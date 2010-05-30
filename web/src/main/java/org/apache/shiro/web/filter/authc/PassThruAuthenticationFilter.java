@@ -39,7 +39,6 @@ import javax.servlet.ServletResponse;
  * at some point.  For example,  if the developer has their own custom MVC login controller or validator,
  * this <code>PassThruAuthenticationFilter</code> may be appropriate.
  *
- * @author Jeremy Haile
  * @see FormAuthenticationFilter
  * @since 0.9
  */

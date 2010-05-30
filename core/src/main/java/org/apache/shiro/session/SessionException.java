@@ -25,7 +25,6 @@ import org.apache.shiro.ShiroException;
  * General security exception attributed to problems during interaction with the system during
  * a session.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class SessionException extends ShiroException {

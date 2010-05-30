@@ -26,7 +26,6 @@ import org.apache.shiro.util.StringUtils;
  * in separate columns (e.g. 'domain', 'actions' and 'targets' columns), which can be used in querying
  * strategies.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public abstract class DomainPermission extends WildcardPermission {

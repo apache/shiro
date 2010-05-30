@@ -36,7 +36,6 @@ import java.lang.annotation.Target;
  * @see RequiresUser
  *
  * @since 0.9.0
- * @author Les Hazlewood
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

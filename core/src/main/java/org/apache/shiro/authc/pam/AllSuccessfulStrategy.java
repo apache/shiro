@@ -36,7 +36,6 @@ import org.apache.shiro.realm.Realm;
  * <tt>AuthenticationInfo</tt> for the token, this implementation will immediately fail the log-in attempt for the
  * associated subject (user).
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {

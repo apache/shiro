@@ -32,7 +32,6 @@ import java.util.Date;
  * {@code javax.servlet.http.HttpSession} or Stateful Session EJB's, which many times
  * unnecessarily coupled applications to web or ejb technologies.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public interface Session {

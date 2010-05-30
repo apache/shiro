@@ -30,11 +30,6 @@ import java.util.StringTokenizer;
  * <p>Some methods in this class were copied from the Spring Framework so we didn't have to re-invent the wheel,
  * and in these cases, we have retained all license, copyright and author information.
  *
- * @author Les Hazlewood
- * @author Rod Johnson
- * @author Juergen Hoeller
- * @author Keith Donald
- * @author Rob Harrop
  * @since 0.9
  */
 public class StringUtils {

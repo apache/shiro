@@ -43,8 +43,6 @@ import org.apache.shiro.subject.PrincipalCollection;
  * <p>These overloaded *Permission methods <em>do</em> forego type-saftey for the benefit of convenience and simplicity,
  * so you should choose which ones to use based on your preferences and needs.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.1
  */
 public interface Authorizer {

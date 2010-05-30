@@ -23,7 +23,6 @@ import javax.servlet.ServletResponse;
  * {@link ServletResponse ServletResponse} pair associated with a currently executing request.  This is used for
  * framework development support and is rarely used by end-users.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public interface RequestPairSource {

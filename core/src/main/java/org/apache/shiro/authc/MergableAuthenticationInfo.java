@@ -30,7 +30,6 @@ package org.apache.shiro.authc;
  * returned at the end of the authentication process, giving the impression of a single underlying
  * realm/data source.
  *
- * @author Jeremy Haile
  * @since 0.9
  */
 public interface MergableAuthenticationInfo extends AuthenticationInfo {

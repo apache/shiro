@@ -52,7 +52,6 @@ import java.io.Serializable;
  * also think the name <em>AuthenticationToken</em> more accurately reflects its true purpose
  * in a login framework, whereas <em>Callback</em> is less obvious.
  *
- * @author Les Hazlewood
  * @see RememberMeAuthenticationToken
  * @see HostAuthenticationToken
  * @see UsernamePasswordToken

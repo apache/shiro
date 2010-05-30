@@ -32,7 +32,6 @@ import java.util.Set;
  * declared, and if so, performs a permission check to see if the calling <code>Subject</code> is allowed continued
  * access.
  *
- * @author Les Hazlewood
  * @since 0.9.0
  */
 public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {

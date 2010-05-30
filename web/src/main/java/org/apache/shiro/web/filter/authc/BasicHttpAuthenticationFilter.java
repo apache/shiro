@@ -54,8 +54,6 @@ import javax.servlet.http.HttpServletResponse;
  * only be called if the subject making the request is not
  * {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated}
  *
- * @author Allan Ditzel
- * @author Les Hazlewood
  * @see <a href="ftp://ftp.isi.edu/in-notes/rfc2617.txt">RFC 2617</a>
  * @see <a href="http://en.wikipedia.org/wiki/Basic_access_authentication">Basic Access Authentication</a>
  * @since 0.9

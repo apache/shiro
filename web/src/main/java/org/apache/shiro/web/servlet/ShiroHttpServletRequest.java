@@ -35,7 +35,6 @@ import java.security.Principal;
  * {@link #getSession getSession}, etc) can be executed first by Shiro as necessary before allowing the underlying
  * Servlet container instance's method to be invoked.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public class ShiroHttpServletRequest extends HttpServletRequestWrapper {

@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
  * {@link ScheduledExecutorService} to call {@link ValidatingSessionManager#validateSessions()} every
  * <em>{@link #getInterval interval}</em> milliseconds.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class ExecutorServiceSessionValidationScheduler implements SessionValidationScheduler, Runnable {

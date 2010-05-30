@@ -49,7 +49,6 @@ import javax.servlet.http.HttpSession;
  * instead.  The {@code DefaultWebSessionManager} supports both traditional web-based access as well as non web-based
  * clients.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class ServletContainerSessionManager extends AbstractSessionManager {

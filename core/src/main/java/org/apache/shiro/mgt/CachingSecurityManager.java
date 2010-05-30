@@ -32,8 +32,6 @@ import org.apache.shiro.util.LifecycleUtils;
  * instantiation.  As caching strategies can vary greatly depending on an application's needs, a {@code CacheManager}
  * instance must be explicitly configured if caching across the framework is to be enabled.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.9
  */
 public abstract class CachingSecurityManager implements SecurityManager, Destroyable, CacheManagerAware {

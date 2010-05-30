@@ -38,7 +38,6 @@ import org.apache.shiro.util.LifecycleUtils;
  * <p>In keeping with the other classes in this hierarchy and Shiro's desire to minimize configuration whenever
  * possible, suitable default instances for all dependencies are created upon instantiation.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class AuthenticatingSecurityManager extends RealmSecurityManager {

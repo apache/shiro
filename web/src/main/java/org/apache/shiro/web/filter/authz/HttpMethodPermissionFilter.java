@@ -73,9 +73,6 @@ import java.util.Map;
  * <tr><td>trace</td><td>read</td><td>perm7</td><td>perm7:read</td></tr>
  * </table>
  *
- * @author Brian Demers
- * @author Tamas Cservenak
- * @author Les Hazlewood
  * @since 1.0
  */
 public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {

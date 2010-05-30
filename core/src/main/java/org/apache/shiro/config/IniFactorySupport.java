@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
  * Base support class for {@link Factory} implementations that generate their instance(s) based on
  * {@link Ini} configuration.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public abstract class IniFactorySupport<T> extends AbstractFactory<T> {

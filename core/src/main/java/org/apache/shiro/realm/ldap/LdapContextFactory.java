@@ -26,7 +26,6 @@ import javax.naming.ldap.LdapContext;
  * of {@link AbstractLdapRealm} to query for <tt>AuthenticationInfo</tt> security data (roles, permissions, etc) of particular
  * Subjects (users).
  *
- * @author Jeremy Haile
  * @since 0.2
  */
 public interface LdapContextFactory {

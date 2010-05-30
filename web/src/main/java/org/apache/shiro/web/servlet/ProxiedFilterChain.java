@@ -31,7 +31,6 @@ import java.util.List;
  * original chain.  It allows a list of filters to execute before continuing the original (proxied)
  * {@code FilterChain} instance.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class ProxiedFilterChain implements FilterChain {

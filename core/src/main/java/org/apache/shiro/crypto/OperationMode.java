@@ -35,7 +35,6 @@ package org.apache.shiro.crypto;
  * platform and rely on an external JCA Provider to be installed.  Some providers
  * (like <a href="http://www.bouncycastle.org">Bouncy Castle</a>) may support these modes however.
  *
- * @author Les Hazlewood
  * @see <a href="http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation">Block Cipher Modes of Operation<a/>
  * @since 1.0
  */

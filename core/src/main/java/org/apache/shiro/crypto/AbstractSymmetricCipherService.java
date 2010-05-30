@@ -25,7 +25,6 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Base abstract class for supporting symmetric key cipher algorithms.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public abstract class AbstractSymmetricCipherService extends JcaCipherService {

@@ -52,7 +52,6 @@ import java.util.Map;
  * {@link Subject.Builder} (which internally uses a {@code SubjectContext}) and build {@code Subject} instances that
  * way.
  *
- * @author Les Hazlewood
  * @see org.apache.shiro.mgt.SecurityManager#createSubject SecurityManager.createSubject
  * @see org.apache.shiro.mgt.SubjectFactory SubjectFactory
  * @since 1.0

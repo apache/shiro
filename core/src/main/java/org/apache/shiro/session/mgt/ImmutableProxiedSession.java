@@ -38,7 +38,6 @@ import org.apache.shiro.session.Session;
  * </ul>
  * Any other method invocation not listed above will result in a corresponding call to the underlying <code>Session</code>.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class ImmutableProxiedSession extends ProxiedSession {

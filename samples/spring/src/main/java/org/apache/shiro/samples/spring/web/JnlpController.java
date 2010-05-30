@@ -34,7 +34,6 @@ import org.apache.shiro.subject.Subject;
  * Controller used to dynamically build a JNLP file used to launch the Shiro
  * Spring WebStart sample application.
  *
- * @author Jeremy Haile
  * @since 0.1
  */
 public class JnlpController extends AbstractController {

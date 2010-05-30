@@ -51,8 +51,6 @@ import java.util.Collection;
  * interfaces separately or implement the one <code>Account</code> interface for a given <code>Realm</code> is
  * entirely based on your application's needs or your preferences.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see org.apache.shiro.authc.AuthenticationInfo AuthenticationInfo
  * @see org.apache.shiro.authc.Account
  * @since 0.9

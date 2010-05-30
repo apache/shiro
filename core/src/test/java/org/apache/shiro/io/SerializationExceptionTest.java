@@ -22,7 +22,6 @@ import org.apache.shiro.ExceptionTest;
 
 
 /**
- * @author Les Hazlewood
  */
 public class SerializationExceptionTest extends ExceptionTest {
 

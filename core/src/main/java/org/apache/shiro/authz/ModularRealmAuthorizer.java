@@ -33,7 +33,6 @@ import java.util.List;
  * A <tt>ModularRealmAuthorizer</tt> is an <tt>Authorizer</tt> implementation that consults one or more configured
  * {@link Realm Realm}s during an authorization operation.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAware, RolePermissionResolverAware {

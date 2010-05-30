@@ -23,7 +23,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 /**
  * An {@code AuthenticationListener} listens for notifications while {@code Subject}s authenticate with the system.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public interface AuthenticationListener {

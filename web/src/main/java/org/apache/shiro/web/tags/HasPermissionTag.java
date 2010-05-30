@@ -19,8 +19,6 @@
 package org.apache.shiro.web.tags;
 
 /**
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.1
  */
 public class HasPermissionTag extends PermissionTag {

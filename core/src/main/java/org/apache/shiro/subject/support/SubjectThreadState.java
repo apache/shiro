@@ -38,7 +38,6 @@ import java.util.Map;
  * the thread's execution.
  *
  * @since 1.0
- * @author Les Hazlewood
  */
 public class SubjectThreadState implements ThreadState {
 

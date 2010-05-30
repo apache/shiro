@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
  * is not authenticated, the tag displays nothing unless a <tt>defaultValue</tt>
  * is specified.</p>
  *
- * @author Jeremy Haile
  * @since 0.2
  */
 public class PrincipalTag extends SecureTag {

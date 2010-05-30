@@ -34,7 +34,6 @@ import java.util.Collection;
  * interaction with the configured Realms.  This allows a pluggable strategy of whether or not an authentication
  * attempt must be successful for all realms, only 1 or more realms, no realms, etc.
  *
- * @author Les Hazlewood
  * @see AllSuccessfulStrategy
  * @see AtLeastOneSuccessfulStrategy
  * @see FirstSuccessfulStrategy

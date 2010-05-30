@@ -26,7 +26,6 @@ import java.util.Map;
 /**
  * A {@code SubjectFactory} is responsible for returning {@link Subject Subject} instances as needed.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public interface SubjectFactory {

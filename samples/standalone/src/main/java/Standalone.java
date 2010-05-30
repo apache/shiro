@@ -22,7 +22,6 @@ import org.apache.shiro.config.IniConfiguration;
 import org.apache.shiro.subject.Subject;
 
 /**
- * @author Les Hazlewood
  * @since Aug 28, 2008 5:46:16 PM
  */
 public class Standalone {

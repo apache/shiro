@@ -29,8 +29,6 @@ import java.util.Set;
  * cache framework's cache instance (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence,
  * GigaSpaces, etc, etc), allowing a Shiro user to configure any cache mechanism they choose.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.2
  */
 public interface Cache<K, V> {

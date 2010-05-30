@@ -34,7 +34,6 @@ import java.io.IOException;
  * and {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) afterCompletion}
  * hooks.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class AdviceFilter extends OncePerRequestFilter {

@@ -28,8 +28,6 @@ import java.util.Set;
  *
  * @see org.apache.shiro.realm.AuthorizingRealm
  * @since 0.9
- * @author Jeremy Haile
- * @author Les Hazlewood
  */
 public class SimpleAuthorizationInfo implements AuthorizationInfo {
 

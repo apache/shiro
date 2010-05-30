@@ -33,7 +33,6 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
  * Shiro Spring sample application to demonstrate the use of the {@link org.apache.shiro.realm.jdbc.JdbcRealm}
  * The tables created by this class follow the default table and column names that {@link org.apache.shiro.realm.jdbc.JdbcRealm} uses.
  *
- * @author Les Hazlewood
  */
 public class BootstrapDataPopulator implements InitializingBean {
 

@@ -34,7 +34,6 @@ import java.util.*;
  * {@code Section} is itself a map of {@code String} name/value pairs.  Name/value pairs are guaranteed to be unique
  * within each {@code Section} only - not across the entire {@code Ini} instance.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public class Ini implements Map<String, Ini.Section> {

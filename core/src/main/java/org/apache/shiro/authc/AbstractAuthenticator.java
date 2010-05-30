@@ -38,8 +38,6 @@ import java.util.Collection;
  * In most cases, the only thing a subclass needs to do (via its {@link #doAuthenticate} implementation)
  * is perform the actual principal/credential verification process for the submitted {@code AuthenticationToken}.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.1
  */
 public abstract class AbstractAuthenticator implements Authenticator, LogoutAware {

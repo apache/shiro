@@ -32,7 +32,6 @@ import java.util.Collection;
  * different behavior than {@link AtLeastOneSuccessfulStrategy}, so please review both to see
  * which one meets your needs better.
  *
- * @author Les Hazlewood
  * @see AtLeastOneSuccessfulStrategy AtLeastOneSuccessfulAuthenticationStrategy
  * @since 0.9
  */

@@ -29,7 +29,6 @@ import javax.servlet.ServletResponse;
  * methods to set and retrieve a {@link ServletRequest} and {@link ServletResponse}, as the request/response pair will
  * often need to be referenced during construction of web-initiated {@code Session} instances.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public interface WebSessionContext extends SessionContext, RequestPairSource {

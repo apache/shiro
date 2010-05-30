@@ -32,7 +32,6 @@ import org.apache.shiro.subject.Subject;
  * Controller responsible for logging out the current user by invoking
  * {@link org.apache.shiro.subject.Subject#logout()}
  *
- * @author Jeremy Haile
  * @since 0.1
  */
 public class LogoutController extends AbstractController {

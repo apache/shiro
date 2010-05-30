@@ -31,7 +31,6 @@ import java.util.Set;
  * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresRoles RequiresRoles} annotation is declared, and if so, performs
  * a role check to see if the calling <code>Subject</code> is allowed to proceed.
  *
- * @author Les Hazlewood
  * @since 0.9.0
  */
 public class RoleAnnotationHandler extends AuthorizingAnnotationHandler {

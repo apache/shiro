@@ -30,8 +30,6 @@ import java.net.URL;
 /**
  * Static helper methods for loading {@code Stream}-backed resources.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see #getInputStreamForPath(String)
  * @since 0.2
  */

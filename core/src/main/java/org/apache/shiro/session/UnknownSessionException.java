@@ -23,7 +23,6 @@ package org.apache.shiro.session;
  * particular session (e.g. under a specific session id), and that session does not exist in
  * the system.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class UnknownSessionException extends InvalidSessionException {

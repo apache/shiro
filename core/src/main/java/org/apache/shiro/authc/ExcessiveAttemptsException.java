@@ -25,7 +25,6 @@ package org.apache.shiro.authc;
  * most systems either temporarily or permanently lock that account to prevent further
  * attempts.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class ExcessiveAttemptsException extends AccountException {

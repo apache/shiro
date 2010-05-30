@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
  *
  * <p>The logically opposite tag of this one is the {@link NotAuthenticatedTag}
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.2
  */
 public class AuthenticatedTag extends SecureTag {

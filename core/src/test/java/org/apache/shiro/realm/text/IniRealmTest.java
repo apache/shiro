@@ -28,7 +28,6 @@ import org.junit.Test;
 /**
  * Unit tests for the {@link IniRealm} class.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public class IniRealmTest {

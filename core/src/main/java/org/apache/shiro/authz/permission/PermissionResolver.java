@@ -42,8 +42,6 @@ import org.apache.shiro.authz.Permission;
  * Although this happens to be the Shiro default, you are of course free to provide custom
  * String-to-Permission conversion by providing Shiro components any instance of this interface.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @see org.apache.shiro.authz.ModularRealmAuthorizer#setPermissionResolver(PermissionResolver) ModularRealmAuthorizer.setPermissionResolver
  * @see org.apache.shiro.realm.AuthorizingRealm#setPermissionResolver(PermissionResolver) AuthorizingRealm.setPermissionResolver
  * @see PermissionResolverAware PermissionResolverAware

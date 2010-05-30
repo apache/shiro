@@ -26,7 +26,6 @@ import org.apache.shiro.authc.AuthenticationException;
  * {@link org.apache.shiro.authc.AuthenticationToken AuthenticationToken} implementation is encountered that is not
  * supported by one or more configured {@link org.apache.shiro.realm.Realm Realm}s.
  *
- * @author Les Hazlewood
  * @see org.apache.shiro.authc.pam.AuthenticationStrategy
  * @since 0.2
  */

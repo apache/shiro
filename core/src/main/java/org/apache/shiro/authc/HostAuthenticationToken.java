@@ -22,7 +22,6 @@ package org.apache.shiro.authc;
  * A {@code HostAuthenticationToken} retains the host information from where
  * an authentication attempt originates.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public interface HostAuthenticationToken {

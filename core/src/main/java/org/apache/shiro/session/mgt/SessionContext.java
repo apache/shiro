@@ -35,7 +35,6 @@ import java.util.Map;
  * will usually use {@code SessionContext} instances to start a session with the application's
  * {@link SessionManager SessionManager}.
  *
- * @author Les Hazlewood
  * @see org.apache.shiro.session.mgt.SessionManager#start SessionManager.start(SessionContext)
  * @see org.apache.shiro.session.mgt.SessionFactory SessionFactory
  * @since 1.0

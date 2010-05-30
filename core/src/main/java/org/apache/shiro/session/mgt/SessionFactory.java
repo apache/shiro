@@ -27,7 +27,6 @@ import org.apache.shiro.session.Session;
  * application, and is typically injected into the {@link org.apache.shiro.mgt.SecurityManager SecurityManager} or a
  * {@link SessionManager}.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public interface SessionFactory {

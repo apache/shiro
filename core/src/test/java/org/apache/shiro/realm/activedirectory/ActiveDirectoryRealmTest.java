@@ -51,7 +51,6 @@ import static org.junit.Assert.assertTrue;
  * This version was intended to mimic my current usage scenario in an effort to debug upgrade issues which were not related
  * to LDAP connectivity.
  *
- * @author Tim Veil
  */
 public class ActiveDirectoryRealmTest {
 

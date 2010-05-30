@@ -39,7 +39,6 @@ import java.util.Arrays;
  * This class and its subclasses support hashing with additional capabilities of salting and multiple iterations via
  * overloaded constructors.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class AbstractHash extends CodecSupport implements Hash, Serializable {

@@ -33,8 +33,6 @@ import java.io.IOException;
  * {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse) onAccessDenied} method, which
  * provides reasonable handling for most applications.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @see #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
  * @since 0.9
  */

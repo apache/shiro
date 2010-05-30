@@ -36,7 +36,6 @@ import org.apache.shiro.mgt.SecurityManager;
 
 /**
  * TODO - complete JavaDoc
- * @author Les Hazlewood
  * @since 0.1
  */
 public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor

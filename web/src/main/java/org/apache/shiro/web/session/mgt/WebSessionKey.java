@@ -27,7 +27,6 @@ import java.io.Serializable;
  * {@code ServletRequest} and {@code ServletResponse} associated with the web request that is performing the
  * session lookup.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class WebSessionKey extends DefaultSessionKey implements RequestPairSource {

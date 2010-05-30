@@ -28,7 +28,6 @@ import javax.servlet.ServletContext;
 /**
  * Tests for {@link IniShiroFilter}.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class IniShiroFilterTest {

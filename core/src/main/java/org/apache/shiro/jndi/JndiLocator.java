@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * we would have used that. Since Shiro is also Apache 2.0 licensed, all regular licenses and conditions and
  * authors have remained in tact.
  *
- * @author Juergen Hoeller
  * @see #setJndiTemplate
  * @see #setJndiEnvironment
  * @see #setResourceRef

@@ -25,7 +25,6 @@ import java.io.Serializable;
  * Maintains request data for a request that was redirected, so that after authentication
  * the user can be redirected to the originally requested page.
  *
- * @author Jeremy Haile
  * @since 0.9
  */
 public class SavedRequest implements Serializable {

@@ -40,7 +40,6 @@ import java.net.URLEncoder;
  * encoding URLs for session ID URL Rewriting (we didn't want to re-invent the wheel).  Since Shiro is also
  * Apache 2.0 license, all regular licenses and conditions have remained in tact.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public class ShiroHttpServletResponse extends HttpServletResponseWrapper {

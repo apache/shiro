@@ -41,7 +41,6 @@ import static org.junit.Assert.*;
 
 
 /**
- * @author Les Hazlewood
  * @since Aug 1, 2008 2:11:17 PM
  */
 public class DelegatingSubjectTest {

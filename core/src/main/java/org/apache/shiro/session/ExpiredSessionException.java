@@ -23,7 +23,6 @@ package org.apache.shiro.session;
  * stopped explicitly due to inactivity (i.e. time-out), as opposed to stopping due to log-out or
  * other reason.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class ExpiredSessionException extends StoppedSessionException {

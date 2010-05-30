@@ -36,7 +36,6 @@ import static org.junit.Assert.assertNull;
 /**
  * Tests for the {@link IniFilterChainResolverFactory}.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public class IniFilterChainResolverFactoryTest extends WebTest {

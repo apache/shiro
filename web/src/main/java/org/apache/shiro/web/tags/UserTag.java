@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
  *
  * <p>The logically opposite tag of this one is the {@link org.apache.shiro.web.tags.GuestTag}.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public class UserTag extends SecureTag {

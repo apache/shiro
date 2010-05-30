@@ -24,7 +24,6 @@ import org.junit.Test;
 
 
 /**
- * @author Les Hazlewood
  */
 @SuppressWarnings({"ThrowableInstanceNeverThrown"})
 public abstract class ExceptionTest extends TestCase {

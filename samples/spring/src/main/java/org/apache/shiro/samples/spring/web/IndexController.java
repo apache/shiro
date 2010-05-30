@@ -36,7 +36,6 @@ import org.apache.shiro.subject.Subject;
  * Spring MVC controller responsible for rendering the Shiro Spring sample
  * application index page.
  *
- * @author Jeremy Haile
  * @since 0.1
  */
 public class IndexController extends SimpleFormController {

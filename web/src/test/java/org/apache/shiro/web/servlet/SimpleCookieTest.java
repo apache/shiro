@@ -31,7 +31,6 @@ import static org.easymock.EasyMock.*;
 /**
  * TODO - Class JavaDoc
  *
- * @author Les Hazlewood
  * @since Apr 22, 2010 9:40:47 PM
  */
 public class SimpleCookieTest extends TestCase {

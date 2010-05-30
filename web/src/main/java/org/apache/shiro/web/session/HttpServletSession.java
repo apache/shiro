@@ -36,7 +36,6 @@ import java.util.Enumeration;
  * {@code SessionManager}, {@code SecurityManager}, etc, and instead satisfies all method implementations by interacting
  * with a servlet container provided {@link HttpSession HttpSession} instance.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class HttpServletSession implements Session {

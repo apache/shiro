@@ -37,7 +37,6 @@ import java.util.Collection;
  * implementations will often return a subset of the total active sessions and perform validation a little more
  * frequently, rather than return a massive set and infrequently validate.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public interface SessionDAO {

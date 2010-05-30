@@ -22,7 +22,6 @@ import org.apache.shiro.ExceptionTest;
 
 
 /**
- * @author Les Hazlewood
  * @since Jun 10, 2008 4:06:45 PM
  */
 public class UnauthorizedExceptionTest extends ExceptionTest {

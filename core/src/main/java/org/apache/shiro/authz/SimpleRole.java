@@ -27,7 +27,6 @@ import java.util.Set;
  * A simple representation of a security role that has a name and a collection of permissions.  This object can be
  * used internally by Realms to maintain authorization state.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public class SimpleRole implements Serializable {

@@ -34,8 +34,6 @@ import java.util.Collection;
 /**
  * Default business-tier implementation of the {@link ValidatingSessionManager} interface.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.1
  */
 public abstract class AbstractValidatingSessionManager extends AbstractNativeSessionManager

@@ -37,8 +37,6 @@ import org.apache.shiro.session.mgt.ValidatingSessionManager;
  * job to call {@link org.apache.shiro.session.mgt.ValidatingSessionManager#validateSessions()} on
  * a regular basis.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.1
  */
 public class QuartzSessionValidationScheduler implements SessionValidationScheduler {

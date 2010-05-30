@@ -41,7 +41,6 @@ import java.io.IOException;
  * /another/path/** = port[8080]
  * </pre>
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class PortFilter extends AuthorizationFilter {

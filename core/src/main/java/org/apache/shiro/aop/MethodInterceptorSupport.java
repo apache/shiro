@@ -27,7 +27,6 @@ import org.apache.shiro.subject.Subject;
  * leaves AOP implementation specifics to be handled by subclass implementations.  This implementation primarily
  * enables a <tt>Log</tt> and makes available the currently executing {@link Subject Subject}.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public abstract class MethodInterceptorSupport implements MethodInterceptor {

@@ -31,8 +31,6 @@ import org.apache.shiro.util.CollectionUtils;
  * Filter that allows access if the current user has the roles specified by the mapped value, or denies access
  * if the user does not have all of the roles specified.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.9
  */
 public class RolesAuthorizationFilter extends AuthorizationFilter {

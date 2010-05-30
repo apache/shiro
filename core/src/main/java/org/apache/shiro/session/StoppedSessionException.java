@@ -23,7 +23,6 @@ package org.apache.shiro.session;
  * stopped.  A session may be stopped in any number of ways, most commonly due to explicit
  * stopping (e.g. from logging out), or due to expiration.
  *
- * @author Les Hazlewood
  * @since 0.1
  */
 public class StoppedSessionException extends InvalidSessionException {

@@ -21,7 +21,6 @@ package org.apache.shiro.authz.aop;
 /**
  * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresPermissions RequiresPermissions} annotation is declared, and if so, performs
  * a permission check to see if the calling <code>Subject</code> is allowed to call the method.
- * @author Les Hazlewood
  * @since 0.9
  */
 public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {

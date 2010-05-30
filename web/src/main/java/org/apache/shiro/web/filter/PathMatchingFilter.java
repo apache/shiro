@@ -36,8 +36,6 @@ import static org.apache.shiro.util.StringUtils.split;
 /**
  * <p>Base class for Filters that will process only specified paths and allow all others to pass through.</p>
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.9
  */
 public abstract class PathMatchingFilter extends AdviceFilter implements PathConfigProcessor {

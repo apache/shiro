@@ -38,8 +38,6 @@ import java.util.Date;
  * web-based application where the web classes and server-side business pojos exist in the same
  * JVM, a remote method call will not be incurred.
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.1
  */
 public class DelegatingSession implements Session, Serializable {

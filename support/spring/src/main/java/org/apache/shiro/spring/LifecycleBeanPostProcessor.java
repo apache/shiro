@@ -40,7 +40,6 @@ import org.apache.shiro.util.Initializable;
  * already been called, so if you define this post processor in your applicationContext, do not also call these
  * methods manually or via Spring's <tt>init-method</tt> or <tt>destroy-method</tt> bean attributes.</b></p>
  *
- * @author Jeremy Haile
  * @since 0.2
  */
 public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProcessor {

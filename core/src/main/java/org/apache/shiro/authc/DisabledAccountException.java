@@ -22,7 +22,6 @@ package org.apache.shiro.authc;
  * Thrown when attempting to authenticate and the corresponding account has been disabled for
  * some reason.
  *
- * @author Les Hazlewood
  * @see LockedAccountException
  * @since 0.1
  */

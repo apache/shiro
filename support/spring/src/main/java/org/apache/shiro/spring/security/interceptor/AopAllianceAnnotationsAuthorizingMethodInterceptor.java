@@ -28,7 +28,6 @@ import java.lang.reflect.Method;
  * Allows Shiro Annotations to work in any <a href="http://aopalliance.sourceforge.net/">AOP Alliance</a>
  * specific implementation environment (for example, Spring).
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public class AopAllianceAnnotationsAuthorizingMethodInterceptor

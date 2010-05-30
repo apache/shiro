@@ -28,7 +28,6 @@ import java.util.Map;
  * Default implementation of the {@link WebSessionContext} interface which provides getters and setters that
  * wrap interaction with the underlying backing context map.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class DefaultWebSessionContext extends DefaultSessionContext implements WebSessionContext {

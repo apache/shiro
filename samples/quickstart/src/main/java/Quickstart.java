@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Simple Quickstart application showing how to use Shiro's API.
  *
- * @author Les Hazlewood
  * @since 0.9 RC2
  */
 public class Quickstart {

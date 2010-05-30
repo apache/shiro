@@ -38,7 +38,6 @@ import java.util.Map;
 /**
  * A {@link Factory} that creates {@link FilterChainResolver} instances based on {@link Ini} configuration.
  *
- * @author The Apache Shiro Project (shiro-dev@incubator.apache.org)
  * @since 1.0
  */
 public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChainResolver> {

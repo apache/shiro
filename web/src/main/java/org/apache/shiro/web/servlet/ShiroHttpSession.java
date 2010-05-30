@@ -36,7 +36,6 @@ import java.util.*;
  * is used on both the business tier as well as in multiple client technologies (web, swing, flash, etc) since
  * Servlet container sessions alone cannot support this feature.
  *
- * @author Les Hazlewood
  * @since 0.2
  */
 public class ShiroHttpSession implements HttpSession {

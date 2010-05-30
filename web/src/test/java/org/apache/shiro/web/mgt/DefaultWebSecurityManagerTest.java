@@ -42,7 +42,6 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
 /**
- * @author Les Hazlewood
  * @since 0.9
  */
 public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTest {

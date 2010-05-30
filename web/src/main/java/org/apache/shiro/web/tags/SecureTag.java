@@ -28,7 +28,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
 /**
- * @author Les Hazlewood
  * @since 0.1
  */
 public abstract class SecureTag extends TagSupport {

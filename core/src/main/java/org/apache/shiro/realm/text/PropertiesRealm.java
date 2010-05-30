@@ -80,8 +80,6 @@ import java.util.concurrent.TimeUnit;
  * role.qa = &quot;server:view,start,shutdown,restart:someQaServer&quot;, server:view:someProductionServer<br/>
  * role.contractor = application:use:timesheet</code>
  *
- * @author Les Hazlewood
- * @author Jeremy Haile
  * @since 0.2
  */
 public class PropertiesRealm extends TextConfigurationRealm implements Destroyable, Runnable {

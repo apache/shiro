@@ -40,8 +40,6 @@ import java.io.IOException;
  * <b>NOTE</b> This class was borrowed from the Spring framework, and as such,
  * all copyright notices and author names have remained in tact.
  *
- * @author Les Hazlewood
- * @author Juergen Hoeller
  * @since 0.1
  */
 public abstract class OncePerRequestFilter extends NameableFilter {

@@ -22,7 +22,6 @@ import java.io.Serializable;
  * {@link #getSessionId() sessionId} that the {@code SessionManager} implementation can use to look up a
  * {@code Session} instance.
  *
- * @author Les Hazlewood
  * @since 1.0
  */
 public class DefaultSessionKey implements SessionKey, Serializable {

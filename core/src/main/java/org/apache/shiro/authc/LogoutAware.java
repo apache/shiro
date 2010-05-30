@@ -28,7 +28,6 @@ import org.apache.shiro.subject.PrincipalCollection;
  * <p>All of Shiro's concrete Realm implementations implement this interface as a convenience for those wishing
  * to subclass them.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public interface LogoutAware {

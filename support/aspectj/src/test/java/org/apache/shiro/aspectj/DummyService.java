@@ -22,7 +22,6 @@ package org.apache.shiro.aspectj;
 /**
  * Basic service for test purposes.
  *
- * @author J-C Desrochers
  */
 public interface DummyService {
 

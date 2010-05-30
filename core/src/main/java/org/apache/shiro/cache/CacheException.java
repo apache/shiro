@@ -24,8 +24,6 @@ import org.apache.shiro.ShiroException;
 /**
  * Root class of all Shiro exceptions related to caching operations.
  *
- * @author Jeremy Haile
- * @author Les Hazlewood
  * @since 0.2
  */
 public class CacheException extends ShiroException

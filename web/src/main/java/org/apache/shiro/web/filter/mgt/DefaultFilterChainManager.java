@@ -43,7 +43,6 @@ import static org.apache.shiro.util.StringUtils.split;
  * {@code Filter}s (key: filter chain name, value: NamedFilterList).  The {@code NamedFilterList} is essentially a
  * {@link FilterChain} that also has a name property by which it can be looked up.
  *
- * @author Les Hazlewood
  * @see NamedFilterList
  * @since 1.0
  */

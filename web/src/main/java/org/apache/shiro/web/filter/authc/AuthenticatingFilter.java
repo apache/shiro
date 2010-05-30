@@ -30,7 +30,6 @@ import javax.servlet.ServletResponse;
  * An <code>AuthenticationFilter</code> that is capable of automatically performing an authentication attempt
  * based on the incoming request.
  *
- * @author Les Hazlewood
  * @since 0.9
  */
 public abstract class AuthenticatingFilter extends AuthenticationFilter {

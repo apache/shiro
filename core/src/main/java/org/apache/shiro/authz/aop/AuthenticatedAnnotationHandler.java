@@ -28,7 +28,6 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
  * Handles {@link RequiresAuthentication RequiresAuthentication} annotations and ensures the calling subject is
  * authenticated before allowing access.
  *
- * @author Les Hazlewood
  * @since 0.9.0
  */
 public class AuthenticatedAnnotationHandler extends AuthorizingAnnotationHandler {
