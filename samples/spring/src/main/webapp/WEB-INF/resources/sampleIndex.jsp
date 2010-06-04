@@ -34,11 +34,18 @@
     Session ID: ${subjectSession.id}
 
     <h3>Session Attribute Keys</h3>
-    <ul>
-        <c:forEach items="${subjectSession.attributeKeys}" var="key">
-            <li>${key}</li>
+    <table border="1">
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+        <c:forEach items="${sessionAttributes}" var="entry">
+            <tr>
+                <td>${entry.key}</td>
+                <td>${entry.value}</td>
+            </tr>
         </c:forEach>
-    </ul>
+    </table>
 
     <p style="font-weight: bold;">
         <shiro:hasRole name="role1">You have role 1.<br/></shiro:hasRole>
@@ -64,8 +71,9 @@
 
     <p>
         Click <a href="<c:url value="/s/shiro.jnlp?sessionId=${subjectSession.id}"/>">here</a> to launch webstart
-        application. (Need to be running <span style="font-weight:bold">mvn jetty:run-exploded</span> to have webstart app 
-        resources available through the webapp context) 
+        application. (Need to be running <span style="font-weight:bold">mvn jetty:run-exploded</span> to have webstart
+        app
+        resources available through the webapp context)
     </p>
 
 
