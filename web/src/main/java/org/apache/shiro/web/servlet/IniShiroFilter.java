@@ -63,7 +63,7 @@ import java.util.Map;
  * #
  * # myRealm = example.pkg.security.MyRealm
  * #
- * # This would instantiate the some.pkg.security.MyRealm class with a default no-arg constructor and inject it into
+ * # This would instantiate the example.pkg.security.MyRealm class with a default no-arg constructor and inject it into
  * # the SecurityManager.  More than one realm can be defined if needed.  You can create graphs and reference
  * # other beans ('$' bean reference notation) while defining Realms and other objects:
  * #
@@ -86,7 +86,7 @@ import java.util.Map;
  * # logic.  Then you can declare the implementation here instead.  The realms it returns will be injected in to the
  * # SecurityManager just as the individual Realms are.  For example:
  * #
- * # aRealmFactory = some.pkg.ClassThatImplementsRealmFactory
+ * # aRealmFactory = example.pkg.ClassThatImplementsRealmFactory
  * #
  * # --- SessionManager properties ---
  * #
