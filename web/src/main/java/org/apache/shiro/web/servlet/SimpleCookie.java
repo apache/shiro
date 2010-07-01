@@ -28,6 +28,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -326,7 +327,7 @@ public class SimpleCookie implements Cookie {
      */
     private static String toCookieDate(Date date) {
         TimeZone tz = TimeZone.getTimeZone(GMT_TIME_ZONE_ID);
-        DateFormat fmt = new SimpleDateFormat(COOKIE_DATE_FORMAT_STRING);
+        DateFormat fmt = new SimpleDateFormat(COOKIE_DATE_FORMAT_STRING, Locale.US);
         fmt.setTimeZone(tz);
         return fmt.format(date);
     }
