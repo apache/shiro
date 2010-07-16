@@ -30,10 +30,7 @@ import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 /**
  */
@@ -56,6 +53,12 @@ public class DummyServiceTest {
         RESTRICTED_SERVICE = new RestrictedDummyService();
     }
 
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+        //don't corrupt other test cases since this is static memory:
+        SecurityUtils.setSecurityManager(null);
+    }
+
     private Subject subject;
 
     @Before
@@ -68,11 +71,6 @@ public class DummyServiceTest {
         subject.logout();
     }
 
-
-    private void loginAsGuest() {
-        subject.login(new UsernamePasswordToken("john", "doe"));
-    }
-
     private void loginAsUser() {
         subject.login(new UsernamePasswordToken("joe", "bob"));
     }
@@ -81,17 +79,9 @@ public class DummyServiceTest {
         subject.login(new UsernamePasswordToken("root", "secret"));
     }
 
-
     // TEST ANONYMOUS
-
     @Test
     public void testAnonymous_asAnonymous() throws Exception {
-        SECURED_SERVICE.anonymous();
-    }
-
-    @Test
-    public void testAnonymous_asGuest() throws Exception {
-        loginAsGuest();
         SECURED_SERVICE.anonymous();
     }
 
@@ -107,43 +97,27 @@ public class DummyServiceTest {
         SECURED_SERVICE.anonymous();
     }
 
-
     // TEST GUEST
-
-    @Test(expected = UnauthenticatedException.class)
+    @Test
     public void testGuest_asAnonymous() throws Exception {
         SECURED_SERVICE.guest();
     }
 
-    @Test
-    public void testGuest_asGuest() throws Exception {
-        loginAsGuest();
-        SECURED_SERVICE.guest();
-    }
-
-    @Test
+    @Test(expected = UnauthenticatedException.class)
     public void testGuest_asUser() throws Exception {
         loginAsUser();
         SECURED_SERVICE.guest();
     }
 
-    @Test
+    @Test(expected = UnauthenticatedException.class)
     public void testGuest_asAdmin() throws Exception {
         loginAsAdmin();
         SECURED_SERVICE.guest();
     }
 
-
     // TEST PEEK
-
     @Test(expected = UnauthenticatedException.class)
     public void testPeek_asAnonymous() throws Exception {
-        SECURED_SERVICE.peek();
-    }
-
-    @Test
-    public void testPeek_asGuest() throws Exception {
-        loginAsGuest();
         SECURED_SERVICE.peek();
     }
 
@@ -159,18 +133,10 @@ public class DummyServiceTest {
         SECURED_SERVICE.peek();
     }
 
-
     // TEST RETRIEVE
-
     @Test(expected = UnauthenticatedException.class)
     //UnauthenticatedException per SHIRO-146
     public void testRetrieve_asAnonymous() throws Exception {
-        SECURED_SERVICE.retrieve();
-    }
-
-    @Test(expected = UnauthorizedException.class)
-    public void testRetrieve_asGuest() throws Exception {
-        loginAsGuest();
         SECURED_SERVICE.retrieve();
     }
 
@@ -186,18 +152,10 @@ public class DummyServiceTest {
         SECURED_SERVICE.retrieve();
     }
 
-
     // TEST CHANGE
-
     @Test(expected = UnauthenticatedException.class)
     //UnauthenticatedException per SHIRO-146
     public void testChange_asAnonymous() throws Exception {
-        SECURED_SERVICE.change();
-    }
-
-    @Test(expected = UnauthorizedException.class)
-    public void testChange_asGuest() throws Exception {
-        loginAsGuest();
         SECURED_SERVICE.change();
     }
 
@@ -213,18 +171,10 @@ public class DummyServiceTest {
         SECURED_SERVICE.change();
     }
 
-
     // TEST RETRIEVE RESTRICTED
-
     @Test(expected = UnauthenticatedException.class)
     //UnauthenticatedException per SHIRO-146
     public void testRetrieveRestricted_asAnonymous() throws Exception {
-        RESTRICTED_SERVICE.retrieve();
-    }
-
-    @Test(expected = UnauthorizedException.class)
-    public void testRetrieveRestricted_asGuest() throws Exception {
-        loginAsGuest();
         RESTRICTED_SERVICE.retrieve();
     }
 
