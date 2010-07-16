@@ -19,6 +19,7 @@
 package org.apache.shiro.aspectj;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresUser;
 
@@ -42,7 +43,7 @@ public class SecuredDummyService implements DummyService {
         log("anonymous");
     }
 
-    @RequiresAuthentication
+    @RequiresGuest
     public void guest() {
         log("guest");
     }
