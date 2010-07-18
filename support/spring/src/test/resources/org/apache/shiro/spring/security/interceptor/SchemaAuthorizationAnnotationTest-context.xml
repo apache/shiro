@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+    <!-- This file exists to test enabling Shiro annotations in Spring using
+         the <aop:config/> schema-based AOP configuration.  It shares common beans
+         defined in AbstractAuthorizationAnnotationTest-context.xml -->
+
+    <!-- NOTE:  When using AspectJ-style pointcut definitions, you CAN NOT put the annotations
+                on an interface method.  They MUST be on implementation methods directly.  Spring's
+                AspectJ-style support does not support annotations on interface methods.  If you
+                want annotations on interface methods, you must use either Spring's bean
+                ProxyCreator mechanisms or AspectJ compile-time or load-time weaving. -->
+    <aop:config>
+        <aop:pointcut id="shiroAnnotatedMethod" expression="
+                      execution(@org.apache.shiro.authz.annotation.RequiresAuthentication * *(..)) ||
+                      execution(@org.apache.shiro.authz.annotation.RequiresGuest * *(..)) ||
+                      execution(@org.apache.shiro.authz.annotation.RequiresPermissions * *(..)) ||
+                      execution(@org.apache.shiro.authz.annotation.RequiresRoles * *(..)) ||
+                      execution(@org.apache.shiro.authz.annotation.RequiresUser * *(..))"/>
+        <aop:advisor pointcut-ref="shiroAnnotatedMethod"
+                     advice-ref="shiroAuthorizationAnnotationsAdvice"/>
+    </aop:config>
+    <bean id="shiroAuthorizationAnnotationsAdvice"
+          class="org.apache.shiro.spring.security.interceptor.AopAllianceAnnotationsAuthorizingMethodInterceptor"/>
+
+</beans>

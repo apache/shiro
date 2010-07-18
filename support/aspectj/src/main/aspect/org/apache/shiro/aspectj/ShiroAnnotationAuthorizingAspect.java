@@ -38,6 +38,9 @@ public class ShiroAnnotationAuthorizingAspect {
                     "execution(@org.apache.shiro.authz.annotation.RequiresUser * *(..))";
 
     @Pointcut(pointCupExpression)
+    public void anyShiroAnnotatedMethod(){}
+
+    @Pointcut(pointCupExpression)
     void anyShiroAnnotatedMethodCall(JoinPoint thisJoinPoint) {
     }
 

@@ -18,30 +18,32 @@
  */
 package org.apache.shiro.spring.security.interceptor;
 
-import java.lang.reflect.Method;
-
-import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
-import org.springframework.beans.factory.InitializingBean;
-
+import org.apache.shiro.authz.annotation.*;
+import org.apache.shiro.mgt.SecurityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
+import org.springframework.core.annotation.AnnotationUtils;
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresGuest;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.apache.shiro.authz.annotation.RequiresUser;
-import org.apache.shiro.mgt.SecurityManager;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 
 /**
  * TODO - complete JavaDoc
+ *
  * @since 0.1
  */
-public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor
-        implements InitializingBean {
+@SuppressWarnings({"unchecked"})
+public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor {
 
     private static final Logger log = LoggerFactory.getLogger(AuthorizationAttributeSourceAdvisor.class);
+
+    private static final Class<? extends Annotation>[] AUTHZ_ANNOTATION_CLASSES =
+            new Class[] {
+                    RequiresPermissions.class, RequiresRoles.class,
+                    RequiresUser.class, RequiresGuest.class, RequiresAuthentication.class
+            };
 
     protected SecurityManager securityManager = null;
 
@@ -49,6 +51,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
      * Create a new AuthorizationAttributeSourceAdvisor.
      */
     public AuthorizationAttributeSourceAdvisor() {
+        setAdvice(new AopAllianceAnnotationsAuthorizingMethodInterceptor());
     }
 
     public SecurityManager getSecurityManager() {
@@ -76,24 +79,37 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
      * @see org.springframework.aop.MethodMatcher#matches(java.lang.reflect.Method, Class)
      */
     public boolean matches(Method method, Class targetClass) {
-        return ((method.getAnnotation(RequiresPermissions.class) != null) ||
-                (method.getAnnotation(RequiresRoles.class) != null) ||
-                (method.getAnnotation(RequiresUser.class) != null) ||
-                (method.getAnnotation(RequiresGuest.class) != null ) ||
-                (method.getAnnotation(RequiresAuthentication.class) != null ));
+        Method m = method;
+
+        if ( isAuthzAnnotationPresent(m) ) {
+            return true;
+        }
+
+        //The 'method' parameter could be from an interface that doesn't have the annotation.
+        //Check to see if the implementation has it.
+        if ( targetClass != null) {
+            try {
+                m = targetClass.getMethod(m.getName(), m.getParameterTypes());
+                if ( isAuthzAnnotationPresent(m) ) {
+                    return true;
+                }
+            } catch (NoSuchMethodException ignored) {
+                //default return value is false.  If we can't find the method, then obviously
+                //there is no annotation, so just use the default return value.
+            }
+        }
+
+        return false;
     }
 
-    public void afterPropertiesSet() throws Exception {
-        if (getAdvice() == null) {
-            if (log.isTraceEnabled()) {
-                log.trace("No authorization advice explicitly configured via the 'advice' " +
-                        "property.  Attempting to set " +
-                        "default instance of type [" +
-                        AopAllianceAnnotationsAuthorizingMethodInterceptor.class.getName() + "]");
+    private boolean isAuthzAnnotationPresent(Method method) {
+        for( Class<? extends Annotation> annClass : AUTHZ_ANNOTATION_CLASSES ) {
+            Annotation a = AnnotationUtils.findAnnotation(method, annClass);
+            if ( a != null ) {
+                return true;
             }
-            AopAllianceAnnotationsAuthorizingMethodInterceptor interceptor =
-                    new AopAllianceAnnotationsAuthorizingMethodInterceptor();
-            setAdvice(interceptor);
         }
+        return false;
     }
+
 }

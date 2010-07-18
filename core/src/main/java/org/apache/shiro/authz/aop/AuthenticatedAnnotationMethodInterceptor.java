@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.authz.aop;
 
+import org.apache.shiro.aop.AnnotationResolver;
+
 /**
  * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresAuthentication RequiresAuthenticated} annotation
  * is declared, and if so, ensures the calling
@@ -34,6 +36,14 @@ public class AuthenticatedAnnotationMethodInterceptor extends AuthorizingAnnotat
      * declaration.
      */
     public AuthenticatedAnnotationMethodInterceptor() {
-        super( new AuthenticatedAnnotationHandler() );
+        super(new AuthenticatedAnnotationHandler());
+    }
+
+    /**
+     * @param resolver
+     * @since 1.1
+     */
+    public AuthenticatedAnnotationMethodInterceptor(AnnotationResolver resolver) {
+        super(new AuthenticatedAnnotationHandler(), resolver);
     }
 }
