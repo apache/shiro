@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.authz.aop;
 
+import org.apache.shiro.aop.AnnotationResolver;
+
 /**
  * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresGuest RequiresGuest} annotation
  * is declared, and if so, ensures the calling <code>Subject</code> does <em>not</em>
@@ -37,4 +39,13 @@ public class GuestAnnotationMethodInterceptor extends AuthorizingAnnotationMetho
     public GuestAnnotationMethodInterceptor() {
         super(new GuestAnnotationHandler());
     }
+
+    /**
+     * @param resolver
+     * @since 1.1
+     */
+    public GuestAnnotationMethodInterceptor(AnnotationResolver resolver) {
+        super(new GuestAnnotationHandler(), resolver);
+    }
+
 }

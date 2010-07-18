@@ -20,9 +20,13 @@ package org.apache.shiro.spring.security.interceptor;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.shiro.authz.aop.AnnotationsAuthorizingMethodInterceptor;
+import org.apache.shiro.aop.AnnotationResolver;
+import org.apache.shiro.authz.aop.*;
+import org.apache.shiro.spring.aop.SpringAnnotationResolver;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Allows Shiro Annotations to work in any <a href="http://aopalliance.sourceforge.net/">AOP Alliance</a>
@@ -33,6 +37,22 @@ import java.lang.reflect.Method;
 public class AopAllianceAnnotationsAuthorizingMethodInterceptor
         extends AnnotationsAuthorizingMethodInterceptor implements MethodInterceptor {
 
+    public AopAllianceAnnotationsAuthorizingMethodInterceptor() {
+        List<AuthorizingAnnotationMethodInterceptor> interceptors =
+                new ArrayList<AuthorizingAnnotationMethodInterceptor>(5);
+
+        //use a Spring-specific Annotation resolver - Spring's AnnotationUtils is nicer than the
+        //raw JDK resolution process.
+        AnnotationResolver resolver = new SpringAnnotationResolver();
+        //we can re-use the same resolver instance - it does not retain state:
+        interceptors.add(new RoleAnnotationMethodInterceptor(resolver));
+        interceptors.add(new PermissionAnnotationMethodInterceptor(resolver));
+        interceptors.add(new AuthenticatedAnnotationMethodInterceptor(resolver));
+        interceptors.add(new UserAnnotationMethodInterceptor(resolver));
+        interceptors.add(new GuestAnnotationMethodInterceptor(resolver));
+
+        setMethodInterceptors(interceptors);
+    }
     /**
      * Creates a {@link MethodInvocation MethodInvocation} that wraps an
      * {@link org.aopalliance.intercept.MethodInvocation org.aopalliance.intercept.MethodInvocation} instance,

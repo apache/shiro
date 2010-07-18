@@ -19,12 +19,14 @@
 package org.apache.shiro.aop;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
 
 /**
  * MethodInterceptor that inspects a specific annotation on the method invocation before continuing
  * its execution.
+ * </p>
+ * The annotation is acquired from the {@link MethodInvocation MethodInvocation} via a
+ * {@link AnnotationResolver AnnotationResolver} instance that may be configured.  Unless
+ * overridden, the default {@code AnnotationResolver} is a
  *
  * @since 0.9
  */
@@ -33,22 +35,87 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
     private AnnotationHandler handler;
 
     /**
+     * The resolver to use to find annotations on intercepted methods.
+     *
+     * @since 1.1
+     */
+    private AnnotationResolver resolver;
+
+    /**
      * Constructs an <code>AnnotationMethodInterceptor</code> with the
-     * {@link AnnotationHandler AnnotationHandler} that will be used to process annotations of a corresponding
-     * type.
+     * {@link AnnotationHandler AnnotationHandler} that will be used to process annotations of a
+     * corresponding type.
      *
      * @param handler the handler to delegate to for processing the annotation.
      */
     public AnnotationMethodInterceptor(AnnotationHandler handler) {
-        setHandler(handler);
+        this(handler, new DefaultAnnotationResolver());
     }
 
+    /**
+     * Constructs an <code>AnnotationMethodInterceptor</code> with the
+     * {@link AnnotationHandler AnnotationHandler} that will be used to process annotations of a
+     * corresponding type, using the specified {@code AnnotationResolver} to acquire annotations
+     * at runtime.
+     *
+     * @param handler  the handler to use to process any discovered annotation
+     * @param resolver the resolver to use to locate/acquire the annotation
+     * @since 1.1
+     */
+    public AnnotationMethodInterceptor(AnnotationHandler handler, AnnotationResolver resolver) {
+        if (handler == null) {
+            throw new IllegalArgumentException("AnnotationHandler argument cannot be null.");
+        }
+        setHandler(handler);
+        setResolver(resolver != null ? resolver : new DefaultAnnotationResolver());
+    }
+
+    /**
+     * Returns the {@code AnnotationHandler} used to perform authorization behavior based on
+     * an annotation discovered at runtime.
+     *
+     * @return the {@code AnnotationHandler} used to perform authorization behavior based on
+     *         an annotation discovered at runtime.
+     */
     public AnnotationHandler getHandler() {
         return handler;
     }
 
+    /**
+     * Sets the {@code AnnotationHandler} used to perform authorization behavior based on
+     * an annotation discovered at runtime.
+     *
+     * @param handler the {@code AnnotationHandler} used to perform authorization behavior based on
+     *                an annotation discovered at runtime.
+     */
     public void setHandler(AnnotationHandler handler) {
         this.handler = handler;
+    }
+
+    /**
+     * Returns the {@code AnnotationResolver} to use to acquire annotations from intercepted
+     * methods at runtime.  The annotation is then used by the {@link #getHandler handler} to
+     * perform authorization logic.
+     *
+     * @return the {@code AnnotationResolver} to use to acquire annotations from intercepted
+     *         methods at runtime.
+     * @since 1.1
+     */
+    public AnnotationResolver getResolver() {
+        return resolver;
+    }
+
+    /**
+     * Returns the {@code AnnotationResolver} to use to acquire annotations from intercepted
+     * methods at runtime.  The annotation is then used by the {@link #getHandler handler} to
+     * perform authorization logic.
+     *
+     * @param resolver the {@code AnnotationResolver} to use to acquire annotations from intercepted
+     *                 methods at runtime.
+     * @since 1.1
+     */
+    public void setResolver(AnnotationResolver resolver) {
+        this.resolver = resolver;
     }
 
     /**
@@ -70,27 +137,14 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
     /**
      * Returns the Annotation that this interceptor will process for the specified method invocation.
      * <p/>
-     * The default implementation merely gets the underlying {@link Method Method} from the supplied
-     * <code>MethodInvocation</code> argument, and returns:
-     * <p/>
-     * <code>mi.{@link Method#getAnnotation(Class) getAnnotation}({@link org.apache.shiro.aop.AnnotationHandler#getAnnotationClass() handler.getAnnotationClass()});</code>
+     * The default implementation acquires the annotation using an annotation
+     * {@link #getResolver resolver} using the internal annotation {@link #getHandler handler}'s
+     * {@link org.apache.shiro.aop.AnnotationHandler#getAnnotationClass() annotationClass}.
      *
      * @param mi the MethodInvocation wrapping the Method from which the Annotation will be acquired.
      * @return the Annotation that this interceptor will process for the specified method invocation.
-     * @throws IllegalArgumentException if the supplied <code>MethodInvocation</code> argument is <code>null</code> or
-     *                                  its underlying <code>Method</code> is <code>null</code>.
      */
-    protected Annotation getAnnotation(MethodInvocation mi) throws IllegalArgumentException {
-        if (mi == null) {
-            throw new IllegalArgumentException("method argument cannot be null");
-        }
-        Method m = mi.getMethod();
-        if (m == null) {
-            String msg = MethodInvocation.class.getName() + " parameter incorrectly constructed.  getMethod() returned null";
-            throw new IllegalArgumentException(msg);
-
-        }
-        return m.getAnnotation(getHandler().getAnnotationClass());
+    protected Annotation getAnnotation(MethodInvocation mi) {
+        return getResolver().getAnnotation(mi, getHandler().getAnnotationClass());
     }
-
 }

@@ -71,6 +71,11 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-aspectj</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

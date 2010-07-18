@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.authz.aop;
 
+import org.apache.shiro.aop.AnnotationResolver;
+
 /**
  * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresUser RequiresUser} annotation
  * is declared, and if so, ensures the calling <code>Subject</code> is <em>either</em>
@@ -38,6 +40,15 @@ public class UserAnnotationMethodInterceptor extends AuthorizingAnnotationMethod
      */
     public UserAnnotationMethodInterceptor() {
         super( new UserAnnotationHandler() );
+    }
+
+    /**
+     *
+     * @param resolver
+     * @since 1.1
+     */
+    public UserAnnotationMethodInterceptor(AnnotationResolver resolver) {
+        super(new UserAnnotationHandler(), resolver);
     }
 
 }

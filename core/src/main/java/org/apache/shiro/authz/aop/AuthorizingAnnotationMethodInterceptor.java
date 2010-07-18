@@ -18,7 +18,9 @@
  */
 package org.apache.shiro.authz.aop;
 
+import org.apache.shiro.aop.AnnotationHandler;
 import org.apache.shiro.aop.AnnotationMethodInterceptor;
+import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.MethodInvocation;
 import org.apache.shiro.authz.AuthorizationException;
 
@@ -40,6 +42,17 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
      */
     public AuthorizingAnnotationMethodInterceptor( AuthorizingAnnotationHandler handler ) {
         super(handler);
+    }
+
+    /**
+     *
+     * @param handler
+     * @param resolver
+     * @since 1.1
+     */
+    public AuthorizingAnnotationMethodInterceptor( AuthorizingAnnotationHandler handler,
+                                                   AnnotationResolver resolver) {
+        super(handler, resolver);
     }
 
     /**

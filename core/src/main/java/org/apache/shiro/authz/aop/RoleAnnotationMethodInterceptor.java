@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.authz.aop;
 
+import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 
 
@@ -35,5 +36,13 @@ public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethod
      */
     public RoleAnnotationMethodInterceptor() {
         super( new RoleAnnotationHandler() );
+    }
+
+    /**
+     * @param resolver
+     * @since 1.1
+     */
+    public RoleAnnotationMethodInterceptor(AnnotationResolver resolver) {
+        super(new RoleAnnotationHandler(), resolver);
     }
 }
