@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  * @see org.apache.shiro.subject.Subject#checkPermission
  * @since 0.1
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequiresPermissions {
 
@@ -51,7 +51,7 @@ public @interface RequiresPermissions {
      * The permission string which will be passed to {@link org.apache.shiro.subject.Subject#isPermitted(String)}
      * to determine if the user is allowed to invoke the code protected by this annotation.
      */
-    String value();
+    String[] value();
 
 }
 

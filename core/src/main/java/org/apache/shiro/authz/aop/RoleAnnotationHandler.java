@@ -23,9 +23,6 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 
 /**
  * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresRoles RequiresRoles} annotation is declared, and if so, performs
@@ -53,21 +50,13 @@ public class RoleAnnotationHandler extends AuthorizingAnnotationHandler {
      *          proceed.
      */
     public void assertAuthorized(Annotation a) throws AuthorizationException {
-        if (!(a instanceof RequiresRoles)) {
-            return;
-        }
+        if (!(a instanceof RequiresRoles)) return;
+
         RequiresRoles rrAnnotation = (RequiresRoles) a;
+        String[] roles = rrAnnotation.value();
 
-        String roleId = rrAnnotation.value();
-
-        String[] roles = roleId.split(",");
-
-        if (roles.length == 1) {
-            getSubject().checkRole(roles[0]);
-        } else {
-            Set<String> rolesSet = new LinkedHashSet<String>(Arrays.asList(roles));
-            getSubject().checkRoles(rolesSet);
-        }
+        if (roles.length == 1) getSubject().checkRole(roles[0]);
+        else getSubject().checkRoles(Arrays.asList(roles));
     }
 
 }

@@ -37,8 +37,8 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
         RoleAnnotationHandler handler = new RoleAnnotationHandler();
 
         Annotation requiresRolesAnnotation = new RequiresRoles() {
-            public String value() {
-                return "blah";
+            public String[] value() {
+                return new String[]{"blah"};
             }
 
             public Class<? extends Annotation> annotationType() {
@@ -56,8 +56,8 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
         RoleAnnotationHandler handler = new RoleAnnotationHandler();
 
         Annotation requiresRolesAnnotation = new RequiresRoles() {
-            public String value() {
-                return "blah, blah2";
+            public String[] value() {
+                return new String[]{"blah", "blah2"};
             }
 
             public Class<? extends Annotation> annotationType() {
