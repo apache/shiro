@@ -45,7 +45,7 @@ import java.lang.annotation.Target;
  *
  * @since 0.9.0
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequiresUser {
 }

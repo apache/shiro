@@ -24,8 +24,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Requires the currently executing {@link org.apache.shiro.subject.Subject Subject} to have one or more specified roles
- * in order to execute the annotated method. If they do not have the role(s), the method will not be executed and
+ * Requires the currently executing {@link org.apache.shiro.subject.Subject Subject} to have all of the 
+ * specified roles. If they do not have the role(s), the method will not be executed and
  * an {@link org.apache.shiro.authz.AuthorizationException AuthorizationException} is thrown.
  * <p/>
  * For example,
@@ -50,7 +50,7 @@ import java.lang.annotation.Target;
  * @see org.apache.shiro.subject.Subject#hasRole(String)
  * @since 0.1
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RequiresRoles {
 
@@ -58,6 +58,6 @@ public @interface RequiresRoles {
      * A single String role name or multiple comma-delimitted role names required in order for the method
      * invocation to be allowed.
      */
-    String value();
+    String[] value();
 
 }

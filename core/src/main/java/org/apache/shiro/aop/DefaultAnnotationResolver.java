@@ -58,6 +58,7 @@ public class DefaultAnnotationResolver implements AnnotationResolver {
             throw new IllegalArgumentException(msg);
 
         }
-        return m.getAnnotation(clazz);
+        Annotation annotation = m.getAnnotation(clazz);
+        return annotation == null ? mi.getThis().getClass().getAnnotation(clazz) : annotation;
     }
 }

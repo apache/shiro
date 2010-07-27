@@ -781,7 +781,6 @@ public interface Subject {
          * @throws IllegalArgumentException if the {@code attributeKey} is {@code null}.
          * @see SubjectFactory#createSubject(SubjectContext)
          */
-        @SuppressWarnings({"UnusedDeclaration"})
         public Builder contextAttribute(String attributeKey, Object attributeValue) {
             if (attributeKey == null) {
                 String msg = "Subject context map key cannot be null.";

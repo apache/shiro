@@ -37,8 +37,8 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
         PermissionAnnotationHandler handler = new PermissionAnnotationHandler();
 
         Annotation requiresPermissionAnnotation = new RequiresPermissions() {
-            public String value() {
-                return "test:test";
+            public String[] value() {
+                return new String[]{"test:test"};
             }
 
             public Class<? extends Annotation> annotationType() {
@@ -56,8 +56,8 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
         PermissionAnnotationHandler handler = new PermissionAnnotationHandler();
 
         Annotation requiresPermissionAnnotation = new RequiresPermissions() {
-            public String value() {
-                return "test:test, test2:test2";
+            public String[] value() {
+                return new String[]{"test:test", "test2:test2"};
             }
 
             public Class<? extends Annotation> annotationType() {

@@ -24,6 +24,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.PermissionUtils;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.Set;
 
 
@@ -50,7 +51,7 @@ public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
      * @param a the RequiresPermissions annotation being inspected.
      * @return the annotation's <code>value</code>, from which the Permission will be constructed.
      */
-    protected String getAnnotationValue(Annotation a) {
+    protected String[] getAnnotationValue(Annotation a) {
         RequiresPermissions rpAnnotation = (RequiresPermissions) a;
         return rpAnnotation.value();
     }
@@ -65,20 +66,12 @@ public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
      *          continue access or execution.
      */
     public void assertAuthorized(Annotation a) throws AuthorizationException {
-        if (!(a instanceof RequiresPermissions)) {
-            return;
-        }
-        String p = getAnnotationValue(a);
-        Set<String> perms = PermissionUtils.toPermissionStrings(p);
+        if (!(a instanceof RequiresPermissions)) return;
 
+        String[] perms = getAnnotationValue(a);
         Subject subject = getSubject();
 
-        if (perms.size() == 1) {
-            subject.checkPermission(perms.iterator().next());
-        } else {
-            String[] permStrings = new String[perms.size()];
-            permStrings = perms.toArray(permStrings);
-            subject.checkPermissions(permStrings);
-        }
+        if (perms.length == 1) subject.checkPermission(perms[0]);
+        else subject.checkPermissions(perms);
     }
 }
