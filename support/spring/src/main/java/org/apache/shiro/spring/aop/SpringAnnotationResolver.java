@@ -20,8 +20,6 @@ package org.apache.shiro.spring.aop;
 
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.MethodInvocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
 
@@ -40,23 +38,20 @@ public class SpringAnnotationResolver implements AnnotationResolver {
 
     public Annotation getAnnotation(MethodInvocation mi, Class<? extends Annotation> clazz) {
         Method m = mi.getMethod();
-        Object target = mi.getThis();
 
         Annotation a = AnnotationUtils.findAnnotation(m, clazz);
+        if (a != null) return a;
 
-        if (a == null) {
-            //The MethodInvocation's method object could be a method defined in an interface.
-            //However, if the annotation existed in the interface's implementation (and not
-            //the interface itself), it won't be on the above method object.  Instead, we need to
-            //acquire the method representation from the targetClass and check directly on the
-            //implementation itself:
-            if ( target != null) {
-                Class targetClass = target.getClass();
-                m = ClassUtils.getMostSpecificMethod(m, targetClass);
-                a = AnnotationUtils.findAnnotation(m, clazz);
-            }
-        }
-
-        return a;
+        //The MethodInvocation's method object could be a method defined in an interface.
+        //However, if the annotation existed in the interface's implementation (and not
+        //the interface itself), it won't be on the above method object.  Instead, we need to
+        //acquire the method representation from the targetClass and check directly on the
+        //implementation itself:
+        Class<?> targetClass = mi.getThis().getClass();
+        m = ClassUtils.getMostSpecificMethod(m, targetClass);
+        a = AnnotationUtils.findAnnotation(m, clazz);
+        if (a != null) return a;
+        // See if the class has the same annotation
+        return AnnotationUtils.findAnnotation(mi.getThis().getClass(), clazz);
     }
 }
