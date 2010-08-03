@@ -18,8 +18,14 @@
  */
 package org.apache.shiro.authz.aop;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+
 import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.Test;
 
@@ -29,6 +35,7 @@ import java.lang.annotation.Annotation;
  * Test cases for the {@link RoleAnnotationHandler} class.
  */
 public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
+    private Subject subject;
 
     //Added to satisfy SHIRO-146
 
@@ -44,6 +51,9 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
             public Class<? extends Annotation> annotationType() {
                 return RequiresRoles.class;
             }
+	    public Logical logical() {
+		return Logical.AND;
+	    }
         };
 
         handler.assertAuthorized(requiresRolesAnnotation);
@@ -63,8 +73,39 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
             public Class<? extends Annotation> annotationType() {
                 return RequiresRoles.class;
             }
+	    public Logical logical() {
+		return Logical.AND;
+	    }
         };
 
+        handler.assertAuthorized(requiresRolesAnnotation);
+    }
+    
+    @Test
+    public void testOneOfTheRolesRequired() throws Throwable {
+	subject = createMock(Subject.class);
+	expect(subject.hasRole("blah")).andReturn(true);
+	expect(subject.hasRole("blah2")).andReturn(false);
+        replay(subject);
+	RoleAnnotationHandler handler = new RoleAnnotationHandler() {
+            @Override
+	    protected Subject getSubject() {
+        	return subject;
+            }
+        };
+
+        Annotation requiresRolesAnnotation = new RequiresRoles() {
+            public String[] value() {
+                return new String[]{"blah", "blah2"};
+            }
+
+            public Class<? extends Annotation> annotationType() {
+                return RequiresRoles.class;
+            }
+	    public Logical logical() {
+		return Logical.OR;
+	    }
+        };
         handler.assertAuthorized(requiresRolesAnnotation);
     }
 }

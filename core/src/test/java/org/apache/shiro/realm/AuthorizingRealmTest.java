@@ -249,6 +249,7 @@ public class AuthorizingRealmTest {
             principals.add(USER_ID + USERNAME);
             return new SimpleAuthenticationInfo(principals, PASSWORD, getName());
         }
+
     }
 
 }

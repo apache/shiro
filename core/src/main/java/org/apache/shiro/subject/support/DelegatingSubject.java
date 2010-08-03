@@ -233,6 +233,9 @@ public class DelegatingSubject implements Subject, Serializable {
         assertAuthzCheckPossible();
         securityManager.checkRole(getPrincipals(), role);
     }
+    
+    public void checkRoles(String... roleIdentifiers) throws AuthorizationException {
+    }
 
     public void checkRoles(Collection<String> roles) throws AuthorizationException {
         assertAuthzCheckPossible();
@@ -456,5 +459,4 @@ public class DelegatingSubject implements Subject, Serializable {
 
         return popped;
     }
-
 }
