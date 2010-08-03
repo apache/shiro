@@ -66,7 +66,6 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
      *
      * @param realms the realms to consult during an authorization check.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
     public ModularRealmAuthorizer(Collection<Realm> realms) {
         setRealms(realms);
     }
@@ -421,9 +420,16 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     }
 
     /**
-     * Calls {@link #checkRole(org.apache.shiro.subject.PrincipalCollection , String) checkRole} for each role specified.
+     * Calls {@link #checkRoles(PrincipalCollection principals, String... roles) checkRoles(PrincipalCollection principals, String... roles) }.
      */
     public void checkRoles(PrincipalCollection principals, Collection<String> roles) throws AuthorizationException {
+	if (roles != null && !roles.isEmpty()) checkRoles(principals, (String[])roles.toArray() );
+    }
+
+    /**
+     * Calls {@link #checkRole(org.apache.shiro.subject.PrincipalCollection , String) checkRole} for each role specified.
+     */
+    public void checkRoles(PrincipalCollection principals, String... roles) throws AuthorizationException {
         assertRealmsConfigured();
         if (roles != null) {
             for (String role : roles) {

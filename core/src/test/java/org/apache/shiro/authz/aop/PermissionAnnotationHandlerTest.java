@@ -19,6 +19,7 @@
 package org.apache.shiro.authz.aop;
 
 import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.Test;
@@ -44,6 +45,10 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
             public Class<? extends Annotation> annotationType() {
                 return RequiresPermissions.class;
             }
+
+	    public Logical logical() {
+		return Logical.AND;
+	    }
         };
 
         handler.assertAuthorized(requiresPermissionAnnotation);
@@ -63,6 +68,10 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
             public Class<? extends Annotation> annotationType() {
                 return RequiresPermissions.class;
             }
+            
+	    public Logical logical() {
+		return Logical.AND;
+	    }
         };
 
         handler.assertAuthorized(requiresPermissionAnnotation);

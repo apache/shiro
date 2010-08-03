@@ -59,5 +59,10 @@ public @interface RequiresRoles {
      * invocation to be allowed.
      */
     String[] value();
-
+    
+    /**
+     * The logical operation for the permission check in case multiple roles are specified. AND is the default
+     * @since 1.1.0
+     */
+    Logical logical() default Logical.AND; 
 }

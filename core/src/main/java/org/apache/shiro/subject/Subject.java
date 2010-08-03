@@ -300,6 +300,19 @@ public interface Subject {
      *          if this Subject does not have all of the specified roles.
      */
     void checkRoles(Collection<String> roleIdentifiers) throws AuthorizationException;
+    
+    /**
+     * Same as {@link #checkRoles(Collection<String> roleIdentifiers) checkRoles(Collection<String> roleIdentifiers)} but
+     * doesn't require a collection as a an argument.
+     * Asserts this Subject has all of the specified roles by returning quietly if they do or throwing an
+     * {@link org.apache.shiro.authz.AuthorizationException} if they do not.
+     * 
+     * @param roleIdentifiers roleIdentifiers the application-specific role identifiers to check (usually role ids or role names).
+     * @throws AuthorizationException org.apache.shiro.authz.AuthorizationException
+     *          if this Subject does not have all of the specified roles.
+     * @since 1.1.0
+     */
+    void checkRoles(String... roleIdentifiers) throws AuthorizationException;
 
     /**
      * Performs a login attempt for this Subject/user.  If unsuccessful,

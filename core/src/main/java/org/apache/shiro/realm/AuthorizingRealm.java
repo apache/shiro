@@ -628,7 +628,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         AuthorizationInfo info = getAuthorizationInfo(principal);
         checkRoles(roles, info);
     }
-
+    
+    public void checkRoles(PrincipalCollection principal, String... roles) throws AuthorizationException {
+	checkRoles(principal, Arrays.asList(roles));
+    }
+    
     protected void checkRoles(Collection<String> roles, AuthorizationInfo info) {
         if (roles != null && !roles.isEmpty()) {
             for (String roleName : roles) {

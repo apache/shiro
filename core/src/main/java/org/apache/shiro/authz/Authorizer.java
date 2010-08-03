@@ -258,5 +258,21 @@ public interface Authorizer {
      */
     void checkRoles(PrincipalCollection subjectPrincipal, Collection<String> roleIdentifiers) throws AuthorizationException;
 
+    /**
+     * Same as {@link #checkRoles(PrincipalCollection subjectPrincipal, Collection<String> roleIdentifiers) 
+     * checkRoles(PrincipalCollection subjectPrincipal, Collection<String> roleIdentifiers)} but doesn't require a collection 
+     * as an argument.
+     * Asserts the corresponding Subject/user has all of the specified roles by returning quietly if they do or
+     * throwing an {@link AuthorizationException} if they do not.
+     *
+     * @param subjectPrincipal the application-specific subject/user identifier.
+     * @param roleIdentifiers  the application-specific role identifiers to check (usually role ids or role names).
+     * @throws AuthorizationException
+     *          if the user does not have all of the specified roles.
+     *          
+     *  @since 1.1.0
+     */
+    void checkRoles(PrincipalCollection subjectPrincipal, String... roleIdentifiers) throws AuthorizationException;
+    
 }
 
