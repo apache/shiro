@@ -35,16 +35,12 @@ import org.slf4j.LoggerFactory;
  *
  * @since 0.2
  */
-public class LdapUtils {
-
-    /** Private internal log instance. */
-    private static final Logger log = LoggerFactory.getLogger(LdapUtils.class);
+public final class LdapUtils {
 
     /**
-     * Private constructor to prevent instantiation
+     * Private internal log instance.
      */
-    private LdapUtils() {
-    }
+    private static final Logger log = LoggerFactory.getLogger(LdapUtils.class);
 
     /**
      * Closes an LDAP context, logging any errors, but not throwing
@@ -58,12 +54,9 @@ public class LdapUtils {
                 ctx.close();
             }
         } catch (NamingException e) {
-            if (log.isErrorEnabled()) {
-                log.error("Exception while closing LDAP context. ", e);
-            }
+            log.error("Exception while closing LDAP context. ", e);
         }
     }
-
 
     /**
      * Helper method used to retrieve all attribute values from a particular context attribute.
@@ -74,12 +67,31 @@ public class LdapUtils {
      */
     public static Collection<String> getAllAttributeValues(Attribute attr) throws NamingException {
         Set<String> values = new HashSet<String>();
-        for (NamingEnumeration e = attr.getAll(); e.hasMore();) {
-            String value = (String) e.next();
-            values.add(value);
+        NamingEnumeration ne = null;
+        try {
+            ne = attr.getAll();
+            while (ne.hasMore()) {
+                String value = (String) ne.next();
+                values.add(value);
+            }
+        } finally {
+            closeEnumeration(ne);
         }
+
         return values;
     }
 
+    //added based on SHIRO-127, per Emmanuel's comment [1]
+    // [1] https://issues.apache.org/jira/browse/SHIRO-127?focusedCommentId=12891380&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#action_12891380
+
+    public static void closeEnumeration(NamingEnumeration ne) {
+        try {
+            if (ne != null) {
+                ne.close();
+            }
+        } catch (NamingException e) {
+            log.error("Exception while closing NamingEnumeration: ", e);
+        }
+    }
 
 }
