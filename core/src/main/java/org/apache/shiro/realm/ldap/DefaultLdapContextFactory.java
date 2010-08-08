@@ -31,15 +31,18 @@ import org.slf4j.LoggerFactory;
 /**
  * <p>Default implementation of {@link LdapContextFactory} that can be configured or extended to
  * customize the way {@link javax.naming.ldap.LdapContext} objects are retrieved.</p>
- *
+ * <p/>
  * <p>This implementation of {@link LdapContextFactory} is used by the {@link AbstractLdapRealm} if a
  * factory is not explictly configured.</p>
- *
+ * <p/>
  * <p>Connection pooling is enabled by default on this factory, but can be disabled using the
  * {@link #usePooling} property.</p>
  *
  * @since 0.2
+ * @deprecated replaced by the {@link JndiLdapContextFactory} implementation.  This implementation will be removed
+ * prior to Shiro 2.0
  */
+@Deprecated
 public class DefaultLdapContextFactory implements LdapContextFactory {
 
     //TODO - complete JavaDoc
@@ -111,7 +114,9 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
      * (e.g. OU=OrganizationName,DC=MyDomain,DC=local )
      *
      * @param searchBase the search base.
+     * @deprecated this attribute existed, but was never used in Shiro 1.x.  It will be removed prior to Shiro 2.0.
      */
+    @Deprecated
     public void setSearchBase(String searchBase) {
         this.searchBase = searchBase;
     }
@@ -193,38 +198,49 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-
     public LdapContext getSystemLdapContext() throws NamingException {
         return getLdapContext(systemUsername, systemPassword);
     }
 
+    /**
+     * Deprecated - use {@link #getLdapContext(Object, Object)} instead.  This will be removed before Apache Shiro 2.0.
+     *
+     * @param username the username to use when creating the connection.
+     * @param password the password to use when creating the connection.
+     * @return a {@code LdapContext} bound using the given username and password.
+     * @throws javax.naming.NamingException if there is an error creating the context.
+     * @deprecated the {@link #getLdapContext(Object, Object)} method should be used in all cases to ensure more than
+     *             String principals and credentials can be used.  Shiro no longer calls this method - it will be
+     *             removed before the 2.0 release.
+     */
+    @Deprecated
     public LdapContext getLdapContext(String username, String password) throws NamingException {
-        if (searchBase == null) {
-            throw new IllegalStateException("A search base must be specified.");
+        if (username != null && principalSuffix != null) {
+            username += principalSuffix;
         }
+        return getLdapContext((Object) username, password);
+    }
+
+    public LdapContext getLdapContext(Object principal, Object credentials) throws NamingException {
         if (url == null) {
             throw new IllegalStateException("An LDAP URL must be specified of the form ldap://<hostname>:<port>");
         }
 
-        if (username != null && principalSuffix != null) {
-            username += principalSuffix;
-        }
-
-        Hashtable<String, String> env = new Hashtable<String, String>();
+        Hashtable<String, Object> env = new Hashtable<String, Object>();
 
         env.put(Context.SECURITY_AUTHENTICATION, authentication);
-        if (username != null) {
-            env.put(Context.SECURITY_PRINCIPAL, username);
+        if (principal != null) {
+            env.put(Context.SECURITY_PRINCIPAL, principal);
         }
-        if (password != null) {
-            env.put(Context.SECURITY_CREDENTIALS, password);
+        if (credentials!= null) {
+            env.put(Context.SECURITY_CREDENTIALS, credentials);
         }
         env.put(Context.INITIAL_CONTEXT_FACTORY, contextFactoryClassName);
         env.put(Context.PROVIDER_URL, url);
         env.put(Context.REFERRAL, referral);
 
         // Only pool connections for system contexts
-        if (usePooling && username != null && username.equals(systemUsername)) {
+        if (usePooling && principal != null && principal.equals(systemUsername)) {
             // Enable connection pooling
             env.put(SUN_CONNECTION_POOLING_PROPERTY, "true");
         }
