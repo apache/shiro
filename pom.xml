@@ -164,9 +164,27 @@
                     <artifactId>maven-site-plugin</artifactId>
                     <version>2.1.1</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.rat</groupId>
+                    <artifactId>apache-rat-plugin</artifactId>
+                    <version>0.7</version>
+                    <configuration>
+                    		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
+                        <excludes>
+                            <exclude>README-runtime-requirements.txt</exclude>
+                            <exclude>**/.externalToolBuilders/*</exclude>
+                            <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
+                            <exclude>velocity.log</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
             </plugins>    
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -556,6 +574,20 @@
                 <!-- Disable, just to make it go faster -->
                 <configuration>
                     <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <version>0.7</version>
+                <configuration>
+                		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
+                    <excludes>
+                        <exclude>README-runtime-requirements.txt</exclude>
+                        <exclude>**/.externalToolBuilders/*</exclude>
+                        <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
+                        <exclude>velocity.log</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
