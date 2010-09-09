@@ -29,7 +29,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-web</artifactId>
     <name>Apache Shiro :: Web</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
@@ -68,5 +68,22 @@
             <artifactId>log4j</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>org.apache.shiro.web</Bundle-SymbolicName>
+                        <Export-Package>org.apache.shiro.web*;version=${project.version}</Export-Package>
+                        <Import-Package>org.apache.shiro*;version="${shiro.osgi.importRange}",*</Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
