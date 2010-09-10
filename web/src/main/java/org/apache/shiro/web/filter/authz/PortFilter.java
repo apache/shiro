@@ -102,12 +102,12 @@ public class PortFilter extends AuthorizationFilter {
 
         String scheme = getScheme(request.getScheme(), port);
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(scheme).append("://");
         sb.append(request.getServerName());
-        if (port != 80 && port != 443) {
+        if (port != DEFAULT_HTTP_PORT && port != SslFilter.DEFAULT_HTTPS_PORT) {
             sb.append(":");
-            sb.append(request.getServerPort());
+            sb.append(port);
         }
         if (request instanceof HttpServletRequest) {
             sb.append(WebUtils.toHttp(request).getRequestURI());
