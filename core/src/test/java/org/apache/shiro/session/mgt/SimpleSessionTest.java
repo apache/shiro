@@ -21,11 +21,28 @@ package org.apache.shiro.session.mgt;
 import org.junit.Test;
 
 import java.io.*;
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SimpleSessionTest {
+
+    @Test
+    public void testDefaultSerialization() throws Exception {
+        SimpleSession session = new SimpleSession();
+
+        long timeout = session.getTimeout();
+        Date start = session.getStartTimestamp();
+        Date lastAccess = session.getLastAccessTime();
+
+        SimpleSession deserialized = serializeAndDeserialize(session);
+
+        assertEquals(timeout, deserialized.getTimeout());
+        assertEquals(start, deserialized.getStartTimestamp());
+        assertEquals(lastAccess, deserialized.getLastAccessTime());
+    }
+
     @Test
     public void serializeHost() throws IOException, ClassNotFoundException {
         SimpleSession session = new SimpleSession("localhost");
