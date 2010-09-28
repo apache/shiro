@@ -436,7 +436,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
 
     /**
      * This implementation returns an LdapContext based on the configured JNDI/LDAP environment configuration.
-     * The environmet (Map) used at runtime is created by merging the default/configured
+     * The environnmet (Map) used at runtime is created by merging the default/configured
      * {@link #getEnvironment() environment template} with some runtime values as necessary (e.g. a principal and
      * credential available at runtime only).
      * <p/>
@@ -464,7 +464,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
 
         Object authcMech = getAuthenticationMechanism();
         if (authcMech == null && (principal != null || credentials != null)) {
-            //No authenticationMechanism has not been set, but either a principal and/or credentials were
+            //authenticationMechanism has not been set, but either a principal and/or credentials were
             //supplied, indicating that at least a 'simple' authentication attempt is indeed occurring - the Shiro
             //end-user just didn't configure it explicitly.  So we set it to be 'simple' here as a convenience;
             //the Sun provider implementation already does this same logic, but by repeating that logic here, we ensure
