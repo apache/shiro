@@ -50,7 +50,32 @@ import javax.naming.ldap.LdapContext;
  * LDAP directory expects a complete User Distinguished Name (User DN) to establish a connection, the
  * {@link #setUserDnTemplate(String) userDnTemplate} property must be configured.  If not configured,
  * the property will pass the simple username directly as the User DN, which is often incorrect in most LDAP
- * environments (Microsoft ActiveDirectory being the exception).
+ * environments (maybe Microsoft ActiveDirectory being the exception).
+ * <h2>Authorization</h2>
+ * By default, authorization is effectively disabled due to the default
+ * {@link #doGetAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection)} implementation returning {@code null}.
+ * If you wish to perform authorization based on an LDAP schema, you must subclass this one
+ * and override that method to reflect your organization's data model.
+ * <h2>Configuration</h2>
+ * This class primarily provides the {@link #setUserDnTemplate(String) userDnTemplate} property to allow you to specify
+ * the your LDAP server's User DN format.  Most other configuration is performed via the nested
+ * {@link LdapContextFactory contextFactory} property.
+ * <p/>
+ * For example, defining this realm in Shiro .ini:
+ * <pre>
+ * [main]
+ * ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
+ * ldapRealm.userDnTemplate = uid={0},ou=users,dc=mycompany,dc=com
+ * ldapRealm.contextFactory.url = ldap://ldapHost:389
+ * ldapRealm.contextFactory.authenticationMechanism = DIGEST-MD5
+ * ldapRealm.contextFactory.environment[some.obscure.jndi.key] = some value
+ * ...
+ * </pre>
+ * The default {@link #setContextFactory contextFactory} instance is a {@link JndiLdapContextFactory}.  See that
+ * class's JavaDoc for more information on configuring the LDAP connection as well as specifying JNDI environment
+ * properties as necessary.
+ *
+ * @see JndiLdapContextFactory
  *
  * @since 1.1
  */
@@ -388,12 +413,12 @@ public class JndiLdapRealm extends AuthorizingRealm {
      * {@link AuthorizationInfo} object by querying the LDAP context for the
      * specified principal.</p>
      *
-     * @param principal          the principal of the Subject whose AuthenticationInfo should be queried from the LDAP server.
+     * @param principals          the principals of the Subject whose AuthenticationInfo should be queried from the LDAP server.
      * @param ldapContextFactory factory used to retrieve LDAP connections.
      * @return an {@link AuthorizationInfo} instance containing information retrieved from the LDAP server.
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    protected AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principal,
+    protected AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principals,
                                                           LdapContextFactory ldapContextFactory) throws NamingException {
         return null;
     }
