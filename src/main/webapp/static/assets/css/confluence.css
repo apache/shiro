@@ -1,0 +1,160 @@
+/*
+ - Licensed to the Apache Software Foundation (ASF) under one
+ - or more contributor license agreements.  See the NOTICE file
+ - distributed with this work for additional information
+ - regarding copyright ownership.  The ASF licenses this file
+ - to you under the Apache License, Version 2.0 (the
+ - "License"); you may not use this file except in compliance
+ - with the License.  You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing,
+ - software distributed under the License is distributed on an
+ - "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ - KIND, either express or implied.  See the License for the
+ - specific language governing permissions and limitations
+ - under the License.
+*/
+
+/* This CSS is for customizing Confluence rendered HTML only.  Shiro-specific
+   site elements are customized in style.css */ 
+
+.nobr sup img {
+    display: none;
+}
+
+.preformattedContent pre {
+    padding: 5px 10px;
+    border: 1px dashed #1a6c0b;
+    background-color: #f0f0f0;
+}
+
+blockquote {
+    margin: 10px;
+    padding: 0 10px;
+    border-left: 1px solid #1a6c0b;
+}
+
+table.confluenceTable {
+    margin: 5px;
+    border-collapse: collapse;
+}
+
+/* Added as a temporary fix for CONF-4223. The table elements appear to be inheriting the border: none attribute from the sectionMacro class */
+
+table.confluenceTable td.confluenceTd {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc;
+    padding: 3px 4px 3px 4px;
+}
+
+/* Added as a temporary fix for CONF-4223. The table elements appear to be inheriting the border: none attribute from the sectionMacro class */
+
+table.confluenceTable th.confluenceTh {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc;
+    padding: 3px 4px 3px 4px;
+    background-color: #f0f0f0;
+    text-align: center;
+}
+
+td.confluenceTd {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc;
+    padding: 3px 4px 3px 4px;
+}
+
+th.confluenceTh {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc;
+    padding: 3px 4px 3px 4px;
+    background-color: #f0f0f0;
+    text-align: center;
+}
+
+.noteMacro {
+    border: 1px solid #f0c000;
+    background-color: #ffffce;
+    margin-top: 5px;
+    margin-bottom: 5px
+}
+
+.warningMacro {
+    border: 1px solid #c00;
+    background-color: #fcc;
+    text-align: left;
+    margin-top: 5px;
+    margin-bottom: 5px
+}
+
+.infoMacro {
+    border: 1px solid #3c78b5;
+    background-color: #D8E4F1;
+    text-align: left;
+    margin-top: 5px;
+    margin-bottom: 5px
+}
+
+.tipMacro {
+    border: 1px solid #090;
+    background-color: #dfd;
+    text-align: left;
+    margin-top: 5px;
+    margin-bottom: 5px
+}
+
+.code {
+    border: 1px dashed #1a6c0b;
+    font-size: 1em;
+    font-family: 'courier new', Courier, serif;
+    margin: 1em;
+    line-height: 1em;
+}
+
+.codeHeader {
+    background-color: #f0f0f0;
+    border-bottom: 1px dashed #1a6c0b;
+    padding: 3px;
+    text-align: center;
+}
+
+.codeContent {
+    text-align: left;
+    background-color: #f0f0f0;
+    padding: 3px;
+}
+
+.code-keyword {
+    color: #000091;
+    background-color: inherit;
+}
+
+.code-object {
+    color: #910091;
+    background-color: inherit;
+}
+
+.code-quote {
+    color: #009100;
+    background-color: inherit;
+}
+
+.code-comment {
+    color: #808080;
+    background-color: inherit;
+}
+
+.code-xml .code-keyword {
+    color: inherit;
+    font-weight: bold;
+}
+
+.code-tag {
+    color: #000091;
+    background-color: inherit;
+}

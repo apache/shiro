@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+<html debug="true">
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>jQuery gradient Visual Test</title>
+		
+		<!-- load latest build of jquery.js -->
+		<script type="text/javascript" src="jquery.js"></script>
+		
+		<!-- load jquery.dimensions.js (a dependency) -->
+		<script type="text/javascript" src="jquery.dimensions.js"></script>
+
+		<!-- load jquery.gradient.js (this is what we're testing!) -->
+		<script type="text/javascript" src="jquery.gradient.js"></script>
+		
+			
+		<script type="text/javascript" charset="utf-8">
+			$(function() {
+				$('#userAgent').html(navigator.userAgent);
+				$('#test1-flex').gradient({
+					from:      '003366',
+					to:        '333333',
+					direction: 'horizontal'
+				});
+				$('#test2-flex').gradient({
+					from:      '003366',
+					to:        '333333',
+					direction: 'vertical'
+				});
+				$('#test1').gradient({
+					from:      '003366',
+					to:        '333333',
+					direction: 'horizontal'
+				});
+				$('#test2').gradient({
+					from:      '003366',
+					to:        '333333',
+					direction: 'vertical'
+				});
+				$('#test3').gradient({
+					from:      '003366',
+					to:        '333333',
+					direction: 'horizontal',
+					length:     75
+				});
+				$('#test4').gradient({
+					from:      '003366',
+					to:        '333333',
+					direction: 'horizontal',
+					length:    75,
+					position:  'bottom'
+				});
+				$('#test5').gradient({
+					from:      '003366',
+					to:        '333333',
+					direction: 'vertical',
+					length:    75
+				});
+				$('#test6').gradient({
+					from:      '003366',
+					to:        '333333',
+					direction: 'vertical',
+					length:    75,
+					position:  'right'
+				});
+				$('#test7').gradient({
+					from: '003366',
+					to:   '333333'
+				});
+			});
+		</script>
+		
+		<style type="text/css" media="screen">
+			#wrapper { position: relative; width: 100%; font: 12px Arial; }
+				.box { float: left; position: relative; margin: 5px; width: 250px; height: 250px; background-color: #333; }
+				.flexible { width: 90%; height: 125px; }
+				.right,
+				.bottom { background-color: #036; }
+				span { float: left; margin: 5px; padding: 3px; color: #fff; }
+		</style>
+	</head>
+	<body>
+		<h1 id="banner">jQuery gradient - Visual Test by <a href="http://www.ajaxupdates.com/jquery-gradient-plugin/">AjaxUpdates.com</a></h1>
+		<h2 id="userAgent"></h2>
+		<div id="wrapper">
+			<div id="test1-flex" class="box flexible"></div>
+			<div id="test2-flex" class="box flexible"></div>
+			<div id="test1" class="box"></div>
+			<div id="test2" class="box"></div>
+			<div id="test3" class="box"></div>
+			<div id="test4" class="box bottom"></div>
+			<div id="test5" class="box"></div>
+			<div id="test6" class="box right"></div>
+			<span id="test7">&nbsp;&nbsp;&nbsp;Testing with an inline element.&nbsp;&nbsp;&nbsp;</span>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Apache Shiro - Welcome to Apache Shiro</title>
+
+    <link rel="stylesheet" type="text/css"
+          href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css">
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/base/base-min.css">
+    <link rel="stylesheet" type="text/css" href="/static/assets/js/superfish-1.4.8/css/superfish.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/confluence.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/style.css"/>
+    <link rel="icon" type="image/vnd.microsoft.icon" href="/static/assets/images/favicon.ico">
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/assets/js/jquery_gradient/jquery.dimensions.js"></script>
+    <script type="text/javascript" src="/static/assets/js/jquery_gradient/jquery.gradient.js"></script>
+    <script type="text/javascript" src="/static/assets/js/superfish-1.4.8/js/hoverIntent.js"></script>
+    <script type="text/javascript" src="/static/assets/js/superfish-1.4.8/js/superfish.js"></script>
+    <script type="text/javascript" src="/static/assets/js/superfish-1.4.8/js/supersubs.js"></script>
+    <script type="text/javascript" src="/static/assets/js/jquery_googleanalytics/jquery.google-analytics.js"></script>
+    <script type="text/javascript">
+        // initialise plugins
+
+        //note that we can't use the simplified dollar-sign based jquery notation as it messes with
+        //velocity's variable reference syntax.  Since the dollar sign is just an alias for the 'jQuery' global
+        //object, we use 'jQuery' explicitly below instead to avoid this conflict:
+        jQuery(function() {
+
+            //Nav bar gradient shading:
+            $('#navlist').gradient({
+                from:      '4273ca',
+                to:        '03148f',
+                direction: 'horizontal'
+            });
+            $('#navlist li').gradient({
+                from:      '4273ca',
+                to:        '03148f',
+                direction: 'horizontal'
+            });
+            $('#navlist ul').gradient({
+                from:      '4273ca',
+                to:        '03148f',
+                direction: 'horizontal'
+            });
+
+            //Nav bar: Supersubs dropdown menus
+            $('ul.sf-menu').supersubs({extraWidth: 1}).superfish({animation:{opacity:'show',height:'show'}});
+
+            //Google Analytics
+            $.trackPage('UA-11551827-1');
+        });
+    </script>
+</head>
+<body>
+
+    <div id="page">
+
+        <div id="header">
+            <!-- <h1>Apache Shiro</h1> -->
+            <img src="/static/assets/images/shiro_logo_484x170.png" alt="Apache Shiro"/>
+            
+            <!-- <img src="http://incubator.apache.org/images/apache-incubator-logo.png" alt="Apache Incubator"/> -->
+
+            <div id="navbar">
+                
+                <ul id="navlist" class="sf-menu rc">
+
+                    <li class="current rc"><a href="#">Home</a></li>
+
+                    <li><a href="#">Download</a></li>
+
+                    <li>
+                        <p><a href="#">About</a></p>
+                        <ul>
+                            <li><a href="#">What is Shiro?</a></li>
+                            <li><a href="#">Features</a></li>
+                            <li><a href="#">License</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <p><a href="#">Documentation</a></p>
+                        <ul>
+                            <li><a href="#">Ten Minute Tutorial</a></li>
+                            <li><a href="#">Getting Started</a></li>
+                            <li><a href="#">Reference Manual</a></li>
+                            <li><a href="#">API</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <p><a href="#">Community</a></p>
+                        <ul>
+                            <li><a href="#">Contribute!</a></li>
+                            <li><a href="#">News</a></li>
+                            <li><a href="#">Events</a></li>
+                            <li><a href="#">Conferences</a></li>
+                            <li><a href="#">Articles</a></li>
+                            <li><a href="#">Who uses Shiro?</a></li>
+                            <li><a href="#">Developer Resources</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <p><a href="#">Support</a></p>
+                        <ul>
+                            <li><a href="#">Mailing Lists</a></li>
+                            <li><a href="#">Forums</a></li>
+                            <li><a href="#">Issue Tracker</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+        <div id="center">
+
+            <div id="main">
+
+                <div id="homecenter">
+
+                    <div id="homeleft">
+
+                        <h1><a name="Index-WelcometoApacheShiro"></a>Welcome to Apache Shiro</h1>
+
+                        <p>Apache Shiro is a powerful and easy-to-use security framework that performs authentication,
+                           authorization, cryptography, and session management. With Shiro’s easy-to-understand API,
+                           you can quickly and easily secure any application – from the smallest mobile applications
+                           to the largest web and enterprise applications.</p>
+
+                        <p>We recommend you start with the Ten Minute Tutorial which gives you a feel for Shiro and its
+                           API.
+                           Then feel free to get started using Shiro in your own application.</p>
+
+                        <p>If you have any questions, please check out our documentation or contact the user mailing
+                           list.</p>
+
+                        <p>And if you’re a fan of Shiro and would like to help it grow, we invite you become a
+                           contributor
+                           to
+                           the project. Please check out the New Contributor Guide</p>
+
+                        <h2>Overview</h2>
+
+                        <div class="foverview">
+                            <h3>Authentication</h3>
+                            <p>Support logins across one or more pluggable data sources (LDAP, JDBC, Kerberos,
+                               ActiveDirectory, etc).</p>
+                        </div>
+
+                        <div class="foverview">
+                            <h3>Authorization</h3>
+
+                            <p>Perform access control based on roles or fine-grained permissions, also using pluggable
+                               data sources.</p>
+                        </div>
+
+                        <div class="foverview crypt">
+                            <h3>Cryptography</h3>
+
+                            <p>Secure data with the easiest possible Cryptography APIs available, giving you power and
+                               simplicity beyond what Java provides by default.</p>
+                        </div>
+
+                        <div class="foverview sess">
+                            <h3>Session Management</h3>
+
+                            <p>Use sessions in any environment, even outside web or EJB containers. Easily cluster
+                               sessions in large scale applications.</p>
+                        </div>
+
+                        <div class="foverview web last">
+                            <h3>Web Integration</h3>
+
+                            <p>Save development time with innovative approaches that easily handle web-specific
+                               security out-of-the-box.</p>
+                        </div>
+
+                    </div>
+
+                    <div id="homeright">
+                        <div id="download" class="rc">
+                            <h2>Download</h2>
+                            <div class="inner rc">
+                                <p>The latest release is <em>1.0.0-incubating</em>
+                                    <span class="relnotes">
+                                        (<a href="https://svn.apache.org/repos/asf/cassandra/tags/cassandra-0.6.5/CHANGES.txt">Changes</a>)
+                                    </span>
+                                </p>
+                                <p>
+                                    <a class="filename"
+                                       href="http://www.apache.org/dyn/closer.cgi?path=/cassandra/0.6.5/apache-cassandra-0.6.5-bin.tar.gz"
+                                       onclick="javascript: pageTracker._trackPageview('/clicks/download/fullbinary');">
+                                        apache-shiro-1.0.0-incubating.zip
+                                    </a>
+                                </p>
+                                <p><a href="/download/">Other download options</a></p>
+                            </div>
+                        </div>
+                        <div id="adoption">
+                            <h2>Communities using Shiro</h2>
+                            <div id="adoptionImages">
+                                <a href="http://www.springsource.org"><img src="/static/assets/images/adoption/spring_103x60.png" alt="Spring Framework"/></a>
+                                <a href="http://wicket.apache.org"><img src="/static/assets/images/adoption/wicket_136x50.png" alt="Apache Wicket"/></a>
+                                <a href="http://www.grails.org"><img src="/static/assets/images/adoption/grails_152x40.png" alt="Grails"/></a>
+                                <a href="http://tapestry.apache.org"><img src="/static/assets/images/adoption/tapestry_136x50.gif" alt="Apache Tapestry"/></a>
+                                <a href="http://tynamo.org"><img src="/static/assets/images/adoption/tynamo_120x50.png" alt="Tynamo"/></a>
+                                <a href="http://click.apache.org"><img src="/static/assets/images/adoption/click_142x43.png" alt="Apache Click"/></a>
+                                <a href="http://www.stripesframework.org"><img src="/static/assets/images/adoption/stripes_122x32.png" alt="Stripes Framework"/></a>
+                                <a href="http://camel.apache.org"><img src="/static/assets/images/adoption/apache-camel_107x50.png" alt="Apache Camel"/></a>
+                                <a href="http://www.sonatype.com"><img src="/static/assets/images/adoption/sonatype_153x43.gif" alt="Sonatype"/></a>
+                                <p>and more...</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="news">
+                <h3><a name="Index-News"></a>News</h3>
+
+                <div class="blogSurtitle">
+                    <img src="http://cwiki.apache.org/confluence/images/icons/blogentry_16.gif" height="16" width="16"
+                         border="0"
+                         align="absmiddle">
+
+                    <a class="blogDate"
+                       href="http://cwiki.apache.org/confluence/pages/viewblogposts.action?key=SHIRO&postingDate=2010%2F6%2F1&period=5">Tuesday,
+                                                                                                                                        1
+                                                                                                                                        June
+                                                                                                                                        2010</a>
+                </div>
+
+                <div class="blogpost" style="margin-bottom: 30px">
+                    <div><a class="blogHeading" href="2010/06/01/sdforum-java-sig-apache-shiro-presentation.html">
+                        SDForum Java SIG Apache Shiro Presentation</a>
+                    </div>
+
+                    <div class="pagesubheading">
+                        Last changed Jun 01, 2010 13:42 by
+                        <a class="confluence-userlink username:lhazlewood url fn"
+                           href="http://cwiki.apache.org/confluence/users/viewuserprofile.action?username=lhazlewood">
+                            Les Hazlewood
+                        </a>
+                    </div>
+                    <div class="wiki-content">
+                        <P>Tonight, 1 June 2010, Les Hazlewood
+                            <a href="http://www.sdforum.org/index.cfm?fuseaction=Calendar.eventDetail&eventID=13671&pageId=471"
+                                class="external-link" rel="nofollow">will present</a>
+                           Apache Shiro to the SDForum Java SIG in Palo Alto, California. Please come if you can!</P>
+                    </div>
+                    <div class="endsection">
+                        <B>Posted at Jun 01, 2010</B> by
+
+                        <img src="http://cwiki.apache.org/confluence/images/icons/user_16.gif"
+                             height="16" width="16" border="0" align="absmiddle" title="User Profile: Les Hazlewood">
+
+                        <a class="confluence-userlink username:lhazlewood url fn"
+                           href="http://cwiki.apache.org/confluence/users/viewuserprofile.action?username=lhazlewood">
+                            Les Hazlewood</a>
+                                                      |
+                        <img src="http://cwiki.apache.org/confluence/images/icons/comment_16.gif"
+                             height="16" width="16" border="0" align="absmiddle">
+                        <a href="2010/06/01/sdforum-java-sig-apache-shiro-presentation.html#comments">0 comments</a>
+                                                      |
+                        <a href="http://cwiki.apache.org/confluence/pages/editblogpost.action?pageId=21791855">Edit</a>
+                    </div>
+                </div>
+
+
+                <div class="blogpost" style="margin-bottom: 30px">
+
+                    <div><a class="blogHeading" href="2010/06/01/apache-shiro-100-incubating-released.html">
+                        Apache Shiro 1.0.0-incubating Released!</a>
+                    </div>
+
+                    <div class="pagesubheading">
+                        Last changed Jun 01, 2010 13:36 by
+                        <a class="confluence-userlink username:lhazlewood url fn"
+                           href="http://cwiki.apache.org/confluence/users/viewuserprofile.action?username=lhazlewood">
+                            Les Hazlewood
+                        </a>
+                    </div>
+                    <div class="wiki-content">
+                        <P>Dear Apache Shiro Community,</P>
+
+                        <P>We are proud and excited to offer Apache Shiro's first stable release as an Apache Incubator
+                           podling!</P>
+
+                        <P>Version 1.0.0-incubating is available immediately for download
+                            <a href="download.html" title="Download">here</a> accompanied by
+                            <a href="documentation.html" title="Documentation">associated documentation</a> and
+                            <a href="https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12310950&styleName=Html&version=12314078"
+                                    class="external-link" rel="nofollow">Release Notes</a>
+                        </P>
+
+                        <P>Thank you so much to the Apache community and the Apache Incubator for helping us move toward
+                           our first release. A very special thanks goes to our user community and early adopters for
+                           helping us refine our first stable release.</P>
+
+                        <P>Best Regards,</P>
+
+                        <P>Les Hazlewood</P>
+                    </div>
+
+                    <div class="endsection">
+                        <B>Posted at Jun 01, 2010</B> by
+                        <img src="http://cwiki.apache.org/confluence/images/icons/user_16.gif" height="16" width="16"
+                             border="0"
+                             align="absmiddle" title="User Profile: Les Hazlewood">
+                        <a class="confluence-userlink username:lhazlewood url fn"
+                           href="http://cwiki.apache.org/confluence/users/viewuserprofile.action?username=lhazlewood">Les
+                                                                                                                      Hazlewood</a>
+                                                      |
+                        <img src="http://cwiki.apache.org/confluence/images/icons/comment_16.gif" height="16" width="16"
+                             border="0"
+                             align="absmiddle">
+
+                        <a href="2010/06/01/apache-shiro-100-incubating-released.html#comments">0 comments</a>
+                                                      |
+                        <a href="http://cwiki.apache.org/confluence/pages/editblogpost.action?pageId=21791849">Edit</a>
+                    </div>
+                </div>
+
+                <div class="blogSurtitle">
+                    <img src="http://cwiki.apache.org/confluence/images/icons/blogentry_16.gif" height="16" width="16"
+                         border="0" align="absmiddle">
+                    <a class="blogDate"
+                       href="http://cwiki.apache.org/confluence/pages/viewblogposts.action?key=SHIRO&postingDate=2010%2F3%2F17&period=5">
+                        Wednesday, 17 March 2010
+                    </a>
+                </div>
+
+                <div class="blogpost" style="margin-bottom: 30px">
+                    <div><a class="blogHeading" href="2010/03/17/great-source-comments.html">Great source comments!</a>
+                    </div>
+
+                    <div class="pagesubheading">
+                        Last changed Mar 17, 2010 22:10 by
+                        <a class="confluence-userlink username:lhazlewood url fn"
+                           href="http://cwiki.apache.org/confluence/users/viewuserprofile.action?username=lhazlewood">
+                            Les Hazlewood
+                        </a>
+                    </div>
+                    <div class="wiki-content">
+
+                        <P>Apache Shiro is among the
+                            <a href="http://www.ohloh.net/p/shiro/factoids/2699226"
+                               class="external-link" rel="nofollow">best-commented</a>
+                           (top 10%) of all projects tracked by Ohloh!
+                        </P>
+                    </div>
+                    <div class="endsection">
+                        <B>Posted at Mar 17, 2010</B> by
+                        <img src="http://cwiki.apache.org/confluence/images/icons/user_16.gif"
+                             height="16" width="16" border="0" align="absmiddle" title="User Profile: Les Hazlewood">
+
+                        <a class="confluence-userlink username:lhazlewood url fn"
+                           href="http://cwiki.apache.org/confluence/users/viewuserprofile.action?username=lhazlewood">
+                            Les Hazlewood
+                        </a>
+                                                      |
+                        <img src="http://cwiki.apache.org/confluence/images/icons/comment_16.gif"
+                             height="16" width="16" border="0" align="absmiddle">
+
+                        <a href="2010/03/17/great-source-comments.html#comments">0 comments</a>
+                                                      |
+                        <a href="http://cwiki.apache.org/confluence/pages/editblogpost.action?pageId=14813062">Edit</a>
+                    </div>
+                </div>
+
+                <P>Stay current with <a href="news.html" title="News">All Apache Shiro News</a></P>
+
+            </div> <!-- end #news -->
+
+        </div> <!-- end #center -->
+
+        <div id="footer">
+            Copyright &copy; 2008-2010 The Apache Software Foundation
+        </div>
+
+    </div> <!-- end #page -->
+
+</body>
+</html> 

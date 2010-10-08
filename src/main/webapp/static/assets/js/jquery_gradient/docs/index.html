@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+	"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		<title>gradient 1.0 docs</title>
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.2.2/build/reset/reset-min.css">
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.2.2/build/fonts/fonts-min.css">
+		<style type="text/css" media="screen">
+			body { margin: 25px; }
+			h1 { margin: 1.0em 0; font-size: 167%; font-weight: bold; }
+			#toc { margin: 0 0 3.0em; }
+				#toc li { margin: 0.4em 0; font-size: 100%; }
+			#qa { margin: 0 0 3.0em; }
+				#qa dt.question { margin: 2.0em 0 1.0em; font-size: 122%; font-weight: bold; }
+				#qa dd.answer { margin: 0 2.0em; }
+					#qa dd.answer p { margin: 0 0 1.5em; }
+					#qa dd.answer code { font-size: 92%; }
+					
+					#qa dd.answer #options dt { margin: 2.0em 0 1.0em;  }
+					#qa dd.answer #options dd { margin: 0 2.0em; }
+					
+		</style>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div id="container">
+				<h1>gradient 1.0</h1>
+				<ul id="toc">
+					<li><a href="#what_does_it_do">What does it do</a></li>
+					<li><a href="#when_should_i_use_it">When should I use it</a></li>
+					<li><a href="#how_do_i_use_it">How do I use it</a></li>
+					<li><a href="#how_does_it_work">How does it work</a></li>
+					<li><a href="#where_can_i_get_it">Where can I get it</a></li>
+					<li><a href="#what_has_changed">What has changed</a></li>
+					<li><a href="#suggestions_bugs_patches">Suggestions? Bugs? Patches?</a></li>
+				</ul>
+				<dl id="qa">
+					<dt id="what_does_it_do" class="question">What does it do?</dt>
+					<dd class="answer">
+						<p>The gradient plugin adds a dynamically created configurable gradient to the background of an element without the use of images.</p>
+					</dd>
+					
+					<dt id="when_should_i_use_it" class="question">When should I use it?</dt>
+					<dd class="answer">
+						<p>The gradient plugin should be used when it makes sense to progressively enhance the UI with dynamic gradients on the fly without images.</p>
+					</dd>
+					
+					<dt id="how_do_i_use_it" class="question">How do I use it?</dt>
+					<dd class="answer">
+						<p>To use the gradient with default options/settings, just call <code>gradient</code> on a jQuery collection of elements.</p>
+						<p><code>$('.gradient').gradient();</code></p>
+						<p>The gradient plugin is requires the <a href="http://jquery.com/plugins/project/dimensions/">Dimensions plugin</a>.</p>
+						<p>With its default options/settings the gradient will fade from black (000000) to white (FFFFFF) horizontally the height of the element. To change the color just specify a 'from' color and a 'to' color in hex.</p>
+						<p><code>$('.gradient').gradient({ from: '003366', to: '333333' });</code></p>
+						<p>All the options/settings are described below.</p>
+						<dl id="options">
+							<dt><code>from</code></dt>
+							<dd>
+								<p>This is a color to start the gradient with. The color should be specified in hex. The default color is black (000000).</p>
+								<p><code>$('.gradient').gradient({ from: '003366' });</code></p>
+							</dd>
+							<dt><code>to</code></dt>
+							<dd>
+								<p>This is a color to end the gradient with. The color should be specified in hex. The default color is white (FFFFFF).</p>
+								<p><code>$('.gradient').gradient({ to: '333333' });</code></p>
+							</dd>
+							<dt><code>direction</code></dt>
+							<dd>
+								<p>There are two possible directions for the gradient: horizontal and vertical. Horizontal fades from top to bottom and vertical fades left to right. The default is horizontal.</p>
+								<p><code>$('.gradient').gradient({ direction: 'vertical' });</code></p>
+							</dd>
+							<dt><code>position</code></dt>
+							<dd>
+								<p>The gradient is positioned top and left within the element by default. To change the position of the gradient, just pass a string that has either top, bottom, left or right.</p>
+								<p><code>$('.gradient').gradient({ position: 'bottom' });</code></p>
+							</dd>
+							<dt><code>length</code></dt>
+							<dd>
+								<p>By default the length of the gradient is determined by the width or height of the element (depending on direction) To change the length just pass a number representing the number of pixels the gradient should be in width or height (depending on direction). To use the default calculations just set length to null.</p>
+								<p><code>$('.gradient').gradient({ length: 25 });</code></p>
+							</dd>
+						</dl>
+					</dd>
+
+					<dt id="how_does_it_work" class="question">How does it work?</dt>
+					<dd class="answer">
+						<p>The gradient plugin adds a series of div elements positioned behind the contents of the element. These divs are given a background color and positioned according to the settings. The number of divs varies based on the length but there is never more than 100 used to make the gradient. The color methods and original idea belongs to <a href="http://slayeroffice.com/code/gradient/">Steve over at slayeroffice.com</a>.</p>
+						<p>Check out the <a href="http://brandonaaron.net/jquery/plugins/gradient/test/">test page</a> to see the plugin in action.</p>
+					</dd>
+
+					<dt id="where_can_i_get_it" class="question">Where can I get it?</dt>
+					<dd class="answer">
+						<ul>
+							<li><a href="http://jquery.com/plugins/files/gradient-1.0.zip">1.0 zip</a> from the gradient <a href="http://jquery.com/plugins/project/gradient">project page</a>.</li>
+							<li>Latest SVN: http://jqueryjs.googlecode.com/svn/trunk/plugins/gradient/</li>
+							<li>Tagged Versions in SVN: Latest SVN: http://jqueryjs.googlecode.com/svn/tags/plugins/gradient/</li>
+						</ul>
+						<p>Don't forget to get the latest version of the <a href="http://jquery.com/plugins/project/dimensions/">Dimensions plugin</a>.</p>
+					</dd>
+					
+					<dt id="suggestions_bugs_patches" class="question">Suggestions? Bugs? Patches?</dt>
+					<dd class="answer">
+						<p>Feel free to make any suggestions, bug reports or add any patches via the <a href="http://jquery.com/plugins/project/gradient">project page</a>.</p>
+					</dd>
+				</dl>
+				<p>The gradient plugin is based on the work done by <a href="http://slayeroffice.com/code/gradient/">Steve over at slayeroffice.com</a> and authored by <a href="http://blog.brandonaaron.net/">Brandon Aaron (http://brandonaaron.net/)</a>.</p>
+			</div>
+		</div>
+	</body>
+</html>

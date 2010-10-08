@@ -1,0 +1,284 @@
+/*
+ - Licensed to the Apache Software Foundation (ASF) under one
+ - or more contributor license agreements.  See the NOTICE file
+ - distributed with this work for additional information
+ - regarding copyright ownership.  The ASF licenses this file
+ - to you under the Apache License, Version 2.0 (the
+ - "License"); you may not use this file except in compliance
+ - with the License.  You may obtain a copy of the License at
+ -
+ -     http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing,
+ - software distributed under the License is distributed on an
+ - "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ - KIND, either express or implied.  See the License for the
+ - specific language governing permissions and limitations
+ - under the License.
+*/
+
+html {
+    overflow-y: scroll; /*background-color: #477ddf;*/
+    background-color: transparent;
+    /*background-attachment: fixed;
+    background-image: url("../images/body-bg.png");
+    background-position: center bottom;
+    background-repeat: repeat-x; */
+    margin: 0;
+    text-align: left;
+}
+
+body {
+    margin: 10px 5% 0 5%;
+    /*color: #5b5a5a;*/
+    color: #222222;
+    text-align: left;
+    background-color: white;
+    font-family: verdana, helvetica, clean, sans-serif, 'sans', serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #1b4085;
+}
+
+h1 {
+    margin-top: .5em;
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.75em;
+}
+
+h3 {
+    font-size: 1.5em;
+}
+
+h4 {
+    font-size: 1.35em;
+    font-weight: bold;
+}
+
+h5 {
+    font-size: 1.15em;
+    font-weight: bold;
+}
+
+h6 {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+a {
+    color: #1b4085;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #477ddf;
+    text-decoration: underline;
+}
+
+/* Confluence classes: */
+.pagesubheading {
+    display: none;
+}
+
+.blogSurtitle {
+    margin-bottom: 1em;
+}
+
+.blogDate {
+    font-size: 1.35em;
+    font-weight: bold;
+}
+
+.blogpost {
+    padding: 0 0 0 1.5em;
+}
+
+.blogHeading {
+    font-size: 1.15em;
+    font-weight: bold;
+}
+
+.blogpost .wiki-content {
+    margin-top: 1em;
+}
+
+.endsection {
+    display: none;
+}
+
+/* end Confluence classes */
+
+/* General purpose rounded corners: */
+.rc {
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+}
+
+#header>img:first-child {
+    float: left;
+    padding: 0.5em 0 1.5em 0;
+}
+
+#navbar {
+    display: block;
+    clear: both;
+    padding: 0;
+}
+#navlist {
+    width: 100%;
+    background: #334B99;
+}
+.sf-menu a {
+	border-left:	1px solid #fff;
+    border-top: none;
+    padding: .75em 2em;
+	text-decoration:none;
+    font-weight: bold;
+}
+.sf-menu li li a {
+    font-weight: normal;
+}
+.sf-menu a, .sf-menu a:visited  { /* visited pseudo selector so IE6 applies text colour*/
+	color: #f2f1ff;
+}
+.sf-menu li {
+	/*background: #334B99;*/
+    background: transparent;
+}
+.sf-menu li li {
+	background: transparent;
+}
+.sf-menu li li li {
+	background: transparent;
+}
+.sf-menu li:hover, .sf-menu li.sfHover,
+.sf-menu a:focus, .sf-menu a:hover, .sf-menu a:active {
+	background: #98a0a8;
+    /*#85c85c; = green */
+	outline:		0;
+}
+
+#center {
+    display: table;
+    padding: 0 1em;
+}
+#main {
+    display: table-row;
+}
+
+#homecenter {
+    display: table-cell;
+}
+#homecenter>div {
+    display: table-cell;
+}
+#homeleft {
+    padding-right: 3em;
+    margin-top: 0;
+}
+#homeleft>h2:first-child {
+    margin-top: 0;
+}
+.last {
+    clear: both;
+}
+
+#homeleft div {
+    float: left;
+    max-width: 45%;
+    margin: 0 2em 1em 0;
+    padding: 0;
+}
+#homeleft div h3 {
+    padding-left: 1.5em;
+    margin: 0;
+    white-space: nowrap;
+    /*border-bottom: 1px solid #98a0a8;*/
+    background: url("../images/shiro_bullet_24x24.png") left center no-repeat;
+    margin-bottom: .4em;
+    /*border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    background: #abb5d2; */
+}
+
+#homeright {
+    padding: 0;
+    clear: both;
+    width: 28%;
+}
+
+#download {
+    background: #669933;
+    color: #eeffcc;
+    text-align: center;
+    padding: 0 1.5em 1.5em 1.5em;
+}
+#download em {
+    font-weight: bold;
+    font-style: normal;
+    display: block;
+}
+#download .relnotes {
+    display: block;
+}
+#download a {
+    color: #070;
+}
+#download a:hover {
+    background-color: #339933;
+}
+#download h2 {
+    padding: .15em;
+    margin: 0;
+    color: white;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+#download .inner {
+    background: #efc;
+    color: #222222;
+    padding: .5em;
+}
+
+#download .filename {
+    background: url("../images/download.png") no-repeat center 0 transparent;
+    display: block;
+    font-size: 18px;
+    line-height: 22px;
+    overflow: auto;
+    padding: 4em 0 0 0;
+    position: relative;
+}
+
+#adoption {
+    margin-top: 3em;
+}
+#adoption h2 {
+    font-size: 1.6em;
+}
+#adoption div {
+    text-align: center;
+}
+#adoption img {
+    padding: .2em .3em;
+}
+#adoption p {
+    padding-top: 1em;
+    font-size: 1.5em;
+}
+
+#news {
+    display: table-row;
+}
+
+#footer {
+/*clear: both;*/
+    text-align: center;
+    padding: 10px;
+}

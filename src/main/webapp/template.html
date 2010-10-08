@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+##
+#set ($siteroot = "http://shiro.apache.org/")
+#set ($assets = "$siteroot/static/assets")
+#set ($pageContentHeaderEnabled = false)
+#set ($globalHelper = $action.getHelper())
+#set ($renderer = $globalHelper.getWikiStyleRenderer())
+##
+#if ( $page.title.equals("Index") )
+    #set ($title = "Application Security Framework")
+#else
+    #set ($title = $page.title)
+#end
+##
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Apache Shiro - Welcome to Apache Shiro</title>
+
+    <link rel="stylesheet" type="text/css"
+          href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css">
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/base/base-min.css">
+    <link rel="stylesheet" type="text/css" href="/static/assets/js/superfish-1.4.8/css/superfish.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/confluence.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/style.css"/>
+    <link rel="icon" type="image/vnd.microsoft.icon" href="/static/assets/images/favicon.ico">
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/assets/js/jquery_gradient/jquery.dimensions.js"></script>
+    <script type="text/javascript" src="/static/assets/js/jquery_gradient/jquery.gradient.js"></script>
+    <script type="text/javascript" src="/static/assets/js/superfish-1.4.8/js/hoverIntent.js"></script>
+    <script type="text/javascript" src="/static/assets/js/superfish-1.4.8/js/superfish.js"></script>
+    <script type="text/javascript" src="/static/assets/js/superfish-1.4.8/js/supersubs.js"></script>
+    <script type="text/javascript" src="/static/assets/js/jquery_googleanalytics/jquery.google-analytics.js"></script>
+    <script type="text/javascript">
+        // initialise plugins
+
+        //note that we can't use the simplified dollar-sign based jquery notation as it messes with
+        //velocity's variable reference syntax.  Since the dollar sign is just an alias for the 'jQuery' global
+        //object, we use 'jQuery' explicitly below instead to avoid this conflict:
+        jQuery(function() {
+
+            //Nav bar gradient shading:
+            $('#navlist').gradient({
+                from:      '4273ca',
+                to:        '03148f',
+                direction: 'horizontal'
+            });
+            $('#navlist li').gradient({
+                from:      '4273ca',
+                to:        '03148f',
+                direction: 'horizontal'
+            });
+            $('#navlist ul').gradient({
+                from:      '4273ca',
+                to:        '03148f',
+                direction: 'horizontal'
+            });
+
+            //Nav bar: Supersubs dropdown menus
+            $('ul.sf-menu').supersubs({extraWidth: 1}).superfish({animation:{opacity:'show',height:'show'}});
+
+            //Google Analytics
+            $.trackPage('UA-11551827-1');
+        });
+    </script>
+</head>
+<body>
+
+    <div id="page">
+
+        <div id="header">
+            <img src="/static/assets/images/shiro_logo_484x170.png" alt="Apache Shiro"/>
+            <div id="navbar">
+                #set($child = $pageManager.getPage($page.space.key,"Navigation"))
+                #set($content = $renderer.convertWikiToXHtml($child.toPageContext(), $child.content).trim())
+                #set($content = $content.replaceAll("^<[pP]>|</[pP]>$", "") )
+                $content
+            </div>
+        </div>
+
+        <div id="center">
+            $body
+        </div> <!-- end #center -->
+
+        <div id="footer">
+            Copyright &copy; 2008-2010 The Apache Software Foundation
+        </div>
+
+    </div> <!-- end #page -->
+
+</body>
+</html>

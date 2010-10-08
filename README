@@ -1,0 +1,18 @@
+Instructions:
+
+Run 'mvn jetty:run' and open your browser to localhost:8080
+
+Make src/main/webapp/index.html adjustments and hit refresh as necessary (css,
+images and javascript are available under src/main/webapp/static/assets/).
+
+When happy, move the changes to template.html, but remember to remove
+all of the simulated content (nav bar, overview, blog posts, etc).
+
+Ensure all static references start with a forward slash '/' e.g.:
+
+/static/assets/images/foo.jpg
+/static/assets/css/...
+
+The template.html file is the one that should be uploaded to the Confluence Auto Export plugin.
+
+When done, commit your changes!
