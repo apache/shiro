@@ -1,18 +1,66 @@
-Instructions:
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+#############################
+# Editing the site template #
+#############################
 
 Run 'mvn jetty:run' and open your browser to localhost:8080
 
 Make src/main/webapp/index.html adjustments and hit refresh as necessary (css,
-images and javascript are available under src/main/webapp/static/assets/).
+images and javascript must all be available under
+src/main/webapp/static/assets - you'll see why when publishing later).
 
-When happy, move the changes to template.html, but remember to remove
-all of the simulated content (nav bar, overview, blog posts, etc).
+When you've happy with your edits, move the changes to template.html, but
+remember to remove any/all of the simulated content (nav bar, overview,
+blog posts, etc).  Look at the existing unedited template.html to see the
+difference.
 
-Ensure all static references start with a forward slash '/' e.g.:
+Finally, ensure all of your static references start with a forward slash '/' 
+e.g.:
 
 /static/assets/images/foo.jpg
 /static/assets/css/...
 
-The template.html file is the one that should be uploaded to the Confluence Auto Export plugin.
+When done, commit your changes back to SVN.
 
-When done, commit your changes!
+###############################################
+# Publishing your changes to shiro.apache.org #
+###############################################
+
+* Changes to the template.html file:
+
+If you've modified the template.html file, it needs to be uploaded to the
+Confluence Auto Export plugin.  This requires Confluence system-wide
+administrative privileges, since the Auto Export plugin can't be managed on a
+per-projet basis.  If you don't have administrative access, contact
+Les Hazlewood on the dev@shiro.a.o list and he can do it for you.
+
+* Changes to static assets:
+
+If you've modified, added or removed any of the static assets, first ensure you
+commit the changes to SVN.  Then you'll need to pull those changes in to the
+web servers (anyone in the 'shiro' unix group on people.a.o can do this - if
+you're not in that group, contact dev@shiro.a.o to ask for help):
+
+> ssh people.apache.org
+> cd /www/shiro.apache.org/static/assets
+> svn up
+
+That's it - you're done.  Allow up to 1 or 2 hours for the changes to be
+reflected on the website - they must propagate to an Apache web server
+farm not under our control (infra@a.o controls this process).
