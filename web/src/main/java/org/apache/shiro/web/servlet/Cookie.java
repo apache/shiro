@@ -31,6 +31,11 @@ import javax.servlet.http.HttpServletResponse;
  * @since 1.0
  */
 public interface Cookie {
+    /**
+     * The value of deleted cookie (with the maxAge 0).
+     */
+    public static final String DELETED_COOKIE_VALUE = "deleteMe";
+    
 
     /**
      * The number of seconds in one year (= 60 * 60 * 24 * 365).

@@ -203,6 +203,9 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
         HttpServletResponse response = WebUtils.getHttpResponse(wsc);
 
         String base64 = getCookie().readValue(request, response);
+        // Browsers do not always remove cookies immediately (SHIRO-183)
+        // ignore cookies that are scheduled for removal
+        if (Cookie.DELETED_COOKIE_VALUE.equals(base64)) return null;
 
         if (base64 != null) {
             base64 = ensurePadding(base64);
