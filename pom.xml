@@ -33,7 +33,7 @@
     <version>1.1.0-SNAPSHOT</version>
 
     <name>Apache Shiro</name>
-    <url>http://incubator.apache.org/shiro/</url>
+    <url>http://shiro.apache.org/</url>
     <description>
         Apache Shiro is a powerful and flexible open-source security framework that cleanly handles
         authentication, authorization, enterprise session management, single sign-on and cryptography services.
@@ -41,9 +41,9 @@
     <inceptionYear>2004</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/incubator/shiro/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/incubator/shiro/trunk</developerConnection>
-        <url>http://svn.apache.org/repos/asf/incubator/shiro/trunk</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/trunk</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/trunk</developerConnection>
+        <url>http://svn.apache.org/repos/asf/shiro/trunk</url>
     </scm>
     <issueManagement>
         <system>Jira</system>
@@ -56,9 +56,9 @@
 
     <distributionManagement>
         <site>
-            <id>incubator.website</id>
-            <name>Apache Incubator Site</name>
-            <url>scp://people.apache.org/www/incubator.apache.org/shiro/static/latest</url>
+            <id>shiro.website</id>
+            <name>Apache Shiro Site</name>
+            <url>scp://people.apache.org/www/shiro.apache.org/static/latest</url>
         </site>
     </distributionManagement>
 
@@ -75,17 +75,17 @@
     <mailingLists>
         <mailingList>
             <name>Apache Shiro Users Mailing List</name>
-            <subscribe>shiro-user-subscribe@incubator.apache.org</subscribe>
-            <unsubscribe>shiro-user-unsubscribe@incubator.apache.org</unsubscribe>
-            <post>shiro-user@incubator.apache.org</post>
+            <subscribe>user-subscribe@shiro.apache.org</subscribe>
+            <unsubscribe>user-unsubscribe@shiro.apache.org</unsubscribe>
+            <post>user@shiro.apache.org</post>
             <!--archive/-->
             <!--otherArchives-->
         </mailingList>
         <mailingList>
             <name>Apache Shiro Developers Mailing List</name>
-            <subscribe>shiro-dev-subscribe@incubator.apache.org</subscribe>
-            <unsubscribe>shiro-dev-unsubscribe@incubator.apache.org</unsubscribe>
-            <post>shiro-dev@incubator.apache.org</post>
+            <subscribe>dev-subscribe@shiro.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@shiro.apache.org</unsubscribe>
+            <post>dev@shiro.apache.org</post>
             <!--archive/-->
             <!--otherArchives-->
         </mailingList>
@@ -685,9 +685,9 @@
             <id>apache-release</id>
             <distributionManagement>
                 <site>
-                    <id>incubator.website</id>
-                    <name>Apache Incubator Site</name>
-                    <url>scp://people.apache.org/www/incubator.apache.org/shiro/static/${project.version}</url>
+                    <id>shiro.website</id>
+                    <name>Apache Shiro Site</name>
+                    <url>scp://people.apache.org/www/shiro.apache.org/static/${project.version}</url>
                 </site>
             </distributionManagement>
         </profile>
