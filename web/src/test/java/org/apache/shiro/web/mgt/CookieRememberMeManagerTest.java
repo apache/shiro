@@ -36,7 +36,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * TODO - Class JavaDoc
@@ -86,9 +88,31 @@ public class CookieRememberMeManagerTest {
         verify(mockSubject);
         verify(cookie);
     }
+    
+    // SHIRO-183
+    @Test
+    public void getRememberedSerializedIdentityReturnsNullForDeletedCookie() {
+        HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
+        WebSubjectContext context = new DefaultWebSubjectContext();
+        context.setServletRequest(mockRequest);
+        context.setServletResponse(mockResponse);
+
+        expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
+
+        Cookie[] cookies = new Cookie[]{
+                new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, org.apache.shiro.web.servlet.Cookie.DELETED_COOKIE_VALUE)
+        };
+
+        expect(mockRequest.getCookies()).andReturn(cookies);
+        replay(mockRequest);
+
+        CookieRememberMeManager mgr = new CookieRememberMeManager();
+        assertNull(mgr.getRememberedSerializedIdentity(context));
+    }
+    
 
     // SHIRO-69
-
     @Test
     public void getRememberedPrincipals() {
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
@@ -149,20 +173,12 @@ public class CookieRememberMeManagerTest {
         replay(mockRequest);
 
         CookieRememberMeManager mgr = new CookieRememberMeManager();
-        PrincipalCollection collection = null;
-
-        CryptoException ce = null;
         try {
-            collection = mgr.getRememberedPrincipals(context);
+            mgr.getRememberedPrincipals(context);
         } catch (CryptoException expected) {
-            ce = expected;
+            return;
         }
-        assertNotNull(ce);
-
-        verify(mockRequest);
-
-        // Collection should be null since there was an error decrypting it
-        assertTrue(collection == null);
+        fail("CryptoException was expected to be thrown");
     }
 
     @Test

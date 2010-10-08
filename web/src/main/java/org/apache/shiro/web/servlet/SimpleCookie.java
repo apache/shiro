@@ -334,7 +334,7 @@ public class SimpleCookie implements Cookie {
 
     public void removeFrom(HttpServletRequest request, HttpServletResponse response) {
         String name = getName();
-        String value = "deleteMe";
+        String value = DELETED_COOKIE_VALUE;
         String comment = null; //don't need to add extra size to the response - comments are irrelevant for deletions
         String domain = getDomain();
         String path = calculatePath(request);
