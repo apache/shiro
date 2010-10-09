@@ -197,6 +197,7 @@ public class RedirectView {
             targetUrl.append(request.getContextPath());
         }
         targetUrl.append(getUrl());
+        //change the following method to accept a StringBuilder instead of a StringBuilder for Shiro 2.x:
         appendQueryProperties(targetUrl, model, this.encodingScheme);
 
         sendRedirect(request, response, targetUrl.toString(), this.http10Compatible);
@@ -209,10 +210,15 @@ public class RedirectView {
      * @param targetUrl      the StringBuffer to append the properties to
      * @param model          Map that contains model attributes
      * @param encodingScheme the encoding scheme to use
-     * @throws java.io.UnsupportedEncodingException
-     *          if string encoding failed
+     * @throws java.io.UnsupportedEncodingException if string encoding failed
+     * @see #urlEncode
      * @see #queryProperties
+     * @see #urlEncode(String, String)
+     * @deprecated this method accepts a less-than-ideal StringBuffer argument and will be replaced by
+     * a StringBuilder argument in the next major version (2.x) of Shiro.  It remains in place to retain
+     * 1.0 -> 1.1 backwards compatibility.  See <a href="https://issues.apache.org/jira/browse/SHIRO-196">SHIRO-196</a>.
      */
+    @Deprecated
     protected void appendQueryProperties(StringBuffer targetUrl, Map model, String encodingScheme)
             throws UnsupportedEncodingException {
 

@@ -227,7 +227,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
         }
 
         if (log.isTraceEnabled()) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             for (int i = 0; i < mappedPerms.length; i++) {
                 if (i > 0) {
                     sb.append(", ");

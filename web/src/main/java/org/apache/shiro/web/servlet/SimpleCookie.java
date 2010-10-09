@@ -242,7 +242,7 @@ public class SimpleCookie implements Cookie {
             throw new IllegalStateException("Cookie name cannot be null/empty.");
         }
 
-        StringBuffer sb = new StringBuffer(name).append(NAME_VALUE_DELIMITER);
+        StringBuilder sb = new StringBuilder(name).append(NAME_VALUE_DELIMITER);
 
         if (StringUtils.hasText(value)) {
             sb.append(value);
@@ -260,28 +260,28 @@ public class SimpleCookie implements Cookie {
 
     }
 
-    private void appendComment(StringBuffer sb, String comment) {
+    private void appendComment(StringBuilder sb, String comment) {
         if (StringUtils.hasText(comment)) {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(COMMENT_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(comment);
         }
     }
 
-    private void appendDomain(StringBuffer sb, String domain) {
+    private void appendDomain(StringBuilder sb, String domain) {
         if (StringUtils.hasText(domain)) {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(DOMAIN_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(domain);
         }
     }
 
-    private void appendPath(StringBuffer sb, String path) {
+    private void appendPath(StringBuilder sb, String path) {
         if (StringUtils.hasText(path)) {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(PATH_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(path);
         }
     }
 
-    private void appendExpires(StringBuffer sb, int maxAge) {
+    private void appendExpires(StringBuilder sb, int maxAge) {
         // if maxAge is negative, cookie should should expire when browser closes
         sb.append(ATTRIBUTE_DELIMITER);
         sb.append(MAXAGE_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(maxAge);
@@ -305,21 +305,21 @@ public class SimpleCookie implements Cookie {
         }
     }
 
-    private void appendVersion(StringBuffer sb, int version) {
+    private void appendVersion(StringBuilder sb, int version) {
         if (version > DEFAULT_VERSION) {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(VERSION_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(version);
         }
     }
 
-    private void appendSecure(StringBuffer sb, boolean secure) {
+    private void appendSecure(StringBuilder sb, boolean secure) {
         if (secure) {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(SECURE_ATTRIBUTE_NAME); //No value for this attribute
         }
     }
 
-    private void appendHttpOnly(StringBuffer sb, boolean httpOnly) {
+    private void appendHttpOnly(StringBuilder sb, boolean httpOnly) {
         if (httpOnly) {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(HTTP_ONLY_ATTRIBUTE_NAME); //No value for this attribute

@@ -235,7 +235,7 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
     private String ensurePadding(String base64) {
         int length = base64.length();
         if (length % 4 != 0) {
-            StringBuffer sb = new StringBuffer(base64);
+            StringBuilder sb = new StringBuilder(base64);
             for (int i = 0; i < length % 4; ++i) {
                 sb.append('=');
             }

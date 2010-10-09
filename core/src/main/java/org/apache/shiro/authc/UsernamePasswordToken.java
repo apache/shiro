@@ -355,7 +355,7 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
      *         the password.
      */
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(getClass().getName());
         sb.append(" - ");
         sb.append(username);

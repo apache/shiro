@@ -174,7 +174,7 @@ public class StringUtils {
         if ( array == null || array.length == 0 ) {
             return EMPTY_STRING;
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for( int i=0; i < array.length; i++ ) {
             if ( i > 0 ) {
                 sb.append(delimiter);
@@ -346,7 +346,7 @@ public class StringUtils {
         }
 
         List<String> tokens = new ArrayList<String>();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         boolean inQuotes = false;
 
         for (int i = 0; i < line.length(); i++) {
@@ -379,7 +379,7 @@ public class StringUtils {
                     s = s.trim();
                 }
                 tokens.add(s);
-                sb = new StringBuffer(); // start work on next token
+                sb = new StringBuilder(); // start work on next token
             } else {
                 sb.append(c);
             }
