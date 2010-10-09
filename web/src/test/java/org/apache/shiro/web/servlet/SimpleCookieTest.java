@@ -61,7 +61,7 @@ public class SimpleCookieTest extends TestCase {
         String headerValue = this.cookie.buildHeaderValue(name, value, null, null, path,
                 0, SimpleCookie.DEFAULT_VERSION, false, false);
 
-        String expectedStart = new StringBuffer()
+        String expectedStart = new StringBuilder()
                 .append(name).append(SimpleCookie.NAME_VALUE_DELIMITER).append(value)
                 .append(SimpleCookie.ATTRIBUTE_DELIMITER)
                 .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(path)
@@ -83,7 +83,7 @@ public class SimpleCookieTest extends TestCase {
     private void testRootContextPath(String contextPath) {
         this.cookie.setValue("blah");
 
-        String expectedCookieValue = new StringBuffer()
+        String expectedCookieValue = new StringBuilder()
                 .append("test").append(SimpleCookie.NAME_VALUE_DELIMITER).append("blah")
                 .append(SimpleCookie.ATTRIBUTE_DELIMITER)
                 .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(Cookie.ROOT_PATH)

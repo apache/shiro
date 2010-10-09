@@ -220,7 +220,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
 
         if (leadingSlash || !hasScheme(location)) {
 
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
 
             String scheme = request.getScheme();
             String name = request.getServerName();
@@ -311,7 +311,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
             anchor = path.substring(pound);
             path = path.substring(0, pound);
         }
-        StringBuffer sb = new StringBuffer(path);
+        StringBuilder sb = new StringBuilder(path);
         if (sb.length() > 0) { // session id param can't be first.
             sb.append(";");
             sb.append(DEFAULT_SESSION_ID_PARAMETER_NAME);

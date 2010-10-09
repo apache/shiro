@@ -292,8 +292,8 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     @SuppressWarnings("unchecked")
     private void createRealmEntitiesFromProperties(Properties properties) {
 
-        StringBuffer userDefs = new StringBuffer();
-        StringBuffer roleDefs = new StringBuffer();
+        StringBuilder userDefs = new StringBuilder();
+        StringBuilder roleDefs = new StringBuilder();
 
         Enumeration<String> propNames = (Enumeration<String>) properties.propertyNames();
 
