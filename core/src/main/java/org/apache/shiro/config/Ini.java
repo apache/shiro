@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * A class representing the <a href="http://en.wikipedia.org/wiki/INI_file">INI</a> text configuration format.
@@ -303,36 +301,23 @@ public class Ini implements Map<String, Ini.Section> {
         return new ByteArrayInputStream(bytes);
     }
 
-    private static final Pattern PATTERN = Pattern.compile("(\\S+)\\s*[\\s|:|=]\\s*(.+)");
-    private static Map<String, String> toProps(String content) {
-        Map<String, String> props = new LinkedHashMap<String, String>();
-        String line = null;
+    private static Properties toProps(String content) {
+        InputStream is = toInputStream(content);
+        Properties props = new Properties();
         try {
-            BufferedReader reader = new BufferedReader(new StringReader(content));
-            while ((line = reader.readLine()) != null) {
-                Matcher matcher = PATTERN.matcher(StringUtils.clean(line));
-                if (matcher.matches() && matcher.groupCount() != 2)
-                    throw new ConfigurationException("Missing property=value assignement at line " + line);
-                String key = StringUtils.clean(matcher.group(1));
-                String value = StringUtils.clean(matcher.group(2));
-                if (key == null || value == null)
-                    throw new ConfigurationException("Missing property=value assignement at line " + line);
-                props.put(key, value);
-            }
+            props.load(is);
         } catch (IOException e) {
             throw new ConfigurationException(e);
-        } catch (IllegalStateException e) {
-            throw new ConfigurationException("Missing property=value assignement at line " + line);
         }
         return props;
     }
 
-    private void addSection(String name, CharSequence content) {
+    private void addSection(String name, StringBuffer content) {
         if (content.length() > 0) {
             String contentString = content.toString();
             String cleaned = StringUtils.clean(contentString);
             if (cleaned != null) {
-                Map<String, String> props = toProps(contentString);
+                Properties props = toProps(contentString);
                 if (!props.isEmpty()) {
                     sections.put(name, new Section(name, props));
                 }
@@ -349,7 +334,7 @@ public class Ini implements Map<String, Ini.Section> {
     public void load(Scanner scanner) {
 
         String sectionName = DEFAULT_SECTION_NAME;
-        StringBuilder sectionContent = new StringBuilder();
+        StringBuffer sectionContent = new StringBuffer();
 
         while (scanner.hasNextLine()) {
 
@@ -367,7 +352,7 @@ public class Ini implements Map<String, Ini.Section> {
                 addSection(sectionName, sectionContent);
 
                 //reset the buffer for the new section:
-                sectionContent = new StringBuilder();
+                sectionContent = new StringBuffer();
 
                 sectionName = newSectionName;
 
@@ -487,9 +472,16 @@ public class Ini implements Map<String, Ini.Section> {
             this.props = new LinkedHashMap<String, String>();
         }
 
-        private Section(String name, Map<String, String> props) {
+        private Section(String name, Properties props) {
             this(name);
-            this.props.putAll(props);
+            Enumeration propNames = props.propertyNames();
+            while (propNames != null && propNames.hasMoreElements()) {
+                String key = propNames.nextElement().toString();
+                String value = props.getProperty(key);
+                if (value != null) {
+                    this.props.put(key, value.trim());
+                }
+            }
         }
 
         private Section(Section defaults) {
