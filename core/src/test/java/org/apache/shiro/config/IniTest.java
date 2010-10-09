@@ -67,8 +67,8 @@ public class IniTest {
                 "prop2   value2" + NL +
                 "prop3:value3" + NL +
                 "prop4 : value 4" + NL +
-                //"prop5 some long \\" + NL +
-                //"      value " + NL +
+                "prop5 some long \\" + NL +
+                "      value " + NL +
                 "# comment.";
 
         Ini ini = new Ini();
@@ -80,11 +80,11 @@ public class IniTest {
         assertNotNull(section);
         assertEquals(sectionName, section.getName());
         assertFalse(section.isEmpty());
-        assertEquals(4, section.size());
+        assertEquals(5, section.size());
         assertEquals("value1", section.get("prop1"));
         assertEquals("value2", section.get("prop2"));
         assertEquals("value3", section.get("prop3"));
         assertEquals("value 4", section.get("prop4"));
-        //assertEquals("some long value", section.get("prop5"));
+        assertEquals("some long value", section.get("prop5"));
     }
 }
