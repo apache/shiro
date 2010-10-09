@@ -61,6 +61,7 @@ public class SimpleCookie implements Cookie {
     protected static final String COOKIE_HEADER_NAME = "Set-Cookie";
     protected static final String PATH_ATTRIBUTE_NAME = "Path";
     protected static final String EXPIRES_ATTRIBUTE_NAME = "Expires";
+    protected static final String MAXAGE_ATTRIBUTE_NAME = "Max-Age";
     protected static final String DOMAIN_ATTRIBUTE_NAME = "Domain";
     protected static final String VERSION_ATTRIBUTE_NAME = "Version";
     protected static final String COMMENT_ATTRIBUTE_NAME = "Comment";
@@ -281,7 +282,13 @@ public class SimpleCookie implements Cookie {
     }
 
     private void appendExpires(StringBuffer sb, int maxAge) {
-        if (maxAge > DEFAULT_MAX_AGE) {
+        // if maxAge is negative, cookie should should expire when browser closes
+        sb.append(ATTRIBUTE_DELIMITER);
+        sb.append(MAXAGE_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(maxAge);
+        // Write the expires header used by older browsers, but may be unnecessary
+        // and it is not by the spec, see http://www.faqs.org/rfcs/rfc2965.html
+        // TODO consider completely removing the following 
+        if (maxAge >= 0) {
             sb.append(ATTRIBUTE_DELIMITER);
             Date expires;
             if (maxAge == 0) {
