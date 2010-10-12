@@ -15,14 +15,19 @@
 # specific language governing permissions and limitations
 # under the License.
 
-This is not an official release notes document.  It exists for Shiro developers to jot down their notes while
-working in the source code.  These notes will be combined with Jira's auto-generated release notes during a release
-for the total set.
+This is not an official release notes document.  It exists for Shiro developers
+to jot down their notes while working in the source code.  These notes will be
+combined with Jira's auto-generated release notes during a release for the
+total set.
 
-########
+###########################################################
 # 1.1.0
-########
+###########################################################
 
+Backwards Incompatible Changes
+--------------------------------
 - The org.apache.shiro.web.util.RedirectView class's
-  appendQueryProperties(StringBuffer targetUrl, Map model, String encodingScheme) method has been marked as
-  deprecated.  It will be replaced with a StringBuilder variant for better performance in Shiro 2.x.
+  appendQueryProperties(StringBuffer targetUrl, Map model, String encodingScheme)
+  method has been changed to accept a StringBuilder argument instead of a
+  StringBuffer per SHIRO-191.  RedirectView is considered an internal
+  implementation support class and Shiro end-users should not be affected by this.
