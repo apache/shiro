@@ -53,6 +53,79 @@ public class IniTest {
     }
 
     @Test
+    public void testIsContinued() {
+        //no slashes
+        String line = "prop = value ";
+        assertFalse(Ini.Section.isContinued(line));
+
+        //1 slash (odd number, but edge case):
+        line = "prop = value" + Ini.ESCAPE_TOKEN;
+        assertTrue(Ini.Section.isContinued(line));
+
+        //2 slashes = even number
+        line = "prop = value" + Ini.ESCAPE_TOKEN + Ini.ESCAPE_TOKEN;
+        assertFalse(Ini.Section.isContinued(line));
+
+        //3 slashes = odd number
+        line = "prop = value" + Ini.ESCAPE_TOKEN + Ini.ESCAPE_TOKEN + Ini.ESCAPE_TOKEN;
+        assertTrue(Ini.Section.isContinued(line));
+    }
+
+    @Test
+    public void testSplitKeyValue() {
+        String test = "Truth Beauty";
+        String[] kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+
+        test = "Truth=Beauty";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+
+        test = "Truth:Beauty";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+
+        test = "Truth = Beauty";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+
+        test = "Truth:  Beauty";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+
+        test = "Truth  :Beauty";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+
+        test = "Truth:Beauty        ";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+
+        test = "    Truth:Beauty    ";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+
+        test = "Truth        =Beauty";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSplitKeyValueNoValue() {
+        String test = "  Truth  ";
+        Ini.Section.splitKeyValue(test);
+    }
+
+    @Test
     public void testOneSection() {
         String sectionName = "main";
         String test = NL +

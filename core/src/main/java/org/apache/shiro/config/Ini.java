@@ -41,12 +41,14 @@ public class Ini implements Map<String, Ini.Section> {
     private static transient final Logger log = LoggerFactory.getLogger(Ini.class);
 
     public static final String DEFAULT_SECTION_NAME = ""; //empty string means the first unnamed section
-    public static final String DEFAULT_CHARSET_NAME = "ISO-8859-1";
+    public static final String DEFAULT_CHARSET_NAME = "UTF-8";
 
     public static final String COMMENT_POUND = "#";
     public static final String COMMENT_SEMICOLON = ";";
     public static final String SECTION_PREFIX = "[";
     public static final String SECTION_SUFFIX = "]";
+
+    protected static final char ESCAPE_TOKEN = '\\';
 
     private final Map<String, Section> sections;
 
@@ -254,7 +256,8 @@ public class Ini implements Map<String, Ini.Section> {
 
     /**
      * Loads the INI-formatted text backed by the given InputStream into this instance.  This implementation will
-     * close the input stream after it has finished loading.
+     * close the input stream after it has finished loading.  It is expected that the stream's contents are
+     * UTF-8 encoded.
      *
      * @param is the {@code InputStream} from which to read the INI-formatted text
      * @throws ConfigurationException if unable
@@ -291,35 +294,14 @@ public class Ini implements Map<String, Ini.Section> {
         }
     }
 
-    private static InputStream toInputStream(String content) {
-        byte[] bytes;
-        try {
-            bytes = content.getBytes(DEFAULT_CHARSET_NAME);
-        } catch (UnsupportedEncodingException e) {
-            throw new ConfigurationException(e);
-        }
-        return new ByteArrayInputStream(bytes);
-    }
-
-    private static Properties toProps(String content) {
-        InputStream is = toInputStream(content);
-        Properties props = new Properties();
-        try {
-            props.load(is);
-        } catch (IOException e) {
-            throw new ConfigurationException(e);
-        }
-        return props;
-    }
-
-    private void addSection(String name, StringBuffer content) {
+    private void addSection(String name, StringBuilder content) {
         if (content.length() > 0) {
             String contentString = content.toString();
             String cleaned = StringUtils.clean(contentString);
             if (cleaned != null) {
-                Properties props = toProps(contentString);
-                if (!props.isEmpty()) {
-                    sections.put(name, new Section(name, props));
+                Section section = new Section(name, contentString);
+                if (!section.isEmpty()) {
+                    sections.put(name, section);
                 }
             }
         }
@@ -334,7 +316,7 @@ public class Ini implements Map<String, Ini.Section> {
     public void load(Scanner scanner) {
 
         String sectionName = DEFAULT_SECTION_NAME;
-        StringBuffer sectionContent = new StringBuffer();
+        StringBuilder sectionContent = new StringBuilder();
 
         while (scanner.hasNextLine()) {
 
@@ -352,7 +334,7 @@ public class Ini implements Map<String, Ini.Section> {
                 addSection(sectionName, sectionContent);
 
                 //reset the buffer for the new section:
-                sectionContent = new StringBuffer();
+                sectionContent = new StringBuilder();
 
                 sectionName = newSectionName;
 
@@ -460,7 +442,7 @@ public class Ini implements Map<String, Ini.Section> {
      * An {@code Ini.Section} is String-key-to-String-value Map, identifiable by a
      * {@link #getName() name} unique within an {@link Ini} instance.
      */
-    public class Section implements Map<String, String> {
+    public static class Section implements Map<String, String> {
         private final String name;
         private final Map<String, String> props;
 
@@ -472,21 +454,121 @@ public class Ini implements Map<String, Ini.Section> {
             this.props = new LinkedHashMap<String, String>();
         }
 
-        private Section(String name, Properties props) {
-            this(name);
-            Enumeration propNames = props.propertyNames();
-            while (propNames != null && propNames.hasMoreElements()) {
-                String key = propNames.nextElement().toString();
-                String value = props.getProperty(key);
-                if (value != null) {
-                    this.props.put(key, value.trim());
-                }
+        private Section(String name, String sectionContent) {
+            if (name == null) {
+                throw new NullPointerException("name");
+            }
+            this.name = name;
+            Map<String,String> props;
+            if (StringUtils.hasText(sectionContent) ) {
+                props = toMapProps(sectionContent);
+            } else {
+                props = new LinkedHashMap<String,String>();
+            }
+            if ( props != null ) {
+                this.props = props;
+            } else {
+                this.props = new LinkedHashMap<String,String>();
             }
         }
 
         private Section(Section defaults) {
             this(defaults.getName());
             putAll(defaults.props);
+        }
+
+        //Protected to access in a test case - NOT considered part of Shiro's public API
+
+        protected static boolean isContinued(String line) {
+            if (line == null || line.isEmpty()) {
+                return false;
+            }
+            int length = line.length();
+            //find the number of backslashes at the end of the line.  If an even number, the
+            //backslashes are considered escaped.  If an odd number, the line is considered continued on the next line
+            int backslashCount = 0;
+            for (int i = length - 1; i > 0; i--) {
+                if (line.charAt(i) == ESCAPE_TOKEN) {
+                    backslashCount++;
+                } else {
+                    break;
+                }
+            }
+            return backslashCount % 2 != 0;
+        }
+
+        private static boolean isKeyValueSeparatorChar(char c) {
+            return Character.isWhitespace(c) || c == ':' || c == '=';
+        }
+
+        private static boolean isCharEscaped(CharSequence s, int index) {
+            return index > 0 && s.charAt(index - 1) == ESCAPE_TOKEN;
+        }
+
+        //Protected to access in a test case - NOT considered part of Shiro's public API
+        protected static String[] splitKeyValue(String keyValueLine) {
+            String line = StringUtils.clean(keyValueLine);
+            if (line == null) {
+                return null;
+            }
+            StringBuilder keyBuffer = new StringBuilder();
+            StringBuilder valueBuffer = new StringBuilder();
+
+            boolean buildingKey = true; //we'll build the value next:
+
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+
+                if (buildingKey) {
+                    if (isKeyValueSeparatorChar(c) && !isCharEscaped(line, i)) {
+                        buildingKey = false;//now start building the value
+                    } else {
+                        keyBuffer.append(c);
+                    }
+                } else {
+                    if (valueBuffer.length() == 0 && isKeyValueSeparatorChar(c) && !isCharEscaped(line, i)) {
+                        //swallow the separator chars before we start building the value
+                    } else {
+                        valueBuffer.append(c);
+                    }
+                }
+            }
+
+            String key = StringUtils.clean(keyBuffer.toString());
+            String value = StringUtils.clean(valueBuffer.toString());
+
+            if (key == null || value == null) {
+                String msg = "Line argument must contain a key and a value.  Only one string token was found.";
+                throw new IllegalArgumentException(msg);
+            }
+
+            log.trace("Discovered key/value pair: {}={}", key, value);
+
+            return new String[]{key, value};
+        }
+
+        private static Map<String, String> toMapProps(String content) {
+            Map<String, String> props = new LinkedHashMap<String, String>();
+            String line;
+            StringBuilder lineBuffer = new StringBuilder();
+            Scanner scanner = new Scanner(content);
+            while (scanner.hasNextLine()) {
+                line = StringUtils.clean(scanner.nextLine());
+                if (isContinued(line)) {
+                    //strip off the last continuation backslash:
+                    line = line.substring(0, line.length() - 1);
+                    lineBuffer.append(line);
+                    continue;
+                } else {
+                    lineBuffer.append(line);
+                }
+                line = lineBuffer.toString();
+                lineBuffer = new StringBuilder();
+                String[] kvPair = splitKeyValue(line);
+                props.put(kvPair[0], kvPair[1]);
+            }
+
+            return props;
         }
 
         public String getName() {
