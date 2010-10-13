@@ -272,7 +272,10 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
         if (activeSessions != null && !activeSessions.isEmpty()) {
             for (Session s : activeSessions) {
                 try {
-                    doValidate(s);
+                    //simulate a lookup key to satisfy the method signature.
+                    //this could probably stand to be cleaned up in future versions:
+                    SessionKey key = new DefaultSessionKey(s.getId());
+                    validate(s, key);
                 } catch (InvalidSessionException e) {
                     if (log.isDebugEnabled()) {
                         boolean expired = (e instanceof ExpiredSessionException);
