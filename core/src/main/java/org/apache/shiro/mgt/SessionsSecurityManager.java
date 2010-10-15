@@ -128,5 +128,6 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     public void destroy() {
         LifecycleUtils.destroy(getSessionManager());
         this.sessionManager = null;
+        super.destroy();
     }
 }
