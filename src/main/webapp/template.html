@@ -31,53 +31,50 @@
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>Apache Shiro - Java Security Framework</title>
+    <title>Apache Shiro - $title</title>
 
     <link rel="stylesheet" type="text/css"
           href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css">
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.1/build/base/base-min.css">
-    <link rel="stylesheet" type="text/css" href="/static/assets/js/superfish-1.4.8/css/superfish.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="/static/assets/css/confluence.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="/static/assets/css/style.css"/>
-    <link rel="icon" type="image/vnd.microsoft.icon" href="/static/assets/images/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="$assets/js/superfish-1.4.8/css/superfish.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="$assets/css/confluence.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="$assets/css/style.css"/>
+    <link rel="icon" type="image/vnd.microsoft.icon" href="$assets/images/favicon.ico">
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-    <script type="text/javascript" src="/static/assets/js/jquery_gradient/jquery.dimensions.js"></script>
-    <script type="text/javascript" src="/static/assets/js/jquery_gradient/jquery.gradient.js"></script>
-    <script type="text/javascript" src="/static/assets/js/superfish-1.4.8/js/hoverIntent.js"></script>
-    <script type="text/javascript" src="/static/assets/js/superfish-1.4.8/js/superfish.js"></script>
-    <script type="text/javascript" src="/static/assets/js/superfish-1.4.8/js/supersubs.js"></script>
-    <script type="text/javascript" src="/static/assets/js/jquery_googleanalytics/jquery.google-analytics.js"></script>
+    <script type="text/javascript" src="$assets/js/jquery_gradient/jquery.dimensions.js"></script>
+    <script type="text/javascript" src="$assets/js/jquery_gradient/jquery.gradient.js"></script>
+    <!-- <script type="text/javascript" src="$assets/js/jquerycurvycorners-2.1.1/jquery.curvycorners.min.js"></script> -->
+    <script type="text/javascript" src="$assets/js/superfish-1.4.8/js/hoverIntent.js"></script>
+    <script type="text/javascript" src="$assets/js/superfish-1.4.8/js/superfish.js"></script>
+    <script type="text/javascript" src="$assets/js/superfish-1.4.8/js/supersubs.js"></script>
+    <script type="text/javascript" src="$assets/js/jquery_googleanalytics/jquery.google-analytics.js"></script>
     <script type="text/javascript">
-        // initialise plugins
-
-        //note that we can't use the simplified dollar-sign based jquery notation as it messes with
-        //velocity's variable reference syntax.  Since the dollar sign is just an alias for the 'jQuery' global
-        //object, we use 'jQuery' explicitly below instead to avoid this conflict:
+        // initialize plugins
         jQuery(function() {
 
             //Nav bar gradient shading:
-            $('#navlist').gradient({
+            jQuery('#navlist').gradient({
                 from:      '4273ca',
                 to:        '03148f',
                 direction: 'horizontal'
             });
-            $('#navlist li').gradient({
+            jQuery('#navlist li').gradient({
                 from:      '4273ca',
                 to:        '03148f',
                 direction: 'horizontal'
             });
-            $('#navlist ul').gradient({
+            jQuery('#navlist ul').gradient({
                 from:      '4273ca',
                 to:        '03148f',
                 direction: 'horizontal'
             });
 
             //Nav bar: Supersubs dropdown menus
-            $('ul.sf-menu').supersubs({extraWidth: 1}).superfish({animation:{opacity:'show',height:'show'}});
+            jQuery('ul.sf-menu').supersubs({extraWidth: 1}).superfish({animation:{opacity:'show',height:'show'}});
 
             //Google Analytics
-            $.trackPage('UA-11551827-1');
+            jQuery.trackPage('UA-11551827-1');
         });
     </script>
 </head>
@@ -86,7 +83,7 @@
     <div id="page">
 
         <div id="header">
-            <img src="/static/assets/images/shiro_logo_484x170.png" alt="Apache Shiro"/>
+            <img src="$assets/images/shiro_logo_484x170.png" alt="Apache Shiro"/>
             <div id="navbar">
                 #set($child = $pageManager.getPage($page.space.key,"Navigation"))
                 #set($content = $renderer.convertWikiToXHtml($child.toPageContext(), $child.content).trim())
