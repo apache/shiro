@@ -27,13 +27,13 @@ import java.io.Serializable;
  * <code>AuthenticationInfo</code> represents a Subject's (aka user's) stored account information relevant to the
  * authentication/log-in process only.
  * <p/>
- * It is important to understand the differnce between this interface and the
+ * It is important to understand the difference between this interface and the
  * {@link AuthenticationToken AuthenticationToken} interface.  <code>AuthenticationInfo</code> implementations
  * represent already-verified and stored account data, whereas an <code>AuthenticationToken</code> represents data
  * submitted for any given login attempt (which may or may not successfully match the verified and stored account
  * <code>AuthenticationInfo</code>).
  * <p/>
- * Because the act of authentication (log-in) is orthoganal to authorization (access control), this interface is
+ * Because the act of authentication (log-in) is orthogonal to authorization (access control), this interface is
  * intended to represent only the account data needed by Shiro during an authentication attempt.  Shiro also
  * has a parallel {@link org.apache.shiro.authz.AuthorizationInfo AuthorizationInfo} interface for use during the
  * authorization process that references access control data such as roles and permissions.

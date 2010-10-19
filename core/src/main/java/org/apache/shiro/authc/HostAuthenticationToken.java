@@ -24,7 +24,7 @@ package org.apache.shiro.authc;
  *
  * @since 1.0
  */
-public interface HostAuthenticationToken {
+public interface HostAuthenticationToken extends AuthenticationToken {
 
     /**
      * Returns the host name of the client from where the
