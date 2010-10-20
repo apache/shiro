@@ -19,9 +19,11 @@
 package org.apache.shiro.util;
 
 /**
- * A {@code ByteSource} wraps a byte array and provides additional encoding operations.
+ * A {@code ByteSource} wraps a byte array and provides additional encoding operations.  Most users will find
+ * that the {@link SimpleByteSource SimpleByteSource} implementation meets most needs.
  *
  * @since 1.0
+ * @see SimpleByteSource
  */
 public interface ByteSource {
 
