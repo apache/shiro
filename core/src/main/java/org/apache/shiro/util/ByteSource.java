@@ -39,7 +39,6 @@ public interface ByteSource {
      * @return the <a href="http://en.wikipedia.org/wiki/Hexadecimal">Hex</a>-formatted String representation of the
      *         underlying wrapped byte array.
      */
-    @SuppressWarnings({"UnusedDeclaration"})
     public String toHex();
 
     /**

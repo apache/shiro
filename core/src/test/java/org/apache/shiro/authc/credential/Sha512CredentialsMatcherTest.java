@@ -25,7 +25,7 @@ import org.apache.shiro.crypto.hash.Sha512Hash;
 /**
  * @since Jun 10, 2008 5:02:58 PM
  */
-public class Sha512CredentialsMatcherTest extends HashedCredentialsMatcherTest {
+public class Sha512CredentialsMatcherTest extends AbstractHashedCredentialsMatcherTest {
 
     public Class<? extends HashedCredentialsMatcher> getMatcherClass() {
         return Sha512CredentialsMatcher.class;

@@ -25,7 +25,7 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
 /**
  * @since Jun 10, 2008 5:01:00 PM
  */
-public class Sha256CredentialsMatcherTest extends HashedCredentialsMatcherTest {
+public class Sha256CredentialsMatcherTest extends AbstractHashedCredentialsMatcherTest {
 
     public Class<? extends HashedCredentialsMatcher> getMatcherClass() {
         return Sha256CredentialsMatcher.class;
