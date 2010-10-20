@@ -25,7 +25,7 @@ import org.apache.shiro.crypto.hash.Sha384Hash;
 /**
  * @since Jun 10, 2008 5:02:27 PM
  */
-public class Sha384CredentialsMatcherTest extends HashedCredentialsMatcherTest {
+public class Sha384CredentialsMatcherTest extends AbstractHashedCredentialsMatcherTest {
 
     public Class<? extends HashedCredentialsMatcher> getMatcherClass() {
         return Sha384CredentialsMatcher.class;

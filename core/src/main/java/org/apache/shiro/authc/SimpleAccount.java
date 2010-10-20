@@ -22,6 +22,7 @@ import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -35,7 +36,7 @@ import java.util.Set;
  *
  * @since 0.1
  */
-public class SimpleAccount implements Account, MergableAuthenticationInfo, Serializable {
+public class SimpleAccount implements Account, MergableAuthenticationInfo, SaltedAuthenticationInfo, Serializable {
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -65,6 +66,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+
     /**
      * Default no-argument constructor.
      */
@@ -80,6 +82,22 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
      */
     public SimpleAccount(Object principal, Object credentials, String realmName) {
         this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal : new SimplePrincipalCollection(principal, realmName), credentials);
+    }
+
+    /**
+     * Constructs a SimpleAccount instance for the specified realm with the given principals, hashedCredentials and
+     * credentials salt used when hashing the credentials.
+     *
+     * @param principal         the 'primary' identifying attribute of the account, for example, a user id or username.
+     * @param hashedCredentials the credentials that verify identity for the account
+     * @param credentialsSalt   the salt used when hashing the credentials
+     * @param realmName         the name of the realm that accesses this account data
+     * @see org.apache.shiro.authc.credential.HashedCredentialsMatcher HashedCredentialsMatcher
+     * @since 1.1
+     */
+    public SimpleAccount(Object principal, Object hashedCredentials, ByteSource credentialsSalt, String realmName) {
+        this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal : new SimplePrincipalCollection(principal, realmName),
+                hashedCredentials, credentialsSalt);
     }
 
     /**
@@ -103,6 +121,21 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
      */
     public SimpleAccount(PrincipalCollection principals, Object credentials) {
         this.authcInfo = new SimpleAuthenticationInfo(principals, credentials);
+        this.authzInfo = new SimpleAuthorizationInfo();
+    }
+
+    /**
+     * Constructs a SimpleAccount instance for the specified principals and credentials.
+     *
+     * @param principals        the identifying attributes of the account, at least one of which should be considered the
+     *                          account's 'primary' identifying attribute, for example, a user id or username.
+     * @param hashedCredentials the hashed credentials that verify identity for the account
+     * @param credentialsSalt   the salt used when hashing the credentials
+     * @see org.apache.shiro.authc.credential.HashedCredentialsMatcher HashedCredentialsMatcher
+     * @since 1.1
+     */
+    public SimpleAccount(PrincipalCollection principals, Object hashedCredentials, ByteSource credentialsSalt) {
+        this.authcInfo = new SimpleAuthenticationInfo(principals, hashedCredentials, credentialsSalt);
         this.authzInfo = new SimpleAuthorizationInfo();
     }
 
@@ -213,6 +246,30 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Seria
      */
     public void setCredentials(Object credentials) {
         this.authcInfo.setCredentials(credentials);
+    }
+
+    /**
+     * Returns the salt used to hash this Account's credentials (eg for password hashing), or {@code null} if no salt
+     * was used or credentials were not hashed at all.
+     *
+     * @return the salt used to hash this Account's credentials (eg for password hashing), or {@code null} if no salt
+     *         was used or credentials were not hashed at all.
+     * @since 1.1
+     */
+    public ByteSource getCredentialsSalt() {
+        return this.authcInfo.getCredentialsSalt();
+    }
+
+    /**
+     * Sets the salt to use to hash this Account's credentials (eg for password hashing), or {@code null} if no salt
+     * is used or credentials are not hashed at all.
+     *
+     * @param salt the salt to use to hash this Account's credentials (eg for password hashing), or {@code null} if no
+     *             salt is used or credentials are not hashed at all.
+     * @since 1.1
+     */
+    public void setSalt(ByteSource salt) {
+        this.authcInfo.setSalt(salt);
     }
 
     /**

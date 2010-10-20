@@ -25,7 +25,7 @@ import org.apache.shiro.crypto.hash.Md2Hash;
 /**
  * @since Jun 10, 2008 4:38:16 PM
  */
-public class Md2CredentialsMatcherTest extends HashedCredentialsMatcherTest {
+public class Md2CredentialsMatcherTest extends AbstractHashedCredentialsMatcherTest {
 
     public Class<? extends HashedCredentialsMatcher> getMatcherClass() {
         return Md2CredentialsMatcher.class;

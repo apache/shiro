@@ -18,32 +18,100 @@
  */
 package org.apache.shiro.authc.credential;
 
-import junit.framework.TestCase;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Sha1Hash;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.junit.Test;
 
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.crypto.hash.AbstractHash;
-import org.apache.shiro.util.ClassUtils;
-
+import static org.junit.Assert.*;
 
 /**
- * @since Jun 10, 2008 4:47:09 PM
+ * Tests for the {@link org.apache.shiro.authc.credential.HashedCredentialsMatcher} class.
  */
-public abstract class HashedCredentialsMatcherTest extends TestCase {
+public class HashedCredentialsMatcherTest {
 
-    public abstract Class<? extends HashedCredentialsMatcher> getMatcherClass();
-
-    public abstract AbstractHash hash(Object credentials);
-
+    /**
+     * Test new Shiro 1.1 functionality, where the salt is obtained from the stored account information, as it
+     * should be.  See <a href="https://issues.apache.org/jira/browse/SHIRO-186">SHIRO-186</a>
+     */
     @Test
-    public void testBasic() {
-        CredentialsMatcher matcher = (CredentialsMatcher) ClassUtils.newInstance(getMatcherClass());
-        byte[] hashed = hash("password").getBytes();
-        AuthenticationInfo account = new SimpleAuthenticationInfo("username", hashed, "realmName");
+    public void testSaltedAuthenticationInfo() {
+        //use SHA-1 hashing in this test:
+        HashedCredentialsMatcher matcher = new Sha1CredentialsMatcher();
+
+        //simulate a user account with a SHA-1 hashed and salted password:
+        ByteSource salt = new SecureRandomNumberGenerator().nextBytes();
+        Object hashedPassword = new Sha1Hash("password", salt);
+        SimpleAuthenticationInfo account = new SimpleAuthenticationInfo("username", hashedPassword, salt, "realmName");
+
+        //simulate a username/password (plaintext) token created in response to a login attempt:
         AuthenticationToken token = new UsernamePasswordToken("username", "password");
+
+        //verify the hashed token matches what is in the account:
+        assertTrue(matcher.doCredentialsMatch(token, account));
+    }
+
+    /**
+     * Test backwards compatibility of unsalted credentials before
+     * <a href="https://issues.apache.org/jira/browse/SHIRO-186">SHIRO-186</a> edits.
+     */
+    @Test
+    public void testBackwardsCompatibleUnsaltedAuthenticationInfo() {
+        HashedCredentialsMatcher matcher = new Sha1CredentialsMatcher();
+
+        //simulate an account with SHA-1 hashed password (no salt)
+        final String username = "username";
+        final String password = "password";
+        final Object hashedPassword = new Sha1Hash(password).getBytes();
+        AuthenticationInfo account = new AuthenticationInfo() {
+            public PrincipalCollection getPrincipals() {
+                return new SimplePrincipalCollection(username, "realmName");
+            }
+
+            public Object getCredentials() {
+                return hashedPassword;
+            }
+        };
+
+        //simulate a username/password (plaintext) token created in response to a login attempt:
+        AuthenticationToken token = new UsernamePasswordToken("username", "password");
+
+        //verify the hashed token matches what is in the account:
+        assertTrue(matcher.doCredentialsMatch(token, account));
+    }
+
+    /**
+     * Test backwards compatibility of salted credentials before
+     * <a href="https://issues.apache.org/jira/browse/SHIRO-186">SHIRO-186</a> edits.
+     */
+    @Test
+    public void testBackwardsCompatibleSaltedAuthenticationInfo() {
+        HashedCredentialsMatcher matcher = new Sha1CredentialsMatcher();
+        //enable this for Shiro 1.0 backwards compatibility:
+        matcher.setHashSalted(true);
+
+        //simulate an account with SHA-1 hashed password, using the username as the salt
+        //(BAD IDEA, but backwards-compatible):
+        final String username = "username";
+        final String password = "password";
+        final Object hashedPassword = new Sha1Hash(password, username).getBytes();
+        AuthenticationInfo account = new AuthenticationInfo() {
+            public PrincipalCollection getPrincipals() {
+                return new SimplePrincipalCollection(username, "realmName");
+            }
+
+            public Object getCredentials() {
+                return hashedPassword;
+            }
+        };
+
+        //simulate a username/password (plaintext) token created in response to a login attempt:
+        AuthenticationToken token = new UsernamePasswordToken("username", "password");
+
+        //verify the hashed token matches what is in the account:
         assertTrue(matcher.doCredentialsMatch(token, account));
     }
 }

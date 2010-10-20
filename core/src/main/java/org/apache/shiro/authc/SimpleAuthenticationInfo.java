@@ -21,6 +21,7 @@ package org.apache.shiro.authc;
 import org.apache.shiro.subject.MutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,7 +35,7 @@ import java.util.Set;
  * @see org.apache.shiro.realm.AuthenticatingRealm
  * @since 0.9
  */
-public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
+public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, SaltedAuthenticationInfo {
 
     /**
      * The principals identifying the account associated with this AuthenticationInfo instance.
@@ -44,6 +45,13 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
      * The credentials verifying the account principals.
      */
     protected Object credentials;
+
+    /**
+     * Any salt used in hashing the credentials.
+     *
+     * @since 1.1
+     */
+    protected ByteSource salt;
 
     /**
      * Default no-argument constructor.
@@ -56,7 +64,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
      * associated with the specified realm.
      * <p/>
      * This is a convenience constructor and will construct a {@link PrincipalCollection PrincipalCollection} based
-     * on the <code>principal</code> and <code>realmName</code> argument.
+     * on the {@code principal} and {@code realmName} argument.
      *
      * @param principal   the 'primary' principal associated with the specified realm.
      * @param credentials the credentials that verify the given principal.
@@ -65,6 +73,26 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
     public SimpleAuthenticationInfo(Object principal, Object credentials, String realmName) {
         this.principals = new SimplePrincipalCollection(principal, realmName);
         this.credentials = credentials;
+    }
+
+    /**
+     * Constructor that takes in a single 'primary' principal of the account, its corresponding hashed credentials,
+     * the salt used to hash the credentials, and the name of the realm to associate with the principals.
+     * <p/>
+     * This is a convenience constructor and will construct a {@link PrincipalCollection PrincipalCollection} based
+     * on the <code>principal</code> and <code>realmName</code> argument.
+     *
+     * @param principal         the 'primary' principal associated with the specified realm.
+     * @param hashedCredentials the hashed credentials that verify the given principal.
+     * @param credentialsSalt   the salt used when hashing the given hashedCredentials
+     * @param realmName         the realm from where the principal and credentials were acquired.
+     * @see org.apache.shiro.authc.credential.HashedCredentialsMatcher HashedCredentialsMatcher
+     * @since 1.1
+     */
+    public SimpleAuthenticationInfo(Object principal, Object hashedCredentials, ByteSource credentialsSalt, String realmName) {
+        this.principals = new SimplePrincipalCollection(principal, realmName);
+        this.credentials = hashedCredentials;
+        this.salt = credentialsSalt;
     }
 
     /**
@@ -77,6 +105,22 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
     public SimpleAuthenticationInfo(PrincipalCollection principals, Object credentials) {
         this.principals = new SimplePrincipalCollection(principals);
         this.credentials = credentials;
+    }
+
+    /**
+     * Constructor that takes in an account's identifying principal(s), hashed credentials used to verify the
+     * principals, and the salt used when hashing the credentials.
+     *
+     * @param principals        a Realm's account's identifying principal(s)
+     * @param hashedCredentials the hashed credentials that verify the principals.
+     * @param credentialsSalt   the salt used when hashing the hashedCredentials.
+     * @see org.apache.shiro.authc.credential.HashedCredentialsMatcher HashedCredentialsMatcher
+     * @since 1.1
+     */
+    public SimpleAuthenticationInfo(PrincipalCollection principals, Object hashedCredentials, ByteSource credentialsSalt) {
+        this.principals = new SimplePrincipalCollection(principals);
+        this.credentials = hashedCredentials;
+        this.salt = credentialsSalt;
     }
 
 
@@ -107,6 +151,40 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
     }
 
     /**
+     * Returns the salt used to hash the credentials, or {@code null} if no salt was used or credentials were not
+     * hashed at all.
+     * <p/>
+     * Note that this attribute is <em>NOT</em> handled in the
+     * {@link #merge(AuthenticationInfo) merge} method - a hash salt is only useful within a single realm (as each
+     * realm will perform it's own Credentials Matching logic), and once finished in that realm, Shiro has no further
+     * use for salts.  Therefore it doesn't make sense to 'merge' salts in a multi-realm scenario.
+     *
+     * @return the salt used to hash the credentials, or {@code null} if no salt was used or credentials were not
+     *         hashed at all.
+     * @since 1.1
+     */
+    public ByteSource getCredentialsSalt() {
+        return salt;
+    }
+
+    /**
+     * Sets the salt used to hash the credentials, or {@code null} if no salt was used or credentials were not
+     * hashed at all.
+     * <p/>
+     * Note that this attribute is <em>NOT</em> handled in the
+     * {@link #merge(AuthenticationInfo) merge} method - a hash salt is only useful within a single realm (as each
+     * realm will perform it's own Credentials Matching logic), and once finished in that realm, Shiro has no further
+     * use for salts.  Therefore it doesn't make sense to 'merge' salts in a multi-realm scenario.
+     *
+     * @param salt the salt used to hash the credentials, or {@code null} if no salt was used or credentials were not
+     *             hashed at all.
+     * @since 1.1
+     */
+    public void setSalt(ByteSource salt) {
+        this.salt = salt;
+    }
+
+    /**
      * Takes the specified <code>info</code> argument and adds its principals and credentials into this instance.
      *
      * @param info the <code>AuthenticationInfo</code> to add into this instance.
@@ -124,7 +202,17 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo {
                 this.principals = new SimplePrincipalCollection(this.principals);
             }
             ((MutablePrincipalCollection) this.principals).addAll(info.getPrincipals());
-        }         
+        }
+
+        //only mess with a salt value if we don't have one yet.  It doesn't make snese
+        //to merge salt values from different realms because a salt is used only within
+        //the realm's credential matching process.  But if the current instance's salt
+        //is null, then it can't hurt to pull in a non-null value if one exists.
+        //
+        //since 1.1:
+        if (this.salt == null && info instanceof SaltedAuthenticationInfo) {
+            this.salt = ((SaltedAuthenticationInfo) info).getCredentialsSalt();
+        }
 
         Object thisCredentials = getCredentials();
         Object otherCredentials = info.getCredentials();

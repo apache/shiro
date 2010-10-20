@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.crypto.hash;
 
+import org.apache.shiro.util.ByteSource;
+
 /**
  * A Cryptographic {@code Hash} represents a one-way conversion algorithm that transforms an input source to an
  * underlying byte array.
@@ -31,7 +33,7 @@ package org.apache.shiro.crypto.hash;
  * @see Sha512Hash
  * @since 0.9
  */
-public interface Hash {
+public interface Hash extends ByteSource {
 
     /**
      * Returns this Hash's byte array, that is, the hashed value of the original input source.
