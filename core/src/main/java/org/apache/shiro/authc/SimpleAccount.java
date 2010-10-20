@@ -268,8 +268,8 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      *             salt is used or credentials are not hashed at all.
      * @since 1.1
      */
-    public void setSalt(ByteSource salt) {
-        this.authcInfo.setSalt(salt);
+    public void setCredentialsSalt(ByteSource salt) {
+        this.authcInfo.setCredentialsSalt(salt);
     }
 
     /**
