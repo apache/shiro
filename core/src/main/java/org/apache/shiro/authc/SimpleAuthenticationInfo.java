@@ -51,7 +51,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      *
      * @since 1.1
      */
-    protected ByteSource salt;
+    protected ByteSource credentialsSalt;
 
     /**
      * Default no-argument constructor.
@@ -92,7 +92,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
     public SimpleAuthenticationInfo(Object principal, Object hashedCredentials, ByteSource credentialsSalt, String realmName) {
         this.principals = new SimplePrincipalCollection(principal, realmName);
         this.credentials = hashedCredentials;
-        this.salt = credentialsSalt;
+        this.credentialsSalt = credentialsSalt;
     }
 
     /**
@@ -120,7 +120,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
     public SimpleAuthenticationInfo(PrincipalCollection principals, Object hashedCredentials, ByteSource credentialsSalt) {
         this.principals = new SimplePrincipalCollection(principals);
         this.credentials = hashedCredentials;
-        this.salt = credentialsSalt;
+        this.credentialsSalt = credentialsSalt;
     }
 
 
@@ -164,7 +164,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      * @since 1.1
      */
     public ByteSource getCredentialsSalt() {
-        return salt;
+        return credentialsSalt;
     }
 
     /**
@@ -180,8 +180,8 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      *             hashed at all.
      * @since 1.1
      */
-    public void setSalt(ByteSource salt) {
-        this.salt = salt;
+    public void setCredentialsSalt(ByteSource salt) {
+        this.credentialsSalt = salt;
     }
 
     /**
@@ -204,14 +204,14 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
             ((MutablePrincipalCollection) this.principals).addAll(info.getPrincipals());
         }
 
-        //only mess with a salt value if we don't have one yet.  It doesn't make snese
+        //only mess with a salt value if we don't have one yet.  It doesn't make sense
         //to merge salt values from different realms because a salt is used only within
         //the realm's credential matching process.  But if the current instance's salt
         //is null, then it can't hurt to pull in a non-null value if one exists.
         //
         //since 1.1:
-        if (this.salt == null && info instanceof SaltedAuthenticationInfo) {
-            this.salt = ((SaltedAuthenticationInfo) info).getCredentialsSalt();
+        if (this.credentialsSalt == null && info instanceof SaltedAuthenticationInfo) {
+            this.credentialsSalt = ((SaltedAuthenticationInfo) info).getCredentialsSalt();
         }
 
         Object thisCredentials = getCredentials();
