@@ -25,6 +25,8 @@ import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.hash.AbstractHash;
 import org.apache.shiro.crypto.hash.Hash;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.StringUtils;
 
 /**
  * A {@code HashedCredentialMatcher} provides support for hashing of supplied {@code AuthenticationToken} credentials
@@ -115,11 +117,65 @@ import org.apache.shiro.crypto.hash.Hash;
  * @see org.apache.shiro.crypto.hash.Sha256Hash
  * @since 0.9
  */
-public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
+public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
 
-    private boolean storedCredentialsHexEncoded = true; //false means base64 encoded
-    private boolean hashSalted = false;
-    private int hashIterations = 1;
+    /**
+     * @since 1.1
+     */
+    private String hashAlgorithm;
+    private int hashIterations;
+    private boolean hashSalted;
+    private boolean storedCredentialsHexEncoded;
+
+    /**
+     * JavaBeans-compatibile no-arg constructor intended for use in IoC/Dependency Injection environments.  If you
+     * use this constructor, you <em>MUST</em> set the hash algorithm name
+     */
+    public HashedCredentialsMatcher() {
+        this.hashAlgorithm = null;
+        this.hashSalted = false;
+        this.hashIterations = 1;
+        this.storedCredentialsHexEncoded = true; //false means Base64-encoded
+    }
+
+    /**
+     * Creates an instance using the specified {@link #getHashAlgorithmName() hashAlgorithmName} to hash submitted
+     * credentials.
+     * @param hashAlgorithmName the {@code Hash} {@link org.apache.shiro.crypto.hash.Hash#getAlgorithmName() algorithmName}
+     *                          to use when performing hashes for credentials matching.
+     * @since 1.1
+     */
+    public HashedCredentialsMatcher(String hashAlgorithmName) {
+        this();
+        if (!StringUtils.hasText(hashAlgorithmName) ) {
+            throw new IllegalArgumentException("hashAlgorithmName cannot be null or empty.");
+        }
+        this.hashAlgorithm = hashAlgorithmName;
+    }
+
+    /**
+     * Returns the {@code Hash} {@link org.apache.shiro.crypto.hash.Hash#getAlgorithmName() algorithmName} to use
+     * when performing hashes for credentials matching.
+     *
+     * @return the {@code Hash} {@link org.apache.shiro.crypto.hash.Hash#getAlgorithmName() algorithmName} to use
+     *         when performing hashes for credentials matching.
+     * @since 1.1
+     */
+    public String getHashAlgorithmName() {
+        return hashAlgorithm;
+    }
+
+    /**
+     * Sets the {@code Hash} {@link org.apache.shiro.crypto.hash.Hash#getAlgorithmName() algorithmName} to use
+     * when performing hashes for credentials matching.
+     *
+     * @param hashAlgorithmName the {@code Hash} {@link org.apache.shiro.crypto.hash.Hash#getAlgorithmName() algorithmName}
+     *                          to use when performing hashes for credentials matching.
+     * @since 1.1
+     */
+    public void setHashAlgorithmName(String hashAlgorithmName) {
+        this.hashAlgorithm = hashAlgorithmName;
+    }
 
     /**
      * Returns {@code true} if the system's stored credential hash is Hex encoded, {@code false} if it
@@ -356,8 +412,26 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
     }
 
     /**
+     * Returns the {@link #getHashAlgorithmName() hashAlgorithmName} property, but will throw an
+     * {@link IllegalStateException} if it has not been set.
+     *
+     * @return the required {@link #getHashAlgorithmName() hashAlgorithmName} property
+     * @throws IllegalStateException if the property has not been set prior to calling this method.
+     * @since 1.1
+     */
+    private String assertHashAlgorithmName() throws IllegalStateException {
+        String hashAlgorithmName = getHashAlgorithmName();
+        if (hashAlgorithmName == null) {
+            String msg = "Required 'hashAlgorithmName' property has not been set.  This is required to execute " +
+                    "the hashing algorithm.";
+            throw new IllegalStateException(msg);
+        }
+        return hashAlgorithmName;
+    }
+
+    /**
      * Hashes the provided credentials a total of {@code hashIterations} times, using the given salt.  The hash
-     * implementation/algorithm used is left to subclasses.
+     * implementation/algorithm used is based on the {@link #getHashAlgorithmName() hashAlgorithmName} property.
      *
      * @param credentials    the submitted authentication token's credentials to hash
      * @param salt           the value to salt the hash, or {@code null} if a salt will not be used.
@@ -365,7 +439,10 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      *                       even if this argument is 0 or negative.
      * @return the hashed value of the provided credentials, according to the specified salt and hash iterations.
      */
-    protected abstract Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations);
+    protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
+        String hashAlgorithmName = assertHashAlgorithmName();
+        return new SimpleHash(hashAlgorithmName, credentials, salt, hashIterations);
+    }
 
     /**
      * Returns a new, <em>uninitialized</em> instance, without its byte array set.  Used as a utility method in the
@@ -373,6 +450,9 @@ public abstract class HashedCredentialsMatcher extends SimpleCredentialsMatcher 
      *
      * @return a new, <em>uninitialized</em> instance, without its byte array set.
      */
-    protected abstract AbstractHash newHashInstance();
+    protected AbstractHash newHashInstance() {
+        String hashAlgorithmName = assertHashAlgorithmName();
+        return new SimpleHash(hashAlgorithmName);
+    }
 
 }

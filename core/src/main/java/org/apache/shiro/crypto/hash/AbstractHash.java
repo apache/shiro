@@ -40,7 +40,9 @@ import java.util.Arrays;
  * overloaded constructors.
  *
  * @since 0.9
+ * @deprecated in Shiro 1.1 in favor of using the concrete {@link SimpleHash} implementation directly.
  */
+@Deprecated
 public abstract class AbstractHash extends CodecSupport implements Hash, Serializable {
 
     /**
@@ -134,12 +136,12 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
     }
 
     /**
-     * Implemented by subclasses, this specifies the name of the {@link MessageDigest MessageDigest} algorithm
+     * Implemented by subclasses, this specifies the {@link MessageDigest MessageDigest} algorithm name 
      * to use when performing the hash.
      *
-     * @return the {@link MessageDigest MessageDigest} algorithm to use when performing the hash.
+     * @return the {@link MessageDigest MessageDigest} algorithm name to use when performing the hash.
      */
-    protected abstract String getAlgorithmName();
+    public abstract String getAlgorithmName();
 
     public byte[] getBytes() {
         return this.bytes;

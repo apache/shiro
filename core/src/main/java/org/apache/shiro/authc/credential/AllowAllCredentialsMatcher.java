@@ -22,7 +22,7 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
- * A credentials matcher that always returns <tt>true</tt> when matching credentials no matter what arguments
+ * A credentials matcher that always returns {@code true} when matching credentials no matter what arguments
  * are passed in.  This can be used for testing or when credentials are implicitly trusted for a particular
  * {@link org.apache.shiro.realm.Realm Realm}.
  *

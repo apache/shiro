@@ -23,38 +23,35 @@ import org.apache.shiro.codec.Hex;
 
 /**
  * Generates an SHA-512 Hash from a given input <tt>source</tt> with an optional <tt>salt</tt> and hash iterations.
- *
- * <p>See the {@link AbstractHash AbstractHash} parent class JavaDoc for a detailed explanation of Hashing
+ * <p/>
+ * See the {@link SimpleHash SimpleHash} parent class JavaDoc for a detailed explanation of Hashing
  * techniques and how the overloaded constructors function.
- *
- * <p><b>JDK Version Note</b> - Attempting to instantiate this class on JREs prior to version 1.4.0 will throw
+ * <p/>
+ * <b>JDK Version Note</b> - Attempting to instantiate this class on JREs prior to version 1.4.0 will throw
  * an {@link IllegalStateException IllegalStateException}
  *
  * @since 0.9
  */
-public class Sha512Hash extends AbstractHash {
+public class Sha512Hash extends SimpleHash {
 
     //TODO - complete JavaDoc
 
     public static final String ALGORITHM_NAME = "SHA-512";
 
     public Sha512Hash() {
+        super(ALGORITHM_NAME);
     }
 
     public Sha512Hash(Object source) {
-        super(source);
+        super(ALGORITHM_NAME, source);
     }
 
     public Sha512Hash(Object source, Object salt) {
-        super(source, salt);
+        super(ALGORITHM_NAME, source, salt);
     }
 
     public Sha512Hash(Object source, Object salt, int hashIterations) {
-        super(source, salt, hashIterations);
-    }
-
-    protected String getAlgorithmName() {
-        return ALGORITHM_NAME;
+        super(ALGORITHM_NAME, source, salt, hashIterations);
     }
 
     public static Sha512Hash fromHexString(String hex) {
@@ -68,7 +65,5 @@ public class Sha512Hash extends AbstractHash {
         hash.setBytes(Base64.decode(base64));
         return hash;
     }
-
-
 }
 

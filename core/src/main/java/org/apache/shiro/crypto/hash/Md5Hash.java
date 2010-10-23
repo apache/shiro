@@ -24,35 +24,32 @@ import org.apache.shiro.codec.Hex;
 /**
  * Generates an MD5 Hash (RFC 1321) from a given input <tt>source</tt> with an optional <tt>salt</tt> and
  * hash iterations.
- *
- * <p>See the {@link AbstractHash AbstractHash} parent class JavaDoc for a detailed explanation of Hashing
+ * <p/>
+ * See the {@link SimpleHash SimpleHash} parent class JavaDoc for a detailed explanation of Hashing
  * techniques and how the overloaded constructors function.
  *
  * @since 0.9
  */
-public class Md5Hash extends AbstractHash {
+public class Md5Hash extends SimpleHash {
 
     //TODO - complete JavaDoc
 
     public static final String ALGORITHM_NAME = "MD5";
 
     public Md5Hash() {
+        super(ALGORITHM_NAME);
     }
 
     public Md5Hash(Object source) {
-        super(source);
+        super(ALGORITHM_NAME, source);
     }
 
     public Md5Hash(Object source, Object salt) {
-        super(source, salt);
+        super(ALGORITHM_NAME, source, salt);
     }
 
     public Md5Hash(Object source, Object salt, int hashIterations) {
-        super(source, salt, hashIterations);
-    }
-
-    protected String getAlgorithmName() {
-        return ALGORITHM_NAME;
+        super(ALGORITHM_NAME, source, salt, hashIterations);
     }
 
     public static Md5Hash fromHexString(String hex) {

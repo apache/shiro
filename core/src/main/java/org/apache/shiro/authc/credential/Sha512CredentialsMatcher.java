@@ -24,27 +24,17 @@ import org.apache.shiro.crypto.hash.Sha512Hash;
 
 
 /**
- * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>AuthenticationInfo</tt> credentials to be
+ * {@code HashedCredentialsMatcher} implementation that expects the stored {@code AuthenticationInfo} credentials to be
  * SHA-512 hashed.
  *
  * @since 0.9
+ * @deprecated since 1.1 - use the HashedCredentialsMatcher directly and set its
+ *             {@link HashedCredentialsMatcher#setHashAlgorithmName(String) hashAlgorithmName} property.
  */
 public class Sha512CredentialsMatcher extends HashedCredentialsMatcher {
 
-    /**
-     * Creates a new <em>uninitialized</em> {@link Sha512Hash Sha512Hash} instance, without it's byte array set.
-     *
-     * @return a new <em>uninitialized</em> {@link org.apache.shiro.crypto.hash.Sha512Hash Sha512Hash} instance, without it's byte array set.
-     */
-    protected AbstractHash newHashInstance() {
-        return new Sha512Hash();
-    }
-
-    /**
-     * This implementation merely returns
-     * <code>new {@link Sha512Hash#Sha512Hash(Object, Object, int) Sha512Hash(credentials,salt,hashIterations)}</code>.
-     */
-    protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
-        return new Sha512Hash(credentials, salt, hashIterations);
+    public Sha512CredentialsMatcher() {
+        super();
+        setHashAlgorithmName(Sha512Hash.ALGORITHM_NAME);
     }
 }

@@ -33,11 +33,9 @@ import java.util.Arrays;
  * <code>Object.equals</code> comparison.
  * <p/>
  * <p>Hashing comparisons (the most common technique used in secure applications) are not supported by this class, but
- * instead by {@link org.apache.shiro.authc.credential.HashedCredentialsMatcher HashedCredentialsMatcher} implementations.
+ * instead by the {@link org.apache.shiro.authc.credential.HashedCredentialsMatcher HashedCredentialsMatcher}.
  *
  * @see org.apache.shiro.authc.credential.HashedCredentialsMatcher
- * @see org.apache.shiro.authc.credential.Md5CredentialsMatcher
- * @see Sha1CredentialsMatcher
  * @since 0.9
  */
 public class SimpleCredentialsMatcher extends CodecSupport implements CredentialsMatcher {
@@ -45,39 +43,39 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
     private static final Logger log = LoggerFactory.getLogger(SimpleCredentialsMatcher.class);
 
     /**
-     * Returns the <tt>token</tt>'s credentials.
+     * Returns the {@code token}'s credentials.
      * <p/>
      * <p>This default implementation merely returns
      * {@link AuthenticationToken#getCredentials() authenticationToken.getCredentials()} and exists as a template hook
      * if subclasses wish to obtain the credentials in a different way or convert them to a different format before
      * returning.
      *
-     * @param token the <tt>AuthenticationToken</tt> submitted during the authentication attempt.
-     * @return the <tt>token</tt>'s associated credentials.
+     * @param token the {@code AuthenticationToken} submitted during the authentication attempt.
+     * @return the {@code token}'s associated credentials.
      */
     protected Object getCredentials(AuthenticationToken token) {
         return token.getCredentials();
     }
 
     /**
-     * Returns the <tt>account</tt>'s credentials.
+     * Returns the {@code account}'s credentials.
      * <p/>
      * <p>This default implementation merely returns
      * {@link AuthenticationInfo#getCredentials() account.getCredentials()} and exists as a template hook if subclasses
      * wish to obtain the credentials in a different way or convert them to a different format before
      * returning.
      *
-     * @param info the <tt>AuthenticationInfo</tt> stored in the data store to be compared against the submitted authentication
+     * @param info the {@code AuthenticationInfo} stored in the data store to be compared against the submitted authentication
      *             token's credentials.
-     * @return the <tt>account</tt>'s associated credentials.
+     * @return the {@code account}'s associated credentials.
      */
     protected Object getCredentials(AuthenticationInfo info) {
         return info.getCredentials();
     }
 
     /**
-     * Returns <tt>true</tt> if the <tt>tokenCredentials</tt> argument is logically equal to the
-     * <tt>accountCredentials</tt> argument.
+     * Returns {@code true} if the {@code tokenCredentials} argument is logically equal to the
+     * {@code accountCredentials} argument.
      * <p/>
      * <p>If both arguments are either a byte array (byte[]), char array (char[]) or String, they will be both be
      * converted to raw byte arrays via the {@link #toBytes toBytes} method first, and then resulting byte arrays
@@ -88,9 +86,9 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * <p/>
      * <p>Subclasses should override this method for more explicit equality checks.
      *
-     * @param tokenCredentials   the <tt>AuthenticationToken</tt>'s associated credentials.
-     * @param accountCredentials the <tt>AuthenticationInfo</tt>'s stored credentials.
-     * @return <tt>true</tt> if the <tt>tokenCredentials</tt> are equal to the <tt>accountCredentials</tt>.
+     * @param tokenCredentials   the {@code AuthenticationToken}'s associated credentials.
+     * @param accountCredentials the {@code AuthenticationInfo}'s stored credentials.
+     * @return {@code true} if the {@code tokenCredentials} are equal to the {@code accountCredentials}.
      */
     protected boolean equals(Object tokenCredentials, Object accountCredentials) {
         if (log.isDebugEnabled()) {
@@ -112,17 +110,17 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
     }
 
     /**
-     * This implementation acquires the <tt>token</tt>'s credentials
+     * This implementation acquires the {@code token}'s credentials
      * (via {@link #getCredentials(AuthenticationToken) getCredentials(token)})
-     * and then the <tt>account</tt>'s credentials
+     * and then the {@code account}'s credentials
      * (via {@link #getCredentials(org.apache.shiro.authc.AuthenticationInfo) getCredentials(account)}) and then passes both of
      * them to the {@link #equals(Object,Object) equals(tokenCredentials, accountCredentials)} method for equality
      * comparison.
      *
-     * @param token the <tt>AuthenticationToken</tt> submitted during the authentication attempt.
-     * @param info  the <tt>AuthenticationInfo</tt> stored in the system matching the token principal.
-     * @return <tt>true</tt> if the provided token credentials are equal to the stored account credentials,
-     *         <tt>false</tt> otherwise
+     * @param token the {@code AuthenticationToken} submitted during the authentication attempt.
+     * @param info  the {@code AuthenticationInfo} stored in the system matching the token principal.
+     * @return {@code true} if the provided token credentials are equal to the stored account credentials,
+     *         {@code false} otherwise
      */
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         Object tokenCredentials = getCredentials(token);
