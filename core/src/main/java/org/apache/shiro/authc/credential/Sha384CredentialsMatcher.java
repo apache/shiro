@@ -24,27 +24,17 @@ import org.apache.shiro.crypto.hash.Sha384Hash;
 
 
 /**
- * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>AuthenticationInfo</tt> credentials to be
+ * {@code HashedCredentialsMatcher} implementation that expects the stored {@code AuthenticationInfo} credentials to be
  * SHA-384 hashed.
  *
  * @since 0.9
+ * @deprecated since 1.1 - use the HashedCredentialsMatcher directly and set its
+ *             {@link HashedCredentialsMatcher#setHashAlgorithmName(String) hashAlgorithmName} property.
  */
 public class Sha384CredentialsMatcher extends HashedCredentialsMatcher {
 
-    /**
-     * Creates a new <em>uninitialized</em> {@link Sha384Hash Sha384Hash} instance, without it's byte array set.
-     *
-     * @return a new <em>uninitialized</em> {@link org.apache.shiro.crypto.hash.Sha384Hash Sha384Hash} instance, without it's byte array set.
-     */
-    protected AbstractHash newHashInstance() {
-        return new Sha384Hash();
-    }
-
-    /**
-     * This implementation merely returns
-     * <code>new {@link Sha384Hash#Sha384Hash(Object, Object, int) Sha384Hash(credentials,salt,hashIterations)}</code>.
-     */
-    protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
-        return new Sha384Hash(credentials, salt, hashIterations);
+    public Sha384CredentialsMatcher() {
+        super();
+        setHashAlgorithmName(Sha384Hash.ALGORITHM_NAME);
     }
 }

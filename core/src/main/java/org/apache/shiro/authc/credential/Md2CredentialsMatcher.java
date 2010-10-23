@@ -24,33 +24,24 @@ import org.apache.shiro.crypto.hash.Md2Hash;
 
 
 /**
- * <tt>HashedCredentialsMatcher</tt> implementation that expects the stored <tt>AuthenticationInfo</tt> credentials to be
+ * {@code HashedCredentialsMatcher} implementation that expects the stored {@code AuthenticationInfo} credentials to be
  * MD2 hashed.
- *
- * <p><b>Note:</b> the MD2, <a href="http://en.wikipedia.org/wiki/MD5">MD5</a> and
+ * <p/>
+ * <b>Note:</b> the MD2, <a href="http://en.wikipedia.org/wiki/MD5">MD5</a> and
  * <a href="http://en.wikipedia.org/wiki/SHA_hash_functions">SHA-1</a> algorithms are now known to be vulnerable to
  * compromise and/or collisions (read the linked pages for more).  While most applications are ok with either of these
  * two, if your application mandates high security, use the SHA-256 (or higher) hashing algorithms and their
  * supporting <code>CredentialsMatcher</code> implementations.</p>
  *
  * @since 0.9
+ * @deprecated since 1.1 - use the HashedCredentialsMatcher directly and set its
+ *             {@link HashedCredentialsMatcher#setHashAlgorithmName(String) hashAlgorithmName} property.
  */
+@Deprecated
 public class Md2CredentialsMatcher extends HashedCredentialsMatcher {
 
-    /**
-     * Creates a new <em>uninitialized</em> {@link Md2Hash Md2Hash} instance, without it's byte array set.
-     *
-     * @return a new <em>uninitialized</em> {@link org.apache.shiro.crypto.hash.Md2Hash Md2Hash} instance, without it's byte array set.
-     */
-    protected AbstractHash newHashInstance() {
-        return new Md2Hash();
-    }
-
-    /**
-     * This implementation merely returns
-     * <code>new {@link org.apache.shiro.crypto.hash.Md2Hash#Md2Hash(Object, Object, int) Md2Hash(credentials,salt,hashIterations)}</code>.
-     */
-    protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
-        return new Md2Hash(credentials, salt, hashIterations);
+    public Md2CredentialsMatcher() {
+        super();
+        setHashAlgorithmName(Md2Hash.ALGORITHM_NAME);
     }
 }

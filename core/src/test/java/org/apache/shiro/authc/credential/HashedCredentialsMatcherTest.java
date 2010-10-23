@@ -18,7 +18,10 @@
  */
 package org.apache.shiro.authc.credential;
 
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha1Hash;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -26,7 +29,7 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for the {@link org.apache.shiro.authc.credential.HashedCredentialsMatcher} class.
@@ -40,7 +43,7 @@ public class HashedCredentialsMatcherTest {
     @Test
     public void testSaltedAuthenticationInfo() {
         //use SHA-1 hashing in this test:
-        HashedCredentialsMatcher matcher = new Sha1CredentialsMatcher();
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha1Hash.ALGORITHM_NAME);
 
         //simulate a user account with a SHA-1 hashed and salted password:
         ByteSource salt = new SecureRandomNumberGenerator().nextBytes();
@@ -60,7 +63,7 @@ public class HashedCredentialsMatcherTest {
      */
     @Test
     public void testBackwardsCompatibleUnsaltedAuthenticationInfo() {
-        HashedCredentialsMatcher matcher = new Sha1CredentialsMatcher();
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha1Hash.ALGORITHM_NAME);
 
         //simulate an account with SHA-1 hashed password (no salt)
         final String username = "username";
@@ -89,7 +92,7 @@ public class HashedCredentialsMatcherTest {
      */
     @Test
     public void testBackwardsCompatibleSaltedAuthenticationInfo() {
-        HashedCredentialsMatcher matcher = new Sha1CredentialsMatcher();
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha1Hash.ALGORITHM_NAME);
         //enable this for Shiro 1.0 backwards compatibility:
         matcher.setHashSalted(true);
 

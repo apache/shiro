@@ -41,13 +41,13 @@ import org.apache.shiro.authc.AuthenticationToken;
 public interface CredentialsMatcher {
 
     /**
-     * Returns <tt>true</tt> if the provided token credentials match the stored account credentials,
-     * <tt>false</tt> otherwise.
+     * Returns {@code true} if the provided token credentials match the stored account credentials,
+     * {@code false} otherwise.
      *
-     * @param token   the <tt>AuthenticationToken</tt> submitted during the authentication attempt
-     * @param info the <tt>AuthenticationInfo</tt> stored in the system.
-     * @return <tt>true</tt> if the provided token credentials match the stored account credentials,
-     *         <tt>false</tt> otherwise.
+     * @param token   the {@code AuthenticationToken} submitted during the authentication attempt
+     * @param info the {@code AuthenticationInfo} stored in the system.
+     * @return {@code true} if the provided token credentials match the stored account credentials,
+     *         {@code false} otherwise.
      */
     boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info);
 

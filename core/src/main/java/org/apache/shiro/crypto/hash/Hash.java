@@ -22,7 +22,11 @@ import org.apache.shiro.util.ByteSource;
 
 /**
  * A Cryptographic {@code Hash} represents a one-way conversion algorithm that transforms an input source to an
- * underlying byte array.
+ * underlying byte array.  Hex and Base64-encoding output of the hashed bytes are automatically supported by the
+ * inherited {@link #toHex() toHex()} and {@link #toBase64() toBase64()} methods.
+ * <p/>
+ * The bytes returned by the parent interface's {@link #getBytes() getBytes()} are the hashed value of the
+ * original input source.
  *
  * @see AbstractHash
  * @see Md2Hash
@@ -36,25 +40,10 @@ import org.apache.shiro.util.ByteSource;
 public interface Hash extends ByteSource {
 
     /**
-     * Returns this Hash's byte array, that is, the hashed value of the original input source.
+     * Returns the hash algorithm name, for example, {@code SHA-256}, {@code MD5}, etc.
      *
-     * @return this Hash's byte array, that is, the hashed value of the original input source.
-     * @see #toHex
-     * @see #toBase64
+     * @return the hash algorithm name, for example, {@code SHA-256}, {@code MD5}, etc.
+     * @since 1.1
      */
-    byte[] getBytes();
-
-    /**
-     * Returns a Hex encoding of this Hash's {@link #getBytes byte array}.
-     *
-     * @return a Hex encoding of this Hash's {@link #getBytes byte array}.
-     */
-    String toHex();
-
-    /**
-     * Returns a Base64 encoding of this Hash's {@link #getBytes byte array}.
-     *
-     * @return a Base64 encoding of this Hash's {@link #getBytes byte array}.
-     */
-    String toBase64();
+    String getAlgorithmName();
 }
