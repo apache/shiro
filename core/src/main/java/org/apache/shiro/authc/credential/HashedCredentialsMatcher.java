@@ -129,7 +129,8 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
 
     /**
      * JavaBeans-compatibile no-arg constructor intended for use in IoC/Dependency Injection environments.  If you
-     * use this constructor, you <em>MUST</em> set the hash algorithm name
+     * use this constructor, you <em>MUST</em> also additionally set the
+     * {@link #setHashAlgorithmName(String) hashAlgorithmName} property.
      */
     public HashedCredentialsMatcher() {
         this.hashAlgorithm = null;
