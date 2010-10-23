@@ -40,9 +40,11 @@ import org.apache.shiro.util.ByteSource;
 public interface Hash extends ByteSource {
 
     /**
-     * Returns the hash algorithm name, for example, {@code SHA-256}, {@code MD5}, etc.
+     * Returns the name of the algorithm used to hash the input source, for example, {@code SHA-256}, {@code MD5}, etc.
+     * <p/>
+     * The name is expected to be a {@link java.security.MessageDigest MessageDigest} algorithm name.
      *
-     * @return the hash algorithm name, for example, {@code SHA-256}, {@code MD5}, etc.
+     * @return the the name of the algorithm used to hash the input source, for example, {@code SHA-256}, {@code MD5}, etc.
      * @since 1.1
      */
     String getAlgorithmName();
