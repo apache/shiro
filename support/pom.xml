@@ -32,6 +32,7 @@
 
     <modules>
         <module>aspectj</module>
+        <module>crowd</module>
         <module>ehcache</module>
         <module>groovy</module>
         <module>quartz</module>

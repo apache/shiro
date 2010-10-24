@@ -64,6 +64,7 @@
 
     <properties>
         <shiro.osgi.importRange>[1.1.0, 2.0.0)</shiro.osgi.importRange>
+        <crowd.version>1.5.2</crowd.version>
         <jdk.version>1.5</jdk.version>
         <slf4j.version>1.5.6</slf4j.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
@@ -286,6 +287,12 @@
             </dependency>
 
             <!-- 3rd party dependencies -->
+            <dependency>
+                <!-- Used for Atlassian Crowd Realm - not required for the framework: -->
+                <groupId>com.atlassian.crowd</groupId>
+                <artifactId>crowd-integration-client</artifactId>
+                <version>${crowd.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
