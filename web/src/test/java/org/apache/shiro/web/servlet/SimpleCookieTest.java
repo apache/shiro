@@ -88,8 +88,6 @@ public class SimpleCookieTest extends TestCase {
                 .append(SimpleCookie.ATTRIBUTE_DELIMITER)
                 .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(Cookie.ROOT_PATH)
                 .append(SimpleCookie.ATTRIBUTE_DELIMITER)
-                .append(SimpleCookie.MAXAGE_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(SimpleCookie.DEFAULT_MAX_AGE)
-                .append(SimpleCookie.ATTRIBUTE_DELIMITER)
                 .append(SimpleCookie.HTTP_ONLY_ATTRIBUTE_NAME)
                 .toString();
 
