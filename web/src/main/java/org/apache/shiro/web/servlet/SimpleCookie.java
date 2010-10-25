@@ -283,12 +283,14 @@ public class SimpleCookie implements Cookie {
 
     private void appendExpires(StringBuilder sb, int maxAge) {
         // if maxAge is negative, cookie should should expire when browser closes
-        sb.append(ATTRIBUTE_DELIMITER);
-        sb.append(MAXAGE_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(maxAge);
+	// Don't write the maxAge cookie value if it's negative - at least on Firefox it'll cause the 
+	// cookie to be deleted immediately
         // Write the expires header used by older browsers, but may be unnecessary
         // and it is not by the spec, see http://www.faqs.org/rfcs/rfc2965.html
         // TODO consider completely removing the following 
         if (maxAge >= 0) {
+            sb.append(ATTRIBUTE_DELIMITER);
+            sb.append(MAXAGE_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(maxAge);
             sb.append(ATTRIBUTE_DELIMITER);
             Date expires;
             if (maxAge == 0) {
