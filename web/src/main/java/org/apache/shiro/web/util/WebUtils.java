@@ -133,8 +133,88 @@ public class WebUtils {
         if (uri == null) {
             uri = request.getRequestURI();
         }
-        return decodeAndCleanUriString(request, uri);
+        return normalize(decodeAndCleanUriString(request, uri));
     }
+    
+    /**
+     * Normalize a relative URI path that may have relative values ("/./",
+     * "/../", and so on ) it it.  <strong>WARNING</strong> - This method is
+     * useful only for normalizing application-generated paths.  It does not
+     * try to perform security checks for malicious input.
+     * Normalize operations were was happily taken from org.apache.catalina.util.RequestUtil in
+     * Tomcat trunk, r939305
+     *
+     * @param path Relative path to be normalized
+     * 
+     */
+    private static String normalize(String path) {
+        return normalize(path, true);
+    }
+
+    /**
+     * Normalize a relative URI path that may have relative values ("/./",
+     * "/../", and so on ) it it.  <strong>WARNING</strong> - This method is
+     * useful only for normalizing application-generated paths.  It does not
+     * try to perform security checks for malicious input.
+     * Normalize operations were was happily taken from org.apache.catalina.util.RequestUtil in
+     * Tomcat trunk, r939305
+     *
+     * @param path Relative path to be normalized
+     * @param replaceBackSlash Should '\\' be replaced with '/'
+     */
+    private static String normalize(String path, boolean replaceBackSlash) {
+
+        if (path == null)
+            return null;
+
+        // Create a place for the normalized path
+        String normalized = path;
+
+        if (replaceBackSlash && normalized.indexOf('\\') >= 0)
+            normalized = normalized.replace('\\', '/');
+
+        if (normalized.equals("/."))
+            return "/";
+
+        // Add a leading "/" if necessary
+        if (!normalized.startsWith("/"))
+            normalized = "/" + normalized;
+
+        // Resolve occurrences of "//" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("//");
+            if (index < 0)
+                break;
+            normalized = normalized.substring(0, index) +
+                normalized.substring(index + 1);
+        }
+
+        // Resolve occurrences of "/./" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("/./");
+            if (index < 0)
+                break;
+            normalized = normalized.substring(0, index) +
+                normalized.substring(index + 2);
+        }
+
+        // Resolve occurrences of "/../" in the normalized path
+        while (true) {
+            int index = normalized.indexOf("/../");
+            if (index < 0)
+                break;
+            if (index == 0)
+                return (null);  // Trying to go outside our context
+            int index2 = normalized.lastIndexOf('/', index - 1);
+            normalized = normalized.substring(0, index2) +
+                normalized.substring(index + 3);
+        }
+
+        // Return the normalized path that we have completed
+        return (normalized);
+
+    }
+   
 
     /**
      * Decode the supplied URI string and strips any extraneous portion after a ';'.
