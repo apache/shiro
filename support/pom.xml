@@ -32,9 +32,6 @@
 
     <modules>
         <module>aspectj</module>
-        <!-- Disable since it is blocking 1.1.0 release - the dependency the module requires is not in central and licensing is unclear 
-        <module>crowd</module>
-        -->
         <module>ehcache</module>
         <module>groovy</module>
         <module>quartz</module>
