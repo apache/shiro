@@ -63,14 +63,25 @@
     </distributionManagement>
 
     <properties>
+        <!-- non-dependency-based properties: -->
         <shiro.osgi.importRange>[1.1.0, 2.0.0)</shiro.osgi.importRange>
+
+        <!-- Compile 3rd party dependencies: -->
+        <aspectj.version>1.6.9</aspectj.version>
         <crowd.version>1.5.2</crowd.version>
-        <jdk.version>1.5</jdk.version>
-        <slf4j.version>1.5.6</slf4j.version>
+        <ehcache.version>2.2.0</ehcache.version>
+        <groovy.version>1.7.5</groovy.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
+        <jdk.version>1.5</jdk.version>
         <jetty.version>6.1.21</jetty.version>
-        <spring.version>2.5.6</spring.version>
-        <groovy.version>1.6.2</groovy.version>
+        <quartz.version>1.6.1</quartz.version>
+        <slf4j.version>1.6.1</slf4j.version>
+        <spring.version>3.0.5.RELEASE</spring.version>
+
+        <!-- Test 3rd-party dependencies: -->
+        <junit.version>4.8.2</junit.version>
+        <easymock.version>3.0</easymock.version>
+
     </properties>
 
     <mailingLists>
@@ -227,13 +238,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.4</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>2.4</version>
+            <version>${easymock.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -293,6 +304,16 @@
 
             <!-- 3rd party dependencies -->
             <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
                 <!-- Used for Atlassian Crowd Realm - not required for the framework: -->
                 <groupId>com.atlassian.crowd</groupId>
                 <artifactId>crowd-integration-client</artifactId>
@@ -326,7 +347,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.7.0</version>
+                <version>1.8.3</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -362,7 +383,7 @@
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.15</version>
+                <version>1.2.16</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -390,8 +411,8 @@
             </dependency>
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>1.4.1</version>
+                <artifactId>ehcache-core</artifactId>
+                <version>${ehcache.version}</version>
                 <optional>true</optional>
                 <exclusions>
                     <exclusion>
@@ -472,7 +493,31 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>spring</artifactId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+                <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring.version}</version>
+                <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
                 <version>${spring.version}</version>
                 <optional>true</optional>
                 <exclusions>
@@ -498,6 +543,7 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
+                <scope>test</scope>
                 <optional>true</optional>
                 <exclusions>
                     <exclusion>
@@ -507,9 +553,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>quartz</groupId>
+                <groupId>org.opensymphony.quartz</groupId>
                 <artifactId>quartz</artifactId>
-                <version>1.5.2</version>
+                <version>${quartz.version}</version>
                 <optional>true</optional>
                 <exclusions>
                     <exclusion>

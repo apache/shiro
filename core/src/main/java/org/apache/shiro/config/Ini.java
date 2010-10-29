@@ -480,7 +480,7 @@ public class Ini implements Map<String, Ini.Section> {
         //Protected to access in a test case - NOT considered part of Shiro's public API
 
         protected static boolean isContinued(String line) {
-            if (line == null || line.isEmpty()) {
+            if (!StringUtils.hasText(line)) {
                 return false;
             }
             int length = line.length();
