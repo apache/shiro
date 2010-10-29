@@ -180,5 +180,4 @@ public class DelegatingSubjectTest {
         subject.logout();
         LifecycleUtils.destroy(sm);
     }
-    */
 }
