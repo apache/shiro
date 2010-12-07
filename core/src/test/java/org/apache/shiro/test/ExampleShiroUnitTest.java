@@ -28,14 +28,6 @@ public class ExampleShiroUnitTest extends AbstractShiroTest {
         //call stack) will work properly.
     }
 
-    /**
-     * Method is optional - use it with the @After annotation if you want
-     * to guarantee that the Subject is removed after every test method.
-     * You'll just need to set up a new Subject instance for every test
-     * that requires the Subject to be present.
-     * tests
-     * that require the Subject to be present.
-     */
     @After
     public void tearDownSubject() {
         //3. Unbind the subject from the current thread:
