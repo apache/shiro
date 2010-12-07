@@ -13,7 +13,7 @@ import org.junit.Test;
  *
  * @since 1.1.1
  */
-public class ExampleShiroTest extends AbstractShiroTest {
+public class ExampleShiroIntegrationTest extends AbstractShiroTest {
 
     @BeforeClass
     public static void beforeClass() {
@@ -32,7 +32,9 @@ public class ExampleShiroTest extends AbstractShiroTest {
         //2. Bind the subject to the current thread:
         setSubject(subjectUnderTest);
 
-        //perform test logic here.
+        //perform test logic here.  Any call to
+        //SecurityUtils.getSubject() directly (or nested in the
+        //call stack) will work properly.
     }
 
     @After
