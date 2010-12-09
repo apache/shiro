@@ -1,6 +1,8 @@
 package org.apache.shiro.test;
 
+import org.apache.shiro.mgt.*;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.mgt.SecurityManager;
 import org.junit.After;
 import org.junit.Test;
 
@@ -14,10 +16,10 @@ public class ExampleShiroUnitTest extends AbstractShiroTest {
 
     @Test
     public void testSimple() {
-
         //1.  Create a mock Subject instance for the test to run
         //    (for example, as an authenticated Subject):
         Subject subjectUnderTest = createNiceMock(Subject.class);
+
         expect(subjectUnderTest.isAuthenticated()).andReturn(true);
 
         //2. Bind the subject to the current thread:
