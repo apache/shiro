@@ -30,7 +30,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
 
     <name>Apache Shiro</name>
     <url>http://shiro.apache.org/</url>
@@ -41,9 +41,9 @@
     <inceptionYear>2004</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.1.0</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.1.0</developerConnection>
-        <url>http://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.1.0</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/branches/shiro-root-1.1.x</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/branches/shiro-root-1.1.x</developerConnection>
+        <url>http://svn.apache.org/repos/asf/shiro/branches/shiro-root-1.1.x</url>
     </scm>
     <issueManagement>
         <system>Jira</system>
@@ -64,7 +64,7 @@
 
     <properties>
         <!-- non-dependency-based properties: -->
-        <shiro.osgi.importRange>[1.1.0, 2.0.0)</shiro.osgi.importRange>
+        <shiro.osgi.importRange>[1.1.1, 2.0.0)</shiro.osgi.importRange>
 
         <!-- Compile 3rd party dependencies: -->
         <aspectj.version>1.6.9</aspectj.version>
