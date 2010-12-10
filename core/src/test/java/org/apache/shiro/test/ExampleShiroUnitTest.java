@@ -1,8 +1,6 @@
 package org.apache.shiro.test;
 
-import org.apache.shiro.mgt.*;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.mgt.SecurityManager;
 import org.junit.After;
 import org.junit.Test;
 
@@ -11,6 +9,8 @@ import static org.easymock.EasyMock.expect;
 
 /**
  * Simple example test class showing how one may perform unit tests for code that requires Shiro APIs.
+ *
+ * @since 1.2
  */
 public class ExampleShiroUnitTest extends AbstractShiroTest {
 

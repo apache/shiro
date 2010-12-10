@@ -21,7 +21,6 @@ package org.apache.shiro.samples.spring.web;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
@@ -44,12 +43,10 @@ public class LoginController extends SimpleFormController {
 
         LoginCommand command = (LoginCommand) cmd;
 
-        Subject subject = SecurityUtils.getSubject();
-
         UsernamePasswordToken token = new UsernamePasswordToken(command.getUsername(), command.getPassword());
 
         try {
-            subject.login(token);
+            SecurityUtils.getSubject().login(token);
         } catch (AuthenticationException e) {
             log.debug("Error authenticating.", e);
             errors.reject("error.invalidLogin", "The username or password was not correct.");

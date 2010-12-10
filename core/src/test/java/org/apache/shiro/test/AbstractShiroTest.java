@@ -12,7 +12,7 @@ import org.junit.AfterClass;
 /**
  * Abstract test case showing how to use Shiro in testing environments.
  *
- * @since 1.1.1
+ * @since 1.2
  */
 public abstract class AbstractShiroTest {
 

@@ -18,15 +18,12 @@
  */
 package org.apache.shiro.samples.spring.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import org.apache.shiro.SecurityUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Controller responsible for logging out the current user by invoking
@@ -37,16 +34,7 @@ import org.apache.shiro.subject.Subject;
 public class LogoutController extends AbstractController {
 
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Subject subject = SecurityUtils.getSubject();
-        if (subject != null) {
-            subject.logout();
-        }
-
-        HttpSession session = request.getSession(false);
-        if( session != null ) {
-            session.invalidate();
-        }        
-
+        SecurityUtils.getSubject().logout();
         return new ModelAndView("redirect:login");
     }
 }
