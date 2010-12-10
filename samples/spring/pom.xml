@@ -45,10 +45,10 @@
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
-                    <contextPath>/shiro</contextPath>
+                    <contextPath>/shiro-samples-spring</contextPath>
                     <connectors>
                         <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-                            <port>9080</port>
+                            <port>8080</port>
                             <maxIdleTime>60000</maxIdleTime>
                         </connector>
                     </connectors>
@@ -175,7 +175,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>1.2</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>

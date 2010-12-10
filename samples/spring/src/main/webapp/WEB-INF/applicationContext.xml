@@ -19,10 +19,8 @@
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <!-- Sample RDBMS data source that would exist in any application - not Shiro related. -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -65,17 +63,16 @@
     <!-- Used by the SecurityManager to access security data (users, roles, etc).
          Many other realm implementations can be used too (PropertiesRealm,
          LdapRealm, etc. -->
-    <bean id="jdbcRealm" class="org.apache.shiro.realm.jdbc.JdbcRealm">
+    <bean id="jdbcRealm" class="org.apache.shiro.samples.spring.realm.SaltAwareJdbcRealm">
         <property name="name" value="jdbcRealm"/>
         <property name="dataSource" ref="dataSource"/>
         <property name="credentialsMatcher">
             <!-- The 'bootstrapDataPopulator' Sha256 hashes the password
                  (using the username as the salt) then base64 encodes it: -->
-            <bean class="org.apache.shiro.authc.credential.Sha256CredentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <property name="hashAlgorithmName" value="SHA-256"/>
                 <!-- true means hex encoded, false means base64 encoded -->
                 <property name="storedCredentialsHexEncoded" value="false"/>
-                <!-- We salt the password using the username, the most common practice: -->
-                <property name="hashSalted" value="true"/>
             </bean>
         </property>
     </bean>
@@ -125,8 +122,14 @@
         </property> -->
         <property name="filterChainDefinitions">
             <value>
-                /s/index = authc
-                /s/shiro.jnlp = authc, user
+                /favicon.ico = anon
+                /logo.png = anon
+                /shiro.css = anon
+                /s/login = anon
+                # allow WebStart to pull the jars for the swing app:
+                /*.jar = anon
+                # everything else requires authentication:
+                /** = authc
             </value>
         </property>
     </bean>

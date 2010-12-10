@@ -11,7 +11,7 @@ import org.junit.Test;
 /**
  * Simple example test class to be used to show how one might write Shiro-compatible unit tests.
  *
- * @since 1.1.1
+ * @since 1.2
  */
 public class ExampleShiroIntegrationTest extends AbstractShiroTest {
 
