@@ -21,8 +21,6 @@ package org.apache.shiro.realm;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authz.Authorizer;
-
 
 /**
  * A <tt>Realm</tt> is a security component that can access application-specific security entities
