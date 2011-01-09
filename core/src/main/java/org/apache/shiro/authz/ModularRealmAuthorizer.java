@@ -22,6 +22,7 @@ import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.PermissionResolverAware;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.authz.permission.RolePermissionResolverAware;
+import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
 
@@ -219,7 +220,8 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     public boolean isPermitted(PrincipalCollection principals, String permission) {
         assertRealmsConfigured();
         for (Realm realm : getRealms()) {
-            if (realm.isPermitted(principals, permission)) {
+            if (!(realm instanceof AuthorizingRealm)) continue;
+            if (((AuthorizingRealm)realm).isPermitted(principals, permission)) {
                 return true;
             }
         }
@@ -234,7 +236,8 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     public boolean isPermitted(PrincipalCollection principals, Permission permission) {
         assertRealmsConfigured();
         for (Realm realm : getRealms()) {
-            if (realm.isPermitted(principals, permission)) {
+            if (!(realm instanceof AuthorizingRealm)) continue;
+            if (((AuthorizingRealm)realm).isPermitted(principals, permission)) {
                 return true;
             }
         }
@@ -368,7 +371,8 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
         assertRealmsConfigured();
         for (Realm realm : getRealms()) {
-            if (realm.hasRole(principals, roleIdentifier)) {
+            if (!(realm instanceof AuthorizingRealm)) continue;
+            if (((AuthorizingRealm)realm).hasRole(principals, roleIdentifier)) {
                 return true;
             }
         }

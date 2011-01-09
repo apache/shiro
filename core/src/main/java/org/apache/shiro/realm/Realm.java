@@ -62,7 +62,7 @@ import org.apache.shiro.authz.Authorizer;
  * @see org.apache.shiro.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator
  * @since 0.1
  */
-public interface Realm extends Authorizer {
+public interface Realm {
 
     /**
      * Returns the (application-unique) name assigned to this <code>Realm</code>. All realms configured for a single

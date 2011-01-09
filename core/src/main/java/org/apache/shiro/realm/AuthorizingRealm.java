@@ -21,6 +21,7 @@ package org.apache.shiro.realm;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.Authorizer;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.permission.*;
@@ -56,7 +57,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 0.2
  */
 public abstract class AuthorizingRealm extends AuthenticatingRealm
-        implements Initializable, PermissionResolverAware, RolePermissionResolverAware {
+        implements Authorizer, Initializable, PermissionResolverAware, RolePermissionResolverAware {
 
     //TODO - complete JavaDoc
 
