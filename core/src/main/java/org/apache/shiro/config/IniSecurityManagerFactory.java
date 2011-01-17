@@ -173,7 +173,8 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
     private void addToRealms(Collection<Realm> realms, RealmFactory factory) {
         LifecycleUtils.init(factory);
         Collection<Realm> factoryRealms = factory.getRealms();
-        if (!CollectionUtils.isEmpty(realms)) {
+        //SHIRO-238: check factoryRealms (was 'realms'):
+        if (!CollectionUtils.isEmpty(factoryRealms)) {
             realms.addAll(factoryRealms);
         }
     }
