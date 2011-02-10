@@ -81,6 +81,11 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
      * @throws AuthorizationException if the method invocation is not allowed to continue/execute.
      */
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
-        ((AuthorizingAnnotationHandler)getHandler()).assertAuthorized(getAnnotation(mi));
+        try {
+            ((AuthorizingAnnotationHandler)getHandler()).assertAuthorized(getAnnotation(mi));
+        }
+        catch(AuthorizationException ae) {
+            throw new AuthorizationException("Not authorized to invoke method: " + mi.getMethod(), ae);
+        }         
     }
 }
