@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.authz.aop;
 
-import org.apache.shiro.aop.AnnotationHandler;
 import org.apache.shiro.aop.AnnotationMethodInterceptor;
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.MethodInvocation;
