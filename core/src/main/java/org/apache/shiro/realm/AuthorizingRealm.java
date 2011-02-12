@@ -92,6 +92,22 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
     ============================================*/
 
     public AuthorizingRealm() {
+        this(null, null);
+    }
+
+    public AuthorizingRealm(CacheManager cacheManager) {
+        this(cacheManager, null);
+    }
+
+    public AuthorizingRealm(CredentialsMatcher matcher) {
+        this(null, matcher);
+    }
+
+    public AuthorizingRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
+        super();
+        if (cacheManager != null) setCacheManager(cacheManager);
+        if (matcher != null) setCredentialsMatcher(matcher);
+        
         this.authorizationCachingEnabled = true;
         this.permissionResolver = new WildcardPermissionResolver();
 
@@ -100,18 +116,6 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         if (instanceNumber > 0) {
             this.authorizationCacheName = this.authorizationCacheName + "." + instanceNumber;
         }
-    }
-
-    public AuthorizingRealm(CacheManager cacheManager) {
-        super(cacheManager);
-    }
-
-    public AuthorizingRealm(CredentialsMatcher matcher) {
-        super(matcher);
-    }
-
-    public AuthorizingRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
-        super(cacheManager, matcher);
     }
 
     /*--------------------------------------------
@@ -178,6 +182,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
     }
 
     public void setPermissionResolver(PermissionResolver permissionResolver) {
+        if (permissionResolver == null) throw new IllegalArgumentException("Null PermissionResolver is not allowed");
         this.permissionResolver = permissionResolver;
     }
 
