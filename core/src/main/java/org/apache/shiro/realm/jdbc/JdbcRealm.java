@@ -22,6 +22,7 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.JdbcUtils;
@@ -34,6 +35,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -323,29 +325,33 @@ public class JdbcRealm extends AuthorizingRealm {
 
     protected Set<String> getPermissions(Connection conn, String username, Collection<String> roleNames) throws SQLException {
         PreparedStatement ps = null;
-        ResultSet rs = null;
         Set<String> permissions = new LinkedHashSet<String>();
         try {
+            ps = conn.prepareStatement(permissionsQuery);
             for (String roleName : roleNames) {
 
-                ps = conn.prepareStatement(permissionsQuery);
                 ps.setString(1, roleName);
 
-                // Execute query
-                rs = ps.executeQuery();
+                ResultSet rs = null;
 
-                // Loop over results and add each returned role to a set
-                while (rs.next()) {
+                try {
+                    // Execute query
+                    rs = ps.executeQuery();
 
-                    String permissionString = rs.getString(1);
+                    // Loop over results and add each returned role to a set
+                    while (rs.next()) {
 
-                    // Add the permission to the set of permissions
-                    permissions.add(permissionString);
+                        String permissionString = rs.getString(1);
+
+                        // Add the permission to the set of permissions
+                        permissions.add(permissionString);
+                    }
+                } finally {
+                    JdbcUtils.closeResultSet(rs);
                 }
 
             }
         } finally {
-            JdbcUtils.closeResultSet(rs);
             JdbcUtils.closeStatement(ps);
         }
 
