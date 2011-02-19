@@ -70,10 +70,11 @@
         <aspectj.version>1.6.9</aspectj.version>
         <crowd.version>1.5.2</crowd.version>
         <ehcache.version>2.2.0</ehcache.version>
-        <groovy.version>1.7.5</groovy.version>
+        <groovy.version>1.7.8</groovy.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
         <jdk.version>1.5</jdk.version>
         <jetty.version>6.1.21</jetty.version>
+        <openid4j.version>0.9.5</openid4j.version>
         <quartz.version>1.6.1</quartz.version>
         <slf4j.version>1.6.1</slf4j.version>
         <spring.version>3.0.5.RELEASE</spring.version>
@@ -235,6 +236,10 @@
     </build>
 
     <dependencies>
+        <!-- Automatically inherited dependencies.  The only ones that should be in here
+             are test dependencies.  Actual compile or runtime dependencies should be
+             explicitly declared in a child module, referencing the dependency defined
+             in this file's <dependencyManagement> section. -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -245,6 +250,13 @@
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <version>${easymock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Writing tests in groovy is fast!: -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovy.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -312,6 +324,15 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openid4java</groupId>
+                <artifactId>openid4java-consumer</artifactId>
+                <!--artifactId>openid4java-server</artifactId-->
+                <!--artifactId>openid4java-infocard</artifactId-->
+                <!--artifactId>openid4java-xri</artifactId-->
+                <!--artifactId>openid4java</artifactId-->
+                <version>${openid4j.version}</version>
             </dependency>
             <dependency>
                 <!-- Used for Atlassian Crowd Realm - not required for the framework: -->
