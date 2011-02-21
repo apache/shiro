@@ -34,9 +34,9 @@
     <modules>
         <module>aspectj</module>
         <module>ehcache</module>
-        <module>groovy</module>
         <module>quartz</module>
         <module>spring</module>
+        <!-- <module>openid4j</module> -->
     </modules>
 
 </project>
