@@ -36,7 +36,7 @@
         <module>ehcache</module>
         <module>quartz</module>
         <module>spring</module>
-        <!-- <module>openid4j</module> -->
+        <module>openid4j</module>
     </modules>
 
 </project>
