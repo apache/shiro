@@ -64,7 +64,7 @@
 
     <properties>
         <!-- non-dependency-based properties: -->
-        <shiro.osgi.importRange>[1.2.0, 2.0.0)</shiro.osgi.importRange>
+        <shiro.osgi.importRange>[1.2, 2)</shiro.osgi.importRange>
 
         <!-- Compile 3rd party dependencies: -->
         <aspectj.version>1.6.9</aspectj.version>
