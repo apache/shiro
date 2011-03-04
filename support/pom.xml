@@ -37,6 +37,7 @@
         <module>quartz</module>
         <module>spring</module>
         <module>openid4j</module>
+        <module>features</module>
     </modules>
 
 </project>
