@@ -70,6 +70,7 @@ public class VMSingletonDefaultSecurityManagerTest {
             assertTrue(subject.getSession().getAttribute("key").equals("value"));
         } finally {
             sm.destroy();
+            //SHIRO-270:
             SecurityUtils.setSecurityManager(null);
         }
     }
