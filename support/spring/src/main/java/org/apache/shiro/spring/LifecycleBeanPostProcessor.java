@@ -21,6 +21,7 @@ package org.apache.shiro.spring;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.config.DestructionAwareBeanPostProcessor;
+import org.springframework.core.PriorityOrdered;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +43,33 @@ import org.apache.shiro.util.Initializable;
  *
  * @since 0.2
  */
-public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProcessor {
+public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProcessor, PriorityOrdered {
 
     /**
      * Private internal class log instance.
      */
     private static final Logger log = LoggerFactory.getLogger(LifecycleBeanPostProcessor.class);
+
+    /**
+     * Order value of this BeanPostProcessor.
+     */
+    private int order;
+
+    /**
+     * Default Constructor.
+     */
+    public LifecycleBeanPostProcessor() {
+        this(LOWEST_PRECEDENCE);
+    }
+
+    /**
+     * Constructor with definable {@link #getOrder() order value}.
+     *
+     * @param order order value of this BeanPostProcessor.
+     */
+    public LifecycleBeanPostProcessor(int order) {
+        this.order = order;
+    }
 
     /**
      * Calls the <tt>init()</tt> methods on the bean if it implements {@link org.apache.shiro.util.Initializable}
@@ -101,5 +123,15 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
                 throw new FatalBeanException("Error destroying bean [" + name + "]", e);
             }
         }
+    }
+
+    /**
+     * Order value of this BeanPostProcessor.
+     *
+     * @return order value.
+     */
+    public int getOrder() {
+        // LifecycleBeanPostProcessor needs Order. See https://issues.apache.org/jira/browse/SHIRO-222
+        return order;
     }
 }
