@@ -68,7 +68,7 @@
                         <Export-Package>org.apache.shiro.ehcache*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            net.sf.ehcache*;version="[2.2, 3)",
+                            net.sf.ehcache*;version="[2.3, 3)",
                             *
                         </Import-Package>
                     </instructions>

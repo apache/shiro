@@ -35,13 +35,13 @@
 
     <feature name="shiro-aspectj" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">shiro-core</feature>
-        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aspectj/${aspectj.version}</bundle>
+        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aspectj/${aspectj.bundle.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-aspectj/${project.version}</bundle>
     </feature>
 
     <feature name="shiro-ehcache" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">shiro-core</feature>
-        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/${ehcache.version}</bundle>
+        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/${ehcache.bundle.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-ehcache/${project.version}</bundle>
     </feature>
 
@@ -59,8 +59,8 @@
 
     <feature name="shiro-quartz" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">shiro-core</feature>
-        <bundle dependency='true'>mvn:commons-collections/commons-collections/3.2.1</bundle>
-        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/${quartz.version}</bundle>
+        <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons.collections.version}</bundle>
+        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/${quartz.bundle.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-quartz/${project.version}</bundle>
     </feature>
 

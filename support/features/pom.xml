@@ -32,6 +32,14 @@
     <name>Apache Shiro :: Support :: Karaf Features</name>
     <packaging>pom</packaging>
 
+    <properties>
+        <aspectj.bundle.version>1.6.8_1</aspectj.bundle.version>
+        <ehcache.bundle.version>2.3.0_1</ehcache.bundle.version>
+        <quartz.bundle.version>1.6.1_1</quartz.bundle.version>
+        <!-- Not a Shiro dependency - used for quartz bundle resolution only (see features.xml): -->
+        <commons.collections.version>3.2.1</commons.collections.version>
+    </properties>
+
     <build>
         <resources>
             <resource>
