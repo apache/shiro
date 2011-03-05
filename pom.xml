@@ -63,25 +63,32 @@
     </distributionManagement>
 
     <properties>
+
         <!-- non-dependency-based properties: -->
         <shiro.osgi.importRange>[1.2, 2)</shiro.osgi.importRange>
 
         <!-- Compile 3rd party dependencies: -->
+        <!-- Don't change this version without also changing the shiro-aspect and shiro-features
+             modules' OSGi metadata: -->
         <aspectj.version>1.6.9</aspectj.version>
         <crowd.version>1.5.2</crowd.version>
-        <ehcache.version>2.2.0</ehcache.version>
-        <groovy.version>1.7.8</groovy.version>
+        <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
+             modules' OSGi metadata: -->
+        <ehcache.version>2.3.0</ehcache.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
         <jdk.version>1.5</jdk.version>
         <jetty.version>6.1.21</jetty.version>
         <openid4j.version>0.9.5</openid4j.version>
+        <!-- Don't change this version without also changing the shiro-quartz and shiro-features
+             modules' OSGi metadata: -->
         <quartz.version>1.6.1</quartz.version>
         <slf4j.version>1.6.1</slf4j.version>
         <spring.version>3.0.5.RELEASE</spring.version>
 
         <!-- Test 3rd-party dependencies: -->
-        <junit.version>4.8.2</junit.version>
         <easymock.version>3.0</easymock.version>
+        <groovy.version>1.7.8</groovy.version>
+        <junit.version>4.8.2</junit.version>
 
     </properties>
 
