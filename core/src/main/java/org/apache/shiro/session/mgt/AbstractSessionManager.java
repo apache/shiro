@@ -27,6 +27,12 @@ import org.apache.shiro.session.Session;
  *
  * @since 0.1
  */
+//TODO - deprecate this class (see SHIRO-240):
+//This is only here to make available a common attribute 'globalSessionTimeout' to subclasses, particularly to make it
+//available to both AbstractNativeSessionManager and ServletContainerSessionManager subclass trees.  However, the
+//ServletContainerSessionManager implementation does not use this value
+//(see https://issues.apache.org/jira/browse/SHIRO-240 for why).  That means that only the Native session managers
+//need a globalSessionTimeout property, making this class unnecessary.
 public abstract class AbstractSessionManager implements SessionManager {
 
     protected static final long MILLIS_PER_SECOND = 1000;
