@@ -22,6 +22,7 @@ import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.CodecException;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
+import org.apache.shiro.crypto.UnknownAlgorithmException;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
@@ -166,13 +167,14 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @param algorithmName the algorithm to use for the hash, provided by subclasses.
      * @return the MessageDigest object for the specified {@code algorithm}.
+     * @throws UnknownAlgorithmException if the specified algorithm name is not available.
      */
-    protected MessageDigest getDigest(String algorithmName) {
+    protected MessageDigest getDigest(String algorithmName) throws UnknownAlgorithmException {
         try {
             return MessageDigest.getInstance(algorithmName);
         } catch (NoSuchAlgorithmException e) {
             String msg = "No native '" + algorithmName + "' MessageDigest instance available on the current JVM.";
-            throw new IllegalStateException(msg, e);
+            throw new UnknownAlgorithmException(msg, e);
         }
     }
 
@@ -204,8 +206,9 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      * @param salt           the salt to use for the initial hash
      * @param hashIterations the number of times the the {@code bytes} will be hashed (for attack resiliency).
      * @return the hashed bytes.
+     * @throws UnknownAlgorithmException if the {@link #getAlgorithmName() algorithmName} is not available.
      */
-    protected byte[] hash(byte[] bytes, byte[] salt, int hashIterations) {
+    protected byte[] hash(byte[] bytes, byte[] salt, int hashIterations) throws UnknownAlgorithmException {
         MessageDigest digest = getDigest(getAlgorithmName());
         if (salt != null) {
             digest.reset();
