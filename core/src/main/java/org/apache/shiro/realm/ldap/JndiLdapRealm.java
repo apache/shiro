@@ -31,6 +31,7 @@ import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.AuthenticationNotSupportedException;
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
 
@@ -291,6 +292,9 @@ public class JndiLdapRealm extends AuthorizingRealm {
         AuthenticationInfo info;
         try {
             info = queryForAuthenticationInfo(token, getContextFactory());
+        } catch (AuthenticationNotSupportedException e) {
+            String msg = "Unsupported configured authentication mechanism";
+            throw new UnsupportedAuthenticationMechanismException(msg, e);
         } catch (javax.naming.AuthenticationException e) {
             throw new AuthenticationException("LDAP authentication failed.", e);
         } catch (NamingException e) {
