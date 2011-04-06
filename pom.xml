@@ -162,6 +162,15 @@
             <name>Tim Veil</name>
             <email>tveil@apache.org</email>
         </developer>
+        <developer>
+            <id>bdemers</id>
+            <name>Brian Demers</name>
+            <email>bdemers@apache.org</email>
+            <url>http://about.me/brian.demers</url>
+            <organization>Sonatype</organization>
+            <organizationUrl>http://www.sonatype.com/</organizationUrl>
+            <timezone>-5</timezone>
+        </developer>
     </developers>
 
     <modules>
