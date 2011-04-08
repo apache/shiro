@@ -19,7 +19,6 @@
 package org.apache.shiro.crypto;
 
 import org.apache.shiro.util.ByteSource;
-import org.apache.shiro.util.SimpleByteSource;
 
 import java.security.SecureRandom;
 
@@ -115,6 +114,6 @@ public class SecureRandomNumberGenerator implements RandomNumberGenerator {
         }
         byte[] bytes = new byte[numBytes];
         this.secureRandom.nextBytes(bytes);
-        return new SimpleByteSource(bytes);
+        return ByteSource.Util.bytes(bytes);
     }
 }

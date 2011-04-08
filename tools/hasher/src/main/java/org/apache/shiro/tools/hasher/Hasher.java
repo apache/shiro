@@ -27,7 +27,6 @@ import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.JavaEnvironment;
-import org.apache.shiro.util.SimpleByteSource;
 import org.apache.shiro.util.StringUtils;
 
 import java.io.File;
@@ -313,7 +312,7 @@ public final class Hasher {
             if (generateSalt || (saltBytesString != null)) {
                 throw new IllegalArgumentException(SALT_MUTEX_MSG);
             }
-            return new SimpleByteSource(saltString);
+            return ByteSource.Util.bytes(saltString);
         }
 
         if (saltBytesString != null) {
@@ -334,7 +333,7 @@ public final class Hasher {
             } else {
                 bytes = Hex.decode(value);
             }
-            return new SimpleByteSource(bytes);
+            return ByteSource.Util.bytes(bytes);
         }
 
         if (generateSalt) {

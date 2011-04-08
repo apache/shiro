@@ -21,7 +21,6 @@ package org.apache.shiro.crypto.hash;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.util.ByteSource;
-import org.apache.shiro.util.SimpleByteSource;
 
 /**
  * Default implementation of the {@link Hasher} interface, supporting secure-random salt generation, an internal
@@ -163,7 +162,7 @@ public class DefaultHasher implements ConfigurableHasher {
         int iterations = Math.max(1, getHashIterations());
 
         Hash result = new SimpleHash(algorithmName, sourceBytes, saltBytes, iterations);
-        ByteSource publicSalt = new SimpleByteSource(publicSaltBytes);
+        ByteSource publicSalt = ByteSource.Util.bytes(publicSaltBytes);
 
         return new SimpleHashResponse(result, publicSalt);
     }

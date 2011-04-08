@@ -19,7 +19,6 @@
 package org.apache.shiro.crypto;
 
 import org.apache.shiro.util.ByteSource;
-import org.apache.shiro.util.SimpleByteSource;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -342,8 +341,7 @@ public abstract class JcaCipherService implements CipherService {
                     "byte array is size " + (output != null ? output.length : 0));
         }
 
-        return new SimpleByteSource(output);
-
+        return ByteSource.Util.bytes(output);
     }
 
     public ByteSource decrypt(byte[] ciphertext, byte[] key) throws CryptoException {
@@ -390,7 +388,7 @@ public abstract class JcaCipherService implements CipherService {
                     (ciphertext != null ? ciphertext.length : 0));
         }
         byte[] decrypted = crypt(ciphertext, key, iv, javax.crypto.Cipher.DECRYPT_MODE);
-        return decrypted == null ? null : new SimpleByteSource(decrypted);
+        return decrypted == null ? null : ByteSource.Util.bytes(decrypted);
     }
 
     /**

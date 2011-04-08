@@ -2,8 +2,8 @@ package org.apache.shiro.samples.spring.realm;
 
 import org.apache.shiro.authc.*;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
+import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.JdbcUtils;
-import org.apache.shiro.util.SimpleByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ public class SaltAwareJdbcRealm extends JdbcRealm {
              * Salts should not be based on anything that a user could enter (attackers can exploit this).  Instead
              * they should ideally be cryptographically-strong randomly generated numbers.
              */
-            saInfo.setCredentialsSalt(new SimpleByteSource(username));
+            saInfo.setCredentialsSalt(ByteSource.Util.bytes(username));
 
             info = saInfo;
 

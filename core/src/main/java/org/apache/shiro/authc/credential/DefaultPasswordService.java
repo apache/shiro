@@ -26,7 +26,6 @@ import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.hash.*;
 import org.apache.shiro.util.ByteSource;
-import org.apache.shiro.util.SimpleByteSource;
 
 import java.util.Arrays;
 
@@ -98,7 +97,7 @@ public class DefaultPasswordService implements PasswordService {
     protected Hash hashProvidedCredentials(AuthenticationToken token, ByteSource salt) {
         Object credentials = token.getCredentials();
         byte[] credentialsBytes = new BytesHelper().getBytes(credentials);
-        ByteSource credentialsByteSource = new SimpleByteSource(credentialsBytes);
+        ByteSource credentialsByteSource = ByteSource.Util.bytes(credentialsBytes);
 
         HashRequest request = new SimpleHashRequest(credentialsByteSource, salt);
 
