@@ -41,8 +41,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * caching to alleviate constant load on any back-end data sources.
  * <p/>
  * This feature is disabled by default to retain backwards-compatibility with Shiro 1.1 and earlier.  It may be
- * enabled by setting {@link #setAuthenticationCachingEnabled(boolean) authenticationCachingEnabled} = {@code true},
- * but <b>NOTE:</b>
+ * enabled by setting {@link #setAuthenticationCachingEnabled(boolean) authenticationCachingEnabled} = {@code true}
+ * (and configuring Shiro with a {@link CacheManager} of course), but <b>NOTE:</b>
  * <p/>
  * <b>ONLY enable authentication caching if either of the following is true for your realm implementation:</b>
  * <ul>
