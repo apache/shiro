@@ -18,10 +18,10 @@
  */
 package org.apache.shiro.authz;
 
+import org.apache.shiro.subject.PrincipalCollection;
+
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.shiro.subject.PrincipalCollection;
 
 /**
  * An <tt>Authorizer</tt> performs authorization (access control) operations for any given Subject
@@ -259,8 +259,8 @@ public interface Authorizer {
     void checkRoles(PrincipalCollection subjectPrincipal, Collection<String> roleIdentifiers) throws AuthorizationException;
 
     /**
-     * Same as {@link #checkRoles(PrincipalCollection subjectPrincipal, Collection<String> roleIdentifiers) 
-     * checkRoles(PrincipalCollection subjectPrincipal, Collection<String> roleIdentifiers)} but doesn't require a collection 
+     * Same as {@link #checkRoles(org.apache.shiro.subject.PrincipalCollection, java.util.Collection)
+     * checkRoles(PrincipalCollection subjectPrincipal, Collection&lt;String&gt; roleIdentifiers)} but doesn't require a collection
      * as an argument.
      * Asserts the corresponding Subject/user has all of the specified roles by returning quietly if they do or
      * throwing an {@link AuthorizationException} if they do not.

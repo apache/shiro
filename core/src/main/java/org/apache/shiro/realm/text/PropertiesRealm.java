@@ -154,6 +154,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
 
     @Override
     public void onInit() {
+        super.onInit();
         //TODO - cleanup - this method shouldn't be necessary
         afterRoleCacheSet();
     }
