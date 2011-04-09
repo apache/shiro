@@ -79,7 +79,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * {@link #getAuthenticationCacheKey(org.apache.shiro.authc.AuthenticationToken)} and
  * {@link #getAuthenticationCacheKey(org.apache.shiro.subject.PrincipalCollection)} methods return the exact same value.
  * <p/>
- * The default implementations of these methods expected that the
+ * The default implementations of these methods expect that the
  * {@link org.apache.shiro.authc.AuthenticationToken#getPrincipal()} (what the user submits during login) and
  * {@link #getAvailablePrincipal(org.apache.shiro.subject.PrincipalCollection) getAvailablePrincipal} (what is returned
  * by the realm after account lookup) return
