@@ -2,6 +2,7 @@ package org.apache.shiro.web.servlet
 
 import javax.servlet.FilterConfig
 import javax.servlet.ServletContext
+import org.apache.shiro.io.ResourceUtils
 import static org.easymock.EasyMock.*
 
 /**
@@ -9,60 +10,64 @@ import static org.easymock.EasyMock.*
  */
 class IniShiroFilterTest extends GroovyTestCase {
 
-    IniShiroFilter filter;
-    FilterConfig mockFilterConfig;
-    ServletContext mockServletContext;
+    void testDefaultWebInfConfig() {
+        def filterConfig = createStrictMock(FilterConfig)
+        def servletContext = createStrictMock(ServletContext)
+        def inputStream = ResourceUtils.getResourceAsStream("classpath:IniShiroFilterTest.ini")
 
-    protected void setUp(String config) {
-        mockFilterConfig = createMock(FilterConfig.class);
-        mockServletContext = createMock(ServletContext.class);
+        expect(filterConfig.getServletContext()).andReturn servletContext
+        expect(filterConfig.getInitParameter(eq(AbstractShiroFilter.STATIC_INIT_PARAM_NAME))).andReturn null
+        expect(filterConfig.getInitParameter(IniShiroFilter.CONFIG_INIT_PARAM_NAME)).andReturn null
+        expect(filterConfig.getInitParameter(IniShiroFilter.CONFIG_PATH_INIT_PARAM_NAME)).andReturn null
+        expect(servletContext.getResourceAsStream(IniShiroFilter.DEFAULT_WEB_INI_RESOURCE_PATH)).andReturn inputStream
 
-        expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext).anyTimes();
-        expect(mockFilterConfig.getInitParameter(eq(AbstractShiroFilter.STATIC_INIT_PARAM_NAME))).andReturn null
-        expect(mockFilterConfig.getInitParameter(eq(IniShiroFilter.CONFIG_INIT_PARAM_NAME))).andReturn(config).once();
-        expect(mockFilterConfig.getInitParameter(eq(IniShiroFilter.CONFIG_PATH_INIT_PARAM_NAME))).andReturn(null).once();
+        replay filterConfig, servletContext
+
+        IniShiroFilter filter = new IniShiroFilter()
+        filter.init(filterConfig)
+
+        verify filterConfig, servletContext
     }
 
-    protected void setUpWithPathConfig(String path) {
-        mockFilterConfig = createMock(FilterConfig.class);
-        mockServletContext = createMock(ServletContext.class);
+    void testDefaultClasspathConfig() {
 
-        expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext).anyTimes();
-        expect(mockFilterConfig.getInitParameter(AbstractShiroFilter.STATIC_INIT_PARAM_NAME)).andReturn null
-        expect(mockFilterConfig.getInitParameter(IniShiroFilter.CONFIG_INIT_PARAM_NAME)).andReturn(null).anyTimes();
-        expect(mockFilterConfig.getInitParameter(IniShiroFilter.CONFIG_PATH_INIT_PARAM_NAME)).andReturn(path).anyTimes();
+        def filterConfig = createStrictMock(FilterConfig)
+        def servletContext = createStrictMock(ServletContext)
+
+        expect(filterConfig.getServletContext()).andReturn servletContext
+        expect(filterConfig.getInitParameter(eq(AbstractShiroFilter.STATIC_INIT_PARAM_NAME))).andReturn null
+        expect(filterConfig.getInitParameter(IniShiroFilter.CONFIG_INIT_PARAM_NAME)).andReturn null
+        expect(filterConfig.getInitParameter(IniShiroFilter.CONFIG_PATH_INIT_PARAM_NAME)).andReturn null
+        expect(servletContext.getResourceAsStream(IniShiroFilter.DEFAULT_WEB_INI_RESOURCE_PATH)).andReturn null
+
+        replay filterConfig, servletContext
+
+        IniShiroFilter filter = new IniShiroFilter()
+        filter.init(filterConfig)
+
+        verify filterConfig, servletContext
     }
 
-    public void tearDown() throws Exception {
-        reset mockServletContext, mockFilterConfig
-    }
-
-    protected void replayAndVerify() throws Exception {
-        replay mockServletContext, mockFilterConfig
-
-        this.filter = new IniShiroFilter();
-        this.filter.init(mockFilterConfig);
-
-        verify mockFilterConfig, mockServletContext
-    }
-
-
-    void testDefaultConfig() {
-        setUp(null);
-        replayAndVerify();
-    }
 
     void testSimpleConfig() {
-        setUp("""
+        def config = """
         [filters]
         authc.successUrl = /index.jsp
-        """);
-        replayAndVerify();
-    }
+        """
+        def filterConfig = createMock(FilterConfig)
+        def servletContext = createMock(ServletContext)
 
-    void testSimplePathConfig() {
-        setUpWithPathConfig("classpath:IniShiroFilterTest.ini");
-        replayAndVerify();
+        expect(filterConfig.getServletContext()).andReturn(servletContext).anyTimes()
+        expect(filterConfig.getInitParameter(eq(AbstractShiroFilter.STATIC_INIT_PARAM_NAME))).andReturn null
+        expect(filterConfig.getInitParameter(eq(IniShiroFilter.CONFIG_INIT_PARAM_NAME))).andReturn config
+        expect(filterConfig.getInitParameter(eq(IniShiroFilter.CONFIG_PATH_INIT_PARAM_NAME))).andReturn null
+
+        replay filterConfig, servletContext
+
+        IniShiroFilter filter = new IniShiroFilter()
+        filter.init(filterConfig)
+
+        verify filterConfig, servletContext
     }
 
 }

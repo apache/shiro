@@ -145,9 +145,9 @@ public class WebUtils {
      * Tomcat trunk, r939305
      *
      * @param path Relative path to be normalized
-     * 
+     * @return normalized path
      */
-    private static String normalize(String path) {
+    public static String normalize(String path) {
         return normalize(path, true);
     }
 
@@ -161,6 +161,7 @@ public class WebUtils {
      *
      * @param path Relative path to be normalized
      * @param replaceBackSlash Should '\\' be replaced with '/'
+     * @return normalized path
      */
     private static String normalize(String path, boolean replaceBackSlash) {
 
