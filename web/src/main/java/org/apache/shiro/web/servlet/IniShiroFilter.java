@@ -174,11 +174,7 @@ public class IniShiroFilter extends AbstractShiroFilter {
      *                   not specified via the {@link #getConfig() config} attribute.
      */
     public void setConfigPath(String configPath) {
-        String path = StringUtils.clean(configPath);
-        if (path != null) {
-            path = WebUtils.normalize(path);
-        }
-        this.configPath = path;
+        this.configPath = StringUtils.clean(configPath);
     }
 
     public void init() throws Exception {
