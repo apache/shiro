@@ -124,7 +124,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
 
     /**
      * Sets the path of the properties file to load user, role, and permission information from.  The properties
-     * file will be loaded using {@link ResourceUtils#getInputStreamForPath(String)} so any convention recongized
+     * file will be loaded using {@link ResourceUtils#getInputStreamForPath(String)} so any convention recognized
      * by that method is accepted here.  For example, to load a file from the classpath use
      * {@code classpath:myfile.properties}; to load a file from disk simply specify the full path; to load
      * a file from a URL use {@code url:www.mysite.com/myfile.properties}.
@@ -138,7 +138,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     /**
      * Sets the interval in seconds at which the property file will be checked for changes and reloaded.  If this is
      * set to zero or less, property file reloading will be disabled.  If it is set to 1 or greater, then a
-     * separate thread will be created to monitor the propery file for changes and reload the file if it is updated.
+     * separate thread will be created to monitor the property file for changes and reload the file if it is updated.
      *
      * @param reloadIntervalSeconds the interval in seconds at which the property file should be examined for changes.
      *                              If set to zero or less, reloading is disabled.

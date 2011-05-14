@@ -40,7 +40,7 @@ import java.util.List;
  * (Shiro's default implementations do String-to-Permission conversion for these methods using
  * {@link org.apache.shiro.authz.permission.PermissionResolver PermissionResolver}s.)
  *
- * <p>These overloaded *Permission methods <em>do</em> forego type-saftey for the benefit of convenience and simplicity,
+ * <p>These overloaded *Permission methods <em>do</em> forego type-safety for the benefit of convenience and simplicity,
  * so you should choose which ones to use based on your preferences and needs.
  *
  * @since 0.1
@@ -159,7 +159,7 @@ public interface Authorizer {
 
     /**
      * Ensures a subject/user {@link Permission#implies(Permission)} implies} the specified <tt>Permission</tt>.
-     * If the subject's exisiting associated permissions do not {@link Permission#implies(Permission)} imply}
+     * If the subject's existing associated permissions do not {@link Permission#implies(Permission)} imply}
      * the given permission, an {@link AuthorizationException} will be thrown.
      *
      * @param subjectPrincipal the application-specific subject/user identifier.
@@ -174,7 +174,7 @@ public interface Authorizer {
      * {@link Permission#implies(Permission) implies} all of the
      * specified permission strings.
      *
-     * If the subject's exisiting associated permissions do not
+     * If the subject's existing associated permissions do not
      * {@link Permission#implies(Permission) imply} all of the given permissions,
      * an {@link AuthorizationException} will be thrown.
      *
@@ -193,7 +193,7 @@ public interface Authorizer {
      * {@link Permission#implies(Permission) implies} all of the
      * specified permission strings.
      *
-     * If the subject's exisiting associated permissions do not
+     * If the subject's existing associated permissions do not
      * {@link Permission#implies(Permission) imply} all of the given permissions,
      * an {@link AuthorizationException} will be thrown.
      *

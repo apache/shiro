@@ -62,7 +62,7 @@ public interface PrincipalCollection extends Iterable, Serializable {
      * Shiro's default implementations of this interface make this
      * assumption by usually simply returning {@link #iterator()}.{@link java.util.Iterator#next() next()}, which just
      * returns the first returned principal obtained from the first consulted/configured {@code Realm} during the
-     * authentication attempt.  This means in a multi-{@code Realm} application, {@code Realm} configuraiton order
+     * authentication attempt.  This means in a multi-{@code Realm} application, {@code Realm} configuration order
      * matters if you want to retain this default heuristic.
      * <p/>
      * If this heuristic is not sufficient, most Shiro end-users will need to implement a custom

@@ -103,7 +103,7 @@ public class Quickstart {
         }
 
         //test a typed permission (not instance-level)
-        if (currentUser.isPermitted("lightsaber:weild")) {
+        if (currentUser.isPermitted("lightsaber:wield")) {
             log.info("You may use a lightsaber ring.  Use it wisely.");
         } else {
             log.info("Sorry, lightsaber rings are for schwartz masters only.");

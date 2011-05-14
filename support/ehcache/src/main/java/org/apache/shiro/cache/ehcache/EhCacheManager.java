@@ -37,7 +37,7 @@ import java.io.InputStream;
  * This class can {@link #setCacheManager(net.sf.ehcache.CacheManager) accept} a manually configured
  * {@link net.sf.ehcache.CacheManager net.sf.ehcache.CacheManager} instance,
  * or an {@code ehcache.xml} path location can be specified instead and one will be constructed. If neither are
- * specified, Shiro's failsafe <code><a href="./ehcache.xml">ehcache.xml</a>} file will be used by default.
+ * specified, Shiro's failsafe <code><a href="./ehcache.xml">ehcache.xml</a></code> file will be used by default.
  * <p/>
  * This implementation requires EhCache 1.2 and above. Make sure EhCache 1.1 or earlier
  * is not in the classpath or it will not work.
@@ -180,7 +180,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * Initializes this instance.
      * <p/>
      * If a {@link #setCacheManager CacheManager} has been
-     * explicitly set (e.g. via Dependency Injection or programatically) prior to calling this
+     * explicitly set (e.g. via Dependency Injection or programmatically) prior to calling this
      * method, this method does nothing.
      * <p/>
      * However, if no {@code CacheManager} has been set, the default Ehcache singleton will be initialized, where
@@ -229,7 +229,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * Shuts-down the wrapped Ehcache CacheManager <b>only if implicitly created</b>.
      * <p/>
      * If another component injected
-     * a non-null CacheManager into this instace before calling {@link #init() init}, this instance expects that same
+     * a non-null CacheManager into this instance before calling {@link #init() init}, this instance expects that same
      * component to also destroy the CacheManager instance, and it will not attempt to do so.
      */
     public void destroy() {

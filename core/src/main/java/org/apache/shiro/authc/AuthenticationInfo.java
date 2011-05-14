@@ -45,7 +45,7 @@ import java.io.Serializable;
  * <code>Account</code> interface for a given <code>Realm</code> is entirely based on your application's needs or your
  * preferences.
  * <p/>
- * <p><b>Pleae note:</b>  Since Shiro sometimes logs authentication operations, please ensure your AuthenticationInfo's
+ * <p><b>Please note:</b>  Since Shiro sometimes logs authentication operations, please ensure your AuthenticationInfo's
  * <code>toString()</code> implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to
  * someone reading your logs.  This is good practice anyway, and account credentials should rarely (if ever) be printed
  * out for any reason.  If you're using Shiro's default implementations of this interface, they only ever print the

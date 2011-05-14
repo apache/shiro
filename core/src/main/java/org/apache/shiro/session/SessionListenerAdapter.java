@@ -27,7 +27,7 @@ package org.apache.shiro.session;
 public class SessionListenerAdapter implements SessionListener {
 
     /**
-     * Adapter no-op implemenation - does nothing and returns immediately.
+     * Adapter no-op implementation - does nothing and returns immediately.
      *
      * @param session the session that has started.
      */
@@ -36,7 +36,7 @@ public class SessionListenerAdapter implements SessionListener {
     }
 
     /**
-     * Adapter no-op implemenation - does nothing and returns immediately.
+     * Adapter no-op implementation - does nothing and returns immediately.
      *
      * @param session the session that has stopped.
      */
@@ -45,7 +45,7 @@ public class SessionListenerAdapter implements SessionListener {
     }
 
     /**
-     * Adapter no-op implemenation - does nothing and returns immediately.
+     * Adapter no-op implementation - does nothing and returns immediately.
      *
      * @param session the session that has expired.
      */

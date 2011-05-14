@@ -116,7 +116,7 @@ public class ResourceUtils {
      * {@link FileInputStream FileInputStream}.
      *
      * @param resourcePath the String path representing the resource to obtain.
-     * @return the InputStraem for the specified resource.
+     * @return the InputStream for the specified resource.
      * @throws IOException if there is a problem acquiring the resource at the specified path.
      */
     public static InputStream getInputStreamForPath(String resourcePath) throws IOException {

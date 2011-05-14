@@ -42,7 +42,7 @@ public class Hex {
     };
 
     /**
-     * Encodes the specifed byte array to a character array and then returns that character array
+     * Encodes the specified byte array to a character array and then returns that character array
      * as a String.
      *
      * @param bytes the byte array to Hex-encode.
@@ -54,12 +54,12 @@ public class Hex {
     }
 
     /**
-     * Converts an array of bytes into an array of characters representing the hexidecimal values of each byte in order.
+     * Converts an array of bytes into an array of characters representing the hexadecimal values of each byte in order.
      * The returned array will be double the length of the passed array, as it takes two characters to represent any
      * given byte.
      *
      * @param data byte[] to convert to Hex characters
-     * @return A char[] containing hexidecimal characters
+     * @return A char[] containing hexadecimal characters
      */
     public static char[] encode(byte[] data) {
 
@@ -77,13 +77,13 @@ public class Hex {
     }
 
     /**
-     * Converts an array of character bytes representing hexidecimal values into an
+     * Converts an array of character bytes representing hexadecimal values into an
      * array of bytes of those same values. The returned array will be half the
      * length of the passed array, as it takes two characters to represent any
      * given byte. An exception is thrown if the passed char array has an odd
      * number of elements.
      *
-     * @param array An array of character bytes containing hexidecimal digits
+     * @param array An array of character bytes containing hexadecimal digits
      * @return A byte array containing binary data decoded from
      *         the supplied byte array (representing characters).
      * @throws IllegalArgumentException Thrown if an odd number of characters is supplied
@@ -108,13 +108,13 @@ public class Hex {
     }
 
     /**
-     * Converts an array of characters representing hexidecimal values into an
+     * Converts an array of characters representing hexadecimal values into an
      * array of bytes of those same values. The returned array will be half the
      * length of the passed array, as it takes two characters to represent any
      * given byte. An exception is thrown if the passed char array has an odd
      * number of elements.
      *
-     * @param data An array of characters containing hexidecimal digits
+     * @param data An array of characters containing hexadecimal digits
      * @return A byte array containing binary data decoded from
      *         the supplied char array.
      * @throws IllegalArgumentException if an odd number or illegal of characters
@@ -153,7 +153,7 @@ public class Hex {
     protected static int toDigit(char ch, int index) throws IllegalArgumentException {
         int digit = Character.digit(ch, 16);
         if (digit == -1) {
-            throw new IllegalArgumentException("Illegal hexadecimal charcter " + ch + " at index " + index);
+            throw new IllegalArgumentException("Illegal hexadecimal character " + ch + " at index " + index);
         }
         return digit;
     }

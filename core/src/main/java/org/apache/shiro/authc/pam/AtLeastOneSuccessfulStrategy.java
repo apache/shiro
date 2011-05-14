@@ -48,7 +48,7 @@ public class AtLeastOneSuccessfulStrategy extends AbstractAuthenticationStrategy
      * that none of the realms authenticated successfully.
      */
     public AuthenticationInfo afterAllAttempts(AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {
-        //we know if one or more were able to succesfully authenticate if the aggregated account object does not
+        //we know if one or more were able to successfully authenticate if the aggregated account object does not
         //contain null or empty data:
         if (aggregate == null || CollectionUtils.isEmpty(aggregate.getPrincipals())) {
             throw new AuthenticationException("Authentication token of type [" + token.getClass() + "] " +

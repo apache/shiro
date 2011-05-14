@@ -41,7 +41,7 @@ public interface ValidatingSessionManager extends SessionManager {
      * This is obvious in the case of web applications due to the HTTP protocol, but it is
      * equally true of remote client applications making remote method invocations.  The server
      * essentially sits idle and only &quot;works&quot; when responding to client requests and/or
-     * method invocations.  This type of model is particularly efficent since it means the
+     * method invocations.  This type of model is particularly efficient since it means the
      * security system only has to validate a session during those cases.  Such
      * &quot;lazy&quot; behavior enables the system to lie stateless and/or idle and only incur
      * overhead for session validation when necessary.

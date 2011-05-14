@@ -104,7 +104,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
      * <p/>
      * <p>where <em>permissionDefinition</em> is an arbitrary String, but must people will want to use
      * Strings that conform to the {@link org.apache.shiro.authz.permission.WildcardPermission WildcardPermission}
-     * format for ease of use and flexibility.  Note that if an individual <em>permissionDefnition</em> needs to
+     * format for ease of use and flexibility.  Note that if an individual <em>permissionDefinition</em> needs to
      * be internally comma-delimited (e.g. <code>printer:5thFloor:print,info</code>), you will need to surround that
      * definition with double quotes (&quot;) to avoid parsing errors (e.g.
      * <code>&quot;printer:5thFloor:print,info&quot;</code>).

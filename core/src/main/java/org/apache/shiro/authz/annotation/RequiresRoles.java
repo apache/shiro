@@ -55,7 +55,7 @@ import java.lang.annotation.Target;
 public @interface RequiresRoles {
 
     /**
-     * A single String role name or multiple comma-delimitted role names required in order for the method
+     * A single String role name or multiple comma-delimited role names required in order for the method
      * invocation to be allowed.
      */
     String[] value();
