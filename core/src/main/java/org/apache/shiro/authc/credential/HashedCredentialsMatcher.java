@@ -128,7 +128,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
     private boolean storedCredentialsHexEncoded;
 
     /**
-     * JavaBeans-compatibile no-arg constructor intended for use in IoC/Dependency Injection environments.  If you
+     * JavaBeans-compatible no-arg constructor intended for use in IoC/Dependency Injection environments.  If you
      * use this constructor, you <em>MUST</em> also additionally set the
      * {@link #setHashAlgorithmName(String) hashAlgorithmName} property.
      */

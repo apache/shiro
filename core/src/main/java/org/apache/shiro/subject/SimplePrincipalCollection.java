@@ -264,7 +264,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
      * Serialization write support.
      * <p/>
      * NOTE: Don't forget to change the serialVersionUID constant at the top of this class
-     * if you make any backwards-incompatible serializatoin changes!!!
+     * if you make any backwards-incompatible serialization changes!!!
      * (use the JDK 'serialver' program for this)
      *
      * @param out output stream provided by Java serialization
@@ -284,7 +284,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
      * input stream.
      * <p/>
      * NOTE: Don't forget to change the serialVersionUID constant at the top of this class
-     * if you make any backwards-incompatible serializatoin changes!!!
+     * if you make any backwards-incompatible serialization changes!!!
      * (use the JDK 'serialver' program for this)
      *
      * @param in input stream provided by

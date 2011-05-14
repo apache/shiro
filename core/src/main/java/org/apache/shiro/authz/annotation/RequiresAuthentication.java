@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
  * <p/>
  * See the {@link RequiresUser RequiresUser} and
  * {@link org.apache.shiro.authc.RememberMeAuthenticationToken RememberMeAuthenticationToken} JavaDoc for an
- * explaination of why these two states are considered different.
+ * explanation of why these two states are considered different.
  *
  * @see RequiresUser
  * @see RequiresGuest

@@ -20,7 +20,7 @@
  * Annotations used to restrict which classes, instances, or methods may be accessed or invoked depending on the
  * caller's access abilities or authentication state.
  * 
- * Since 1.1, all core annotations were extends to accept Target ElementType.TYPE in additon to ElementType.METHOD 
+ * Since 1.1, all core annotations were extends to accept Target ElementType.TYPE in addition to ElementType.METHOD 
  */
 package org.apache.shiro.authz.annotation;
 import java.lang.annotation.ElementType;

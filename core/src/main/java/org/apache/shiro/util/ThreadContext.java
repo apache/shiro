@@ -256,7 +256,7 @@ public abstract class ThreadContext {
      * Convenience method that simplifies removal of the application's SecurityManager instance from the thread.
      * <p/>
      * The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
-     * merely a conveient wrapper for the following:
+     * merely a convenient wrapper for the following:
      * <p/>
      * <code>return (SecurityManager)remove( SECURITY_MANAGER_KEY );</code>
      * <p/>
@@ -315,7 +315,7 @@ public abstract class ThreadContext {
      * Convenience method that simplifies removal of a thread-local Subject from the thread.
      * <p/>
      * The implementation just helps reduce casting and remembering of the ThreadContext key name, i.e it is
-     * merely a conveient wrapper for the following:
+     * merely a convenient wrapper for the following:
      * <p/>
      * <code>return (Subject)remove( SUBJECT_KEY );</code>
      * <p/>

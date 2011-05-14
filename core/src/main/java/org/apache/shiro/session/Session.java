@@ -116,7 +116,7 @@ public interface Session {
      * automatically as a result of an incoming web request or remote procedure call/method invocation.
      * <p/>
      * However, this method is particularly useful when supporting rich-client applications such as
-     * Java Web Start appp, Java or Flash applets, etc.  Although rare, it is possible in a rich-client
+     * Java Web Start app, Java or Flash applets, etc.  Although rare, it is possible in a rich-client
      * environment that a user continuously interacts with the client-side application without a
      * server-side method call ever being invoked.  If this happens over a long enough period of
      * time, the user's server-side session could time-out.  Again, such cases are rare since most
@@ -183,7 +183,7 @@ public interface Session {
     Object getAttribute(Object key) throws InvalidSessionException;
 
     /**
-     * Binds the specified {@code value} to this session, uniquely identified by the specifed
+     * Binds the specified {@code value} to this session, uniquely identified by the specified
      * {@code key} name.  If there is already an object bound under the {@code key} name, that
      * existing object will be replaced by the new {@code value}.
      * <p/>

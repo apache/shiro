@@ -96,7 +96,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 if (log.isTraceEnabled()) {
                     log.trace("RemoteInvocation did not contain a Shiro Session id attribute under " +
                             "key [" + SecureRemoteInvocationFactory.SESSION_ID_KEY + "].  A Subject based " +
-                            "on an existing Session will not be available during the method invocatin.");
+                            "on an existing Session will not be available during the method invocation.");
                 }
             }
 

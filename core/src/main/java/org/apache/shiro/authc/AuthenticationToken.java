@@ -43,7 +43,7 @@ import java.io.Serializable;
  * {@link UsernamePasswordToken UsernamePasswordToken} class, as it is probably sufficient for your needs.
  * <p/>
  * <p>RememberMe services are enabled for a token if they implement a sub-interface of this one, called
- * {@link RememberMeAuthenticationToken RememberMeAuthenticationToken}.  Implement that interfac if you need
+ * {@link RememberMeAuthenticationToken RememberMeAuthenticationToken}.  Implement that interface if you need
  * RememberMe services (the <tt>UsernamePasswordToken</tt> already implements this interface).
  * <p/>
  * <p>If you are familiar with JAAS, an <tt>AuthenticationToken</tt> replaces the concept of a

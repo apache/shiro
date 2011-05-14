@@ -28,7 +28,7 @@ package org.apache.shiro.authz;
  * configuration, typically by assigning Permissions to users, roles and/or groups.
  * <p/>
  * Most typical systems are what the Shiro team calls <em>role-based</em> in nature, where a role represents
- * common behavior for certain user types.  For example, a system might have an <em>Aministrator</em> role, a
+ * common behavior for certain user types.  For example, a system might have an <em>Administrator</em> role, a
  * <em>User</em> or <em>Guest</em> roles, etc.
  * <p/>
  * But if you have a dynamic security model, where roles can be created and deleted at runtime, you can't hard-code
@@ -69,7 +69,7 @@ public interface Permission {
      * Returns {@code true} if this current instance <em>implies</em> all the functionality and/or resource access
      * described by the specified {@code Permission} argument, {@code false} otherwise.
      * <p/>
-     * <p>That is, this current instance must be exactly equal to or a <em>superset</em> of the functionalty
+     * <p>That is, this current instance must be exactly equal to or a <em>superset</em> of the functionality
      * and/or resource access described by the given {@code Permission} argument.  Yet another way of saying this
      * would be:
      * <p/>

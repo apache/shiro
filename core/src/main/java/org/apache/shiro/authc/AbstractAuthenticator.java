@@ -172,7 +172,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * authentication behavior.</li>
      * <li>If an {@code AuthenticationException} is thrown during {@code doAuthenticate},
      * {@link #notifyFailure(AuthenticationToken, AuthenticationException) notify} any registered
-     * {@link AuthenticationListener AuthenticationListener}s of the exception and then propogate the exception
+     * {@link AuthenticationListener AuthenticationListener}s of the exception and then propagate the exception
      * for the caller to handle.</li>
      * <li>If no exception is thrown (indicating a successful login),
      * {@link #notifySuccess(AuthenticationToken, AuthenticationInfo) notify} any registered
