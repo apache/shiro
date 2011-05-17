@@ -22,10 +22,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
+    <listener>
+        <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+    </listener>
+
     <filter>
         <filter-name>ShiroFilter</filter-name>
-        <filter-class>org.apache.shiro.web.servlet.IniShiroFilter</filter-class>
-        <!-- no init-param means load config from /WEB-INF/shiro.ini or classpath:shiro.ini, whichever is found first -->
+        <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
     </filter>
 
     <filter-mapping>

@@ -110,7 +110,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
     }
 
     public void addFilter(String name, Filter filter) {
-        addFilter(name, filter, true);
+        addFilter(name, filter, false);
     }
 
     public void addFilter(String name, Filter filter, boolean init) {

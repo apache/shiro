@@ -83,7 +83,7 @@ public interface FilterChainManager {
      * {@link #addToChain(String, String, String) creating filter chains}.
      * <p/>
      * Calling this method is effectively the same as calling
-     * <code>{@link #addFilter(String, javax.servlet.Filter, boolean) addFilter}(name, filter, <b>true</b>);</code>
+     * <code>{@link #addFilter(String, javax.servlet.Filter, boolean) addFilter}(name, filter, <b>false</b>);</code>
      *
      * @param name   the name to assign to the filter, used to reference the filter in chain definitions
      * @param filter the filter to initialize and then add to the pool of available filters that can be used

@@ -16,9 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.shiro.config;
+
 /**
- * Shiro-specific implementations of the Servlet API (Servlet Filters, et al).
+ * Interface implemented by components that can be configured by resource locations (paths).
  *
- * @see ShiroFilter
+ * @since 1.2
  */
-package org.apache.shiro.web.servlet;
+public interface ResourceConfigurable {
+
+    /**
+     * Convenience method that accepts a comma-delimited string of config locations (resource paths).
+     *
+     * @param locations comma-delimited list of config locations (resource paths).
+     */
+    void setConfigLocations(String locations);
+
+    /**
+     * Sets the configuration locations (resource paths) that will be used to configure the instance.
+     *
+     * @param locations the configuration locations (resource paths) that will be used to configure the instance.
+     */
+    void setConfigLocations(String[] locations);
+
+}
