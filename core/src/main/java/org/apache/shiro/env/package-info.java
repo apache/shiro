@@ -17,8 +17,9 @@
  * under the License.
  */
 /**
- * Shiro-specific implementations of the Servlet API (Servlet Filters, et al).
+ * Concepts used to represent Shiro's aggregate state in an application.  An {@link Environment} instance represents
+ * everything Shiro needs to function in an application.
  *
- * @see ShiroFilter
+ * @see Environment
  */
-package org.apache.shiro.web.servlet;
+package org.apache.shiro.env;

@@ -16,27 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web.filter.mgt;
+package org.apache.shiro.web.filter.mgt
 
-import org.apache.shiro.config.ConfigurationException;
-import org.apache.shiro.web.filter.authz.SslFilter;
-import org.apache.shiro.web.servlet.IniShiroFilter;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.servlet.*;
-import java.util.Map;
-import java.util.Set;
-
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import javax.servlet.Filter
+import javax.servlet.FilterChain
+import javax.servlet.FilterConfig
+import javax.servlet.ServletContext
+import org.apache.shiro.config.ConfigurationException
+import org.apache.shiro.web.filter.authz.SslFilter
+import org.apache.shiro.web.servlet.ShiroFilter
+import org.junit.Before
+import org.junit.Test
+import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
- * Test case for the {@link DefaultFilterChainManager} implementation.
- *
- * @since 1.0
+ * Unit tests for the {@link DefaultFilterChainManager} implementation.
  */
-public class DefaultFilterChainManagerTest {
+class DefaultFilterChainManagerTest {
 
     DefaultFilterChainManager manager;
 
@@ -132,33 +129,28 @@ public class DefaultFilterChainManagerTest {
         verify(mockFilterConfig);
     }
 
-    @Test(expected = ConfigurationException.class)
-    public void testAddFilterInitThrowsException() {
+    @Test
+    public void testAddFilterNoInit() {
         FilterConfig mockFilterConfig = createNiceMockFilterConfig();
         Filter mockFilter = createNiceMock(Filter.class);
 
-        try {
-            mockFilter.init(isA(FilterConfig.class));
-        } catch (ServletException e) {
-            fail("test setup failure.");
-        }
-        //noinspection ThrowableInstanceNeverThrown
-        expectLastCall().andThrow(new ServletException());
-
-        replay(mockFilterConfig);
-        replay(mockFilter);
+        replay mockFilterConfig, mockFilter
 
         this.manager = new DefaultFilterChainManager(mockFilterConfig);
 
         this.manager.addFilter("blah", mockFilter);
 
-        verify(mockFilterConfig);
-        verify(mockFilter);
+        assertNotNull this.manager.filters['blah']
+        assertSame this.manager.filters['blah'], mockFilter
+
+        verify mockFilterConfig, mockFilter
     }
 
-    @Test(expected = IllegalStateException.class)
     public void testAddFilterNoFilterConfig() {
-        manager.addFilter("test", new SslFilter());
+        SslFilter filter = new SslFilter();
+        manager.addFilter("test", filter);
+        assertNotNull manager.filters['test']
+        assertSame manager.filters['test'], filter
     }
 
     @Test
@@ -186,7 +178,7 @@ public class DefaultFilterChainManagerTest {
         replay(mockFilterConfig);
         this.manager = new DefaultFilterChainManager(mockFilterConfig);
 
-        manager.addFilter("nonPathProcessor", new IniShiroFilter());
+        manager.addFilter("nonPathProcessor", new ShiroFilter());
         manager.createChain("test", "nonPathProcessor");
 
         try {
@@ -211,4 +203,5 @@ public class DefaultFilterChainManagerTest {
         this.manager.proxy(mock, "blah");
         verify(mock);
     }
+
 }

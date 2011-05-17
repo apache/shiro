@@ -37,7 +37,13 @@ import java.io.InputStream;
 import java.util.Map;
 
 /**
- * Main Servlet Filter that configures and enables all Shiro functions within a web application by using the
+ * <h1>Deprecated</h1>
+ * This filter has been deprecated as of Shiro 1.2 in favor of using the {@link ShiroFilter} in {@code web.xml} instead.
+ * See the {@link ShiroFilter} JavaDoc for usage.
+ * <p/>
+ * ======================
+ * <p/>
+ * Servlet Filter that configures and enables all Shiro functions within a web application by using the
  * <a href="http://en.wikipedia.org/wiki/INI_file">INI</a> configuration format.
  * <p/>
  * The actual INI configuration contents are not covered here, but instead in Shiro's
@@ -95,10 +101,12 @@ import java.util.Map;
  * <a href="http://shiro.apache.org/configuration.html">Configuration Documentation</a> and
  * <a href="http://shiro.apache.org/web.html">Web Documentation</a>.
  *
- * @since 1.0
  * @see <a href="http://shiro.apache.org/configuration.html">Apache Shiro INI Configuration</a>
  * @see <a href="http://shiro.apache.org/web.html">Apache Shiro Web Documentation</a>
+ * @since 1.0
+ * @deprecated in 1.2 in favor of using the {@link ShiroFilter}
  */
+@Deprecated
 public class IniShiroFilter extends AbstractShiroFilter {
 
     public static final String CONFIG_INIT_PARAM_NAME = "config";

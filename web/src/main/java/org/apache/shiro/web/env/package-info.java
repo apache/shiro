@@ -17,8 +17,11 @@
  * under the License.
  */
 /**
- * Shiro-specific implementations of the Servlet API (Servlet Filters, et al).
+ * Web-specific {@link org.apache.shiro.env.Environment Environment} implementation and support.  The most important
+ * components are the {@link EnvironmentLoader} and {@link EnvironmentLoaderListener}, which are used in conjunction
+ * with the {@link org.apache.shiro.web.servlet.ShiroFilter ShiroFilter} to enable Shiro in a web application.
  *
- * @see ShiroFilter
+ * @see EnvironmentLoaderListener
+ * @see EnvironmentLoader
  */
-package org.apache.shiro.web.servlet;
+package org.apache.shiro.web.env;
