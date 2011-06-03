@@ -153,7 +153,7 @@ public class DefaultHasher implements ConfigurableHasher {
             publicSaltBytes = null;
         }
         if (publicSaltBytes == null) {
-            getRandomNumberGenerator().nextBytes().getBytes();
+        	publicSaltBytes = getRandomNumberGenerator().nextBytes().getBytes();
         }
 
         String algorithmName = getHashAlgorithmName();
