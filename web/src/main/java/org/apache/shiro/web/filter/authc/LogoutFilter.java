@@ -29,8 +29,10 @@ public class LogoutFilter extends AdviceFilter {
     private String redirectUrl = DEFAULT_REDIRECT_URL;
 
     /**
-     * Immediately logs out the currently executing {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) subject}
-     * and redirects the end-user to the configured {@link #getRedirectUrl() redirectUrl}.
+     * Acquires the currently executing {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) subject},
+     * a potentially Subject or request-specific
+     * {@link #getRedirectUrl(javax.servlet.ServletRequest, javax.servlet.ServletResponse, org.apache.shiro.subject.Subject) redirectUrl},
+     * and redirects the end-user to that redirect url.
      *
      * @param request  the incoming ServletRequest
      * @param response the outgoing ServletResponse
@@ -40,8 +42,9 @@ public class LogoutFilter extends AdviceFilter {
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
         Subject subject = getSubject(request, response);
+        String redirectUrl = getRedirectUrl(request, response, subject);
         subject.logout();
-        issueRedirect(request, response);
+        issueRedirect(request, response, redirectUrl);
         return false;
     }
 
@@ -59,29 +62,37 @@ public class LogoutFilter extends AdviceFilter {
     }
 
     /**
-     * Issues an HTTP redirect after subject logout.  This implementation acquires the redirect URL returned from
-     * {@link #getRedirectUrl(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} and then calls
+     * Issues an HTTP redirect to the specified URL after subject logout.  This implementation simply calls
      * {@code WebUtils.}{@link WebUtils#issueRedirect(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String) issueRedirect(request,response,redirectUrl)}.
      *
      * @param request  the incoming Servlet request
      * @param response the outgoing Servlet response
+     * @param redirectUrl the URL to where the browser will be redirected immediately after Subject logout.
      * @throws Exception if there is any error.
      */
-    protected void issueRedirect(ServletRequest request, ServletResponse response) throws Exception {
-        String redirectUrl = getRedirectUrl(request, response);
+    protected void issueRedirect(ServletRequest request, ServletResponse response, String redirectUrl) throws Exception {
         WebUtils.issueRedirect(request, response, redirectUrl);
     }
 
     /**
-     * Returns the redirect URL to send the user after logout.  This default implementation returns the static
-     * configured {@link #getRedirectUrl() redirectUrl} property, but this method may be overridden by subclasses
-     * to dynamically construct the URL if necessary.
+     * Returns the redirect URL to send the user after logout.  This default implementation ignores the arguments and
+     * returns the static configured {@link #getRedirectUrl() redirectUrl} property, but this method may be overridden
+     * by subclasses to dynamically construct the URL based on the request or subject if necessary.
+     * <p/>
+     * Note: the Subject is <em>not</em> yet logged out at the time this method is invoked.  You may access the Subject's
+     * session if one is available and if necessary.
+     * <p/>
+     * Tip: if you need to access the Subject's session, consider using the
+     * {@code Subject.}{@link Subject#getSession(boolean) getSession(false)} method to ensure a new session isn't created unnecessarily.
+     * If a session would be created, it will be immediately stopped after logout, not providing any value and
+     * unnecessarily taxing session infrastructure/resources.
      *
      * @param request the incoming Servlet request
      * @param response the outgoing ServletResponse
+     * @param subject the not-yet-logged-out currently executing Subject
      * @return the redirect URL to send the user after logout.
      */
-    protected String getRedirectUrl(ServletRequest request, ServletResponse response) {
+    protected String getRedirectUrl(ServletRequest request, ServletResponse response, Subject subject) {
         return getRedirectUrl();
     }
 
