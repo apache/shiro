@@ -59,16 +59,30 @@ public class LogoutFilter extends AdviceFilter {
     }
 
     /**
-     * Issues an HTTP redirect after subject logout.  This implementation calls
-     * {@code WebUtils.}{@link WebUtils#issueRedirect(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String) issueRedirect(request,response,redirectUrl)}
-     * using the configured {@link #getRedirectUrl()}.
+     * Issues an HTTP redirect after subject logout.  This implementation acquires the redirect URL returned from
+     * {@link #getRedirectUrl(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} and then calls
+     * {@code WebUtils.}{@link WebUtils#issueRedirect(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String) issueRedirect(request,response,redirectUrl)}.
      *
      * @param request  the incoming Servlet request
      * @param response the outgoing Servlet response
      * @throws Exception if there is any error.
      */
     protected void issueRedirect(ServletRequest request, ServletResponse response) throws Exception {
-        WebUtils.issueRedirect(request, response, getRedirectUrl());
+        String redirectUrl = getRedirectUrl(request, response);
+        WebUtils.issueRedirect(request, response, redirectUrl);
+    }
+
+    /**
+     * Returns the redirect URL to send the user after logout.  This default implementation returns the static
+     * configured {@link #getRedirectUrl() redirectUrl} property, but this method may be overridden by subclasses
+     * to dynamically construct the URL if necessary.
+     *
+     * @param request the incoming Servlet request
+     * @param response the outgoing ServletResponse
+     * @return the redirect URL to send the user after logout.
+     */
+    protected String getRedirectUrl(ServletRequest request, ServletResponse response) {
+        return getRedirectUrl();
     }
 
     /**
