@@ -426,6 +426,7 @@ public abstract class AuthenticatingRealm extends CachingRealm {
      * <li>If authentication caching is disabled, this implementation does nothing.</li>
      * </ol>
      * </li>
+     * </ol>
      *
      * @return any available {@link Cache} instance to use for authentication caching.
      */
