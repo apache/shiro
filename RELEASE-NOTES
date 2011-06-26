@@ -21,6 +21,30 @@ combined with Jira's auto-generated release notes during a release for the
 total set.
 
 ###########################################################
+# 1.2.0
+###########################################################
+
+Backwards Incompatible Changes
+--------------------------------
+- The following org.apache.shiro.mgt.DefaultSecurityManager methods have been removed:
+  bindPrincipalsToSession(principals, context)
+
+  This logic has been moved into a SubjectDAO concept to allow end-users to control
+  exactly how the Session may be used for subject state persistence.  This allows a
+  single point of control rather than needing to configure Shiro in multiple places.
+
+  If you overrode this method in Shiro 1.0 or 1.2, please look at the new
+  org.apache.shiro.mgt.DefaultSubjectDAO implementation, which performs compatible logic.
+
+Potential Breaking Changes
+--------------------------------
+- The org.apache.shiro.web.filter.mgt.FilterChainManager class's
+  addFilter(String name, Filter filter) semantics have changed.  It now no longer
+  attempts to initialize a filter by default before adding the filter to the chain.
+  If you ever called this method, you can call the
+  addFilter(name, filter, true) method to achieve the <= 1.1 behavior.
+
+###########################################################
 # 1.1.0
 ###########################################################
 
@@ -31,19 +55,3 @@ Backwards Incompatible Changes
   method has been changed to accept a StringBuilder argument instead of a
   StringBuffer per SHIRO-191.  RedirectView is considered an internal
   implementation support class and Shiro end-users should not be affected by this.
-
-###########################################################
-# 1.2.0
-###########################################################
-
-Potential Breaking Changes
---------------------------------
-- The org.apache.shiro.web.filter.mgt.FilterChainManager class's
-  addFilter(String name, Filter filter) semantics have changed.  It now no longer
-  attempts to initialize a filter by default before adding the filter to the chain.
-  If you ever called this method, you can call the
-  addFilter(name, filter, true) method to achieve the <= 1.1 behavior.
-
-
-
-
