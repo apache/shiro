@@ -53,7 +53,7 @@ public final class Hasher {
     private static final Option ITERATIONS = new Option("i", "iterations", true, "number of hash iterations.  Defaults to 1.");
     private static final Option NO_FORMAT = new Option("nf", "noformat", false, "turn off output formatting.  Any generated salt will be placed after the hash separated by a space.");
     private static final Option PASSWORD = new Option("p", "password", false, "hash a password (disable typing echo)");
-    private static final Option PASSWORD_NC = new Option("pnc", "pnoconfirm", false, "disable password hash confirmation prompt.");
+    private static final Option PASSWORD_NC = new Option("pnc", "pnoconfirm", false, "hash a password (disable typing echo) but disable password confirmation prompt.");
     private static final Option RESOURCE = new Option("r", "resource", false, "read and hash the resource located at <value>.  See below for more information.");
     private static final Option SALT = new Option("s", "salt", true, "use the specified salt.  <arg> is plaintext.");
     private static final Option SALT_BYTES = new Option("sb", "saltbytes", true, "use the specified salt bytes.  <arg> is hex or base64 encoded text.");
@@ -68,6 +68,13 @@ public final class Hasher {
     private static final int DEFAULT_NUM_ITERATIONS = 1;
     private static final String SALT_MUTEX_MSG = createMutexMessage(SALT, SALT_BYTES);
 
+    static {
+        ALGORITHM.setArgName("name");
+        SALT_GEN_SIZE.setArgName("numBits");
+        ITERATIONS.setArgName("num");
+        SALT.setArgName("sval");
+        SALT_BYTES.setArgName("encTxt");
+    }
 
     public static void main(String[] args) {
 
@@ -122,6 +129,7 @@ public final class Hasher {
                 resource = true;
             }
             if (line.hasOption(PASSWORD_NC.getOpt())) {
+                password = true;
                 passwordConfirm = false;
             }
             if (line.hasOption(SALT.getOpt())) {
@@ -468,13 +476,5 @@ public final class Hasher {
             return null;
         }
         return StringUtils.toDelimitedString(strings, " ");
-    }
-
-    static {
-        ALGORITHM.setArgName("name");
-        SALT_GEN_SIZE.setArgName("numBits");
-        ITERATIONS.setArgName("num");
-        SALT.setArgName("sval");
-        SALT_BYTES.setArgName("encTxt");
     }
 }
