@@ -35,7 +35,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -281,7 +280,6 @@ public class DelegatingSubject implements Subject, Serializable {
         } else {
             this.session = null;
         }
-        ThreadContext.bind(this);
     }
 
     public boolean isAuthenticated() {
