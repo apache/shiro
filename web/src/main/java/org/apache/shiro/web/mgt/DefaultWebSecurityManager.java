@@ -125,19 +125,15 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
      * @since 1.0
      */
     public boolean isHttpSessionMode() {
-        return this.sessionMode == null || this.sessionMode.equals(HTTP_SESSION_MODE);
+        return this.sessionMode == null || !this.sessionMode.equals(NATIVE_SESSION_MODE);
     }
 
     protected SessionManager createSessionManager(String sessionMode) {
-        if (sessionMode == null || sessionMode.equalsIgnoreCase(HTTP_SESSION_MODE)) {
-            if (log.isInfoEnabled()) {
-                log.info(HTTP_SESSION_MODE + " mode - enabling ServletContainerSessionManager (HTTP-only Sessions)");
-            }
+        if (sessionMode == null || !sessionMode.equalsIgnoreCase(NATIVE_SESSION_MODE)) {
+            log.info("{} mode - enabling ServletContainerSessionManager (HTTP-only Sessions)", HTTP_SESSION_MODE);
             return new ServletContainerSessionManager();
         } else {
-            if (log.isInfoEnabled()) {
-                log.info(NATIVE_SESSION_MODE + " mode - enabling DefaultWebSessionManager (HTTP + heterogeneous-client sessions)");
-            }
+            log.info("{} mode - enabling DefaultWebSessionManager (non-HTTP and HTTP Sessions)", NATIVE_SESSION_MODE);
             return new DefaultWebSessionManager();
         }
     }
