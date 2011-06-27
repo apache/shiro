@@ -363,9 +363,9 @@ public class SimpleCookie implements Cookie {
         javax.servlet.http.Cookie cookie = getCookie(request, name);
         if (cookie != null) {
             value = cookie.getValue();
-            log.debug("Found string value [{}] from Cookie [{}]", value, name);
+            log.debug("Found '{}' cookie value [{}]", name, value);
         } else {
-            log.trace("No value found in request Cookies under cookie name [{}]", name);
+            log.trace("No '{}' cookie value", name);
         }
 
         return value;
