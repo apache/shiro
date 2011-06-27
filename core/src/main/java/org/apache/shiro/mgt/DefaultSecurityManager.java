@@ -105,18 +105,48 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         setRealms(realms);
     }
 
+    /**
+     * Returns the {@code SubjectFactory} responsible for creating {@link Subject} instances exposed to the application.
+     *
+     * @return the {@code SubjectFactory} responsible for creating {@link Subject} instances exposed to the application.
+     */
     public SubjectFactory getSubjectFactory() {
         return subjectFactory;
     }
 
+    /**
+     * Sets the {@code SubjectFactory} responsible for creating {@link Subject} instances exposed to the application.
+     *
+     * @param subjectFactory the {@code SubjectFactory} responsible for creating {@link Subject} instances exposed to the application.
+     */
     public void setSubjectFactory(SubjectFactory subjectFactory) {
         this.subjectFactory = subjectFactory;
     }
 
+    /**
+     * Returns the {@code SubjectDAO} responsible for persisting Subject state, typically used after login or when an
+     * Subject identity is discovered (eg after RememberMe services).  Unless configured otherwise, the default
+     * implementation is a {@link DefaultSubjectDAO}.
+     *
+     * @return the {@code SubjectDAO} responsible for persisting Subject state, typically used after login or when an
+     *         Subject identity is discovered (eg after RememberMe services).
+     * @see DefaultSubjectDAO
+     * @since 1.2
+     */
     public SubjectDAO getSubjectDAO() {
         return subjectDAO;
     }
 
+    /**
+     * Sets the {@code SubjectDAO} responsible for persisting Subject state, typically used after login or when an
+     * Subject identity is discovered (eg after RememberMe services). Unless configured otherwise, the default
+     * implementation is a {@link DefaultSubjectDAO}.
+     *
+     * @param subjectDAO the {@code SubjectDAO} responsible for persisting Subject state, typically used after login or when an
+     *                   Subject identity is discovered (eg after RememberMe services).
+     * @see DefaultSubjectDAO
+     * @since 1.2
+     */
     public void setSubjectDAO(SubjectDAO subjectDAO) {
         this.subjectDAO = subjectDAO;
     }
