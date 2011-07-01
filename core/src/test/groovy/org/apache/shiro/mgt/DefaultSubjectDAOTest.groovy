@@ -39,13 +39,15 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
 
     void testIsSessionStorageEnabledDefaultSubject() {
         def dao = new DefaultSubjectDAO()
+
         def subject = createStrictMock(Subject)
+
+        expect(subject.getSession(false)).andReturn null
 
         replay subject
 
         assertTrue dao.isSessionStorageEnabled(subject)
-        //ensures the Subject instance wasn't interacted with
-        //(no need when DefaultSubjectDAO is for global (non-subject-specific) logic
+
         verify subject
     }
 
@@ -100,6 +102,8 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         def dao = new DefaultSubjectDAO()
         def subject = createStrictMock(Subject)
 
+        expect(subject.getSession(false)).andReturn null
+
         //turn off session storage:
         ((DefaultSessionStorageEvaluator)dao.sessionStorageEvaluator).sessionStorageEnabled = false
 
@@ -120,6 +124,8 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         def dao = new DefaultSubjectDAO()
         def subject = createStrictMock(Subject)
         def session = createStrictMock(Session)
+
+        expect(subject.getSession(false)).andReturn null
 
         expect(subject.principals).andReturn null
         expect(subject.getSession(false)).andReturn(null).anyTimes()

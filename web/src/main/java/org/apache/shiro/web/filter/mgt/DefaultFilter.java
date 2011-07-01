@@ -21,6 +21,7 @@ package org.apache.shiro.web.filter.mgt;
 import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.web.filter.authc.*;
 import org.apache.shiro.web.filter.authz.*;
+import org.apache.shiro.web.filter.session.NoSessionCreationFilter;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
@@ -40,6 +41,7 @@ public enum DefaultFilter {
     authc(FormAuthenticationFilter.class),
     authcBasic(BasicHttpAuthenticationFilter.class),
     logout(LogoutFilter.class),
+    noSession(NoSessionCreationFilter.class),
     perms(PermissionsAuthorizationFilter.class),
     port(PortFilter.class),
     rest(HttpMethodPermissionFilter.class),

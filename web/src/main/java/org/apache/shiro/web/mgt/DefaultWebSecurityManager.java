@@ -19,6 +19,7 @@
 package org.apache.shiro.web.mgt;
 
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
@@ -63,6 +64,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
 
     public DefaultWebSecurityManager() {
         super();
+        ((DefaultSubjectDAO)this.subjectDAO).setSessionStorageEvaluator(new DefaultWebSessionStorageEvaluator());
         this.sessionMode = HTTP_SESSION_MODE;
         setSubjectFactory(new DefaultWebSubjectFactory());
         setRememberMeManager(new CookieRememberMeManager());

@@ -65,6 +65,8 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
 
     private static final String HOST = DefaultSubjectContext.class.getName() + ".HOST";
 
+    public static final String SESSION_CREATION_ENABLED = DefaultSubjectContext.class.getName() + ".SESSION_CREATION_ENABLED";
+
     /**
      * The session key that is used to store subject principals.
      */
@@ -185,6 +187,15 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
             }
         }
         return session;
+    }
+
+    public boolean isSessionCreationEnabled() {
+        Boolean val = getTypedValue(SESSION_CREATION_ENABLED, Boolean.class);
+        return val == null || val;
+    }
+
+    public void setSessionCreationEnabled(boolean enabled) {
+        nullSafePut(SESSION_CREATION_ENABLED, enabled);
     }
 
     public boolean isAuthenticated() {

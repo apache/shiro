@@ -22,6 +22,7 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionContext;
@@ -48,7 +49,15 @@ public class WebDelegatingSubject extends DelegatingSubject implements WebSubjec
                                 String host, Session session,
                                 ServletRequest request, ServletResponse response,
                                 SecurityManager securityManager) {
-        super(principals, authenticated, host, session, securityManager);
+        this(principals, authenticated, host, session, true, request, response, securityManager);
+    }
+
+    //since 1.2
+    public WebDelegatingSubject(PrincipalCollection principals, boolean authenticated,
+                                String host, Session session, boolean sessionEnabled,
+                                ServletRequest request, ServletResponse response,
+                                SecurityManager securityManager) {
+        super(principals, authenticated, host, session, sessionEnabled, securityManager);
         this.servletRequest = request;
         this.servletResponse = response;
     }
@@ -59,6 +68,36 @@ public class WebDelegatingSubject extends DelegatingSubject implements WebSubjec
 
     public ServletResponse getServletResponse() {
         return servletResponse;
+    }
+
+    /**
+     * Returns {@code true} if session creation is allowed  (as determined by the super class's
+     * {@link super#isSessionCreationEnabled()} value and no request-specific override has disabled sessions for this subject,
+     * {@code false} otherwise.
+     * <p/>
+     * This means session creation is disabled if the super {@link super#isSessionCreationEnabled()} property is {@code false}
+     * or if a request attribute is discovered that turns off sessions for the current request.
+     *
+     * @return {@code true} if session creation is allowed  (as determined by the super class's
+     *         {@link super#isSessionCreationEnabled()} value and no request-specific override has disabled sessions for this
+     *         subject, {@code false} otherwise.
+     * @since 1.2
+     */
+    @Override
+    protected boolean isSessionCreationEnabled() {
+        boolean enabled = super.isSessionCreationEnabled();
+        if (!enabled) {
+            return false;
+        }
+        ServletRequest request = getServletRequest();
+        if (request != null) {
+            Object val = request.getAttribute(DefaultSubjectContext.SESSION_CREATION_ENABLED);
+            if (val != null && val instanceof Boolean) {
+                return (Boolean) val;
+            }
+        }
+
+        return true;
     }
 
     @Override
