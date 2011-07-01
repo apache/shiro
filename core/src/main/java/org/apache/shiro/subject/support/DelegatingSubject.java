@@ -81,6 +81,10 @@ public class DelegatingSubject implements Subject, Serializable {
     protected boolean authenticated;
     protected String host;
     protected Session session;
+    /**
+     * @since 1.2
+     */
+    protected boolean sessionCreationEnabled;
     private List<PrincipalCollection> runAsPrincipals; //supports assumed identities (aka 'run as')
 
     protected transient SecurityManager securityManager;
@@ -91,6 +95,12 @@ public class DelegatingSubject implements Subject, Serializable {
 
     public DelegatingSubject(PrincipalCollection principals, boolean authenticated, String host,
                              Session session, SecurityManager securityManager) {
+        this(principals, authenticated, host, session, true, securityManager);
+    }
+
+    //since 1.2
+    public DelegatingSubject(PrincipalCollection principals, boolean authenticated, String host,
+                             Session session, boolean sessionCreationEnabled, SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager argument cannot be null.");
         }
@@ -102,6 +112,7 @@ public class DelegatingSubject implements Subject, Serializable {
             this.session = decorate(session);
             this.runAsPrincipals = getRunAsPrincipals(this.session);
         }
+        this.sessionCreationEnabled = sessionCreationEnabled;
     }
 
     protected Session decorate(Session session) {
@@ -232,7 +243,7 @@ public class DelegatingSubject implements Subject, Serializable {
         assertAuthzCheckPossible();
         securityManager.checkRole(getPrincipals(), role);
     }
-    
+
     public void checkRoles(String... roleIdentifiers) throws AuthorizationException {
         assertAuthzCheckPossible();
         securityManager.checkRoles(getPrincipals(), roleIdentifiers);
@@ -291,6 +302,16 @@ public class DelegatingSubject implements Subject, Serializable {
         return principals != null && !principals.isEmpty() && !isAuthenticated();
     }
 
+    /**
+     * Returns {@code true} if this Subject is allowed to create sessions, {@code false} otherwise.
+     *
+     * @return {@code true} if this Subject is allowed to create sessions, {@code false} otherwise.
+     * @since 1.2
+     */
+    protected boolean isSessionCreationEnabled() {
+        return this.sessionCreationEnabled;
+    }
+
     public Session getSession() {
         return getSession(true);
     }
@@ -301,6 +322,17 @@ public class DelegatingSubject implements Subject, Serializable {
         }
 
         if (this.session == null && create) {
+
+            //added in 1.2:
+            if (!isSessionCreationEnabled()) {
+                String msg = "Session creation has been disabled for the current subject.  This exception indicates " +
+                        "that there is either a programming error (using a session when it should never be " +
+                        "used) or that Shiro's configuration needs to be adjusted to allow Sessions to be created " +
+                        "for the current Subject.  See the " + DisabledSessionException.class.getName() + " JavaDoc " +
+                        "for more.";
+                throw new DisabledSessionException(msg);
+            }
+
             log.trace("Starting session for host {}", getHost());
             SessionContext sessionContext = createSessionContext();
             Session session = this.securityManager.start(sessionContext);

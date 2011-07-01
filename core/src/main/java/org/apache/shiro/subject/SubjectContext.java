@@ -189,6 +189,26 @@ public interface SubjectContext extends Map<String, Object> {
      */
     void setAuthenticated(boolean authc);
 
+    /**
+     * Returns {@code true} if the constructed {@code Subject} should be allowed to create a session, {@code false}
+     * otherwise.  Shiro's configuration defaults to {@code true} as most applications find value in Sessions.
+     *
+     * @return {@code true} if the constructed {@code Subject} should be allowed to create sessions, {@code false}
+     * otherwise.
+     * @since 1.2
+     */
+    boolean isSessionCreationEnabled();
+
+    /**
+     * Sets whether or not the constructed {@code Subject} instance should be allowed to create a session,
+     * {@code false} otherwise.
+     *
+     * @param enabled whether or not the constructed {@code Subject} instance should be allowed to create a session,
+     * {@code false} otherwise.
+     * @since 1.2
+     */
+    void setSessionCreationEnabled(boolean enabled);
+
     boolean resolveAuthenticated();
 
     AuthenticationInfo getAuthenticationInfo();

@@ -26,6 +26,7 @@ import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +107,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @since 0.2
  */
-public abstract class AuthenticatingRealm extends CachingRealm {
+public abstract class AuthenticatingRealm extends CachingRealm implements Initializable {
 
     //TODO - complete JavaDoc
 

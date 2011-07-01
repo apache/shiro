@@ -37,7 +37,6 @@ import javax.servlet.ServletResponse;
  * threads when using the {@code Subject} {@link Subject#associateWith(java.util.concurrent.Callable) createCallable}
  * and {@link Subject#associateWith(Runnable) createRunnable} methods.
  *
- * @see #newSubjectInstance(org.apache.shiro.subject.PrincipalCollection, boolean, String, org.apache.shiro.session.Session, org.apache.shiro.mgt.SecurityManager)
  * @since 1.0
  */
 public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
@@ -53,18 +52,27 @@ public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
         WebSubjectContext wsc = (WebSubjectContext) context;
         SecurityManager securityManager = wsc.resolveSecurityManager();
         Session session = wsc.resolveSession();
+        boolean sessionEnabled = wsc.isSessionCreationEnabled();
         PrincipalCollection principals = wsc.resolvePrincipals();
         boolean authenticated = wsc.resolveAuthenticated();
         String host = wsc.resolveHost();
         ServletRequest request = wsc.resolveServletRequest();
         ServletResponse response = wsc.resolveServletResponse();
-        return newSubjectInstance(principals, authenticated, host, session, request, response, securityManager);
+
+        return new WebDelegatingSubject(principals, authenticated, host, session, sessionEnabled,
+                request, response, securityManager);
     }
 
+    /**
+     * @deprecated since 1.2 - override {@link #createSubject(org.apache.shiro.subject.SubjectContext)} directly if you
+     *             need to instantiate a custom {@link Subject} class.
+     */
+    @Deprecated
     protected Subject newSubjectInstance(PrincipalCollection principals, boolean authenticated,
                                          String host, Session session,
                                          ServletRequest request, ServletResponse response,
                                          SecurityManager securityManager) {
-        return new WebDelegatingSubject(principals, authenticated, host, session, request, response, securityManager);
+        return new WebDelegatingSubject(principals, authenticated, host, session, true,
+                request, response, securityManager);
     }
 }
