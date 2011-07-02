@@ -20,10 +20,7 @@ package org.apache.shiro.web.mgt;
 
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.web.util.WebUtils;
-
-import javax.servlet.ServletRequest;
 
 /**
  * A web-specific {@code SessionStorageEvaluator} that performs the same logic as the parent class
@@ -31,7 +28,7 @@ import javax.servlet.ServletRequest;
  * disable session access.
  * <p/>
  * This implementation usually works in conjunction with the
- * {@link org.apache.shiro.web.filter.session.NoSessionCreationFilter NoSessionFilter}:  If the {@code NoSessionFilter}
+ * {@link org.apache.shiro.web.filter.session.NoSessionCreationFilter}:  If the {@code NoSessionCreationFilter}
  * is configured in a filter chain, that filter will set a specific
  * {@code ServletRequest} {@link javax.servlet.ServletRequest#setAttribute attribute} indicating that session creation
  * should be disabled.
@@ -41,8 +38,8 @@ import javax.servlet.ServletRequest;
  * Shiro from creating a session for the purpose of storing subject state.
  * <p/>
  * If the request attribute has
- * not been set (i.e. the {@code NoSessionFilter} is not configured or has been disabled), this class does nothing
- * and delegates to the parent class for existing behavior.
+ * not been set (i.e. the {@code NoSessionCreationFilter} is not configured or has been disabled), this class does
+ * nothing and delegates to the parent class for existing behavior.
  *
  * @since 1.2
  */
@@ -61,6 +58,7 @@ public class DefaultWebSessionStorageEvaluator extends DefaultSessionStorageEval
      *         configuration property {@link #isSessionStorageEnabled()} and no request-specific override has turned off
      *         session storage, {@code false} otherwise.
      */
+    @SuppressWarnings({"SimplifiableIfStatement"})
     @Override
     public boolean isSessionStorageEnabled(Subject subject) {
         if (subject.getSession(false) != null) {
@@ -73,18 +71,7 @@ public class DefaultWebSessionStorageEvaluator extends DefaultSessionStorageEval
             return false;
         }
 
-        //at this point there is no session yet, but general session storage is allowed.  Let's check to see if there
-        //is a request-specific override just in case:
-        if (WebUtils.isWeb(subject)) {
-            ServletRequest request = WebUtils.getRequest(subject);
-            Object val = request.getAttribute(DefaultSubjectContext.SESSION_CREATION_ENABLED);
-            if (val != null && val instanceof Boolean) {
-                return (Boolean)val;
-            }
-        }
-
-        //generally available and no request-specific override:
-        return true;
+        return WebUtils._isSessionCreationEnabled(subject);
     }
 
 

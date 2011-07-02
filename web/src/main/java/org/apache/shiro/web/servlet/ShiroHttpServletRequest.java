@@ -21,6 +21,8 @@ package org.apache.shiro.web.servlet;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.support.DisabledSessionException;
+import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -138,15 +140,23 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         HttpSession httpSession;
 
         if (isHttpSessions()) {
-            httpSession = super.getSession(create);
+            httpSession = super.getSession(false);
+            if (httpSession == null && create) {
+                //Shiro 1.2: assert that creation is enabled (SHIRO-266):
+                if (WebUtils._isSessionCreationEnabled(this)) {
+                    httpSession = super.getSession(create);
+                } else {
+                    throw newNoSessionCreationException();
+                }
+            }
         } else {
             if (this.session == null) {
 
                 boolean existing = getSubject().getSession(false) != null;
 
-                Session jsecSession = getSubject().getSession(create);
-                if (jsecSession != null) {
-                    this.session = new ShiroHttpSession(jsecSession, this, this.servletContext);
+                Session shiroSession = getSubject().getSession(create);
+                if (shiroSession != null) {
+                    this.session = new ShiroHttpSession(shiroSession, this, this.servletContext);
                     if (!existing) {
                         setAttribute(REFERENCED_SESSION_IS_NEW, Boolean.TRUE);
                     }
@@ -158,6 +168,21 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         return httpSession;
     }
 
+    /**
+     * Constructs and returns a {@link DisabledSessionException} with an appropriate message explaining why
+     * session creation has been disabled.
+     *
+     * @return a new DisabledSessionException with appropriate no creation message
+     * @since 1.2
+     */
+    private DisabledSessionException newNoSessionCreationException() {
+        String msg = "Session creation has been disabled for the current request.  This exception indicates " +
+                "that there is either a programming error (using a session when it should never be " +
+                "used) or that Shiro's configuration needs to be adjusted to allow Sessions to be created " +
+                "for the current request.  See the " + DisabledSessionException.class.getName() + " JavaDoc " +
+                "for more.";
+        return new DisabledSessionException(msg);
+    }
 
     public HttpSession getSession() {
         return getSession(true);

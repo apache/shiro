@@ -21,6 +21,7 @@ package org.apache.shiro.web.util;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.env.EnvironmentLoader;
 import org.apache.shiro.web.env.WebEnvironment;
@@ -93,7 +94,7 @@ public class WebUtils {
 
     /**
      * Return the path within the web application for the given request.
-     * <p>Detects include request URL if called within a RequestDispatcher include.
+     * Detects include request URL if called within a RequestDispatcher include.
      * <p/>
      * For example, for a request to URL
      * <p/>
@@ -433,6 +434,47 @@ public class WebUtils {
         ServletRequest request = source.getServletRequest();
         ServletResponse response = source.getServletResponse();
         return request instanceof HttpServletRequest && response instanceof HttpServletResponse;
+    }
+
+    /**
+     * Returns {@code true} if a session is allowed to be created for a subject-associated request, {@code false}
+     * otherwise.
+     * <p/>
+     * <b>This method exists for Shiro's internal framework needs and should never be called by Shiro end-users.  It
+     * could be changed/removed at any time.</b>
+     *
+     * @param requestPairSource a {@link RequestPairSource} instance, almost always a
+     *                          {@link org.apache.shiro.web.subject.WebSubject WebSubject} instance.
+     * @return {@code true} if a session is allowed to be created for a subject-associated request, {@code false}
+     *         otherwise.
+     */
+    public static boolean _isSessionCreationEnabled(Object requestPairSource) {
+        if (requestPairSource instanceof RequestPairSource) {
+            RequestPairSource source = (RequestPairSource) requestPairSource;
+            return _isSessionCreationEnabled(source.getServletRequest());
+        }
+        return true; //by default
+    }
+
+    /**
+     * Returns {@code true} if a session is allowed to be created for a subject-associated request, {@code false}
+     * otherwise.
+     * <p/>
+     * <b>This method exists for Shiro's internal framework needs and should never be called by Shiro end-users.  It
+     * could be changed/removed at any time.</b>
+     *
+     * @param request incoming servlet request.
+     * @return {@code true} if a session is allowed to be created for a subject-associated request, {@code false}
+     *         otherwise.
+     */
+    public static boolean _isSessionCreationEnabled(ServletRequest request) {
+        if (request != null) {
+            Object val = request.getAttribute(DefaultSubjectContext.SESSION_CREATION_ENABLED);
+            if (val != null && val instanceof Boolean) {
+                return (Boolean) val;
+            }
+        }
+        return true; //by default
     }
 
     /**

@@ -22,12 +22,12 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionContext;
 import org.apache.shiro.web.session.mgt.WebSessionContext;
 import org.apache.shiro.web.subject.WebSubject;
+import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -86,18 +86,7 @@ public class WebDelegatingSubject extends DelegatingSubject implements WebSubjec
     @Override
     protected boolean isSessionCreationEnabled() {
         boolean enabled = super.isSessionCreationEnabled();
-        if (!enabled) {
-            return false;
-        }
-        ServletRequest request = getServletRequest();
-        if (request != null) {
-            Object val = request.getAttribute(DefaultSubjectContext.SESSION_CREATION_ENABLED);
-            if (val != null && val instanceof Boolean) {
-                return (Boolean) val;
-            }
-        }
-
-        return true;
+        return enabled && WebUtils._isSessionCreationEnabled(this);
     }
 
     @Override

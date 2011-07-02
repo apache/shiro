@@ -41,7 +41,7 @@ public enum DefaultFilter {
     authc(FormAuthenticationFilter.class),
     authcBasic(BasicHttpAuthenticationFilter.class),
     logout(LogoutFilter.class),
-    noSession(NoSessionCreationFilter.class),
+    noSessionCreation(NoSessionCreationFilter.class),
     perms(PermissionsAuthorizationFilter.class),
     port(PortFilter.class),
     rest(HttpMethodPermissionFilter.class),

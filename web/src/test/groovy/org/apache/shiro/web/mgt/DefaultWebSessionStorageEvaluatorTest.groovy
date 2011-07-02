@@ -91,8 +91,6 @@ class DefaultWebSessionStorageEvaluatorTest extends GroovyTestCase {
 
         expect(subject.getSession(false)).andReturn null
         expect(subject.getServletRequest()).andReturn request
-        expect(subject.getServletResponse()).andReturn response
-        expect(subject.getServletRequest()).andReturn request
         expect(request.getAttribute(eq(DefaultSubjectContext.SESSION_CREATION_ENABLED))).andReturn null
 
         replay subject, request, response
@@ -112,8 +110,6 @@ class DefaultWebSessionStorageEvaluatorTest extends GroovyTestCase {
 
         expect(subject.getSession(false)).andReturn null
         expect(subject.getServletRequest()).andReturn request
-        expect(subject.getServletResponse()).andReturn response
-        expect(subject.getServletRequest()).andReturn request
         expect(request.getAttribute(eq(DefaultSubjectContext.SESSION_CREATION_ENABLED))).andReturn Boolean.FALSE
 
         replay subject, request, response
@@ -132,8 +128,6 @@ class DefaultWebSessionStorageEvaluatorTest extends GroovyTestCase {
         def response = createMock(ServletResponse)
 
         expect(subject.getSession(false)).andReturn null
-        expect(subject.getServletRequest()).andReturn request
-        expect(subject.getServletResponse()).andReturn response
         expect(subject.getServletRequest()).andReturn request
         expect(request.getAttribute(eq(DefaultSubjectContext.SESSION_CREATION_ENABLED))).andReturn new Object()
 
