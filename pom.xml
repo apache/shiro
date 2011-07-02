@@ -88,6 +88,7 @@
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>3.0</easymock.version>
+        <gmaven.version>1.3</gmaven.version>
         <groovy.version>1.7.8</groovy.version>
         <junit.version>4.8.2</junit.version>
 
@@ -223,7 +224,7 @@
                 <plugin>
                     <groupId>org.codehaus.gmaven</groupId>
                     <artifactId>gmaven-plugin</artifactId>
-                    <version>1.2</version>
+                    <version>${gmaven.version}</version>
                     <configuration>
                         <providerSelection>1.7</providerSelection>
                         <source>src/main/groovy</source>
@@ -232,7 +233,7 @@
                         <dependency>
                             <groupId>org.codehaus.gmaven.runtime</groupId>
                             <artifactId>gmaven-runtime-1.7</artifactId>
-                            <version>1.2</version>
+                            <version>${gmaven.version}</version>
                             <exclusions>
                                 <exclusion>
                                     <groupId>org.codehaus.groovy</groupId>
@@ -333,6 +334,20 @@
                     <target>${jdk.version}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
+            </plugin>
+            <!-- Allow Groovy tests to run: -->
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>${gmaven.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <!-- Add SVN Revision To A JAR Manifest
