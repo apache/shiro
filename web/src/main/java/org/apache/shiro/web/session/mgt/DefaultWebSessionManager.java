@@ -45,7 +45,7 @@ import java.io.Serializable;
  *
  * @since 0.9
  */
-public class DefaultWebSessionManager extends DefaultSessionManager {
+public class DefaultWebSessionManager extends DefaultSessionManager implements WebSessionManager {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultWebSessionManager.class);
 
@@ -237,5 +237,15 @@ public class DefaultWebSessionManager extends DefaultSessionManager {
             log.debug("SessionKey argument is not HTTP compatible or does not have an HTTP request/response " +
                     "pair. Session ID cookie will not be removed due to stopped session.");
         }
+    }
+
+    /**
+     * This is a native session manager implementation, so this method returns {@code false} always.
+     *
+     * @return {@code false} always
+     * @since 1.2
+     */
+    public boolean isServletContainerSessions() {
+        return false;
     }
 }

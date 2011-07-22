@@ -26,6 +26,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
+import org.apache.shiro.web.session.mgt.WebSessionManager;
 import org.apache.shiro.web.subject.WebSubject;
 import org.junit.After;
 import org.junit.Before;
@@ -67,6 +68,22 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     protected Subject newSubject(ServletRequest request, ServletResponse response) {
         return new WebSubject.Builder(sm, request, response).buildSubject();
     }
+
+	@Test
+	public void checkSessionManagerDeterminesContainerSessionMode() {
+		sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
+		WebSessionManager sessionManager = createMock(WebSessionManager.class);
+
+		expect(sessionManager.isServletContainerSessions()).andReturn(true).anyTimes();
+
+		replay(sessionManager);
+
+		sm.setSessionManager(sessionManager);
+
+		assertTrue("The set SessionManager is not being used to determine isHttpSessionMode.", sm.isHttpSessionMode());
+
+		verify(sessionManager);
+	}
 
     @Test
     public void shiroSessionModeInit() {

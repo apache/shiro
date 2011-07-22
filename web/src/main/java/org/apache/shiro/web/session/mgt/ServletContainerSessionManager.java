@@ -23,7 +23,6 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
-import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.web.session.HttpServletSession;
 import org.apache.shiro.web.util.WebUtils;
 
@@ -52,7 +51,7 @@ import javax.servlet.http.HttpSession;
  * @since 0.9
  * @see DefaultWebSessionManager
  */
-public class ServletContainerSessionManager implements SessionManager {
+public class ServletContainerSessionManager implements WebSessionManager {
 
     //TODO - complete JavaDoc
 
@@ -120,4 +119,14 @@ public class ServletContainerSessionManager implements SessionManager {
         return new HttpServletSession(httpSession, host);
     }
 
+    /**
+     * This implementation always delegates to the servlet container for sessions, so this method returns
+     * {@code true} always.
+     *
+     * @return {@code true} always
+     * @since 1.2
+     */
+	public boolean isServletContainerSessions() {
+		return true;
+	}
 }
