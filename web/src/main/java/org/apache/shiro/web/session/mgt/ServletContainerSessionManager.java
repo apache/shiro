@@ -21,9 +21,9 @@ package org.apache.shiro.web.session.mgt;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
-import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.web.session.HttpServletSession;
 import org.apache.shiro.web.util.WebUtils;
 
@@ -38,20 +38,21 @@ import javax.servlet.http.HttpSession;
  * <p/>
  * Despite its name, this implementation <em>does not</em> itself manage Sessions since the Servlet container
  * provides the actual management support.  This class mainly exists to 'impersonate' a regular Shiro
- * <tt>SessionManager</tt> so it can be pluggable into a normal Shiro configuration in a pure web application.
+ * {@code SessionManager} so it can be pluggable into a normal Shiro configuration in a pure web application.
  * <p/>
  * Note that because this implementation relies on the {@link HttpSession HttpSession}, it is only functional in a
- * servlet container.  I.e. it is <em>NOT</em> capable of supporting Sessions for any clients other than
- * {@code HttpRequest/HttpResponse} based clients.
+ * servlet container - it is not capable of supporting Sessions for any clients other than those using the HTTP
+ * protocol.
  * <p/>
- * Therefore, if you need {@code Session} access from heterogeneous clients (e.g. web pages,
- * Java Web Start applications, etc.), use the {@link DefaultWebSessionManager DefaultWebSessionManager}
+ * Therefore, if you need {@code Session} support for heterogeneous clients (e.g. web browsers,
+ * RMI clients, etc), use the {@link DefaultWebSessionManager DefaultWebSessionManager}
  * instead.  The {@code DefaultWebSessionManager} supports both traditional web-based access as well as non web-based
  * clients.
  *
  * @since 0.9
+ * @see DefaultWebSessionManager
  */
-public class ServletContainerSessionManager extends AbstractSessionManager {
+public class ServletContainerSessionManager implements SessionManager {
 
     //TODO - complete JavaDoc
 
