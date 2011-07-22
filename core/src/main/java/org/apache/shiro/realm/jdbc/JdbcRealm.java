@@ -25,6 +25,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.JdbcUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -65,6 +65,11 @@ public class JdbcRealm extends AuthorizingRealm {
      * The default query used to retrieve account data for the user.
      */
     protected static final String DEFAULT_AUTHENTICATION_QUERY = "select password from users where username = ?";
+    
+    /**
+     * The default query used to retrieve account data for the user when {@link #saltStyle} is COLUMN.
+     */
+    protected static final String DEFAULT_SALTED_AUTHENTICATION_QUERY = "select password, password_salt from users where username = ?";
 
     /**
      * The default query used to retrieve the roles that apply to a user.
@@ -77,6 +82,16 @@ public class JdbcRealm extends AuthorizingRealm {
     protected static final String DEFAULT_PERMISSIONS_QUERY = "select permission from roles_permissions where role_name = ?";
 
     private static final Logger log = LoggerFactory.getLogger(JdbcRealm.class);
+    
+    /**
+     * Password hash salt configuration. <ul>
+     *   <li>NO_SALT - password hashes are not salted.</li>
+     *   <li>CRYTP - password hashes are stored in in the database unix crypt format.</li>
+     *   <li>COLUMN - salt is in a separate column in the database.</li> 
+     *   <li>EXTERNAL - salt is not stored in the database. {@link #getSaltForUser(String)} will be called
+     *       to get the salt</li></ul>
+     */
+    public enum SaltStyle {NO_SALT, CRYPT, COLUMN, EXTERNAL};
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -90,6 +105,8 @@ public class JdbcRealm extends AuthorizingRealm {
     protected String permissionsQuery = DEFAULT_PERMISSIONS_QUERY;
 
     protected boolean permissionsLookupEnabled = false;
+    
+    protected SaltStyle saltStyle = SaltStyle.NO_SALT;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -98,7 +115,7 @@ public class JdbcRealm extends AuthorizingRealm {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
-
+    
     /**
      * Sets the datasource that should be used to retrieve connections used by this realm.
      *
@@ -165,6 +182,18 @@ public class JdbcRealm extends AuthorizingRealm {
     public void setPermissionsLookupEnabled(boolean permissionsLookupEnabled) {
         this.permissionsLookupEnabled = permissionsLookupEnabled;
     }
+    
+    /**
+     * Sets the salt style.  See {@link #saltStyle}.
+     * 
+     * @param saltStyle new SaltStyle to set.
+     */
+    public void setSaltStyle(SaltStyle saltStyle) {
+        this.saltStyle = saltStyle;
+        if (saltStyle == SaltStyle.COLUMN && authenticationQuery.equals(DEFAULT_AUTHENTICATION_QUERY)) {
+            authenticationQuery = DEFAULT_SALTED_AUTHENTICATION_QUERY;
+        }
+    }
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -181,17 +210,39 @@ public class JdbcRealm extends AuthorizingRealm {
         }
 
         Connection conn = null;
-        AuthenticationInfo info = null;
+        SimpleAuthenticationInfo info = null;
         try {
             conn = dataSource.getConnection();
 
-            String password = getPasswordForUser(conn, username);
+            String password = null;
+            String salt = null;
+            switch (saltStyle) {
+            case NO_SALT:
+                password = getPasswordForUser(conn, username)[0];
+                break;
+            case CRYPT:
+                // TODO: separate password and hash from getPasswordForUser[0]
+                throw new ConfigurationException("Not implemented yet");
+                //break;
+            case COLUMN:
+                String[] queryResults = getPasswordForUser(conn, username);
+                password = queryResults[0];
+                salt = queryResults[1];
+                break;
+            case EXTERNAL:
+                password = getPasswordForUser(conn, username)[0];
+                salt = getSaltForUser(username);
+            }
 
             if (password == null) {
                 throw new UnknownAccountException("No account found for user [" + username + "]");
             }
 
-            info = buildAuthenticationInfo(username, password.toCharArray());
+            info = new SimpleAuthenticationInfo(username, password.toCharArray(), getName());
+            
+            if (salt != null) {
+                info.setCredentialsSalt(ByteSource.Util.bytes(salt));
+            }
 
         } catch (SQLException e) {
             final String message = "There was a SQL error while authenticating user [" + username + "]";
@@ -208,15 +259,23 @@ public class JdbcRealm extends AuthorizingRealm {
         return info;
     }
 
-    protected AuthenticationInfo buildAuthenticationInfo(String username, char[] password) {
-        return new SimpleAuthenticationInfo(username, password, getName());
-    }
+    private String[] getPasswordForUser(Connection conn, String username) throws SQLException {
 
-    private String getPasswordForUser(Connection conn, String username) throws SQLException {
-
+        String[] result;
+        boolean returningSeparatedSalt = false;
+        switch (saltStyle) {
+        case NO_SALT:
+        case CRYPT:
+        case EXTERNAL:
+            result = new String[1];
+            break;
+        default:
+            result = new String[2];
+            returningSeparatedSalt = true;
+        }
+        
         PreparedStatement ps = null;
         ResultSet rs = null;
-        String password = null;
         try {
             ps = conn.prepareStatement(authenticationQuery);
             ps.setString(1, username);
@@ -233,7 +292,10 @@ public class JdbcRealm extends AuthorizingRealm {
                     throw new AuthenticationException("More than one user row found for user [" + username + "]. Usernames must be unique.");
                 }
 
-                password = rs.getString(1);
+                result[0] = rs.getString(1);
+                if (returningSeparatedSalt) {
+                    result[1] = rs.getString(2);
+                }
 
                 foundResult = true;
             }
@@ -242,7 +304,7 @@ public class JdbcRealm extends AuthorizingRealm {
             JdbcUtils.closeStatement(ps);
         }
 
-        return password;
+        return result;
     }
 
     /**
@@ -356,6 +418,10 @@ public class JdbcRealm extends AuthorizingRealm {
         }
 
         return permissions;
+    }
+    
+    protected String getSaltForUser(String username) {
+        return username;
     }
 
 }
