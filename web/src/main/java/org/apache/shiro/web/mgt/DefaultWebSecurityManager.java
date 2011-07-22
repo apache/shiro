@@ -59,15 +59,15 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     @Deprecated
     public static final String NATIVE_SESSION_MODE = "native";
 
-	/**
-	 * @deprecated as of 1.2.  This should NOT be used for anything other than determining if the sessionMode has changed.
-	 */
-	@Deprecated
+    /**
+     * @deprecated as of 1.2.  This should NOT be used for anything other than determining if the sessionMode has changed.
+     */
+    @Deprecated
     private String sessionMode;
 
     public DefaultWebSecurityManager() {
         super();
-        ((DefaultSubjectDAO)this.subjectDAO).setSessionStorageEvaluator(new DefaultWebSessionStorageEvaluator());
+        ((DefaultSubjectDAO) this.subjectDAO).setSessionStorageEvaluator(new DefaultWebSessionStorageEvaluator());
         this.sessionMode = HTTP_SESSION_MODE;
         setSubjectFactory(new DefaultWebSubjectFactory());
         setRememberMeManager(new CookieRememberMeManager());
@@ -134,31 +134,35 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         }
     }
 
-	@Override
-	public void setSessionManager(SessionManager sessionManager) {
-		this.sessionMode = null;
-		this.setInternalSessionManager(sessionManager);
-	}
+    @Override
+    public void setSessionManager(SessionManager sessionManager) {
+        this.sessionMode = null;
+        if (sessionManager != null && !(sessionManager instanceof WebSessionManager)) {
+            if (log.isWarnEnabled()) {
+                String msg = "The " + getClass().getName() + " implementation expects SessionManager instances " +
+                        "that implement the " + WebSessionManager.class.getName() + " interface.  The " +
+                        "configured instance is of type [" + sessionManager.getClass().getName() + "] which does not " +
+                        "implement this interface..  This may cause unexpected behavior.";
+                log.warn(msg);
+            }
+        }
+        setInternalSessionManager(sessionManager);
+    }
 
     /**
      * @param sessionManager
      * @since 1.2
      */
-	private void setInternalSessionManager(SessionManager sessionManager) {
-		super.setSessionManager(sessionManager);
-	}
+    private void setInternalSessionManager(SessionManager sessionManager) {
+        super.setSessionManager(sessionManager);
+    }
 
-	/**
+    /**
      * @since 1.0
      */
     public boolean isHttpSessionMode() {
         SessionManager sessionManager = getSessionManager();
-
-	    if(sessionManager instanceof WebSessionManager) {
-		    return ((WebSessionManager)sessionManager).isServletContainerSessions();
-	    }
-        //use Servlet container sessions by default:
-		return true;
+        return sessionManager instanceof WebSessionManager && ((WebSessionManager)sessionManager).isServletContainerSessions();
     }
 
     protected SessionManager createSessionManager(String sessionMode) {
