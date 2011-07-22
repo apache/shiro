@@ -100,6 +100,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- JDBC Realm tests: -->
+        <dependency>
+            <groupId>hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
