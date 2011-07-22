@@ -21,12 +21,12 @@ package org.apache.shiro.web.mgt;
 import org.apache.shiro.mgt.SecurityManager;
 
 /**
- * This interface represents a {@link SecurityManager} implementation that can
- * be used in a servlet container.
+ * This interface represents a {@link SecurityManager} implementation that can used in web-enabled applications.
  *
  * @since 1.0
  */
 public interface WebSecurityManager extends SecurityManager {
+
     /**
      * Security information needs to be retained from request to request, so Shiro makes use of a
      * session for this. Typically, a security manager will use the servlet container's HTTP session

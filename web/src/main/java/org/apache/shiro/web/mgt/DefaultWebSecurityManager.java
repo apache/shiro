@@ -28,10 +28,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
-import org.apache.shiro.web.session.mgt.DefaultWebSessionContext;
-import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
-import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
-import org.apache.shiro.web.session.mgt.WebSessionKey;
+import org.apache.shiro.web.session.mgt.*;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
@@ -57,9 +54,15 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
 
     private static final Logger log = LoggerFactory.getLogger(DefaultWebSecurityManager.class);
 
+    @Deprecated
     public static final String HTTP_SESSION_MODE = "http";
+    @Deprecated
     public static final String NATIVE_SESSION_MODE = "native";
 
+	/**
+	 * @deprecated as of 1.2.  This should NOT be used for anything other than determining if the sessionMode has changed.
+	 */
+	@Deprecated
     private String sessionMode;
 
     public DefaultWebSecurityManager() {
@@ -97,11 +100,19 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
+    @Deprecated
     public String getSessionMode() {
         return sessionMode;
     }
 
+    /**
+     * @param sessionMode
+     * @deprecated since 1.2
+     */
+    @Deprecated
     public void setSessionMode(String sessionMode) {
+        log.warn("The 'sessionMode' property has been deprecated.  Please configure an appropriate WebSessionManager " +
+                "instance instead of using this property.  This property/method will be removed in a later version.");
         String mode = sessionMode;
         if (mode == null) {
             throw new IllegalArgumentException("sessionMode argument cannot be null.");
@@ -119,15 +130,35 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         if (recreate) {
             LifecycleUtils.destroy(getSessionManager());
             SessionManager sessionManager = createSessionManager(mode);
-            setSessionManager(sessionManager);
+            this.setInternalSessionManager(sessionManager);
         }
     }
 
+	@Override
+	public void setSessionManager(SessionManager sessionManager) {
+		this.sessionMode = null;
+		this.setInternalSessionManager(sessionManager);
+	}
+
     /**
+     * @param sessionManager
+     * @since 1.2
+     */
+	private void setInternalSessionManager(SessionManager sessionManager) {
+		super.setSessionManager(sessionManager);
+	}
+
+	/**
      * @since 1.0
      */
     public boolean isHttpSessionMode() {
-        return this.sessionMode == null || !this.sessionMode.equals(NATIVE_SESSION_MODE);
+        SessionManager sessionManager = getSessionManager();
+
+	    if(sessionManager instanceof WebSessionManager) {
+		    return ((WebSessionManager)sessionManager).isServletContainerSessions();
+	    }
+        //use Servlet container sessions by default:
+		return true;
     }
 
     protected SessionManager createSessionManager(String sessionMode) {
