@@ -116,6 +116,7 @@ public abstract class ShiroWebModule extends ShiroModule {
 
     @Override
     protected final void configureShiro() {
+        bindBeanType(TypeLiteral.get(ServletContext.class), Key.get(ServletContext.class, Names.named(NAME)));
         bind(Key.get(ServletContext.class, Names.named(NAME))).toInstance(this.servletContext);
         bindWebSecurityManager(bind(WebSecurityManager.class));
         bindWebEnvironment(bind(WebEnvironment.class));

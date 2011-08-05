@@ -83,6 +83,7 @@ public class BeanTypeListenerTest {
         expect(injector.getInstance(Key.get(String.class, Names.named("shiro.myProperty")))).andReturn(property);
         expect(injector.getInstance(Key.get(String.class, Names.named("shiro.unavailableProperty"))))
                 .andThrow(new ConfigurationException(Collections.singleton(new Message("Not Available!"))));
+        expect(injector.getInstance(BeanTypeListener.MAP_KEY)).andReturn(Collections.EMPTY_MAP).anyTimes();
 
         control.replay();
 
