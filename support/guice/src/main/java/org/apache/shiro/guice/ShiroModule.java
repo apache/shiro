@@ -75,6 +75,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
                 .to(realmSetKey());
 
         bind(DestroyableInjectionListener.DestroyableRegistry.class).toInstance(registry);
+        BeanTypeListener.ensureBeanTypeMapExists(binder());
     }
 
     @SuppressWarnings({"unchecked"})
@@ -138,6 +139,16 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
      */
     protected void bindEnvironment(AnnotatedBindingBuilder<Environment> bind) {
         bind.to(GuiceEnvironment.class).asEagerSingleton();
+    }
+
+    /**
+     * Binds a key to use for injecting setters in shiro classes.
+     * @param typeLiteral the bean property type
+     * @param key the key to use to satisfy the bean property dependency
+     * @param <T>
+     */
+    protected final <T> void bindBeanType(TypeLiteral<T> typeLiteral, Key<? extends T> key) {
+        BeanTypeListener.bindBeanType(binder(), typeLiteral, key);
     }
 
     /**

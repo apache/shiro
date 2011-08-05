@@ -22,9 +22,11 @@ import com.google.common.primitives.Primitives;
 import com.google.inject.*;
 import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
+import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
+import com.google.inject.util.Types;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.shiro.SecurityUtils;
 
@@ -49,6 +51,9 @@ class BeanTypeListener implements TypeListener {
 
     public static final Matcher<TypeLiteral> MATCHER = ShiroMatchers.typeLiteral(classMatcher);
 
+    private static final String BEAN_TYPE_MAP_NAME = "__SHIRO_BEAN_TYPES__";
+    static final Key<?> MAP_KEY = Key.get(Types.mapOf(TypeLiteral.class, BeanTypeKey.class), Names.named(BEAN_TYPE_MAP_NAME));
+
     public <I> void hear(TypeLiteral<I> type, final TypeEncounter<I> encounter) {
         PropertyDescriptor propertyDescriptors[] = PropertyUtils.getPropertyDescriptors(type.getRawType());
         final Map<PropertyDescriptor, Key<?>> propertyDependencies = new HashMap<PropertyDescriptor, Key<?>>(propertyDescriptors.length);
@@ -56,16 +61,16 @@ class BeanTypeListener implements TypeListener {
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             if (propertyDescriptor.getWriteMethod() != null && Modifier.isPublic(propertyDescriptor.getWriteMethod().getModifiers())) {
                 Type propertyType = propertyDescriptor.getWriteMethod().getGenericParameterTypes()[0];
-                propertyDependencies.put(propertyDescriptor, requiresName(propertyType)
-                        ? Key.get(propertyType, Names.named("shiro." + propertyDescriptor.getName()))
-                        : Key.get(propertyType));
+                propertyDependencies.put(propertyDescriptor, createDependencyKey(propertyDescriptor, propertyType));
             }
         }
         encounter.register(new MembersInjector<I>() {
             public void injectMembers(I instance) {
                 for (Map.Entry<PropertyDescriptor, Key<?>> dependency : propertyDependencies.entrySet()) {
                     try {
-                        Object value = injectorProvider.get().getInstance(dependency.getValue());
+                        final Injector injector = injectorProvider.get();
+
+                        Object value = injector.getInstance(getMappedKey(injector, dependency.getValue()));
                         dependency.getKey().getWriteMethod().invoke(instance, value);
 
                     } catch (ConfigurationException e) {
@@ -82,12 +87,54 @@ class BeanTypeListener implements TypeListener {
         });
     }
 
+    private static Key<?> getMappedKey(Injector injector, Key<?> key) {
+        Map<TypeLiteral, BeanTypeKey> beanTypeMap = getBeanTypeMap(injector);
+        if(key.getAnnotation() == null && beanTypeMap.containsKey(key.getTypeLiteral())) {
+            return beanTypeMap.get(key.getTypeLiteral()).key;
+        } else {
+            return key;
+        }
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private static Map<TypeLiteral, BeanTypeKey> getBeanTypeMap(Injector injector) {
+        return (Map<TypeLiteral, BeanTypeKey>) injector.getInstance(MAP_KEY);
+    }
+
+    private static Key<?> createDependencyKey(PropertyDescriptor propertyDescriptor, Type propertyType) {
+        if(requiresName(propertyType)) {
+            return Key.get(propertyType, Names.named("shiro." + propertyDescriptor.getName()));
+        } else {
+            return Key.get(propertyType);
+        }
+    }
+
     private static boolean requiresName(Type propertyType) {
         if (propertyType instanceof Class) {
             Class<?> aClass = (Class<?>) propertyType;
             return aClass.isPrimitive() || aClass.isEnum() || Primitives.isWrapperType(aClass) || CharSequence.class.isAssignableFrom(aClass);
         } else {
             return false;
+        }
+    }
+
+    static void ensureBeanTypeMapExists(Binder binder) {
+        beanTypeMapBinding(binder).addBinding(TypeLiteral.get(BeanTypeKey.class)).toInstance(new BeanTypeKey(null));
+    }
+
+    static <T> void bindBeanType(Binder binder, TypeLiteral<T> typeLiteral, Key<? extends T> key) {
+        beanTypeMapBinding(binder).addBinding(typeLiteral).toInstance(new BeanTypeKey(key));
+    }
+
+    private static MapBinder<TypeLiteral, BeanTypeKey> beanTypeMapBinding(Binder binder) {
+        return MapBinder.newMapBinder(binder, TypeLiteral.class, BeanTypeKey.class, Names.named(BEAN_TYPE_MAP_NAME));
+    }
+
+    private static class BeanTypeKey {
+        Key<?> key;
+
+        private BeanTypeKey(Key<?> key) {
+            this.key = key;
         }
     }
 }
