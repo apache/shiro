@@ -39,7 +39,7 @@ import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.filter.session.NoSessionCreationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
-import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletContext;
@@ -195,7 +195,7 @@ public abstract class ShiroWebModule extends ShiroModule {
      */
     @Override
     protected void bindSessionManager(AnnotatedBindingBuilder<SessionManager> bind) {
-        bind.to(DefaultWebSessionManager.class).asEagerSingleton();
+        bind.to(ServletContainerSessionManager.class).asEagerSingleton();
     }
 
     @Override
