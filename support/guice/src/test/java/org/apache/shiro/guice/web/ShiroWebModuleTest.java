@@ -33,6 +33,7 @@ import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 import org.junit.Test;
 
 import javax.inject.Named;
@@ -71,8 +72,8 @@ public class ShiroWebModuleTest {
         assertTrue(securityManager instanceof WebSecurityManager);
         SessionManager sessionManager = injector.getInstance(SessionManager.class);
         assertNotNull(sessionManager);
-        assertTrue(sessionManager instanceof DefaultWebSessionManager);
-        assertTrue(((DefaultWebSecurityManager)securityManager).getSessionManager() instanceof DefaultWebSessionManager);
+        assertTrue(sessionManager instanceof ServletContainerSessionManager);
+        assertTrue(((DefaultWebSecurityManager)securityManager).getSessionManager() instanceof ServletContainerSessionManager);
     }
 
     @Test
