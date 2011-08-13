@@ -212,6 +212,14 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
     }
 
     /**
+     * Delegates to {@link #isLoginAttempt(javax.servlet.ServletRequest, javax.servlet.ServletResponse) isLoginAttempt}.
+     */
+    @Override
+    protected final boolean isLoginRequest(ServletRequest request, ServletResponse response) {
+        return this.isLoginAttempt(request, response);
+    }
+
+    /**
      * Returns the {@link #AUTHORIZATION_HEADER AUTHORIZATION_HEADER} from the specified ServletRequest.
      * <p/>
      * This implementation merely casts the request to an <code>HttpServletRequest</code> and returns the header:

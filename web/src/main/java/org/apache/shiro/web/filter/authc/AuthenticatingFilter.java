@@ -21,10 +21,14 @@ package org.apache.shiro.web.filter.authc;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.subject.Subject;
 
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * An <code>AuthenticationFilter</code> that is capable of automatically performing an authentication attempt
@@ -33,6 +37,7 @@ import javax.servlet.ServletResponse;
  * @since 0.9
  */
 public abstract class AuthenticatingFilter extends AuthenticationFilter {
+    public static final String PERMISSIVE = "permissive";
 
     //TODO - complete JavaDoc
 
@@ -103,5 +108,51 @@ public abstract class AuthenticatingFilter extends AuthenticationFilter {
      */
     protected boolean isRememberMe(ServletRequest request) {
         return false;
+    }
+
+    /**
+     * Determines whether the current subject should be allowed to make the current request.
+     * <p/>
+     * The default implementation returns <code>true</code> if the user is authenticated.  Will also return
+     * <code>true</code> if the {@link #isLoginRequest} returns false and the &quot;permissive&quot; flag is set.
+     *
+     * @return <code>true</code> if request should be allowed access
+     */
+    @Override
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        return super.isAccessAllowed(request, response, mappedValue) ||
+                (!isLoginRequest(request, response) && isPermissive(mappedValue));
+    }
+
+    /**
+     * Returns <code>true</code> if the mappedValue contains the {@link #PERMISSIVE} qualifier.
+     *
+     * @return <code>true</code> if this filter should be permissive
+     */
+    protected boolean isPermissive(Object mappedValue) {
+        if(mappedValue != null) {
+            String[] values = (String[]) mappedValue;
+            return Arrays.binarySearch(values, PERMISSIVE) >= 0;
+        }
+        return false;
+    }
+
+    /**
+     * Overrides the default behavior to call {@link #onAccessDenied} and swallow the exception if the exception is
+     * {@link UnauthenticatedException}.
+     */
+    @Override
+    protected void cleanup(ServletRequest request, ServletResponse response, Exception existing) throws ServletException, IOException {
+        if (existing instanceof UnauthenticatedException || (existing instanceof ServletException && existing.getCause() instanceof UnauthenticatedException))
+        {
+            try {
+                onAccessDenied(request, response);
+                existing = null;
+            } catch (Exception e) {
+                existing = e;
+            }
+        }
+        super.cleanup(request, response, existing);
+
     }
 }
