@@ -24,6 +24,7 @@ import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.Factory;
 import org.apache.shiro.util.Nameable;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
@@ -37,6 +38,9 @@ import java.util.*;
  * Object builder that uses reflection and Apache Commons BeanUtils to build objects given a
  * map of "property values".  Typically these come from the Shiro INI configuration and are used
  * to construct or modify the SecurityManager, its dependencies, and web-based security filters.
+ *
+ * Recognizes {@link Factory} implementations and will call
+ * {@link org.apache.shiro.util.Factory#getInstance() getInstance} to satisfy any reference to this bean.
  *
  * @since 0.9
  */
@@ -228,7 +232,11 @@ public class ReflectionBuilder {
     protected Object resolveReference(String reference) {
         String id = getId(reference);
         log.debug("Encountered object reference '{}'.  Looking up object with id '{}'", reference, id);
-        return getReferencedObject(id);
+        final Object referencedObject = getReferencedObject(id);
+        if(referencedObject instanceof Factory) {
+            return ((Factory)referencedObject).getInstance();
+        }
+        return referencedObject;
     }
 
     protected boolean isTypedProperty(Object object, String propertyName, Class clazz) {

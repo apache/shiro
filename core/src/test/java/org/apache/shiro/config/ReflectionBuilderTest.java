@@ -21,6 +21,7 @@ package org.apache.shiro.config;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
+import org.apache.shiro.jndi.JndiObjectFactory;
 import org.apache.shiro.util.CollectionUtils;
 import org.junit.Test;
 
@@ -240,4 +241,22 @@ public class ReflectionBuilderTest {
         assertEquals(2, children.size());
     }
 
+    @Test
+    public void testFactoryInstantiation() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBeanFactory", "org.apache.shiro.config.SimpleBeanFactory");
+        defs.put("simpleBeanFactory.factoryInt", "5");
+        defs.put("simpleBeanFactory.factoryString", "someString");
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.simpleBean", "$simpleBeanFactory");
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        assertFalse(CollectionUtils.isEmpty(objects));
+        CompositeBean compositeBean = (CompositeBean) objects.get("compositeBean");
+        SimpleBean bean = compositeBean.getSimpleBean();
+        assertNotNull(bean);
+        assertEquals(5, bean.getIntProp());
+        assertEquals("someString", bean.getStringProp());
+    }
 }
