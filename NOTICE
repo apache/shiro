@@ -13,16 +13,3 @@ Certain parts (StringUtils etc.) of the source code for this
 product was copied for simplicity and to reduce dependencies 
 from the source code developed by the Spring Framework Project 
 (http://www.springframework.org).
-
-Shiro's BCrypt Hashing support is a modification of Damien Miller's
-jBCrypt project at http://www.mindrot.org/projects/jBCrypt/, a
-port of OpenBSD's BCrypt algorithm to Java.  Per his BSD-style
-license, the following remains in-tact:
-// Copyright (c) 2006 Damien Miller <djm@mindrot.org>
-//
-// Permission to use, copy, modify, and distribute this software for
-// any purpose with or without fee is hereby granted, provided that
-// the above copyright notice and this permission notice appear in
-// all copies.
-Note that this attribution statement applies to Shiro's BCrypt hash
-class only, not Shiro in general.
