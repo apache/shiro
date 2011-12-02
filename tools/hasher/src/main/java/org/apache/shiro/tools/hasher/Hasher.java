@@ -24,6 +24,7 @@ import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.UnknownAlgorithmException;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.crypto.hash.format.*;
 import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.JavaEnvironment;
@@ -46,27 +47,29 @@ import java.util.Arrays;
  */
 public final class Hasher {
 
-    private static final Option ALGORITHM = new Option("a", "algorithm", true, "hash algorithm name.  Defaults to MD5.");
+    private static final Option ALGORITHM = new Option("a", "algorithm", true, "hash algorithm name.  Defaults to MD5 (SHA-256 when password hashing).");
     private static final Option DEBUG = new Option("d", "debug", false, "show additional error (stack trace) information.");
+    private static final Option FORMAT = new Option("f", "format", true, "hash output format.  Defaults to 'shiro1' when password hashing, 'hex' otherwise.  See below for more information.");
     private static final Option HELP = new Option("help", "help", false, "show this help message.");
-    private static final Option HEX = new Option("h", "hex", false, "display a hex value instead of Base64.");
-    private static final Option ITERATIONS = new Option("i", "iterations", true, "number of hash iterations.  Defaults to 1.");
-    private static final Option NO_FORMAT = new Option("nf", "noformat", false, "turn off output formatting.  Any generated salt will be placed after the hash separated by a space.");
+    private static final Option ITERATIONS = new Option("i", "iterations", true, "number of hash iterations.  Defaults to 350,000 when password hashing, 1 otherwise.");
     private static final Option PASSWORD = new Option("p", "password", false, "hash a password (disable typing echo)");
     private static final Option PASSWORD_NC = new Option("pnc", "pnoconfirm", false, "hash a password (disable typing echo) but disable password confirmation prompt.");
     private static final Option RESOURCE = new Option("r", "resource", false, "read and hash the resource located at <value>.  See below for more information.");
     private static final Option SALT = new Option("s", "salt", true, "use the specified salt.  <arg> is plaintext.");
     private static final Option SALT_BYTES = new Option("sb", "saltbytes", true, "use the specified salt bytes.  <arg> is hex or base64 encoded text.");
     private static final Option SALT_GEN = new Option("gs", "gensalt", false, "generate and use a random salt.");
-    private static final Option SALT_GEN_HEX = new Option("gsh", "gensalthex", false, "display the generated salt's hex value instead of Base64.");
+    private static final Option NO_SALT_GEN = new Option("ngs", "nogensalt", false, "do NOT generate and use a random salt (valid during password hashing).");
     private static final Option SALT_GEN_SIZE = new Option("gss", "gensaltsize", true, "the number of salt bits (not bytes!) to generate.  Defaults to 128.");
-    private static final Option SHIRO = new Option("shiro", "shiro", false, "display output in the Shiro password file format (.ini [users] config).");
 
     private static final String HEX_PREFIX = "0x";
     private static final String DEFAULT_ALGORITHM_NAME = "MD5";
+    private static final String DEFAULT_PASSWORD_ALGORITHM_NAME = "SHA-256";
     private static final int DEFAULT_GENERATED_SALT_SIZE = 128;
     private static final int DEFAULT_NUM_ITERATIONS = 1;
+    private static final int DEFAULT_PASSWORD_NUM_ITERATIONS = 350000;
     private static final String SALT_MUTEX_MSG = createMutexMessage(SALT, SALT_BYTES);
+
+    private static final HashFormatFactory HASH_FORMAT_FACTORY = new DefaultHashFormatFactory();
 
     static {
         ALGORITHM.setArgName("name");
@@ -81,26 +84,23 @@ public final class Hasher {
         CommandLineParser parser = new PosixParser();
 
         Options options = new Options();
-        options.addOption(HELP).addOption(DEBUG).addOption(ALGORITHM).addOption(HEX).addOption(ITERATIONS);
+        options.addOption(HELP).addOption(DEBUG).addOption(ALGORITHM).addOption(ITERATIONS);
         options.addOption(RESOURCE).addOption(PASSWORD).addOption(PASSWORD_NC);
-        options.addOption(SALT).addOption(SALT_BYTES).addOption(SALT_GEN).addOption(SALT_GEN_SIZE).addOption(SALT_GEN_HEX);
-        options.addOption(NO_FORMAT).addOption(SHIRO);
+        options.addOption(SALT).addOption(SALT_BYTES).addOption(SALT_GEN).addOption(SALT_GEN_SIZE).addOption(NO_SALT_GEN);
+        options.addOption(FORMAT);
 
         boolean debug = false;
-        String algorithm = DEFAULT_ALGORITHM_NAME;
-        int iterations = DEFAULT_NUM_ITERATIONS;
-        boolean base64 = true;
+        String algorithm = null; //user unspecified
+        int iterations = 0; //0 means unspecified by the end-user
         boolean resource = false;
         boolean password = false;
         boolean passwordConfirm = true;
         String saltString = null;
         String saltBytesString = null;
         boolean generateSalt = false;
-        boolean generatedSaltBase64 = true;
         int generatedSaltSize = DEFAULT_GENERATED_SALT_SIZE;
 
-        boolean shiroFormat = false;
-        boolean format = true;
+        String formatString = null;
 
         char[] passwordChars = null;
 
@@ -119,17 +119,16 @@ public final class Hasher {
             if (line.hasOption(ITERATIONS.getOpt())) {
                 iterations = getRequiredPositiveInt(line, ITERATIONS);
             }
-            if (line.hasOption(HEX.getOpt())) {
-                base64 = false;
-            }
             if (line.hasOption(PASSWORD.getOpt())) {
                 password = true;
+                generateSalt = true;
             }
             if (line.hasOption(RESOURCE.getOpt())) {
                 resource = true;
             }
             if (line.hasOption(PASSWORD_NC.getOpt())) {
                 password = true;
+                generateSalt = true;
                 passwordConfirm = false;
             }
             if (line.hasOption(SALT.getOpt())) {
@@ -138,12 +137,11 @@ public final class Hasher {
             if (line.hasOption(SALT_BYTES.getOpt())) {
                 saltBytesString = line.getOptionValue(SALT_BYTES.getOpt());
             }
+            if (line.hasOption(NO_SALT_GEN.getOpt())) {
+                generateSalt = false;
+            }
             if (line.hasOption(SALT_GEN.getOpt())) {
                 generateSalt = true;
-            }
-            if (line.hasOption(SALT_GEN_HEX.getOpt())) {
-                generateSalt = true;
-                generatedSaltBase64 = false;
             }
             if (line.hasOption(SALT_GEN_SIZE.getOpt())) {
                 generateSalt = true;
@@ -152,14 +150,11 @@ public final class Hasher {
                     throw new IllegalArgumentException("Generated salt size must be a multiple of 8 (e.g. 128, 192, 256, 512, etc).");
                 }
             }
-            if (line.hasOption(NO_FORMAT.getOpt())) {
-                format = false;
-            }
-            if (line.hasOption(SHIRO.getOpt())) {
-                shiroFormat = true;
+            if (line.hasOption(FORMAT.getOpt())) {
+                formatString = line.getOptionValue(FORMAT.getOpt());
             }
 
-            String sourceValue = null;
+            String sourceValue;
 
             Object source;
 
@@ -186,18 +181,44 @@ public final class Hasher {
                 }
             }
 
+            if (algorithm == null) {
+                if (password) {
+                    algorithm = DEFAULT_PASSWORD_ALGORITHM_NAME;
+                } else {
+                    algorithm = DEFAULT_ALGORITHM_NAME;
+                }
+            }
+
+            if (iterations < DEFAULT_NUM_ITERATIONS) {
+                //Iterations were not specified.  Default to 350,000 when password hashing, and 1 for everything else:
+                if (password) {
+                    iterations = DEFAULT_PASSWORD_NUM_ITERATIONS;
+                } else {
+                    iterations = DEFAULT_NUM_ITERATIONS;
+                }
+            }
+
             ByteSource salt = getSalt(saltString, saltBytesString, generateSalt, generatedSaltSize);
 
             SimpleHash hash = new SimpleHash(algorithm, source, salt, iterations);
 
-            StringBuilder output;
-            if (shiroFormat) {
-                output = formatForShiroIni(hash, base64, salt, generatedSaltBase64, generateSalt);
-            } else if (format) {
-                output = format(hash, base64, salt, generatedSaltBase64, generateSalt, algorithm, sourceValue);
-            } else {
-                output = formatMinimal(hash, base64, salt, generatedSaltBase64, generateSalt);
+            if (formatString == null) {
+                //Output format was not specified.  Default to 'shiro1' when password hashing, and 'hex' for
+                //everything else:
+                if (password) {
+                    formatString = Shiro1CryptFormat.class.getName();
+                } else {
+                    formatString = HexFormat.class.getName();
+                }
             }
+
+            HashFormat format = HASH_FORMAT_FACTORY.getInstance(formatString);
+
+            if (format == null) {
+                throw new IllegalArgumentException("Unrecognized hash format '" + formatString + "'.");
+            }
+
+            String output = format.format(hash);
 
             System.out.println(output);
 
@@ -236,72 +257,6 @@ public final class Hasher {
     private static void exit(Exception e, boolean debug) {
         printException(e, debug);
         System.exit(-1);
-    }
-
-    private static StringBuilder format(ByteSource hash, boolean hashBase64, ByteSource salt, boolean saltBase64, boolean showSalt, String alg, String value) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(alg).append("(").append(value).append(")");
-
-        if (hashBase64) {
-            sb.append(" base64 = ").append(hash.toBase64());
-        } else {
-            sb.append(" hex = ").append(hash.toHex());
-        }
-
-        if (showSalt && salt != null) {
-            sb.append("\nGenerated salt");
-            if (saltBase64) {
-                sb.append(" base64 = ").append(salt.toBase64());
-            } else {
-                sb.append(" hex = ").append(salt.toHex());
-            }
-        }
-
-        return sb;
-    }
-
-    private static StringBuilder formatForShiroIni(ByteSource hash, boolean hashBase64, ByteSource salt, boolean saltBase64, boolean showSalt) {
-        StringBuilder sb = new StringBuilder();
-
-        if (hashBase64) {
-            sb.append(hash.toBase64());
-        } else {
-            //hex:
-            sb.append(HEX_PREFIX).append(hash.toHex());
-        }
-
-        if (showSalt && salt != null) {
-            sb.append(" ");
-            if (saltBase64) {
-                sb.append(salt.toBase64());
-            } else {
-                //hex:
-                sb.append(HEX_PREFIX).append(salt.toHex());
-            }
-        }
-        return sb;
-    }
-
-    private static StringBuilder formatMinimal(ByteSource hash, boolean hashBase64, ByteSource salt, boolean saltBase64, boolean showSalt) {
-        StringBuilder sb = new StringBuilder();
-
-        if (hashBase64) {
-            sb.append(hash.toBase64());
-        } else {
-            sb.append(hash.toHex());
-        }
-
-        if (showSalt && salt != null) {
-            sb.append(" ");
-            if (saltBase64) {
-                sb.append(salt.toBase64());
-            } else {
-                sb.append(salt.toHex());
-            }
-        }
-
-        return sb;
     }
 
     private static int getRequiredPositiveInt(CommandLine line, Option option) {
@@ -387,7 +342,6 @@ public final class Hasher {
                 "---------------------------------\n" +
                 "Specifying a salt:" +
                 "\n\n" +
-
                 "You may specify a salt using the -s/--salt option followed by the salt\n" +
                 "value.  If the salt value is a base64 or hex string representing a\n" +
                 "byte array, you must specify the -sb/--saltbytes option to indicate this,\n" +
@@ -401,9 +355,9 @@ public final class Hasher {
                 "\n\n" +
                 "Use the -sg/--saltgenerated option if you don't want to specify a salt,\n" +
                 "but want a strong random salt to be generated and used during hashing.\n" +
-                "The generated salt size defaults to 128 bytes.  You may specify\n" +
+                "The generated salt size defaults to 128 bits.  You may specify\n" +
                 "a different size by using the -sgs/--saltgeneratedsize option followed by\n" +
-                "a positive integer." +
+                "a positive integer (size is in bits, not bytes)." +
                 "\n\n" +
                 "Because a salt must be specified if computing the\n" +
                 "hash later, generated salts will be printed, defaulting to base64\n" +
@@ -424,7 +378,18 @@ public final class Hasher {
                 "<command> -r ~/documents/myfile.pdf\n" +
                 "<command> -r /usr/local/logs/absolutePathFile.log\n" +
                 "<command> -r url:http://foo.com/page.html\n" +
-                "<command> -r classpath:/WEB-INF/lib/something.jar";
+                "<command> -r classpath:/WEB-INF/lib/something.jar" +
+                "\n\n" +
+                "Output Format:\n" +
+                "---------------------------------\n" +
+                "Specify the -f/--format option followed by either 1) the format ID (as defined\n" +
+                "by the " + DefaultHashFormatFactory.class.getName() + "\n" +
+                "JavaDoc) or 2) the fully qualified " + HashFormat.class.getName() + "\n" +
+                "implementation class name to instantiate and use for formatting.\n\n" +
+                "The default output format is 'shiro1' which is a Modular Crypt Format (MCF)\n" +
+                "that shows all relevant information as a dollar-sign ($) delimited string.\n" +
+                "This format is ideal for use in Shiro's text-based user configuration (e.g.\n" +
+                "shiro.ini or a properties file).";
 
         printException(e, debug);
 

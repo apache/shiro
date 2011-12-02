@@ -42,11 +42,11 @@ public class DefaultWebEnvironment extends DefaultEnvironment implements Mutable
     }
 
     public FilterChainResolver getFilterChainResolver() {
-        return (FilterChainResolver)this.objects.get(DEFAULT_FILTER_CHAIN_RESOLVER_NAME);
+        return getObject(DEFAULT_FILTER_CHAIN_RESOLVER_NAME, FilterChainResolver.class);
     }
 
     public void setFilterChainResolver(FilterChainResolver filterChainResolver) {
-        this.objects.put(DEFAULT_FILTER_CHAIN_RESOLVER_NAME, filterChainResolver);
+        setObject(DEFAULT_FILTER_CHAIN_RESOLVER_NAME, filterChainResolver);
     }
 
     @Override

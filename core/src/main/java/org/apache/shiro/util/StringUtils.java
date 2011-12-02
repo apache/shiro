@@ -478,4 +478,25 @@ public class StringUtils {
         return CollectionUtils.asSet(split);
     }
 
+    /**
+     * Returns the input argument, but ensures the first character is capitalized (if possible).
+     * @param in the string to uppercase the first character.
+     * @return the input argument, but with the first character capitalized (if possible).
+     * @since 1.2
+     */
+    public static String uppercaseFirstChar(String in) {
+        if (in == null || in.length() == 0) {
+            return in;
+        }
+        int length = in.length();
+        StringBuilder sb = new StringBuilder(length);
+
+        sb.append(Character.toUpperCase(in.charAt(0)));
+        if (length > 1) {
+            String remaining = in.substring(1);
+            sb.append(remaining);
+        }
+        return sb.toString();
+    }
+
 }

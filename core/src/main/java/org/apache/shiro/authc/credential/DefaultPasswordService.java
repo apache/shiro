@@ -18,143 +18,156 @@
  */
 package org.apache.shiro.authc.credential;
 
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SaltedAuthenticationInfo;
 import org.apache.shiro.codec.Base64;
-import org.apache.shiro.codec.CodecSupport;
-import org.apache.shiro.codec.Hex;
-import org.apache.shiro.crypto.hash.*;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.Hash;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.util.ByteSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
 /**
- * Default implementation of the {@link PasswordService} interface.  Delegates to an internal (configurable)
- * {@link Hasher} instance.
+ * Default implementation of the {@link PasswordService} interface.
  *
  * @since 1.2
  */
 public class DefaultPasswordService implements PasswordService {
 
-    private ConfigurableHasher hasher;
+    public static final String DEFAULT_HASH_ALGORITHM_NAME = "SHA-512";
+    //see http://www.katasoft.com/blog/2011/04/04/strong-password-hashing-apache-shiro
+    public static final int DEFAULT_HASH_ITERATIONS = 500000; //500,000
+    public static final int DEFAULT_SALT_SIZE = 32; //32 bytes == 256 bits
 
-    private String storedCredentialsEncoding = "base64";
+    private static final String MCF_PREFIX = "$shiro1$"; //Modular Crypt Format prefix specific to Shiro's needs
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultPasswordService.class);
+
+    private String hashAlgorithmName;
+    private int hashIterations;
+    private int saltSize;
+    private RandomNumberGenerator randomNumberGenerator;
 
     public DefaultPasswordService() {
-        this.hasher = new DefaultHasher();
-        this.hasher.setHashAlgorithmName(Sha512Hash.ALGORITHM_NAME);
-        //see http://www.katasoft.com/blog/2011/04/04/strong-password-hashing-apache-shiro:
-        this.hasher.setHashIterations(200000);
+        this.hashAlgorithmName = DEFAULT_HASH_ALGORITHM_NAME;
+        this.hashIterations = DEFAULT_HASH_ITERATIONS;
+        this.saltSize = DEFAULT_SALT_SIZE;
+        this.randomNumberGenerator = new SecureRandomNumberGenerator();
     }
 
-    public HashResponse hashPassword(ByteSource plaintextPassword) {
-        byte[] plaintextBytes = plaintextPassword != null ? plaintextPassword.getBytes() : null;
+    public String hashPassword(String plaintext) {
+        if (plaintext == null || plaintext.length() == 0) {
+            return null;
+        }
+        return hashPassword(ByteSource.Util.bytes(plaintext));
+    }
+
+    public String hashPassword(ByteSource plaintext) {
+        if (plaintext == null) {
+            return null;
+        }
+        byte[] plaintextBytes = plaintext.getBytes();
         if (plaintextBytes == null || plaintextBytes.length == 0) {
             return null;
         }
+        String algorithmName = getHashAlgorithmName();
+        ByteSource salt = getRandomNumberGenerator().nextBytes(getSaltSize());
+        int iterations = Math.max(1, getHashIterations());
 
-        return this.hasher.computeHash(new SimpleHashRequest(plaintextPassword));
+        Hash result = new SimpleHash(algorithmName, plaintext, salt, iterations);
+
+        //Modular Crypt Format
+        //TODO: make this pluggable:
+        return new StringBuilder(MCF_PREFIX).append(algorithmName).append("$").append(iterations).append("$")
+                .append(salt.toBase64()).append("$").append(result.toBase64()).toString();
     }
 
-    public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
-
-        ByteSource publicSalt = null;
-        if (info instanceof SaltedAuthenticationInfo) {
-            publicSalt = ((SaltedAuthenticationInfo) info).getCredentialsSalt();
-        }
-
-        Hash tokenCredentialsHash = hashProvidedCredentials(token, publicSalt);
-        byte[] storedCredentialsBytes = getCredentialsBytes(info);
-
-        return Arrays.equals(tokenCredentialsHash.getBytes(), storedCredentialsBytes);
-    }
-
-    protected byte[] getCredentialsBytes(AuthenticationInfo info) {
-        Object credentials = info.getCredentials();
-
-        byte[] bytes = new BytesHelper().getBytes(credentials);
-
-        if (this.storedCredentialsEncoding != null &&
-                (credentials instanceof String || credentials instanceof char[])) {
-            assertEncodingSupported(this.storedCredentialsEncoding);
-            bytes = decode(bytes, this.storedCredentialsEncoding);
-        }
-
-        return bytes;
-    }
-
-    protected byte[] decode(byte[] storedCredentials, String encodingName) {
-        if ("hex".equalsIgnoreCase(encodingName)) {
-            return Hex.decode(storedCredentials);
-        } else if ("base64".equalsIgnoreCase(encodingName) ||
-                "base-64".equalsIgnoreCase(encodingName)) {
-            return Base64.decode(storedCredentials);
-        }
-        throw new IllegalStateException("Unsupported encoding '" + encodingName + "'.");
-    }
-
-    protected Hash hashProvidedCredentials(AuthenticationToken token, ByteSource salt) {
-        Object credentials = token.getCredentials();
-        byte[] credentialsBytes = new BytesHelper().getBytes(credentials);
-        ByteSource credentialsByteSource = ByteSource.Util.bytes(credentialsBytes);
-
-        HashRequest request = new SimpleHashRequest(credentialsByteSource, salt);
-
-        HashResponse response = this.hasher.computeHash(request);
-
-        return response.getHash();
-    }
-
-    /**
-     * Returns {@code true} if the argument equals (ignoring case):
-     * <ul>
-     * <li>{@code hex}</li>
-     * <li>{@code base64}</li>
-     * <li>{@code base-64}</li>
-     * </ul>
-     * {@code false} otherwise.
-     * <p/>
-     * Subclasses should override this method as well as the {@link #decode(byte[], String)} method if other
-     * encodings should be supported.
-     *
-     * @param encodingName the name of the encoding to check.
-     * @return {@code }
-     */
-    protected boolean isEncodingSupported(String encodingName) {
-        return "hex".equalsIgnoreCase(encodingName) ||
-                "base64".equalsIgnoreCase(encodingName) ||
-                "base-64".equalsIgnoreCase(encodingName);
-    }
-
-
-    protected void assertEncodingSupported(String encodingName) throws IllegalArgumentException {
-        if (!isEncodingSupported(encodingName)) {
-            String msg = "Unsupported encoding '" + encodingName + "'.  Please check for typos.";
-            throw new IllegalArgumentException(msg);
+    public boolean passwordsMatch(ByteSource submittedPassword, String savedPassword) {
+        if (savedPassword == null) {
+            return isEmpty(submittedPassword);
+        } else {
+            return !isEmpty(submittedPassword) && doPasswordsMatch(submittedPassword, savedPassword);
         }
     }
 
-    public ConfigurableHasher getHasher() {
-        return hasher;
+    private static boolean isEmpty(ByteSource source) {
+        return source == null || source.getBytes() == null || source.getBytes().length == 0;
     }
 
-    public void setHasher(ConfigurableHasher hasher) {
-        this.hasher = hasher;
-    }
-
-    public void setStoredCredentialsEncoding(String storedCredentialsEncoding) {
-        if (storedCredentialsEncoding != null) {
-            assertEncodingSupported(storedCredentialsEncoding);
+    private boolean doPasswordsMatch(ByteSource submittedPassword, String savedPassword) {
+        if (!savedPassword.startsWith(MCF_PREFIX)) {
+            log.warn("Encountered unrecognized saved password format.  Falling back to simple equality " +
+                    "comparison.  Use the PasswordService to hash new passwords as well as match them.");
+            return ByteSource.Util.bytes(savedPassword).equals(submittedPassword);
         }
-        this.storedCredentialsEncoding = storedCredentialsEncoding;
+
+        String suffix = savedPassword.substring(MCF_PREFIX.length());
+        String[] parts = suffix.split("\\$");
+
+        //last part is always the digest/checksum, Base64-encoded:
+        int i = parts.length-1;
+        String digestBase64 = parts[i--];
+        //second-to-last part is always the salt, Base64-encoded:
+        String saltBase64 = parts[i--];
+        String iterationsString = parts[i--];
+        String algorithmName = parts[i--];
+
+        /*String timestampString = null;
+
+        if (parts.length == 5) {
+            timestampString = parts[i--];
+        } */
+
+        byte[] digest = Base64.decode(digestBase64);
+
+        byte[] salt = Base64.decode(saltBase64);
+        int iterations;
+        try {
+            iterations = Integer.parseInt(iterationsString);
+        } catch (NumberFormatException e) {
+            log.error("Unable to parse saved password string: " + savedPassword, e);
+            throw e;
+        }
+
+        //now compute the digest on the submitted password.  If the resulting digest matches the saved digest,
+        //the password matches:
+
+        Hash submittedHash = new SimpleHash(algorithmName, submittedPassword, salt, iterations);
+
+        return Arrays.equals(digest, submittedHash.getBytes());
     }
 
-    //will probably be removed in Shiro 2.0.  See SHIRO-203:
-    //https://issues.apache.org/jira/browse/SHIRO-203
-    private static final class BytesHelper extends CodecSupport {
-        public byte[] getBytes(Object o) {
-            return toBytes(o);
-        }
+    public String getHashAlgorithmName() {
+        return hashAlgorithmName;
+    }
+
+    public void setHashAlgorithmName(String hashAlgorithmName) {
+        this.hashAlgorithmName = hashAlgorithmName;
+    }
+
+    public int getHashIterations() {
+        return hashIterations;
+    }
+
+    public void setHashIterations(int hashIterations) {
+        this.hashIterations = hashIterations;
+    }
+
+    public int getSaltSize() {
+        return saltSize;
+    }
+
+    public void setSaltSize(int saltSize) {
+        this.saltSize = saltSize;
+    }
+
+    public RandomNumberGenerator getRandomNumberGenerator() {
+        return randomNumberGenerator;
+    }
+
+    public void setRandomNumberGenerator(RandomNumberGenerator randomNumberGenerator) {
+        this.randomNumberGenerator = randomNumberGenerator;
     }
 }

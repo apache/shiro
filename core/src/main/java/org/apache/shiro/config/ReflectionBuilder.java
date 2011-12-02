@@ -22,11 +22,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
-import org.apache.shiro.util.ClassUtils;
-import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.Factory;
-import org.apache.shiro.util.Nameable;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -361,6 +357,9 @@ public class ReflectionBuilder {
             value = toList(stringValue);
         } else if (isTypedProperty(object, propertyName, byte[].class)) {
             value = toBytes(stringValue);
+        } else if (isTypedProperty(object, propertyName, ByteSource.class)) {
+            byte[] bytes = toBytes(stringValue);
+            value = ByteSource.Util.bytes(bytes);
         } else {
             value = resolveValue(stringValue);
         }

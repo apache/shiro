@@ -16,37 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.crypto.hash;
+package org.apache.shiro.codec
 
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator
 
 /**
- * Simple implementation of {@link HashResponse} that retains the {@link #getHash hash} and
- * {@link #getSalt hashSalt} properties as private attributes.
- *
- * @since 1.2
+ * Test cases for the {@link H64} implementation.
  */
-public class SimpleHashResponse implements HashResponse {
+class H64Test extends GroovyTestCase {
 
-    private final Hash hash;
-    private final ByteSource salt;
+    void testNothing(){}
 
-    /**
-     * Constructs a new instance with the specified hash and salt.
-     *
-     * @param hash the hash to respond with.
-     * @param salt the public salt associated with the specified hash.
-     */
-    public SimpleHashResponse(Hash hash, ByteSource salt) {
-        this.hash = hash;
-        this.salt = salt;
-    }
+    public void testDefault() {
+        byte[] orig = new SecureRandomNumberGenerator().nextBytes(6).bytes
 
-    public Hash getHash() {
-        return this.hash;
-    }
+        System.out.println("bytes: $orig");
 
-    public ByteSource getSalt() {
-        return this.salt;
+        String encoded = H64.encodeToString(orig)
+        System.out.println("encoded: $encoded");
+
+        assertNotNull orig
     }
 }

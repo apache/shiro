@@ -35,13 +35,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
- * TODO - Class JavaDoc
+ * Unit tests for the {@link CookieRememberMeManager} implementation.
  *
  * @since 1.0
  */
@@ -125,13 +122,13 @@ public class CookieRememberMeManagerTest {
 
         //The following base64 string was determined from the log output of the above 'onSuccessfulLogin' test.
         //This will have to change any time the PrincipalCollection implementation changes:
-        final String userPCAesBase64 = "qk7spFqO1zoNLgq3qArE7bc8+J+Zvm1jz8lDSUmRiRlDQQx7jxG4+" +
-                "QImiRpR7zO0d9oHH+7C3VeN9OvGMdjxtpbInMsLcGz4Q0u3M1fmyErn5Mr61chmNzQ8cLegpIKE3M+xMY" +
-                "5JB1PRw7aEJdRxtHh80kiXZ5jeALvDP3hmFM7OF2CDKLIIa83XuBQvyrKGI9GhsxGTLkmNFknbfRsmN7v" +
-                "NIDorceeaMkAetYf6GxDOw1ZK7yEbsydIHnqVWNHLen6DHC8pLkqMNOoGwXLeBroD6mRpoFf76J0VKBcd" +
-                "C54Mg73S2R7wx9ZzSNJJrCi1KAilmThzm3Rm97EidUnYlWI0TM+zvMzNsLynIK4PoIG6HYQQfEI35qVRI" +
-                "bCdbTlTnjfM/fPf7RWO8s4Z7KzszSQMJE9LgBudcyzrld5ZrWb11cianskNZMI8kzOITezjjqvWn5U4jg" +
-                "Mb9a6qcpaNJcgaxV6NZRmof8cnet54wwE=";
+        final String userPCAesBase64 = "WlD5MLzzZznN3dQ1lPJO/eScSuY245k29aECNmjUs31o7Yu478hWhaM5Sj" +
+                "jmoe900/72JNu3hcJaPG6Q17Vuz4F8x0kBjbFnPVx4PqzsZYT6yreeS2jwO6OwfI+efqXOKyB2a5KPtnr" +
+                "7jt5kZsyH38XJISb81cf6xqTGUru8zC+kNqJFz7E5RpO0kraBofS5jhMm45gDVjDRkjgPJAzocVWMtrza" +
+                "zy67P8eb+kMSBCqGI251JTNAGboVgQ28KjfaAJ/6LXRJUj7kB7CGia7mgRk+hxzEJGDs81at5VOPqODJr" +
+                "xb8tcIdemFUFIkiYVP9bGs4dP3ECtmw7aNrCzv+84sx3vRFUrd5DbDYpEuE12hF2Y9owDK9sxStbXoF0y" +
+                "A32dhfGDIqS+agsass0sWn8WX2TM9i8SxrUjiFbxqyIG49HbqGrZp5QLM9IuIwO+TzGfF1FzumQGdwmWT" +
+                "xkVapw5UESl34YvA615cb+82ue1I=";
 
         Cookie[] cookies = new Cookie[]{
                 new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
