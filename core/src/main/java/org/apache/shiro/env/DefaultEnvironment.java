@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @since 1.2
  */
-public class DefaultEnvironment implements Environment, Destroyable {
+public class DefaultEnvironment implements NamedObjectEnvironment, Destroyable {
 
     /**
      * The default name under which the application's {@code SecurityManager} instance may be acquired, equal to
@@ -54,12 +54,12 @@ public class DefaultEnvironment implements Environment, Destroyable {
      *
      * @param seed backing map to use to maintain Shiro objects.
      */
+    @SuppressWarnings({"unchecked"})
     public DefaultEnvironment(Map<String, ?> seed) {
         this.securityManagerName = DEFAULT_SECURITY_MANAGER_KEY;
         if (seed == null) {
             throw new IllegalArgumentException("Backing map cannot be null.");
         }
-        //noinspection unchecked
         this.objects = (Map<String, Object>) seed;
     }
 
@@ -88,8 +88,8 @@ public class DefaultEnvironment implements Environment, Destroyable {
         if (securityManager == null) {
             throw new IllegalArgumentException("Null SecurityManager instances are not allowed.");
         }
-        String key = getSecurityManagerName();
-        this.objects.put(key, securityManager);
+        String name = getSecurityManagerName();
+        setObject(name, securityManager);
     }
 
     /**
@@ -98,8 +98,8 @@ public class DefaultEnvironment implements Environment, Destroyable {
      * @return the {@code SecurityManager} in the backing map, or {@code null} if it has not yet been populated.
      */
     protected SecurityManager lookupSecurityManager() {
-        String key = getSecurityManagerName();
-        return (SecurityManager) this.objects.get(key);
+        String name = getSecurityManagerName();
+        return getObject(name, SecurityManager.class);
     }
 
     /**
@@ -132,6 +132,37 @@ public class DefaultEnvironment implements Environment, Destroyable {
     public Map<String,Object> getObjects() {
         return this.objects;
     }
+
+    @SuppressWarnings({"unchecked"})
+    public <T> T getObject(String name, Class<T> requiredType) throws RequiredTypeException {
+        if (name == null) {
+            throw new NullPointerException("name parameter cannot be null.");
+        }
+        if (requiredType == null) {
+            throw new NullPointerException("requiredType parameter cannot be null.");
+        }
+        Object o = this.objects.get(name);
+        if (o == null) {
+            return null;
+        }
+        if (!requiredType.isInstance(o)) {
+            String msg = "Object named '" + name + "' is not of required type [" + requiredType.getName() + "].";
+            throw new RequiredTypeException(msg);
+        }
+        return (T)o;
+    }
+
+    public void setObject(String name, Object instance) {
+        if (name == null) {
+            throw new NullPointerException("name parameter cannot be null.");
+        }
+        if (instance == null) {
+            this.objects.remove(name);
+        } else {
+            this.objects.put(name, instance);
+        }
+    }
+
 
     public void destroy() throws Exception {
         LifecycleUtils.destroy(this.objects.values());

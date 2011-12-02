@@ -33,8 +33,10 @@ Backwards Incompatible Changes
   exactly how the Session may be used for subject state persistence.  This allows a
   single point of control rather than needing to configure Shiro in multiple places.
 
-  If you overrode this method in Shiro 1.0 or 1.2, please look at the new
+  If you overrode this method in Shiro 1.0 or 1.1, please look at the new
   org.apache.shiro.mgt.DefaultSubjectDAO implementation, which performs compatible logic.
+  Documentation for this is covered here:
+  http://shiro.apache.org/session-management.html#SessionManagement-SessionsandSubjectState
 
 - The org.apache.shiro.web.session.mgt.ServletContainerSessionManager implementation
   (enabled by default for all web applications) no longer subclasses
@@ -48,6 +50,7 @@ Backwards Incompatible Changes
   be honored.  It was better to remove the extends clause to ensure that any
   such configuration would fail fast when Shiro starts up to reflect the invalid config.
 
+
 Potential Breaking Changes
 --------------------------------
 - The org.apache.shiro.web.filter.mgt.FilterChainManager class's
@@ -55,6 +58,40 @@ Potential Breaking Changes
   attempts to initialize a filter by default before adding the filter to the chain.
   If you ever called this method, you can call the
   addFilter(name, filter, true) method to achieve the <= 1.1 behavior.
+
+- The org.apache.shiro.crypto.SecureRandomNumberGenerator previously defaulted to generating
+  128 random _bytes_ each time the nextBytes() method was called.  This is too large for most purposes, so the
+  default has been changed to 16 _bytes_ (which equals 128 bits - what was originally intended).  If for some reason
+  you need more than 16 bytes (128 bits) of randomly generated bits, you will need to configure the
+  'defaultNextByteSize' property to match your desired size (in bytes, NOT bits).
+
+- Shiro's Block Cipher Services (AesCipherService, BlowfishCipherService) have had the following changes:
+
+  1) The internal Cipher Mode and Streaming Cipher Mode have been changed from CFB to the new default of CBC.
+     CBC is more commonly used for block ciphers today (e.g. SSL).
+     If you were using an AES or Blowfish CipherService you will want to revert to the previous defaults in your config
+     to ensure you can still decrypt previously encrypted data.  For example, in code:
+
+     blockCipherService.setMode(OperationMode.CFB);
+     blockCipherService.setStreamingMode(OperationMode.CFB);
+
+     or, in shiro.ini:
+
+     blockCipherService.modeName = CFB
+     blockCipherService.streamingModeName = CFB
+
+  2) The internal Streaming Padding Scheme has been changed from NONE to PKCS5 as PKCS5 is more commonly used.
+     If you were using an AES or Blowfish CipherService for streaming operations, you will want to revert to the
+     previous padding scheme default to ensure you can still decrypt previously encrypted data.  For example, in code:
+
+     blockCipherService.setStreamingPaddingScheme(PaddingScheme.NONE);
+
+     or, in shiro.ini:
+
+     blockCipherService.streamingPaddingSchemeName = NoPadding
+
+     Note the difference in code vs shiro.ini in this last example: 'NoPadding' is the correct text value, 'NONE' is
+     the correct Enum value.
 
 ###########################################################
 # 1.1.0

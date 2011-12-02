@@ -34,7 +34,7 @@ public interface ByteSource {
      *
      * @return the wrapped byte array.
      */
-    public byte[] getBytes();
+    byte[] getBytes();
 
     /**
      * Returns the <a href="http://en.wikipedia.org/wiki/Hexadecimal">Hex</a>-formatted String representation of the
@@ -43,7 +43,7 @@ public interface ByteSource {
      * @return the <a href="http://en.wikipedia.org/wiki/Hexadecimal">Hex</a>-formatted String representation of the
      *         underlying wrapped byte array.
      */
-    public String toHex();
+    String toHex();
 
     /**
      * Returns the <a href="http://en.wikipedia.org/wiki/Base64">Base 64</a>-formatted String representation of the
@@ -52,7 +52,17 @@ public interface ByteSource {
      * @return the <a href="http://en.wikipedia.org/wiki/Base64">Base 64</a>-formatted String representation of the
      *         underlying wrapped byte array.
      */
-    public String toBase64();
+    String toBase64();
+
+    /**
+     * Returns {@code true} if the underlying wrapped byte array is null or empty (zero length), {@code false}
+     * otherwise.
+     *
+     * @return {@code true} if the underlying wrapped byte array is null or empty (zero length), {@code false}
+     *         otherwise.
+     * @since 1.2
+     */
+    boolean isEmpty();
 
     /**
      * Utility class that can construct ByteSource instances.  This is slightly nicer than needing to know the
@@ -122,6 +132,60 @@ public interface ByteSource {
          */
         public static ByteSource bytes(InputStream stream) {
             return new SimpleByteSource(stream);
+        }
+
+        /**
+         * Returns {@code true} if the specified object can be easily represented as a {@code ByteSource} using
+         * the {@link ByteSource.Util}'s default heuristics, {@code false} otherwise.
+         * <p/>
+         * This implementation merely returns {@link SimpleByteSource}.{@link SimpleByteSource#isCompatible(Object) isCompatible(source)}.
+         *
+         * @param source the object to test to see if it can be easily converted to ByteSource instances using default
+         *               heuristics.
+         * @return {@code true} if the specified object can be easily represented as a {@code ByteSource} using
+         *         the {@link ByteSource.Util}'s default heuristics, {@code false} otherwise.
+         */
+        public static boolean isCompatible(Object source) {
+            return SimpleByteSource.isCompatible(source);
+        }
+
+        /**
+         * Returns a {@code ByteSource} instance representing the specified byte source argument.  If the argument
+         * <em>cannot</em> be easily converted to bytes (as is indicated by the {@link #isCompatible(Object)} JavaDoc),
+         * this method will throw an {@link IllegalArgumentException}.
+         *
+         * @param source the byte-backed instance that should be represented as a {@code ByteSource} instance.
+         * @return a {@code ByteSource} instance representing the specified byte source argument.
+         * @throws IllegalArgumentException if the argument <em>cannot</em> be easily converted to bytes
+         *                                  (as indicated by the {@link #isCompatible(Object)} JavaDoc)
+         */
+        public static ByteSource bytes(Object source) throws IllegalArgumentException {
+            if (source == null) {
+                return null;
+            }
+            if (!isCompatible(source)) {
+                String msg = "Unable to heuristically acquire bytes for object of type [" +
+                        source.getClass().getName() + "].  If this type is indeed a byte-backed data type, you might " +
+                        "want to write your own ByteSource implementation to extract its bytes explicitly.";
+                throw new IllegalArgumentException(msg);
+            }
+            if (source instanceof byte[]) {
+                return bytes((byte[]) source);
+            } else if (source instanceof ByteSource) {
+                return (ByteSource) source;
+            } else if (source instanceof char[]) {
+                return bytes((char[]) source);
+            } else if (source instanceof String) {
+                return bytes((String) source);
+            } else if (source instanceof File) {
+                return bytes((File) source);
+            } else if (source instanceof InputStream) {
+                return bytes((InputStream) source);
+            } else {
+                throw new IllegalStateException("Encountered unexpected byte source.  This is a bug - please notify " +
+                        "the Shiro developer list asap (the isCompatible implementation does not reflect this " +
+                        "method's implementation).");
+            }
         }
     }
 }

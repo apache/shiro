@@ -22,7 +22,8 @@ import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
 
 /**
@@ -104,8 +105,37 @@ public class SimpleByteSource implements ByteSource {
         this.bytes = new BytesHelper().getBytes(stream);
     }
 
+    /**
+     * Returns {@code true} if the specified object is a recognized data type that can be easily converted to
+     * bytes by instances of this class, {@code false} otherwise.
+     * <p/>
+     * This implementation returns {@code true} IFF the specified object is an instance of one of the following
+     * types:
+     * <ul>
+     * <li>{@code byte[]}</li>
+     * <li>{@code char[]}</li>
+     * <li>{@link ByteSource}</li>
+     * <li>{@link String}</li>
+     * <li>{@link File}</li>
+     * </li>{@link InputStream}</li>
+     * </ul>
+     *
+     * @param o the object to test to see if it can be easily converted to bytes by instances of this class.
+     * @return {@code true} if the specified object can be easily converted to bytes by instances of this class,
+     *         {@code false} otherwise.
+     * @since 1.2
+     */
+    public static boolean isCompatible(Object o) {
+        return o instanceof byte[] || o instanceof char[] || o instanceof String ||
+                o instanceof ByteSource || o instanceof File || o instanceof InputStream;
+    }
+
     public byte[] getBytes() {
         return this.bytes;
+    }
+
+    public boolean isEmpty() {
+        return this.bytes == null || this.bytes.length == 0;
     }
 
     public String toHex() {
@@ -127,7 +157,10 @@ public class SimpleByteSource implements ByteSource {
     }
 
     public int hashCode() {
-        return toString().hashCode();
+        if (this.bytes == null || this.bytes.length == 0) {
+            return 0;
+        }
+        return Arrays.hashCode(this.bytes);
     }
 
     public boolean equals(Object o) {

@@ -288,7 +288,10 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      * @return toHex().hashCode()
      */
     public int hashCode() {
-        return toHex().hashCode();
+        if (this.bytes == null || this.bytes.length == 0) {
+            return 0;
+        }
+        return Arrays.hashCode(this.bytes);
     }
 
     private static void printMainUsage(Class<? extends AbstractHash> clazz, String type) {

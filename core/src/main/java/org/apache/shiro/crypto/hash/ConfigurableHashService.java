@@ -19,20 +19,22 @@
 package org.apache.shiro.crypto.hash;
 
 import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.util.ByteSource;
 
 /**
- * A {@code Hasher} that allows configuration of its strategy via JavaBeans-compatible setter methods.
+ * A {@code HashService} that allows configuration of its strategy via JavaBeans-compatible setter methods.
  *
  * @since 1.2
  */
-public interface ConfigurableHasher extends Hasher {
+public interface ConfigurableHashService extends HashService {
 
     /**
-     * Sets the 'private' base salt to be paired with a 'public' (random or supplied) salt during hash computation.
+     * Sets the 'private' (internal) salt to be paired with a 'public' (random or supplied) salt during hash computation.
      *
-     * @param baseSalt the 'private' base salt to be paired with a 'public' (random or supplied) salt during hash computation.
+     * @param privateSalt the 'private' internal salt to be paired with a 'public' (random or supplied) salt during
+     *                    hash computation.
      */
-    void setBaseSalt(byte[] baseSalt);
+    void setPrivateSalt(ByteSource privateSalt);
 
     /**
      * Sets the number of hash iterations that will be performed during hash computation.
@@ -45,8 +47,8 @@ public interface ConfigurableHasher extends Hasher {
      * Sets the name of the {@link java.security.MessageDigest MessageDigest} algorithm that will be used to compute
      * hashes.
      *
-     * @param name the name of the {@link java.security.MessageDigest MessageDigest} algorithm that will be used to compute
-     *             hashes.
+     * @param name the name of the {@link java.security.MessageDigest MessageDigest} algorithm that will be used to
+     *             compute hashes.
      */
     void setHashAlgorithmName(String name);
 
