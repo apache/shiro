@@ -67,7 +67,7 @@ import org.apache.shiro.util.StringUtils;
  * guarantees that the mode name will be recognized by the underlying JCA Provider.
  * <p/>
  * <b>*</b>If no operation mode is specified, Shiro defaults all of its block {@code CipherService} instances to the
- * {@link OperationMode#CFB CFB} mode, specifically to support auto-generation of initialization vectors during
+ * {@link OperationMode#CBC CBC} mode, specifically to support auto-generation of initialization vectors during
  * encryption.  This is different than the JDK's default {@link OperationMode#ECB ECB} mode because {@code ECB} does
  * not support initialization vectors, which are necessary for strong encryption.  See  the
  * {@link org.apache.shiro.crypto.JcaCipherService JcaCipherService parent class} class JavaDoc for an extensive
@@ -117,9 +117,8 @@ import org.apache.shiro.util.StringUtils;
  * for all three streaming configuration parameters.  The defaults are:
  * <ul>
  * <li>{@link #setStreamingBlockSize(int) streamingBlockSize} = {@code 8} (bits)</li>
- * <li>{@link #setStreamingMode streamingMode} = {@link OperationMode#CFB CFB}</li>
- * <li>{@link #setStreamingPaddingScheme(PaddingScheme) streamingPaddingScheme} = {@link PaddingScheme#NONE none} (since
- * the block size is already the most atomic size of a single byte)</li>
+ * <li>{@link #setStreamingMode streamingMode} = {@link OperationMode#CBC CBC}</li>
+ * <li>{@link #setStreamingPaddingScheme(PaddingScheme) streamingPaddingScheme} = {@link PaddingScheme#PKCS5 PKCS5}</li>
  * </ul>
  * <p/>
  * These attributes have the same meaning as the {@code mode}, {@code blockSize}, and {@code paddingScheme} attributes
@@ -154,7 +153,7 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
      * Creates a new {@link DefaultBlockCipherService} using the specified block cipher {@code algorithmName}.  Per this
      * class's JavaDoc, this constructor also sets the following defaults:
      * <ul>
-     * <li>{@code streamingMode} = {@link OperationMode#CFB CFB}</li>
+     * <li>{@code streamingMode} = {@link OperationMode#CBC CBC}</li>
      * <li>{@code streamingPaddingScheme} = {@link PaddingScheme#NONE none}</li>
      * <li>{@code streamingBlockSize} = 8</li>
      * </ul>
@@ -165,12 +164,12 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
     public DefaultBlockCipherService(String algorithmName) {
         super(algorithmName);
 
-        this.modeName = OperationMode.CFB.name();
+        this.modeName = OperationMode.CBC.name();
         this.paddingSchemeName = PaddingScheme.PKCS5.getTransformationName();
         this.blockSize = DEFAULT_BLOCK_SIZE; //0 = use the JCA provider's default
 
-        this.streamingModeName = OperationMode.CFB.name();
-        this.streamingPaddingSchemeName = PaddingScheme.NONE.getTransformationName();
+        this.streamingModeName = OperationMode.CBC.name();
+        this.streamingPaddingSchemeName = PaddingScheme.PKCS5.getTransformationName();
         this.streamingBlockSize = DEFAULT_STREAMING_BLOCK_SIZE;
     }
 
@@ -367,7 +366,7 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
      * {@link #decrypt(java.io.InputStream, java.io.OutputStream, byte[])}).
      * <p/>
      * Note that unlike the {@link #getModeName modeName} attribute, the default value of this attribute is not
-     * {@code null} - it is {@link OperationMode#CFB CFB} for reasons described in the class-level JavaDoc in the
+     * {@code null} - it is {@link OperationMode#CBC CBC} for reasons described in the class-level JavaDoc in the
      * {@code Streaming} section.
      *
      * @return the transformation string mode name to be used for streaming operations only.
@@ -384,7 +383,7 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
 
     /**
      * Sets the transformation string mode name to be used for streaming operations only.  The default value is
-     * {@link OperationMode#CFB CFB} for reasons described in the class-level JavaDoc in the {@code Streaming} section.
+     * {@link OperationMode#CBC CBC} for reasons described in the class-level JavaDoc in the {@code Streaming} section.
      *
      * @param streamingModeName transformation string mode name to be used for streaming operations only
      */
@@ -400,7 +399,7 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
 
     /**
      * Sets the transformation string mode to be used for streaming operations only.  The default value is
-     * {@link OperationMode#CFB CFB} for reasons described in the class-level JavaDoc in the {@code Streaming} section.
+     * {@link OperationMode#CBC CBC} for reasons described in the class-level JavaDoc in the {@code Streaming} section.
      *
      * @param mode the transformation string mode to be used for streaming operations only
      */
@@ -461,7 +460,7 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
     }
 
     private String buildStreamingTransformationString() {
-        return buildTransformationString(getStreamingModeName(), getStreamingPaddingSchemeName(), getStreamingBlockSize());
+        return buildTransformationString(getStreamingModeName(), getStreamingPaddingSchemeName(), 0);
     }
 
     private String buildTransformationString(String modeName, String paddingSchemeName, int blockSize) {
