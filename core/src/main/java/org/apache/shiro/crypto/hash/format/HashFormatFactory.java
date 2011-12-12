@@ -23,5 +23,5 @@ package org.apache.shiro.crypto.hash.format;
  */
 public interface HashFormatFactory {
 
-    HashFormat getInstance(String id);
+    HashFormat getInstance(String token);
 }
