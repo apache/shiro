@@ -34,7 +34,7 @@
     <download-page rdf:resource="http://shiro.apache.org/download.html" />
     <programming-language>Java</programming-language>
     <category rdf:resource="http://projects.apache.org/category/library" />
-	<category rdf:resource="http://www.apache.org/category/web-framework"/>
+	<category rdf:resource="http://projects.apache.org/category/web-framework"/>
 	<release>
       <Version>
         <name>Apache Shiro 1.0.0-incubating</name>
