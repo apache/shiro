@@ -26,6 +26,27 @@ import org.apache.shiro.util.ByteSource;
  * Default implementation of the {@link HashService} interface, supporting a customizable hash algorithm name,
  * secure-random salt generation, multiple hash iterations and an optional internal
  * {@link #setPrivateSalt(ByteSource) privateSalt}.
+ * <h2>Hash Algorithm</h2>
+ * You may specify a hash algorithm via the {@link #setHashAlgorithmName(String)} property.  Any algorithm name
+ * understood by the JDK
+ * {@link java.security.MessageDigest#getInstance(String) MessageDigest.getInstance(String algorithmName)} method
+ * will work.  The default is {@code SHA-512}.
+ * <h2>Random Salts</h2>
+ * When a salt is not specified in a request, this implementation generates secure random salts via its
+ * {@link #setRandomNumberGenerator(org.apache.shiro.crypto.RandomNumberGenerator) randomNumberGenerator} property.
+ * Random salts (and potentially combined with the internal {@link #getPrivateSalt() privateSalt}) is a very strong
+ * salting strategy, as salts should ideally never be based on known/guessable data.  The default instance is a
+ * {@link SecureRandomNumberGenerator}.
+ * <h2>Hash Iterations</h2>
+ * Secure hashing strategies often employ multiple hash iterations to slow down the hashing process.  This technique
+ * is usually used for password hashing, since the longer it takes to compute a password hash, the longer it would
+ * take for an attacker to compromise a password.  This
+ * <a href="http://www.katasoft.com/blog/2011/04/04/strong-password-hashing-apache-shiro">Katasoft blog article</a>
+ * explains in greater detail why this is useful, as well as information on how many iterations is 'enough'.
+ * <p/>
+ * You may set the number of hash iterations via the {@link #setHashIterations(int)} property.  The default is
+ * {@code 1}, but should be increased significantly if the {@code HashService} is intended to be used for password
+ * hashing. See the linked blog article for more info.
  * <h2>Private Salt</h2>
  * If using this implementation as part of a password hashing strategy, it might be desirable to configure a
  * {@link #setPrivateSalt(ByteSource) private salt}:
@@ -42,27 +63,6 @@ import org.apache.shiro.util.ByteSource;
  * <p/>
  * <b>*</b>By default, the {@link #getPrivateSalt() privateSalt} is null, since a sensible default cannot be used that
  * isn't easily compromised (because Shiro is an open-source project and any default could be easily seen and used).
- * <h2>Random Salts</h2>
- * When a salt is not specified in a request, this implementation generates secure random salts via its
- * {@link #setRandomNumberGenerator(org.apache.shiro.crypto.RandomNumberGenerator) randomNumberGenerator} property.
- * Random salts (and potentially combined with the internal {@link #getPrivateSalt() privateSalt}) is a very strong
- * salting strategy, as salts should ideally never be based on known/guessable data.  The default instance is a
- * {@link SecureRandomNumberGenerator}.
- * <h2>Password Hash Iterations</h2>
- * Secure hashing strategies often employ multiple hash iterations to slow down the hashing process.  This technique
- * is usually used for password hashing, since the longer it takes to compute a password hash, the longer it would
- * take for an attacker to compromise a password.  This
- * <a href="http://www.katasoft.com/blog/2011/04/04/strong-password-hashing-apache-shiro">Katasoft blog article</a>
- * explains in greater detail why this is useful, as well as information on how many iterations is 'enough'.
- * <p/>
- * You may set the number of hash iterations via the {@link #setHashIterations(int)} property.  The default is
- * {@code 1}, but should be increased significantly if the {@code HashService} is intended to be used for password
- * hashing. See the linked blog article for more info.
- * <h2>Hash Algorithm</h2>
- * You may specify a hash algorithm via the {@link #setHashAlgorithmName(String)} property.  Any algorithm name
- * understood by the JDK
- * {@link java.security.MessageDigest#getInstance(String) MessageDigest.getInstance(String algorithmName)} method
- * will work.  The default is {@code SHA-512}.
  *
  * @since 1.2
  */
@@ -148,42 +148,44 @@ public class DefaultHashService implements ConfigurableHashService {
      *         exposed to the caller.
      */
     public Hash computeHash(HashRequest request) {
-        if (request == null) {
+        if (request == null || request.getSource() == null || request.getSource().isEmpty()) {
             return null;
         }
+
+        String algorithmName = getAlgorithmName(request);
         ByteSource source = request.getSource();
+        int iterations = getIterations(request);
 
-        byte[] sourceBytes = source != null ? source.getBytes() : null;
-        if (sourceBytes == null || sourceBytes.length == 0) {
-            return null;
-        }
-
-        ByteSource requestSalt = request.getSalt();
-        ByteSource publicSalt = requestSalt != null ? requestSalt : null;
-        if (requestSalt != null && (requestSalt.getBytes() == null || requestSalt.getBytes().length == 0)) {
-            publicSalt = null;
-        }
-
-        if (publicSalt == null) {
-            publicSalt = getRandomNumberGenerator().nextBytes();
-        }
-
-        String algorithmName = getHashAlgorithmName();
+        ByteSource publicSalt = getPublicSalt(request);
         ByteSource privateSalt = getPrivateSalt();
-        ByteSource combinedSalt = combine(privateSalt, publicSalt);
-        int iterations = Math.max(1, getHashIterations());
+        ByteSource salt = combine(privateSalt, publicSalt);
 
-        Hash computed = new SimpleHash(algorithmName, sourceBytes, combinedSalt, iterations);
+        Hash computed = new SimpleHash(algorithmName, source, salt, iterations);
 
         SimpleHash result = new SimpleHash(algorithmName);
         result.setBytes(computed.getBytes());
         result.setIterations(iterations);
-        //Only expose the public salt - not the real/combined salt that was used:
+        //Only expose the public salt - not the real/combined salt that might have been used:
         result.setSalt(publicSalt);
 
         return result;
     }
 
+    protected String getAlgorithmName(HashRequest request) {
+        String name = request.getAlgorithmName();
+        if (name == null) {
+            name = getHashAlgorithmName();
+        }
+        return name;
+    }
+
+    protected int getIterations(HashRequest request) {
+        int iterations = Math.max(0, request.getIterations());
+        if (iterations < 1) {
+            iterations = Math.max(1, getHashIterations());
+        }
+        return iterations;
+    }
 
     /**
      * Returns the public salt that should be used to compute a hash based on the specified request or

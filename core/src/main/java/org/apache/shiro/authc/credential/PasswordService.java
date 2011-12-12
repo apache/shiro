@@ -34,16 +34,16 @@ import org.apache.shiro.util.ByteSource;
  * <h3>Account Creation or Password Reset</h3>
  * Whenever you create a new user account or reset that account's password, we must translate the end-user submitted
  * raw/plaintext password value to a string format that is much safer to store.  You do that by calling the
- * {@link #hashPassword(ByteSource)} method to create the safer hashed and formatted value.  For
+ * {@link #encryptPassword(Object)} method to create the safer value.  For
  * example:
  * <pre>
- * ByteSource plaintextBytes = ByteSource.Util.bytes(submittedPlaintextPassword);
- * String hashed = passwordService.hashPassword(plaintextBytes);
+ * String submittedPlaintextPassword = ...
+ * String encryptedValue = passwordService.encryptPassword(submittedPlaintextPassword);
  * ...
- * userAccount.setHashedPassword(hashed);
+ * userAccount.setPassword(encryptedValue);
  * userAccount.save(); //create or update to your data store
  * </pre>
- * Be sure to save this hashed password in your data store and never the original/raw submitted password.
+ * Be sure to save this encrypted password in your data store and never the original/raw submitted password.
  * <h3>Login Password Comparison</h3>
  * Shiro performs the comparison during login automatically.  Along with your {@code PasswordService}, you just
  * have to configure a {@link PasswordMatcher} on a realm that has password-based accounts.   During a login attempt,
@@ -55,7 +55,7 @@ import org.apache.shiro.util.ByteSource;
  * [main]
  * ...
  * passwordService = org.apache.shiro.authc.credential.DefaultPasswordService
- * # configure the passwordService to use the hashing settings you desire
+ * # configure the passwordService to use the settings you desire
  * ...
  * passwordMatcher = org.apache.shiro.authc.credential.PasswordMatcher
  * passwordMatcher.passwordService = $passwordService
@@ -72,65 +72,76 @@ import org.apache.shiro.util.ByteSource;
 public interface PasswordService {
 
     /**
-     * Hashes the specified plaintext password (usually acquired from your application's 'new user' or 'password reset'
-     * workflow).  After this call returns, you typically will store the returned formatted String with the
-     * corresponding user record (e.g. as the 'password' or 'passwordHash' attribute).
+     * Converts the specified plaintext password (usually acquired from your application's 'new user' or 'password reset'
+     * workflow) into a formatted string safe for storage.  The returned string can be safely saved with the
+     * corresponding user account record (e.g. as a 'password' attribute).
      * <p/>
-     * The String returned from this argument must be presented to the
-     * {@link #passwordsMatch(ByteSource, String) passwordsMatch} method when performing a
+     * It is expected that the String returned from this method will be presented to the
+     * {@link #passwordsMatch(Object, String) passwordsMatch(plaintext,encrypted)} method when performing a
      * password comparison check.
      * <h3>Usage</h3>
-     * The input argument type is a {@code ByteSource} to support either String or character array
-     * {@code (char[])} arguments; character arrays are often a safer way to represent passwords as they can be
-     * cleared/nulled-out after use.
+     * The input argument type can be any 'byte backed' {@code Object} - almost always either a
+     * String or character array representing passwords (character arrays are often a safer way to represent passwords
+     * as they can be cleared/nulled-out after use.  Any argument type supported by
+     * {@link ByteSource.Util#isCompatible(Object)} is valid.
      * <p/>
-     * Regardless of your choice of using Strings or character arrays to represent submitted passwords, you can wrap
-     * either as a {@code ByteSource} by using {@link ByteSource.Util}, for example, when the passwords are captured as
-     * Strings:
+     * For example:
      * <pre>
-     * ByteSource passwordBytes = ByteSource.Util.bytes(submittedPasswordString);
-     * String formattedHashedValue = passwordService.hashPassword(passwordBytes);
+     * String rawPassword = ...
+     * String encryptedValue = passwordService.encryptPassword(rawPassword);
      * </pre>
-     * or, identically, when captured as a character array:
+     * or, identically:
      * <pre>
-     * ByteSource passwordBytes = ByteSource.Util.bytes(submittedPasswordCharacterArray);
-     * String formattedHashedValue = passwordService.hashPassword(passwordBytes);
+     * char[] rawPasswordChars = ...
+     * String encryptedValue = passwordService.encryptPassword(rawPasswordChars);
      * </pre>
      * <p/>
-     * The resulting {@code formattedHashedValue} should be stored with the account to be retrieved later during a
+     * The resulting {@code encryptedValue} should be stored with the account to be retrieved later during a
      * login attempt.  For example:
      * <pre>
-     * String formattedHashedValue = passwordService.hashPassword(passwordBytes);
+     * String encryptedValue = passwordService.encryptPassword(rawPassword);
      * ...
-     * userAccount.setHashedPassword(formattedHashedValue);
+     * userAccount.setPassword(encryptedValue);
      * userAccount.save(); //create or update to your data store
      * </pre>
      *
-     * @param plaintext a {@code ByteSource} encapsulating a plaintext password's bytes, usually acquired from your
-     *                  application's 'new user' or 'password reset' workflow.
-     * @return the hashed password, formatted for storage.
+     * @param plaintextPassword the raw password as 'byte-backed' object (String, character array, {@link ByteSource},
+     *                          etc) usually acquired from your application's 'new user' or 'password reset' workflow.
+     * @return the encrypted password, formatted for storage.
+     * @throws IllegalArgumentException if the argument cannot be easily converted to bytes as defined by
+     *                                  {@link ByteSource.Util#isCompatible(Object)}.
+     * @see ByteSource.Util#isCompatible(Object)
      */
-    String hashPassword(ByteSource plaintext);
+    String encryptPassword(Object plaintextPassword) throws IllegalArgumentException;
 
     /**
      * Returns {@code true} if the {@code submittedPlaintext} password matches the existing {@code saved} password,
      * {@code false} otherwise.
      * <h3>Usage</h3>
-     * The {@code submittedPlaintext} argument is a {@code ByteSource} to support both String and character array
-     * arguments.  Regardless of which you use to capture submitted passwords, you can wrap either as a
-     * {@code ByteSource} as follows:
+     * The {@code submittedPlaintext} argument type can be any 'byte backed' {@code Object} - almost always either a
+     * String or character array representing passwords (character arrays are often a safer way to represent passwords
+     * as they can be cleared/nulled-out after use.  Any argument type supported by
+     * {@link ByteSource.Util#isCompatible(Object)} is valid.
+     * <p/>
+     * For example:
      * <pre>
-     * ByteSource submittedPasswordBytes = ByteSource.Util.bytes(submittedPasswordStringOrCharacterArray);
-     * passwordService.passwordsMatch(submittedPasswordBytes, formattedHashedPassword);
+     * String submittedPassword = ...
+     * passwordService.passwordsMatch(submittedPassword, encryptedPassword);
+     * </pre>
+     * or similarly:
+     * <pre>
+     * char[] submittedPasswordCharacters = ...
+     * passwordService.passwordsMatch(submittedPasswordCharacters, encryptedPassword);
      * </pre>
      *
      * @param submittedPlaintext a raw/plaintext password submitted by an end user/Subject.
-     * @param saved              the previously hashed and formatted password known to be associated with an account.
-     *                           This value must have been previously generated from the
-     *                           {@link #hashPassword(ByteSource) hashPassword} method (typically
+     * @param encrypted          the previously encrypted password known to be associated with an account.
+     *                           This value is expected to have been previously generated from the
+     *                           {@link #encryptPassword(Object) encryptPassword} method (typically
      *                           when the account is created or the account's password is reset).
      * @return {@code true} if the {@code submittedPlaintext} password matches the existing {@code saved} password,
      *         {@code false} otherwise.
+     * @see ByteSource.Util#isCompatible(Object)
      */
-    boolean passwordsMatch(ByteSource submittedPlaintext, String saved);
+    boolean passwordsMatch(Object submittedPlaintext, String encrypted);
 }
