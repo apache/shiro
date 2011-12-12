@@ -12,7 +12,7 @@ public interface NamedObjectEnvironment extends Environment {
      * no object with that name was found.
      *
      * @param name the assigned name of the object.
-     * @param requiredType the class that the discovered object should be.  If the object is not the specified type, a
+     * @param requiredType the class to which the discovered object must be assignable.
      * @param <T> the type of the class
      * @throws RequiredTypeException if the discovered object does not equal, extend, or implement the specified class.
      * @return the object in Shiro's environment with the specified name (of the specified type) or {@code null} if
