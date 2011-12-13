@@ -32,6 +32,7 @@ class PasswordMatcherTest extends GroovyTestCase {
 
     void testMissingPasswordService() {
         def matcher = new PasswordMatcher()
+        matcher.passwordService = null
         try {
             matcher.doCredentialsMatch(null, null)
             fail "Test should fail due to lack of a configured PasswordService instance."

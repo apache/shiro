@@ -35,6 +35,10 @@ public class PasswordMatcher implements CredentialsMatcher {
 
     private PasswordService passwordService;
 
+    public PasswordMatcher() {
+        this.passwordService = new DefaultPasswordService();
+    }
+
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
 
         PasswordService service = ensurePasswordService();

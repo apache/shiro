@@ -19,6 +19,7 @@
 package org.apache.shiro.tools.hasher;
 
 import org.apache.commons.cli.*;
+import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
@@ -47,26 +48,27 @@ import java.util.Arrays;
  */
 public final class Hasher {
 
-    private static final Option ALGORITHM = new Option("a", "algorithm", true, "hash algorithm name.  Defaults to MD5 (SHA-256 when password hashing).");
+    private static final String HEX_PREFIX = "0x";
+    private static final String DEFAULT_ALGORITHM_NAME = "MD5";
+    private static final String DEFAULT_PASSWORD_ALGORITHM_NAME = DefaultPasswordService.DEFAULT_HASH_ALGORITHM;
+    private static final int DEFAULT_GENERATED_SALT_SIZE = 128;
+    private static final int DEFAULT_NUM_ITERATIONS = 1;
+    private static final int DEFAULT_PASSWORD_NUM_ITERATIONS = DefaultPasswordService.DEFAULT_HASH_ITERATIONS;
+
+    private static final Option ALGORITHM = new Option("a", "algorithm", true, "hash algorithm name.  Defaults to SHA-256 when password hashing, MD5 otherwise.");
     private static final Option DEBUG = new Option("d", "debug", false, "show additional error (stack trace) information.");
     private static final Option FORMAT = new Option("f", "format", true, "hash output format.  Defaults to 'shiro1' when password hashing, 'hex' otherwise.  See below for more information.");
     private static final Option HELP = new Option("help", "help", false, "show this help message.");
-    private static final Option ITERATIONS = new Option("i", "iterations", true, "number of hash iterations.  Defaults to 350,000 when password hashing, 1 otherwise.");
+    private static final Option ITERATIONS = new Option("i", "iterations", true, "number of hash iterations.  Defaults to " + DEFAULT_PASSWORD_NUM_ITERATIONS + " when password hashing, 1 otherwise.");
     private static final Option PASSWORD = new Option("p", "password", false, "hash a password (disable typing echo)");
     private static final Option PASSWORD_NC = new Option("pnc", "pnoconfirm", false, "hash a password (disable typing echo) but disable password confirmation prompt.");
     private static final Option RESOURCE = new Option("r", "resource", false, "read and hash the resource located at <value>.  See below for more information.");
     private static final Option SALT = new Option("s", "salt", true, "use the specified salt.  <arg> is plaintext.");
     private static final Option SALT_BYTES = new Option("sb", "saltbytes", true, "use the specified salt bytes.  <arg> is hex or base64 encoded text.");
-    private static final Option SALT_GEN = new Option("gs", "gensalt", false, "generate and use a random salt.");
+    private static final Option SALT_GEN = new Option("gs", "gensalt", false, "generate and use a random salt. Defaults to true when password hashing, false otherwise.");
     private static final Option NO_SALT_GEN = new Option("ngs", "nogensalt", false, "do NOT generate and use a random salt (valid during password hashing).");
     private static final Option SALT_GEN_SIZE = new Option("gss", "gensaltsize", true, "the number of salt bits (not bytes!) to generate.  Defaults to 128.");
 
-    private static final String HEX_PREFIX = "0x";
-    private static final String DEFAULT_ALGORITHM_NAME = "MD5";
-    private static final String DEFAULT_PASSWORD_ALGORITHM_NAME = "SHA-256";
-    private static final int DEFAULT_GENERATED_SALT_SIZE = 128;
-    private static final int DEFAULT_NUM_ITERATIONS = 1;
-    private static final int DEFAULT_PASSWORD_NUM_ITERATIONS = 350000;
     private static final String SALT_MUTEX_MSG = createMutexMessage(SALT, SALT_BYTES);
 
     private static final HashFormatFactory HASH_FORMAT_FACTORY = new DefaultHashFormatFactory();
