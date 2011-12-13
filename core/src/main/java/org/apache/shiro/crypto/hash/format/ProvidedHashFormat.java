@@ -20,6 +20,8 @@ package org.apache.shiro.crypto.hash.format;
 
 /**
  * An enum representing Shiro's default provided {@link HashFormat} implementations.
+ *
+ * @since 1.2
  */
 public enum ProvidedHashFormat {
 
