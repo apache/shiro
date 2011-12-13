@@ -20,6 +20,8 @@ package org.apache.shiro.crypto.hash.format
 
 /**
  * Unit tests for the {@link ProvidedHashFormat} implementation.
+ *
+ * @since 1.2
  */
 class ProvidedHashFormatTest extends GroovyTestCase {
 
