@@ -38,7 +38,7 @@ import java.util.*;
  * specifies a name and an optional collection of assigned Permissions.  Users can be assigned Roles, and Roles can be
  * assigned Permissions.  By transitive association, each User 'has' all of their Role's Permissions.
  * <p/>
- * User and user-to-role definitinos are specified via the {@link #setUserDefinitions} method and
+ * User and user-to-role definitions are specified via the {@link #setUserDefinitions} method and
  * Role-to-permission definitions are specified via the {@link #setRoleDefinitions} method.
  *
  * @since 0.9
