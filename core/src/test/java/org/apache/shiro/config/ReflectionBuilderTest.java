@@ -21,7 +21,6 @@ package org.apache.shiro.config;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.codec.Hex;
-import org.apache.shiro.jndi.JndiObjectFactory;
 import org.apache.shiro.util.CollectionUtils;
 import org.junit.Test;
 
@@ -50,6 +49,84 @@ public class ReflectionBuilderTest {
         assertEquals(compositeBean.getStringProp(), "blah");
         assertTrue(compositeBean.isBooleanProp());
         assertEquals(compositeBean.getIntProp(), 42);
+    }
+
+    @Test
+    public void testWithConfiguredNullValue() {
+        Map<String,Object> defaults = new LinkedHashMap<String,Object>();
+        CompositeBean cBean = new CompositeBean();
+        cBean.setSimpleBean(new SimpleBean());
+        defaults.put("compositeBean", cBean);
+        
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("compositeBean.intProp", "42");
+        defs.put("compositeBean.booleanProp", "true");
+        defs.put("compositeBean.stringProp", "test");
+        defs.put("compositeBean.simpleBean", "null");
+
+        ReflectionBuilder builder = new ReflectionBuilder(defaults);
+        Map beans = builder.buildObjects(defs);
+
+        CompositeBean compositeBean = (CompositeBean) beans.get("compositeBean");
+        assertNotNull(compositeBean);
+        assertTrue(compositeBean.isBooleanProp());
+        assertEquals(compositeBean.getIntProp(), 42);
+        assertEquals("test", compositeBean.getStringProp());
+        assertNull(compositeBean.getSimpleBean());
+    }
+
+    @Test
+    public void testWithConfiguredNullLiteralValue() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.intProp", "42");
+        defs.put("compositeBean.booleanProp", "true");
+        defs.put("compositeBean.stringProp", "\"null\"");
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map beans = builder.buildObjects(defs);
+
+        CompositeBean compositeBean = (CompositeBean) beans.get("compositeBean");
+        assertNotNull(compositeBean);
+        assertTrue(compositeBean.isBooleanProp());
+        assertEquals(compositeBean.getIntProp(), 42);
+        assertEquals("null", compositeBean.getStringProp());
+    }
+
+    @Test
+    public void testWithConfiguredEmptyStringValue() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.intProp", "42");
+        defs.put("compositeBean.booleanProp", "true");
+        defs.put("compositeBean.stringProp", "\"\"");
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map beans = builder.buildObjects(defs);
+
+        CompositeBean compositeBean = (CompositeBean) beans.get("compositeBean");
+        assertNotNull(compositeBean);
+        assertTrue(compositeBean.isBooleanProp());
+        assertEquals(compositeBean.getIntProp(), 42);
+        assertEquals("", compositeBean.getStringProp());
+    }
+
+    @Test
+    public void testWithConfiguredEmptyStringLiteralValue() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.intProp", "42");
+        defs.put("compositeBean.booleanProp", "true");
+        defs.put("compositeBean.stringProp", "\"\"\"\"");
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map beans = builder.buildObjects(defs);
+
+        CompositeBean compositeBean = (CompositeBean) beans.get("compositeBean");
+        assertNotNull(compositeBean);
+        assertTrue(compositeBean.isBooleanProp());
+        assertEquals(compositeBean.getIntProp(), 42);
+        assertEquals("\"\"", compositeBean.getStringProp());
     }
 
     @Test

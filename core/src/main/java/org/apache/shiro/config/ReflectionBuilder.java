@@ -34,7 +34,7 @@ import java.util.*;
  * Object builder that uses reflection and Apache Commons BeanUtils to build objects given a
  * map of "property values".  Typically these come from the Shiro INI configuration and are used
  * to construct or modify the SecurityManager, its dependencies, and web-based security filters.
- *
+ * <p/>
  * Recognizes {@link Factory} implementations and will call
  * {@link org.apache.shiro.util.Factory#getInstance() getInstance} to satisfy any reference to this bean.
  *
@@ -51,6 +51,9 @@ public class ReflectionBuilder {
     private static final String GLOBAL_PROPERTY_PREFIX = "shiro";
     private static final char MAP_KEY_VALUE_DELIMITER = ':';
     private static final String HEX_BEGIN_TOKEN = "0x";
+    private static final String NULL_VALUE_TOKEN = "null";
+    private static final String EMPTY_STRING_VALUE_TOKEN = "\"\"";
+    private static final char STRING_VALUE_DELIMETER = '"';
 
     private Map<String, ?> objects;
 
@@ -229,8 +232,8 @@ public class ReflectionBuilder {
         String id = getId(reference);
         log.debug("Encountered object reference '{}'.  Looking up object with id '{}'", reference, id);
         final Object referencedObject = getReferencedObject(id);
-        if(referencedObject instanceof Factory) {
-            return ((Factory)referencedObject).getInstance();
+        if (referencedObject instanceof Factory) {
+            return ((Factory) referencedObject).getInstance();
         }
         return referencedObject;
     }
@@ -343,12 +346,31 @@ public class ReflectionBuilder {
         return value;
     }
 
+    protected String checkForNullOrEmptyLiteral(String stringValue) {
+        if (stringValue == null) {
+            return null;
+        }
+        //check if the value is the actual literal string 'null' (expected to be wrapped in quotes):
+        if (stringValue.equals("\"null\"")) {
+            return NULL_VALUE_TOKEN;
+        }
+        //or the actual literal string of two quotes '""' (expected to be wrapped in quotes):
+        else if (stringValue.equals("\"\"\"\"")) {
+            return EMPTY_STRING_VALUE_TOKEN;
+        } else {
+            return stringValue;
+        }
+    }
 
     protected void applyProperty(Object object, String propertyName, String stringValue) {
 
         Object value;
 
-        if (isTypedProperty(object, propertyName, Set.class)) {
+        if (NULL_VALUE_TOKEN.equals(stringValue)) {
+            value = null;
+        } else if (EMPTY_STRING_VALUE_TOKEN.equals(stringValue)) {
+            value = StringUtils.EMPTY_STRING;
+        } else if (isTypedProperty(object, propertyName, Set.class)) {
             value = toSet(stringValue);
         } else if (isTypedProperty(object, propertyName, Map.class)) {
             value = toMap(stringValue);
@@ -361,7 +383,8 @@ public class ReflectionBuilder {
             byte[] bytes = toBytes(stringValue);
             value = ByteSource.Util.bytes(bytes);
         } else {
-            value = resolveValue(stringValue);
+            String checked = checkForNullOrEmptyLiteral(stringValue);
+            value = resolveValue(checked);
         }
 
         try {
