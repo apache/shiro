@@ -200,14 +200,16 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
             factory = new WebIniSecurityManagerFactory(ini);
         }
 
+        WebSecurityManager wsm = (WebSecurityManager)factory.getInstance();
+
+        //SHIRO-306 - get beans after they've been created (the call was before the factory.getInstance() call,
+        //which always returned null.
         Map<String, ?> beans = factory.getBeans();
         if (!CollectionUtils.isEmpty(beans)) {
             this.objects.putAll(beans);
         }
 
-        // Create the security manager and check that it implements WebSecurityManager.
-        // Otherwise, it can't be used with the filter.
-        return (WebSecurityManager) factory.getInstance();
+        return wsm;
     }
 
     /**
