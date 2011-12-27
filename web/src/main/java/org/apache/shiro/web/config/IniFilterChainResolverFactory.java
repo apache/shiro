@@ -140,14 +140,20 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     protected Map<String, Filter> getFilters(Map<String, String> section, Map<String, ?> defaults) {
 
-        Map<String, Filter> filters;
+        Map<String, Filter> filters = extractFilters(defaults);
 
         if (!CollectionUtils.isEmpty(section)) {
             ReflectionBuilder builder = new ReflectionBuilder(defaults);
             Map<String, ?> built = builder.buildObjects(section);
-            filters = extractFilters(built);
-        } else {
-            filters = extractFilters(defaults);
+            Map<String,Filter> sectionFilters = extractFilters(built);
+
+            if (CollectionUtils.isEmpty(filters)) {
+                filters = sectionFilters;
+            } else {
+                if (!CollectionUtils.isEmpty(sectionFilters)) {
+                    filters.putAll(sectionFilters);
+                }
+            }
         }
 
         return filters;
