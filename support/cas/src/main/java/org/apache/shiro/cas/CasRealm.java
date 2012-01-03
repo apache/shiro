@@ -96,7 +96,13 @@ public class CasRealm extends AuthorizingRealm {
     public CasRealm() {
         setAuthenticationTokenClass(CasToken.class);
     }
-    
+
+    @Override
+    protected void onInit() {
+        super.onInit();
+        ensureTicketValidator();
+    }
+
     protected TicketValidator ensureTicketValidator() {
         if (this.ticketValidator == null) {
             this.ticketValidator = createTicketValidator();
