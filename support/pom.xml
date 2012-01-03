@@ -39,6 +39,7 @@
         <module>guice</module>
         <module>openid4j</module>
         <module>features</module>
+        <module>cas</module>
     </modules>
 
 </project>
