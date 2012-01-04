@@ -54,6 +54,18 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         super();
     }
 
+    /**
+     * Will call 'processDefinitions' on startup.
+     *
+     * @since 1.2
+     * @see <a href="https://issues.apache.org/jira/browse/SHIRO-223">SHIRO-223</a>
+     */
+    @Override
+    protected void onInit() {
+        super.onInit();
+        processDefinitions();
+    }
+
     public String getUserDefinitions() {
         return userDefinitions;
     }
