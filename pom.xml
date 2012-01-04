@@ -327,7 +327,17 @@
                 		</lifecycleMappingMetadata>
                 	</configuration>
                 </plugin>
-            </plugins>    
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>dependency-maven-plugin</artifactId>
+                    <version>1.0</version>
+                </plugin>
+            </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
@@ -390,7 +400,7 @@
                         </manifest>
                         <manifestEntries>
                             <SCM-Revision>${buildNumber}</SCM-Revision>
-                            <SCM-url>${scm.url}</SCM-url>
+                            <SCM-url>${project.scm.url}</SCM-url>
                         </manifestEntries>
                     </archive>
                 </configuration>
