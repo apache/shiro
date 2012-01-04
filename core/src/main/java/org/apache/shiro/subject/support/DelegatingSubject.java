@@ -28,6 +28,7 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.ProxiedSession;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DefaultSessionContext;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.ExecutionException;
@@ -351,7 +352,13 @@ public class DelegatingSubject implements Subject, Serializable {
 
     public void logout() {
         try {
-            clearRunAsIdentities();
+            //try/catch added for SHIRO-298
+            try {
+                clearRunAsIdentities();
+            } catch (SessionException se) {
+                log.debug("Encountered session exception trying to clear 'runAs' identities during logout.  This " +
+                        "can generally safely be ignored.", se);
+            }
             this.securityManager.logout(this);
         } finally {
             this.session = null;
