@@ -41,18 +41,24 @@
             <artifactId>cas-client-core</artifactId>
             <version>3.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
         <!-- for SAML ticket validation -->
         <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
             <version>1.1</version>
+            <scope>runtime</scope>
         </dependency>
+        <!-- for SAML ticket validation -->
         <dependency>
             <groupId>org.apache.santuario</groupId>
             <artifactId>xmlsec</artifactId>
             <version>1.4.3</version>
+            <scope>runtime</scope>
         </dependency>
-        <!-- for SAML ticket validation -->
     </dependencies>
 
     <build>
