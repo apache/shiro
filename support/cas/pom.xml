@@ -42,22 +42,26 @@
             <version>3.2.1</version>
         </dependency>
         <dependency>
+            <!-- for Optional SAML ticket validation: -->
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
+            <optional>true</optional>
         </dependency>
-        <!-- for SAML ticket validation -->
         <dependency>
+            <!-- for Optional SAML ticket validation: -->
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml</artifactId>
             <version>1.1</version>
             <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
-        <!-- for SAML ticket validation -->
         <dependency>
+            <!-- for Optional SAML ticket validation: -->
             <groupId>org.apache.santuario</groupId>
             <artifactId>xmlsec</artifactId>
             <version>1.4.3</version>
             <scope>runtime</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -73,7 +77,7 @@
                         <Export-Package>org.apache.shiro.cas*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            org.jasig.cas*;version="[3.1.3, 4)",
+                            org.jasig.cas.client*;version="[3.2, 4)",
                             *
                         </Import-Package>
                     </instructions>
