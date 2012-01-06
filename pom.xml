@@ -70,28 +70,29 @@
         <!-- Compile 3rd party dependencies: -->
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
-        <aspectj.version>1.6.9</aspectj.version>
+        <aspectj.version>1.6.12</aspectj.version>
         <commons.cli.version>1.2</commons.cli.version>
+        <commons.codec.version>1.4</commons.codec.version>
         <crowd.version>1.5.2</crowd.version>
         <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
              modules' OSGi metadata: -->
-        <ehcache.version>2.3.0</ehcache.version>
+        <ehcache.version>2.5.0</ehcache.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
         <jdk.version>1.5</jdk.version>
-        <jetty.version>6.1.21</jetty.version>
+        <jetty.version>6.1.26</jetty.version>
         <openid4j.version>0.9.5</openid4j.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
         <quartz.version>1.6.1</quartz.version>
-        <slf4j.version>1.6.1</slf4j.version>
-        <spring.version>3.0.5.RELEASE</spring.version>
+        <slf4j.version>1.6.4</slf4j.version>
+        <spring.version>3.1.0.RELEASE</spring.version>
         <guice.version>3.0</guice.version>
         <guava.version>r09</guava.version>
 
         <!-- Test 3rd-party dependencies: -->
-        <easymock.version>3.0</easymock.version>
+        <easymock.version>3.1</easymock.version>
         <gmaven.version>1.3</gmaven.version>
-        <groovy.version>1.7.8</groovy.version>
+        <groovy.version>1.8.5</groovy.version>
         <junit.version>4.8.2</junit.version>
 
     </properties>
@@ -514,6 +515,13 @@
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
                 <version>${commons.cli.version}</version>
+            </dependency>
+            <dependency>
+                <!-- runtime dependency for the shiro-cas module: -->
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons.codec.version}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>

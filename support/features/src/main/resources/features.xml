@@ -39,6 +39,14 @@
         <bundle>mvn:org.apache.shiro/shiro-aspectj/${project.version}</bundle>
     </feature>
 
+    <feature name="shiro-cas" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">shiro-cas</feature>
+        <!-- Is there a CAS client osgi bundle somewhere?
+        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aspectj/${casclient.bundle.version}</bundle>
+        -->
+        <bundle>mvn:org.apache.shiro/shiro-cas/${project.version}</bundle>
+    </feature>
+
     <feature name="shiro-ehcache" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">shiro-core</feature>
         <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/${ehcache.bundle.version}</bundle>
