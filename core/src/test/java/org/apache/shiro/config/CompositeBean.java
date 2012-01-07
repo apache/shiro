@@ -28,6 +28,8 @@ import java.util.Set;
  */
 @SuppressWarnings({"UnusedDeclaration"})
 public class CompositeBean {
+    
+    private String name;
 
     private String stringProp;
     private boolean booleanProp;
@@ -38,8 +40,22 @@ public class CompositeBean {
     private List<SimpleBean> simpleBeanList;
     private Collection<SimpleBean> simpleBeanCollection;
     private Map<String, SimpleBean> simpleBeanMap;
+    private Map<String, CompositeBean> compositeBeanMap;
+    private CompositeBean[] compositeBeanArray;
 
     public CompositeBean() {
+    }
+    
+    public CompositeBean(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getStringProp() {
@@ -104,5 +120,21 @@ public class CompositeBean {
 
     public void setSimpleBeanMap(Map<String, SimpleBean> simpleBeanMap) {
         this.simpleBeanMap = simpleBeanMap;
+    }
+
+    public Map<String, CompositeBean> getCompositeBeanMap() {
+        return compositeBeanMap;
+    }
+
+    public void setCompositeBeanMap(Map<String, CompositeBean> compositeBeanMap) {
+        this.compositeBeanMap = compositeBeanMap;
+    }
+
+    public CompositeBean[] getCompositeBeanArray() {
+        return compositeBeanArray;
+    }
+
+    public void setCompositeBeanArray(CompositeBean[] compositeBeanArray) {
+        this.compositeBeanArray = compositeBeanArray;
     }
 }
