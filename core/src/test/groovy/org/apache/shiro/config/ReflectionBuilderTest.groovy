@@ -16,25 +16,86 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.config;
+package org.apache.shiro.config
 
-import org.apache.shiro.codec.Base64;
-import org.apache.shiro.codec.CodecSupport;
-import org.apache.shiro.codec.Hex;
-import org.apache.shiro.util.CollectionUtils;
-import org.junit.Test;
-
-import java.util.*;
-
-import static org.junit.Assert.*;
+import org.apache.shiro.codec.Base64
+import org.apache.shiro.codec.CodecSupport
+import org.apache.shiro.codec.Hex
+import org.apache.shiro.util.CollectionUtils
 
 /**
- * @since Aug 5, 2008 9:53:00 AM
+ * Unit tests for the {@link ReflectionBuilder} implementation.
  */
-public class ReflectionBuilderTest {
+class ReflectionBuilderTest extends GroovyTestCase {
 
-    @Test
-    public void testSimpleConfig() {
+    void testStandardPropertyAssignment() {
+        ReflectionBuilder builder = new ReflectionBuilder();
+
+        CompositeBean cBean = new CompositeBean();
+        builder.applyProperty(cBean, 'stringProp', 'hello world')
+        builder.applyProperty(cBean, 'booleanProp', true)
+        builder.applyProperty(cBean, 'intProp', 42)
+        builder.applyProperty(cBean, 'simpleBean', new SimpleBean())
+        
+        assertTrue cBean.stringProp == 'hello world'
+        assertTrue cBean.booleanProp
+        assertTrue cBean.intProp == 42
+        assertTrue cBean.simpleBean instanceof SimpleBean
+    }
+    
+    void testMapEntryAssignment() {
+        ReflectionBuilder builder = new ReflectionBuilder();
+
+        CompositeBean cBean = new CompositeBean();
+        cBean.simpleBeanMap = ['simpleBean1': new SimpleBean()]
+        
+        builder.applyProperty(cBean, 'simpleBeanMap[simpleBean2]', new SimpleBean())
+        
+        assertTrue cBean.simpleBeanMap['simpleBean2'] instanceof SimpleBean
+    }
+
+    void testArrayEntryAssignment() {
+        ReflectionBuilder builder = new ReflectionBuilder();
+
+        CompositeBean cBean = new CompositeBean();
+        cBean.compositeBeanArray = new CompositeBean[1];
+
+        builder.applyProperty(cBean, 'compositeBeanArray[0]', new CompositeBean())
+
+        assertTrue cBean.compositeBeanArray[0] instanceof CompositeBean
+    }
+
+    void testNestedPathAssignment() {
+        ReflectionBuilder builder = new ReflectionBuilder();
+
+        CompositeBean cbean1 = new CompositeBean('cbean1');
+        cbean1.compositeBeanMap = ['cbean2': new CompositeBean('cbean2')]
+        cbean1.compositeBeanMap['cbean2'].compositeBeanArray = new CompositeBean[2];
+        
+        builder.applyProperty(cbean1, "compositeBeanMap[cbean2].compositeBeanArray[0]", new CompositeBean('cbean3'))
+        builder.applyProperty(cbean1, "compositeBeanMap[cbean2].compositeBeanArray[0].simpleBean", new SimpleBean('sbean1'))
+
+        assertTrue cbean1.compositeBeanMap['cbean2'].compositeBeanArray[0].name == 'cbean3'
+        assertTrue cbean1.compositeBeanMap['cbean2'].compositeBeanArray[0].simpleBean.name == 'sbean1'
+    }
+
+    //asserts SHIRO-305: https://issues.apache.org/jira/browse/SHIRO-305
+    void testNestedMapAssignmentWithPeriodDelimitedKeys() {
+        def ini = new Ini()
+        ini.load('''
+            ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
+            ldapRealm.contextFactory.environment[java.naming.security.protocol] = ssl
+            ldapRealm.contextFactory.environment[com.sun.jndi.ldap.connect.pool.protocol] = plain ssl 
+            ldapRealm.contextFactory.environment[com.sun.jndi.ldap.connect.pool] = true 
+        ''')
+        def builder = new ReflectionBuilder()
+        def objects = builder.buildObjects(ini.getSections().iterator().next())
+        
+        assertFalse objects.isEmpty()
+        assertEquals 'ssl', objects['ldapRealm'].contextFactory.environment['java.naming.security.protocol']
+    }
+
+    void testSimpleConfig() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
         defs.put("compositeBean.stringProp", "blah");
@@ -51,13 +112,12 @@ public class ReflectionBuilderTest {
         assertEquals(compositeBean.getIntProp(), 42);
     }
 
-    @Test
-    public void testWithConfiguredNullValue() {
+    void testWithConfiguredNullValue() {
         Map<String,Object> defaults = new LinkedHashMap<String,Object>();
         CompositeBean cBean = new CompositeBean();
         cBean.setSimpleBean(new SimpleBean());
         defaults.put("compositeBean", cBean);
-        
+
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("compositeBean.intProp", "42");
         defs.put("compositeBean.booleanProp", "true");
@@ -75,8 +135,7 @@ public class ReflectionBuilderTest {
         assertNull(compositeBean.getSimpleBean());
     }
 
-    @Test
-    public void testWithConfiguredNullLiteralValue() {
+    void testWithConfiguredNullLiteralValue() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
         defs.put("compositeBean.intProp", "42");
@@ -93,8 +152,7 @@ public class ReflectionBuilderTest {
         assertEquals("null", compositeBean.getStringProp());
     }
 
-    @Test
-    public void testWithConfiguredEmptyStringValue() {
+    void testWithConfiguredEmptyStringValue() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
         defs.put("compositeBean.intProp", "42");
@@ -111,8 +169,7 @@ public class ReflectionBuilderTest {
         assertEquals("", compositeBean.getStringProp());
     }
 
-    @Test
-    public void testWithConfiguredEmptyStringLiteralValue() {
+    void testWithConfiguredEmptyStringLiteralValue() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
         defs.put("compositeBean.intProp", "42");
@@ -129,27 +186,25 @@ public class ReflectionBuilderTest {
         assertEquals("\"\"", compositeBean.getStringProp());
     }
 
-    @Test
-    public void testSimpleConfigWithDollarSignStringValue() {
+    void testSimpleConfigWithDollarSignStringValue() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
-        defs.put("compositeBean.stringProp", "\\$500");
+        defs.put("compositeBean.stringProp", '\\$500');
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map beans = builder.buildObjects(defs);
 
         CompositeBean compositeBean = (CompositeBean) beans.get("compositeBean");
-        assertEquals(compositeBean.getStringProp(), "$500");
+        assertEquals(compositeBean.getStringProp(), '$500');
     }
 
-    @Test
-    public void testObjectReferenceConfig() {
+    void testObjectReferenceConfig() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("simpleBean", "org.apache.shiro.config.SimpleBean");
         defs.put("simpleBean.intProp", "101");
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
         defs.put("compositeBean.stringProp", "blah");
-        defs.put("compositeBean.simpleBean", "$simpleBean");
+        defs.put("compositeBean.simpleBean", '$simpleBean');
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map beans = builder.buildObjects(defs);
@@ -164,33 +219,38 @@ public class ReflectionBuilderTest {
         assertEquals(simpleBean.getIntProp(), 101);
     }
 
-    @Test(expected = ConfigurationException.class)
-    public void testObjectReferenceConfigWithTypeMismatch() {
+    void testObjectReferenceConfigWithTypeMismatch() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("simpleBean", "org.apache.shiro.config.SimpleBean");
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
         defs.put("compositeBean.simpleBean", "simpleBean");
         ReflectionBuilder builder = new ReflectionBuilder();
-        builder.buildObjects(defs);
+        try {
+            builder.buildObjects(defs);
+            "Should have encountered an " + ConfigurationException.class.name
+        } catch (ConfigurationException expected) {
+        }
     }
 
-    @Test(expected = UnresolveableReferenceException.class)
-    public void testObjectReferenceConfigWithInvalidReference() {
+    void testObjectReferenceConfigWithInvalidReference() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("simpleBean", "org.apache.shiro.config.SimpleBean");
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
-        defs.put("compositeBean.simpleBean", "$foo");
+        defs.put("compositeBean.simpleBean", '$foo');
         ReflectionBuilder builder = new ReflectionBuilder();
-        builder.buildObjects(defs);
+        try {
+            builder.buildObjects(defs);
+            fail "should have encountered an " + UnresolveableReferenceException.class.name
+        } catch (UnresolveableReferenceException expected) {
+        }
     }
 
-    @Test
-    public void testSetProperty() {
+    void testSetProperty() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
         defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
-        defs.put("compositeBean.simpleBeanSet", "$simpleBean1, $simpleBean2, $simpleBean2");
+        defs.put("compositeBean.simpleBeanSet", '$simpleBean1, $simpleBean2, $simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
         assertFalse(CollectionUtils.isEmpty(objects));
@@ -201,13 +261,12 @@ public class ReflectionBuilderTest {
         assertEquals(2, simpleBeans.size());
     }
 
-    @Test
-    public void testListProperty() {
+    void testListProperty() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
         defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
-        defs.put("compositeBean.simpleBeanList", "$simpleBean1, $simpleBean2, $simpleBean2");
+        defs.put("compositeBean.simpleBeanList", '$simpleBean1, $simpleBean2, $simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
         assertFalse(CollectionUtils.isEmpty(objects));
@@ -218,13 +277,12 @@ public class ReflectionBuilderTest {
         assertEquals(3, simpleBeans.size());
     }
 
-    @Test
-    public void testCollectionProperty() {
+    void testCollectionProperty() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
         defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
-        defs.put("compositeBean.simpleBeanCollection", "$simpleBean1, $simpleBean2, $simpleBean2");
+        defs.put("compositeBean.simpleBeanCollection", '$simpleBean1, $simpleBean2, $simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
         assertFalse(CollectionUtils.isEmpty(objects));
@@ -236,8 +294,7 @@ public class ReflectionBuilderTest {
         assertEquals(3, simpleBeans.size());
     }
 
-    @Test
-    public void testByteArrayHexProperty() {
+    void testByteArrayHexProperty() {
         String source = "Hello, world.";
         byte[] bytes = CodecSupport.toBytes(source);
         String hex = Hex.encodeToString(bytes);
@@ -257,8 +314,7 @@ public class ReflectionBuilderTest {
         assertEquals(source, reconstituted);
     }
 
-    @Test
-    public void testByteArrayBase64Property() {
+    void testByteArrayBase64Property() {
         String source = "Hello, world.";
         byte[] bytes = CodecSupport.toBytes(source);
         String base64 = Base64.encodeToString(bytes);
@@ -276,13 +332,12 @@ public class ReflectionBuilderTest {
         assertEquals(reconstituted, source);
     }
 
-    @Test
-    public void testMapProperty() {
+    void testMapProperty() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
         defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
-        defs.put("compositeBean.simpleBeanMap", "simpleBean1:$simpleBean1, simpleBean2:$simpleBean2");
+        defs.put("compositeBean.simpleBeanMap", 'simpleBean1:$simpleBean1, simpleBean2:$simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
         assertFalse(CollectionUtils.isEmpty(objects));
@@ -297,15 +352,14 @@ public class ReflectionBuilderTest {
         assertTrue(value instanceof SimpleBean);
     }
 
-    @Test
-    public void testNestedListProperty() {
+    void testNestedListProperty() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
         defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
         defs.put("simpleBean3", "org.apache.shiro.config.SimpleBean");
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
-        defs.put("compositeBean.simpleBean", "$simpleBean1");
-        defs.put("compositeBean.simpleBean.simpleBeans", "$simpleBean2, $simpleBean3");
+        defs.put("compositeBean.simpleBean", '$simpleBean1');
+        defs.put("compositeBean.simpleBean.simpleBeans", '$simpleBean2, $simpleBean3');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
         assertFalse(CollectionUtils.isEmpty(objects));
@@ -318,14 +372,13 @@ public class ReflectionBuilderTest {
         assertEquals(2, children.size());
     }
 
-    @Test
-    public void testFactoryInstantiation() {
+    void testFactoryInstantiation() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("simpleBeanFactory", "org.apache.shiro.config.SimpleBeanFactory");
         defs.put("simpleBeanFactory.factoryInt", "5");
         defs.put("simpleBeanFactory.factoryString", "someString");
         defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
-        defs.put("compositeBean.simpleBean", "$simpleBeanFactory");
+        defs.put("compositeBean.simpleBean", '$simpleBeanFactory');
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);

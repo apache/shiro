@@ -24,6 +24,8 @@ import java.util.List;
  * @since 1.0
  */
 public class SimpleBean {
+    
+    private String name;
 
     private String stringProp = null;
     private int intProp;
@@ -32,6 +34,18 @@ public class SimpleBean {
     private List<SimpleBean> simpleBeans;
 
     public SimpleBean() {
+    }
+    
+    public SimpleBean(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getStringProp() {
