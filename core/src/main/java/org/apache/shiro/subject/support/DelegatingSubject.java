@@ -39,7 +39,6 @@ import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -69,9 +68,7 @@ import java.util.concurrent.Callable;
  *
  * @since 0.1
  */
-public class DelegatingSubject implements Subject, Serializable {
-
-    private static final long serialVersionUID = -5094259915319399138L;
+public class DelegatingSubject implements Subject {
 
     private static final Logger log = LoggerFactory.getLogger(DelegatingSubject.class);
 
