@@ -21,6 +21,7 @@ package org.apache.shiro.config
 import org.apache.shiro.codec.Base64
 import org.apache.shiro.codec.CodecSupport
 import org.apache.shiro.codec.Hex
+import org.apache.shiro.realm.ldap.JndiLdapRealm
 import org.apache.shiro.util.CollectionUtils
 
 /**
@@ -85,14 +86,17 @@ class ReflectionBuilderTest extends GroovyTestCase {
         ini.load('''
             ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
             ldapRealm.contextFactory.environment[java.naming.security.protocol] = ssl
-            ldapRealm.contextFactory.environment[com.sun.jndi.ldap.connect.pool.protocol] = plain ssl 
             ldapRealm.contextFactory.environment[com.sun.jndi.ldap.connect.pool] = true 
+            ldapRealm.contextFactory.environment[com.sun.jndi.ldap.connect.pool.protocol] = plain ssl 
         ''')
         def builder = new ReflectionBuilder()
         def objects = builder.buildObjects(ini.getSections().iterator().next())
         
         assertFalse objects.isEmpty()
-        assertEquals 'ssl', objects['ldapRealm'].contextFactory.environment['java.naming.security.protocol']
+        def ldapRealm = objects['ldapRealm'] as JndiLdapRealm
+        assertEquals 'ssl', ldapRealm.contextFactory.environment['java.naming.security.protocol']
+        assertEquals 'true', ldapRealm.contextFactory.environment['com.sun.jndi.ldap.connect.pool']
+        assertEquals 'plain ssl', ldapRealm.contextFactory.environment['com.sun.jndi.ldap.connect.pool.protocol']
     }
 
     void testSimpleConfig() {
