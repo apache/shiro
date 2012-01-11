@@ -25,25 +25,98 @@ import javax.servlet.ServletContext
 import org.apache.shiro.config.ConfigurationException
 import org.apache.shiro.web.filter.authz.SslFilter
 import org.apache.shiro.web.servlet.ShiroFilter
-import org.junit.Before
-import org.junit.Test
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link DefaultFilterChainManager} implementation.
  */
-class DefaultFilterChainManagerTest {
+class DefaultFilterChainManagerTest extends GroovyTestCase {
 
     DefaultFilterChainManager manager;
 
-    @Before
-    public void setUp() {
+    void setUp() {
         this.manager = new DefaultFilterChainManager();
     }
 
-    @Test
-    public void testNewInstanceDefaultFilters() {
+    //SHIRO-205
+    void testToNameConfigPairNoBrackets() {
+        def token = "foo"
+
+        String[] pair = manager.toNameConfigPair(token);
+
+        assertNotNull pair
+        assertEquals 2, pair.length
+        assertEquals "foo", pair[0]
+        assertNull pair[1]
+    }
+
+    //SHIRO-205
+    void testToNameConfigPairWithEmptyBrackets() {
+        def token = "foo[]"
+
+        String[] pair = manager.toNameConfigPair(token);
+
+        assertNotNull pair
+        assertEquals 2, pair.length
+        assertEquals "foo", pair[0]
+        assertNull pair[1]
+    }
+
+    //SHIRO-205
+    void testToNameConfigPairWithPopulatedBrackets() {
+        def token = "foo[bar, baz]"
+
+        String[] pair = manager.toNameConfigPair(token);
+
+        assertNotNull pair
+        assertEquals 2, pair.length
+        assertEquals "foo", pair[0]
+        assertEquals "bar, baz", pair[1]
+    }
+
+    //SHIRO-205 - asserts backwards compatibility before SHIRO-205 was implemented:
+    void testToNameConfigPairWithNestedQuotesInBrackets() {
+        def token = 'roles["guest, admin"]'
+
+        String[] pair = manager.toNameConfigPair(token);
+
+        assertNotNull pair
+        assertEquals 2, pair.length
+        assertEquals "roles", pair[0]
+        assertEquals "guest, admin", pair[1]
+    }
+    
+    //SHIRO-205
+    void testFilterChainConfigWithNestedCommas() {
+        def chain = "a, b[c], d[e, f], g[h, i, j], k"
+
+        String[] tokens = manager.splitChainDefinition(chain);
+        
+        assertNotNull tokens
+        assertEquals 5, tokens.length
+        assertEquals "a", tokens[0]
+        assertEquals "b[c]", tokens[1]
+        assertEquals "d[e, f]", tokens[2]
+        assertEquals "g[h, i, j]", tokens[3]
+        assertEquals "k", tokens[4]
+    }
+
+    //SHIRO-205
+    void testFilterChainConfigWithNestedQuotedCommas() {
+        def chain = "a, b[c], d[e, f], g[h, i, j], k"
+
+        String[] tokens = manager.splitChainDefinition(chain);
+
+        assertNotNull tokens
+        assertEquals 5, tokens.length
+        assertEquals "a", tokens[0]
+        assertEquals "b[c]", tokens[1]
+        assertEquals "d[e, f]", tokens[2]
+        assertEquals "g[h, i, j]", tokens[3]
+        assertEquals "k", tokens[4]
+    }
+
+    void testNewInstanceDefaultFilters() {
         for (DefaultFilter defaultFilter : DefaultFilter.values()) {
             assertNotNull(manager.getFilter(defaultFilter.name()));
         }
@@ -57,8 +130,7 @@ class DefaultFilterChainManagerTest {
         return mock;
     }
 
-    @Test
-    public void testNewInstanceWithFilterConfig() {
+    void testNewInstanceWithFilterConfig() {
         FilterConfig mock = createNiceMockFilterConfig();
         replay(mock);
         this.manager = new DefaultFilterChainManager(mock);
@@ -69,8 +141,7 @@ class DefaultFilterChainManagerTest {
         verify(mock);
     }
 
-    @Test
-    public void testCreateChain() {
+    void testCreateChain() {
         try {
             manager.createChain(null, null);
         } catch (NullPointerException expected) {
@@ -110,15 +181,13 @@ class DefaultFilterChainManagerTest {
         assertEquals(DefaultFilter.perms.getFilterClass(), filter.getClass());
     }
 
-    @Test
-    public void testBeanMethods() {
+    void testBeanMethods() {
         Map<String, Filter> filters = manager.getFilters();
         assertEquals(filters.size(), DefaultFilter.values().length);
         manager.setFilters(filters);
     }
 
-    @Test
-    public void testAddFilter() {
+    void testAddFilter() {
         FilterConfig mockFilterConfig = createNiceMockFilterConfig();
         replay(mockFilterConfig);
         this.manager = new DefaultFilterChainManager(mockFilterConfig);
@@ -129,8 +198,7 @@ class DefaultFilterChainManagerTest {
         verify(mockFilterConfig);
     }
 
-    @Test
-    public void testAddFilterNoInit() {
+    void testAddFilterNoInit() {
         FilterConfig mockFilterConfig = createNiceMockFilterConfig();
         Filter mockFilter = createNiceMock(Filter.class);
 
@@ -146,15 +214,14 @@ class DefaultFilterChainManagerTest {
         verify mockFilterConfig, mockFilter
     }
 
-    public void testAddFilterNoFilterConfig() {
+    void testAddFilterNoFilterConfig() {
         SslFilter filter = new SslFilter();
         manager.addFilter("test", filter);
         assertNotNull manager.filters['test']
         assertSame manager.filters['test'], filter
     }
 
-    @Test
-    public void testAddToChain() {
+    void testAddToChain() {
         FilterConfig mockFilterConfig = createNiceMockFilterConfig();
         replay(mockFilterConfig);
         this.manager = new DefaultFilterChainManager(mockFilterConfig);
@@ -164,16 +231,17 @@ class DefaultFilterChainManagerTest {
 
         try {
             manager.addToChain("test", null);
+            fail "Should have thrown an IllegalArgumentException"
         } catch (IllegalArgumentException expected) {
         }
         try {
             manager.addToChain(null, "testSsl");
+            fail "Should have thrown an IllegalArgumentException"
         } catch (IllegalArgumentException expected) {
         }
     }
 
-    @Test
-    public void testAddToChainNotPathProcessor() {
+    void testAddToChainNotPathProcessor() {
         FilterConfig mockFilterConfig = createNiceMockFilterConfig();
         replay(mockFilterConfig);
         this.manager = new DefaultFilterChainManager(mockFilterConfig);
@@ -183,12 +251,12 @@ class DefaultFilterChainManagerTest {
 
         try {
             manager.addToChain("test", "nonPathProcessor", "dummyConfig");
+            fail "Should have thrown a ConfigurationException"
         } catch (ConfigurationException expected) {
         }
     }
 
-    @Test
-    public void testProxy() {
+    void testProxy() {
         FilterChain mock = createNiceMock(FilterChain.class);
         replay(mock);
         manager.createChain("test", "anon");
@@ -196,11 +264,14 @@ class DefaultFilterChainManagerTest {
         verify(mock);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testProxyNoChain() {
+    void testProxyNoChain() {
         FilterChain mock = createNiceMock(FilterChain.class);
         replay(mock);
-        this.manager.proxy(mock, "blah");
+        try {
+            this.manager.proxy(mock, "blah");
+            fail "Should have thrown an IllegalArgumentException"
+        } catch (IllegalArgumentException expected) {
+        }
         verify(mock);
     }
 
