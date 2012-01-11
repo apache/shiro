@@ -35,8 +35,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.apache.shiro.util.StringUtils.split;
-
 /**
  * Default {@link FilterChainManager} implementation maintaining a map of {@link Filter Filter} instances
  * (key: filter name, value: Filter) as well as a map of {@link NamedFilterList NamedFilterList}s created from these
@@ -139,23 +137,95 @@ public class DefaultFilterChainManager implements FilterChainManager {
         //
         //     { "authc", "roles[admin,user]", "perms[file:edit]" }
         //
-        String[] filterTokens = split(chainDefinition);
+        String[] filterTokens = splitChainDefinition(chainDefinition);
 
         //each token is specific to each filter.
         //strip the name and extract any filter-specific config between brackets [ ]
         for (String token : filterTokens) {
-            String[] nameAndConfig = token.split("\\[", 2);
-            String name = nameAndConfig[0];
-            String config = null;
-
-            if (nameAndConfig.length == 2) {
-                config = nameAndConfig[1];
-                //if there was an open bracket, there was a close bracket, so strip it too:
-                config = config.substring(0, config.length() - 1);
-            }
+            String[] nameConfigPair = toNameConfigPair(token);
 
             //now we have the filter name, path and (possibly null) path-specific config.  Let's apply them:
-            addToChain(chainName, name, config);
+            addToChain(chainName, nameConfigPair[0], nameConfigPair[1]);
+        }
+    }
+
+    /**
+     * Splits the comma-delimited filter chain definition line into individual filter definition tokens.
+     * <p/>
+     * Example Input:
+     * <pre>
+     *     foo, bar[baz], blah[x, y]
+     * </pre>
+     * Resulting Output:
+     * <pre>
+     *     output[0] == foo
+     *     output[1] == bar[baz]
+     *     output[2] == blah[x, y]
+     * </pre>
+     * @param chainDefinition the comma-delimited filter chain definition.
+     * @return an array of filter definition tokens
+     * @since 1.2
+     * @see <a href="https://issues.apache.org/jira/browse/SHIRO-205">SHIRO-205</a>
+     */
+    protected String[] splitChainDefinition(String chainDefinition) {
+        return StringUtils.split(chainDefinition, StringUtils.DEFAULT_DELIMITER_CHAR, '[', ']', true, true);
+    }
+
+    /**
+     * Based on the given filter chain definition token (e.g. 'foo' or 'foo[bar, baz]'), this will return the token
+     * as a name/value pair, removing any brackets as necessary.  Examples:
+     * <table>
+     *     <tr>
+     *         <th>Input</th>
+     *         <th>Result</th>
+     *     </tr>
+     *     <tr>
+     *         <td>{@code foo}</td>
+     *         <td>returned[0] == {@code foo}<br/>returned[1] == {@code null}</td>
+     *     </tr>
+     *     <tr>
+     *         <td>{@code foo[bar, baz]}</td>
+     *         <td>returned[0] == {@code foo}<br/>returned[1] == {@code bar, baz}</td>
+     *     </tr>
+     * </table>
+     * @param token the filter chain definition token
+     * @return A name/value pair representing the filter name and a (possibly null) config value.
+     * @throws ConfigurationException if the token cannot be parsed
+     * @since 1.2
+     * @see <a href="https://issues.apache.org/jira/browse/SHIRO-205">SHIRO-205</a>
+     */
+    protected String[] toNameConfigPair(String token) throws ConfigurationException {
+
+        try {
+            String[] pair = token.split("\\[", 2);
+            String name = StringUtils.clean(pair[0]);
+
+            if (name == null) {
+                throw new IllegalArgumentException("Filter name not found for filter chain definition token: " + token);
+            }
+            String config = null;
+
+            if (pair.length == 2) {
+                config = StringUtils.clean(pair[1]);
+                //if there was an open bracket, it assumed there is a closing bracket, so strip it too:
+                config = config.substring(0, config.length() - 1);
+
+                //backwards compatibility prior to implmenting SHIRO-205:
+                //prior to SHIRO-205 being implemented, it was common for end-users to quote the config inside brackets
+                //if that config required commas.  We need to strip those quotes to get to the interior quoted definition
+                //to ensure any existing quoted definitions still function for end users:
+                if (config.startsWith("\"") && config.endsWith("\"")) {
+                    config = config.substring(1, config.length() - 1);
+                }
+                
+                config = StringUtils.clean(config);
+            }
+            
+            return new String[]{name, config};
+
+        } catch (Exception e) {
+            String msg = "Unable to parse filter chain definition token: " + token;
+            throw new ConfigurationException(msg, e);
         }
     }
 
