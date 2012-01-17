@@ -252,8 +252,10 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
      * @return a new Realm instance reflecting the account data discovered in the {@code Ini}.
      */
     protected Realm createRealm(Ini ini) {
-        IniRealm realm = new IniRealm(ini);
+        //IniRealm realm = new IniRealm(ini); changed to support SHIRO-322
+        IniRealm realm = new IniRealm();
         realm.setName(INI_REALM_NAME);
+        realm.setIni(ini); //added for SHIRO-322
         return realm;
     }
 }
