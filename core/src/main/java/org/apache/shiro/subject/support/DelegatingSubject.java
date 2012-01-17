@@ -455,11 +455,12 @@ public class DelegatingSubject implements Subject {
     }
 
     private void clearRunAsIdentities() {
+        //setting to null must occur before interacting with the session in case it throws an exception (SHIRO-298)
+        this.runAsPrincipals = null;
         Session session = getSession(false);
         if (session != null) {
             session.removeAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
         }
-        this.runAsPrincipals = null;
     }
 
     private void pushIdentity(PrincipalCollection principals) throws NullPointerException {
