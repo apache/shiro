@@ -36,7 +36,7 @@ public class ContainerIntegrationTest extends AbstractContainerTest {
     @Before
     public void logOut() throws IOException {
         // Make sure we are logged out
-        final HtmlPage homePage = webClient.getPage(BASEURI);
+        final HtmlPage homePage = webClient.getPage(getBaseUri());
         try {
             homePage.getAnchorByHref("/logout").click();
         }
@@ -48,7 +48,7 @@ public class ContainerIntegrationTest extends AbstractContainerTest {
     @Test
     public void logIn() throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 
-        HtmlPage page = webClient.getPage(BASEURI + "login.jsp");
+        HtmlPage page = webClient.getPage(getBaseUri() + "login.jsp");
         HtmlForm form = page.getFormByName("loginform");
         form.<HtmlInput>getInputByName("username").setValueAttribute("root");
         form.<HtmlInput>getInputByName("password").setValueAttribute("secret");
@@ -59,7 +59,7 @@ public class ContainerIntegrationTest extends AbstractContainerTest {
 
     @Test
     public void logInAndRememberMe() throws Exception {
-        HtmlPage page = webClient.getPage(BASEURI + "login.jsp");
+        HtmlPage page = webClient.getPage(getBaseUri() + "login.jsp");
         HtmlForm form = page.getFormByName("loginform");
         form.<HtmlInput>getInputByName("username").setValueAttribute("root");
         form.<HtmlInput>getInputByName("password").setValueAttribute("secret");
@@ -68,7 +68,7 @@ public class ContainerIntegrationTest extends AbstractContainerTest {
         page = form.<HtmlInput>getInputByName("submit").click();
         server.stop();
         server.start();
-        page = webClient.getPage(BASEURI);
+        page = webClient.getPage(getBaseUri());
         // page.getAnchorByHref("/logout");
         WebAssert.assertLinkPresentWithText(page, "Log out");
         page = page.getAnchorByHref("/account").click();

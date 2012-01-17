@@ -27,26 +27,42 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
 
+import java.net.BindException;
+
 public abstract class AbstractContainerTest {
+    public static final int MAX_PORT = 9200;
+
     protected static PauseableServer server;
 
-    protected static final int port = 9180;
-
-    protected static final String BASEURI = "http://localhost:" + port + "/";
+    private static int port = 9180;
 
     protected final WebClient webClient = new WebClient();
 
     @BeforeClass
     public static void startContainer() throws Exception {
-        if (server == null) {
-            server = new PauseableServer();
-            Connector connector = new SelectChannelConnector();
-            connector.setPort(port);
-            server.setConnectors(new Connector[]{connector});
-            server.setHandler(new WebAppContext("src/main/webapp", "/"));
-            server.start();
-            assertTrue(server.isStarted());
+        while (server == null && port < MAX_PORT) {
+            try {
+                server = createAndStartServer(port);
+            } catch (BindException e) {
+                System.err.printf("Unable to listen on port %d.  Trying next port.", port);
+                port++;
+            }
         }
+        assertTrue(server.isStarted());
+    }
+
+    private static PauseableServer createAndStartServer(final int port) throws Exception {
+        PauseableServer server = new PauseableServer();
+        Connector connector = new SelectChannelConnector();
+        connector.setPort(port);
+        server.setConnectors(new Connector[]{connector});
+        server.setHandler(new WebAppContext("src/main/webapp", "/"));
+        server.start();
+        return server;
+    }
+
+    protected static String getBaseUri() {
+        return "http://localhost:" + port + "/";
     }
 
     @Before
