@@ -16,48 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.config;
+package org.apache.shiro.config
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.cache.Cache;
-import org.apache.shiro.cache.MapCache;
-import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.realm.Realm;
-import org.apache.shiro.realm.text.IniRealm;
-import org.apache.shiro.realm.text.PropertiesRealm;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.AbstractSessionManager;
-import org.apache.shiro.session.mgt.DefaultSessionManager;
-import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
-import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
-import org.apache.shiro.session.mgt.eis.SessionDAO;
-import org.apache.shiro.subject.Subject;
-import org.junit.Test;
-
-import java.util.Collection;
-
-import static junit.framework.Assert.*;
+import org.apache.shiro.SecurityUtils
+import org.apache.shiro.authc.UsernamePasswordToken
+import org.apache.shiro.cache.Cache
+import org.apache.shiro.cache.MapCache
+import org.apache.shiro.crypto.hash.Sha256Hash
+import org.apache.shiro.mgt.DefaultSecurityManager
+import org.apache.shiro.mgt.SecurityManager
+import org.apache.shiro.realm.Realm
+import org.apache.shiro.realm.text.IniRealm
+import org.apache.shiro.realm.text.PropertiesRealm
+import org.apache.shiro.session.Session
+import org.apache.shiro.session.mgt.AbstractSessionManager
+import org.apache.shiro.session.mgt.DefaultSessionManager
+import org.apache.shiro.session.mgt.eis.CachingSessionDAO
+import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO
+import org.apache.shiro.session.mgt.eis.SessionDAO
+import org.apache.shiro.subject.Subject
 
 /**
  * Unit tests for the {@link IniSecurityManagerFactory} implementation.
  *
  * @since 1.0
  */
-public class IniSecurityManagerFactoryTest {
+class IniSecurityManagerFactoryTest extends GroovyTestCase {
 
-    @Test
-    public void testGetInstanceWithoutIni() {
+    void testGetInstanceWithoutIni() {
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory();
         SecurityManager sm = factory.getInstance();
         assertNotNull(sm);
         assertTrue(sm instanceof DefaultSecurityManager);
     }
 
-    @Test
-    public void testGetInstanceWithResourcePath() {
+    void testGetInstanceWithResourcePath() {
         String path = "classpath:org/apache/shiro/config/IniSecurityManagerFactoryTest.ini";
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory(path);
         SecurityManager sm = factory.getInstance();
@@ -65,8 +58,7 @@ public class IniSecurityManagerFactoryTest {
         assertTrue(sm instanceof DefaultSecurityManager);
     }
 
-    @Test
-    public void testGetInstanceWithEmptyIni() {
+    void testGetInstanceWithEmptyIni() {
         Ini ini = new Ini();
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
         SecurityManager sm = factory.getInstance();
@@ -74,8 +66,7 @@ public class IniSecurityManagerFactoryTest {
         assertTrue(sm instanceof DefaultSecurityManager);
     }
 
-    @Test
-    public void testGetInstanceWithSimpleIni() {
+    void testGetInstanceWithSimpleIni() {
         Ini ini = new Ini();
         ini.setSectionProperty(IniSecurityManagerFactory.MAIN_SECTION_NAME,
                 "securityManager.sessionManager.globalSessionTimeout", "5000");
@@ -86,8 +77,7 @@ public class IniSecurityManagerFactoryTest {
         assertEquals(5000, ((AbstractSessionManager) ((DefaultSecurityManager) sm).getSessionManager()).getGlobalSessionTimeout());
     }
 
-    @Test
-    public void testGetInstanceWithConfiguredRealm() {
+    void testGetInstanceWithConfiguredRealm() {
         Ini ini = new Ini();
         Ini.Section section = ini.addSection(IniSecurityManagerFactory.MAIN_SECTION_NAME);
         section.put("propsRealm", PropertiesRealm.class.getName());
@@ -104,8 +94,7 @@ public class IniSecurityManagerFactoryTest {
         assertTrue(realm instanceof PropertiesRealm);
     }
 
-    @Test
-    public void testGetInstanceWithAutomaticallyCreatedIniRealm() {
+    void testGetInstanceWithAutomaticallyCreatedIniRealm() {
         Ini ini = new Ini();
         Ini.Section section = ini.addSection(IniRealm.USERS_SECTION_NAME);
         section.put("admin", "admin");
@@ -124,8 +113,7 @@ public class IniSecurityManagerFactoryTest {
     /**
      * Test for issue <a href="https://issues.apache.org/jira/browse/SHIRO-125">SHIRO-125</a>.
      */
-    @Test
-    public void testImplicitIniRealmWithAdditionalRealmConfiguration() {
+    void testImplicitIniRealmWithAdditionalRealmConfiguration() {
 
         Ini ini = new Ini();
 
@@ -134,7 +122,7 @@ public class IniSecurityManagerFactoryTest {
         //such as the Sha256 credentials matcher:
         Ini.Section main = ini.addSection("main");
         main.put("credentialsMatcher", "org.apache.shiro.authc.credential.Sha256CredentialsMatcher");
-        main.put("iniRealm.credentialsMatcher", "$credentialsMatcher");
+        main.put("iniRealm.credentialsMatcher", '$credentialsMatcher');
 
         //create a users section - user 'admin', with a Sha256-hashed 'admin' password (hex encoded):
         Ini.Section users = ini.addSection(IniRealm.USERS_SECTION_NAME);
@@ -143,7 +131,7 @@ public class IniSecurityManagerFactoryTest {
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
         SecurityManager sm = factory.getInstance();
 
-        //go ahead and try to log in with the admin user, ensuring the 
+        //go ahead and try to log in with the admin user, ensuring the
         //iniRealm has a Sha256CredentialsMatcher enabled:
 
         //try to log-in:
@@ -161,10 +149,37 @@ public class IniSecurityManagerFactoryTest {
     }
 
     /**
+     * Test for issue <a href="https://issues.apache.org/jira/browse/SHIRO-322">SHIRO-322</a>.
+     */
+    void testImplicitIniRealmWithConfiguredPermissionResolver() {
+        def ini = new Ini();
+        ini.load('''
+            [main]
+            # The MockPermissionResolver is a peer class to this test class.
+            permissionResolver = org.apache.shiro.config.MockPermissionResolver
+            iniRealm.permissionResolver = $permissionResolver
+
+            [users]
+            jsmith = secret, author
+
+            [roles]
+            author = book:write
+        ''');
+
+        IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
+        SecurityManager sm = factory.instance
+        
+        def realm = sm.realms[0]
+        assertNotNull realm
+        def permResolver = realm.permissionResolver
+        assertTrue permResolver instanceof MockPermissionResolver
+        assertTrue permResolver.invoked
+    }
+
+    /**
      * Test case for issue <a href="https://issues.apache.org/jira/browse/SHIRO-95">SHIRO-95</a>.
      */
-    @Test
-    public void testCacheManagerConfigOrderOfOperations() {
+    void testCacheManagerConfigOrderOfOperations() {
 
         Ini ini = new Ini();
         Ini.Section main = ini.addSection(IniSecurityManagerFactory.MAIN_SECTION_NAME);
@@ -173,10 +188,10 @@ public class IniSecurityManagerFactoryTest {
 
         //now add a session DAO after the cache manager has been set - this is what tests the user-reported issue
         main.put("sessionDAO", "org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO");
-        main.put("securityManager.sessionManager.sessionDAO", "$sessionDAO");
+        main.put("securityManager.sessionManager.sessionDAO", '$sessionDAO');
 
         //add the cache manager after the sessionDAO has been set:
-        main.put("securityManager.cacheManager", "$cacheManager");
+        main.put("securityManager.cacheManager", '$cacheManager');
 
         //add a test user:
         ini.setSectionProperty(IniRealm.USERS_SECTION_NAME, "admin", "admin");
@@ -203,6 +218,5 @@ public class IniSecurityManagerFactoryTest {
         //default cache manager's caches:
         assertTrue(mapCache instanceof HashMapCacheManager.HashMapCache);
     }
-
 
 }
