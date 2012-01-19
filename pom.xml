@@ -219,6 +219,7 @@
                     		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                         <excludes>
                             <exclude>**/.externalToolBuilders/*</exclude>
+                            <exclude>**/infinitest.filters</exclude>
                             <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                             <exclude>velocity.log</exclude>
                         </excludes>
@@ -910,6 +911,7 @@
                 		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                     <excludes>
                         <exclude>**/.externalToolBuilders/*</exclude>
+                        <exclude>**/infinitest.filters</exclude>
                         <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                         <exclude>velocity.log</exclude>
                     </excludes>
