@@ -41,9 +41,9 @@
     <inceptionYear>2004</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/trunk</developerConnection>
-        <url>http://svn.apache.org/repos/asf/shiro/trunk</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/branches/1.2.x</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/branches/1.2.x</developerConnection>
+        <url>http://svn.apache.org/repos/asf/shiro/branches/1.2.x</url>
     </scm>
     <issueManagement>
         <system>Jira</system>
