@@ -41,9 +41,9 @@
     <inceptionYear>2004</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.2.0</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.2.0</developerConnection>
-        <url>http://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.2.0</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/tags/1.2.0</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/tags/1.2.0</developerConnection>
+        <url>http://svn.apache.org/repos/asf/shiro/tags/1.2.0</url>
     </scm>
     <issueManagement>
         <system>Jira</system>
