@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -37,8 +37,6 @@
         <module>quartz</module>
         <module>spring</module>
         <module>guice</module>
-        <!-- This module's development is slated for 1.3.0 M1: -->
-        <!-- <module>openid4j</module> -->
         <module>features</module>
         <module>cas</module>
     </modules>

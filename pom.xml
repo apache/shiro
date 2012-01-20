@@ -30,7 +30,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
 
     <name>Apache Shiro</name>
     <url>http://shiro.apache.org/</url>
@@ -80,7 +80,6 @@
         <hsqldb.version>1.8.0.7</hsqldb.version>
         <jdk.version>1.5</jdk.version>
         <jetty.version>6.1.26</jetty.version>
-        <openid4j.version>0.9.5</openid4j.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
         <quartz.version>1.6.1</quartz.version>
@@ -539,15 +538,6 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openid4java</groupId>
-                <artifactId>openid4java-consumer</artifactId>
-                <!--artifactId>openid4java-server</artifactId-->
-                <!--artifactId>openid4java-infocard</artifactId-->
-                <!--artifactId>openid4java-xri</artifactId-->
-                <!--artifactId>openid4java</artifactId-->
-                <version>${openid4j.version}</version>
             </dependency>
             <dependency>
                 <!-- Used for Atlassian Crowd Realm - not required for the framework: -->
