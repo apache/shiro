@@ -21,10 +21,8 @@ package org.apache.shiro.openid4j.realm;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.openid4j.OpenIdService;
-import org.apache.shiro.realm.AuthorizingRealm;
-import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.realm.AuthenticatingRealm;
 
 /**
  * A {@code Realm} implementation that performs OpenID authentication by acting as the &quot;Relying Party&quot;
@@ -32,7 +30,7 @@ import org.apache.shiro.subject.PrincipalCollection;
  *
  * @since 1.2
  */
-public class RelyingPartyRealm extends AuthorizingRealm {
+public class RelyingPartyRealm extends AuthenticatingRealm {
 
     private OpenIdService openIdService;
 
@@ -46,17 +44,6 @@ public class RelyingPartyRealm extends AuthorizingRealm {
 
     public void setOpenIdService(OpenIdService openIdService) {
         this.openIdService = openIdService;
-    }
-
-    /**
-     * Returns {@code null} always because OpenId does not support authorization operations.
-     *
-     * @param principals the primary identifying principals of the AuthorizationInfo that should be retrieved.
-     * @return {@code null} always because OpenId does not support authorization operations.
-     */
-    @Override
-    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return null;
     }
 
     @Override
