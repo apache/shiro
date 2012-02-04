@@ -91,7 +91,7 @@
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>3.1</easymock.version>
-        <gmaven.version>1.3</gmaven.version>
+        <gmaven.version>1.4</gmaven.version>
         <groovy.version>1.8.5</groovy.version>
         <junit.version>4.8.2</junit.version>
 
@@ -331,6 +331,26 @@
                 						<ignore />
                 					</action>
                 				</pluginExecution>
+                        <pluginExecution>
+                          <pluginExecutionFilter>
+                            <groupId>
+                              org.codehaus.gmaven
+                            </groupId>
+                            <artifactId>
+                              gmaven-plugin
+                            </artifactId>
+                            <versionRange>
+                              [1.4,)
+                            </versionRange>
+                            <goals>
+                              <goal>compile</goal>
+                              <goal>testCompile</goal>
+                            </goals>
+                          </pluginExecutionFilter>
+                          <action>
+                            <ignore></ignore>
+                          </action>
+                        </pluginExecution>
                 			</pluginExecutions>
                 		</lifecycleMappingMetadata>
                 	</configuration>
