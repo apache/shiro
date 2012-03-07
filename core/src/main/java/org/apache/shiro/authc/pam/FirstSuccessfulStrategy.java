@@ -45,6 +45,10 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
         return null;
     }
 
+    public boolean continueAfterAttempt( AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo, Throwable t ) {
+        return !( aggregateInfo != null && aggregateInfo == singleRealmInfo );
+    }
+
     /**
      * Returns the specified {@code aggregate} instance if is non null and valid (that is, has principals and they are
      * not empty) immediately, or, if it is null or not valid, the {@code info} argument is returned instead.

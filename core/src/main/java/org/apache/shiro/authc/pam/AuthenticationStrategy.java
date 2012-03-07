@@ -99,6 +99,23 @@ public interface AuthenticationStrategy {
             throws AuthenticationException;
 
     /**
+     * Method invoked by the ModularAuthenticator after a realm is consulted for authentication in order to check if other
+     * realms should also be consulted.
+     *
+     * <p>This method returns returns true if other realms should be consulted for authentication, false if no other
+     * realms should be consulted.</p>
+     *
+     * @param singleRealmInfo the info returned from a single realm.
+     * @param aggregateInfo   the aggregate info representing all realms in a multi-realm environment.
+     * @param t               the Throwable thrown by the Realm during the attempt, or {@code null} if the method returned normally.
+     * @return true if other realms should be consulted for authentication, false otherwise.
+     * @throws AuthenticationException an exception thrown by the Strategy implementation if it wishes the login process
+     *                                 for the associated subject (user) to stop immediately.
+     * @since 1.3
+     */
+    boolean continueAfterAttempt( AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo, Throwable t );
+
+    /**
      * Method invoked by the ModularAuthenticator signifying that all of its configured Realms have been consulted
      * for account data, allowing post-proccessing after all realms have completed.
      *

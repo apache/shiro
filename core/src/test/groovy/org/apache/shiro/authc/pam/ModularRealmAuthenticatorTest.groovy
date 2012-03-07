@@ -22,6 +22,7 @@ import org.apache.shiro.realm.Realm
 import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.authc.*
 import static org.easymock.EasyMock.*
+import static org.easymock.EasyMock.same
 
 /**
  * Unit tests for the {@link ModularRealmAuthenticator} implementation.
@@ -132,11 +133,13 @@ class ModularRealmAuthenticatorTest extends GroovyTestCase {
         expect(realm1.supports(same(token))).andReturn true
         expect(realm1.getAuthenticationInfo(same(token))).andReturn realm1Info
         expect(strategy.afterAttempt(same(realm1), same(token), same(realm1Info), same(aggregate), isNull(Throwable))).andReturn aggregate
+        expect(strategy.continueAfterAttempt(same(realm1Info), same(aggregate), isNull(Throwable))).andReturn true
 
         expect(strategy.beforeAttempt(same(realm2), same(token), same(aggregate))).andReturn aggregate
         expect(realm2.supports(same(token))).andReturn true
         expect(realm2.getAuthenticationInfo(same(token))).andReturn realm2Info
         expect(strategy.afterAttempt(same(realm2), same(token), same(realm2Info), same(aggregate), isNull(Throwable))).andReturn aggregate
+        expect(strategy.continueAfterAttempt(same(realm2Info), same(aggregate), isNull(Throwable))).andReturn true
 
         expect(strategy.afterAllAttempts(same(token), same(aggregate))).andReturn aggregate
 
@@ -170,11 +173,13 @@ class ModularRealmAuthenticatorTest extends GroovyTestCase {
         expect(realm1.supports(same(token))).andReturn true
         expect(realm1.getAuthenticationInfo(same(token))).andReturn realm1Info
         expect(strategy.afterAttempt(same(realm1), same(token), same(realm1Info), same(aggregate), isNull(Throwable))).andReturn aggregate
+        expect(strategy.continueAfterAttempt(same(realm1Info), same(aggregate), isNull(Throwable))).andReturn true
 
         expect(strategy.beforeAttempt(same(realm2), same(token), same(aggregate))).andReturn aggregate
         expect(realm2.supports(same(token))).andReturn true
         expect(realm2.getAuthenticationInfo(same(token))).andThrow authcException
         expect(strategy.afterAttempt(same(realm2), same(token), isNull(AuthenticationInfo), same(aggregate), same(authcException))).andReturn aggregate
+        expect(strategy.continueAfterAttempt(isNull(AuthenticationInfo), same(aggregate), same(authcException))).andReturn true
 
         expect(strategy.afterAllAttempts(same(token), same(aggregate))).andReturn aggregate
 
@@ -190,6 +195,47 @@ class ModularRealmAuthenticatorTest extends GroovyTestCase {
         verify realm1, realm1Info, realm2, token, aggregate, strategy
     }
 
+    void testMultiRealmAuthenticationStrategyDoesNotContinue() {
+
+      def realm1 = createStrictMock(Realm)
+      def realm2 = createStrictMock(Realm)
+      def realm2Info = createStrictMock(AuthenticationInfo)
+      def realm3 = createStrictMock(Realm)
+      def realms = [realm1, realm2, realm3]
+      def token = createStrictMock(AuthenticationToken)
+      def strategy = createStrictMock(AuthenticationStrategy)
+      def aggregate = createStrictMock(AuthenticationInfo)
+
+      expect(strategy.beforeAllAttempts(same(realms), same(token))).andReturn aggregate
+
+      expect(strategy.beforeAttempt(same(realm1), same(token), same(aggregate))).andReturn aggregate
+      expect(realm1.supports(same(token))).andReturn true
+      expect(realm1.getAuthenticationInfo(same(token))).andReturn null
+      expect(strategy.afterAttempt(same(realm1), same(token), isNull(AuthenticationInfo), same(aggregate), isNull(Throwable))).andReturn aggregate
+      expect(strategy.continueAfterAttempt(isNull(AuthenticationInfo), same(aggregate), isNull(Throwable))).andReturn true
+
+      expect(strategy.beforeAttempt(same(realm2), same(token), same(aggregate))).andReturn aggregate
+      expect(realm2.supports(same(token))).andReturn true
+      expect(realm2.getAuthenticationInfo(same(token))).andReturn realm2Info
+      expect(strategy.afterAttempt(same(realm2), same(token), same(realm2Info), same(aggregate),  isNull(Throwable))).andReturn aggregate
+      expect(strategy.continueAfterAttempt(same(realm2Info), same(aggregate), isNull(Throwable))).andReturn false
+
+      // realm 3 should never be called
+
+      expect(strategy.afterAllAttempts(same(token), same(aggregate))).andReturn aggregate
+
+
+      replay realm1, realm2, realm2Info, realm3, token, strategy, aggregate
+
+      ModularRealmAuthenticator mra = new ModularRealmAuthenticator()
+      mra.setAuthenticationStrategy(strategy)
+      mra.realms = realms
+
+      assertSame aggregate, mra.doAuthenticate(token)
+
+      verify realm1, realm2, realm2Info, realm3, token, strategy, aggregate
+
+    }
     void testOnLogout() {
 
         def realm = createStrictMock(LogoutAwareRealm)

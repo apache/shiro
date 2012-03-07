@@ -227,6 +227,12 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
                 aggregate = strategy.afterAttempt(realm, token, info, aggregate, t);
 
+                // check if we should check the next realm, or just stop here.
+                if(!strategy.continueAfterAttempt( info, aggregate, t )) {
+                    log.trace( "Will not consult any other realms for authentication, last realm [{}].", realm );
+                    break;
+                }
+
             } else {
                 log.debug("Realm [{}] does not support token {}.  Skipping realm.", realm, token);
             }

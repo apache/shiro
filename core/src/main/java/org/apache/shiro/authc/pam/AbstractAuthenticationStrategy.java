@@ -67,6 +67,13 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
     }
 
     /**
+     * Base implementation always returns true, to be consistent with versions before Shiro 1.3.
+     */
+    public boolean continueAfterAttempt( AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo, Throwable t ) {
+        return true;
+    }
+
+    /**
      * Merges the specified <code>info</code> argument into the <code>aggregate</code> argument and then returns an
      * aggregate for continued use throughout the login process.
      * <p/>
