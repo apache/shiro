@@ -18,12 +18,15 @@
  */
 package org.apache.shiro.authz;
 
+import org.apache.shiro.ShiroException;
 import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.PermissionResolverAware;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.authz.permission.RolePermissionResolverAware;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +40,11 @@ import java.util.List;
  */
 public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAware, RolePermissionResolverAware {
 
+    /**
+     * Logger
+     */
+    private static final Logger log = LoggerFactory.getLogger( ModularRealmAuthorizer.class );
+    
     /**
      * The realms to consult during any authorization check.
      */
@@ -53,6 +61,13 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
      * to configure different resolvers for different realms.
      */
     protected RolePermissionResolver rolePermissionResolver;
+
+    /**
+     * A boolean which can be set to ignore Exceptions thrown from AuthorizationRealms.  Useful when multiple
+     * realms are configured, and one of them throws Exceptions, and you want other realms to be consulted. <BR/>
+     * NOTE: the default value must be false to keep backwards compatibility.
+     */
+    private boolean ignoreExceptionsFromRealms = false;
 
     /**
      * Default no-argument constructor, does nothing.
@@ -170,6 +185,46 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         applyRolePermissionResolverToRealms();
     }
 
+    /**
+     * Returns true if Exceptions thrown by AuthorizationRealms should be ignored.
+     * If the value is false (the default) the AuthorizationExceptions will propagate back to the caller.
+     *
+     * @return
+     * @since 1.3
+     */
+    public boolean isIgnoreExceptionsFromRealms()
+    {
+        return ignoreExceptionsFromRealms;
+    }
+
+    /**
+     * Sets if the Exceptions thrown from AuthorizationRealms should be ignored.  Useful when multiple
+     * realms are configured, and one of them throws Exceptions, and you want other realms to be consulted. <BR/>
+     * If the value is false (the default) the AuthorizationExceptions will propagate back to the caller.
+     *
+     * @param ignoreExceptionsFromRealms true if Exceptions should be ignored from AuthorizationRealms.
+     * @since 1.3
+     */
+    public void setIgnoreExceptionsFromRealms( boolean ignoreExceptionsFromRealms )
+    {
+        this.ignoreExceptionsFromRealms = ignoreExceptionsFromRealms;
+    }
+
+    /**
+     * Checks if ShiroExceptions thrown from a Realm when checking authz should be ignored.<BR/>
+     * The default implementation just checks the value of isIgnoreExceptionsFromRealms().
+     * @param realm The realm from which the ShiroException was thrown.
+     * @param e The Exception that was thrown by the realm when checking authz.
+     */
+    protected void checkIgnoreExceptionsFromRealm( Realm realm, ShiroException e) {
+        if(isIgnoreExceptionsFromRealms()) {
+            log.trace( "Realm: [{}], caused an exception that will be ignored: {}", new Object[] {realm, e.getMessage(), e } );
+        }
+        else {
+            throw e;
+        }
+    }
+    
 
     /**
      * Sets the internal {@link #getRolePermissionResolver} on any internal configured
@@ -220,8 +275,13 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         assertRealmsConfigured();
         for (Realm realm : getRealms()) {
             if (!(realm instanceof Authorizer)) continue;
-            if (((Authorizer) realm).isPermitted(principals, permission)) {
-                return true;
+            try {
+                if (((Authorizer) realm).isPermitted(principals, permission)) {
+                    return true;
+                }
+            }
+            catch(ShiroException e) {
+                checkIgnoreExceptionsFromRealm(realm, e);
             }
         }
         return false;
@@ -236,8 +296,13 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         assertRealmsConfigured();
         for (Realm realm : getRealms()) {
             if (!(realm instanceof Authorizer)) continue;
-            if (((Authorizer) realm).isPermitted(principals, permission)) {
-                return true;
+            try {
+                if (((Authorizer) realm).isPermitted(principals, permission)) {
+                    return true;
+                }
+            }
+            catch(ShiroException e) {
+                checkIgnoreExceptionsFromRealm(realm, e);
             }
         }
         return false;
@@ -371,8 +436,13 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         assertRealmsConfigured();
         for (Realm realm : getRealms()) {
             if (!(realm instanceof Authorizer)) continue;
-            if (((Authorizer) realm).hasRole(principals, roleIdentifier)) {
-                return true;
+            try {
+                if (((Authorizer) realm).hasRole(principals, roleIdentifier)) {
+                    return true;
+                }
+            }
+            catch(ShiroException e) {
+                checkIgnoreExceptionsFromRealm(realm, e);
             }
         }
         return false;
