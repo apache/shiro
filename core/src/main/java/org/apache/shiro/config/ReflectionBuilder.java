@@ -133,7 +133,7 @@ public class ReflectionBuilder {
         Object currentInstance = objects.get(name);
         if (currentInstance != null) {
             log.info("An instance with name '{}' already exists.  " +
-                    "Redefining this object as a new instance of type []", name, value);
+                    "Redefining this object as a new instance of type {}", name, value);
         }
 
         Object instance;//name with no property, assume right hand side of equals sign is the class name:
