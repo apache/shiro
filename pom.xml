@@ -65,7 +65,7 @@
     <properties>
 
         <!-- non-dependency-based properties: -->
-        <shiro.osgi.importRange>[1.2, 2)</shiro.osgi.importRange>
+        <shiro.osgi.importRange>[1.3, 2)</shiro.osgi.importRange>
 
         <!-- Compile 3rd party dependencies: -->
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
@@ -414,6 +414,7 @@
                 <configuration>
                     <doCheck>false</doCheck>
                     <doUpdate>false</doUpdate>
+                    <revisionOnScmFailure>${project.version}</revisionOnScmFailure>
                 </configuration>
             </plugin>
             <plugin>
@@ -627,7 +628,7 @@
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>jstl</artifactId>
-                <version>1.1.2</version>
+                <version>1.2</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
