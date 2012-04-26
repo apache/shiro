@@ -182,7 +182,7 @@ public class DefaultSubjectDAO implements SubjectDAO {
                 session = subject.getSession();
                 session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, currentPrincipals);
             }
-            //otherwise no session and no principals - nothing to save
+            // otherwise no session and no principals - nothing to save
         } else {
             PrincipalCollection existingPrincipals =
                     (PrincipalCollection) session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
@@ -191,12 +191,23 @@ public class DefaultSubjectDAO implements SubjectDAO {
                 if (!CollectionUtils.isEmpty(existingPrincipals)) {
                     session.removeAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
                 }
-                //otherwise both are null or empty - no need to update the session
+                // otherwise both are null or empty - no need to update the session
             } else {
                 if (!currentPrincipals.equals(existingPrincipals)) {
                     session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, currentPrincipals);
                 }
-                //otherwise they're the same - no need to update the session
+                /*
+                PrincipalCollection previousPrincipals = null;
+                if (subject.isRunAs()) {
+                    previousPrincipals = subject.getPreviousPrincipals();
+                }
+
+                currentPrincipals = CollectionUtils.isEmpty(previousPrincipals) ? currentPrincipals : previousPrincipals;
+                if (currentPrincipals != null && !currentPrincipals.equals(existingPrincipals)) {
+                    session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, currentPrincipals);
+                }
+                 */
+                // otherwise they're the same - no need to update the session
             }
         }
     }
