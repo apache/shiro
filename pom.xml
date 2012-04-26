@@ -393,6 +393,7 @@
                 <configuration>
                     <doCheck>false</doCheck>
                     <doUpdate>false</doUpdate>
+                    <revisionOnScmFailure>${project.version}</revisionOnScmFailure>
                 </configuration>
             </plugin>
             <plugin>
