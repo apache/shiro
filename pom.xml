@@ -348,7 +348,7 @@
                             </goals>
                           </pluginExecutionFilter>
                           <action>
-                            <ignore></ignore>
+                            <ignore/>
                           </action>
                         </pluginExecution>
                 			</pluginExecutions>
@@ -428,6 +428,7 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                         <manifestEntries>
+                            <!--suppress MavenModelInspection -->
                             <SCM-Revision>${buildNumber}</SCM-Revision>
                             <SCM-url>${project.scm.url}</SCM-url>
                         </manifestEntries>
@@ -918,7 +919,6 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <targetJdk>1.5</targetJdk>
                 </configuration>
