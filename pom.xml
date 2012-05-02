@@ -140,8 +140,8 @@
             <name>Les Hazlewood</name>
             <email>lhazlewood@apache.org</email>
             <url>http://www.leshazlewood.com</url>
-            <organization>Katasoft</organization>
-            <organizationUrl>http://www.katasoft.com</organizationUrl>
+            <organization>Stormpath</organization>
+            <organizationUrl>http://www.stormpath.com</organizationUrl>
             <timezone>-8</timezone>
         </developer>
         <developer>
