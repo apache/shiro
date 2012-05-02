@@ -41,7 +41,7 @@ import org.apache.shiro.util.ByteSource;
  * Secure hashing strategies often employ multiple hash iterations to slow down the hashing process.  This technique
  * is usually used for password hashing, since the longer it takes to compute a password hash, the longer it would
  * take for an attacker to compromise a password.  This
- * <a href="http://www.katasoft.com/blog/2011/04/04/strong-password-hashing-apache-shiro">Katasoft blog article</a>
+ * <a href="http://www.stormpath.com/blog/strong-password-hashing-apache-shiro">blog article</a>
  * explains in greater detail why this is useful, as well as information on how many iterations is 'enough'.
  * <p/>
  * You may set the number of hash iterations via the {@link #setHashIterations(int)} property.  The default is
