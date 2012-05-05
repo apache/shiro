@@ -201,10 +201,11 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
             Serializable sessionId = context.getSessionId();
             ServletRequest request = WebUtils.getRequest(context);
             ServletResponse response = WebUtils.getResponse(context);
-            return new WebSessionKey(sessionId, request, response);
+            WebSessionKey wsk = new WebSessionKey(sessionId, request, response);
+            wsk.setUpdateDeferred(context.isSessionUpdateDeferred());
+            return wsk;
         } else {
             return super.getSessionKey(context);
-
         }
     }
 

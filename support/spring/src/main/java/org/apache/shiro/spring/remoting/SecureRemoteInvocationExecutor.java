@@ -20,8 +20,11 @@ package org.apache.shiro.spring.remoting;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.Flushable;
 import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.remoting.support.DefaultRemoteInvocationExecutor;
@@ -59,6 +62,8 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
      */
     private SecurityManager securityManager;
 
+    private boolean isSessionUpdateDeferred = true; //since 1.3
+
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
@@ -69,6 +74,18 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
 
     public void setSecurityManager(org.apache.shiro.mgt.SecurityManager securityManager) {
         this.securityManager = securityManager;
+    }
+
+    public boolean isSessionUpdateDeferred() {
+        return isSessionUpdateDeferred;
+    }
+
+    public void setSessionUpdateDeferred(boolean sessionUpdateDeferred) {
+        isSessionUpdateDeferred = sessionUpdateDeferred;
+    }
+
+    protected boolean isSessionUpdateDeferred(RemoteInvocation ri, Object targetObject) {
+        return isSessionUpdateDeferred();
     }
 
     /*--------------------------------------------
@@ -100,12 +117,29 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
                 }
             }
 
+            boolean sessionUpdateDeferred = isSessionUpdateDeferred(invocation, targetObject);
+            builder.sessionUpdateDeferred(sessionUpdateDeferred);
+
             Subject subject = builder.buildSubject();
-            return subject.execute(new Callable() {
-                public Object call() throws Exception {
-                    return SecureRemoteInvocationExecutor.super.invoke(invocation, targetObject);
+
+            try {
+                return subject.execute(new Callable() {
+                    public Object call() throws Exception {
+                        return SecureRemoteInvocationExecutor.super.invoke(invocation, targetObject);
+                    }
+                });
+            } finally {
+                try {
+                    if (sessionUpdateDeferred) {
+                        Session session = subject.getSession(false);
+                        if (session instanceof Flushable) {
+                            ((Flushable)session).flush();
+                        }
+                    }
+                } finally {
+                    ThreadContext.remove();
                 }
-            });
+            }
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
             if (cause instanceof NoSuchMethodException) {

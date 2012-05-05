@@ -20,8 +20,10 @@ package org.apache.shiro.web.servlet;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.Flushable;
 import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
@@ -289,7 +291,9 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * @since 1.0
      */
     protected WebSubject createSubject(ServletRequest request, ServletResponse response) {
-        return new WebSubject.Builder(getSecurityManager(), request, response).buildWebSubject();
+        WebSubject.Builder builder = new WebSubject.Builder(getSecurityManager(), request, response);
+        builder.sessionUpdateDeferred(true); //added in 1.3 - MUST be accompanied by finally 'flush'.
+        return builder.buildWebSubject();
     }
 
     /**
@@ -358,14 +362,26 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
 
             final Subject subject = createSubject(request, response);
 
-            //noinspection unchecked
-            subject.execute(new Callable() {
-                public Object call() throws Exception {
-                    updateSessionLastAccessTime(request, response);
-                    executeChain(request, response, chain);
-                    return null;
-                }
-            });
+            try {
+                //noinspection unchecked
+                subject.execute(new Callable() {
+                    public Object call() throws Exception {
+                        try {
+                            updateSessionLastAccessTime(request, response);
+                            executeChain(request, response, chain);
+                            return null;
+                        } finally {
+                            Session session = subject.getSession(false);
+                            if (session instanceof Flushable) {
+                                ((Flushable) session).flush();
+                            }
+                        }
+                    }
+                });
+            } finally {
+                ThreadContext.remove(); //silence innocuous Tomcat ThreadLocal warnings
+            }
+
         } catch (ExecutionException ex) {
             t = ex.getCause();
         } catch (Throwable throwable) {

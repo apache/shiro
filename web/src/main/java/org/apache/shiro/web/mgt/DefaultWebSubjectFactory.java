@@ -53,13 +53,14 @@ public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
         SecurityManager securityManager = wsc.resolveSecurityManager();
         Session session = wsc.resolveSession();
         boolean sessionEnabled = wsc.isSessionCreationEnabled();
+        boolean sessionUpdateDeferred = wsc.isSessionUpdateDeferred();
         PrincipalCollection principals = wsc.resolvePrincipals();
         boolean authenticated = wsc.resolveAuthenticated();
         String host = wsc.resolveHost();
         ServletRequest request = wsc.resolveServletRequest();
         ServletResponse response = wsc.resolveServletResponse();
 
-        return new WebDelegatingSubject(principals, authenticated, host, session, sessionEnabled,
+        return new WebDelegatingSubject(principals, authenticated, host, session, sessionEnabled, sessionUpdateDeferred,
                 request, response, securityManager);
     }
 
@@ -72,7 +73,7 @@ public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
                                          String host, Session session,
                                          ServletRequest request, ServletResponse response,
                                          SecurityManager securityManager) {
-        return new WebDelegatingSubject(principals, authenticated, host, session, true,
+        return new WebDelegatingSubject(principals, authenticated, host, session, true, false,
                 request, response, securityManager);
     }
 }

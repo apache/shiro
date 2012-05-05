@@ -31,16 +31,16 @@ import java.util.Date;
  * This implementation is basically a proxy to a server-side {@link NativeSessionManager NativeSessionManager},
  * which will return the proper results for each method call.
  * <p/>
- * <p>A <tt>DelegatingSession</tt> will cache data when appropriate to avoid a remote method invocation,
+ * A <tt>DelegatingSession</tt> will cache data when appropriate to avoid a remote method invocation,
  * only communicating with the server when necessary.
  * <p/>
- * <p>Of course, if used in-process with a NativeSessionManager business POJO, as might be the case in a
+ * Of course, if used in-process with a NativeSessionManager business POJO, as might be the case in a
  * web-based application where the web classes and server-side business pojos exist in the same
  * JVM, a remote method call will not be incurred.
  *
  * @since 0.1
  */
-public class DelegatingSession implements Session, Serializable {
+public class DelegatingSession implements Session, Flushable, Serializable {
 
     //TODO - complete JavaDoc
 
@@ -157,5 +157,18 @@ public class DelegatingSession implements Session, Serializable {
      */
     public Object removeAttribute(Object attributeKey) throws InvalidSessionException {
         return sessionManager.removeAttribute(this.key, attributeKey);
+    }
+
+    /**
+     * If the backing SessionManager is a {@link FlushableSessionManager}, this method calls
+     * sessionManager.{@link FlushableSessionManager#flush(SessionKey) flush(sessionKey)}, otherwise this implementation
+     * does nothing.
+     *
+     * @since 1.3
+     */
+    public void flush() {
+        if (sessionManager instanceof FlushableSessionManager) {
+            ((FlushableSessionManager) sessionManager).flush(this.key);
+        }
     }
 }

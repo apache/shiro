@@ -234,4 +234,16 @@ public interface SubjectContext extends Map<String, Object> {
     void setHost(String host);
 
     String resolveHost();
+
+    /**
+     * @since 1.3
+     * @see org.apache.shiro.session.mgt.UpdateDeferrable UpdateDeferrable
+     */
+    boolean isSessionUpdateDeferred();
+
+    /**
+     * @since 1.3
+     * @see org.apache.shiro.session.mgt.UpdateDeferrable UpdateDeferrable
+     */
+    void setSessionUpdateDeferred(boolean deferred);
 }

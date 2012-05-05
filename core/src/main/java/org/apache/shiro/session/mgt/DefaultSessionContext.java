@@ -30,12 +30,13 @@ import java.util.Map;
  *
  * @since 1.0
  */
-public class DefaultSessionContext extends MapContext implements SessionContext {
+public class DefaultSessionContext extends MapContext implements SessionContext, UpdateDeferrable {
 
     private static final long serialVersionUID = -1424160751361252966L;
 
     private static final String HOST = DefaultSessionContext.class.getName() + ".HOST";
     private static final String SESSION_ID = DefaultSessionContext.class.getName() + ".SESSION_ID";
+    private static final String UPDATE_DEFERRED = DefaultSessionContext.class.getName() + ".UPDATE_DEFERRED";
 
     public DefaultSessionContext() {
         super();
@@ -61,5 +62,15 @@ public class DefaultSessionContext extends MapContext implements SessionContext 
 
     public void setSessionId(Serializable sessionId) {
         nullSafePut(SESSION_ID, sessionId);
+    }
+
+    public boolean isUpdateDeferred() {
+        Boolean bool = getTypedValue(UPDATE_DEFERRED, Boolean.class);
+        //noinspection UnnecessaryUnboxing
+        return bool != null && bool.booleanValue();
+    }
+
+    public void setUpdateDeferred(boolean deferred) {
+        nullSafePut(UPDATE_DEFERRED, deferred);
     }
 }

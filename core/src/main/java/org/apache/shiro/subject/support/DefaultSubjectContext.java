@@ -77,6 +77,8 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
      */
     public static final String AUTHENTICATED_SESSION_KEY = DefaultSubjectContext.class.getName() + "_AUTHENTICATED_SESSION_KEY";
 
+    public static final String SESSION_UPDATE_DEFERRED = DefaultSubjectContext.class.getName() + ".SESSION_UPDATE_DEFERRED";
+
     private static final transient Logger log = LoggerFactory.getLogger(DefaultSubjectContext.class);
 
     public DefaultSubjectContext() {
@@ -272,5 +274,14 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
         }
 
         return host;
+    }
+
+    public boolean isSessionUpdateDeferred() {
+        Boolean bool = getTypedValue(SESSION_UPDATE_DEFERRED, Boolean.class);
+        return bool != null && bool;
+    }
+
+    public void setSessionUpdateDeferred(boolean deferred) {
+        nullSafePut(SESSION_UPDATE_DEFERRED, deferred);
     }
 }

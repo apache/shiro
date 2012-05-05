@@ -54,7 +54,10 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
 
     public Session start(SessionContext context) {
         Session session = createSession(context);
-        applyGlobalSessionTimeout(session);
+        session.setTimeout(getGlobalSessionTimeout()); //todo this configuration in Session creation
+        if (isUpdateImmediate(context)) {
+            onChange(session);
+        }
         onStart(session, context);
         notifyStart(session);
         //Don't expose the EIS-tier Session object to the client-tier:
@@ -76,11 +79,6 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
      *                                caller to start sessions.
      */
     protected abstract Session createSession(SessionContext context) throws AuthorizationException;
-
-    protected void applyGlobalSessionTimeout(Session session) {
-        session.setTimeout(getGlobalSessionTimeout());
-        onChange(session);
-    }
 
     /**
      * Template method that allows subclasses to react to a new session being created.
@@ -117,11 +115,45 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
     protected abstract Session doGetSession(SessionKey key) throws InvalidSessionException;
 
     protected Session createExposedSession(Session session, SessionContext context) {
-        return new DelegatingSession(this, new DefaultSessionKey(session.getId()));
+        SessionKey sessionKey = createSessionKey(session, context);
+        return new DelegatingSession(this, sessionKey);
+    }
+
+    //since 1.3
+    protected SessionKey createSessionKey(Session session, SessionContext context) {
+        SessionKey key = doCreateSessionKey(session, context);
+        if (key instanceof UpdateDeferrable && context instanceof UpdateDeferrable) {
+            UpdateDeferrable udKey = (UpdateDeferrable)key;
+            UpdateDeferrable udContext = (UpdateDeferrable)context;
+            udKey.setUpdateDeferred(udContext.isUpdateDeferred());
+        }
+        return key;
+    }
+
+    //since 1.3
+    protected SessionKey createSessionKey(Session session, SessionKey oldKey) {
+        SessionKey newKey = doCreateSessionKey(session, oldKey);
+        if (newKey instanceof UpdateDeferrable && oldKey instanceof UpdateDeferrable) {
+            UpdateDeferrable newKeyUdDeferrable = (UpdateDeferrable)newKey;
+            UpdateDeferrable oldKeyUdDeferrable = (UpdateDeferrable)oldKey;
+            newKeyUdDeferrable.setUpdateDeferred(oldKeyUdDeferrable.isUpdateDeferred());
+        }
+        return newKey;
+    }
+
+    //since 1.3
+    protected SessionKey doCreateSessionKey(Session session, SessionContext context) {
+        return new DefaultSessionKey(session.getId());
+    }
+
+    //since 1.3
+    protected SessionKey doCreateSessionKey(Session session, SessionKey sessionKey) {
+        return new DefaultSessionKey(session.getId());
     }
 
     protected Session createExposedSession(Session session, SessionKey key) {
-        return new DelegatingSession(this, new DefaultSessionKey(session.getId()));
+        SessionKey sessionKey = createSessionKey(session, key);
+        return new DelegatingSession(this, sessionKey);
     }
 
     /**
@@ -181,13 +213,17 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
     public void setTimeout(SessionKey key, long maxIdleTimeInMillis) throws InvalidSessionException {
         Session s = lookupRequiredSession(key);
         s.setTimeout(maxIdleTimeInMillis);
-        onChange(s);
+        if (isUpdateImmediate(key)) {
+            onChange(s);
+        }
     }
 
     public void touch(SessionKey key) throws InvalidSessionException {
         Session s = lookupRequiredSession(key);
         s.touch();
-        onChange(s);
+        if (isUpdateImmediate(key)) {
+            onChange(s);
+        }
     }
 
     public String getHost(SessionKey key) {
@@ -212,14 +248,26 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
         } else {
             Session s = lookupRequiredSession(sessionKey);
             s.setAttribute(attributeKey, value);
-            onChange(s);
+            if (isUpdateImmediate(sessionKey)) {
+                onChange(s);
+            }
         }
+    }
+
+    //since 1.3
+    protected final boolean isUpdateDeferred(Object object) {
+        return object instanceof UpdateDeferrable && ((UpdateDeferrable)object).isUpdateDeferred();
+    }
+
+    //since 1.3
+    protected final boolean isUpdateImmediate(Object object) {
+        return !isUpdateDeferred(object);
     }
 
     public Object removeAttribute(SessionKey sessionKey, Object attributeKey) throws InvalidSessionException {
         Session s = lookupRequiredSession(sessionKey);
         Object removed = s.removeAttribute(attributeKey);
-        if (removed != null) {
+        if (removed != null && isUpdateImmediate(sessionKey)) {
             onChange(s);
         }
         return removed;

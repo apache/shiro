@@ -459,9 +459,13 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
     }
 
     protected SessionKey getSessionKey(SubjectContext context) {
+        DefaultSessionKey sessionKey = null;
         Serializable sessionId = context.getSessionId();
         if (sessionId != null) {
-            return new DefaultSessionKey(sessionId);
+            sessionKey = new DefaultSessionKey(sessionId);
+        }
+        if (sessionKey != null) {
+            sessionKey.setUpdateDeferred(context.isSessionUpdateDeferred());
         }
         return null;
     }

@@ -30,6 +30,7 @@ import org.apache.shiro.session.ProxiedSession;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DefaultSessionContext;
+import org.apache.shiro.session.mgt.Flushable;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -79,10 +80,9 @@ public class DelegatingSubject implements Subject {
     protected boolean authenticated;
     protected String host;
     protected Session session;
-    /**
-     * @since 1.2
-     */
-    protected boolean sessionCreationEnabled;
+    protected boolean sessionCreationEnabled; //since 1.2
+    protected boolean sessionUpdateDeferred; //since 1.3
+
     private List<PrincipalCollection> runAsPrincipals; //supports assumed identities (aka 'run as')
 
     protected transient SecurityManager securityManager;
@@ -99,6 +99,13 @@ public class DelegatingSubject implements Subject {
     //since 1.2
     public DelegatingSubject(PrincipalCollection principals, boolean authenticated, String host,
                              Session session, boolean sessionCreationEnabled, SecurityManager securityManager) {
+        this(principals, authenticated, host, session, sessionCreationEnabled, false, securityManager);
+    }
+
+    //since 1.3
+    public DelegatingSubject(PrincipalCollection principals, boolean authenticated, String host,
+                             Session session, boolean sessionCreationEnabled, boolean sessionUpdateDeferred,
+                             SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager argument cannot be null.");
         }
@@ -111,13 +118,18 @@ public class DelegatingSubject implements Subject {
             this.runAsPrincipals = getRunAsPrincipals(this.session);
         }
         this.sessionCreationEnabled = sessionCreationEnabled;
+        this.sessionUpdateDeferred = sessionUpdateDeferred;
     }
 
     protected Session decorate(Session session) {
         if (session == null) {
             throw new IllegalArgumentException("session cannot be null");
         }
-        return new StoppingAwareProxiedSession(session, this);
+        if (session instanceof Flushable) {
+            return new FlushableStoppingAwareProxiedSession(session, this);
+        } else {
+            return new StoppingAwareProxiedSession(session, this);
+        }
     }
 
     public SecurityManager getSecurityManager() {
@@ -310,6 +322,10 @@ public class DelegatingSubject implements Subject {
         return this.sessionCreationEnabled;
     }
 
+    protected boolean isSessionUpdateDeferred() {
+        return this.sessionUpdateDeferred;
+    }
+
     public Session getSession() {
         return getSession(true);
     }
@@ -340,9 +356,13 @@ public class DelegatingSubject implements Subject {
     }
 
     protected SessionContext createSessionContext() {
-        SessionContext sessionContext = new DefaultSessionContext();
+        DefaultSessionContext sessionContext = new DefaultSessionContext();
         if (StringUtils.hasText(host)) {
             sessionContext.setHost(host);
+        }
+        //added for 1.3 (see SHIRO-317):
+        if (isSessionUpdateDeferred()) {
+            sessionContext.setUpdateDeferred(isSessionUpdateDeferred());
         }
         return sessionContext;
     }
@@ -418,6 +438,27 @@ public class DelegatingSubject implements Subject {
         }
     }
 
+    private class FlushableStoppingAwareProxiedSession extends StoppingAwareProxiedSession implements Flushable {
+
+        private final DelegatingSubject owner;
+
+        private FlushableStoppingAwareProxiedSession(Session target, DelegatingSubject owningSubject) {
+            super(target, owningSubject);
+            if (!(target instanceof Flushable)) {
+                throw new IllegalStateException("Target session must be Flushable");
+            }
+            owner = owningSubject;
+        }
+
+        public void stop() throws InvalidSessionException {
+            super.stop();
+            owner.sessionStopped();
+        }
+
+        public void flush() {
+            ((Flushable)delegate).flush();
+        }
+    }
 
     // ======================================
     // 'Run As' support implementations

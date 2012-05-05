@@ -21,14 +21,12 @@ package org.apache.shiro.web.session.mgt;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.DefaultSessionManager;
-import org.apache.shiro.session.mgt.DelegatingSession;
-import org.apache.shiro.session.mgt.SessionContext;
-import org.apache.shiro.session.mgt.SessionKey;
+import org.apache.shiro.session.mgt.*;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.apache.shiro.web.util.RequestPairSource;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,25 +132,26 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         return id;
     }
 
-    protected Session createExposedSession(Session session, SessionContext context) {
+    @Override
+    protected SessionKey doCreateSessionKey(Session session, SessionContext context) {
         if (!WebUtils.isWeb(context)) {
-            return super.createExposedSession(session, context);
+            return super.doCreateSessionKey(session, context);
         }
-        ServletRequest request = WebUtils.getRequest(context);
-        ServletResponse response = WebUtils.getResponse(context);
-        SessionKey key = new WebSessionKey(session.getId(), request, response);
-        return new DelegatingSession(this, key);
+        return createSessionKey(session, (RequestPairSource)context);
     }
 
-    protected Session createExposedSession(Session session, SessionKey key) {
+    @Override
+    protected SessionKey doCreateSessionKey(Session session, SessionKey key) {
         if (!WebUtils.isWeb(key)) {
-            return super.createExposedSession(session, key);
+            return super.doCreateSessionKey(session, key);
         }
+        return createSessionKey(session, (RequestPairSource)key);
+    }
 
-        ServletRequest request = WebUtils.getRequest(key);
-        ServletResponse response = WebUtils.getResponse(key);
-        SessionKey sessionKey = new WebSessionKey(session.getId(), request, response);
-        return new DelegatingSession(this, sessionKey);
+    protected SessionKey createSessionKey(Session session, RequestPairSource rpSource) {
+        ServletRequest request = WebUtils.getRequest(rpSource);
+        ServletResponse response = WebUtils.getResponse(rpSource);
+        return new WebSessionKey(session.getId(), request, response);
     }
 
     /**

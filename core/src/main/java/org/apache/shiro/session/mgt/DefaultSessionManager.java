@@ -20,10 +20,12 @@ package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.CacheManagerAware;
+import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +40,14 @@ import java.util.Date;
  *
  * @since 0.1
  */
-public class DefaultSessionManager extends AbstractValidatingSessionManager implements CacheManagerAware {
+public class DefaultSessionManager extends AbstractValidatingSessionManager implements CacheManagerAware, FlushableSessionManager {
 
     //TODO - complete JavaDoc
 
     private static final Logger log = LoggerFactory.getLogger(DefaultSessionManager.class);
+
+    //since 1.3
+    private static final String SESSION_THREAD_CACHE_KEY = DefaultSessionManager.class.getName() + ".SESSION_THREAD_CACHE_KEY";
 
     private SessionFactory sessionFactory;
 
@@ -156,6 +161,9 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
             log.trace("Creating session for host {}", s.getHost());
         }
         create(s);
+        if (isUpdateDeferred(context)) {
+            addToFirstLevelCache(s); //since 1.3
+        }
         return s;
     }
 
@@ -192,6 +200,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         if (isDeleteInvalidSessions()) {
             delete(session);
         }
+        removeSessionFromFirstLevelCache(); //since 1.3
     }
 
     protected void onExpiration(Session session) {
@@ -206,9 +215,11 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         if (isDeleteInvalidSessions()) {
             delete(session);
         }
+        removeSessionFromFirstLevelCache(); //since 1.3
     }
 
     protected void onChange(Session session) {
+        log.trace("Updating session {}", session);
         sessionDAO.update(session);
     }
 
@@ -219,7 +230,22 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
                     "session could not be found.", sessionKey);
             return null;
         }
-        Session s = retrieveSessionFromDataSource(sessionId);
+
+        Session s = null;
+
+        boolean updateDeferred = false;
+        if (sessionKey instanceof UpdateDeferrable && ((UpdateDeferrable)sessionKey).isUpdateDeferred()) {
+            updateDeferred = true;
+        }
+        if (updateDeferred) {
+            s = retrieveSessionFromFirstLevelCache(sessionId);
+        }
+        if (s == null) {
+            s = retrieveSessionFromDataSource(sessionId);
+            if (s != null && updateDeferred) {
+                addToFirstLevelCache(s);
+            }
+        }
         if (s == null) {
             //session ID was provided, meaning one is expected to be found, but we couldn't find one:
             String msg = "Could not find session with ID [" + sessionId + "]";
@@ -232,7 +258,35 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         return sessionKey.getSessionId();
     }
 
+    //since 1.3
+    protected final void addToFirstLevelCache(Session session) {
+        ThreadContext.put(SESSION_THREAD_CACHE_KEY, session);
+    }
+
+    //since 1.3
+    protected final Session retrieveSessionFromFirstLevelCache(Serializable sessionId) {
+        Session session = (Session) ThreadContext.get(SESSION_THREAD_CACHE_KEY);
+        if (session != null && sessionId.equals(session.getId())) {
+            return session;
+        }
+        return null;
+    }
+
+    protected final void removeSessionFromFirstLevelCache() {
+        ThreadContext.remove(SESSION_THREAD_CACHE_KEY);
+    }
+
+    public void flush(SessionKey key) throws InvalidSessionException {
+        Serializable sessionId = getSessionId(key);
+        Session session = retrieveSessionFromFirstLevelCache(sessionId);
+        if (session != null) {
+            log.trace("Flushing session to data store.  Session id: {}", session.getId());
+            sessionDAO.update(session);
+        }
+    }
+
     protected Session retrieveSessionFromDataSource(Serializable sessionId) throws UnknownSessionException {
+        log.trace("Retrieving session from data source. Session id: {}", sessionId);
         return sessionDAO.readSession(sessionId);
     }
 
@@ -244,5 +298,4 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         Collection<Session> active = sessionDAO.getActiveSessions();
         return active != null ? active : Collections.<Session>emptySet();
     }
-
 }

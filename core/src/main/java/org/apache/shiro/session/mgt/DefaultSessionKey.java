@@ -24,9 +24,11 @@ import java.io.Serializable;
  *
  * @since 1.0
  */
-public class DefaultSessionKey implements SessionKey, Serializable {
+public class DefaultSessionKey implements SessionKey, Serializable, UpdateDeferrable {
 
     private Serializable sessionId;
+
+    private boolean updateDeferred;
 
     public DefaultSessionKey() {
     }
@@ -41,5 +43,13 @@ public class DefaultSessionKey implements SessionKey, Serializable {
 
     public Serializable getSessionId() {
         return this.sessionId;
+    }
+
+    public boolean isUpdateDeferred() {
+        return this.updateDeferred;
+    }
+
+    public void setUpdateDeferred(boolean deferred) {
+        this.updateDeferred = deferred;
     }
 }

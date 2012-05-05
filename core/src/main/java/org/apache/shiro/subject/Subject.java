@@ -52,7 +52,7 @@ import java.util.concurrent.Callable;
  * simply convert these String values to {@link Permission Permission} instances and then just call the corresponding
  * type-safe method.  (Shiro's default implementations do String-to-Permission conversion for these methods using
  * {@link org.apache.shiro.authz.permission.PermissionResolver PermissionResolver}s.)
- * <p/>
+ *
  * These overloaded *Permission methods forgo type-saftey for the benefit of convenience and simplicity,
  * so you should choose which ones to use based on your preferences and needs.
  *
@@ -309,7 +309,7 @@ public interface Subject {
      *
      * @param roleIdentifiers roleIdentifiers the application-specific role identifiers to check (usually role ids or role names).
      * @throws AuthorizationException org.apache.shiro.authz.AuthorizationException
-     *          if this Subject does not have all of the specified roles.
+     *                                if this Subject does not have all of the specified roles.
      * @since 1.1.0
      */
     void checkRoles(String... roleIdentifiers) throws AuthorizationException;
@@ -356,13 +356,13 @@ public interface Subject {
      * this method act as the logical equivalent to this code:
      * <pre>
      * {@link #getPrincipal() getPrincipal()} != null && !{@link #isAuthenticated() isAuthenticated()}</pre>
-     * <p/>
+     *
      * Note as indicated by the above code example, if a {@code Subject} is remembered, they are
      * <em>NOT</em> considered authenticated.  A check against {@link #isAuthenticated() isAuthenticated()} is a more
      * strict check than that reflected by this method.  For example, a check to see if a subject can access financial
      * information should almost always depend on {@link #isAuthenticated() isAuthenticated()} to <em>guarantee</em> a
      * verified identity, and not this method.
-     * <p/>
+     *
      * Once the subject is authenticated, they are no longer considered only remembered because their identity would
      * have been verified during the current session.
      * <h4>Remembered vs Authenticated</h4>
@@ -370,23 +370,23 @@ public interface Subject {
      * the remembered identity gives the system an idea who that user probably is, but in reality, has no way of
      * absolutely <em>guaranteeing</em> if the remembered {@code Subject} represents the user currently
      * using the application.
-     * <p/>
+     *
      * So although many parts of the application can still perform user-specific logic based on the remembered
      * {@link #getPrincipals() principals}, such as customized views, it should never perform highly-sensitive
      * operations until the user has legitimately verified their identity by executing a successful authentication
      * attempt.
-     * <p/>
+     *
      * We see this paradigm all over the web, and we will use <a href="http://www.amazon.com">Amazon.com</a> as an
      * example:
-     * <p/>
+     *
      * When you visit Amazon.com and perform a login and ask it to 'remember me', it will set a cookie with your
      * identity.  If you don't log out and your session expires, and you come back, say the next day, Amazon still knows
      * who you <em>probably</em> are: you still see all of your book and movie recommendations and similar user-specific
      * features since these are based on your (remembered) user id.
-     * <p/>
+     *
      * BUT, if you try to do something sensitive, such as access your account's billing data, Amazon forces you
      * to do an actual log-in, requiring your username and password.
-     * <p/>
+     *
      * This is because although amazon.com assumed your identity from 'remember me', it recognized that you were not
      * actually authenticated.  The only way to really guarantee you are who you say you are, and therefore allow you
      * access to sensitive account data, is to force you to perform an actual successful authentication.  You can
@@ -585,18 +585,18 @@ public interface Subject {
      * specify the exact {@code SecurityManager} instance to be used by the additional
      * <code>Subject.{@link #Builder(org.apache.shiro.mgt.SecurityManager) Builder(securityManager)}</code>
      * constructor if desired.
-     * <p/>
+     *
      * All other methods may be called before the {@link #buildSubject() buildSubject()} method to
      * provide context on how to construct the {@code Subject} instance.  For example, if you have a session id and
      * want to acquire the {@code Subject} that 'owns' that session (assuming the session exists and is not expired):
      * <pre>
      * Subject subject = new Subject.Builder().sessionId(sessionId).buildSubject();</pre>
-     * <p/>
+     *
      * Similarly, if you want a {@code Subject} instance reflecting a certain identity:
      * <pre>
      * PrincipalCollection principals = new SimplePrincipalCollection("username", <em>yourRealmName</em>);
      * Subject subject = new Subject.Builder().principals(principals).build();</pre>
-     * <p/>
+     *
      * <b>Note*</b> that the returned {@code Subject} instance is <b>not</b> automatically bound to the application (thread)
      * for further use.  That is,
      * {@link org.apache.shiro.SecurityUtils SecurityUtils}.{@link org.apache.shiro.SecurityUtils#getSubject() getSubject()}
@@ -675,15 +675,15 @@ public interface Subject {
          * session alone.  In other words, this is almost always sufficient:
          * <pre>
          * new Subject.Builder().sessionId(sessionId).buildSubject();</pre>
-         * <p/>
+         *
          * <b>Although simple in concept, this method provides very powerful functionality previously absent in almost
          * all Java environments:</b>
-         * <p/>
+         *
          * The ability to reference a {@code Subject} and their server-side session
          * <em>across clients of different mediums</em> such as web applications, Java applets,
          * standalone C# clients over XML-RPC and/or SOAP, and many others. This is a <em>huge</em>
          * benefit in heterogeneous enterprise applications.
-         * <p/>
+         *
          * To maintain session integrity across client mediums, the {@code sessionId} <b>must</b> be transmitted
          * to all client mediums securely (e.g. over SSL) to prevent man-in-the-middle attacks.  This
          * is nothing new - all web applications are susceptible to the same problem when transmitting
@@ -740,7 +740,7 @@ public interface Subject {
          * <pre>
          * PrincipalCollection identity = new {@link org.apache.shiro.subject.SimplePrincipalCollection#SimplePrincipalCollection(Object, String) SimplePrincipalCollection}(&quot;jsmith&quot;, &quot;myRealm&quot;);
          * Subject jsmith = new Subject.Builder().principals(identity).buildSubject();</pre>
-         * <p/>
+         *
          * Similarly, if your application's unique identifier for users is a {@code long} value (such as might be used
          * as a primary key in a relational database) and you were using a {@code JDBC}
          * {@code Realm} named, (unimaginatively) &quot;jdbcRealm&quot;, you might create the Subject
@@ -790,6 +790,43 @@ public interface Subject {
          */
         public Builder authenticated(boolean authenticated) {
             this.subjectContext.setAuthenticated(authenticated);
+            return this;
+        }
+
+        /**
+         * Sets whether or not any session associated with the built subject will have state changes deferred until
+         * a caller can explicitly {@code flush()} the session.
+         * <p/>
+         * Setting this to be true is a performance enhancement, typically used during web requests and/or invocation
+         * chains but <b>REQUIRES THE FOLLOWING</b>:
+         * <p/>
+         * The caller building the subject <em>MUST</em> {@link org.apache.shiro.session.mgt.Flushable#flush() flush} any
+         * session modifications at the end of the request/invocation chain.  For example:
+         * <pre>
+         *     final Subject subject = new Subject.Builder(...).sessionUpdateDeferred(true).... .buildSubject();
+         *
+         *     try {
+         *         subject.execute(...);
+         *     } finally {
+         *         Session session = subject.getSession(false);
+         *         if (session instanceof Flushable) {
+         *             ((Flushable)session).flush();
+         *         }
+         *     }
+         * </pre>
+         * <p/>
+         * The flush() call MUST be called to persist any session state changes during the execution or the session
+         * will never be updated.
+         *
+         * @param deferred {@code true} to defer session updates until flush may be called, {@code false} to ensure
+         *                 updates are persisted as they occur.
+         * @return whether or not any session associated with the built subject will have state changes deferred until
+         *         a caller can explicitly {@code flush()} the session.
+         * @see org.apache.shiro.session.mgt.UpdateDeferrable#isUpdateDeferred()
+         * @since 1.3
+         */
+        public Builder sessionUpdateDeferred(boolean deferred) {
+            this.subjectContext.setSessionUpdateDeferred(deferred);
             return this;
         }
 
@@ -846,5 +883,4 @@ public interface Subject {
             return this.securityManager.createSubject(this.subjectContext);
         }
     }
-
 }

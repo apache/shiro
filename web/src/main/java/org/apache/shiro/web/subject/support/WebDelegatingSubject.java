@@ -40,24 +40,32 @@ import javax.servlet.ServletResponse;
  */
 public class WebDelegatingSubject extends DelegatingSubject implements WebSubject {
 
-    private static final long serialVersionUID = -1655724323350159250L;
+    private final transient ServletRequest servletRequest;
+    private final transient ServletResponse servletResponse;
 
-    private final ServletRequest servletRequest;
-    private final ServletResponse servletResponse;
-
+    @SuppressWarnings("UnusedDeclaration") //should keep for backwards compatibility
     public WebDelegatingSubject(PrincipalCollection principals, boolean authenticated,
                                 String host, Session session,
                                 ServletRequest request, ServletResponse response,
                                 SecurityManager securityManager) {
-        this(principals, authenticated, host, session, true, request, response, securityManager);
+        this(principals, authenticated, host, session, true, false, request, response, securityManager);
     }
 
     //since 1.2
+    @SuppressWarnings("UnusedDeclaration") //should keep for backwards compatibility
     public WebDelegatingSubject(PrincipalCollection principals, boolean authenticated,
                                 String host, Session session, boolean sessionEnabled,
                                 ServletRequest request, ServletResponse response,
                                 SecurityManager securityManager) {
-        super(principals, authenticated, host, session, sessionEnabled, securityManager);
+        this(principals, authenticated, host, session, sessionEnabled, false, request, response, securityManager);
+    }
+
+    //since 1.3
+    public WebDelegatingSubject(PrincipalCollection principals, boolean authenticated,
+                                String host, Session session, boolean sessionEnabled, boolean sessionUpdateDeferred,
+                                ServletRequest request, ServletResponse response,
+                                SecurityManager securityManager) {
+        super(principals, authenticated, host, session, sessionEnabled, sessionUpdateDeferred, securityManager);
         this.servletRequest = request;
         this.servletResponse = response;
     }
@@ -91,13 +99,18 @@ public class WebDelegatingSubject extends DelegatingSubject implements WebSubjec
 
     @Override
     protected SessionContext createSessionContext() {
-        WebSessionContext wsc = new DefaultWebSessionContext();
+        DefaultWebSessionContext wsc = new DefaultWebSessionContext();
         String host = getHost();
         if (StringUtils.hasText(host)) {
             wsc.setHost(host);
         }
+        //added for 1.3 (see SHIRO-317):
+        if (isSessionUpdateDeferred()) {
+            wsc.setUpdateDeferred(isSessionUpdateDeferred());
+        }
         wsc.setServletRequest(this.servletRequest);
         wsc.setServletResponse(this.servletResponse);
+
         return wsc;
     }
 }
