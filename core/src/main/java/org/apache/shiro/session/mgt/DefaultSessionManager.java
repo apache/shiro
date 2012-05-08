@@ -25,7 +25,6 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
-import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,8 +45,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     private static final Logger log = LoggerFactory.getLogger(DefaultSessionManager.class);
 
-    //since 1.3
-    private static final String SESSION_THREAD_CACHE_KEY = DefaultSessionManager.class.getName() + ".SESSION_THREAD_CACHE_KEY";
+    private static final ThreadLocal<Session> firstLevelSessionCache = new ThreadLocal<Session>();
 
     private SessionFactory sessionFactory;
 
@@ -233,10 +231,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
         Session s = null;
 
-        boolean updateDeferred = false;
-        if (sessionKey instanceof UpdateDeferrable && ((UpdateDeferrable)sessionKey).isUpdateDeferred()) {
-            updateDeferred = true;
-        }
+        boolean updateDeferred = isUpdateDeferred(sessionKey);
         if (updateDeferred) {
             s = retrieveSessionFromFirstLevelCache(sessionId);
         }
@@ -260,28 +255,32 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     //since 1.3
     protected final void addToFirstLevelCache(Session session) {
-        ThreadContext.put(SESSION_THREAD_CACHE_KEY, session);
+        firstLevelSessionCache.set(session);
+        log.trace("Added session {} to first level cache", session);
     }
 
     //since 1.3
     protected final Session retrieveSessionFromFirstLevelCache(Serializable sessionId) {
-        Session session = (Session) ThreadContext.get(SESSION_THREAD_CACHE_KEY);
+        Session session = firstLevelSessionCache.get();
         if (session != null && sessionId.equals(session.getId())) {
+            log.trace("Retrieved session {} from first level cache.", session);
             return session;
         }
         return null;
     }
 
     protected final void removeSessionFromFirstLevelCache() {
-        ThreadContext.remove(SESSION_THREAD_CACHE_KEY);
+        firstLevelSessionCache.remove();
+        log.trace("Removed session from first level cache.");
     }
 
     public void flush(SessionKey key) throws InvalidSessionException {
         Serializable sessionId = getSessionId(key);
         Session session = retrieveSessionFromFirstLevelCache(sessionId);
         if (session != null) {
-            log.trace("Flushing session to data store.  Session id: {}", session.getId());
+            log.debug("Flushing session to data store.  Session id: {}", session.getId());
             sessionDAO.update(session);
+            removeSessionFromFirstLevelCache();
         }
     }
 

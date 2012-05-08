@@ -26,11 +26,13 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+@Ignore
 public class ContainerIntegrationTest extends AbstractContainerTest {
 
     @Before

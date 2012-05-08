@@ -361,8 +361,9 @@ public class DelegatingSubject implements Subject {
             sessionContext.setHost(host);
         }
         //added for 1.3 (see SHIRO-317):
-        if (isSessionUpdateDeferred()) {
-            sessionContext.setUpdateDeferred(isSessionUpdateDeferred());
+        boolean updateDeferred = isSessionUpdateDeferred();
+        if (updateDeferred) {
+            sessionContext.setUpdateDeferred(updateDeferred);
         }
         return sessionContext;
     }

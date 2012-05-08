@@ -122,22 +122,14 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
     //since 1.3
     protected SessionKey createSessionKey(Session session, SessionContext context) {
         SessionKey key = doCreateSessionKey(session, context);
-        if (key instanceof UpdateDeferrable && context instanceof UpdateDeferrable) {
-            UpdateDeferrable udKey = (UpdateDeferrable)key;
-            UpdateDeferrable udContext = (UpdateDeferrable)context;
-            udKey.setUpdateDeferred(udContext.isUpdateDeferred());
-        }
+        applyUpdateDeferred(key, context);
         return key;
     }
 
     //since 1.3
     protected SessionKey createSessionKey(Session session, SessionKey oldKey) {
         SessionKey newKey = doCreateSessionKey(session, oldKey);
-        if (newKey instanceof UpdateDeferrable && oldKey instanceof UpdateDeferrable) {
-            UpdateDeferrable newKeyUdDeferrable = (UpdateDeferrable)newKey;
-            UpdateDeferrable oldKeyUdDeferrable = (UpdateDeferrable)oldKey;
-            newKeyUdDeferrable.setUpdateDeferred(oldKeyUdDeferrable.isUpdateDeferred());
-        }
+        applyUpdateDeferred(newKey, oldKey);
         return newKey;
     }
 
@@ -257,6 +249,13 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
     //since 1.3
     protected final boolean isUpdateDeferred(Object object) {
         return object instanceof UpdateDeferrable && ((UpdateDeferrable)object).isUpdateDeferred();
+    }
+
+    //since 1.3
+    protected final void applyUpdateDeferred(Object target, Object source) {
+        if (target instanceof UpdateDeferrable) {
+            ((UpdateDeferrable)target).setUpdateDeferred(isUpdateDeferred(source));
+        }
     }
 
     //since 1.3
