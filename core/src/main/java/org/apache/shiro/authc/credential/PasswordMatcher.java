@@ -92,7 +92,12 @@ public class PasswordMatcher implements CredentialsMatcher {
     }
 
     protected Object getStoredPassword(AuthenticationInfo storedAccountInfo) {
-        return storedAccountInfo != null ? storedAccountInfo.getCredentials() : null;
+        Object stored = storedAccountInfo != null ? storedAccountInfo.getCredentials() : null;
+        //fix for https://issues.apache.org/jira/browse/SHIRO-363
+        if (stored instanceof char[]) {
+            stored = new String((char[])stored);
+        }
+        return stored;
     }
 
     public PasswordService getPasswordService() {
