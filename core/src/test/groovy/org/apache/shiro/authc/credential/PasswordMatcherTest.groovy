@@ -21,6 +21,7 @@ package org.apache.shiro.authc.credential
 import org.apache.shiro.authc.AuthenticationInfo
 import org.apache.shiro.authc.AuthenticationToken
 import org.apache.shiro.crypto.hash.Sha256Hash
+
 import static org.easymock.EasyMock.*
 
 /**
@@ -102,6 +103,34 @@ class PasswordMatcherTest extends GroovyTestCase {
         expect(info.credentials).andReturn savedPassword
 
         expect(service.passwordsMatch(submittedPassword, savedPassword)).andReturn true
+
+        replay token, info, service
+
+        def matcher = new PasswordMatcher()
+        matcher.passwordService = service
+        assertSame service, matcher.passwordService
+
+        assertTrue matcher.doCredentialsMatch(token, info)
+
+        verify token, info, service
+    }
+
+    /**
+     * Asserts fix for https://issues.apache.org/jira/browse/SHIRO-363
+     */
+    void testCharArrayComparison() {
+        def service = createMock(PasswordService)
+        def token = createMock(AuthenticationToken)
+        def info = createMock(AuthenticationInfo)
+        //generate a stored password just for this test:
+        def submittedPassword = "foo"
+        def savedPasswordAsString = "foo";
+        def savedPassword = savedPasswordAsString.toCharArray()
+
+        expect(token.credentials).andReturn submittedPassword
+        expect(info.credentials).andReturn savedPassword
+
+        expect(service.passwordsMatch(eq(submittedPassword), eq(savedPasswordAsString))).andReturn true
 
         replay token, info, service
 
