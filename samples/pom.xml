@@ -40,6 +40,7 @@
         <module>spring</module>
         <module>spring-hibernate</module>
 	    <module>guice</module>
+        <module>quickstart-guice</module>
     </modules>
 
     <reporting>
