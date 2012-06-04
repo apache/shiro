@@ -32,6 +32,7 @@ import org.easymock.IMocksControl;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.Map;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
@@ -83,7 +84,7 @@ public class BeanTypeListenerTest {
         expect(injector.getInstance(Key.get(String.class, Names.named("shiro.myProperty")))).andReturn(property);
         expect(injector.getInstance(Key.get(String.class, Names.named("shiro.unavailableProperty"))))
                 .andThrow(new ConfigurationException(Collections.singleton(new Message("Not Available!"))));
-        expect(injector.getInstance(BeanTypeListener.MAP_KEY)).andReturn(Collections.EMPTY_MAP).anyTimes();
+        expect((Map)injector.getInstance(BeanTypeListener.MAP_KEY)).andReturn(Collections.EMPTY_MAP).anyTimes();
 
         control.replay();
 

@@ -88,9 +88,9 @@ public class SimpleFilterChainResolverTest {
         Filter filter2a = ctrl.createMock(Filter.class);
         Filter filter2b = ctrl.createMock(Filter.class);
 
-        expect(injector.getInstance(key2a)).andReturn(filter2a);
+        expect((Filter)injector.getInstance(key2a)).andReturn(filter2a);
         filter2a.doFilter(same(request), same(response), anyObject(FilterChain.class));
-        expect(injector.getInstance(key2b)).andReturn(filter2b);
+        expect((Filter)injector.getInstance(key2b)).andReturn(filter2b);
         filter2b.doFilter(same(request), same(response), anyObject(FilterChain.class));
         originalChain.doFilter(request, response);
 
