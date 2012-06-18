@@ -74,10 +74,12 @@ public class MemorySessionDAO extends AbstractSessionDAO {
         if (id == null) {
             throw new NullPointerException("id argument cannot be null.");
         }
+        log.trace("Storing session {}.", id);
         return sessions.putIfAbsent(id, session);
     }
 
     protected Session doReadSession(Serializable sessionId) {
+        log.trace("Retrieving session {}", sessionId);
         return sessions.get(sessionId);
     }
 
@@ -91,6 +93,7 @@ public class MemorySessionDAO extends AbstractSessionDAO {
         }
         Serializable id = session.getId();
         if (id != null) {
+            log.trace("Removing session {}", id);
             sessions.remove(id);
         }
     }

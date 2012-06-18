@@ -22,6 +22,7 @@ import org.apache.shiro.session.Session;
 
 import java.io.Serializable;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * {@link SessionIdGenerator} that generates String values of JDK {@link java.util.UUID}'s as the session IDs.
@@ -29,6 +30,8 @@ import java.util.UUID;
  * @since 1.0
  */
 public class JavaUuidSessionIdGenerator implements SessionIdGenerator {
+
+    private final Pattern PATTERN = Pattern.compile("-");
 
     /**
      * Ignores the method argument and simply returns
@@ -38,6 +41,7 @@ public class JavaUuidSessionIdGenerator implements SessionIdGenerator {
      * @return the String value of the JDK's next {@link UUID#randomUUID() randomUUID()}.
      */
     public Serializable generateId(Session session) {
-        return UUID.randomUUID().toString();
+        String id = UUID.randomUUID().toString();
+        return PATTERN.matcher(id).replaceAll("").toUpperCase();
     }
 }
