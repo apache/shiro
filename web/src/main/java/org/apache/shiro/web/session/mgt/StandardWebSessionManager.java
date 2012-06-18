@@ -224,6 +224,7 @@ public class StandardWebSessionManager extends StandardSessionManager implements
     protected void update(Session session, SessionKey key) {
         if (!WebUtils.isHttp(key)) {
             super.update(session, key);
+            return;
         }
         //don't actually update - we'll defer that to the end of the request via
         //onEvent(EndServletRequestEvent).  Just keep a record that it is referenced for now:
