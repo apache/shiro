@@ -68,6 +68,12 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
         return this.builder != null ? Collections.unmodifiableMap(builder.getObjects()) : null;
     }
 
+    public void destroy() {
+        if(this.builder != null) {
+            builder.destroy();
+        }
+    }
+
     private SecurityManager getSecurityManagerBean() {
         return builder.getBean(SECURITY_MANAGER_NAME, SecurityManager.class);
     }
