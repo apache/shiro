@@ -23,6 +23,7 @@ import org.apache.shiro.codec.CodecSupport
 import org.apache.shiro.codec.Hex
 import org.apache.shiro.realm.ldap.JndiLdapRealm
 import org.apache.shiro.util.CollectionUtils
+import org.apache.shiro.config.event.BeanEvent
 
 /**
  * Unit tests for the {@link ReflectionBuilder} implementation.
@@ -392,5 +393,83 @@ class ReflectionBuilderTest extends GroovyTestCase {
         assertNotNull(bean);
         assertEquals(5, bean.getIntProp());
         assertEquals("someString", bean.getStringProp());
+    }
+
+    void testBeanListeners() {
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("listenerOne", RecordingBeanListener.class.getName());
+        defs.put("listenerTwo", RecordingBeanListener.class.getName());
+
+        defs.put("simpleBeanFactory", "org.apache.shiro.config.SimpleBeanFactory");
+        defs.put("simpleBeanFactory.factoryInt", "5");
+        defs.put("simpleBeanFactory.factoryString", "someString");
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.simpleBean", '$simpleBeanFactory');
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map<String, ?> objects = builder.buildObjects(defs);
+        assertFalse(CollectionUtils.isEmpty(objects));
+
+        assertInstantiatedEvents("listenerOne", objects);
+        assertConfiguredEvents("listenerOne", objects, true);
+        assertInstantiatedEvents("listenerTwo", objects);
+        assertConfiguredEvents("listenerTwo", objects, false);
+
+        builder.destroy();
+
+        assertDestroyedEvents("listenerOne", objects);
+        assertDestroyedEvents("listenerTwo", objects);
+    }
+
+    void assertInstantiatedEvents(String name, Map<String, ?> objects) {
+        Object bean = objects.get(name);
+        assertTrue("Bean " + name + " is not a " + RecordingBeanListener.class.getSimpleName(),
+                bean instanceof RecordingBeanListener);
+        List<BeanEvent> instantiatedEvents = bean.getInstantiateEvents();
+        assertEquals(2, instantiatedEvents.size())
+
+        checkType(name, instantiatedEvents, "simpleBeanFactory", SimpleBeanFactory.class);
+        checkType(name, instantiatedEvents, "compositeBean", CompositeBean.class);
+
+        // instantiate notifications do not occur for listeners
+    }
+
+    void assertConfiguredEvents(String name, Map<String, ?> objects, boolean includeListener) {
+        Object bean = objects.get(name);
+        assertTrue("Bean " + name + " is not a " + RecordingBeanListener.class.getSimpleName(),
+                bean instanceof RecordingBeanListener);
+        List<BeanEvent> configuredEvents = bean.getConfiguredEvents();
+        assertEquals(includeListener ? 3 : 2, configuredEvents.size())
+
+        checkType(name, configuredEvents, "simpleBeanFactory", SimpleBeanFactory.class);
+        checkType(name, configuredEvents, "compositeBean", CompositeBean.class);
+        if(includeListener) {
+            checkType(name, configuredEvents, "listenerTwo", RecordingBeanListener.class);
+        }
+    }
+
+    void assertDestroyedEvents(String name, Map<String, ?> objects) {
+        Object bean = objects.get(name);
+        assertTrue("Bean " + name + " is not a " + RecordingBeanListener.class.getSimpleName(),
+                bean instanceof RecordingBeanListener);
+        List<BeanEvent> configuredEvents = bean.getDestroyedEvents();
+        assertEquals(4, configuredEvents.size())
+
+        checkType(name, configuredEvents, "simpleBeanFactory", SimpleBeanFactory.class);
+        checkType(name, configuredEvents, "compositeBean", CompositeBean.class);
+        checkType(name, configuredEvents, "listenerOne", RecordingBeanListener.class);
+        checkType(name, configuredEvents, "listenerTwo", RecordingBeanListener.class);
+    }
+
+    void checkType(String instanceName, List<BeanEvent> events, String name, Class<?> expectedType) {
+        for(BeanEvent event: events) {
+            if(event.getBeanName().equals(name)) {
+                assertTrue("Notification for bean " + name + " did not provide an instance of " + expectedType
+                        + " to listener " + instanceName,
+                expectedType.isInstance(event.getBean()))
+                return;
+            }
+        }
+        fail("No bean named " + name + " was ever notified to listener " + instanceName + ".");
     }
 }

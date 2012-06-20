@@ -22,6 +22,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
+import org.apache.shiro.config.event.*;
 import org.apache.shiro.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,22 +58,41 @@ public class ReflectionBuilder {
     private static final char MAP_PROPERTY_BEGIN_TOKEN = '[';
     private static final char MAP_PROPERTY_END_TOKEN = ']';
 
-    private Map<String, ?> objects;
+    private final Map<String, Object> objects;
+    private final List<BeanListener> listeners = new ArrayList<BeanListener>();
+    private final BeanListener compositeListener = new BeanListener() {
+        public void onBeanEvent(BeanEvent beanEvent) {
+            for(BeanListener listener: listeners) {
+                listener.onBeanEvent(beanEvent);
+            }
+        }
+    };
 
     public ReflectionBuilder() {
         this.objects = new LinkedHashMap<String, Object>();
     }
 
     public ReflectionBuilder(Map<String, ?> defaults) {
-        this.objects = CollectionUtils.isEmpty(defaults) ? new LinkedHashMap<String, Object>() : defaults;
+        this.objects = new LinkedHashMap<String, Object>();
+        if(!CollectionUtils.isEmpty(defaults)) {
+            this.objects.putAll(defaults);
+        }
     }
 
     public Map<String, ?> getObjects() {
         return objects;
     }
 
+    /**
+     * @deprecated Use of this method will break the event contract.  We recommend not using it.
+     * @param objects
+     */
+    @Deprecated
     public void setObjects(Map<String, ?> objects) {
-        this.objects = CollectionUtils.isEmpty(objects) ? new LinkedHashMap<String, Object>() : objects;
+        this.objects.clear();
+        if(!CollectionUtils.isEmpty(objects)) {
+            this.objects.putAll(objects);
+        }
     }
 
     public Object getBean(String id) {
@@ -119,13 +139,66 @@ public class ReflectionBuilder {
                 createNewInstance((Map<String, Object>) objects, entry.getKey(), entry.getValue());
             }
 
+            // Set properties on listeners
+            Iterator<Map.Entry<String, String>> entryIterator = propertyMap.entrySet().iterator();
+            while(entryIterator.hasNext()) {
+                Map.Entry<String, String> entry = entryIterator.next();
+                if(isListenerProperty(entry.getKey())) {
+                    applyProperty(entry.getKey(), entry.getValue(), objects);
+                    entryIterator.remove();
+                }
+            }
+
+            Map<String, Object> immutableObjects = Collections.unmodifiableMap(objects);
+
+            // Add listeners to listener set, notifying events on them as we go - order is important here
+            for(Map.Entry<String, ?> entry: objects.entrySet()) {
+                if(entry.getValue() instanceof BeanListener) {
+                    compositeListener.onBeanEvent(new ConfiguredBeanEvent(entry.getKey(), entry.getValue(), immutableObjects));
+                    listeners.add((BeanListener) entry.getValue());
+                }
+            }
+
+            // notify instantiated event on non-listeners
+            for(Map.Entry<String, ?> entry: objects.entrySet()) {
+                if(!(entry.getValue() instanceof BeanListener)) {
+                    compositeListener.onBeanEvent(new InstantiatedBeanEvent(entry.getKey(), entry.getValue(), immutableObjects));
+                }
+            }
+
             // Set all properties
             for (Map.Entry<String, String> entry : propertyMap.entrySet()) {
                 applyProperty(entry.getKey(), entry.getValue(), objects);
             }
+
+            for(Map.Entry<String, ?> entry: objects.entrySet()) {
+                if(!(entry.getValue() instanceof BeanListener)) {
+                    compositeListener.onBeanEvent(new ConfiguredBeanEvent(entry.getKey(), entry.getValue(), immutableObjects));
+                }
+            }
         }
 
         return objects;
+    }
+
+    public void destroy() {
+        final Map<String, Object> immutableObjects = Collections.unmodifiableMap(objects);
+        for(Map.Entry<String, ?> entry: objects.entrySet()) {
+            compositeListener.onBeanEvent(new DestroyedBeanEvent(entry.getKey(), entry.getValue(), immutableObjects));
+        }
+    }
+
+    private boolean isListenerProperty(String key) {
+        int index = key.indexOf('.');
+
+        if (index >= 0) {
+            String name = key.substring(0, index);
+
+            return objects.containsKey(name) && objects.get(name) instanceof BeanListener;
+        } else {
+            throw new IllegalArgumentException("All property keys must contain a '.' character. " +
+                    "(e.g. myBean.property = value)  These should already be separated out by buildObjects().");
+        }
     }
 
     protected void createNewInstance(Map<String, Object> objects, String name, String value) {
