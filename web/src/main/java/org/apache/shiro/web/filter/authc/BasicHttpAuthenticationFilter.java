@@ -362,6 +362,6 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
      */
     protected String[] getPrincipalsAndCredentials(String scheme, String encoded) {
         String decoded = Base64.decodeToString(encoded);
-        return decoded.split(":");
+        return decoded.split(":", 2);
     }
 }
