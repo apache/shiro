@@ -40,7 +40,7 @@
     </feature>
 
     <feature name="shiro-cas" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">shiro-cas</feature>
+        <feature version="${project.version}">shiro-core</feature>
         <!-- Is there a CAS client osgi bundle somewhere?
         <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aspectj/${casclient.bundle.version}</bundle>
         -->
