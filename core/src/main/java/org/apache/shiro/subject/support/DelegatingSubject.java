@@ -39,10 +39,10 @@ import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Implementation of the {@code Subject} interface that delegates
@@ -60,7 +60,7 @@ import java.util.concurrent.Callable;
  * data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered
  * much more elegant to let the underlying {@code SecurityManager} implementation or its delegate components
  * manage caching, not this class.  A {@code SecurityManager} is considered a business-tier component,
- * where caching strategies are better suited.
+ * where caching strategies are better managed.
  * <p/>
  * Applications from large and clustered to simple and JVM-local all benefit from
  * stateless architectures.  This implementation plays a part in the stateless programming
@@ -83,7 +83,6 @@ public class DelegatingSubject implements Subject {
      * @since 1.2
      */
     protected boolean sessionCreationEnabled;
-    private List<PrincipalCollection> runAsPrincipals; //supports assumed identities (aka 'run as')
 
     protected transient SecurityManager securityManager;
 
@@ -108,7 +107,6 @@ public class DelegatingSubject implements Subject {
         this.host = host;
         if (session != null) {
             this.session = decorate(session);
-            this.runAsPrincipals = getRunAsPrincipals(this.session);
         }
         this.sessionCreationEnabled = sessionCreationEnabled;
     }
@@ -152,7 +150,8 @@ public class DelegatingSubject implements Subject {
     }
 
     public PrincipalCollection getPrincipals() {
-        return CollectionUtils.isEmpty(this.runAsPrincipals) ? this.principals : this.runAsPrincipals.get(0);
+        List<PrincipalCollection> runAsPrincipals = getRunAsPrincipalsStack();
+        return CollectionUtils.isEmpty(runAsPrincipals) ? this.principals : runAsPrincipals.get(0);
     }
 
     public boolean isPermitted(String permission) {
@@ -253,7 +252,7 @@ public class DelegatingSubject implements Subject {
     }
 
     public void login(AuthenticationToken token) throws AuthenticationException {
-        clearRunAsIdentities();
+        clearRunAsIdentitiesInternal();
         Subject subject = securityManager.login(this, token);
 
         PrincipalCollection principals;
@@ -285,7 +284,6 @@ public class DelegatingSubject implements Subject {
         Session session = subject.getSession(false);
         if (session != null) {
             this.session = decorate(session);
-            this.runAsPrincipals = getRunAsPrincipals(this.session);
         } else {
             this.session = null;
         }
@@ -316,7 +314,9 @@ public class DelegatingSubject implements Subject {
 
     public Session getSession(boolean create) {
         if (log.isTraceEnabled()) {
-            log.trace("attempting to get session; create = " + create + "; session is null = " + (this.session == null) + "; session has id = " + (this.session != null && session.getId() != null));
+            log.trace("attempting to get session; create = " + create +
+                    "; session is null = " + (this.session == null) +
+                    "; session has id = " + (this.session != null && session.getId() != null));
         }
 
         if (this.session == null && create) {
@@ -347,21 +347,24 @@ public class DelegatingSubject implements Subject {
         return sessionContext;
     }
 
+    private void clearRunAsIdentitiesInternal() {
+        //try/catch added for SHIRO-298
+        try {
+            clearRunAsIdentities();
+        } catch (SessionException se) {
+            log.debug("Encountered session exception trying to clear 'runAs' identities during logout.  This " +
+                    "can generally safely be ignored.", se);
+        }
+    }
+
     public void logout() {
         try {
-            //try/catch added for SHIRO-298
-            try {
-                clearRunAsIdentities();
-            } catch (SessionException se) {
-                log.debug("Encountered session exception trying to clear 'runAs' identities during logout.  This " +
-                        "can generally safely be ignored.", se);
-            }
+            clearRunAsIdentitiesInternal();
             this.securityManager.logout(this);
         } finally {
             this.session = null;
             this.principals = null;
             this.authenticated = false;
-            this.runAsPrincipals = null;
             //Don't set securityManager to null here - the Subject can still be
             //used, it is just considered anonymous at this point.  The SecurityManager instance is
             //necessary if the subject would log in again or acquire a new session.  This is in response to
@@ -435,19 +438,33 @@ public class DelegatingSubject implements Subject {
     }
 
     public boolean isRunAs() {
-        return !CollectionUtils.isEmpty(this.runAsPrincipals);
+        List<PrincipalCollection> stack = getRunAsPrincipalsStack();
+        return !CollectionUtils.isEmpty(stack);
     }
 
     public PrincipalCollection getPreviousPrincipals() {
-        return isRunAs() ? this.principals : null;
+        PrincipalCollection previousPrincipals = null;
+        List<PrincipalCollection> stack = getRunAsPrincipalsStack();
+        int stackSize = stack != null ? stack.size() : 0;
+        if (stackSize > 0) {
+            if (stackSize == 1) {
+                previousPrincipals = this.principals;
+            } else {
+                //always get the one behind the current:
+                assert stack != null;
+                previousPrincipals = stack.get(1);
+            }
+        }
+        return previousPrincipals;
     }
 
     public PrincipalCollection releaseRunAs() {
         return popIdentity();
     }
 
-    @SuppressWarnings({"unchecked"})
-    private List<PrincipalCollection> getRunAsPrincipals(Session session) {
+    @SuppressWarnings("unchecked")
+    private List<PrincipalCollection> getRunAsPrincipalsStack() {
+        Session session = getSession(false);
         if (session != null) {
             return (List<PrincipalCollection>) session.getAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
         }
@@ -455,8 +472,6 @@ public class DelegatingSubject implements Subject {
     }
 
     private void clearRunAsIdentities() {
-        //setting to null must occur before interacting with the session in case it throws an exception (SHIRO-298)
-        this.runAsPrincipals = null;
         Session session = getSession(false);
         if (session != null) {
             session.removeAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
@@ -468,29 +483,29 @@ public class DelegatingSubject implements Subject {
             String msg = "Specified Subject principals cannot be null or empty for 'run as' functionality.";
             throw new NullPointerException(msg);
         }
-        if (this.runAsPrincipals == null) {
-            this.runAsPrincipals = new ArrayList<PrincipalCollection>();
+        List<PrincipalCollection> stack = getRunAsPrincipalsStack();
+        if (stack == null) {
+            stack = new CopyOnWriteArrayList<PrincipalCollection>();
         }
-        this.runAsPrincipals.add(0, principals);
+        stack.add(0, principals);
         Session session = getSession();
-        session.setAttribute(RUN_AS_PRINCIPALS_SESSION_KEY, this.runAsPrincipals);
+        session.setAttribute(RUN_AS_PRINCIPALS_SESSION_KEY, stack);
     }
 
     private PrincipalCollection popIdentity() {
         PrincipalCollection popped = null;
-        if (!CollectionUtils.isEmpty(this.runAsPrincipals)) {
-            popped = this.runAsPrincipals.remove(0);
+
+        List<PrincipalCollection> stack = getRunAsPrincipalsStack();
+        if (!CollectionUtils.isEmpty(stack)) {
+            popped = stack.remove(0);
             Session session;
-            if (!CollectionUtils.isEmpty(this.runAsPrincipals)) {
-                //persist the changed deque to the session
+            if (!CollectionUtils.isEmpty(stack)) {
+                //persist the changed stack to the session
                 session = getSession();
-                session.setAttribute(RUN_AS_PRINCIPALS_SESSION_KEY, this.runAsPrincipals);
+                session.setAttribute(RUN_AS_PRINCIPALS_SESSION_KEY, stack);
             } else {
-                //deque is empty, remove it from the session:
-                session = getSession(false);
-                if (session != null) {
-                    session.removeAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
-                }
+                //stack is empty, remove it from the session:
+                clearRunAsIdentities();
             }
         }
 
