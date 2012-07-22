@@ -139,10 +139,6 @@ public class DelegatingSubjectTest {
         assertNull(ThreadContext.getSecurityManager());
     }
 
-    /**
-     * This test fails on JDK 1.5 from the command line but not from within the IDE
-     * and I have no idea why at the moment - Les - 29 Oct 2010.  Works fine on JDK 1.6 (JDK 1.6 is required to build).
-     */
     @Test
     public void testRunAs() {
 
