@@ -55,7 +55,7 @@ public class DomainPermission extends WildcardPermission {
     public DomainPermission(String actions, String targets) {
         this.domain = getDomain(getClass());
         this.actions = StringUtils.splitToSet(actions, SUBPART_DIVIDER_TOKEN);
-        this.targets = StringUtils.splitToSet(actions, SUBPART_DIVIDER_TOKEN);
+        this.targets = StringUtils.splitToSet(targets, SUBPART_DIVIDER_TOKEN);
         encodeParts(this.domain, actions, targets);
     }
 
