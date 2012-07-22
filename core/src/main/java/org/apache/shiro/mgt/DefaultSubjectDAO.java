@@ -196,17 +196,6 @@ public class DefaultSubjectDAO implements SubjectDAO {
                 if (!currentPrincipals.equals(existingPrincipals)) {
                     session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, currentPrincipals);
                 }
-                /*
-                PrincipalCollection previousPrincipals = null;
-                if (subject.isRunAs()) {
-                    previousPrincipals = subject.getPreviousPrincipals();
-                }
-
-                currentPrincipals = CollectionUtils.isEmpty(previousPrincipals) ? currentPrincipals : previousPrincipals;
-                if (currentPrincipals != null && !currentPrincipals.equals(existingPrincipals)) {
-                    session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, currentPrincipals);
-                }
-                 */
                 // otherwise they're the same - no need to update the session
             }
         }
