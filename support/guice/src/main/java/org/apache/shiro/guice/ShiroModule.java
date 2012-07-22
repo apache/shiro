@@ -52,6 +52,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
 	private Set<Destroyable> destroyables = Collections.newSetFromMap(new WeakHashMap<Destroyable, Boolean>());
     public void configure() {
+        this.binder().requireExplicitBindings();
         // setup security manager
         bindSecurityManager(bind(SecurityManager.class));
         bindSessionManager(bind(SessionManager.class));

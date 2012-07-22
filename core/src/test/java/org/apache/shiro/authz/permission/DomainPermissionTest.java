@@ -27,6 +27,9 @@ import java.util.Set;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @since 1.3
+ */
 public class DomainPermissionTest {
     @Test
     public void testDefaultConstructor() {
