@@ -25,6 +25,7 @@ import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.DelegatingSession;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
+import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
@@ -115,10 +116,11 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
                     ShiroHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
         } else {
             //not in a cookie, or cookie is disabled - try the request params as a fallback (i.e. URL rewriting):
-            id = request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
+            String name = getSessionIdName();
+            id = request.getParameter(name);
             if (id == null) {
                 //try lowercase:
-                id = request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME.toLowerCase());
+                id = request.getParameter(name.toLowerCase());
             }
             if (id != null) {
                 request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
@@ -132,6 +134,15 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
         }
         return id;
+    }
+
+    //since 1.2.1
+    private String getSessionIdName() {
+        String name = this.sessionIdCookie != null ? this.sessionIdCookie.getName() : null;
+        if (name == null) {
+            name = ShiroHttpSession.DEFAULT_SESSION_ID_NAME;
+        }
+        return name;
     }
 
     protected Session createExposedSession(Session session, SessionContext context) {
