@@ -163,7 +163,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
         loadProperties();
         //we can only determine if files have been modified at runtime (not classpath entries or urls), so only
         //start the thread in this case:
-        if (this.resourcePath.startsWith(ResourceUtils.FILE_PREFIX) && scheduler != null) {
+        if (this.resourcePath.startsWith(ResourceUtils.FILE_PREFIX) && scheduler == null) {
             startReloadThread();
         }
     }
