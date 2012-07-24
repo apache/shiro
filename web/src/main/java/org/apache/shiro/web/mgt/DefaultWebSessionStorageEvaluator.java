@@ -19,7 +19,10 @@
 package org.apache.shiro.web.mgt;
 
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
+import org.apache.shiro.session.mgt.NativeSessionManager;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.util.WebUtils;
 
 /**
@@ -45,6 +48,19 @@ import org.apache.shiro.web.util.WebUtils;
  */
 public class DefaultWebSessionStorageEvaluator extends DefaultSessionStorageEvaluator {
 
+    //since 1.2.1
+    private SessionManager sessionManager;
+
+    /**
+     * Sets the session manager to use when checking to see if session storage is possible.
+     * @param sessionManager the session manager instance for checking.
+     * @since 1.2.1
+     */
+    //package protected on purpose to maintain point-version compatibility: (1.2.3 -> 1.2.1 should work always).
+    void setSessionManager(SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+    }
+
     /**
      * Returns {@code true} if session storage is generally available (as determined by the super class's global
      * configuration property {@link #isSessionStorageEnabled()} and no request-specific override has turned off
@@ -68,6 +84,12 @@ public class DefaultWebSessionStorageEvaluator extends DefaultSessionStorageEval
 
         if (!isSessionStorageEnabled()) {
             //honor global setting:
+            return false;
+        }
+
+        //SHIRO-350: non-web subject instances can't be saved to web-only session managers:
+        //since 1.2.1:
+        if (!(subject instanceof WebSubject) && (this.sessionManager != null && !(this.sessionManager instanceof NativeSessionManager))) {
             return false;
         }
 
