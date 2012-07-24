@@ -424,7 +424,7 @@
                     <!-- This configuration copied from apache:apache:7 parent pom -->
                     <useReleaseProfile>false</useReleaseProfile>
                     <goals>deploy site-deploy</goals>
-                    <arguments>-Papache-release</arguments>
+                    <arguments>-Pdocs,apache-release</arguments>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                 </configuration>
             </plugin>
