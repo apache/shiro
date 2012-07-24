@@ -20,6 +20,8 @@ package org.apache.shiro.web.mgt;
 
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
+import org.apache.shiro.mgt.SessionStorageEvaluator;
+import org.apache.shiro.mgt.SubjectDAO;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
@@ -89,6 +91,31 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     @Override
     protected SubjectContext createSubjectContext() {
         return new DefaultWebSubjectContext();
+    }
+
+    @Override
+    //since 1.2.1 for fixing SHIRO-350
+    public void setSubjectDAO(SubjectDAO subjectDAO) {
+        super.setSubjectDAO(subjectDAO);
+        applySessionManagerToSessionStorageEvaluatorIfPossible();
+    }
+
+    //since 1.2.1 for fixing SHIRO-350
+    @Override
+    protected void afterSessionManagerSet() {
+        super.afterSessionManagerSet();
+        applySessionManagerToSessionStorageEvaluatorIfPossible();
+    }
+
+    //since 1.2.1 for fixing SHIRO-350:
+    private void applySessionManagerToSessionStorageEvaluatorIfPossible() {
+        SubjectDAO subjectDAO = getSubjectDAO();
+        if (subjectDAO instanceof DefaultSubjectDAO) {
+            SessionStorageEvaluator evaluator = ((DefaultSubjectDAO)subjectDAO).getSessionStorageEvaluator();
+            if (evaluator instanceof DefaultWebSessionStorageEvaluator) {
+                ((DefaultWebSessionStorageEvaluator)evaluator).setSessionManager(getSessionManager());
+            }
+        }
     }
 
     @Override
