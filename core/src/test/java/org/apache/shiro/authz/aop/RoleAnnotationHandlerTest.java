@@ -18,10 +18,6 @@
  */
 package org.apache.shiro.authz.aop;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -30,6 +26,8 @@ import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
+
+import static org.easymock.EasyMock.*;
 
 /**
  * Test cases for the {@link RoleAnnotationHandler} class.
