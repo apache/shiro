@@ -819,12 +819,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>taglibs</groupId>
-                <artifactId>standard</artifactId>
-                <version>1.1.2</version>
-                <scope>test</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     
