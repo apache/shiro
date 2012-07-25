@@ -34,7 +34,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-
 /**
  * A {@link TextConfigurationRealm} that defers all logic to the parent class, but just enables
  * {@link java.util.Properties Properties} based configuration in addition to the parent class's String configuration.
@@ -168,6 +167,9 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
         }
     }
 
+    /**
+     * Destroy reload scheduler if one exists.
+     */
     public void destroy() {
         try {
             if (scheduler != null) {
@@ -177,6 +179,8 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
             if (log.isInfoEnabled()) {
                 log.info("Unable to cleanly shutdown Scheduler.  Ignoring (shutting down)...", e);
             }
+        } finally {
+            scheduler = null;
         }
     }
 
