@@ -30,7 +30,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.1</version>
 
     <name>Apache Shiro</name>
     <url>http://shiro.apache.org/</url>
@@ -41,9 +41,9 @@
     <inceptionYear>2004</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/branches/1.2.x</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/branches/1.2.x</developerConnection>
-        <url>http://svn.apache.org/repos/asf/shiro/branches/1.2.x</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.2.1</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.2.1</developerConnection>
+        <url>http://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.2.1</url>
     </scm>
     <issueManagement>
         <system>Jira</system>
