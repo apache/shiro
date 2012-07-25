@@ -427,7 +427,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <!-- "install" needed because we have interrelated dependencies between the modules and we are releasing them all the same - especially consider shiro-all -->
-                    <preparationGoals>clean apache-rat:rat install</preparationGoals>
+                    <preparationGoals>clean apache-rat:check install</preparationGoals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <!-- This configuration copied from apache:apache:7 parent pom -->
                     <useReleaseProfile>false</useReleaseProfile>
