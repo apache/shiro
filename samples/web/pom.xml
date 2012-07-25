@@ -68,6 +68,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -109,10 +110,6 @@
             <artifactId>jsp-2.1-jetty</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>taglibs</groupId>
-            <artifactId>standard</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
