@@ -51,6 +51,7 @@
                 <!-- Turn off this plugin - it often fails with the example projects:
                      http://shiro-developer.582600.n2.nabble.com/Failed-releases-and-Apache-Rat-tp7577605.html -->
                     <skip>true</skip>
+                    <skipDeploy>true</skipDeploy>
                 </configuration>
             </plugin>
         </plugins>
