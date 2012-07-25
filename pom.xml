@@ -64,6 +64,9 @@
 
     <properties>
 
+        <!-- Replaced by the build number plugin at build time: -->
+        <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
+
         <!-- non-dependency-based properties: -->
         <shiro.osgi.importRange>[1.3, 2)</shiro.osgi.importRange>
 
