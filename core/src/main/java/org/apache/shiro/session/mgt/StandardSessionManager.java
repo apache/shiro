@@ -260,9 +260,23 @@ public class StandardSessionManager implements NativeSessionManager, ValidatingS
     public void validateSessions() {
         log.debug("Validating active sessions...");
 
-        int invalidCount = 0;
-
         Collection<Session> activeSessions = getSessionDAO().getActiveSessions();
+        int invalidCount = validate(activeSessions);
+
+        if (log.isDebugEnabled()) {
+            String msg = "Finished session validation.";
+            if (invalidCount > 0) {
+                msg += "  [" + invalidCount + "] sessions were stopped.";
+            } else {
+                msg += "  No sessions were stopped.";
+            }
+            log.debug(msg);
+        }
+    }
+
+    protected int validate(Collection<Session> activeSessions) {
+
+        int invalidCount = 0;
 
         if (activeSessions != null) {
             for (Session s : activeSessions) {
@@ -283,15 +297,7 @@ public class StandardSessionManager implements NativeSessionManager, ValidatingS
             }
         }
 
-        if (log.isDebugEnabled()) {
-            String msg = "Finished session validation.";
-            if (invalidCount > 0) {
-                msg += "  [" + invalidCount + "] sessions were stopped.";
-            } else {
-                msg += "  No sessions were stopped.";
-            }
-            log.debug(msg);
-        }
+        return invalidCount;
     }
 
     protected void validate(Session session, SessionKey key) throws InvalidSessionException {

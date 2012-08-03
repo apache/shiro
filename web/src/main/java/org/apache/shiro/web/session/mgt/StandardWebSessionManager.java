@@ -5,6 +5,7 @@ import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.*;
 import org.apache.shiro.util.Assert;
+import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.web.event.BeginServletRequestEvent;
 import org.apache.shiro.web.event.EndServletRequestEvent;
 import org.apache.shiro.web.servlet.*;
@@ -17,6 +18,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -61,6 +64,8 @@ public class StandardWebSessionManager extends StandardSessionManager implements
     //key: sessionID, value: total count of all requests currently interacting with the session identified by sessionId
     private final ConcurrentMap<Serializable, AtomicInteger> activeSessionRequestCounts;
 
+    private boolean stickySessionsAssumed;
+
     public StandardWebSessionManager() {
         super();
         Cookie cookie = new SimpleCookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
@@ -71,6 +76,7 @@ public class StandardWebSessionManager extends StandardSessionManager implements
         this.requestIdGenerator = new UuidRequestIdGenerator();
         this.activeSessions = new ConcurrentHashMap<Serializable, Session>();
         this.activeSessionRequestCounts = new ConcurrentHashMap<Serializable, AtomicInteger>();
+        this.stickySessionsAssumed = true;
     }
 
     public Cookie getSessionIdCookie() {
@@ -107,6 +113,44 @@ public class StandardWebSessionManager extends StandardSessionManager implements
     @SuppressWarnings("UnusedDeclaration")
     public void setRequestIdGenerator(RequestIdGenerator requestIdGenerator) {
         this.requestIdGenerator = requestIdGenerator;
+    }
+
+    public boolean isStickySessionsAssumed() {
+        return stickySessionsAssumed;
+    }
+
+    public void setStickySessionsAssumed(boolean stickySessionsAssumed) {
+        this.stickySessionsAssumed = stickySessionsAssumed;
+    }
+
+    @Override
+    public void validateSessions() {
+
+        log.debug("Validating active sessions...");
+
+        Collection<Session> daoSessions = getSessionDAO().getActiveSessions();
+        Collection<Session> activeSessions = this.activeSessions.values();
+
+        int size = (daoSessions != null ? daoSessions.size() : 0) +
+                (activeSessions != null ? activeSessions.size() : 0);
+
+        Set<Session> sessions = new LinkedHashSet<Session>(size);
+        sessions.addAll(daoSessions);
+        sessions.addAll(activeSessions);
+
+        int invalidCount = validate(sessions);
+
+        if (log.isDebugEnabled()) {
+            String msg = "Finished session validation.";
+            if (invalidCount > 0) {
+                msg += "  [" + invalidCount + "] sessions were stopped.";
+            } else {
+                msg += "  No sessions were stopped.";
+            }
+            log.debug(msg);
+        }
+
+        super.validateSessions();    //To change body of overridden methods use File | Settings | File Templates.
     }
 
     private void storeSessionId(Serializable currentId, HttpServletRequest request, HttpServletResponse response) {
@@ -178,7 +222,7 @@ public class StandardWebSessionManager extends StandardSessionManager implements
             internal = super.getInternalSession(key, sessionId);
             if (internal != null) {
                 //found it.  Update the reference count for post-request cleanup:
-                addSessionReference(request, internal);
+                internal = addSessionReference(request, internal);
             }
         } else {
             //in first-level request cache.  Update the reference count for post-request cleanup:
@@ -189,10 +233,14 @@ public class StandardWebSessionManager extends StandardSessionManager implements
         return internal;
     }
 
-    private void addSessionReference(HttpServletRequest request, Session session) {
+    private Session addSessionReference(HttpServletRequest request, Session session) {
         Serializable id = session.getId();
         addSessionReference(request, id);
-        this.activeSessions.put(id, session);
+        Session s = this.activeSessions.putIfAbsent(id, session);
+        if (s == null) {
+            s = session;
+        }
+        return s;
     }
 
     @SuppressWarnings("unchecked")
@@ -221,6 +269,12 @@ public class StandardWebSessionManager extends StandardSessionManager implements
     }
 
     @Override
+    protected void delete(Session session, SessionKey key) {
+        this.activeSessions.remove(session.getId());
+        super.delete(session, key);
+    }
+
+    @Override
     protected void update(Session session, SessionKey key) {
         if (!WebUtils.isHttp(key)) {
             super.update(session, key);
@@ -230,7 +284,7 @@ public class StandardWebSessionManager extends StandardSessionManager implements
         //onEvent(EndServletRequestEvent).  Just keep a record that it is referenced for now:
         HttpServletRequest request = WebUtils.getHttpRequest(key);
         addSessionReference(request, session);
-        log.trace("Ignored mid-request DAO update.  Update will occur at the end of the request.");
+        log.trace("Request {}: Ignored mid-request DAO update.  Update will occur at the end of the request.", getRequestId(request));
     }
 
     public void onEvent(Object event) {
@@ -282,9 +336,19 @@ public class StandardWebSessionManager extends StandardSessionManager implements
         }
     }
 
+    private String getRequestId(HttpServletRequest request) {
+        return (String)request.getAttribute(AbstractShiroFilter.REQUEST_ID_ATTR_NAME);
+    }
+
     @SuppressWarnings("unchecked")
     private void dereferenceSessions(HttpServletRequest request) {
+
+        String requestId = getRequestId(request);
+
         Set<Serializable> ids = (Set<Serializable>) request.getAttribute(REFERENCED_SESSION_IDS);
+
+        log.trace("Request {} has ended.  Referenced session count: {}", requestId, CollectionUtils.size(ids));
+
         if (ids == null) {
             return;
         }
@@ -292,20 +356,27 @@ public class StandardWebSessionManager extends StandardSessionManager implements
         for (Serializable id : ids) {
             int count = decrementReferencedSession(id);
             if (count <= 0) {
-                String requestId = (String)request.getAttribute(AbstractShiroFilter.REQUEST_ID_ATTR_NAME);
-                Session session = activeSessions.remove(id);
-                if (session instanceof ValidatingSession) {
-                    ValidatingSession vs = (ValidatingSession) session;
-                    if (!vs.isValid() && isDeleteInvalidSessions()) {
-                        getSessionDAO().delete(vs);
-                        log.trace("Request ID: {}, Deleted DAO Session {}", requestId, id);
-                    } else {
-                        getSessionDAO().update(vs);
-                        log.trace("Request ID: {}, Updated DAO Session {}", requestId, id);
-                    }
+                Session session;
+                if (isStickySessionsAssumed()) {
+                    session = activeSessions.get(id); //leave for future requests
                 } else {
-                    getSessionDAO().update(session);
-                    log.trace("Request ID: {}, Updated DAO Session {}", requestId, id);
+                    session = activeSessions.remove(id); //need to remove asap in case requests go to another node
+                }
+
+                if (session != null) {
+                    if (session instanceof ValidatingSession) {
+                        ValidatingSession vs = (ValidatingSession) session;
+                        if (!vs.isValid() && isDeleteInvalidSessions()) {
+                            log.trace("Request {}: Deleting invalid Session {}", requestId, id);
+                            getSessionDAO().delete(vs);
+                        } else {
+                            log.trace("Request {}: Persisting changes for Session {}", requestId, id);
+                            getSessionDAO().update(vs);
+                        }
+                    } else {
+                        log.trace("Request {}: Persisting changes for Session {}", requestId, id);
+                        getSessionDAO().update(session);
+                    }
                 }
             }
         }
@@ -384,4 +455,32 @@ public class StandardWebSessionManager extends StandardSessionManager implements
     public boolean isServletContainerSessions() {
         return false;
     }
+
+    //TODO: CREATE SESSION HOLDER! SessionRegistration? ActiveSession?
+
+    private static class ActiveSession {
+
+        private long referenceCount;
+        private final Session session;
+
+        private ActiveSession(Session session) {
+            this.referenceCount = 0;
+            this.session = session;
+        }
+
+        public synchronized Session checkoutSession() {
+            this.referenceCount++;
+            return this.session;
+        }
+
+        public synchronized long checkinSession() {
+            this.referenceCount--;
+            return this.referenceCount;
+        }
+    }
+
+
+
+
+
 }
