@@ -64,7 +64,7 @@
         </release>
         <release>
             <Version>
-                <name>Apache Shiro 1.1.0</name>
+                <name>Apache Shiro 1.2.1</name>
                 <created>2012-07-28</created>
                 <revision>1.2.1</revision>
             </Version>
