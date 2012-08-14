@@ -23,15 +23,19 @@
 #set ($renderer = $globalHelper.getWikiStyleRenderer())
 ##
 #if ( $page.title.equals("Index") )
-    #set ($title = "Java Security Framework")
+#set ($title = "Apache Shiro | Java Security Framework")
 #else
-    #set ($title = $page.title)
+#set ($title = "$page.title | Apache Shiro")
 #end
 ##
 <html>
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>Apache Shiro - $title</title>
+    <meta name="description" content="Apache Shiro is a powerful and easy-to-use Java security framework that performs authentication, authorization, cryptography, and session management."/>
+    <meta name="google-site-verification" content="QIax6uT5UX3enoU0G8Pz2pXbQ45KaQuHZ3nCh9V27mw"/>
+    <meta name="msvalidate.01" content="0B57EB46CBFAD8FD45008D2DB6B6C68C"/>
+    <meta name="y_key" content="e47896cd6bae4920"/>
+    <title>$title</title>
 
     <link rel="stylesheet" type="text/css"
           href="http://yui.yahooapis.com/2.8.1/build/reset-fonts-grids/reset-fonts-grids.css">
@@ -88,17 +92,17 @@
                 #set($child = $pageManager.getPage($page.space.key,"Navigation"))
                 #set($content = $renderer.convertWikiToXHtml($child.toPageContext(), $child.content).trim())
                 #set($content = $content.replaceAll("^<[pP]>|</[pP]>$", "") )
-                $content
-            </div>
+            $content
         </div>
+    </div>
 
-        <div id="center">
-            $body
-        </div> <!-- end #center -->
+    <div id="center">
+        $body
+    </div> <!-- end #center -->
 
-        <div id="footer">
-            Copyright &copy; 2008-2010 The Apache Software Foundation
-        </div>
+    <div id="footer">
+        Copyright &copy; 2008-2012 The Apache Software Foundation
+    </div>
 
     </div> <!-- end #page -->
 
