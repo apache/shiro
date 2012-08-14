@@ -247,7 +247,7 @@ a:hover {
 }
 
 #download .filename {
-    background: url("../images/download.png") no-repeat center 0 transparent;
+    background: url("../images/download_old.png") no-repeat center 0 transparent;
     display: block;
     font-size: 18px;
     line-height: 22px;
