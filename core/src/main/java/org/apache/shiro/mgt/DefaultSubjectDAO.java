@@ -22,9 +22,12 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
+import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Field;
 
 /**
  * Default {@code SubjectDAO} implementation that stores Subject state in the Subject's Session by default (but this
@@ -174,7 +177,26 @@ public class DefaultSubjectDAO implements SubjectDAO {
     protected void mergePrincipals(Subject subject) {
         //merge PrincipalCollection state:
 
-        PrincipalCollection currentPrincipals = subject.getPrincipals();
+        PrincipalCollection currentPrincipals = null;
+
+        //SHIRO-380: added if/else block - need to retain original (source) principals
+        //This technique (reflection) is only temporary - a proper long term solution needs to be found,
+        //but this technique allowed an immediate fix that is API point-version forwards and backwards compatible
+        //
+        //A more comprehensive review / cleaning of runAs should be performed for Shiro 1.3 / 2.0 +
+        if (subject.isRunAs() && subject instanceof DelegatingSubject) {
+            try {
+                Field field = DelegatingSubject.class.getDeclaredField("principals");
+                field.setAccessible(true);
+                currentPrincipals = (PrincipalCollection)field.get(subject);
+            } catch (Exception e) {
+                throw new IllegalStateException("Unable to access DelegatingSubject principals property.", e);
+            }
+        }
+        if (currentPrincipals == null || currentPrincipals.isEmpty()) {
+            currentPrincipals = subject.getPrincipals();
+        }
+
         Session session = subject.getSession(false);
 
         if (session == null) {
