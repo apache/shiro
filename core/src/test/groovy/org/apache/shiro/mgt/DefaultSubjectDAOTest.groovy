@@ -22,6 +22,7 @@ import org.apache.shiro.session.Session
 import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.subject.Subject
 import org.apache.shiro.subject.support.DefaultSubjectContext
+import org.apache.shiro.subject.support.DelegatingSubject
 
 import static org.easymock.EasyMock.*
 
@@ -128,6 +129,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
 
         expect(subject.getSession(false)).andReturn null
 
+        expect(subject.isRunAs()).andReturn false
         expect(subject.principals).andReturn null
         expect(subject.getSession(false)).andReturn(null).anyTimes()
         expect(subject.authenticated).andReturn false
@@ -142,6 +144,32 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
     // BEGIN: mergePrincipals tests
 
     /**
+     * SHIRO-380
+     */
+    void testMergePrincipalsWithDelegatingSubject() {
+
+        def sessionId = "sessionId"
+
+        def principals = createStrictMock(PrincipalCollection)
+        def runAsPrincipals = createStrictMock(PrincipalCollection)
+        def session = createStrictMock(Session)
+        def securityManager = createStrictMock(SecurityManager)
+
+        expect(session.getId()).andStubReturn sessionId
+        expect(session.getAttribute(eq(DelegatingSubject.RUN_AS_PRINCIPALS_SESSION_KEY))).andReturn(Arrays.asList(runAsPrincipals))
+        expect(principals.isEmpty()).andStubReturn false
+        expect(session.getAttribute(eq(DefaultSubjectContext.PRINCIPALS_SESSION_KEY))).andReturn null
+        session.setAttribute(eq(DefaultSubjectContext.PRINCIPALS_SESSION_KEY), same(principals));
+
+        replay principals, runAsPrincipals, session, securityManager
+
+        def subject = new DelegatingSubject(principals, true, "localhost", session, true, securityManager)
+        new DefaultSubjectDAO().mergePrincipals(subject)
+
+        verify principals, runAsPrincipals, session, securityManager
+    }
+
+    /**
      * Tests the case when the Subject has principals but no session yet.  In this case, a session will be created
      * and the session will be set with the principals.
      */
@@ -151,6 +179,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         def session = createStrictMock(Session)
         def principals = createStrictMock(PrincipalCollection)
 
+        expect(subject.runAs).andReturn false
         expect(subject.principals).andReturn principals
         expect(subject.getSession(false)).andReturn null //no session
         expect(principals.isEmpty()).andReturn(false).anyTimes()
@@ -175,6 +204,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         def subject = createStrictMock(Subject)
         def session = createStrictMock(Session)
 
+        expect(subject.runAs).andReturn false
         expect(subject.principals).andReturn null
         expect(subject.getSession(false)).andReturn(session).anyTimes()
 
@@ -199,6 +229,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         def session = createStrictMock(Session)
         def sessionPrincipals = createStrictMock(PrincipalCollection)
 
+        expect(subject.runAs).andReturn false
         expect(subject.principals).andReturn null
         expect(subject.getSession(false)).andReturn(session).anyTimes()
 
@@ -265,6 +296,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         def session = createStrictMock(Session)
         def subjectPrincipals = createStrictMock(PrincipalCollection)
 
+        expect(subject.runAs).andReturn false
         expect(subject.principals).andReturn subjectPrincipals
         expect(subject.getSession(false)).andReturn session
         expect(subjectPrincipals.isEmpty()).andReturn false
