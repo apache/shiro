@@ -127,6 +127,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
 
         expect(subject.getSession(false)).andReturn null
 
+        expect(subject.isRunAs()).andReturn(false)
         expect(subject.principals).andReturn null
         expect(subject.getSession(false)).andReturn(null).anyTimes()
         expect(subject.authenticated).andReturn false
@@ -150,6 +151,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         def session = createStrictMock(Session)
         def principals = createStrictMock(PrincipalCollection)
 
+        expect(subject.runAs).andReturn false
         expect(subject.principals).andReturn principals
         expect(subject.getSession(false)).andReturn null //no session
         expect(principals.isEmpty()).andReturn(false).anyTimes()
@@ -174,6 +176,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         def subject = createStrictMock(Subject)
         def session = createStrictMock(Session)
 
+        expect(subject.runAs).andReturn(false)
         expect(subject.principals).andReturn null
         expect(subject.getSession(false)).andReturn(session).anyTimes()
 
@@ -198,6 +201,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         def session = createStrictMock(Session)
         def sessionPrincipals = createStrictMock(PrincipalCollection)
 
+        expect(subject.runAs).andReturn false
         expect(subject.principals).andReturn null
         expect(subject.getSession(false)).andReturn(session).anyTimes()
 
@@ -248,6 +252,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         def session = createStrictMock(Session)
         def subjectPrincipals = createStrictMock(PrincipalCollection)
 
+        expect(subject.runAs).andReturn false
         expect(subject.principals).andReturn subjectPrincipals
         expect(subject.getSession(false)).andReturn session
         expect(subjectPrincipals.isEmpty()).andReturn false
