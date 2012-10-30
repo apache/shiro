@@ -23,6 +23,7 @@ import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.subject.Subject
 import org.apache.shiro.subject.support.DefaultSubjectContext
 import static org.easymock.EasyMock.*
+import org.apache.shiro.subject.support.DelegatingSubject
 
 /**
  * Unit tests for the {@link DefaultSubjectDAO} implementation.
@@ -140,6 +141,32 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
     }
 
     // BEGIN: mergePrincipals tests
+
+    /**
+     * SHIRO-380
+     */
+    void testMergePrincipalsWithDelegatingSubject() {
+
+        def sessionId = "sessionId"
+
+        def principals = createStrictMock(PrincipalCollection)
+        def runAsPrincipals = createStrictMock(PrincipalCollection)
+        def session = createStrictMock(Session)
+        def securityManager = createStrictMock(SecurityManager)
+
+        expect(session.getId()).andStubReturn sessionId
+        expect(session.getAttribute(eq(DelegatingSubject.RUN_AS_PRINCIPALS_SESSION_KEY))).andReturn(Arrays.asList(runAsPrincipals))
+        expect(principals.isEmpty()).andStubReturn false
+        expect(session.getAttribute(eq(DefaultSubjectContext.PRINCIPALS_SESSION_KEY))).andReturn null
+        session.setAttribute(eq(DefaultSubjectContext.PRINCIPALS_SESSION_KEY), same(principals));
+
+        replay principals, runAsPrincipals, session, securityManager
+
+        def subject = new DelegatingSubject(principals, true, "localhost", session, true, securityManager)
+        new DefaultSubjectDAO().mergePrincipals(subject)
+
+        verify principals, runAsPrincipals, session, securityManager
+    }
 
     /**
      * Tests the case when the Subject has principals but no session yet.  In this case, a session will be created
