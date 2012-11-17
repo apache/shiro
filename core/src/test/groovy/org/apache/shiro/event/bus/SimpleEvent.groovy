@@ -19,11 +19,7 @@
 package org.apache.shiro.event.bus
 
 /**
- * Created with IntelliJ IDEA.
- * User: lhazlewood
- * Date: 11/16/12
- * Time: 11:09 PM
- * To change this template use File | Settings | File Templates.
+ * @since 1.3
  */
 class SimpleEvent {
 }
