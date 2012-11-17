@@ -22,7 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -205,6 +209,29 @@ public class ClassUtils {
             String msg = "Unable to instantiate Permission instance with constructor [" + ctor + "]";
             throw new InstantiationException(msg, e);
         }
+    }
+
+    /**
+     *
+     * @param type
+     * @param annotation
+     * @return
+     * @since 1.3
+     */
+    public static List<Method> getAnnotatedMethods(final Class<?> type, final Class<? extends Annotation> annotation) {
+        final List<Method> methods = new ArrayList<Method>();
+        Class<?> clazz = type;
+        while (!Object.class.equals(clazz)) {
+            Method[] currentClassMethods = clazz.getDeclaredMethods();
+            for (final Method method : currentClassMethods) {
+                if (annotation == null || method.isAnnotationPresent(annotation)) {
+                    methods.add(method);
+                }
+            }
+            // move to the upper class in the hierarchy in search for more methods
+            clazz = clazz.getSuperclass();
+        }
+        return methods;
     }
 
     /**
