@@ -29,7 +29,7 @@ class SingleArgumentMethodEventListenerTest extends GroovyTestCase {
 
         def target = new Object()
 
-        def method = Object.class.getMethods()[0] //any old method will do
+        def method = Object.class.getMethod("hashCode") //any method without a single arg will do
 
         try {
             //noinspection GroovyResultOfObjectAllocationIgnored
