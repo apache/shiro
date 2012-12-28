@@ -398,7 +398,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      */
     protected abstract AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals);
 
-    private Collection<Permission> getPermissions(AuthorizationInfo info) {
+    //visibility changed from private to protected per SHIRO-332
+    protected Collection<Permission> getPermissions(AuthorizationInfo info) {
         Set<Permission> permissions = new HashSet<Permission>();
 
         if (info != null) {
@@ -462,7 +463,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return isPermitted(permission, info);
     }
 
-    private boolean isPermitted(Permission permission, AuthorizationInfo info) {
+    //visibility changed from private to protected per SHIRO-332
+    protected boolean isPermitted(Permission permission, AuthorizationInfo info) {
         Collection<Permission> perms = getPermissions(info);
         if (perms != null && !perms.isEmpty()) {
             for (Permission perm : perms) {
