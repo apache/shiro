@@ -16,23 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus
-
-import org.apache.shiro.event.Subscribe
+package org.apache.shiro.event.support
 
 /**
  * @since 1.3
  */
-class SimpleSubscriber {
-
-    int count
-
-    SimpleSubscriber() {
-        count = 0
-    }
-
-    @Subscribe
-    void onEvent(SimpleEvent event) {
-        count++
-    }
+class ErrorCausingEvent {
 }

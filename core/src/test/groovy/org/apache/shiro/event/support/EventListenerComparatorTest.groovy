@@ -16,27 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus
+package org.apache.shiro.event.support
+
+import static org.easymock.EasyMock.createStrictMock
 
 /**
  * @since 1.3
  */
-class ClassComparatorTest extends GroovyTestCase {
+class EventListenerComparatorTest extends GroovyTestCase {
 
-    ClassComparator comparator
+    EventListenerComparator comparator
 
     @Override
     protected void setUp() {
-        comparator = new ClassComparator()
+        comparator = new EventListenerComparator()
     }
 
     void testANull() {
-        def result = comparator.compare(null, Object)
+        def result = comparator.compare(null, createStrictMock(EventListener))
         assertEquals(-1, result)
     }
 
     void testBNull() {
-        def result = comparator.compare(Object, null)
+        def result = comparator.compare(createStrictMock(EventListener), null)
         assertEquals 1, result
     }
 
@@ -45,18 +47,25 @@ class ClassComparatorTest extends GroovyTestCase {
     }
 
     void testBothSame() {
-        assertEquals 0, comparator.compare(Object, Object)
+        def mock = createStrictMock(EventListener)
+        assertEquals 0, comparator.compare(mock, mock)
     }
 
-    void testAParentOfB() {
-        assertEquals 1, comparator.compare(Number, Integer)
+    void testBothEventListener() {
+        def a = createStrictMock(EventListener)
+        def b = createStrictMock(EventListener)
+        assertEquals 0, comparator.compare(a, b)
     }
 
-    void testBParentOfA() {
-        assertEquals(-1, comparator.compare(Integer, Number))
+    void testATypedListenerBNormalListener() {
+        def a = createStrictMock(TypedEventListener)
+        def b = createStrictMock(EventListener)
+        assertEquals(-1, comparator.compare(a, b))
     }
 
-    void testUnrelated() {
-        assertEquals(0, comparator.compare(Integer, Boolean))
+    void testANormalBTypedListener() {
+        def a = createStrictMock(EventListener)
+        def b = createStrictMock(TypedEventListener)
+        assertEquals 1, comparator.compare(a, b)
     }
 }

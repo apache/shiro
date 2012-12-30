@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus;
+package org.apache.shiro.event.support;
 
 import java.lang.reflect.Method;
 

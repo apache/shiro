@@ -16,35 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus
-
-import org.apache.shiro.event.Subscribe
+package org.apache.shiro.event.support
 
 /**
  * @since 1.3
  */
-class TestSubscriber {
+class BarEvent extends FooEvent {
 
-    int fooCount, barCount
-    Object lastEvent;
-
-    TestSubscriber() {
-        fooCount = barCount = 0
-    }
-
-    @Subscribe
-    void onFooEvent(FooEvent event) {
-        fooCount++
-        lastEvent = event;
-    }
-
-    @Subscribe
-    void onBarEvent(BarEvent event) {
-        barCount++
-        lastEvent = event;
-    }
-
-    int getCount() {
-        return fooCount + barCount
+    BarEvent(Object o) {
+        super(o)
     }
 }

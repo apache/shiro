@@ -16,34 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus
-
-import org.apache.shiro.event.Subscribe
+package org.apache.shiro.event.support
 
 /**
  * @since 1.3
  */
-class SubclassTestSubscriber extends TestSubscriber {
+class BazEvent extends BarEvent {
 
-    int bazCount
-
-    SubclassTestSubscriber() {
-        bazCount = 0
-    }
-
-    @Subscribe
-    void onEvent(BazEvent event) {
-        bazCount++
-        lastEvent = event;
-    }
-
-    @Subscribe
-    void onEvent(ErrorCausingEvent event) {
-        throw new UnsupportedOperationException("This throws!")
-    }
-
-    @Override
-    int getCount() {
-        return super.getCount() + bazCount
+    BazEvent(Object o) {
+        super(o)
     }
 }

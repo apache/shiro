@@ -16,10 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus
+package org.apache.shiro.event;
 
 /**
+ * Interface implemented by components that utilize an EventBus for publishing and/or subscribing to/from events
+ * and wish that EventBus to be supplied if one is available.
+ *
  * @since 1.3
  */
-class ErrorCausingEvent {
+public interface EventBusAware {
+
+    /**
+     * Sets the available {@code EventBus} that may be used for publishing and subscribing to/from events.
+     *
+     * @param bus the available {@code EventBus}.
+     */
+    void setEventBus(EventBus bus);
 }
