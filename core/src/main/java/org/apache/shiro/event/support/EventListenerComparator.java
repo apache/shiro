@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus;
+package org.apache.shiro.event.support;
 
 import java.util.Comparator;
 
@@ -30,7 +30,7 @@ import java.util.Comparator;
  * <p/>
  * When both objects being compared are TypedEventListeners, they are ordered according to the rules of the
  * {@link ClassComparator}, using the TypedEventListeners'
- * {@link org.apache.shiro.event.bus.TypedEventListener#getEventType() eventType}.
+ * {@link TypedEventListener#getEventType() eventType}.
  *
  * @since 1.3
  */

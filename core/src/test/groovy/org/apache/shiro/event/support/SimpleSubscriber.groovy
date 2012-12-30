@@ -16,14 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus
+package org.apache.shiro.event.support
+
+import org.apache.shiro.event.Subscribe
 
 /**
  * @since 1.3
  */
-class BarEvent extends FooEvent {
+class SimpleSubscriber {
 
-    BarEvent(Object o) {
-        super(o)
+    int count
+
+    SimpleSubscriber() {
+        count = 0
+    }
+
+    @Subscribe
+    void onEvent(SimpleEvent event) {
+        count++
     }
 }

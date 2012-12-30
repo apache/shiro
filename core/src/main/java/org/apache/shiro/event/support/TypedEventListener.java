@@ -16,14 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus
+package org.apache.shiro.event.support;
 
 /**
  * @since 1.3
  */
-class FooEvent extends EventObject {
+public interface TypedEventListener extends EventListener {
 
-    FooEvent(Object o) {
-        super(o)
-    }
+    Class getEventType();
 }

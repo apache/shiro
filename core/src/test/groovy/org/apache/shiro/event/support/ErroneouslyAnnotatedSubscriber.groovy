@@ -16,12 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus
+package org.apache.shiro.event.support
+
+import org.apache.shiro.event.Subscribe
 
 /**
  * @since 1.3
  */
-class NotAnnotatedSubscriber {
-    //not a subscriber - no methods have been annotated on purpose.
-    void hello() {}
+class ErroneouslyAnnotatedSubscriber {
+
+    @Subscribe
+    void onEvent(FooEvent event, Object someOtherArg) {
+    }
 }

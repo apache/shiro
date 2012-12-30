@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus;
+package org.apache.shiro.event.support;
 
 import org.apache.shiro.event.Subscribe;
 import org.apache.shiro.util.ClassUtils;
@@ -28,10 +28,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Inspects an object for annotated methods of interest and creates an {@link EventListener} for each method discovered.
- * An event bus will call the resulting listeners as relevant events arrive.
+ * Inspects an object for annotated methods of interest and creates an {@link EventListener} instance for each method
+ * discovered.  An event bus will call the resulting listeners as relevant events arrive.
  * <p/>
- * The default {@link #setAnnotationClass(Class) annotationClass} is {@link Subscribe}, indicating any
+ * The default {@link #setAnnotationClass(Class) annotationClass} is {@link Subscribe}, indicating each
  * {@link Subscribe}-annotated method will be represented as an EventListener.
  *
  * @see SingleArgumentMethodEventListener

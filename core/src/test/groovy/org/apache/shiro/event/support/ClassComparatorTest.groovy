@@ -16,29 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus
-
-import static org.easymock.EasyMock.createStrictMock
+package org.apache.shiro.event.support
 
 /**
  * @since 1.3
  */
-class EventListenerComparatorTest extends GroovyTestCase {
+class ClassComparatorTest extends GroovyTestCase {
 
-    EventListenerComparator comparator
+    ClassComparator comparator
 
     @Override
     protected void setUp() {
-        comparator = new EventListenerComparator()
+        comparator = new ClassComparator()
     }
 
     void testANull() {
-        def result = comparator.compare(null, createStrictMock(EventListener))
+        def result = comparator.compare(null, Object)
         assertEquals(-1, result)
     }
 
     void testBNull() {
-        def result = comparator.compare(createStrictMock(EventListener), null)
+        def result = comparator.compare(Object, null)
         assertEquals 1, result
     }
 
@@ -47,25 +45,18 @@ class EventListenerComparatorTest extends GroovyTestCase {
     }
 
     void testBothSame() {
-        def mock = createStrictMock(EventListener)
-        assertEquals 0, comparator.compare(mock, mock)
+        assertEquals 0, comparator.compare(Object, Object)
     }
 
-    void testBothEventListener() {
-        def a = createStrictMock(EventListener)
-        def b = createStrictMock(EventListener)
-        assertEquals 0, comparator.compare(a, b)
+    void testAParentOfB() {
+        assertEquals 1, comparator.compare(Number, Integer)
     }
 
-    void testATypedListenerBNormalListener() {
-        def a = createStrictMock(TypedEventListener)
-        def b = createStrictMock(EventListener)
-        assertEquals(-1, comparator.compare(a, b))
+    void testBParentOfA() {
+        assertEquals(-1, comparator.compare(Integer, Number))
     }
 
-    void testANormalBTypedListener() {
-        def a = createStrictMock(EventListener)
-        def b = createStrictMock(TypedEventListener)
-        assertEquals 1, comparator.compare(a, b)
+    void testUnrelated() {
+        assertEquals(0, comparator.compare(Integer, Boolean))
     }
 }
