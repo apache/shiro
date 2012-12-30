@@ -16,19 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event;
+package org.apache.shiro.event.support
+
+import org.apache.shiro.event.Subscribe
 
 /**
- * Publishes events to an event subsystem that will deliver events to registered {@link Subscribe}rs.
- *
  * @since 1.3
  */
-public interface Publisher {
+class ExceptionThrowingSubscriber extends TestSubscriber {
 
-    /**
-     * Publishes the specified event to an event subsystem that will deliver events to relevant {@link Subscribe}rs.
-     *
-     * @param event The event object to distribute to relevant subscribers.
-     */
-    void publish(Object event);
+    @Subscribe
+    void onEvent(ErrorCausingEvent event) {
+        throw new UnsupportedOperationException("This throws!")
+    }
 }

@@ -16,12 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus;
+package org.apache.shiro.event.support
+
+import org.apache.shiro.event.Subscribe
 
 /**
  * @since 1.3
  */
-public interface TypedEventListener extends EventListener {
+class TestSubscriber {
 
-    Class getEventType();
+    int fooCount, barCount
+    Object lastEvent;
+
+    TestSubscriber() {
+        fooCount = barCount = 0
+    }
+
+    @Subscribe
+    void onFooEvent(FooEvent event) {
+        fooCount++
+        lastEvent = event;
+    }
+
+    @Subscribe
+    void onBarEvent(BarEvent event) {
+        barCount++
+        lastEvent = event;
+    }
+
+    int getCount() {
+        return fooCount + barCount
+    }
 }

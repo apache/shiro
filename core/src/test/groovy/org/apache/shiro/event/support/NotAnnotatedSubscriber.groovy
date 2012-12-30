@@ -16,14 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus
+package org.apache.shiro.event.support
 
 /**
  * @since 1.3
  */
-class BazEvent extends BarEvent {
-
-    BazEvent(Object o) {
-        super(o)
-    }
+class NotAnnotatedSubscriber {
+    //not a subscriber - no methods have been annotated on purpose.
+    void hello() {}
 }

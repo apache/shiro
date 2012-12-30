@@ -16,10 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus;
+package org.apache.shiro.event.support;
 
-
-import org.apache.shiro.event.Publisher;
+import org.apache.shiro.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p/>
  * An event bus enables a publish/subscribe paradigm within Shiro - components can publish or consume events they
  * find relevant without needing to be tightly coupled to other components.  This affords great
- * flexibility within Shiro by promoting loose coupling and high cohesion between components and a much safer pluggable
- * architecture.
+ * flexibility within Shiro by promoting loose coupling and high cohesion between components and a much safer
+ * pluggable architecture that is more resilient to change over time.
  * <h2>Sending Events</h2>
  * If a component wishes to publish events to other components:
  * <pre>
@@ -64,7 +63,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @since 1.3
  */
-public class DefaultEventBus implements Publisher, SubscriberRegistry {
+public class DefaultEventBus implements EventBus {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultEventBus.class);
 
@@ -149,10 +148,11 @@ public class DefaultEventBus implements Publisher, SubscriberRegistry {
                 if (listener.accepts(event) && !delivered.contains(target)) {
                     try {
                         listener.onEvent(event);
-                        delivered.add(target);
                     } catch (Throwable t) {
                         log.warn("Event listener processing failed.  Listeners should generally " +
                                 "handle exceptions directly and not propagate to the event bus.", t);
+                    } finally {
+                        delivered.add(target);
                     }
                 }
             }

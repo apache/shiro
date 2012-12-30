@@ -16,17 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.event.bus
-
-import org.apache.shiro.event.Subscribe
+package org.apache.shiro.event.support
 
 /**
  * @since 1.3
  */
-class ExceptionThrowingSubscriber extends TestSubscriber {
+class FooEvent extends EventObject {
 
-    @Subscribe
-    void onEvent(ErrorCausingEvent event) {
-        throw new UnsupportedOperationException("This throws!")
+    FooEvent(Object o) {
+        super(o)
     }
 }
