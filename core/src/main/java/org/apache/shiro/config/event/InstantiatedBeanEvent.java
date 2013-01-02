@@ -24,6 +24,7 @@ import java.util.Map;
  * @since 1.3
  */
 public class InstantiatedBeanEvent extends BeanEvent {
+
     public InstantiatedBeanEvent(final String beanName, final Object bean, final Map<String, Object> beanContext) {
         super(beanName, bean, beanContext);
     }

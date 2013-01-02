@@ -18,7 +18,11 @@
  */
 package org.apache.shiro.config;
 
-import org.apache.shiro.config.event.*;
+import org.apache.shiro.config.event.BeanEvent;
+import org.apache.shiro.config.event.ConfiguredBeanEvent;
+import org.apache.shiro.config.event.DestroyedBeanEvent;
+import org.apache.shiro.config.event.InstantiatedBeanEvent;
+import org.apache.shiro.event.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,30 +30,29 @@ import java.util.List;
 /**
  * @since 1.3
  */
-public class RecordingBeanListener extends BeanListenerSupport {
+public class RecordingBeanListener {
 
     private List<InstantiatedBeanEvent> instantiateEvents = new ArrayList<InstantiatedBeanEvent>();
     private List<ConfiguredBeanEvent> configuredEvents = new ArrayList<ConfiguredBeanEvent>();
     private List<DestroyedBeanEvent> destroyedEvents = new ArrayList<DestroyedBeanEvent>();
-
     private List<BeanEvent> unhandledEvents = new ArrayList<BeanEvent>();
 
-    @Override
+    @Subscribe
     protected void onUnhandledBeanEvent(BeanEvent beanEvent) {
         this.unhandledEvents.add(beanEvent);
     }
 
-    @Override
+    @Subscribe
     protected void onInstantiatedBeanEvent(InstantiatedBeanEvent beanEvent) {
         this.instantiateEvents.add(beanEvent);
     }
 
-    @Override
+    @Subscribe
     protected void onConfiguredBeanEvent(ConfiguredBeanEvent beanEvent) {
         this.configuredEvents.add(beanEvent);
     }
 
-    @Override
+    @Subscribe
     protected void onDestroyedBeanEvent(DestroyedBeanEvent beanEvent) {
         this.destroyedEvents.add(beanEvent);
     }

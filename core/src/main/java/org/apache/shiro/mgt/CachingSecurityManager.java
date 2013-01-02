@@ -20,6 +20,9 @@ package org.apache.shiro.mgt;
 
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.CacheManagerAware;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.EventBusAware;
+import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.util.Destroyable;
 import org.apache.shiro.util.LifecycleUtils;
 
@@ -34,7 +37,7 @@ import org.apache.shiro.util.LifecycleUtils;
  *
  * @since 0.9
  */
-public abstract class CachingSecurityManager implements SecurityManager, Destroyable, CacheManagerAware {
+public abstract class CachingSecurityManager implements SecurityManager, Destroyable, CacheManagerAware, EventBusAware {
 
     /**
      * The CacheManager to use to perform caching operations to enhance performance.  Can be null.
@@ -42,9 +45,17 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
     private CacheManager cacheManager;
 
     /**
+     * The EventBus to use to use to publish and receive events of interest during Shiro's lifecycle.
+     * @since 1.3
+     */
+    private EventBus eventBus;
+
+    /**
      * Default no-arg constructor that will automatically attempt to initialize a default cacheManager
      */
     public CachingSecurityManager() {
+        //use a default event bus:
+        setEventBus(new DefaultEventBus());
     }
 
     /**
@@ -81,11 +92,49 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
     }
 
     /**
+     * Returns the {@code EventBus} used by this Securitymanager and potentially any of its children components.
+     *
+     * @return the {@code EventBus} used by this Securitymanager and potentially any of its children components.
+     * @since 1.3
+     */
+    public EventBus getEventBus() {
+        return eventBus;
+    }
+
+    /**
+     * Sets the EventBus used by this {@code SecurityManager} and potentially any of its
+     * children components.
+     * <p/>
+     * After the eventBus attribute has been set, the template method
+     * {@link #afterEventBusSet() afterEventBusSet()} is executed to allow subclasses to adjust when a
+     * eventBus is available.
+     *
+     * @param eventBus the EventBus used by this {@code SecurityManager} and potentially any of its
+     *                     children components.
+     * @since 1.3
+     */
+    public void setEventBus(EventBus eventBus) {
+        this.eventBus = eventBus;
+        afterEventBusSet();
+    }
+
+    /**
+     * Template callback to notify subclasses that an {@link EventBus EventBus} has been set and is available for use
+     * via the {@link #getEventBus() getEventBus()} method.
+     *
+     * @since 1.3
+     */
+    protected void afterEventBusSet() {
+    }
+
+    /**
      * Destroys the {@link #getCacheManager() cacheManager} via {@link LifecycleUtils#destroy LifecycleUtils.destroy}.
      */
     public void destroy() {
         LifecycleUtils.destroy(getCacheManager());
         this.cacheManager = null;
+        LifecycleUtils.destroy(getEventBus());
+        this.eventBus = new DefaultEventBus();
     }
 
 }
