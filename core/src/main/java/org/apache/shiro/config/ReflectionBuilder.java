@@ -22,7 +22,14 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
-import org.apache.shiro.config.event.*;
+import org.apache.shiro.config.event.BeanEvent;
+import org.apache.shiro.config.event.ConfiguredBeanEvent;
+import org.apache.shiro.config.event.DestroyedBeanEvent;
+import org.apache.shiro.config.event.InstantiatedBeanEvent;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.EventBusAware;
+import org.apache.shiro.event.Subscribe;
+import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,25 +65,47 @@ public class ReflectionBuilder {
     private static final char MAP_PROPERTY_BEGIN_TOKEN = '[';
     private static final char MAP_PROPERTY_END_TOKEN = ']';
 
+    private static final String EVENT_BUS_NAME = "eventBus";
+
     private final Map<String, Object> objects;
-    private final List<BeanListener> listeners = new ArrayList<BeanListener>();
-    private final BeanListener compositeListener = new BeanListener() {
-        public void onBeanEvent(BeanEvent beanEvent) {
-            for(BeanListener listener: listeners) {
-                listener.onBeanEvent(beanEvent);
-            }
-        }
-    };
+    /**
+     * @since 1.3
+     */
+    private EventBus eventBus;
+    /**
+     * Keeps track of event subscribers that were automatically registered by this ReflectionBuilder during
+     * object construction.  This is used in case a new EventBus is discovered during object graph
+     * construction:  upon discovery of the new EventBus, the existing subscribers will be unregistered from the
+     * old EventBus and then re-registered with the new EventBus.
+     *
+     * @since 1.3
+     */
+    private final Map<String,Object> registeredEventSubscribers;
+
+    //@since 1.3
+    private static Map<String,Object> createDefaultObjectMap() {
+        Map<String,Object> map = new LinkedHashMap<String, Object>();
+        map.put(EVENT_BUS_NAME, new DefaultEventBus());
+        return map;
+    }
 
     public ReflectionBuilder() {
-        this.objects = new LinkedHashMap<String, Object>();
+        this(null);
     }
 
     public ReflectionBuilder(Map<String, ?> defaults) {
-        this.objects = new LinkedHashMap<String, Object>();
-        if(!CollectionUtils.isEmpty(defaults)) {
-            this.objects.putAll(defaults);
+        this.objects = createDefaultObjectMap();
+        this.registeredEventSubscribers = new LinkedHashMap<String,Object>();
+        apply(defaults);
+    }
+
+    private void apply(Map<String, ?> objects) {
+        if(!CollectionUtils.isEmpty(objects)) {
+            this.objects.putAll(objects);
         }
+        EventBus found = findEventBus(this.objects);
+        Assert.notNull(found, "An " + EventBus.class.getName() + " instance must be present in the object defaults");
+        enableEvents(found);
     }
 
     public Map<String, ?> getObjects() {
@@ -84,15 +113,82 @@ public class ReflectionBuilder {
     }
 
     /**
-     * @deprecated Use of this method will break the event contract.  We recommend not using it.
      * @param objects
      */
-    @Deprecated
     public void setObjects(Map<String, ?> objects) {
         this.objects.clear();
-        if(!CollectionUtils.isEmpty(objects)) {
-            this.objects.putAll(objects);
+        this.objects.putAll(createDefaultObjectMap());
+        apply(objects);
+    }
+
+    //@since 1.3
+    private void enableEvents(EventBus eventBus) {
+        Assert.notNull(eventBus, "EventBus argument cannot be null.");
+        //clean up old auto-registered subscribers:
+        for (Object subscriber : this.registeredEventSubscribers.values()) {
+            this.eventBus.unregister(subscriber);
         }
+        this.registeredEventSubscribers.clear();
+
+        this.eventBus = eventBus;
+
+        for(Map.Entry<String,Object> entry : this.objects.entrySet()) {
+            enableEventsIfNecessary(entry.getValue(), entry.getKey());
+        }
+    }
+
+    //@since 1.3
+    private void enableEventsIfNecessary(Object bean, String name) {
+        boolean applied = applyEventBusIfNecessary(bean);
+        if (!applied) {
+            //if the event bus is applied, and the bean wishes to be a subscriber as well (not just a publisher),
+            // we assume that the implementation registers itself with the event bus, i.e. eventBus.register(this);
+
+            //if the event bus isn't applied, only then do we need to check to see if the bean is an event subscriber,
+            // and if so, register it on the event bus automatically since it has no ability to do so itself:
+            if (isEventSubscriber(bean, name)) {
+                //found an event subscriber, so register them with the EventBus:
+                this.eventBus.register(bean);
+                this.registeredEventSubscribers.put(name, bean);
+            }
+        }
+    }
+
+    //@since 1.3
+    private boolean isEventSubscriber(Object bean, String name) {
+        List annotatedMethods = ClassUtils.getAnnotatedMethods(bean.getClass(), Subscribe.class);
+        return !CollectionUtils.isEmpty(annotatedMethods);
+    }
+
+    //@since 1.3
+    protected EventBus findEventBus(Map<String,?> objects) {
+
+        if (CollectionUtils.isEmpty(objects)) {
+            return null;
+        }
+
+        //prefer a named object first:
+        Object value = objects.get(EVENT_BUS_NAME);
+        if (value != null && value instanceof EventBus) {
+            return (EventBus)value;
+        }
+
+        //couldn't find a named 'eventBus' EventBus object.  Try to find the first typed value we can:
+        for( Object v : objects.values()) {
+            if (v instanceof EventBus) {
+                return (EventBus)v;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean applyEventBusIfNecessary(Object value) {
+        if (value instanceof EventBusAware) {
+            ((EventBusAware)value).setEventBus(this.eventBus);
+            return true;
+        }
+        return false;
     }
 
     public Object getBean(String id) {
@@ -108,74 +204,44 @@ public class ReflectionBuilder {
         if (bean == null) {
             return null;
         }
-        if (!requiredType.isAssignableFrom(bean.getClass())) {
-            throw new IllegalStateException("Bean with id [" + id + "] is not of the required type [" +
-                    requiredType.getName() + "].");
-        }
+        Assert.state(requiredType.isAssignableFrom(bean.getClass()),
+                "Bean with id [" + id + "] is not of the required type [" + requiredType.getName() + "].");
         return (T) bean;
+    }
+
+    private String parseBeanId(String lhs) {
+        Assert.notNull(lhs);
+        if (lhs.indexOf('.') < 0) {
+            return lhs;
+        }
+        String classSuffix = ".class";
+        int index = lhs.indexOf(classSuffix);
+        if (index >= 0) {
+            return lhs.substring(0, index);
+        }
+        return null;
     }
 
     @SuppressWarnings({"unchecked"})
     public Map<String, ?> buildObjects(Map<String, String> kvPairs) {
+
         if (kvPairs != null && !kvPairs.isEmpty()) {
 
-            // Separate key value pairs into object declarations and property assignment
-            // so that all objects can be created up front
-
-            //https://issues.apache.org/jira/browse/SHIRO-85 - need to use LinkedHashMaps here:
-            Map<String, String> instanceMap = new LinkedHashMap<String, String>();
-            Map<String, String> propertyMap = new LinkedHashMap<String, String>();
+            BeanConfigurationProcessor processor = new BeanConfigurationProcessor();
 
             for (Map.Entry<String, String> entry : kvPairs.entrySet()) {
-                if (entry.getKey().indexOf('.') < 0 || entry.getKey().endsWith(".class")) {
-                    instanceMap.put(entry.getKey(), entry.getValue());
-                } else {
-                    propertyMap.put(entry.getKey(), entry.getValue());
+                String lhs = entry.getKey();
+                String rhs = entry.getValue();
+
+                String beanId = parseBeanId(lhs);
+                if (beanId != null) { //a beanId could be parsed, so the line is a bean instance definition
+                    processor.add(new InstantiationStatement(beanId, rhs));
+                } else { //the line must be a property configuration
+                    processor.add(new AssignmentStatement(lhs, rhs));
                 }
             }
 
-            // Create all instances
-            for (Map.Entry<String, String> entry : instanceMap.entrySet()) {
-                createNewInstance((Map<String, Object>) objects, entry.getKey(), entry.getValue());
-            }
-
-            // Set properties on listeners
-            Iterator<Map.Entry<String, String>> entryIterator = propertyMap.entrySet().iterator();
-            while(entryIterator.hasNext()) {
-                Map.Entry<String, String> entry = entryIterator.next();
-                if(isListenerProperty(entry.getKey())) {
-                    applyProperty(entry.getKey(), entry.getValue(), objects);
-                    entryIterator.remove();
-                }
-            }
-
-            Map<String, Object> immutableObjects = Collections.unmodifiableMap(objects);
-
-            // Add listeners to listener set, notifying events on them as we go - order is important here
-            for(Map.Entry<String, ?> entry: objects.entrySet()) {
-                if(entry.getValue() instanceof BeanListener) {
-                    compositeListener.onBeanEvent(new ConfiguredBeanEvent(entry.getKey(), entry.getValue(), immutableObjects));
-                    listeners.add((BeanListener) entry.getValue());
-                }
-            }
-
-            // notify instantiated event on non-listeners
-            for(Map.Entry<String, ?> entry: objects.entrySet()) {
-                if(!(entry.getValue() instanceof BeanListener)) {
-                    compositeListener.onBeanEvent(new InstantiatedBeanEvent(entry.getKey(), entry.getValue(), immutableObjects));
-                }
-            }
-
-            // Set all properties
-            for (Map.Entry<String, String> entry : propertyMap.entrySet()) {
-                applyProperty(entry.getKey(), entry.getValue(), objects);
-            }
-
-            for(Map.Entry<String, ?> entry: objects.entrySet()) {
-                if(!(entry.getValue() instanceof BeanListener)) {
-                    compositeListener.onBeanEvent(new ConfiguredBeanEvent(entry.getKey(), entry.getValue(), immutableObjects));
-                }
-            }
+            processor.execute();
         }
 
         //SHIRO-413: init method must be called for constructed objects that are Initializable
@@ -187,20 +253,11 @@ public class ReflectionBuilder {
     public void destroy() {
         final Map<String, Object> immutableObjects = Collections.unmodifiableMap(objects);
         for(Map.Entry<String, ?> entry: objects.entrySet()) {
-            compositeListener.onBeanEvent(new DestroyedBeanEvent(entry.getKey(), entry.getValue(), immutableObjects));
-        }
-    }
-
-    private boolean isListenerProperty(String key) {
-        int index = key.indexOf('.');
-
-        if (index >= 0) {
-            String name = key.substring(0, index);
-
-            return objects.containsKey(name) && objects.get(name) instanceof BeanListener;
-        } else {
-            throw new IllegalArgumentException("All property keys must contain a '.' character. " +
-                    "(e.g. myBean.property = value)  These should already be separated out by buildObjects().");
+            String id = entry.getKey();
+            Object bean = entry.getValue();
+            BeanEvent event = new DestroyedBeanEvent(id, bean, immutableObjects);
+            eventBus.publish(event);
+            LifecycleUtils.destroy(bean);
         }
     }
 
@@ -633,6 +690,232 @@ public class ReflectionBuilder {
         }
 
         applyProperty(object, propertyName, value);
+    }
+
+    private class BeanConfigurationProcessor {
+
+        private final List<Statement> statements = new ArrayList<Statement>();
+        private final List<BeanConfiguration> beanConfigurations = new ArrayList<BeanConfiguration>();
+
+        public void add(Statement statement) {
+
+            statements.add(statement); //we execute bean configuration statements in the order they are declared.
+
+            if (statement instanceof InstantiationStatement) {
+                InstantiationStatement is = (InstantiationStatement)statement;
+                beanConfigurations.add(new BeanConfiguration(is));
+            } else {
+                AssignmentStatement as = (AssignmentStatement)statement;
+                //statements always apply to the most recently defined bean configuration with the same name, so we
+                //have to traverse the configuration list starting at the end (most recent elements are appended):
+                boolean addedToConfig = false;
+                String beanName = as.getRootBeanName();
+                for( int i = beanConfigurations.size()-1; i >= 0; i--) {
+                    BeanConfiguration mostRecent = beanConfigurations.get(i);
+                    String mostRecentBeanName = mostRecent.getBeanName();
+                    if (beanName.equals(mostRecentBeanName)) {
+                        mostRecent.add(as);
+                        addedToConfig = true;
+                        break;
+                    }
+                }
+
+                if (!addedToConfig) {
+                    // the AssignmentStatement must be for an existing bean that does not yet have a corresponding
+                    // configuration object (this would happen if the bean is in the default objects map). Because
+                    // BeanConfiguration instances don't exist for default (already instantiated) beans,
+                    // we simulate a creation of one to satisfy this processors implementation:
+                    beanConfigurations.add(new BeanConfiguration(as));
+                }
+            }
+        }
+
+        public void execute() {
+
+            for( Statement statement : statements) {
+
+                statement.execute();
+
+                BeanConfiguration bd = statement.getBeanConfiguration();
+
+                if (bd.isExecuted()) { //bean is fully configured, no more statements to execute for it:
+
+                    if (bd.getBeanName().equals(EVENT_BUS_NAME)) {
+                        EventBus eventBus = (EventBus)bd.getBean();
+                        enableEvents(eventBus);
+                    }
+
+                    //ignore global 'shiro.' shortcut mechanism:
+                    if (!bd.isGlobalConfig()) {
+                        BeanEvent event = new ConfiguredBeanEvent(bd.getBeanName(), bd.getBean(),
+                                Collections.unmodifiableMap(objects));
+                        eventBus.publish(event);
+                    }
+                }
+            }
+        }
+    }
+
+    private class BeanConfiguration {
+
+        private final InstantiationStatement instantiationStatement;
+        private final List<AssignmentStatement> assignments = new ArrayList<AssignmentStatement>();
+        private final String beanName;
+        private Object bean;
+
+        private BeanConfiguration(InstantiationStatement statement) {
+            statement.setBeanConfiguration(this);
+            this.instantiationStatement = statement;
+            this.beanName = statement.lhs;
+        }
+
+        private BeanConfiguration(AssignmentStatement as) {
+            this.instantiationStatement = null;
+            this.beanName = as.getRootBeanName();
+            add(as);
+        }
+
+        public String getBeanName() {
+            return this.beanName;
+        }
+
+        public boolean isGlobalConfig() { //BeanConfiguration instance representing the global 'shiro.' properties
+            // (we should remove this concept).
+            return GLOBAL_PROPERTY_PREFIX.equals(getBeanName());
+        }
+
+        public void add(AssignmentStatement as) {
+            as.setBeanConfiguration(this);
+            assignments.add(as);
+        }
+
+        /**
+         * When this configuration is parsed sufficiently to create (or find) an actual bean instance, that instance
+         * will be associated with its configuration by setting it via this method.
+         *
+         * @param bean the bean instantiated (or found) that corresponds to this BeanConfiguration instance.
+         */
+        public void setBean(Object bean) {
+            this.bean = bean;
+        }
+
+        public Object getBean() {
+            return this.bean;
+        }
+
+        /**
+         * Returns true if all configuration statements have been executed.
+         * @return true if all configuration statements have been executed.
+         */
+        public boolean isExecuted() {
+            if (instantiationStatement != null && !instantiationStatement.isExecuted()) {
+                return false;
+            }
+            for (AssignmentStatement as : assignments) {
+                if (!as.isExecuted()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    private abstract class Statement {
+
+        protected final String lhs;
+        protected final String rhs;
+        protected Object bean;
+        private Object result;
+        private boolean executed;
+        private BeanConfiguration beanConfiguration;
+
+        private Statement(String lhs, String rhs) {
+            this.lhs = lhs;
+            this.rhs = rhs;
+            this.executed = false;
+        }
+
+        public void setBeanConfiguration(BeanConfiguration bd) {
+            this.beanConfiguration = bd;
+        }
+
+        public BeanConfiguration getBeanConfiguration() {
+            return this.beanConfiguration;
+        }
+
+        public Object execute() {
+            if (!isExecuted()) {
+                this.result = doExecute();
+                this.executed = true;
+            }
+            if (!getBeanConfiguration().isGlobalConfig()) {
+                Assert.notNull(this.bean, "Implementation must set the root bean for which it executed.");
+            }
+            return this.result;
+        }
+
+        public Object getBean() {
+            return this.bean;
+        }
+
+        protected void setBean(Object bean) {
+            this.bean = bean;
+            if (this.beanConfiguration.getBean() == null) {
+                this.beanConfiguration.setBean(bean);
+            }
+        }
+
+        public Object getResult() {
+            return result;
+        }
+
+        protected abstract Object doExecute();
+
+        public boolean isExecuted() {
+            return executed;
+        }
+    }
+
+    private class InstantiationStatement extends Statement {
+
+        private InstantiationStatement(String lhs, String rhs) {
+            super(lhs, rhs);
+        }
+
+        @Override
+        protected Object doExecute() {
+            createNewInstance(objects, this.lhs, this.rhs);
+            Object instantiated = objects.get(this.lhs);
+            setBean(instantiated);
+
+            BeanEvent event = new InstantiatedBeanEvent(this.lhs, instantiated, Collections.unmodifiableMap(objects));
+            eventBus.publish(event);
+
+            return instantiated;
+        }
+    }
+
+    private class AssignmentStatement extends Statement {
+
+        private final String rootBeanName;
+
+        private AssignmentStatement(String lhs, String rhs) {
+            super(lhs, rhs);
+            int index = lhs.indexOf('.');
+            this.rootBeanName = lhs.substring(0, index);
+        }
+
+        @Override
+        protected Object doExecute() {
+            applyProperty(lhs, rhs, objects);
+            Object bean = objects.get(this.rootBeanName);
+            setBean(bean);
+            return null;
+        }
+
+        public String getRootBeanName() {
+            return this.rootBeanName;
+        }
     }
 
 }

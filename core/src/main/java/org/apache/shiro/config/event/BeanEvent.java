@@ -4,6 +4,7 @@ import java.util.EventObject;
 import java.util.Map;
 
 public class BeanEvent extends EventObject {
+
     private String beanName;
     private Object bean;
     private final Map<String, Object> beanContext;
