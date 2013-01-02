@@ -21,9 +21,9 @@ package org.apache.shiro.config
 import org.apache.shiro.codec.Base64
 import org.apache.shiro.codec.CodecSupport
 import org.apache.shiro.codec.Hex
+import org.apache.shiro.config.event.BeanEvent
 import org.apache.shiro.realm.ldap.JndiLdapRealm
 import org.apache.shiro.util.CollectionUtils
-import org.apache.shiro.config.event.BeanEvent
 
 /**
  * Unit tests for the {@link ReflectionBuilder} implementation.
@@ -396,6 +396,9 @@ class ReflectionBuilderTest extends GroovyTestCase {
     }
 
     void testBeanListeners() {
+
+        //currently commented out pending Mailing List discussion:
+        /*
         Map<String, String> defs = new LinkedHashMap<String, String>();
         defs.put("listenerOne", RecordingBeanListener.class.getName());
         defs.put("listenerTwo", RecordingBeanListener.class.getName());
@@ -419,6 +422,7 @@ class ReflectionBuilderTest extends GroovyTestCase {
 
         assertDestroyedEvents("listenerOne", objects);
         assertDestroyedEvents("listenerTwo", objects);
+        */
     }
 
     void assertInstantiatedEvents(String name, Map<String, ?> objects) {

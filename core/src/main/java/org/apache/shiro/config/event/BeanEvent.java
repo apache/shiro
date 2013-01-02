@@ -25,6 +25,7 @@ import java.util.Map;
  * @since 1.3
  */
 public class BeanEvent extends EventObject {
+
     private String beanName;
     private Object bean;
     private final Map<String, Object> beanContext;
