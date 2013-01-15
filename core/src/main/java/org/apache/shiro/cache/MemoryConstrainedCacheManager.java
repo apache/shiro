@@ -28,8 +28,8 @@ import org.apache.shiro.util.SoftHashMap;
  * <p/>
  * While the {@code Cache} instances created are thread-safe, they do not offer any enterprise-level features such as
  * cache coherency, optimistic locking, failover or other similar features.  For more enterprise features, consider
- * using a different {@code CacheManager} implementation backed by an enterprise-grade caching product (EhCache,
- * TerraCotta, Coherence, GigaSpaces, etc, etc).
+ * using a different {@code CacheManager} implementation backed by an enterprise-grade caching product (Hazelcast,
+ * EhCache, TerraCotta, Coherence, GigaSpaces, etc, etc).
  *
  * @since 1.0
  */

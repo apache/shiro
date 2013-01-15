@@ -237,13 +237,15 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
             try {
                 net.sf.ehcache.CacheManager cacheMgr = getCacheManager();
                 cacheMgr.shutdown();
-            } catch (Exception e) {
+            } catch (Throwable t) {
                 if (log.isWarnEnabled()) {
                     log.warn("Unable to cleanly shutdown implicitly created CacheManager instance.  " +
-                            "Ignoring (shutting down)...");
+                            "Ignoring (shutting down)...", t);
                 }
+            } finally {
+                this.manager = null;
+                this.cacheManagerImplicitlyCreated = false;
             }
-            cacheManagerImplicitlyCreated = false;
         }
     }
 }
