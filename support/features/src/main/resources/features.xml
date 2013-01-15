@@ -53,6 +53,25 @@
         <bundle>mvn:org.apache.shiro/shiro-ehcache/${project.version}</bundle>
     </feature>
 
+    <feature name="shiro-hazelcast" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">shiro-core</feature>
+        <!-- Is there a Hazelcast osgi bundle somewhere? The following line just assumes it exists: -->
+        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hazelcast/${hazelcast.bundle.version}</bundle>
+        <bundle>mvn:org.apache.shiro/shiro-hazelcast/${project.version}</bundle>
+    </feature>
+
+    <!--
+    TODO enable when openid4j module is done
+    <feature name="shiro-openid4j" version="${project.version}" resolver="(obr)">
+        <feature version="${project.version}">shiro-core</feature>
+        <feature version="${project.version}">shiro-web</feature>
+        <feature version="[3,4)">spring</feature>
+        TODO: is there an openid4j OSGi bundle?
+        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.openid4j/${openid4j.version}</bundle>
+        <bundle>mvn:org.apache.shiro/shiro-openid4j/${project.version}</bundle>
+    </feature>
+    -->
+
     <feature name="shiro-quartz" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">shiro-core</feature>
         <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons.collections.version}</bundle>

@@ -27,9 +27,13 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>shiro-ehcache</artifactId>
-    <name>Apache Shiro :: Support :: EHCache</name>
+    <artifactId>shiro-hazelcast</artifactId>
+    <name>Apache Shiro :: Support :: Hazelcast</name>
     <packaging>bundle</packaging>
+
+    <properties>
+        <hazelcast.osgi.importRange>[2.4, 3)</hazelcast.osgi.importRange>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -37,8 +41,8 @@
             <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-core</artifactId>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
         </dependency>
         <!-- Test dependencies -->
         <dependency>
@@ -63,11 +67,11 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-SymbolicName>org.apache.shiro.ehcache</Bundle-SymbolicName>
-                        <Export-Package>org.apache.shiro.cache.ehcache*;version=${project.version}</Export-Package>
+                        <Bundle-SymbolicName>org.apache.shiro.hazelcast</Bundle-SymbolicName>
+                        <Export-Package>org.apache.shiro.hazelcast*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            net.sf.ehcache*;version="[2.5, 3)",
+                            com.hazelcast*;version="${hazelcast.osgi.importRange}",
                             *
                         </Import-Package>
                     </instructions>
