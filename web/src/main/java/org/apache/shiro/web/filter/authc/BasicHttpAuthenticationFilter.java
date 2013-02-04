@@ -28,6 +28,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 
 
 /**
@@ -251,8 +252,9 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
      *         the {@link #getAuthzScheme() authzScheme}.
      */
     protected boolean isLoginAttempt(String authzHeader) {
-        String authzScheme = getAuthzScheme().toLowerCase();
-        return authzHeader.toLowerCase().startsWith(authzScheme);
+        //SHIRO-415: use English Locale:
+        String authzScheme = getAuthzScheme().toLowerCase(Locale.ENGLISH);
+        return authzHeader.toLowerCase(Locale.ENGLISH).startsWith(authzScheme);
     }
 
     /**
