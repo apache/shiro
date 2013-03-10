@@ -21,7 +21,13 @@ package org.apache.shiro.config.event;
 import java.util.Map;
 
 /**
+ * Event triggered when a configured bean has been destroyed.
+ *
  * @since 1.3
+ * @see org.apache.shiro.util.Destroyable Destroyable
+ * @see InstantiatedBeanEvent
+ * @see ConfiguredBeanEvent
+ * @see InitializedBeanEvent
  */
 public class DestroyedBeanEvent extends BeanEvent {
 
