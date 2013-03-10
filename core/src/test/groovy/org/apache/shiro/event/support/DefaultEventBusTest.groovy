@@ -76,6 +76,18 @@ class DefaultEventBusTest extends GroovyTestCase {
         verify(resolver)
     }
 
+    void testSubscribeWithNullResolvedListeners() {
+        def resolver = new EventListenerResolver() {
+            List<EventListener> getEventListeners(Object instance) {
+                return null //dummy implementation
+            }
+        }
+        bus.setEventListenerResolver(resolver)
+        def subscriber = new NotAnnotatedSubscriber()
+        bus.register(subscriber);
+        assertEquals 0, bus.registry.size()
+    }
+
     void testSubscribeWithoutAnnotations() {
         def subscriber = new NotAnnotatedSubscriber()
         bus.register(subscriber)

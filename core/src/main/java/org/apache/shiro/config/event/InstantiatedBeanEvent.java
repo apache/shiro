@@ -21,7 +21,13 @@ package org.apache.shiro.config.event;
 import java.util.Map;
 
 /**
+ * Event triggered when a configured bean has been instantiated but before it is configured or initialized.
+ *
  * @since 1.3
+ * @see ConfiguredBeanEvent
+ * @see InitializedBeanEvent
+ * @see DestroyedBeanEvent
+ * @see org.apache.shiro.util.Initializable Initializable
  */
 public class InstantiatedBeanEvent extends BeanEvent {
 

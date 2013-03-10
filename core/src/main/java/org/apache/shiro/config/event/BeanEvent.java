@@ -18,13 +18,14 @@
  */
 package org.apache.shiro.config.event;
 
-import java.util.EventObject;
+import org.apache.shiro.event.Event;
+
 import java.util.Map;
 
 /**
  * @since 1.3
  */
-public class BeanEvent extends EventObject {
+public abstract class BeanEvent extends Event {
 
     private String beanName;
     private Object bean;

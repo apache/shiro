@@ -21,9 +21,9 @@ package org.apache.shiro.event.support;
 import java.util.Comparator;
 
 /**
- * Compares two classes based on their position in a hierarchy.  Classes higher up in a hierarchy are 'greater than'
- * (ordered later) than classes lower in a hierarchy (ordered earlier).  Classes in unrelated hierarchies have the same
- * order priority.
+ * Compares two event classes based on their position in a class hierarchy.  Classes higher up in a hierarchy are
+ * 'greater than' (ordered later) than classes lower in a hierarchy (ordered earlier).  Classes in unrelated
+ * hierarchies have the same order priority.
  * <p/>
  * Event bus implementations use this comparator to determine which event listener method to invoke when polymorphic
  * listener methods are defined:
@@ -42,13 +42,14 @@ import java.util.Comparator;
  * {@code onEvent(A a)} method will <em>not</em> be invoked.  This is to prevent multiple dispatching of a single event
  * to the same consumer.
  * <p/>
- * The ClassComparator is used to order listener method priority based on their event argument class - methods handling
- * event subclasses have higher precedence than superclasses.
+ * The EventClassComparator is used to order listener method priority based on their event argument class - methods
+ * handling event subclasses have higher precedence than superclasses.
  *
  * @since 1.3
  */
-public class ClassComparator implements Comparator<Class> {
+public class EventClassComparator implements Comparator<Class> {
 
+    @SuppressWarnings("unchecked")
     public int compare(Class a, Class b) {
         if (a == null) {
             if (b == null) {
