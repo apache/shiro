@@ -21,6 +21,7 @@ package org.apache.shiro.config;
 import org.apache.shiro.config.event.BeanEvent;
 import org.apache.shiro.config.event.ConfiguredBeanEvent;
 import org.apache.shiro.config.event.DestroyedBeanEvent;
+import org.apache.shiro.config.event.InitializedBeanEvent;
 import org.apache.shiro.config.event.InstantiatedBeanEvent;
 import org.apache.shiro.event.Subscribe;
 
@@ -34,35 +35,50 @@ public class RecordingBeanListener {
 
     private List<InstantiatedBeanEvent> instantiateEvents = new ArrayList<InstantiatedBeanEvent>();
     private List<ConfiguredBeanEvent> configuredEvents = new ArrayList<ConfiguredBeanEvent>();
+    private List<InitializedBeanEvent> initializedEvents = new ArrayList<InitializedBeanEvent>();
     private List<DestroyedBeanEvent> destroyedEvents = new ArrayList<DestroyedBeanEvent>();
     private List<BeanEvent> unhandledEvents = new ArrayList<BeanEvent>();
 
+    @SuppressWarnings("UnusedDeclaration") //used via reflection
     @Subscribe
-    protected void onUnhandledBeanEvent(BeanEvent beanEvent) {
+    public void onUnhandledBeanEvent(BeanEvent beanEvent) {
         this.unhandledEvents.add(beanEvent);
     }
 
+    @SuppressWarnings("UnusedDeclaration") //used via reflection
     @Subscribe
-    protected void onInstantiatedBeanEvent(InstantiatedBeanEvent beanEvent) {
+    public void onInstantiatedBeanEvent(InstantiatedBeanEvent beanEvent) {
         this.instantiateEvents.add(beanEvent);
     }
 
+    @SuppressWarnings("UnusedDeclaration") //used via reflection
     @Subscribe
-    protected void onConfiguredBeanEvent(ConfiguredBeanEvent beanEvent) {
+    public void onConfiguredBeanEvent(ConfiguredBeanEvent beanEvent) {
         this.configuredEvents.add(beanEvent);
     }
 
+    @SuppressWarnings("UnusedDeclaration") //used via reflection
     @Subscribe
-    protected void onDestroyedBeanEvent(DestroyedBeanEvent beanEvent) {
+    public void onInitializedBeanEvent(InitializedBeanEvent beanEvent) {
+        this.initializedEvents.add(beanEvent);
+    }
+
+    @SuppressWarnings("UnusedDeclaration") //used via reflection
+    @Subscribe
+    public void onDestroyedBeanEvent(DestroyedBeanEvent beanEvent) {
         this.destroyedEvents.add(beanEvent);
     }
 
-    public List<InstantiatedBeanEvent> getInstantiateEvents() {
+    public List<InstantiatedBeanEvent> getInstantiatedEvents() {
         return instantiateEvents;
     }
 
     public List<ConfiguredBeanEvent> getConfiguredEvents() {
         return configuredEvents;
+    }
+
+    public List<InitializedBeanEvent> getInitializedEvents() {
+        return initializedEvents;
     }
 
     public List<DestroyedBeanEvent> getDestroyedEvents() {

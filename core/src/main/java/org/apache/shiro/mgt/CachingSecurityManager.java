@@ -89,12 +89,13 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * {@link #getCacheManager getCacheManager()} method.
      */
     protected void afterCacheManagerSet() {
+        applyEventBusToCacheManager();
     }
 
     /**
-     * Returns the {@code EventBus} used by this Securitymanager and potentially any of its children components.
+     * Returns the {@code EventBus} used by this SecurityManager and potentially any of its children components.
      *
-     * @return the {@code EventBus} used by this Securitymanager and potentially any of its children components.
+     * @return the {@code EventBus} used by this SecurityManager and potentially any of its children components.
      * @since 1.3
      */
     public EventBus getEventBus() {
@@ -119,12 +120,22 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
     }
 
     /**
+     * @since 1.3
+     */
+    protected void applyEventBusToCacheManager() {
+        if (this.eventBus != null && this.cacheManager != null && this.cacheManager instanceof EventBusAware) {
+            ((EventBusAware)this.cacheManager).setEventBus(this.eventBus);
+        }
+    }
+
+    /**
      * Template callback to notify subclasses that an {@link EventBus EventBus} has been set and is available for use
      * via the {@link #getEventBus() getEventBus()} method.
      *
      * @since 1.3
      */
     protected void afterEventBusSet() {
+        applyEventBusToCacheManager();
     }
 
     /**

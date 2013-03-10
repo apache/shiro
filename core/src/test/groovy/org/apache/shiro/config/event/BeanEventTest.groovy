@@ -16,37 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.config.event;
+package org.apache.shiro.config.event
 
-import org.apache.shiro.event.Event;
+import org.junit.Test
 
-import java.util.Map;
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertSame
 
 /**
  * @since 1.3
  */
-public abstract class BeanEvent extends Event {
+class BeanEventTest {
 
-    private String beanName;
-    private Object bean;
-    private final Map<String, Object> beanContext;
+    @Test
+    void testDefault() {
 
-    public BeanEvent(final String beanName, final Object bean, final Map<String, Object> beanContext) {
-        super(bean);
-        this.beanName = beanName;
-        this.bean = bean;
-        this.beanContext = beanContext;
+        def m = [foo: 'bar'] as Map<String,Object>
+        Object o = new Object()
+        BeanEvent evt = new MyBeanEvent('baz', o, m)
+
+        assertEquals 'baz', evt.beanName
+        assertSame o, evt.bean
+        assertSame m, evt.beanContext
     }
 
-    public String getBeanName() {
-        return beanName;
-    }
-
-    public Object getBean() {
-        return bean;
-    }
-
-    public Map<String, Object> getBeanContext() {
-        return beanContext;
+    private class MyBeanEvent extends BeanEvent {
+        MyBeanEvent(String beanName, Object bean, Map<String, Object> beanContext) {
+            super(beanName, bean, beanContext)
+        }
     }
 }

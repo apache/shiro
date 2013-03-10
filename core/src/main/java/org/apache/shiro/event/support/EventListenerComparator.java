@@ -29,12 +29,15 @@ import java.util.Comparator;
  * EventListener instances have the same order priority.
  * <p/>
  * When both objects being compared are TypedEventListeners, they are ordered according to the rules of the
- * {@link ClassComparator}, using the TypedEventListeners'
+ * {@link EventClassComparator}, using the TypedEventListeners'
  * {@link TypedEventListener#getEventType() eventType}.
  *
  * @since 1.3
  */
 public class EventListenerComparator implements Comparator<EventListener> {
+
+    //event class comparator is stateless, so we can retain an instance:
+    private static final EventClassComparator EVENT_CLASS_COMPARATOR = new EventClassComparator();
 
     public int compare(EventListener a, EventListener b) {
         if (a == null) {
@@ -52,7 +55,7 @@ public class EventListenerComparator implements Comparator<EventListener> {
                 TypedEventListener ta = (TypedEventListener)a;
                 if (b instanceof TypedEventListener) {
                     TypedEventListener tb = (TypedEventListener)b;
-                    return new ClassComparator().compare(ta.getEventType(), tb.getEventType());
+                    return EVENT_CLASS_COMPARATOR.compare(ta.getEventType(), tb.getEventType());
                 } else {
                     return -1; //TypedEventListeners are 'less than' (higher priority) than non typed
                 }

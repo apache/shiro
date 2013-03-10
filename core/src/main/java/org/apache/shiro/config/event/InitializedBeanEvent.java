@@ -18,35 +18,20 @@
  */
 package org.apache.shiro.config.event;
 
-import org.apache.shiro.event.Event;
-
 import java.util.Map;
 
 /**
+ * Event triggered when a configured bean has been instantiated, fully configured and initialized.
+ *
  * @since 1.3
+ * @see org.apache.shiro.util.Initializable Initializable
+ * @see InstantiatedBeanEvent
+ * @see ConfiguredBeanEvent
+ * @see DestroyedBeanEvent
  */
-public abstract class BeanEvent extends Event {
+public class InitializedBeanEvent extends BeanEvent {
 
-    private String beanName;
-    private Object bean;
-    private final Map<String, Object> beanContext;
-
-    public BeanEvent(final String beanName, final Object bean, final Map<String, Object> beanContext) {
-        super(bean);
-        this.beanName = beanName;
-        this.bean = bean;
-        this.beanContext = beanContext;
-    }
-
-    public String getBeanName() {
-        return beanName;
-    }
-
-    public Object getBean() {
-        return bean;
-    }
-
-    public Map<String, Object> getBeanContext() {
-        return beanContext;
+    public InitializedBeanEvent(String beanName, Object bean, Map<String, Object> beanContext) {
+        super(beanName, bean, beanContext);
     }
 }

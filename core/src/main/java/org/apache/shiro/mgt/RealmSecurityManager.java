@@ -20,6 +20,8 @@ package org.apache.shiro.mgt;
 
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.CacheManagerAware;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.util.LifecycleUtils;
 
@@ -83,6 +85,7 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
 
     protected void afterRealmsSet() {
         applyCacheManagerToRealms();
+        applyEventBusToRealms();
     }
 
     /**
@@ -119,12 +122,45 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
     }
 
     /**
+     * Sets the internal {@link #getEventBus  EventBus} on any internal configured
+     * {@link #getRealms Realms} that implement the {@link EventBusAware} interface.
+     * <p/>
+     * This method is called after setting an eventBus on this securityManager via the
+     * {@link #setEventBus(org.apache.shiro.event.EventBus) setEventBus} method to allow it to be propagated
+     * down to all the internal Realms that would need to use it.
+     * <p/>
+     * It is also called after setting one or more realms via the {@link #setRealm setRealm} or
+     * {@link #setRealms setRealms} methods to allow these newly available realms to be given the EventBus
+     * already in use.
+     *
+     * @since 1.3
+     */
+    protected void applyEventBusToRealms() {
+        EventBus eventBus = getEventBus();
+        Collection<Realm> realms = getRealms();
+        if (eventBus != null && realms != null && !realms.isEmpty()) {
+            for(Realm realm : realms) {
+                if (realm instanceof EventBusAware) {
+                    ((EventBusAware)realm).setEventBus(eventBus);
+                }
+            }
+        }
+    }
+
+    /**
      * Simply calls {@link #applyCacheManagerToRealms() applyCacheManagerToRealms()} to allow the
      * newly set {@link org.apache.shiro.cache.CacheManager CacheManager} to be propagated to the internal collection of <code>Realm</code>
      * that would need to use it.
      */
     protected void afterCacheManagerSet() {
+        super.afterCacheManagerSet();
         applyCacheManagerToRealms();
+    }
+
+    @Override
+    protected void afterEventBusSet() {
+        super.afterEventBusSet();
+        applyEventBusToRealms();
     }
 
     public void destroy() {

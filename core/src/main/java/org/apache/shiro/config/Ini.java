@@ -24,8 +24,17 @@ import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
 
 /**
  * A class representing the <a href="http://en.wikipedia.org/wiki/INI_file">INI</a> text configuration format.
@@ -542,7 +551,7 @@ public class Ini implements Map<String, Ini.Section> {
                 throw new IllegalArgumentException(msg);
             }
 
-            log.trace("Discovered key/value pair: {}={}", key, value);
+            log.trace("Discovered key/value pair: {} = {}", key, value);
 
             return new String[]{key, value};
         }

@@ -18,13 +18,18 @@
  */
 package org.apache.shiro.event.support
 
+import org.junit.Test
+
 import java.lang.reflect.Method
+
+import static org.junit.Assert.*
 
 /**
  * @since 1.3
  */
-class SingleArgumentMethodEventListenerTest extends GroovyTestCase {
+class SingleArgumentMethodEventListenerTest {
 
+    @Test
     void testInvalidConstruction() {
 
         def target = new Object()
@@ -40,6 +45,7 @@ class SingleArgumentMethodEventListenerTest extends GroovyTestCase {
         }
     }
 
+    @Test
     void testValidConstruction() {
 
         def target = new TestSubscriber()
@@ -51,6 +57,7 @@ class SingleArgumentMethodEventListenerTest extends GroovyTestCase {
         assertSame method, listener.getMethod()
     }
 
+    @Test
     void testMethodException() {
 
         def target = new TestSubscriber()
@@ -74,6 +81,7 @@ class SingleArgumentMethodEventListenerTest extends GroovyTestCase {
         }
     }
 
+    @Test
     void testAccepts() {
         def target = new TestSubscriber()
         def method = TestSubscriber.class.getMethods().find { it.name == "onFooEvent" }
@@ -82,5 +90,15 @@ class SingleArgumentMethodEventListenerTest extends GroovyTestCase {
 
         assertTrue listener.accepts(new FooEvent(this))
     }
+
+    @Test(expected=IllegalArgumentException)
+    void testNonPublicMethodSubscriber() {
+        def target = new InvalidMethodModiferSubscriber()
+        def method = InvalidMethodModiferSubscriber.class.getDeclaredMethods().find { it.name == "onEvent" }
+
+        new SingleArgumentMethodEventListener(target, method)
+    }
+
+
 
 }

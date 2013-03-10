@@ -18,45 +18,15 @@
  */
 package org.apache.shiro.event.support
 
+import org.apache.shiro.event.Subscribe
+
 /**
  * @since 1.3
  */
-class ClassComparatorTest extends GroovyTestCase {
+class InvalidMethodModiferSubscriber {
 
-    ClassComparator comparator
-
-    @Override
-    protected void setUp() {
-        comparator = new ClassComparator()
-    }
-
-    void testANull() {
-        def result = comparator.compare(null, Object)
-        assertEquals(-1, result)
-    }
-
-    void testBNull() {
-        def result = comparator.compare(Object, null)
-        assertEquals 1, result
-    }
-
-    void testBothNull() {
-        assertEquals 0, comparator.compare(null, null)
-    }
-
-    void testBothSame() {
-        assertEquals 0, comparator.compare(Object, Object)
-    }
-
-    void testAParentOfB() {
-        assertEquals 1, comparator.compare(Number, Integer)
-    }
-
-    void testBParentOfA() {
-        assertEquals(-1, comparator.compare(Integer, Number))
-    }
-
-    void testUnrelated() {
-        assertEquals(0, comparator.compare(Integer, Boolean))
+    @Subscribe
+    protected void onEvent(Object event) {
+        throw new IllegalStateException("Should never be called.");
     }
 }

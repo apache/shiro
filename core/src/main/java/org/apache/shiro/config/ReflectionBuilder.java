@@ -25,17 +25,33 @@ import org.apache.shiro.codec.Hex;
 import org.apache.shiro.config.event.BeanEvent;
 import org.apache.shiro.config.event.ConfiguredBeanEvent;
 import org.apache.shiro.config.event.DestroyedBeanEvent;
+import org.apache.shiro.config.event.InitializedBeanEvent;
 import org.apache.shiro.config.event.InstantiatedBeanEvent;
 import org.apache.shiro.event.EventBus;
 import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.event.Subscribe;
 import org.apache.shiro.event.support.DefaultEventBus;
-import org.apache.shiro.util.*;
+import org.apache.shiro.util.Assert;
+import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.ClassUtils;
+import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.Factory;
+import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.util.Nameable;
+import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -83,7 +99,7 @@ public class ReflectionBuilder {
     private final Map<String,Object> registeredEventSubscribers;
 
     //@since 1.3
-    private static Map<String,Object> createDefaultObjectMap() {
+    private Map<String,Object> createDefaultObjectMap() {
         Map<String,Object> map = new LinkedHashMap<String, Object>();
         map.put(EVENT_BUS_NAME, new DefaultEventBus());
         return map;
@@ -252,13 +268,25 @@ public class ReflectionBuilder {
 
     public void destroy() {
         final Map<String, Object> immutableObjects = Collections.unmodifiableMap(objects);
-        for(Map.Entry<String, ?> entry: objects.entrySet()) {
+
+        //destroy objects in the opposite order they were initialized:
+        List<Map.Entry<String,?>> entries = new ArrayList<Map.Entry<String,?>>(objects.entrySet());
+        Collections.reverse(entries);
+
+        for(Map.Entry<String, ?> entry: entries) {
             String id = entry.getKey();
             Object bean = entry.getValue();
-            BeanEvent event = new DestroyedBeanEvent(id, bean, immutableObjects);
-            eventBus.publish(event);
-            LifecycleUtils.destroy(bean);
+
+            //don't destroy the eventbus until the end - we need it to still be 'alive' while publishing destroy events:
+            if (bean != this.eventBus) { //memory equality check (not .equals) on purpose
+                LifecycleUtils.destroy(bean);
+                BeanEvent event = new DestroyedBeanEvent(id, bean, immutableObjects);
+                eventBus.publish(event);
+                this.eventBus.unregister(bean); //bean is now destroyed - it should not receive any other events
+            }
         }
+        //only now destroy the event bus:
+        LifecycleUtils.destroy(this.eventBus);
     }
 
     protected void createNewInstance(Map<String, Object> objects, String name, String value) {
@@ -740,6 +768,7 @@ public class ReflectionBuilder {
 
                 if (bd.isExecuted()) { //bean is fully configured, no more statements to execute for it:
 
+                    //bean configured overrides the 'eventBus' bean - replace the existing eventBus with the one configured:
                     if (bd.getBeanName().equals(EVENT_BUS_NAME)) {
                         EventBus eventBus = (EventBus)bd.getBean();
                         enableEvents(eventBus);
@@ -748,6 +777,16 @@ public class ReflectionBuilder {
                     //ignore global 'shiro.' shortcut mechanism:
                     if (!bd.isGlobalConfig()) {
                         BeanEvent event = new ConfiguredBeanEvent(bd.getBeanName(), bd.getBean(),
+                                Collections.unmodifiableMap(objects));
+                        eventBus.publish(event);
+                    }
+
+                    //initialize the bean if necessary:
+                    LifecycleUtils.init(bd.getBean());
+
+                    //ignore global 'shiro.' shortcut mechanism:
+                    if (!bd.isGlobalConfig()) {
+                        BeanEvent event = new InitializedBeanEvent(bd.getBeanName(), bd.getBean(),
                                 Collections.unmodifiableMap(objects));
                         eventBus.publish(event);
                     }
@@ -884,11 +923,17 @@ public class ReflectionBuilder {
 
         @Override
         protected Object doExecute() {
-            createNewInstance(objects, this.lhs, this.rhs);
-            Object instantiated = objects.get(this.lhs);
+            String beanName = this.lhs;
+            createNewInstance(objects, beanName, this.rhs);
+            Object instantiated = objects.get(beanName);
             setBean(instantiated);
 
-            BeanEvent event = new InstantiatedBeanEvent(this.lhs, instantiated, Collections.unmodifiableMap(objects));
+            //also ensure the instantiated bean has access to the event bus or is subscribed to events if necessary:
+            //Note: because events are being enabled on this bean here (before the instantiated event below is
+            //triggered), beans can react to their own instantiation events.
+            enableEventsIfNecessary(instantiated, beanName);
+
+            BeanEvent event = new InstantiatedBeanEvent(beanName, instantiated, Collections.unmodifiableMap(objects));
             eventBus.publish(event);
 
             return instantiated;

@@ -19,6 +19,7 @@
 package org.apache.shiro.event.support;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  * A event listener that invokes a target object's method that accepts a single event argument.
@@ -35,6 +36,8 @@ public class SingleArgumentMethodEventListener implements TypedEventListener {
         this.method = method;
         //assert that the method is defined as expected:
         getMethodArgumentType(method);
+
+        assertPublicMethod(method);
     }
 
     public Object getTarget() {
@@ -43,6 +46,13 @@ public class SingleArgumentMethodEventListener implements TypedEventListener {
 
     public Method getMethod() {
         return this.method;
+    }
+
+    private void assertPublicMethod(Method method) {
+        int modifiers = method.getModifiers();
+        if (!Modifier.isPublic(modifiers)) {
+            throw new IllegalArgumentException("Event handler method [" + method + "] must be public.");
+        }
     }
 
     public boolean accepts(Object event) {
@@ -58,7 +68,7 @@ public class SingleArgumentMethodEventListener implements TypedEventListener {
         try {
             method.invoke(getTarget(), event);
         } catch (Exception e) {
-            throw new IllegalStateException("Unable to invoke event handler method [" + method + "]", e);
+            throw new IllegalStateException("Unable to invoke event handler method [" + method + "].", e);
         }
     }
 

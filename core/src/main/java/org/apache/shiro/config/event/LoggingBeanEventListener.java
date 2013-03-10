@@ -23,31 +23,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A stock bean listener implementation that logs all BeanEvents via the standard logging mechanism.
+ * A stock bean listener implementation that logs all BeanEvents as TRACE log statements.
  *
  * @since 1.3
  */
-public class LoggingBeanListener {
+public class LoggingBeanEventListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingBeanListener.class);
-
-    @Subscribe
-    protected void onUnhandledBeanEvent(BeanEvent beanEvent) {
-        logger.warn("UNHANDLED EVENT :: {} :: {}", beanEvent.getBeanName(), beanEvent.getBean());
-    }
+    private static final Logger logger = LoggerFactory.getLogger(LoggingBeanEventListener.class);
+    private static final String SUFFIX = BeanEvent.class.getSimpleName();
 
     @Subscribe
-    protected void onInstantiatedBeanEvent(InstantiatedBeanEvent beanEvent) {
-        logger.info("INSTANTIATED :: {} :: {}", beanEvent.getBeanName(), beanEvent.getBean());
-    }
-
-    @Subscribe
-    protected void onConfiguredBeanEvent(ConfiguredBeanEvent beanEvent) {
-        logger.info("CONFIGURED :: {} :: {}", beanEvent.getBeanName(), beanEvent.getBean());
-    }
-
-    @Subscribe
-    protected void onDestroyedBeanEvent(DestroyedBeanEvent beanEvent) {
-        logger.info("DESTROYED :: {} :: {}", beanEvent.getBeanName(), beanEvent.getBean());
+    public void onEvent(BeanEvent e) {
+        String className = e.getClass().getSimpleName();
+        int i = className.lastIndexOf(SUFFIX);
+        String subclassPrefix = className.substring(0, i);
+        logger.trace("{} bean '{}' [{}]", new Object[]{subclassPrefix, e.getBeanName(), e.getBean()});
     }
 }

@@ -20,6 +20,8 @@ package org.apache.shiro.mgt;
 
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.cache.CacheManagerAware;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
@@ -82,6 +84,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     protected void afterSessionManagerSet() {
         applyCacheManagerToSessionManager();
+        applyEventBusToSessionManager();
     }
 
     /**
@@ -99,9 +102,21 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * {@link #applyCacheManagerToSessionManager() applyCacheManagerToSessionManager()} to ensure the
      * <code>CacheManager</code> is applied to the SessionManager as necessary.
      */
+    @Override
     protected void afterCacheManagerSet() {
         super.afterCacheManagerSet();
         applyCacheManagerToSessionManager();
+    }
+
+    /**
+     * Sets any configured EventBus on the SessionManager if necessary.
+     *
+     * @since 1.3
+     */
+    @Override
+    protected void afterEventBusSet() {
+        super.afterEventBusSet();
+        applyEventBusToSessionManager();
     }
 
     /**
@@ -114,6 +129,22 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     protected void applyCacheManagerToSessionManager() {
         if (this.sessionManager instanceof CacheManagerAware) {
             ((CacheManagerAware) this.sessionManager).setCacheManager(getCacheManager());
+        }
+    }
+
+    /**
+     * Ensures the internal delegate <code>SessionManager</code> is injected with the newly set
+     * {@link #setEventBus EventBus} so it may use it for its internal event needs.
+     * <p/>
+     * Note: This implementation only injects the EventBus into the SessionManager if the SessionManager
+     * instance implements the {@link EventBusAware EventBusAware} interface.
+     *
+     * @since 1.3
+     */
+    protected void applyEventBusToSessionManager() {
+        EventBus eventBus = getEventBus();
+        if (eventBus != null && this.sessionManager instanceof EventBusAware) {
+            ((EventBusAware)this.sessionManager).setEventBus(eventBus);
         }
     }
 
