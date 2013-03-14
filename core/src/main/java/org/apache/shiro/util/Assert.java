@@ -6,6 +6,8 @@ import java.util.Map;
 /**
  * Assertion utility class that assists in validating arguments.
  * Useful for identifying programmer errors early and clearly at runtime.
+ * Regular usage also reduces a program's
+ * <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity">cyclomatic complexity</a>.
  *
  * <p>For example, if the contract of a public method states it does not
  * allow <code>null</code> arguments, Assert can be used to validate that

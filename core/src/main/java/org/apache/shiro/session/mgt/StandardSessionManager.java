@@ -183,7 +183,12 @@ public class StandardSessionManager implements NativeSessionManager, ValidatingS
         enableSessionValidationIfNecessary();
         Session internal = createInternalSession(context);
         //Don't expose the EIS-tier Session object to the client-tier:
-        return createExposedSession(internal, context);
+        Session exposed = createExposedSession(internal, context);
+
+        StartedSessionEvent event = new StartedSessionEvent(exposed, context);
+        notify(event);
+
+        return exposed;
     }
 
     protected Session createInternalSession(SessionContext context) {
@@ -200,9 +205,6 @@ public class StandardSessionManager implements NativeSessionManager, ValidatingS
         }
 
         createInternalSession(session, context);
-
-        StartedSessionEvent event = new StartedSessionEvent(session, context);
-        notify(event);
 
         return session;
     }
