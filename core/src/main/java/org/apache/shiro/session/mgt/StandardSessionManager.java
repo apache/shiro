@@ -185,8 +185,8 @@ public class StandardSessionManager implements NativeSessionManager, ValidatingS
         //Don't expose the EIS-tier Session object to the client-tier:
         Session exposed = createExposedSession(internal, context);
 
-        StartedSessionEvent event = new StartedSessionEvent(exposed, context);
-        notify(event);
+        //StartedSessionEvent event = new StartedSessionEvent(exposed, context);
+        //notify(event);
 
         return exposed;
     }

@@ -125,6 +125,9 @@ public class ReflectionBuilder {
             }
         }
 
+        //initialize all objects:
+        LifecycleUtils.init(objects.values());
+
         return objects;
     }
 
