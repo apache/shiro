@@ -394,6 +394,18 @@ class ReflectionBuilderTest {
         assertEquals(2, children.size());
     }
 
+    //asserts SHIRO-413
+    @Test
+    void testInitializable() {
+        def defs = [
+                initializableBean: 'org.apache.shiro.config.InitializableBean'
+        ]
+        def builder = new ReflectionBuilder()
+        def objects = builder.buildObjects(defs)
+        def bean = objects.get('initializableBean') as InitializableBean
+        assertTrue bean.isInitialized()
+    }
+
     @Test
     void testFactoryInstantiation() {
         Map<String, String> defs = new LinkedHashMap<String, String>();
