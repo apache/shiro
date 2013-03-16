@@ -125,6 +125,9 @@ public class ReflectionBuilder {
             }
         }
 
+        //SHIRO-413: init method must be called for constructed objects that are Initializable
+        LifecycleUtils.init(objects.values());
+
         return objects;
     }
 
