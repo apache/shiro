@@ -19,16 +19,23 @@
 package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.session.SessionListenerAdapter;
 import org.apache.shiro.session.UnknownSessionException;
-
+import org.apache.shiro.util.ThreadContext;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit tests for the {@link org.apache.shiro.session.mgt.AbstractValidatingSessionManager} class.
@@ -87,5 +94,50 @@ public class AbstractValidatingSessionManagerTest {
         sessionManager.validateSessions();
         
         assertEquals(1, expirationCount.intValue());
+    }
+
+
+    /**
+     * Tests that no memory leak exists on invalid sessions: expired or stopped
+     * Verifies <a href="https://issues.apache.org/jira/browse/SHIRO-399">SHIRO-399</a>.
+     */
+    @Test
+    public void testNoMemoryLeakOnInvalidSessions() throws Exception {
+        ThreadContext.remove();
+        SecurityManager sm = new DefaultSecurityManager();
+        ThreadContext.bind(sm);
+
+        SessionListener sessionListener = new SessionListener() {
+            public void onStart(Session session) {
+                session.setAttribute("I love", "Romania");
+            }
+
+            public void onStop(Session session) {
+                tryToCleanSession(session);
+            }
+
+            public void onExpiration(Session session) {
+                tryToCleanSession(session);
+            }
+
+            private void tryToCleanSession(Session session) {
+                Collection<Object> keys = session.getAttributeKeys();
+                for (Object key : keys) {
+                    session.removeAttribute(key);
+                }
+            }
+        };
+
+        DefaultSessionManager sessionManager = new DefaultSessionManager();
+        sessionManager.setSessionListeners(Arrays.asList(sessionListener));
+
+        Session session = sessionManager.start(null);
+        session.setTimeout(0L);
+
+        sessionManager.getSessionDAO().update(session);
+        assertEquals(1, sessionManager.getActiveSessions().size());
+
+        sessionManager.validateSessions();
+        assertEquals(0, sessionManager.getActiveSessions().size());
     }
 }
