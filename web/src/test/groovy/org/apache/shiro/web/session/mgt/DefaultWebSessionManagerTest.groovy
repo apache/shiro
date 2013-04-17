@@ -16,23 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web.session.mgt;
+package org.apache.shiro.web.session.mgt
 
-import org.apache.shiro.session.mgt.SimpleSession;
-import org.apache.shiro.util.ThreadContext;
-import org.apache.shiro.web.servlet.Cookie;
-import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
-import org.apache.shiro.web.servlet.ShiroHttpSession;
-import org.apache.shiro.web.servlet.SimpleCookie;
-import org.junit.After;
-import org.junit.Test;
+import org.apache.shiro.session.mgt.SimpleSession
+import org.apache.shiro.util.ThreadContext
+import org.apache.shiro.web.servlet.Cookie
+import org.apache.shiro.web.servlet.ShiroHttpServletRequest
+import org.apache.shiro.web.servlet.ShiroHttpSession
+import org.apache.shiro.web.servlet.SimpleCookie
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
+import javax.servlet.ServletRequest
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertEquals;
+import static org.easymock.EasyMock.*
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertNull
 
 /**
  * Test cases for the {@link DefaultWebSessionManager} implementation.
@@ -41,6 +43,14 @@ import static org.junit.Assert.assertEquals;
  */
 public class DefaultWebSessionManagerTest {
 
+
+    DefaultWebSessionManager mgr;
+
+    @Before
+    void setUp() {
+        this.mgr = new DefaultWebSessionManager()
+    }
+
     @After
     public void clearThread() {
         ThreadContext.remove();
@@ -48,7 +58,6 @@ public class DefaultWebSessionManagerTest {
 
     @Test
     public void testOnStart() {
-        DefaultWebSessionManager mgr = new DefaultWebSessionManager();
         Cookie cookie = createMock(Cookie.class);
         mgr.setSessionIdCookie(cookie);
 
@@ -80,7 +89,6 @@ public class DefaultWebSessionManagerTest {
     @Test
     public void testOnStartWithSessionIdCookieDisabled() {
 
-        DefaultWebSessionManager mgr = new DefaultWebSessionManager();
         Cookie cookie = createMock(Cookie.class);
         mgr.setSessionIdCookie(cookie);
         mgr.setSessionIdCookieEnabled(false);
@@ -103,7 +111,6 @@ public class DefaultWebSessionManagerTest {
 
     @Test
     public void testGetSessionIdWithSessionIdCookieEnabled() {
-        DefaultWebSessionManager mgr = new DefaultWebSessionManager();
         Cookie cookie = createMock(Cookie.class);
         mgr.setSessionIdCookie(cookie);
 
@@ -135,7 +142,6 @@ public class DefaultWebSessionManagerTest {
     @Test
     public void testGetSessionIdWithSessionIdCookieDisabled() {
 
-        DefaultWebSessionManager mgr = new DefaultWebSessionManager();
         Cookie cookie = createMock(Cookie.class);
         mgr.setSessionIdCookie(cookie);
         mgr.setSessionIdCookieEnabled(false);
@@ -148,6 +154,7 @@ public class DefaultWebSessionManagerTest {
         String id = "12345";
 
         expect(cookie.getName()).andReturn(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
+        expect(request.getRequestURI()).andReturn("/foo/bar?JSESSIONID=$id" as String)
         expect(request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME)).andReturn(id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                 ShiroHttpServletRequest.URL_SESSION_ID_SOURCE);
@@ -169,7 +176,6 @@ public class DefaultWebSessionManagerTest {
     @Test
     public void testGetSessionIdWithSessionIdCookieDisabledAndLowercaseRequestParam() {
 
-        DefaultWebSessionManager mgr = new DefaultWebSessionManager();
         Cookie cookie = createMock(Cookie.class);
         mgr.setSessionIdCookie(cookie);
         mgr.setSessionIdCookieEnabled(false);
@@ -182,6 +188,7 @@ public class DefaultWebSessionManagerTest {
         String id = "12345";
 
         expect(cookie.getName()).andReturn(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
+        expect(request.getRequestURI()).andReturn("/foo/bar?JSESSIONID=$id" as String)
         expect(request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME)).andReturn(null);
         expect(request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME.toLowerCase())).andReturn(id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
@@ -199,5 +206,112 @@ public class DefaultWebSessionManagerTest {
         verify(cookie);
         verify(request);
         verify(response);
+    }
+
+    //SHIRO-351:
+    //since 1.2.2
+    @Test
+    public void testGetSessionIdFromRequestUriPathSegmentParam() {
+
+        mgr.setSessionIdCookieEnabled(false);
+
+        HttpServletRequest request = createMock(HttpServletRequest.class);
+        HttpServletResponse response = createMock(HttpServletResponse.class);
+
+        String id = "12345";
+
+        expect(request.getRequestURI()).andReturn("/foo/bar.html;JSESSIONID=$id;key2=value2?key3=value3" as String)
+
+        request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, ShiroHttpServletRequest.URL_SESSION_ID_SOURCE);
+        request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
+        request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+
+        replay(request);
+        replay(response);
+
+        Serializable sessionId = mgr.getSessionId(request, response);
+        assertEquals(sessionId, id);
+
+        verify(request);
+        verify(response);
+    }
+
+    //SHIRO-351:
+    //since 1.2.2
+    @Test
+    void testSessionIDRequestPathParameterWithNonHttpRequest() {
+
+        def request = createMock(ServletRequest)
+
+        replay request
+
+        assertNull mgr.getUriPathSegmentParamValue(request, ShiroHttpSession.DEFAULT_SESSION_ID_NAME)
+
+        verify request
+    }
+
+    //SHIRO-351:
+    //since 1.2.2
+    @Test
+    void testSessionIDRequestPathParameterWithoutARequestURI() {
+
+        def request = createMock(HttpServletRequest)
+
+        expect(request.getRequestURI()).andReturn null
+        replay request
+
+        assertNull mgr.getUriPathSegmentParamValue(request, ShiroHttpSession.DEFAULT_SESSION_ID_NAME)
+
+        verify request
+    }
+
+    //SHIRO-351:
+    //since 1.2.2
+    @Test
+    void testSessionIDRequestPathParameterWithoutPathParameters() {
+
+        def request = createMock(HttpServletRequest)
+
+        expect(request.getRequestURI()).andReturn '/foo/bar/baz.html'
+        replay request
+
+        assertNull mgr.getUriPathSegmentParamValue(request, ShiroHttpSession.DEFAULT_SESSION_ID_NAME)
+
+        verify request
+    }
+
+    //SHIRO-351:
+    //since 1.2.2
+    @Test
+    void testSessionIDRequestPathParameterWithoutJSESSIONID() {
+
+        def request = createMock(HttpServletRequest)
+
+        expect(request.getRequestURI()).andReturn '/foo/bar;key1=key2;a/b/c;blah'
+        replay request
+
+        assertNull mgr.getUriPathSegmentParamValue(request, ShiroHttpSession.DEFAULT_SESSION_ID_NAME)
+
+        verify request
+    }
+
+    //SHIRO-351:
+    //since 1.2.2
+    @Test
+    void testSessionIDRequestPathParameter() {
+
+        def request = createMock(HttpServletRequest)
+
+        def id = 'baz'
+        def path = "/foo/bar;key1=value1;key3,key4,key5;JSESSIONID=$id;key6=value6?key7=value7&key8=value8"
+
+        expect(request.getRequestURI()).andReturn(path.toString())
+        replay request
+
+        String found = mgr.getUriPathSegmentParamValue(request, ShiroHttpSession.DEFAULT_SESSION_ID_NAME)
+
+        assertEquals id, found
+
+        verify request
     }
 }
