@@ -18,7 +18,11 @@
  */
 package org.apache.shiro.session.mgt;
 
-import org.apache.shiro.session.*;
+import org.apache.shiro.session.ExpiredSessionException;
+import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.SessionListener;
+import org.apache.shiro.session.SessionListenerAdapter;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.util.ThreadContext;
 import org.easymock.EasyMock;
@@ -94,6 +98,29 @@ public class DefaultSessionManagerTest {
         Session session = sm.start(null);
         sm.stop(new DefaultSessionKey(session.getId()));
         assertTrue(stopped[0]);
+    }
+
+    //asserts fix for SHIRO-388:
+    //Ensures that a session attribute can be accessed in the listener without
+    //causing a stack overflow exception.
+    @Test
+    public void testSessionListenerStopNotificationWithReadAttribute() {
+        final boolean[] stopped = new boolean[1];
+        final String[] value = new String[1];
+        SessionListener listener = new SessionListenerAdapter() {
+            public void onStop(Session session) {
+                stopped[0] = true;
+                value[0] = (String)session.getAttribute("foo");
+            }
+        };
+        sm.getSessionListeners().add(listener);
+        Session session = sm.start(null);
+        session.setAttribute("foo", "bar");
+
+        sm.stop(new DefaultSessionKey(session.getId()));
+
+        assertTrue(stopped[0]);
+        assertEquals("bar", value[0]);
     }
 
     @Test
