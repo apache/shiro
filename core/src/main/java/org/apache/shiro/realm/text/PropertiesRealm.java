@@ -265,7 +265,9 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     }
 
     private boolean isFileModified() {
-        File propertyFile = new File(this.resourcePath);
+        //SHIRO-394: strip file prefix before constructing the File instance:
+        String fileNameWithoutPrefix = this.resourcePath.substring(this.resourcePath.indexOf(":") + 1);
+        File propertyFile = new File(fileNameWithoutPrefix);
         long currentLastModified = propertyFile.lastModified();
         if (currentLastModified > this.fileLastModified) {
             this.fileLastModified = currentLastModified;
