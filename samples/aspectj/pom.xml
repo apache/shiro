@@ -52,6 +52,7 @@
 					<execution>
 						<id>aspectj-compile</id>
 						<goals>
+							<goal>compile</goal>
 							<goal>test-compile</goal>
 						</goals>
 					</execution>
