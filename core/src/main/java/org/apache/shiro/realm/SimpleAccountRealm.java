@@ -28,6 +28,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * A simple implementation of the {@link Realm Realm} interface that
@@ -43,13 +46,16 @@ import java.util.Set;
 public class SimpleAccountRealm extends AuthorizingRealm {
 
     //TODO - complete JavaDoc
-
     protected final Map<String, SimpleAccount> users; //username-to-SimpleAccount
     protected final Map<String, SimpleRole> roles; //roleName-to-SimpleRole
+    protected final ReadWriteLock USERS_LOCK;
+    protected final ReadWriteLock ROLES_LOCK;
 
     public SimpleAccountRealm() {
         this.users = new LinkedHashMap<String, SimpleAccount>();
         this.roles = new LinkedHashMap<String, SimpleRole>();
+        USERS_LOCK = new ReentrantReadWriteLock();
+        ROLES_LOCK = new ReentrantReadWriteLock();
         //SimpleAccountRealms are memory-only realms - no need for an additional cache mechanism since we're
         //already as memory-efficient as we can be:
         setCachingEnabled(false);
@@ -61,7 +67,12 @@ public class SimpleAccountRealm extends AuthorizingRealm {
     }
 
     protected SimpleAccount getUser(String username) {
-        return this.users.get(username);
+        USERS_LOCK.readLock().lock();
+        try {
+            return this.users.get(username);
+        } finally {
+            USERS_LOCK.readLock().unlock();
+        }
     }
 
     public boolean accountExists(String username) {
@@ -88,11 +99,21 @@ public class SimpleAccountRealm extends AuthorizingRealm {
 
     protected void add(SimpleAccount account) {
         String username = getUsername(account);
-        this.users.put(username, account);
+        USERS_LOCK.writeLock().lock();
+        try {
+            this.users.put(username, account);
+        } finally {
+            USERS_LOCK.writeLock().unlock();
+        }
     }
 
     protected SimpleRole getRole(String rolename) {
-        return roles.get(rolename);
+        ROLES_LOCK.readLock().lock();
+        try {
+            return roles.get(rolename);
+        } finally {
+            ROLES_LOCK.readLock().unlock();
+        }
     }
 
     public boolean roleExists(String name) {
@@ -104,7 +125,12 @@ public class SimpleAccountRealm extends AuthorizingRealm {
     }
 
     protected void add(SimpleRole role) {
-        roles.put(role.getName(), role);
+        ROLES_LOCK.writeLock().lock();
+        try {
+            roles.put(role.getName(), role);
+        } finally {
+            ROLES_LOCK.writeLock().unlock();
+        }
     }
 
     protected static Set<String> toSet(String delimited, String delimiter) {
@@ -144,6 +170,12 @@ public class SimpleAccountRealm extends AuthorizingRealm {
     }
 
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        return this.users.get(getUsername(principals));
+        String username = getUsername(principals);
+        USERS_LOCK.readLock().lock();
+        try {
+            return this.users.get(username);
+        } finally {
+            USERS_LOCK.readLock().unlock();
+        }
     }
 }
