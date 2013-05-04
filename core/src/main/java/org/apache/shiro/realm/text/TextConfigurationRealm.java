@@ -27,7 +27,12 @@ import org.apache.shiro.util.PermissionUtils;
 import org.apache.shiro.util.StringUtils;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
 
 
 /**
@@ -47,8 +52,8 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
 
     //TODO - complete JavaDoc
 
-    private String userDefinitions;
-    private String roleDefinitions;
+    private volatile String userDefinitions;
+    private volatile String roleDefinitions;
 
     public TextConfigurationRealm() {
         super();
@@ -143,7 +148,6 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         if (roleDefs == null || roleDefs.isEmpty()) {
             return;
         }
-
         for (String rolename : roleDefs.keySet()) {
             String value = roleDefs.get(rolename);
 
@@ -159,7 +163,6 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
     }
 
     protected void processUserDefinitions() throws ParseException {
-
         String userDefinitions = getUserDefinitions();
         if (userDefinitions == null) {
             return;
@@ -174,7 +177,6 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         if (userDefs == null || userDefs.isEmpty()) {
             return;
         }
-
         for (String username : userDefs.keySet()) {
 
             String value = userDefs.get(username);
