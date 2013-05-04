@@ -21,6 +21,7 @@ package org.apache.shiro.samples.aspectj.bank;
 import junit.framework.Assert;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
@@ -196,6 +197,12 @@ public class SecureBankServiceTest {
         service.closeAccount(accountId);
     }
 
+    @Test(expected = UnauthorizedException.class)
+    public void testCloseAccount_unauthorizedAttempt() throws Exception {
+        loginAsUser();
+        long accountId = createAndValidateAccountFor("Chris Smith");
+        service.closeAccount(accountId);
+    }
 
     protected long createAndValidateAccountFor(String anOwner) throws Exception {
         long createdId = service.createNewAccount(anOwner);
