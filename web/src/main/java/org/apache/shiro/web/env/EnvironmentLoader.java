@@ -108,11 +108,6 @@ public class EnvironmentLoader {
     private static final Logger log = LoggerFactory.getLogger(EnvironmentLoader.class);
 
     /**
-     * The Shiro environment (object graph) managed by this loader.
-     */
-    private WebEnvironment environment;
-
-    /**
      * Initializes Shiro's {@link WebEnvironment} instance for the specified {@code ServletContext} based on the
      * {@link #CONFIG_LOCATIONS_PARAM} value.
      *
@@ -135,8 +130,8 @@ public class EnvironmentLoader {
         long startTime = System.currentTimeMillis();
 
         try {
-            this.environment = createEnvironment(servletContext);
-            servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY, this.environment);
+            WebEnvironment environment = createEnvironment(servletContext);
+            servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY, environment);
 
             log.debug("Published WebEnvironment as ServletContext attribute with name [{}]",
                     ENVIRONMENT_ATTRIBUTE_KEY);
@@ -146,7 +141,7 @@ public class EnvironmentLoader {
                 log.info("Shiro environment initialized in {} ms.", elapsed);
             }
 
-            return this.environment;
+            return environment;
         } catch (RuntimeException ex) {
             log.error("Shiro environment initialization failed", ex);
             servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY, ex);
@@ -239,7 +234,8 @@ public class EnvironmentLoader {
     public void destroyEnvironment(ServletContext servletContext) {
         servletContext.log("Cleaning up Shiro Environment");
         try {
-            LifecycleUtils.destroy(this.environment);
+            Object environment = servletContext.getAttribute(ENVIRONMENT_ATTRIBUTE_KEY);
+            LifecycleUtils.destroy(environment);
         } finally {
             servletContext.removeAttribute(ENVIRONMENT_ATTRIBUTE_KEY);
         }
