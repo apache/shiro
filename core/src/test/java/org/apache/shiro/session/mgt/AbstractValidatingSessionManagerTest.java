@@ -19,13 +19,10 @@
 package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.session.SessionListenerAdapter;
 import org.apache.shiro.session.UnknownSessionException;
-import org.apache.shiro.util.ThreadContext;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -103,10 +100,6 @@ public class AbstractValidatingSessionManagerTest {
      */
     @Test
     public void testNoMemoryLeakOnInvalidSessions() throws Exception {
-        ThreadContext.remove();
-        SecurityManager sm = new DefaultSecurityManager();
-        ThreadContext.bind(sm);
-
         SessionListener sessionListener = new SessionListener() {
             public void onStart(Session session) {
                 session.setAttribute("I love", "Romania");
@@ -132,12 +125,14 @@ public class AbstractValidatingSessionManagerTest {
         sessionManager.setSessionListeners(Arrays.asList(sessionListener));
 
         Session session = sessionManager.start(null);
-        session.setTimeout(0L);
-
-        sessionManager.getSessionDAO().update(session);
         assertEquals(1, sessionManager.getActiveSessions().size());
 
+        session.setTimeout(0L);
+        //last access timestamp needs to be older than the current timestamp when validating, so ensure a delay:
+        Thread.sleep(1);
+
         sessionManager.validateSessions();
+
         assertEquals(0, sessionManager.getActiveSessions().size());
     }
 }
