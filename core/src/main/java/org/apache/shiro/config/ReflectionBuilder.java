@@ -428,6 +428,15 @@ public class ReflectionBuilder {
         if (tokens == null || tokens.length <= 0) {
             return null;
         }
+
+        //SHIRO-423: check to see if the value is a referenced Set already, and if so, return it immediately:
+        if (tokens.length == 1 && isReference(tokens[0])) {
+            Object reference = resolveReference(tokens[0]);
+            if (reference instanceof Set) {
+                return (Set)reference;
+            }
+        }
+
         Set<String> setTokens = new LinkedHashSet<String>(Arrays.asList(tokens));
 
         //now convert into correct values and/or references:
@@ -444,6 +453,14 @@ public class ReflectionBuilder {
                 StringUtils.DEFAULT_QUOTE_CHAR, StringUtils.DEFAULT_QUOTE_CHAR, true, true);
         if (tokens == null || tokens.length <= 0) {
             return null;
+        }
+
+        //SHIRO-423: check to see if the value is a referenced Map already, and if so, return it immediately:
+        if (tokens.length == 1 && isReference(tokens[0])) {
+            Object reference = resolveReference(tokens[0]);
+            if (reference instanceof Map) {
+                return (Map)reference;
+            }
         }
 
         Map<String, String> mapTokens = new LinkedHashMap<String, String>(tokens.length);
@@ -468,11 +485,43 @@ public class ReflectionBuilder {
         return map;
     }
 
+    // @since 1.2.2
+    protected Collection<?> toCollection(String sValue) {
+
+        String[] tokens = StringUtils.split(sValue);
+        if (tokens == null || tokens.length <= 0) {
+            return null;
+        }
+
+        //SHIRO-423: check to see if the value is a referenced Collection already, and if so, return it immediately:
+        if (tokens.length == 1 && isReference(tokens[0])) {
+            Object reference = resolveReference(tokens[0]);
+            if (reference instanceof Collection) {
+                return (Collection)reference;
+            }
+        }
+
+        //now convert into correct values and/or references:
+        List<Object> values = new ArrayList<Object>(tokens.length);
+        for (String token : tokens) {
+            Object value = resolveValue(token);
+            values.add(value);
+        }
+        return values;
+    }
 
     protected List<?> toList(String sValue) {
         String[] tokens = StringUtils.split(sValue);
         if (tokens == null || tokens.length <= 0) {
             return null;
+        }
+
+        //SHIRO-423: check to see if the value is a referenced List already, and if so, return it immediately:
+        if (tokens.length == 1 && isReference(tokens[0])) {
+            Object reference = resolveReference(tokens[0]);
+            if (reference instanceof List) {
+                return (List)reference;
+            }
         }
 
         //now convert into correct values and/or references:
@@ -653,9 +702,10 @@ public class ReflectionBuilder {
             value = toSet(stringValue);
         } else if (isTypedProperty(object, propertyName, Map.class)) {
             value = toMap(stringValue);
-        } else if (isTypedProperty(object, propertyName, List.class) ||
-                isTypedProperty(object, propertyName, Collection.class)) {
+        } else if (isTypedProperty(object, propertyName, List.class)) {
             value = toList(stringValue);
+        } else if (isTypedProperty(object, propertyName, Collection.class)) {
+            value = toCollection(stringValue);
         } else if (isTypedProperty(object, propertyName, byte[].class)) {
             value = toBytes(stringValue);
         } else if (isTypedProperty(object, propertyName, ByteSource.class)) {
