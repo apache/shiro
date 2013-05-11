@@ -209,16 +209,26 @@ public class DefaultFilterChainManager implements FilterChainManager {
                 config = StringUtils.clean(pair[1]);
                 //if there was an open bracket, it assumed there is a closing bracket, so strip it too:
                 config = config.substring(0, config.length() - 1);
+                config = StringUtils.clean(config);
 
-                //backwards compatibility prior to implmenting SHIRO-205:
+                //backwards compatibility prior to implementing SHIRO-205:
                 //prior to SHIRO-205 being implemented, it was common for end-users to quote the config inside brackets
                 //if that config required commas.  We need to strip those quotes to get to the interior quoted definition
                 //to ensure any existing quoted definitions still function for end users:
-                if (config.startsWith("\"") && config.endsWith("\"")) {
-                    config = config.substring(1, config.length() - 1);
+                if (config != null && config.startsWith("\"") && config.endsWith("\"")) {
+                    String stripped = config.substring(1, config.length() - 1);
+                    stripped = StringUtils.clean(stripped);
+
+                    //if the stripped value does not have any internal quotes, we can assume that the entire config was
+                    //quoted and we can use the stripped value.
+                    if (stripped != null && stripped.indexOf('"') == -1) {
+                        config = stripped;
+                    }
+                    //else:
+                    //the remaining config does have internal quotes, so we need to assume that each comma delimited
+                    //pair might be quoted, in which case we need the leading and trailing quotes that we stripped
+                    //So we ignore the stripped value.
                 }
-                
-                config = StringUtils.clean(config);
             }
             
             return new String[]{name, config};
