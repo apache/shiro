@@ -1,0 +1,106 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+This is not an official release notes document.  It exists for Shiro developers
+to jot down their notes while working in the source code.  These notes will be
+combined with Jira's auto-generated release notes during a release for the
+total set.
+
+###########################################################
+# 1.2.0
+###########################################################
+
+Backwards Incompatible Changes
+--------------------------------
+- The following org.apache.shiro.mgt.DefaultSecurityManager methods have been removed:
+  bindPrincipalsToSession(principals, context)
+
+  This logic has been moved into a SubjectDAO concept to allow end-users to control
+  exactly how the Session may be used for subject state persistence.  This allows a
+  single point of control rather than needing to configure Shiro in multiple places.
+
+  If you overrode this method in Shiro 1.0 or 1.1, please look at the new
+  org.apache.shiro.mgt.DefaultSubjectDAO implementation, which performs compatible logic.
+  Documentation for this is covered here:
+  http://shiro.apache.org/session-management.html#SessionManagement-SessionsandSubjectState
+
+- The org.apache.shiro.web.session.mgt.ServletContainerSessionManager implementation
+  (enabled by default for all web applications) no longer subclasses
+  org.apache.shiro.session.mgt.AbstractSessionManager.  AbstractSessionManager existed
+  originally to consolidate a 'globalSessionTimeout' configuration property for
+  subclasses.  However, the ServletContainerSessionManager has been changed to always
+  reflect the session configuration from web.xml (per its namesake).  Because web.xml
+  is the definitive source for session timeout configuration, the 'extends' clause
+  was removed to avoid configuration confusion: if someone attempted to configure
+  'globalSessionTimeout' on a ServletContainerSessionManager instance, it would never
+  be honored.  It was better to remove the extends clause to ensure that any
+  such configuration would fail fast when Shiro starts up to reflect the invalid config.
+
+
+Potential Breaking Changes
+--------------------------------
+- The org.apache.shiro.web.filter.mgt.FilterChainManager class's
+  addFilter(String name, Filter filter) semantics have changed.  It now no longer
+  attempts to initialize a filter by default before adding the filter to the chain.
+  If you ever called this method, you can call the
+  addFilter(name, filter, true) method to achieve the <= 1.1 behavior.
+
+- The org.apache.shiro.crypto.SecureRandomNumberGenerator previously defaulted to generating
+  128 random _bytes_ each time the nextBytes() method was called.  This is too large for most purposes, so the
+  default has been changed to 16 _bytes_ (which equals 128 bits - what was originally intended).  If for some reason
+  you need more than 16 bytes (128 bits) of randomly generated bits, you will need to configure the
+  'defaultNextByteSize' property to match your desired size (in bytes, NOT bits).
+
+- Shiro's Block Cipher Services (AesCipherService, BlowfishCipherService) have had the following changes:
+
+  1) The internal Cipher Mode and Streaming Cipher Mode have been changed from CFB to the new default of CBC.
+     CBC is more commonly used for block ciphers today (e.g. SSL).
+     If you were using an AES or Blowfish CipherService you will want to revert to the previous defaults in your config
+     to ensure you can still decrypt previously encrypted data.  For example, in code:
+
+     blockCipherService.setMode(OperationMode.CFB);
+     blockCipherService.setStreamingMode(OperationMode.CFB);
+
+     or, in shiro.ini:
+
+     blockCipherService.modeName = CFB
+     blockCipherService.streamingModeName = CFB
+
+  2) The internal Streaming Padding Scheme has been changed from NONE to PKCS5 as PKCS5 is more commonly used.
+     If you were using an AES or Blowfish CipherService for streaming operations, you will want to revert to the
+     previous padding scheme default to ensure you can still decrypt previously encrypted data.  For example, in code:
+
+     blockCipherService.setStreamingPaddingScheme(PaddingScheme.NONE);
+
+     or, in shiro.ini:
+
+     blockCipherService.streamingPaddingSchemeName = NoPadding
+
+     Note the difference in code vs shiro.ini in this last example: 'NoPadding' is the correct text value, 'NONE' is
+     the correct Enum value.
+
+###########################################################
+# 1.1.0
+###########################################################
+
+Backwards Incompatible Changes
+--------------------------------
+- The org.apache.shiro.web.util.RedirectView class's
+  appendQueryProperties(StringBuffer targetUrl, Map model, String encodingScheme)
+  method has been changed to accept a StringBuilder argument instead of a
+  StringBuffer per SHIRO-191.  RedirectView is considered an internal
+  implementation support class and Shiro end-users should not be affected by this.
