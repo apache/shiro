@@ -18,13 +18,15 @@
  */
 package org.apache.shiro.web.filter.mgt
 
+import org.apache.shiro.config.ConfigurationException
+import org.apache.shiro.web.filter.authz.SslFilter
+import org.apache.shiro.web.servlet.ShiroFilter
+
 import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.FilterConfig
 import javax.servlet.ServletContext
-import org.apache.shiro.config.ConfigurationException
-import org.apache.shiro.web.filter.authz.SslFilter
-import org.apache.shiro.web.servlet.ShiroFilter
+
 import static org.easymock.EasyMock.*
 
 /**
@@ -84,6 +86,19 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         assertEquals 2, pair.length
         assertEquals "roles", pair[0]
         assertEquals "guest, admin", pair[1]
+    }
+
+    //SHIRO-205 - asserts backwards compatibility before SHIRO-205 was implemented:
+    //@since 1.2.2
+    void testToNameConfigPairWithIndividualNestedQuotesInBrackets() {
+        def token = 'roles["guest", "admin"]'
+
+        String[] pair = manager.toNameConfigPair(token);
+
+        assertNotNull pair
+        assertEquals 2, pair.length
+        assertEquals "roles", pair[0]
+        assertEquals '"guest", "admin"', pair[1]
     }
     
     //SHIRO-205
@@ -177,6 +192,38 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         assertEquals(DefaultFilter.roles.getFilterClass(), filter.getClass());
 
         filter = chain.get(2);
+        assertNotNull(filter);
+        assertEquals(DefaultFilter.perms.getFilterClass(), filter.getClass());
+    }
+
+    /**
+     * Helps assert <a href="https://issues.apache.org/jira/browse/SHIRO-429">SHIRO-429</a>
+     * @since 1.2.2
+     */
+    void testCreateChainWithQuotedInstanceConfig() {
+
+        manager.createChain("test", 'authc, perms["perm1", "perm2"]');
+
+        assertTrue(manager.hasChains());
+
+        Set<String> chainNames = manager.getChainNames();
+        assertNotNull(chainNames);
+        assertEquals(1, chainNames.size());
+        assertTrue(chainNames.contains("test"));
+
+        Map<String, NamedFilterList> chains = manager.getFilterChains();
+        assertEquals(1, chains.size());
+        assertTrue(chains.containsKey("test"));
+        manager.setFilterChains(chains);
+
+        NamedFilterList chain = manager.getChain("test");
+        assertNotNull(chain);
+
+        Filter filter = chain.get(0);
+        assertNotNull(filter);
+        assertEquals(DefaultFilter.authc.getFilterClass(), filter.getClass());
+
+        filter = chain.get(1);
         assertNotNull(filter);
         assertEquals(DefaultFilter.perms.getFilterClass(), filter.getClass());
     }
