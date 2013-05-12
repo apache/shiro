@@ -24,13 +24,13 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>7</version>
+        <version>13</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>2.alpha.0-SNAPSHOT</version>
 
     <name>Apache Shiro</name>
     <url>http://shiro.apache.org/</url>
@@ -68,7 +68,7 @@
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
 
         <!-- non-dependency-based properties: -->
-        <shiro.osgi.importRange>[1.3, 2)</shiro.osgi.importRange>
+        <shiro.osgi.importRange>[2, 3)</shiro.osgi.importRange>
 
         <!-- Compile 3rd party dependencies: -->
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
