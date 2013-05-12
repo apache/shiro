@@ -28,7 +28,6 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
-import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.MapContext;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
@@ -133,8 +132,12 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
         return getTypedValue(PRINCIPALS, PrincipalCollection.class);
     }
 
+    private static boolean isEmpty(PrincipalCollection pc) {
+        return pc == null || pc.isEmpty();
+    }
+
     public void setPrincipals(PrincipalCollection principals) {
-        if (!CollectionUtils.isEmpty(principals)) {
+        if (!isEmpty(principals)) {
             put(PRINCIPALS, principals);
         }
     }
@@ -142,7 +145,7 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
     public PrincipalCollection resolvePrincipals() {
         PrincipalCollection principals = getPrincipals();
 
-        if (CollectionUtils.isEmpty(principals)) {
+        if (isEmpty(principals)) {
             //check to see if they were just authenticated:
             AuthenticationInfo info = getAuthenticationInfo();
             if (info != null) {
@@ -150,14 +153,14 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
             }
         }
 
-        if (CollectionUtils.isEmpty(principals)) {
+        if (isEmpty(principals)) {
             Subject subject = getSubject();
             if (subject != null) {
                 principals = subject.getPrincipals();
             }
         }
 
-        if (CollectionUtils.isEmpty(principals)) {
+        if (isEmpty(principals)) {
             //try the session:
             Session session = resolveSession();
             if (session != null) {

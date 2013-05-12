@@ -20,14 +20,12 @@ package org.apache.shiro.util;
 
 import org.apache.shiro.ShiroException;
 
-
 /**
  * Runtime exception thrown by the framework when unable to instantiate a Class via reflection.
  *
  * @since 0.2
  */
-public class InstantiationException extends ShiroException
-{
+public class InstantiationException extends ShiroException {
 
     /**
      * Creates a new InstantiationException.

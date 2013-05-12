@@ -193,6 +193,7 @@
     </developers>
 
     <modules>
+        <module>lang</module>
         <module>core</module>
         <module>web</module>
         <module>support</module>
@@ -511,6 +512,11 @@
     <dependencyManagement>
         <dependencies>
             <!-- Intra project dependencies -->
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-lang</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>

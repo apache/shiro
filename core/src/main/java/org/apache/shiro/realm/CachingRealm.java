@@ -152,6 +152,10 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
         clearCache(principals);
     }
 
+    private static boolean isEmpty(PrincipalCollection pc) {
+        return pc == null || pc.isEmpty();
+    }
+
     /**
      * Clears out any cached data associated with the specified account identity/identities.
      * <p/>
@@ -162,7 +166,7 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
      * @since 1.2
      */
     protected void clearCache(PrincipalCollection principals) {
-        if (!CollectionUtils.isEmpty(principals)) {
+        if (!isEmpty(principals)) {
             doClearCache(principals);
             log.trace("Cleared cache entries for account with principals [{}]", principals);
         }
@@ -197,7 +201,7 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
      */
     protected Object getAvailablePrincipal(PrincipalCollection principals) {
         Object primary = null;
-        if (!CollectionUtils.isEmpty(principals)) {
+        if (!isEmpty(principals)) {
             Collection thisPrincipals = principals.fromRealm(getName());
             if (!CollectionUtils.isEmpty(thisPrincipals)) {
                 primary = thisPrincipals.iterator().next();

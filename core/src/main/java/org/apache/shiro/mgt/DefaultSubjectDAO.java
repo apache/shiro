@@ -23,7 +23,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.subject.support.DelegatingSubject;
-import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,6 +166,10 @@ public class DefaultSubjectDAO implements SubjectDAO {
         mergeAuthenticationState(subject);
     }
 
+    private static boolean isEmpty(PrincipalCollection pc) {
+        return pc == null || pc.isEmpty();
+    }
+
     /**
      * Merges the Subject's current {@link org.apache.shiro.subject.Subject#getPrincipals()} with whatever may be in
      * any available session.  Only updates the Subject's session if the session does not match the current principals
@@ -200,7 +203,7 @@ public class DefaultSubjectDAO implements SubjectDAO {
         Session session = subject.getSession(false);
 
         if (session == null) {
-            if (!CollectionUtils.isEmpty(currentPrincipals)) {
+            if (!isEmpty(currentPrincipals)) {
                 session = subject.getSession();
                 session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, currentPrincipals);
             }
@@ -209,8 +212,8 @@ public class DefaultSubjectDAO implements SubjectDAO {
             PrincipalCollection existingPrincipals =
                     (PrincipalCollection) session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
 
-            if (CollectionUtils.isEmpty(currentPrincipals)) {
-                if (!CollectionUtils.isEmpty(existingPrincipals)) {
+            if (isEmpty(currentPrincipals)) {
+                if (!isEmpty(existingPrincipals)) {
                     session.removeAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
                 }
                 // otherwise both are null or empty - no need to update the session

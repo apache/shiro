@@ -18,7 +18,11 @@
  */
 package org.apache.shiro.mgt;
 
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.Authenticator;
+import org.apache.shiro.authc.LogoutAware;
 import org.apache.shiro.authz.Authorizer;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.InvalidSessionException;
@@ -466,6 +470,10 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return null;
     }
 
+    private static boolean isEmpty(PrincipalCollection pc) {
+        return pc == null || pc.isEmpty();
+    }
+
     /**
      * Attempts to resolve an identity (a {@link PrincipalCollection}) for the context using heuristics.  This
      * implementation functions as follows:
@@ -486,12 +494,12 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
 
         PrincipalCollection principals = context.resolvePrincipals();
 
-        if (CollectionUtils.isEmpty(principals)) {
+        if (isEmpty(principals)) {
             log.trace("No identity (PrincipalCollection) found in the context.  Looking for a remembered identity.");
 
             principals = getRememberedIdentity(context);
 
-            if (!CollectionUtils.isEmpty(principals)) {
+            if (!isEmpty(principals)) {
                 log.debug("Found remembered PrincipalCollection.  Adding to the context to be used " +
                         "for subject construction by the SubjectFactory.");
 

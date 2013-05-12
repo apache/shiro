@@ -42,7 +42,9 @@ import java.util.Map;
  * A {@link Factory} that creates {@link SecurityManager} instances based on {@link Ini} configuration.
  *
  * @since 1.0
+ * @deprecated use Shiro's {@code Environment} mechanisms instead.
  */
+@Deprecated
 public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager> {
 
     public static final String MAIN_SECTION_NAME = "main";
