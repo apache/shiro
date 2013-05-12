@@ -18,14 +18,17 @@
  */
 package org.apache.shiro.realm;
 
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -656,6 +659,10 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
         clearCachedAuthenticationInfo(principals);
     }
 
+    private static boolean isEmpty(PrincipalCollection pc) {
+        return pc == null || pc.isEmpty();
+    }
+
     /**
      * Clears out the AuthenticationInfo cache entry for the specified account.
      * <p/>
@@ -677,7 +684,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @since 1.2
      */
     protected void clearCachedAuthenticationInfo(PrincipalCollection principals) {
-        if (!CollectionUtils.isEmpty(principals)) {
+        if (!isEmpty(principals)) {
             Cache<Object, AuthenticationInfo> cache = getAvailableAuthenticationCache();
             //cache instance will be non-null if caching is enabled:
             if (cache != null) {

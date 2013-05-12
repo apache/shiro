@@ -20,14 +20,12 @@ package org.apache.shiro.codec;
 
 import org.apache.shiro.ShiroException;
 
-
 /**
  * Root exception related to issues during encoding or decoding.
  *
  * @since 0.9
  */
-public class CodecException extends ShiroException
-{
+public class CodecException extends ShiroException {
 
     /**
      * Creates a new <code>CodecException</code>.

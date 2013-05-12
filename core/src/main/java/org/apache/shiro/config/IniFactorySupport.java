@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
  * {@link Ini} configuration.
  *
  * @since 1.0
+ * @deprecated use Shiro's {@code Environment} mechanisms instead.
  */
+@Deprecated
 public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
 
     public static final String DEFAULT_INI_RESOURCE_PATH = "classpath:shiro.ini";

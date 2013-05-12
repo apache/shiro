@@ -18,9 +18,13 @@
  */
 package org.apache.shiro.util;
 
-import org.apache.shiro.subject.PrincipalCollection;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Static helper class for use dealing with Collections.
@@ -88,19 +92,6 @@ public class CollectionUtils {
         return m != null ? m.size() : 0;
     }
 
-
-    /**
-     * Returns {@code true} if the specified {@code PrincipalCollection} is {@code null} or
-     * {@link PrincipalCollection#isEmpty empty}, {@code false} otherwise.
-     *
-     * @param principals the principals to check.
-     * @return {@code true} if the specified {@code PrincipalCollection} is {@code null} or
-     *         {@link PrincipalCollection#isEmpty empty}, {@code false} otherwise.
-     * @since 1.0
-     */
-    public static boolean isEmpty(PrincipalCollection principals) {
-        return principals == null || principals.isEmpty();
-    }
 
     public static <E> List<E> asList(E... elements) {
         if (elements == null || elements.length == 0) {

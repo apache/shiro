@@ -171,7 +171,7 @@ public class DelegatingSubjectTest {
 
         //assert we still have the previous (user1) principals:
         PrincipalCollection previous = subject.getPreviousPrincipals();
-        assertFalse(CollectionUtils.isEmpty(previous));
+        assertFalse(previous == null || previous.isEmpty());
         assertTrue(previous.getPrimaryPrincipal().equals("user1"));
 
         //test the stack functionality:  While as user2, run as user3:
@@ -184,7 +184,7 @@ public class DelegatingSubjectTest {
 
         //assert we still have the previous (user2) principals in the stack:
         previous = subject.getPreviousPrincipals();
-        assertFalse(CollectionUtils.isEmpty(previous));
+        assertFalse(previous == null || previous.isEmpty());
         assertTrue(previous.getPrimaryPrincipal().equals("user2"));
 
         //drop down to user2:
@@ -199,7 +199,7 @@ public class DelegatingSubjectTest {
 
         //assert we still have the previous (user1) principals:
         previous = subject.getPreviousPrincipals();
-        assertFalse(CollectionUtils.isEmpty(previous));
+        assertFalse(previous == null || previous.isEmpty());
         assertTrue(previous.getPrimaryPrincipal().equals("user1"));
 
         //drop down to original user1:
