@@ -20,14 +20,17 @@ package org.apache.shiro.crypto.hash.format
 
 import org.apache.shiro.crypto.hash.Hash
 import org.apache.shiro.crypto.hash.Sha1Hash
+import org.junit.Test
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link Base64Format} implementation.
  *
  * @since 1.2
  */
-class Base64FormatTest extends GroovyTestCase {
+class Base64FormatTest {
 
+    @Test
     void testFormat() {
         Hash hash = new Sha1Hash("hello");
         Base64Format format = new Base64Format()
@@ -35,6 +38,7 @@ class Base64FormatTest extends GroovyTestCase {
         assertEquals base64, hash.toBase64()
     }
 
+    @Test
     void testFormatWithNullArgument() {
         Base64Format format = new Base64Format()
         assertNull format.format(null)

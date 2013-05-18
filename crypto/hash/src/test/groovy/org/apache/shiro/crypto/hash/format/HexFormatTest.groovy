@@ -20,14 +20,17 @@ package org.apache.shiro.crypto.hash.format
 
 import org.apache.shiro.crypto.hash.Hash
 import org.apache.shiro.crypto.hash.Sha1Hash
+import org.junit.Test
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link HexFormat} implementation.
  *
  * @since 1.2
  */
-class HexFormatTest extends GroovyTestCase {
+class HexFormatTest {
 
+    @Test
     void testFormat() {
         Hash hash = new Sha1Hash("hello");
         HexFormat format = new HexFormat()
@@ -35,6 +38,7 @@ class HexFormatTest extends GroovyTestCase {
         assertEquals hex, hash.toHex()
     }
 
+    @Test
     void testFormatWithNullArgument() {
         HexFormat format = new HexFormat()
         assertNull format.format(null)

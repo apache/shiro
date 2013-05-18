@@ -19,14 +19,17 @@
 package org.apache.shiro.crypto.hash.format
 
 import org.apache.shiro.crypto.hash.Sha1Hash
+import org.junit.Test
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link DefaultHashFormatFactory} implementation.
  *
  * @since 1.2
  */
-class DefaultHashFormatFactoryTest extends GroovyTestCase {
+class DefaultHashFormatFactoryTest {
 
+    @Test
     void testDefaultInstance() {
         def factory = new DefaultHashFormatFactory()
         assertNotNull factory.formatClassNames
@@ -35,16 +38,19 @@ class DefaultHashFormatFactoryTest extends GroovyTestCase {
         assertTrue factory.formatClassNames.isEmpty()
     }
 
+    @Test
     void testNullArg() {
         def factory = new DefaultHashFormatFactory()
         assertNull factory.getInstance(null)
     }
 
+    @Test
     void testNotFound() {
         def factory = new DefaultHashFormatFactory()
         assertNull factory.getInstance('foo')
     }
 
+    @Test
     void testSetFormatClassNames() {
         def classNames = ['hex': HexFormat.class.name]
         def factory = new DefaultHashFormatFactory()
@@ -54,6 +60,7 @@ class DefaultHashFormatFactoryTest extends GroovyTestCase {
         assertEquals factory.formatClassNames['hex'], HexFormat.class.name
     }
 
+    @Test
     void testGetInstanceWithConfiguredFormatClassName() {
         def classNames = ['anAlias': HexFormat.class.name]
         def factory = new DefaultHashFormatFactory(formatClassNames: classNames)
@@ -62,6 +69,7 @@ class DefaultHashFormatFactoryTest extends GroovyTestCase {
         assertTrue instance instanceof HexFormat
     }
 
+    @Test
     void testGetInstanceWithMcfFormattedString() {
         Shiro1CryptFormat format = new Shiro1CryptFormat()
         def formatted = format.format(new Sha1Hash("test"))
@@ -74,12 +82,14 @@ class DefaultHashFormatFactoryTest extends GroovyTestCase {
         assertTrue instance instanceof Shiro1CryptFormat
     }
 
+    @Test
     void testAbsentFQCN() {
         def factory = new DefaultHashFormatFactory()
         def instance = factory.getInstance("com.foo.bar.some.random.MyHashFormat")
         assertNull instance
     }
 
+    @Test
     void testPresentFQCN() {
         def factory = new DefaultHashFormatFactory()
         def instance = factory.getInstance(Shiro1CryptFormat.class.name)
@@ -87,6 +97,7 @@ class DefaultHashFormatFactoryTest extends GroovyTestCase {
         assertTrue instance instanceof Shiro1CryptFormat
     }
 
+    @Test
     void testMcfFormattedArgument() {
         def factory = new DefaultHashFormatFactory()
 
@@ -99,6 +110,7 @@ class DefaultHashFormatFactoryTest extends GroovyTestCase {
         assertTrue instance instanceof Shiro1CryptFormat
     }
 
+    @Test
     void testSearchPackages() {
         def factory = new DefaultHashFormatFactory()
         factory.searchPackages = ['org.apache.shiro.crypto.hash.format']
@@ -110,6 +122,7 @@ class DefaultHashFormatFactoryTest extends GroovyTestCase {
         assertTrue instance instanceof ToStringHashFormat
     }
 
+    @Test
     void testSearchPackagesWithoutMatch() {
         def factory = new DefaultHashFormatFactory()
         factory.searchPackages = ['com.foo']
@@ -117,6 +130,7 @@ class DefaultHashFormatFactoryTest extends GroovyTestCase {
         assertNull factory.getInstance('bar')
     }
 
+    @Test
     void testWithInvalidHashFormatImplementation() {
         def factory = new DefaultHashFormatFactory()
         try {

@@ -21,31 +21,38 @@ package org.apache.shiro.crypto.hash
 import org.apache.shiro.crypto.RandomNumberGenerator
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
 import org.apache.shiro.util.ByteSource
+import org.junit.Test
+
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link DefaultHashService} implementation.
  *
  * @since 1.2
  */
-class DefaultHashServiceTest extends GroovyTestCase {
+class DefaultHashServiceTest {
 
+    @Test
     void testNullRequest() {
         assertNull createService().computeHash(null)
     }
 
+    @Test
     void testDifferentAlgorithmName() {
         def service = new DefaultHashService(hashAlgorithmName: 'MD5')
         def hash = hash(service, "test")
         assertEquals 'MD5', hash.algorithmName
     }
 
+    @Test
     void testDifferentIterations() {
         def service = new DefaultHashService(hashIterations: 2)
         def hash = hash(service, "test")
         assertEquals 2, hash.iterations
     }
 
+    @Test
     void testDifferentRandomNumberGenerator() {
 
         def ByteSource randomBytes = new SecureRandomNumberGenerator().nextBytes()
@@ -63,6 +70,7 @@ class DefaultHashServiceTest extends GroovyTestCase {
     /**
      * If 'generatePublicSalt' is true, 2 hashes of the same input source should be different.
      */
+    @Test
     void testWithRandomlyGeneratedSalt() {
         def service = new DefaultHashService(generatePublicSalt: true)
         def first = hash(service, "password")
@@ -70,6 +78,7 @@ class DefaultHashServiceTest extends GroovyTestCase {
         assertFalse first == second
     }
 
+    @Test
     void testRequestWithEmptySource() {
         def source = ByteSource.Util.bytes((byte[])null)
         def request = new HashRequest.Builder().setSource(source).build()
@@ -81,6 +90,7 @@ class DefaultHashServiceTest extends GroovyTestCase {
      * Two different strings hashed with the same salt should result in two different
      * hashes.
      */
+    @Test
     void testOnlyRandomSaltHash() {
         HashService service = createService();
         Hash first = hash(service, "password");
@@ -92,6 +102,7 @@ class DefaultHashServiceTest extends GroovyTestCase {
      * If the same string is hashed twice and only base salt was supplied, hashed
      * result should be different in each case.
      */
+    @Test
     void testBothSaltsRandomness() {
         HashService service = createServiceWithPrivateSalt();
         Hash first = hash(service, "password");
@@ -104,6 +115,7 @@ class DefaultHashServiceTest extends GroovyTestCase {
      * Hash of the same string with generated random salt should return the
      * same result.
      */
+    @Test
     void testBothSaltsReturn() {
         HashService service = createServiceWithPrivateSalt();
         Hash first = hash(service, "password");
@@ -115,6 +127,7 @@ class DefaultHashServiceTest extends GroovyTestCase {
      * Two different strings hashed with the same salt should result in two different
      * hashes.
      */
+    @Test
     void testBothSaltsHash() {
         HashService service = createServiceWithPrivateSalt();
         Hash first = hash(service, "password");
@@ -125,6 +138,7 @@ class DefaultHashServiceTest extends GroovyTestCase {
     /**
      * Hash result is different if the base salt is added.
      */
+    @Test
     public void testPrivateSaltChangesResult() {
         HashService saltedService = createServiceWithPrivateSalt();
         HashService service = createService();

@@ -19,41 +19,49 @@
 package org.apache.shiro.authc.credential
 
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
+import org.apache.shiro.crypto.hash.*
 import org.apache.shiro.crypto.hash.format.HashFormatFactory
 import org.apache.shiro.crypto.hash.format.HexFormat
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat
-import org.apache.shiro.crypto.hash.*
+import org.junit.Test
+
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link DefaultPasswordService} implementation.
  *
  * @since 1.2
  */
-class DefaultPasswordServiceTest extends GroovyTestCase {
+class DefaultPasswordServiceTest {
 
+    @Test
     void testEncryptPasswordWithNullArgument() {
         def service = new DefaultPasswordService()
         assertNull service.encryptPassword(null)
     }
 
+    @Test
     void testHashPasswordWithNullArgument() {
         def service = new DefaultPasswordService()
         assertNull service.hashPassword(null)
     }
 
+    @Test
     void testEncryptPasswordDefault() {
         def service = new DefaultPasswordService()
         def encrypted = service.encryptPassword("12345")
         assertTrue service.passwordsMatch("12345", encrypted)
     }
 
+    @Test
     void testEncryptPasswordWithInvalidMatch() {
         def service = new DefaultPasswordService()
         def encrypted = service.encryptPassword("ABCDEF")
         assertFalse service.passwordsMatch("ABC", encrypted)
     }
 
+    @Test
     void testBackwardsCompatibility() {
         def service = new DefaultPasswordService()
         def encrypted = service.encryptPassword("12345")
@@ -71,6 +79,7 @@ class DefaultPasswordServiceTest extends GroovyTestCase {
         assertTrue service.passwordsMatch(submitted, encrypted2)
     }
 
+    @Test
     void testHashFormatWarned() {
         def service = new DefaultPasswordService()
         service.hashFormat = new HexFormat()
@@ -79,16 +88,18 @@ class DefaultPasswordServiceTest extends GroovyTestCase {
         assertTrue service.hashFormatWarned
     }
 
+    @Test
     void testPasswordsMatchWithNullOrEmpty() {
         def service = new DefaultPasswordService()
-        assertTrue service.passwordsMatch(null, (String)null)
-        assertTrue service.passwordsMatch(null, (Hash)null)
-        assertTrue service.passwordsMatch("", (String)null)
+        assertTrue service.passwordsMatch(null, (String) null)
+        assertTrue service.passwordsMatch(null, (Hash) null)
+        assertTrue service.passwordsMatch("", (String) null)
         assertTrue service.passwordsMatch(null, "")
         assertFalse service.passwordsMatch(null, "12345")
         assertFalse service.passwordsMatch(null, new Sha1Hash("test"))
     }
 
+    @Test
     void testCustomHashService() {
         def hashService = createMock(HashService)
 
@@ -108,6 +119,7 @@ class DefaultPasswordServiceTest extends GroovyTestCase {
         verify hashService
     }
 
+    @Test
     void testCustomHashFormatFactory() {
 
         def factory = createMock(HashFormatFactory)
@@ -128,6 +140,7 @@ class DefaultPasswordServiceTest extends GroovyTestCase {
         verify factory
     }
 
+    @Test
     void testStringComparisonWhenNotUsingAParsableHashFormat() {
 
         def service = new DefaultPasswordService()
