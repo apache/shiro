@@ -513,7 +513,7 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Intra project dependencies -->
+            <!-- Shiro core artifacts -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-lang</artifactId>
@@ -551,7 +551,40 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-all</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
+            <!-- Shiro 3rd party support (keep this alphabetically ordered based on the artifactId please): -->
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-aspectj</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-cas</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-ehcache</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-faces</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-guice</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-hazelcast</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -564,21 +597,8 @@
                 <artifactId>shiro-spring</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-guice</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-aspectj</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-all</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+
+            <!-- Shiro samples: -->
             <dependency>
                 <groupId>org.apache.shiro.samples</groupId>
                 <artifactId>samples-spring-client</artifactId>
