@@ -196,6 +196,7 @@
         <module>lang</module>
         <module>crypto</module>
         <module>event</module>
+        <module>config</module>
         <module>core</module>
         <module>web</module>
         <module>support</module>
@@ -522,6 +523,16 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-config-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-config-ogdl</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
