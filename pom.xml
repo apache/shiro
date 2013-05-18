@@ -195,6 +195,7 @@
     <modules>
         <module>lang</module>
         <module>crypto</module>
+        <module>event</module>
         <module>core</module>
         <module>web</module>
         <module>support</module>
@@ -536,6 +537,11 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-crypto-cipher</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-event</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
