@@ -194,6 +194,7 @@
 
     <modules>
         <module>lang</module>
+        <module>crypto</module>
         <module>core</module>
         <module>web</module>
         <module>support</module>
@@ -520,6 +521,21 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-crypto-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-crypto-hash</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-crypto-cipher</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

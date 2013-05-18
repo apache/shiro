@@ -20,14 +20,18 @@ package org.apache.shiro.crypto.hash
 
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
 import org.apache.shiro.util.ByteSource
+import org.junit.Test
+
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link HashRequest.Builder} implementation
  *
  * @since 1.2
  */
-class HashRequestBuilderTest extends GroovyTestCase {
+class HashRequestBuilderTest {
 
+    @Test
     void testNullSource() {
         try {
             new HashRequest.Builder().build()
@@ -36,10 +40,12 @@ class HashRequestBuilderTest extends GroovyTestCase {
         }
     }
 
+    @Test
     void testDefault() {
         assertEquals 0, new HashRequest.Builder().setSource("test").build().iterations
     }
 
+    @Test
     void testConfig() {
         ByteSource source = ByteSource.Util.bytes("test")
         ByteSource salt = new SecureRandomNumberGenerator().nextBytes()

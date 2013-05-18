@@ -35,14 +35,18 @@ import org.apache.shiro.session.mgt.eis.CachingSessionDAO
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO
 import org.apache.shiro.session.mgt.eis.SessionDAO
 import org.apache.shiro.subject.Subject
+import org.junit.Test
+
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link IniSecurityManagerFactory} implementation.
  *
  * @since 1.0
  */
-class IniSecurityManagerFactoryTest extends GroovyTestCase {
+class IniSecurityManagerFactoryTest {
 
+    @Test
     void testGetInstanceWithoutIni() {
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory();
         SecurityManager sm = factory.getInstance();
@@ -50,6 +54,7 @@ class IniSecurityManagerFactoryTest extends GroovyTestCase {
         assertTrue(sm instanceof DefaultSecurityManager);
     }
 
+    @Test
     void testGetInstanceWithResourcePath() {
         String path = "classpath:org/apache/shiro/config/IniSecurityManagerFactoryTest.ini";
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory(path);
@@ -58,6 +63,7 @@ class IniSecurityManagerFactoryTest extends GroovyTestCase {
         assertTrue(sm instanceof DefaultSecurityManager);
     }
 
+    @Test
     void testGetInstanceWithEmptyIni() {
         Ini ini = new Ini();
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
@@ -66,6 +72,7 @@ class IniSecurityManagerFactoryTest extends GroovyTestCase {
         assertTrue(sm instanceof DefaultSecurityManager);
     }
 
+    @Test
     void testGetInstanceWithSimpleIni() {
         Ini ini = new Ini();
         ini.setSectionProperty(IniSecurityManagerFactory.MAIN_SECTION_NAME,
@@ -77,6 +84,7 @@ class IniSecurityManagerFactoryTest extends GroovyTestCase {
         assertEquals(5000, ((AbstractSessionManager) ((DefaultSecurityManager) sm).getSessionManager()).getGlobalSessionTimeout());
     }
 
+    @Test
     void testGetInstanceWithConfiguredRealm() {
         Ini ini = new Ini();
         Ini.Section section = ini.addSection(IniSecurityManagerFactory.MAIN_SECTION_NAME);
@@ -94,6 +102,7 @@ class IniSecurityManagerFactoryTest extends GroovyTestCase {
         assertTrue(realm instanceof PropertiesRealm);
     }
 
+    @Test
     void testGetInstanceWithAutomaticallyCreatedIniRealm() {
         Ini ini = new Ini();
         Ini.Section section = ini.addSection(IniRealm.USERS_SECTION_NAME);
@@ -113,6 +122,7 @@ class IniSecurityManagerFactoryTest extends GroovyTestCase {
     /**
      * Test for issue <a href="https://issues.apache.org/jira/browse/SHIRO-125">SHIRO-125</a>.
      */
+    @Test
     void testImplicitIniRealmWithAdditionalRealmConfiguration() {
 
         Ini ini = new Ini();
@@ -151,6 +161,7 @@ class IniSecurityManagerFactoryTest extends GroovyTestCase {
     /**
      * Test for issue <a href="https://issues.apache.org/jira/browse/SHIRO-322">SHIRO-322</a>.
      */
+    @Test
     void testImplicitIniRealmWithConfiguredPermissionResolver() {
         def ini = new Ini();
         ini.load('''
@@ -168,7 +179,7 @@ class IniSecurityManagerFactoryTest extends GroovyTestCase {
 
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
         SecurityManager sm = factory.instance
-        
+
         def realm = sm.realms[0]
         assertNotNull realm
         def permResolver = realm.permissionResolver
@@ -179,6 +190,7 @@ class IniSecurityManagerFactoryTest extends GroovyTestCase {
     /**
      * Test case for issue <a href="https://issues.apache.org/jira/browse/SHIRO-95">SHIRO-95</a>.
      */
+    @Test
     void testCacheManagerConfigOrderOfOperations() {
 
         Ini ini = new Ini();

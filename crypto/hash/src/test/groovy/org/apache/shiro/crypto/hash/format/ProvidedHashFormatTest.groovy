@@ -18,13 +18,17 @@
  */
 package org.apache.shiro.crypto.hash.format
 
+import org.junit.Test
+import static org.junit.Assert.*
+
 /**
  * Unit tests for the {@link ProvidedHashFormat} implementation.
  *
  * @since 1.2
  */
-class ProvidedHashFormatTest extends GroovyTestCase {
+class ProvidedHashFormatTest {
 
+    @Test
     void testDefaults() {
         def set = ProvidedHashFormat.values() as Set
         assertEquals 3, set.size()
@@ -33,6 +37,7 @@ class ProvidedHashFormatTest extends GroovyTestCase {
         assertTrue set.contains(ProvidedHashFormat.SHIRO1)
     }
 
+    @Test
     void testByIdWithNullArg() {
         assertNull ProvidedHashFormat.byId(null)
     }

@@ -20,18 +20,22 @@ package org.apache.shiro.crypto.hash.format
 
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
 import org.apache.shiro.crypto.hash.SimpleHash
+import org.junit.Test
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link Shiro1CryptFormat} implementation.
  *
  * @since 1.2
  */
-class Shiro1CryptFormatTest extends GroovyTestCase {
+class Shiro1CryptFormatTest {
 
+    @Test
     void testGetId() {
         assertEquals "shiro1", new Shiro1CryptFormat().getId()
     }
 
+    @Test
     void testFormatDefault() {
         def format = new Shiro1CryptFormat();
 
@@ -52,6 +56,7 @@ class Shiro1CryptFormatTest extends GroovyTestCase {
         assertEquals expected, formatted
     }
 
+    @Test
     void testFormatWithoutSalt() {
         def format = new Shiro1CryptFormat();
 
@@ -70,12 +75,14 @@ class Shiro1CryptFormatTest extends GroovyTestCase {
         assertEquals expected, formatted
     }
 
+    @Test
     void testFormatWithNullArgument() {
         def format = new Shiro1CryptFormat()
         def result = format.format(null)
         assertNull result
     }
 
+    @Test
     void testParseDefault() {
         def format = new Shiro1CryptFormat();
         def delim = Shiro1CryptFormat.TOKEN_DELIMITER
@@ -103,6 +110,7 @@ class Shiro1CryptFormatTest extends GroovyTestCase {
         assertTrue Arrays.equals(hash.bytes, parsedHash.bytes)
     }
 
+    @Test
     void testParseWithoutSalt() {
         def format = new Shiro1CryptFormat();
         def delim = Shiro1CryptFormat.TOKEN_DELIMITER
@@ -129,12 +137,14 @@ class Shiro1CryptFormatTest extends GroovyTestCase {
         assertTrue Arrays.equals(hash.bytes, parsedHash.bytes)
     }
 
+    @Test
     void testParseWithNullArgument() {
         def format = new Shiro1CryptFormat()
         def result = format.parse(null)
         assertNull result
     }
 
+    @Test
     void testParseWithInvalidId() {
         def format = new Shiro1CryptFormat()
         try {
@@ -144,6 +154,7 @@ class Shiro1CryptFormatTest extends GroovyTestCase {
         }
     }
 
+    @Test
     void testParseWithNonNumericIterations() {
         def format = new Shiro1CryptFormat();
         def formatted = '$shiro1$SHA-512$N$foo$foo'

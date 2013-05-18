@@ -21,16 +21,19 @@ package org.apache.shiro.authc.credential
 import org.apache.shiro.authc.AuthenticationInfo
 import org.apache.shiro.authc.AuthenticationToken
 import org.apache.shiro.crypto.hash.Sha256Hash
+import org.junit.Test
 
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link PasswordMatcher} implementation.
  *
  * @since 1.2
  */
-class PasswordMatcherTest extends GroovyTestCase {
+class PasswordMatcherTest {
 
+    @Test
     void testMissingPasswordService() {
         def matcher = new PasswordMatcher()
         matcher.passwordService = null
@@ -41,6 +44,7 @@ class PasswordMatcherTest extends GroovyTestCase {
         }
     }
 
+    @Test
     void testStringPasswordComparison() {
         def service = createMock(PasswordService)
         def token = createMock(AuthenticationToken)
@@ -65,6 +69,7 @@ class PasswordMatcherTest extends GroovyTestCase {
         verify token, info, service
     }
 
+    @Test
     void testHashComparisonWithoutHashedPasswordService() {
         def service = createMock(PasswordService)
         def token = createMock(AuthenticationToken)
@@ -91,6 +96,7 @@ class PasswordMatcherTest extends GroovyTestCase {
         verify token, info, service
     }
 
+    @Test
     void testHashComparison() {
         def service = createMock(HashingPasswordService)
         def token = createMock(AuthenticationToken)
@@ -118,6 +124,7 @@ class PasswordMatcherTest extends GroovyTestCase {
     /**
      * Asserts fix for https://issues.apache.org/jira/browse/SHIRO-363
      */
+    @Test
     void testCharArrayComparison() {
         def service = createMock(PasswordService)
         def token = createMock(AuthenticationToken)
@@ -143,6 +150,7 @@ class PasswordMatcherTest extends GroovyTestCase {
         verify token, info, service
     }
 
+    @Test
     void testUnexpectedSavedCredentialsType() {
         def service = createMock(HashingPasswordService)
         def token = createMock(AuthenticationToken)
