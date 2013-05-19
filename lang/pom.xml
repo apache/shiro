@@ -34,7 +34,7 @@
         The lang module encapsulates only language-specific utilities that are used by various
         other modules.  It exists to augment what we would have liked to see in the JDK but does not exist.
     </description>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
 
@@ -52,27 +52,5 @@
             <artifactId>log4j</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>org.apache.shiro.lang</Bundle-SymbolicName>
-                        <Export-Package>org.apache.shiro.*;version=${project.version}</Export-Package>
-                        <!-- javax.servlet.jsp* marked as optional per SHIRO-390: -->
-                        <Import-Package>
-                            org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            javax.servlet.jsp*;resolution:=optional,
-                            *
-                        </Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
