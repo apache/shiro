@@ -64,7 +64,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.quartz</Bundle-SymbolicName>
-                        <Export-Package>org.apache.shiro.quartz*;version=${project.version}</Export-Package>
+                        <Export-Package>org.apache.shiro.session.mgt.quartz*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
                             org.quartz*;version="[1.6, 2)",
