@@ -16,23 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.config;
+package org.apache.shiro.config
 
-import org.apache.shiro.ShiroException;
-import org.apache.shiro.util.Initializable;
+class SimpleBean {
 
-/**
- * @since 1.2.2
- */
-public class InitializableBean implements Initializable {
+    String name;
+    String stringProp;
+    int intProp;
+    byte[] byteArrayProp;
+    List<SimpleBean> simpleBeans;
+    Map<String,Object> mapProp = new LinkedHashMap<String,Object>();
 
-    private volatile boolean initialized = false;
-
-    public void init() throws ShiroException {
-        initialized = true;
-    }
-
-    public boolean isInitialized() {
-        return initialized;
+    public SimpleBean(){}
+    public SimpleBean(String name) {
+        this.name = name
     }
 }
