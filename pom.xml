@@ -625,6 +625,13 @@
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-config-ogdl</artifactId>
+                <version>${project.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
 
             <!-- 3rd party dependencies -->
             <dependency>

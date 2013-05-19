@@ -21,8 +21,6 @@ package org.apache.shiro.config;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import java.util.Scanner;
-
 /**
  * Unit test for the {@link Ini} class.
  *
@@ -35,8 +33,8 @@ public class IniTest {
     @Test
     public void testNoSections() {
         String test =
-                "prop1 = value1" + NL +
-                        "prop2 = value2";
+            "prop1 = value1" + NL +
+                    "prop2 = value2";
 
         Ini ini = new Ini();
         ini.load(test);

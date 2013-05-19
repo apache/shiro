@@ -16,17 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.config;
+package org.apache.shiro.config
 
-import org.apache.shiro.config.event.BeanEvent;
-import org.apache.shiro.config.event.ConfiguredBeanEvent;
-import org.apache.shiro.config.event.DestroyedBeanEvent;
-import org.apache.shiro.config.event.InitializedBeanEvent;
-import org.apache.shiro.config.event.InstantiatedBeanEvent;
-import org.apache.shiro.event.Subscribe;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.shiro.config.event.*
+import org.apache.shiro.event.Subscribe
 
 /**
  * @since 1.3

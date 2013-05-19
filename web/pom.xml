@@ -52,6 +52,12 @@
         <!-- Test dependencies - scope set appropriately already in the parent pom-->
         <dependency>
             <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-config-ogdl</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
             <type>test-jar</type>
             <scope>test</scope>

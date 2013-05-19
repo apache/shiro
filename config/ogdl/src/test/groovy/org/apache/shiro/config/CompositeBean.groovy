@@ -16,34 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.config;
+package org.apache.shiro.config
 
-import org.apache.shiro.util.Factory;
+class CompositeBean {
 
-public class SimpleBeanFactory implements Factory<SimpleBean> {
-    private int factoryInt;
-    private String factoryString;
+    String name;
 
-    public SimpleBean getInstance() {
-        final SimpleBean simpleBean = new SimpleBean();
-        simpleBean.setIntProp(factoryInt);
-        simpleBean.setStringProp(factoryString);
-        return simpleBean;
-    }
+    String stringProp;
+    boolean booleanProp;
+    int intProp;
+    SimpleBean simpleBean;
 
-    public int getFactoryInt() {
-        return factoryInt;
-    }
+    Set<SimpleBean> simpleBeanSet;
+    List<SimpleBean> simpleBeanList;
+    Collection<SimpleBean> simpleBeanCollection;
+    Map<String, SimpleBean> simpleBeanMap;
+    Map<String, CompositeBean> compositeBeanMap;
+    CompositeBean[] compositeBeanArray;
 
-    public void setFactoryInt(int factoryInt) {
-        this.factoryInt = factoryInt;
-    }
+    public CompositeBean(){}
 
-    public String getFactoryString() {
-        return factoryString;
-    }
-
-    public void setFactoryString(String factoryString) {
-        this.factoryString = factoryString;
+    public CompositeBean(String name) {
+        this.name = name
     }
 }
