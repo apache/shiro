@@ -223,14 +223,19 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
     protected void enableSessionValidation() {
         SessionValidationScheduler scheduler = getSessionValidationScheduler();
         if (scheduler == null) {
-            scheduler = createSessionValidationScheduler();
-            setSessionValidationScheduler(scheduler);
+            synchronized ( this ) {
+                scheduler = getSessionValidationScheduler();
+                if (scheduler == null) {
+                    scheduler = createSessionValidationScheduler();
+                    setSessionValidationScheduler(scheduler);
+                }
+                if (log.isInfoEnabled()) {
+                    log.info("Enabling session validation scheduler...");
+                }
+                scheduler.enableSessionValidation();
+                afterSessionValidationEnabled();
+            }
         }
-        if (log.isInfoEnabled()) {
-            log.info("Enabling session validation scheduler...");
-        }
-        scheduler.enableSessionValidation();
-        afterSessionValidationEnabled();
     }
 
     protected void afterSessionValidationEnabled() {
