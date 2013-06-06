@@ -18,14 +18,23 @@
  */
 package org.apache.shiro.tools.hasher;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.PosixParser;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.UnknownAlgorithmException;
 import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.crypto.hash.format.*;
+import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
+import org.apache.shiro.crypto.hash.format.HashFormat;
+import org.apache.shiro.crypto.hash.format.HashFormatFactory;
+import org.apache.shiro.crypto.hash.format.HexFormat;
+import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
 import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.JavaEnvironment;

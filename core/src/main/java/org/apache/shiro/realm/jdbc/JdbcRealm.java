@@ -18,7 +18,13 @@
  */
 package org.apache.shiro.realm.jdbc;
 
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -86,7 +92,7 @@ public class JdbcRealm extends AuthorizingRealm {
     /**
      * Password hash salt configuration. <ul>
      *   <li>NO_SALT - password hashes are not salted.</li>
-     *   <li>CRYTP - password hashes are stored in in the database unix crypt format.</li>
+     *   <li>CRYPT - password hashes are stored in unix crypt format.</li>
      *   <li>COLUMN - salt is in a separate column in the database.</li> 
      *   <li>EXTERNAL - salt is not stored in the database. {@link #getSaltForUser(String)} will be called
      *       to get the salt</li></ul>

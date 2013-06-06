@@ -27,7 +27,6 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
-import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 
 import java.io.Serializable;
@@ -754,7 +753,7 @@ public interface Subject {
          * @return this {@code Builder} instance for method chaining.
          */
         public Builder principals(PrincipalCollection principals) {
-            if (!CollectionUtils.isEmpty(principals)) {
+            if (principals != null && !principals.isEmpty()) {
                 this.subjectContext.setPrincipals(principals);
             }
             return this;

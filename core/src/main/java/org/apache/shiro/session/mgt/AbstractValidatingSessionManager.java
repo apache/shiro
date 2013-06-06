@@ -152,9 +152,12 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
 
     protected void onExpiration(Session s, ExpiredSessionException ese, SessionKey key) {
         log.trace("Session with id [{}] has expired.", s.getId());
-        onExpiration(s);
-        notifyExpiration(s);
-        afterExpired(s);
+        try {
+            onExpiration(s);
+            notifyExpiration(s);
+        } finally {
+            afterExpired(s);
+        }
     }
 
     protected void onExpiration(Session session) {
@@ -170,9 +173,12 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
             return;
         }
         log.trace("Session with id [{}] is invalid.", s.getId());
-        onStop(s);
-        notifyStop(s);
-        afterStopped(s);
+        try {
+            onStop(s);
+            notifyStop(s);
+        } finally {
+            afterStopped(s);
+        }
     }
 
     protected void doValidate(Session session) throws InvalidSessionException {

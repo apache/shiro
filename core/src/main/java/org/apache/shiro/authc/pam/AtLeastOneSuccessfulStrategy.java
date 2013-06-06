@@ -21,7 +21,7 @@ package org.apache.shiro.authc.pam;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.subject.PrincipalCollection;
 
 /**
  * <tt>AuthenticationStrategy</tt> implementation that requires <em>at least one</em> configured realm to
@@ -41,6 +41,10 @@ import org.apache.shiro.util.CollectionUtils;
  */
 public class AtLeastOneSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
+    private static boolean isEmpty(PrincipalCollection pc) {
+        return pc == null || pc.isEmpty();
+    }
+
     /**
      * Ensures that the <code>aggregate</code> method argument is not <code>null</code> and
      * <code>aggregate.{@link org.apache.shiro.authc.AuthenticationInfo#getPrincipals() getPrincipals()}</code>
@@ -50,7 +54,7 @@ public class AtLeastOneSuccessfulStrategy extends AbstractAuthenticationStrategy
     public AuthenticationInfo afterAllAttempts(AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {
         //we know if one or more were able to succesfully authenticate if the aggregated account object does not
         //contain null or empty data:
-        if (aggregate == null || CollectionUtils.isEmpty(aggregate.getPrincipals())) {
+        if (aggregate == null || isEmpty(aggregate.getPrincipals())) {
             throw new AuthenticationException("Authentication token of type [" + token.getClass() + "] " +
                     "could not be authenticated by any configured realms.  Please ensure that at least one realm can " +
                     "authenticate these tokens.");

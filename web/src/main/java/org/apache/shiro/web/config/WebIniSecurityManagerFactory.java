@@ -32,7 +32,9 @@ import java.util.Map;
  * ensure a web-capable {@code SecurityManager} instance is created by default.
  *
  * @since 1.0
+ * @deprecated use Shiro's {@code Environment} mechanisms instead.
  */
+@Deprecated
 public class WebIniSecurityManagerFactory extends IniSecurityManagerFactory {
 
     /**

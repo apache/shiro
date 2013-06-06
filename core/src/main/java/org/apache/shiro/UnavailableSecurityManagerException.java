@@ -29,8 +29,4 @@ public class UnavailableSecurityManagerException extends ShiroException {
     public UnavailableSecurityManagerException(String message) {
         super(message);
     }
-
-    public UnavailableSecurityManagerException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }

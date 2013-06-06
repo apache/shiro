@@ -114,12 +114,19 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                     ShiroHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
         } else {
-            //not in a cookie, or cookie is disabled - try the request params as a fallback (i.e. URL rewriting):
-            String name = getSessionIdName();
-            id = request.getParameter(name);
+            //not in a cookie, or cookie is disabled - try the request URI as a fallback (i.e. due to URL rewriting):
+
+            //try the URI path segment parameters first:
+            id = getUriPathSegmentParamValue(request, ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
+
             if (id == null) {
-                //try lowercase:
-                id = request.getParameter(name.toLowerCase());
+                //not a URI path segment parameter, try the query parameters:
+                String name = getSessionIdName();
+                id = request.getParameter(name);
+                if (id == null) {
+                    //try lowercase:
+                    id = request.getParameter(name.toLowerCase());
+                }
             }
             if (id != null) {
                 request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
@@ -133,6 +140,54 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
         }
         return id;
+    }
+
+    //SHIRO-351
+    //also see http://cdivilly.wordpress.com/2011/04/22/java-servlets-uri-parameters/
+    //since 1.2.2
+    private String getUriPathSegmentParamValue(ServletRequest servletRequest, String paramName) {
+
+        if (!(servletRequest instanceof HttpServletRequest)) {
+            return null;
+        }
+        HttpServletRequest request = (HttpServletRequest)servletRequest;
+        String uri = request.getRequestURI();
+        if (uri == null) {
+            return null;
+        }
+
+        int queryStartIndex = uri.indexOf('?');
+        if (queryStartIndex >= 0) { //get rid of the query string
+            uri = uri.substring(0, queryStartIndex);
+        }
+
+        int index = uri.indexOf(';'); //now check for path segment parameters:
+        if (index < 0) {
+            //no path segment params - return:
+            return null;
+        }
+
+        //there are path segment params, let's get the last one that may exist:
+
+        final String TOKEN = paramName + "=";
+
+        uri = uri.substring(index+1); //uri now contains only the path segment params
+
+        //we only care about the last JSESSIONID param:
+        index = uri.lastIndexOf(TOKEN);
+        if (index < 0) {
+            //no segment param:
+            return null;
+        }
+
+        uri = uri.substring(index + TOKEN.length());
+
+        index = uri.indexOf(';'); //strip off any remaining segment params:
+        if(index >= 0) {
+            uri = uri.substring(0, index);
+        }
+
+        return uri; //what remains is the value
     }
 
     //since 1.2.1

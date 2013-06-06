@@ -122,8 +122,12 @@ public class DelegatingSubject implements Subject {
         return securityManager;
     }
 
+    private static boolean isEmpty(PrincipalCollection pc) {
+        return pc == null || pc.isEmpty();
+    }
+
     protected boolean hasPrincipals() {
-        return !CollectionUtils.isEmpty(getPrincipals());
+        return !isEmpty(getPrincipals());
     }
 
     /**
@@ -136,7 +140,7 @@ public class DelegatingSubject implements Subject {
     }
 
     private Object getPrimaryPrincipal(PrincipalCollection principals) {
-        if (!CollectionUtils.isEmpty(principals)) {
+        if (!isEmpty(principals)) {
             return principals.getPrimaryPrincipal();
         }
         return null;
@@ -479,7 +483,7 @@ public class DelegatingSubject implements Subject {
     }
 
     private void pushIdentity(PrincipalCollection principals) throws NullPointerException {
-        if (CollectionUtils.isEmpty(principals)) {
+        if (isEmpty(principals)) {
             String msg = "Specified Subject principals cannot be null or empty for 'run as' functionality.";
             throw new NullPointerException(msg);
         }

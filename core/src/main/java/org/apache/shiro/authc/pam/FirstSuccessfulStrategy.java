@@ -22,7 +22,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.subject.PrincipalCollection;
 
 import java.util.Collection;
 
@@ -45,6 +45,10 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
         return null;
     }
 
+    private static boolean isEmpty(PrincipalCollection pc) {
+        return pc == null || pc.isEmpty();
+    }
+
     /**
      * Returns the specified {@code aggregate} instance if is non null and valid (that is, has principals and they are
      * not empty) immediately, or, if it is null or not valid, the {@code info} argument is returned instead.
@@ -53,7 +57,7 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
      * since this strategy mandates that only the info from the first successfully authenticated realm be used.
      */
     protected AuthenticationInfo merge(AuthenticationInfo info, AuthenticationInfo aggregate) {
-        if (aggregate != null && !CollectionUtils.isEmpty(aggregate.getPrincipals())) {
+        if (aggregate != null && isEmpty(aggregate.getPrincipals())) {
             return aggregate;
         }
         return info != null ? info : aggregate;

@@ -15,6 +15,12 @@
 # specific language governing permissions and limitations
 # under the License.
 
+# IntelliJ
+*.ipr
+*.iml
+*.iws
+.idea/
+
 #
 # Eclipse metadata.
 #
@@ -33,3 +39,4 @@ target/
 #
 release.properties
 pom.xml.*
+-
