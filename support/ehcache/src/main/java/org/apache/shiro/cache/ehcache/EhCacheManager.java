@@ -21,7 +21,6 @@ package org.apache.shiro.cache.ehcache;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.util.Destroyable;
 import org.apache.shiro.util.Initializable;
@@ -136,7 +135,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
         try {
             return ResourceUtils.getInputStreamForPath(configFile);
         } catch (IOException e) {
-            throw new ConfigurationException("Unable to obtain input stream for cacheManagerConfigFile [" +
+            throw new IllegalStateException("Unable to obtain input stream for cacheManagerConfigFile [" +
                     configFile + "]", e);
         }
     }

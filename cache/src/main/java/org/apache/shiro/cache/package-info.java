@@ -17,6 +17,6 @@
  * under the License.
  */
 /**
- * Caching support used to enhance performance for any security operation.
+ * Caching support used to enhance performance for security operations.
  */
 package org.apache.shiro.cache;
