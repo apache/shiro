@@ -38,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-core</artifactId>
+            <artifactId>shiro-cache</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
