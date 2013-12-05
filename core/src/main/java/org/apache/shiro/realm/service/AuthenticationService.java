@@ -4,7 +4,7 @@ import java.util.Set;
 
 /**
  * This interface defines three method to fetch password/rolenames/permissions for usertoken authentication.
- * @author kimmking (kimmking@163.com)
+ * @author kimmking (kimmking.cn@gmail.com)
  * @date 2013-12-5
  */
 public interface AuthenticationService {

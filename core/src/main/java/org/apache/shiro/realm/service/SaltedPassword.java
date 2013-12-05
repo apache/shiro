@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * password & salt
- * @author kimmking (kimmking@163.com)
+ * @author kimmking (kimmking.cn@gmail.com)
  * @date 2013-12-5
  */
 public class SaltedPassword implements Serializable {

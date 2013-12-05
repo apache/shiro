@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * your project. So, you can use your services to access database or other ways by unified
  * Data Access Layer. Such as ibatis/mybatis or hibernate or mock-service etc.
  * 
- * @author kimmking (kimmking.cn@gmail..com)
+ * @author kimmking (kimmking.cn@gmail.com)
  * @date 2013-12-5
  */
 public class ServiceRealm extends AuthorizingRealm {
