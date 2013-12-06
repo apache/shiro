@@ -46,12 +46,12 @@ public class ServiceRealm extends AuthorizingRealm {
 		this.useSalt = useSalt;
 	}
 
-	public AuthenticationService getAuthorizingService() {
+	public AuthenticationService getAuthencationService() {
 		return authencationService;
 	}
 
-	public void setAuthorizingService(AuthenticationService authorizingService) {
-		this.authencationService = authorizingService;
+	public void setAuthencationService(AuthenticationService authencationService) {
+		this.authencationService = authencationService;
 	}
 
 	@Override
