@@ -36,7 +36,7 @@ public class ServiceRealm extends AuthorizingRealm {
 	private static final Logger log = LoggerFactory.getLogger(ServiceRealm.class);
 
 	boolean useSalt = false;
-	AuthenticationService authencationService;
+	AuthenticationService authenticationService;
 
 	public boolean isUseSalt() {
 		return useSalt;
@@ -46,12 +46,12 @@ public class ServiceRealm extends AuthorizingRealm {
 		this.useSalt = useSalt;
 	}
 
-	public AuthenticationService getAuthencationService() {
-		return authencationService;
+	public AuthenticationService getAuthenticationService() {
+		return authenticationService;
 	}
 
-	public void setAuthencationService(AuthenticationService authencationService) {
-		this.authencationService = authencationService;
+	public void setAuthenticationService(AuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class ServiceRealm extends AuthorizingRealm {
 
 		SimpleAuthenticationInfo info = null;
 		try {
-			SaltedPassword saltedPassword = authencationService.findSaltedPasswordByUserName(username);
+			SaltedPassword saltedPassword = authenticationService.findSaltedPasswordByUserName(username);
 
 			String password = saltedPassword.getPassword();
 			if (password == null) {
@@ -107,8 +107,8 @@ public class ServiceRealm extends AuthorizingRealm {
 		Set<String> permissions = null;
 		try {
 			// Retrieve roles and permissions from service
-			roleNames = authencationService.findRoleNamesForUserName(username);
-			permissions = authencationService.findPermissions(username, roleNames);
+			roleNames = authenticationService.findRoleNamesForUserName(username);
+			permissions = authenticationService.findPermissions(username, roleNames);
 
 		} catch (Exception e) {
 			final String message = "There was an error while authorizing user [" + username + "]";
