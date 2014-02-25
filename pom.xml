@@ -1010,7 +1010,7 @@
                 <site>
                     <id>shiro.website</id>
                     <name>Apache Shiro Site</name>
-                    <url>scm:svn:http://svn.apache.org/repos/asf/shiro/site/publish/static/${project.version}</url>
+                    <url>scp://people.apache.org/www/shiro.apache.org/static/${project.version}</url>
                 </site>
             </distributionManagement>
         </profile>
