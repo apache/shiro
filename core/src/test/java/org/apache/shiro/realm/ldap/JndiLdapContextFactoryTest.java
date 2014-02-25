@@ -21,6 +21,7 @@ package org.apache.shiro.realm.ldap;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
@@ -182,6 +183,31 @@ public class JndiLdapContextFactoryTest {
         factory.setUrl("ldap://localhost:389");
         factory.getSystemLdapContext();
     }
+
+    @Test(expected = AuthenticationException.class)
+    public void testEmptyStringCredentials() throws NamingException {
+        factory.setUrl("ldap://localhost:389");
+        factory.getLdapContext((Object)"jcoder", "");
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void testEmptyCharArrayCredentials() throws NamingException {
+        factory.setUrl("ldap://localhost:389");
+        factory.getLdapContext((Object)"jcoder", new char[0]);
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void testEmptyByteArrayCredentials() throws NamingException {
+        factory.setUrl("ldap://localhost:389");
+        factory.getLdapContext((Object)"jcoder", new byte[0]);
+    }
+
+    @Test(expected = AuthenticationException.class)
+    public void testEmptyNullCredentials() throws NamingException {
+        factory.setUrl("ldap://localhost:389");
+        factory.getLdapContext((Object)"jcoder", null);
+    }
+
 
 
 }
