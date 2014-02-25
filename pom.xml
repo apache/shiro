@@ -30,7 +30,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.2.3-SNAPSHOT</version>
 
     <name>Apache Shiro</name>
     <url>http://shiro.apache.org/</url>
