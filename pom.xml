@@ -58,7 +58,7 @@
         <site>
             <id>shiro.website</id>
             <name>Apache Shiro Site</name>
-            <url>scp://people.apache.org/www/shiro.apache.org/static/latest</url>
+            <url>scm:svn:https://svn.apache.org/repos/asf/shiro/site/publish/static/latest</url>
         </site>
     </distributionManagement>
 
@@ -211,14 +211,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.1</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.maven.wagon</groupId>
-                            <artifactId>wagon-ssh</artifactId>
-                            <version>2.2</version>
-                        </dependency>
-                    </dependencies>
+                    <version>3.1</version>    
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-publish-plugin</artifactId>
+                    <version>1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.rat</groupId>
@@ -434,9 +432,19 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <!-- This configuration copied from apache:apache:7 parent pom -->
                     <useReleaseProfile>false</useReleaseProfile>
-                    <goals>deploy site-deploy</goals>
+                    <goals>deploy site site:stage</goals>
                     <arguments>-Pdocs,apache-release</arguments>
                     <mavenExecutorId>forked-path</mavenExecutorId>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <nexusUrl>https://repository.apache.org</nexusUrl>
+                    <serverId>apache.releases.https</serverId>
                 </configuration>
             </plugin>
         </plugins>
@@ -1010,7 +1018,7 @@
                 <site>
                     <id>shiro.website</id>
                     <name>Apache Shiro Site</name>
-                    <url>scp://people.apache.org/www/shiro.apache.org/static/${project.version}</url>
+                    <url>scm:svn:https://svn.apache.org/repos/asf/shiro/site/publish/static/${project.version}</url>
                 </site>
             </distributionManagement>
         </profile>
