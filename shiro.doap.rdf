@@ -76,6 +76,13 @@
                 <revision>1.2.2</revision>
             </Version>
         </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 1.2.3</name>
+                <created>2014-02-27</created>
+                <revision>1.2.3</revision>
+            </Version>
+        </release>
         <repository>
             <SVNRepository>
                 <location rdf:resource="http://svn.apache.org/repos/asf/shiro"/>
