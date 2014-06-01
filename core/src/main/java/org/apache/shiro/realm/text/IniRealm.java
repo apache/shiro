@@ -41,7 +41,9 @@ import org.slf4j.LoggerFactory;
  * data from an .ini resource.  This will only be used if there isn't already account data in the Realm.
  *
  * @since 1.0
+ * @deprecated since 2.0 if favor of the {@link org.apache.shiro.realm.AccountStoreRealm} configured with an Ini-specific {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public class IniRealm extends TextConfigurationRealm {
 
     public static final String USERS_SECTION_NAME = "users";

@@ -27,6 +27,7 @@ import java.util.Collection;
 
 
 /**
+ * <h1>Deprecated in 2.0</h1>
  * A {@code AuthenticationStrategy} implementation assists the {@link ModularRealmAuthenticator} during the
  * log-in process in a pluggable realm (PAM) environment.
  *
@@ -34,11 +35,10 @@ import java.util.Collection;
  * interaction with the configured Realms.  This allows a pluggable strategy of whether or not an authentication
  * attempt must be successful for all realms, only 1 or more realms, no realms, etc.
  *
- * @see AllSuccessfulStrategy
- * @see AtLeastOneSuccessfulStrategy
- * @see FirstSuccessfulStrategy
  * @since 0.2
+ * @deprecated since 2.0 in favor of {@link org.apache.shiro.authc.strategy.AuthenticationStrategy}.
  */
+@Deprecated
 public interface AuthenticationStrategy {
 
     /**

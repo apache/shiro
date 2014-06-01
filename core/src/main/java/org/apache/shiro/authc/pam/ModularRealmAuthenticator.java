@@ -18,7 +18,17 @@
  */
 package org.apache.shiro.authc.pam;
 
-import org.apache.shiro.authc.*;
+import org.apache.shiro.account.Account;
+import org.apache.shiro.authc.AbstractAuthenticator;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.DefaultAuthenticator;
+import org.apache.shiro.authc.LogoutAware;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.strategy.AllRealmsSuccessfulStrategy;
+import org.apache.shiro.authc.strategy.AtLeastOneRealmSuccessfulStrategy;
+import org.apache.shiro.authc.strategy.FirstRealmSuccessfulStrategy;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
@@ -60,7 +70,9 @@ import java.util.Collection;
  * @see AllSuccessfulStrategy
  * @see FirstSuccessfulStrategy
  * @since 0.1
+ * @deprecated since 2.0 in favor of {@link org.apache.shiro.authc.DefaultAuthenticator}
  */
+@Deprecated
 public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
     /*--------------------------------------------
@@ -143,16 +155,12 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
         this.authenticationStrategy = authenticationStrategy;
     }
 
-    /*--------------------------------------------
-    |               M E T H O D S               |
-
     /**
      * Used by the internal {@link #doAuthenticate} implementation to ensure that the {@code realms} property
      * has been set.  The default implementation ensures the property is not null and not empty.
      *
      * @throws IllegalStateException if the {@code realms} property is configured incorrectly.
      */
-
     protected void assertRealmsConfigured() throws IllegalStateException {
         Collection<Realm> realms = getRealms();
         if (CollectionUtils.isEmpty(realms)) {
@@ -160,6 +168,38 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                     "present to execute an authentication attempt.";
             throw new IllegalStateException(msg);
         }
+    }
+
+    public Account authenticateAccount(AuthenticationToken token) throws AuthenticationException {
+        DefaultAuthenticator authc = new DefaultAuthenticator();
+        authc.setRealms(this.realms);
+
+        AuthenticationStrategy legacyAuthcStrategy = getAuthenticationStrategy();
+        if (legacyAuthcStrategy == null) {
+            //retain default behavior in ModularRealmAuthenticator's constructor:
+            legacyAuthcStrategy = new AtLeastOneSuccessfulStrategy();
+        }
+
+        org.apache.shiro.authc.strategy.AuthenticationStrategy newAuthcStrategy = null;
+
+        Class legacyClass = legacyAuthcStrategy.getClass();
+
+        if (legacyClass.equals(AllSuccessfulStrategy.class)) {
+            newAuthcStrategy = new AllRealmsSuccessfulStrategy();
+        } else if (legacyClass.equals(AtLeastOneSuccessfulStrategy.class)) {
+            newAuthcStrategy = new AtLeastOneRealmSuccessfulStrategy();
+        } else if (legacyClass.equals(FirstSuccessfulStrategy.class)) {
+            newAuthcStrategy = new FirstRealmSuccessfulStrategy();
+        } else {
+            throw new IllegalStateException("Configured authenticationStrategy does not have a direct Apache Shiro 2.0 " +
+                    "org.apache.shiro.authc.strategy.AuthenticationStrategy implementation.  If you have a custom " +
+                    "AuthenticationStrategy, do not use the ModularRealmAuthenticator - use the " +
+                    "DefaultAuthenticator and configure a new org.apache.shiro.authc.strategy.AuthenticationStrategy " +
+                    "implementation.");
+        }
+        authc.setAuthenticationStrategy(newAuthcStrategy);
+
+        return authc.authenticateAccount(token);
     }
 
     /**

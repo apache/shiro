@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.authc.credential;
 
+import org.apache.shiro.account.Account;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SaltedAuthenticationInfo;
@@ -116,7 +117,9 @@ import org.apache.shiro.util.StringUtils;
  * @see org.apache.shiro.crypto.hash.Sha1Hash
  * @see org.apache.shiro.crypto.hash.Sha256Hash
  * @since 0.9
+ * @deprecated since 2.0 in favor of {@link PasswordMatcher} or implementing {@link CredentialsMatcher} directly.
  */
+@Deprecated
 public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
 
     /**
@@ -381,6 +384,16 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
         return equals(tokenHashedCredentials, accountCredentials);
     }
 
+    @Override
+    public boolean credentialsMatch(AuthenticationToken token, Account account) {
+        throw new UnsupportedOperationException("In Shiro 2.0, the " + HashedCredentialsMatcher.class.getName() +
+                " is deprecated.  Password comparisons should performed by a PasswordMatcher or by implementing " +
+                "the " + CredentialsMatcher.class.getName() + " interface directly.");
+        //Object tokenHashedCredentials = hashProvidedCredentials(token, account);
+        //Object accountCredentials = getCredentials(account);
+        //return equals(tokenHashedCredentials, accountCredentials);
+    }
+
     /**
      * Hash the provided {@code token}'s credentials using the salt stored with the account if the
      * {@code info} instance is an {@code instanceof} {@link SaltedAuthenticationInfo SaltedAuthenticationInfo} (see
@@ -455,5 +468,4 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
         String hashAlgorithmName = assertHashAlgorithmName();
         return new SimpleHash(hashAlgorithmName);
     }
-
 }

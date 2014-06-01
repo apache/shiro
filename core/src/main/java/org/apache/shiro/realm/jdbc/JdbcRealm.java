@@ -59,7 +59,9 @@ import java.util.Set;
  * This realm supports caching by extending from {@link org.apache.shiro.realm.AuthorizingRealm}.
  *
  * @since 0.2
+ * @deprecated since 2.0 if favor of the {@link org.apache.shiro.realm.AccountStoreRealm} configured with a JDBC-specific {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public class JdbcRealm extends AuthorizingRealm {
 
     //TODO - complete JavaDoc

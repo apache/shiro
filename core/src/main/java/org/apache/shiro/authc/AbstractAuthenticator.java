@@ -39,7 +39,9 @@ import java.util.Collection;
  * is perform the actual principal/credential verification process for the submitted {@code AuthenticationToken}.
  *
  * @since 0.1
+ * @deprecated since 2.0 in favor of {@link DefaultAuthenticator} or implementing {@link Authenticator} directly.
  */
+@Deprecated
 public abstract class AbstractAuthenticator implements Authenticator, LogoutAware {
 
     /*-------------------------------------------
@@ -185,6 +187,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * @throws AuthenticationException if there is any problem during the authentication process - see the
      *                                 interface's JavaDoc for a more detailed explanation.
      */
+    @Deprecated
     public final AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
 
         if (token == null) {
@@ -254,6 +257,4 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      */
     protected abstract AuthenticationInfo doAuthenticate(AuthenticationToken token)
             throws AuthenticationException;
-
-
 }

@@ -23,7 +23,7 @@ package org.apache.shiro.cache;
  * one is available.
  *
  * <p>This is used so internal security components that use a CacheManager can be injected with it instead of having
- * to create one on their own.
+ * to create one on their own.</p>
  *
  * @since 0.9
  */

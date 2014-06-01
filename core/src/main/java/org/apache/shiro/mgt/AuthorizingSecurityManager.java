@@ -43,7 +43,9 @@ import java.util.List;
  * possible, suitable default instances for all dependencies will be created upon instantiation.
  *
  * @since 0.9
+ * @deprecated in 2.0 in favor of the simpler {@link ApplicationSecurityManager} implementation.
  */
+@Deprecated
 public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityManager {
 
     /**

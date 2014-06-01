@@ -48,7 +48,7 @@ public interface Cache<K, V> {
      *
      * @param key   the key used to identify the object being stored.
      * @param value the value to be stored in the cache.
-     * @return the previous value associated with the given {@code key} or {@code null} if there was previous value
+     * @return the previous value associated with the given {@code key} or {@code null} if there was no previous value
      * @throws CacheException if there is a problem accessing the underlying cache system
      */
     public V put(K key, V value) throws CacheException;
@@ -57,7 +57,7 @@ public interface Cache<K, V> {
      * Remove the cache entry corresponding to the specified key.
      *
      * @param key the key of the entry to be removed.
-     * @return the previous value associated with the given {@code key} or {@code null} if there was previous value
+     * @return the previous value associated with the given {@code key} or {@code null} if there was no previous value
      * @throws CacheException if there is a problem accessing the underlying cache system
      */
     public V remove(K key) throws CacheException;
@@ -66,21 +66,27 @@ public interface Cache<K, V> {
      * Clear all entries from the cache.
      *
      * @throws CacheException if there is a problem accessing the underlying cache system
+     * @deprecated since 2.0.  Shiro's implementations never called this method - it is extraneous and causes unnecessary implementation requirements on Cache implementors.
      */
+    @Deprecated
     public void clear() throws CacheException;
 
     /**
      * Returns the number of entries in the cache.
      *
      * @return the number of entries in the cache.
+     * @deprecated since 2.0.  Shiro's implementations never called this method - it is extraneous and causes unnecessary implementation requirements on Cache implementors.
      */
+    @Deprecated
     public int size();
 
     /**
      * Returns a view of all the keys for entries contained in this cache.
      *
      * @return a view of all the keys for entries contained in this cache.
+     * @deprecated since 2.0.  Shiro's implementations never called this method - it is extraneous and causes unnecessary implementation requirements on Cache implementors.
      */
+    @Deprecated
     public Set<K> keys();
 
     /**

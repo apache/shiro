@@ -49,7 +49,9 @@ import javax.naming.NamingException;
  * @see #queryForAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken , LdapContextFactory)
  * @see #queryForAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection , LdapContextFactory)
  * @since 0.1
+ * @deprecated since 2.0 if favor of the {@link org.apache.shiro.realm.AccountStoreRealm} configured with an LDAP-specific {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public abstract class AbstractLdapRealm extends AuthorizingRealm {
 
     //TODO - complete JavaDoc

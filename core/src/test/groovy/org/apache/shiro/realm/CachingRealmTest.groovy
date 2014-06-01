@@ -18,11 +18,14 @@
  */
 package org.apache.shiro.realm
 
+import org.apache.shiro.account.Account
+import org.apache.shiro.authc.AuthenticationException
 import org.apache.shiro.authc.AuthenticationInfo
 import org.apache.shiro.authc.AuthenticationToken
 import org.apache.shiro.cache.Cache
 import org.apache.shiro.cache.CacheManager
 import org.apache.shiro.subject.PrincipalCollection
+
 import static org.easymock.EasyMock.*
 
 /**
@@ -133,6 +136,7 @@ class CachingRealmTest extends GroovyTestCase {
     private static final class TestCachingRealm extends CachingRealm {
 
         def info;
+        def account;
 
         boolean templateMethodCalled = false
         boolean doClearCacheCalled = false
@@ -143,6 +147,14 @@ class CachingRealmTest extends GroovyTestCase {
 
         AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) {
             return info;
+        }
+
+        AuthenticationInfo authenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
+            return info;
+        }
+
+        Account authenticateAccount(AuthenticationToken authenticationToken) throws AuthenticationException {
+            return account;
         }
 
         @Override

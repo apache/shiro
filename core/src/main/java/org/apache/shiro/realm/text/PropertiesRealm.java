@@ -80,7 +80,9 @@ import java.util.concurrent.TimeUnit;
  * role.contractor = application:use:timesheet</code>
  *
  * @since 0.2
+ * @deprecated since 2.0 if favor of the {@link org.apache.shiro.realm.AccountStoreRealm} configured with a Properties-based {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public class PropertiesRealm extends TextConfigurationRealm implements Destroyable, Runnable {
 
     //TODO - complete JavaDoc

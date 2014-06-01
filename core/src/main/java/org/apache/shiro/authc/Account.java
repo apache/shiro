@@ -36,7 +36,9 @@ import org.apache.shiro.authz.AuthorizationInfo;
  *
  * @see SimpleAccount
  * @since 0.9
+ * @deprecated since 2.0 in favor of {@link org.apache.shiro.account.Account}
  */
+@Deprecated
 public interface Account extends AuthenticationInfo, AuthorizationInfo {
 
 }

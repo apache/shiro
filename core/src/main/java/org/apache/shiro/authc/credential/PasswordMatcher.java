@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.authc.credential;
 
+import org.apache.shiro.account.Account;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.crypto.hash.Hash;
@@ -39,12 +40,31 @@ public class PasswordMatcher implements CredentialsMatcher {
         this.passwordService = new DefaultPasswordService();
     }
 
+    @Deprecated
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
 
         PasswordService service = ensurePasswordService();
 
         Object submittedPassword = getSubmittedPassword(token);
         Object storedCredentials = getStoredPassword(info);
+        assertStoredCredentialsType(storedCredentials);
+
+        if (storedCredentials instanceof Hash) {
+            Hash hashedPassword = (Hash)storedCredentials;
+            HashingPasswordService hashingService = assertHashingPasswordService(service);
+            return hashingService.passwordsMatch(submittedPassword, hashedPassword);
+        }
+        //otherwise they are a String (asserted in the 'assertStoredCredentialsType' method call above):
+        String formatted = (String)storedCredentials;
+        return passwordService.passwordsMatch(submittedPassword, formatted);
+    }
+
+    //since 2.0
+    public boolean credentialsMatch(AuthenticationToken token, Account account) {
+        PasswordService service = ensurePasswordService();
+
+        Object submittedPassword = getSubmittedPassword(token);
+        Object storedCredentials = getStoredPassword(account);
         assertStoredCredentialsType(storedCredentials);
 
         if (storedCredentials instanceof Hash) {
@@ -93,6 +113,15 @@ public class PasswordMatcher implements CredentialsMatcher {
 
     protected Object getStoredPassword(AuthenticationInfo storedAccountInfo) {
         Object stored = storedAccountInfo != null ? storedAccountInfo.getCredentials() : null;
+        //fix for https://issues.apache.org/jira/browse/SHIRO-363
+        if (stored instanceof char[]) {
+            stored = new String((char[])stored);
+        }
+        return stored;
+    }
+
+    protected Object getStoredPassword(Account account) {
+        Object stored = account != null ? account.getCredentials() : null;
         //fix for https://issues.apache.org/jira/browse/SHIRO-363
         if (stored instanceof char[]) {
             stored = new String((char[])stored);

@@ -21,6 +21,129 @@ combined with Jira's auto-generated release notes during a release for the
 total set.
 
 ###########################################################
+# 2.0 alpha 0
+###########################################################
+
+The 2.0 alpha 0 release's design goal is to introduce a much cleaner, more intuitive, more configurable API that is
+even easier to understand and use than previous Shiro versions.
+
+The design changes however introduce enough change such that there will be a decent amount of deprecation of old
+concepts and implementations; the releases before 2.0.0 final will retain all of these 'legacy' concepts and
+implementations to provide a smoother upgrade path for those trying alpha and beta releases.
+
+2.0.0 final however will completely remove all deprecated interfaces, classes and methods to ensure a clean
+codebase for the many years to come.
+
+Design Changes
+--------------------------------
+
+- All of Shiro's SecurityManager implementations now require a CacheManager - it cannot be null.  Caching is still
+  disabled by default however; the SecurityManager implementations just default to an
+  org.apache.shiro.cache.DisabledCacheManager instance.  This reflects the Null Object design pattern, helping
+  reducing cyclomatic complexity (and therefore the potential for bugs) in Shiro.
+
+- org.apache.shiro.subject.PrincipalCollection has been deprecated and will be removed in 2.0 final.  This represents
+  a big change, but for an extremely strong reason:
+
+  Almost all Shiro end-users expect to be able to query a Subject's PrincipalCollection for identifying attributes,
+  like a username, or first name, etc.  This is extraordinarily difficult with the PrincipalCollection API, which
+  only allows users to acquire identity attributes _by type_.  If you had more than one attribute of the same
+  type (e.g. a String username and a String surname), the PrincipalCollection is effectively useless, and you had to
+  come up with all sorts of workarounds (like creating 'wrapper' objects) to obtain the data you needed.  Additionally
+  these workarounds were not usable by any tools or frameworks that used reflection to lookup information.
+
+  This was a huge problem, almost crippling in some cases, and so PrincipalCollection has been deprecated and
+  replaced by a very simple 'attributes' map, of type Map<String,Object>.  This allows much cleaner code, like:
+
+  subject.getAttributes().get("username");
+
+  or, even simpler for Groovy or JSTL:
+
+  subject.attributes[username]
+
+  This change affords a huge number of simplifications/conveniences for the Shriro user community, dev team, and
+  bean-compatible tools and frameworks.
+
+- org.apache.shiro.authc.AuthenticationInfo (used widely by Realm implementations) has been deprecated and will be
+  replaced by a brand new org.apache.shiro.account.Account interface.  This was done for three reasons:
+
+  1. Account supports a getId() method, which allows explicit support for a data-store-unique account identifier.
+     AuthenticationInfo did not have this, and id acquisition was implicit - not good for such a core Shiro concept.
+
+  2. 'Account' is an inherently more intuitive name.  The < 2.0 'AuthenticationInfo' interface name actually always
+     represented an Account, and the name 'AuthenticationInfo' is abstract and fairly unintuitive.  Now it is more
+     obvious/explicity.
+
+  3. Shiro's old PrincipalCollection concept is being removed.  Account instead represents principals with a
+     new name, called 'attributes' as a simple Map<String,Object> collections, as described above.
+
+  org.apache.shiro.authc.AuthenticationInfo is currently deprecated, but will be removed entirely when 2.0 final is
+  released.
+
+- The previously (very) complicated SecurityManager implementation hierarchy has been deprecated entirely:
+
+  CachingSecurityManager < RealmSecurityManager < AuthenticatingSecurityManager < AuthorizingSecurityManager
+      < SessionsSecurityManager < DefaultSecurityManager < DefaultWebSecurityManager
+
+  An interim replacement, org.apache.shiro.mgt.ApplicationSecurityManager is the only SecurityManager implementation.
+  All customization for this implementation can be done by customizing or plugging in its internal components.  This is
+  now possible because the implementation much more heavily favors a "delegation over inheritance" best practice.
+  This approach will allow much greater resilience to change over time and help keep Shiro's core SecurityManager
+  codebase highly stable.
+
+  Right before the 2.0 final release, ApplicationSecurityManager might be renamed to DefaultSecurityManager to adhere
+  to all other existing default implementation naming conventions.  This just cannot be done prior to a 2.0 final
+  release because it would be a backwards-incompatible change.
+
+- For multi-realm authentication, the org.apache.shiro.authc.pam package and all of its internal
+  org.apache.shiro.authc.pam.AuthenticationStrategy implementations have been deprecated in favor of the new
+  org.apache.shiro.authc.strategy package.
+
+  The new org.apache.shiro.authc.strategy.AuthenticationStrategy interface is much simpler - it is a single method that
+  can perform all multi-realm interaction logic without compromise.
+
+  The legacy org.apache.shiro.authc.pam.AuthenticationStrategy API and implementations suffered from an overly complex
+  pre/before/after/post implementation requirement, and in some cases, entirely prevented some Strategy behavior from
+  being implemented successfully.
+
+  For example the org.apache.shiro.authc.pam.FirstSuccessfulStrategy did not
+  short-circuit realm iteration (desired by most Shiro users) and the existing Strategy API provided no way to 'tell'
+  the calling Authorizer how to stop iteration when things were successful.  The new Strategy API has no such problems,
+  and is more holistic, allowing implementors exact control over the login attempt.
+
+  Finally, the *Strategy implementations have been renamed to include the word 'Realm' in the name to more explicitly
+  self-document what is occurring.
+
+  For example, the class name 'FirstRealmSuccessfulStrategy' (in 2.0) is more intuitive than
+  'FirstSuccessfulStrategy' in pre 2.0 (first *what* is successful?).  The 2.0 implementations naming scheme makes it
+  very clear what is occurring.
+
+- org.apache.shiro.authc.AuthenticationInfo (used widely by Realms) has been deprecated in favor of a
+
+Deprecations (will be removed immediately before 2.0 final)
+-----------------------------------------------------------
+
+- org.apache.shiro.cache.Cache methods clear(), size() and keys() have been deprecated and will be removed before the
+  2.0 final release.  These methods were never called by Shiro's components and caused an unnecessary implementation
+  burden.
+
+- org.apache.shiro.authc.credential.CredentialsMatcher doCredentialsMatch(AuthenticationToken, AuthenticationInfo)
+  has been deprecated in favor of the new method (in the same interface):
+  credentialsMatch(AuthenticationToken, Account) to reflect the new Account concept (discussed in 'Design Changes'
+  above).
+
+- org.apache.shiro.authc.credential.HashedCredentialsMatcher and all of its children implementations
+  (Md5CredentialsMatcher, Sha256CredentialsMatcher, etc) have been deprecated and will be removed in 2.0 final.  The
+  org.apache.shiro.authc.credential.PasswordMatcher and org.apache.shiro.authc.credential.PasswordService
+  introduced in 1.2 perform all of these operations and more.
+
+New Features / Implementations
+--------------------------------
+- org.apache.shiro.cache.DisabledCacheManager returns no-op implementations for all caching operations.  Mostly usable
+  for the Null Object design pattern.
+
+
+###########################################################
 # 1.2.0
 ###########################################################
 

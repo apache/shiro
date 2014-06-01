@@ -36,7 +36,9 @@ import org.apache.shiro.util.LifecycleUtils;
  * instance must be explicitly configured if caching across the framework is to be enabled.
  *
  * @since 0.9
+ * @deprecated in 2.0 in favor of the simpler {@link ApplicationSecurityManager} implementation.
  */
+@Deprecated
 public abstract class CachingSecurityManager implements SecurityManager, Destroyable, CacheManagerAware, EventBusAware {
 
     /**

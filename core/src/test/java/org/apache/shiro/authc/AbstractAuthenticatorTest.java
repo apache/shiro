@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.authc;
 
+import org.apache.shiro.account.Account;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,6 +39,10 @@ public class AbstractAuthenticatorTest {
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 return null;
             }
+
+            public Account authenticateAccount(AuthenticationToken authenticationToken) throws AuthenticationException {
+                return null;
+            }
         };
     }
 
@@ -45,6 +50,10 @@ public class AbstractAuthenticatorTest {
         return new AbstractAuthenticator() {
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 return info;
+            }
+
+            public Account authenticateAccount(AuthenticationToken authenticationToken) throws AuthenticationException {
+                throw new UnsupportedOperationException("Not yet implemented.");
             }
         };
     }
@@ -63,6 +72,10 @@ public class AbstractAuthenticatorTest {
         abstractAuthenticator = new AbstractAuthenticator() {
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 return info;
+            }
+
+            public Account authenticateAccount(AuthenticationToken authenticationToken) throws AuthenticationException {
+                throw new UnsupportedOperationException("Not yet implemented.");
             }
         };
     }
@@ -121,6 +134,10 @@ public class AbstractAuthenticatorTest {
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 throw ae;
             }
+
+            public Account authenticateAccount(AuthenticationToken authenticationToken) throws AuthenticationException {
+                throw new UnsupportedOperationException("Not yet implemented.");
+            }
         };
         abstractAuthenticator.getAuthenticationListeners().add(mockListener);
 
@@ -146,6 +163,10 @@ public class AbstractAuthenticatorTest {
         abstractAuthenticator = new AbstractAuthenticator() {
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 throw new IllegalArgumentException("not an AuthenticationException subclass");
+            }
+
+            public Account authenticateAccount(AuthenticationToken authenticationToken) throws AuthenticationException {
+                throw new UnsupportedOperationException("Not yet implemented.");
             }
         };
         AuthenticationToken token = newToken();

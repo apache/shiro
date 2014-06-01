@@ -34,7 +34,9 @@ import java.util.Collection;
  *
  * @see AtLeastOneSuccessfulStrategy AtLeastOneSuccessfulAuthenticationStrategy
  * @since 0.9
+ * @deprecated since 2.0 in favor of {@link org.apache.shiro.authc.strategy.FirstRealmSuccessfulStrategy}
  */
+@Deprecated
 public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
     /**

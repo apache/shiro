@@ -28,7 +28,9 @@ import org.apache.shiro.authc.AuthenticationException;
  *
  * @see org.apache.shiro.authc.pam.AuthenticationStrategy
  * @since 0.2
+ * @deprecated since 2.0 as this was only thrown by legacy {@link org.apache.shiro.authc.pam.AuthenticationStrategy} implementations.
  */
+@Deprecated
 public class UnsupportedTokenException extends AuthenticationException {
 
     /**

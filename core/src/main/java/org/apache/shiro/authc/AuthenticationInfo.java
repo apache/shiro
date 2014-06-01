@@ -54,7 +54,9 @@ import java.io.Serializable;
  * @see org.apache.shiro.authz.AuthorizationInfo AuthorizationInfo
  * @see Account
  * @since 0.9
+ * @deprecated since 2.0 in favor of {@link org.apache.shiro.account.Account}.
  */
+@Deprecated
 public interface AuthenticationInfo extends Serializable {
 
     /**
@@ -66,7 +68,9 @@ public interface AuthenticationInfo extends Serializable {
      * as passwords, private keys, etc.  Those should be instead returned by {@link #getCredentials() getCredentials()}.
      *
      * @return all principals associated with the corresponding Subject.
+     * @deprecated since 2.0 in favor of {@link org.apache.shiro.account.Account#getAttributes()}.
      */
+    @Deprecated
     PrincipalCollection getPrincipals();
 
     /**

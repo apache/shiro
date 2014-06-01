@@ -29,7 +29,9 @@ import org.apache.shiro.realm.AuthenticatingRealm;
  * (client) to an OpenId Provider (server).
  *
  * @since 1.2
+ * @deprecated since 2.0 if favor of the {@link org.apache.shiro.realm.AccountStoreRealm} configured with an OpenId-specific {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public class RelyingPartyRealm extends AuthenticatingRealm {
 
     private OpenIdService openIdService;

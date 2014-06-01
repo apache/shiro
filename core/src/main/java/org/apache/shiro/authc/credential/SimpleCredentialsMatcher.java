@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.authc.credential;
 
+import org.apache.shiro.account.Account;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.codec.CodecSupport;
@@ -28,14 +29,19 @@ import java.util.Arrays;
 
 
 /**
- * Simple CredentialsMatcher implementation.  Supports direct (plain) comparison for credentials of type
+ * Implements exact byte equality comparison for credentials of type
  * byte[], char[], and Strings, and if the arguments do not match these types, then reverts back to simple
  * <code>Object.equals</code> comparison.
+ * <h3>Usage Warning</h3>
+ * Applications that use passwords for authentication will almost never use this implementation, because it would
+ * require storing the password in plaintext to be used for later comparison - almost universally recognized as
+ * a security flaw that opens attack vectors.
  * <p/>
- * <p>Hashing comparisons (the most common technique used in secure applications) are not supported by this class, but
- * instead by the {@link org.apache.shiro.authc.credential.HashedCredentialsMatcher HashedCredentialsMatcher}.
+ * In these applications, the Shiro team recommends using the {@link PasswordService} and a {@link PasswordMatcher}
+ * to compare (storage safe) hashed passwords.
  *
- * @see org.apache.shiro.authc.credential.HashedCredentialsMatcher
+ * @see PasswordService
+ * @see PasswordMatcher
  * @since 0.9
  */
 public class SimpleCredentialsMatcher extends CodecSupport implements CredentialsMatcher {
@@ -68,9 +74,28 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * @param info the {@code AuthenticationInfo} stored in the data store to be compared against the submitted authentication
      *             token's credentials.
      * @return the {@code account}'s associated credentials.
+     * @deprecated since 2.0 in favor of {@link #getCredentials(org.apache.shiro.account.Account)}
      */
+    @Deprecated
     protected Object getCredentials(AuthenticationInfo info) {
         return info.getCredentials();
+    }
+
+    /**
+     * Returns the {@code account}'s credentials.
+     * <p/>
+     * <p>This default implementation merely returns
+     * {@link Account#getCredentials() account.getCredentials()} and exists as a template hook if subclasses
+     * wish to obtain the credentials in a different way or convert them to a different format before
+     * returning.
+     *
+     * @param account the {@code Account} stored in the data store to be compared against the submitted authentication
+     *             token's credentials.
+     * @return the {@code account}'s associated credentials.
+     * @since 2.0
+     */
+    protected Object getCredentials(Account account) {
+        return account.getCredentials();
     }
 
     /**
@@ -121,11 +146,35 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * @param info  the {@code AuthenticationInfo} stored in the system matching the token principal.
      * @return {@code true} if the provided token credentials are equal to the stored account credentials,
      *         {@code false} otherwise
+     * @deprecated since 2.0 in favor of {@link #credentialsMatch(org.apache.shiro.authc.AuthenticationToken, org.apache.shiro.account.Account)}
      */
+    @Deprecated
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         Object tokenCredentials = getCredentials(token);
         Object accountCredentials = getCredentials(info);
         return equals(tokenCredentials, accountCredentials);
     }
 
+    /**
+     * This implementation acquires the {@code token}'s credentials
+     * (via {@link #getCredentials(AuthenticationToken) getCredentials(token)})
+     * and then the {@code account}'s credentials
+     * (via {@link #getCredentials(org.apache.shiro.account.Account) getCredentials(account)}) and then passes both of
+     * them to the {@link #equals(Object,Object) equals(tokenCredentials, accountCredentials)} method for equality
+     * comparison.
+     * <h3>Usage Warning</h3>
+     * If your accounts use hashed passwords, the {@code SimpleCredentialsMatcher} SHOULD NOT be used.  Use a
+     * {@link PasswordMatcher} instead.
+     *
+     * @param token the {@code AuthenticationToken} submitted during the authentication attempt.
+     * @param account  the {@code Account} stored in the system matching the token principal.
+     * @return {@code true} if the provided token credentials are exactly equal to the stored account credentials,
+     *         {@code false} otherwise
+     * @since 2.0
+     */
+    public boolean credentialsMatch(AuthenticationToken token, Account account) {
+        Object tokenCredentials = getCredentials(token);
+        Object accountCredentials = getCredentials(account);
+        return equals(tokenCredentials, accountCredentials);
+    }
 }

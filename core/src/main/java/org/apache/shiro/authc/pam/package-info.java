@@ -28,5 +28,6 @@
  * How the <code>ModularRealmAuthenticator</code> actually coordinates this behavior is configurable based on your
  * application's needs using an injectible
  * {@link AuthenticationStrategy}.
+ * @deprecated since 2.0 in favor of the {@link org.apache.shiro.authc.strategy} package.
  */
 package org.apache.shiro.authc.pam;

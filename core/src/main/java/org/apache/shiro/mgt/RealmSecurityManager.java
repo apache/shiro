@@ -35,7 +35,9 @@ import java.util.Collection;
  * subclasses.
  *
  * @since 0.9
+ * @deprecated in 2.0 in favor of the simpler {@link ApplicationSecurityManager} implementation.
  */
+@Deprecated
 public abstract class RealmSecurityManager extends CachingSecurityManager {
 
     /**

@@ -34,7 +34,9 @@ import java.util.Set;
  *
  * @see org.apache.shiro.realm.AuthenticatingRealm
  * @since 0.9
+ * @deprecated since 2.0 in favor of an {@link org.apache.shiro.account.Account Account} implementation.
  */
+@Deprecated
 public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, SaltedAuthenticationInfo {
 
     /**

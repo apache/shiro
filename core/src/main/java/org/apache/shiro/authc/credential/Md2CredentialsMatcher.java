@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.authc.credential;
 
-import org.apache.shiro.crypto.hash.AbstractHash;
-import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.Md2Hash;
 
 
@@ -34,8 +32,7 @@ import org.apache.shiro.crypto.hash.Md2Hash;
  * supporting <code>CredentialsMatcher</code> implementations.</p>
  *
  * @since 0.9
- * @deprecated since 1.1 - use the HashedCredentialsMatcher directly and set its
- *             {@link HashedCredentialsMatcher#setHashAlgorithmName(String) hashAlgorithmName} property.
+ * @deprecated since 2.0 in favor of {@link PasswordMatcher} or implementing {@link CredentialsMatcher} directly.
  */
 @Deprecated
 public class Md2CredentialsMatcher extends HashedCredentialsMatcher {

@@ -38,7 +38,9 @@ import org.apache.shiro.subject.PrincipalCollection;
  *
  * @see FirstSuccessfulStrategy FirstSuccessfulAuthenticationStrategy
  * @since 0.2
+ * @deprecated since 2.0 in favor of {@link org.apache.shiro.authc.strategy.AtLeastOneRealmSuccessfulStrategy}
  */
+@Deprecated
 public class AtLeastOneSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
     private static boolean isEmpty(PrincipalCollection pc) {

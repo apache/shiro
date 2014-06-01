@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.realm;
 
+import org.apache.shiro.account.Account;
+import org.apache.shiro.account.AccountId;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -33,8 +35,10 @@ import org.apache.shiro.util.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
 
 /**
  * A top-level abstract implementation of the <tt>Realm</tt> interface that only implements authentication support
@@ -109,7 +113,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * the subclass implementation.
  *
  * @since 0.2
+ * @deprecated since 2.0 if favor of the {@link AccountStoreRealm} configured with an {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public abstract class AuthenticatingRealm extends CachingRealm implements Initializable {
 
     //TODO - complete JavaDoc
@@ -562,9 +568,15 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @return the AuthenticationInfo corresponding to the given {@code token}, or {@code null} if no
      *         AuthenticationInfo could be found.
      * @throws AuthenticationException if authentication failed.
+     * @deprecated
      */
+    @Deprecated
     public final AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+        return authenticate(token);
+    }
 
+    @Deprecated
+    public AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
         AuthenticationInfo info = getCachedAuthenticationInfo(token);
         if (info == null) {
             //otherwise not cached, perform the lookup:
@@ -584,6 +596,38 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
         }
 
         return info;
+    }
+
+    public Account authenticateAccount(AuthenticationToken authenticationToken) throws AuthenticationException {
+        final AuthenticationInfo info = authenticate(authenticationToken);
+        final Map<String,Object> attributes = new LinkedHashMap<String,Object>();
+        int i = 0;
+        for(Object principal : info.getPrincipals()) {
+            attributes.put("principal" + i++, principal);
+        }
+
+        return new Account() {
+            public AccountId getId() {
+                return new AccountId() {
+                    @Override
+                    public String toString() {
+                        return info.getPrincipals().getPrimaryPrincipal().toString();
+                    }
+                };
+            }
+
+            public Object getCredentials() {
+                return info.getCredentials();
+            }
+
+            public Map<String, Object> getAttributes() {
+                return Collections.unmodifiableMap(attributes);
+            }
+
+            public PrincipalCollection getPrincipals() {
+                return info.getPrincipals();
+            }
+        };
     }
 
     /**

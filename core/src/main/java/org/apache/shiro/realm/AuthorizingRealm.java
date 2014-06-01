@@ -19,8 +19,16 @@
 package org.apache.shiro.realm;
 
 import org.apache.shiro.authc.credential.CredentialsMatcher;
-import org.apache.shiro.authz.*;
-import org.apache.shiro.authz.permission.*;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.Authorizer;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.permission.PermissionResolver;
+import org.apache.shiro.authz.permission.PermissionResolverAware;
+import org.apache.shiro.authz.permission.RolePermissionResolver;
+import org.apache.shiro.authz.permission.RolePermissionResolverAware;
+import org.apache.shiro.authz.permission.WildcardPermissionResolver;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -29,7 +37,14 @@ import org.apache.shiro.util.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -51,7 +66,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @see org.apache.shiro.authz.SimpleAuthorizationInfo
  * @since 0.2
+ * @deprecated since 2.0 if favor of the {@link AccountStoreRealm} configured with an {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public abstract class AuthorizingRealm extends AuthenticatingRealm
         implements Authorizer, Initializable, PermissionResolverAware, RolePermissionResolverAware {
 
@@ -476,12 +493,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return false;
     }
 
-    public boolean[] isPermitted(PrincipalCollection subjectIdentifier, String... permissions) {
+    public boolean[] isPermitted(PrincipalCollection principals, String... permissions) {
         List<Permission> perms = new ArrayList<Permission>(permissions.length);
         for (String permString : permissions) {
             perms.add(getPermissionResolver().resolvePermission(permString));
         }
-        return isPermitted(subjectIdentifier, perms);
+        return isPermitted(principals, perms);
     }
 
     public boolean[] isPermitted(PrincipalCollection principals, List<Permission> permissions) {
@@ -504,19 +521,19 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return result;
     }
 
-    public boolean isPermittedAll(PrincipalCollection subjectIdentifier, String... permissions) {
+    public boolean isPermittedAll(PrincipalCollection principals, String... permissions) {
         if (permissions != null && permissions.length > 0) {
             Collection<Permission> perms = new ArrayList<Permission>(permissions.length);
             for (String permString : permissions) {
                 perms.add(getPermissionResolver().resolvePermission(permString));
             }
-            return isPermittedAll(subjectIdentifier, perms);
+            return isPermittedAll(principals, perms);
         }
         return false;
     }
 
-    public boolean isPermittedAll(PrincipalCollection principal, Collection<Permission> permissions) {
-        AuthorizationInfo info = getAuthorizationInfo(principal);
+    public boolean isPermittedAll(PrincipalCollection principals, Collection<Permission> permissions) {
+        AuthorizationInfo info = getAuthorizationInfo(principals);
         return info != null && isPermittedAll(permissions, info);
     }
 
@@ -531,13 +548,13 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return true;
     }
 
-    public void checkPermission(PrincipalCollection subjectIdentifier, String permission) throws AuthorizationException {
+    public void checkPermission(PrincipalCollection principals, String permission) throws AuthorizationException {
         Permission p = getPermissionResolver().resolvePermission(permission);
-        checkPermission(subjectIdentifier, p);
+        checkPermission(principals, p);
     }
 
-    public void checkPermission(PrincipalCollection principal, Permission permission) throws AuthorizationException {
-        AuthorizationInfo info = getAuthorizationInfo(principal);
+    public void checkPermission(PrincipalCollection principals, Permission permission) throws AuthorizationException {
+        AuthorizationInfo info = getAuthorizationInfo(principals);
         checkPermission(permission, info);
     }
 
@@ -548,16 +565,16 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         }
     }
 
-    public void checkPermissions(PrincipalCollection subjectIdentifier, String... permissions) throws AuthorizationException {
+    public void checkPermissions(PrincipalCollection principals, String... permissions) throws AuthorizationException {
         if (permissions != null) {
             for (String permString : permissions) {
-                checkPermission(subjectIdentifier, permString);
+                checkPermission(principals, permString);
             }
         }
     }
 
-    public void checkPermissions(PrincipalCollection principal, Collection<Permission> permissions) throws AuthorizationException {
-        AuthorizationInfo info = getAuthorizationInfo(principal);
+    public void checkPermissions(PrincipalCollection principals, Collection<Permission> permissions) throws AuthorizationException {
+        AuthorizationInfo info = getAuthorizationInfo(principals);
         checkPermissions(permissions, info);
     }
 
@@ -569,8 +586,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         }
     }
 
-    public boolean hasRole(PrincipalCollection principal, String roleIdentifier) {
-        AuthorizationInfo info = getAuthorizationInfo(principal);
+    public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
+        AuthorizationInfo info = getAuthorizationInfo(principals);
         return hasRole(roleIdentifier, info);
     }
 
@@ -578,8 +595,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return info != null && info.getRoles() != null && info.getRoles().contains(roleIdentifier);
     }
 
-    public boolean[] hasRoles(PrincipalCollection principal, List<String> roleIdentifiers) {
-        AuthorizationInfo info = getAuthorizationInfo(principal);
+    public boolean[] hasRoles(PrincipalCollection principals, List<String> roleIdentifiers) {
+        AuthorizationInfo info = getAuthorizationInfo(principals);
         boolean[] result = new boolean[roleIdentifiers != null ? roleIdentifiers.size() : 0];
         if (info != null) {
             result = hasRoles(roleIdentifiers, info);
@@ -602,8 +619,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return result;
     }
 
-    public boolean hasAllRoles(PrincipalCollection principal, Collection<String> roleIdentifiers) {
-        AuthorizationInfo info = getAuthorizationInfo(principal);
+    public boolean hasAllRoles(PrincipalCollection principals, Collection<String> roleIdentifiers) {
+        AuthorizationInfo info = getAuthorizationInfo(principals);
         return info != null && hasAllRoles(roleIdentifiers, info);
     }
 
@@ -618,8 +635,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         return true;
     }
 
-    public void checkRole(PrincipalCollection principal, String role) throws AuthorizationException {
-        AuthorizationInfo info = getAuthorizationInfo(principal);
+    public void checkRole(PrincipalCollection principals, String role) throws AuthorizationException {
+        AuthorizationInfo info = getAuthorizationInfo(principals);
         checkRole(role, info);
     }
 
@@ -630,13 +647,13 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         }
     }
 
-    public void checkRoles(PrincipalCollection principal, Collection<String> roles) throws AuthorizationException {
-        AuthorizationInfo info = getAuthorizationInfo(principal);
+    public void checkRoles(PrincipalCollection principals, Collection<String> roles) throws AuthorizationException {
+        AuthorizationInfo info = getAuthorizationInfo(principals);
         checkRoles(roles, info);
     }
 
-    public void checkRoles(PrincipalCollection principal, String... roles) throws AuthorizationException {
-        checkRoles(principal, Arrays.asList(roles));
+    public void checkRoles(PrincipalCollection principals, String... roles) throws AuthorizationException {
+        checkRoles(principals, Arrays.asList(roles));
     }
 
     protected void checkRoles(Collection<String> roles, AuthorizationInfo info) {

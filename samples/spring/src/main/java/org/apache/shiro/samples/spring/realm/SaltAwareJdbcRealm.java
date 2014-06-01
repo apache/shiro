@@ -18,7 +18,13 @@
  */
 package org.apache.shiro.samples.spring.realm;
 
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.JdbcUtils;
@@ -33,7 +39,9 @@ import java.sql.SQLException;
 /**
  * Realm that exists to support salted credentials.  The JdbcRealm implementation needs to be updated in a future
  * Shiro release to handle this.
+ * @deprecated since 2.0 if favor of the {@link org.apache.shiro.realm.AccountStoreRealm} configured with an JDBC-specific {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public class SaltAwareJdbcRealm extends JdbcRealm {
 
     private static final Logger log = LoggerFactory.getLogger(SaltAwareJdbcRealm.class);

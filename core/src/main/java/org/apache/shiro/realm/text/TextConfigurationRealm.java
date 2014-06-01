@@ -47,7 +47,9 @@ import java.util.Set;
  * Role-to-permission definitions are specified via the {@link #setRoleDefinitions} method.
  *
  * @since 0.9
+ * @deprecated since 2.0 if favor of the {@link org.apache.shiro.realm.AccountStoreRealm} configured with an text config-specific {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public class TextConfigurationRealm extends SimpleAccountRealm {
 
     //TODO - complete JavaDoc

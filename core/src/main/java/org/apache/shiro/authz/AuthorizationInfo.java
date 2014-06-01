@@ -38,7 +38,7 @@ import java.util.Collection;
  * Both permission collections together represent the total aggregate collection of permissions.  You may use one
  * or both depending on your preference and needs.
  * <p/>
- * Because the act of authorization (access control) is orthoganal to authentication (log-in), this interface is
+ * Because the act of authorization (access control) is orthogonal to authentication (log-in), this interface is
  * intended to represent only the account data needed by Shiro during an access control check
  * (role, permission, etc).  Shiro also has a parallel
  * {@link org.apache.shiro.authc.AuthenticationInfo AuthenticationInfo} interface for use during the authentication

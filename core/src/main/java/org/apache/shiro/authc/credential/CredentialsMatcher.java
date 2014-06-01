@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.authc.credential;
 
+import org.apache.shiro.account.Account;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
@@ -25,17 +26,15 @@ import org.apache.shiro.authc.AuthenticationToken;
 /**
  * Interface implemented by classes that can determine if an AuthenticationToken's provided
  * credentials matches a corresponding account's credentials stored in the system.
- *
+ * <p/>
  * <p>Simple direct comparisons are handled well by the
  * {@link SimpleCredentialsMatcher SimpleCredentialsMatcher}.  If you
- * hash user's credentials before storing them in a realm (a common practice), look at the
- * {@link HashedCredentialsMatcher HashedCredentialsMatcher} implementations,
- * as they support this scenario.
+ * hash user's credentials (passwords) before storing them in a realm (a common practice), look at the
+ * {@link PasswordMatcher PasswordMatcher}.
  *
+ * @see PasswordMatcher
  * @see SimpleCredentialsMatcher
  * @see AllowAllCredentialsMatcher
- * @see Md5CredentialsMatcher
- * @see Sha1CredentialsMatcher
  * @since 0.1
  */
 public interface CredentialsMatcher {
@@ -44,11 +43,25 @@ public interface CredentialsMatcher {
      * Returns {@code true} if the provided token credentials match the stored account credentials,
      * {@code false} otherwise.
      *
+     * @param token the {@code AuthenticationToken} submitted during the authentication attempt
+     * @param info  the {@code AuthenticationInfo} stored in the system.
+     * @return {@code true} if the provided token credentials match the stored account credentials,
+     *         {@code false} otherwise.
+     * @deprecated since 2.0 in favor of {@link #credentialsMatch(org.apache.shiro.authc.AuthenticationToken, org.apache.shiro.account.Account)}
+     */
+    @Deprecated
+    boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info);
+
+    /**
+     * Returns {@code true} if the provided token credentials match the stored account credentials,
+     * {@code false} otherwise.
+     *
      * @param token   the {@code AuthenticationToken} submitted during the authentication attempt
-     * @param info the {@code AuthenticationInfo} stored in the system.
+     * @param account the stored {@code Account} found based on the submitted token
+     *                {@link org.apache.shiro.authc.AuthenticationToken#getPrincipal() principal}.
      * @return {@code true} if the provided token credentials match the stored account credentials,
      *         {@code false} otherwise.
      */
-    boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info);
+    boolean credentialsMatch(AuthenticationToken token, Account account);
 
 }

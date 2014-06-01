@@ -22,17 +22,19 @@ import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.crypto.hash.HashService;
-import org.apache.shiro.crypto.hash.format.*;
+import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
+import org.apache.shiro.crypto.hash.format.HashFormat;
+import org.apache.shiro.crypto.hash.format.HashFormatFactory;
+import org.apache.shiro.crypto.hash.format.ParsableHashFormat;
+import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
 import org.apache.shiro.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of the {@link PasswordService} interface that relies on an internal
- * {@link HashService}, {@link HashFormat}, and {@link HashFormatFactory} to function:
- * <h2>Hashing Passwords</h2>
- *
- * <h2>Comparing Passwords</h2>
+ * {@link HashService}, {@link HashFormat}, and {@link HashFormatFactory} to function.
+ * <p/>
  * All hashing operations are performed by the internal {@link #getHashService() hashService}.  After the hash
  * is computed, it is formatted into a String value via the internal {@link #getHashFormat() hashFormat}.
  *

@@ -39,7 +39,11 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -49,7 +53,9 @@ import java.util.*;
  * {@link #groupRolesMap}.
  *
  * @since 0.1
+ * @deprecated since 2.0 if favor of the {@link org.apache.shiro.realm.AccountStoreRealm} configured with an ActiveDirectory-specific {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
     //TODO - complete JavaDoc

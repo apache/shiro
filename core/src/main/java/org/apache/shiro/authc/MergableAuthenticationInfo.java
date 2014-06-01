@@ -31,7 +31,9 @@ package org.apache.shiro.authc;
  * realm/data source.
  *
  * @since 0.9
+ * @deprecated since 2.0 in favor of {@link CompositeAccount}
  */
+@Deprecated
 public interface MergableAuthenticationInfo extends AuthenticationInfo {
 
     /**

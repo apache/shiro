@@ -36,7 +36,9 @@ import org.apache.shiro.util.ByteSource;
  * @see org.apache.shiro.authc.credential.HashedCredentialsMatcher
  *
  * @since 1.1
+ * @deprecated since 2.0 in favor of using a {@link org.apache.shiro.authc.credential.PasswordMatcher}
  */
+@Deprecated
 public interface SaltedAuthenticationInfo extends AuthenticationInfo {
 
     /**

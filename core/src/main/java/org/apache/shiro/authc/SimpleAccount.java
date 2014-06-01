@@ -28,19 +28,20 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
-
 /**
  * Simple implementation of the {@link org.apache.shiro.authc.Account} interface that
  * contains principal and credential and authorization information (roles and permissions) as instance variables and
  * exposes them via getters and setters using standard JavaBean notation.
  *
  * @since 0.1
+ * @deprecated since 2.0 in favor of an {@link org.apache.shiro.account.Account Account} implementation.
  */
+@Deprecated
 public class SimpleAccount implements Account, MergableAuthenticationInfo, SaltedAuthenticationInfo, Serializable {
 
     /*--------------------------------------------
-    |    I N S T A N C E   V A R I A B L E S    |
-    ============================================*/
+     |    I N S T A N C E   V A R I A B L E S    |
+     ============================================*/
     /**
      * The authentication information (principals and credentials) for this account.
      */

@@ -18,14 +18,13 @@
  */
 package org.apache.shiro.authc.pam;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.realm.Realm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -37,7 +36,9 @@ import org.apache.shiro.realm.Realm;
  * associated subject (user).
  *
  * @since 0.2
+ * @deprecated since 2.0 in favor of {@link org.apache.shiro.authc.strategy.AllRealmsSuccessfulStrategy}
  */
+@Deprecated
 public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
     /** Private class log instance. */

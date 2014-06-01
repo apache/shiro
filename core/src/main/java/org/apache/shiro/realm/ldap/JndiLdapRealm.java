@@ -80,7 +80,9 @@ import javax.naming.ldap.LdapContext;
  * @see JndiLdapContextFactory
  *
  * @since 1.1
+ * @deprecated since 2.0 if favor of the {@link org.apache.shiro.realm.AccountStoreRealm} configured with an LDAP-specific {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public class JndiLdapRealm extends AuthorizingRealm {
 
     private static final Logger log = LoggerFactory.getLogger(JndiLdapRealm.class);

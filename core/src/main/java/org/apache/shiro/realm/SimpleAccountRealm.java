@@ -47,7 +47,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * is not sufficiently large.
  *
  * @since 0.1
+ * @deprecated since 2.0 if favor of the {@link AccountStoreRealm} configured with a simple in-memory {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public class SimpleAccountRealm extends AuthorizingRealm {
 
     //TODO - complete JavaDoc

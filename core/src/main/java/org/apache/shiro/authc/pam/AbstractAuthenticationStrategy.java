@@ -18,7 +18,11 @@
  */
 package org.apache.shiro.authc.pam;
 
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.MergableAuthenticationInfo;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.realm.Realm;
 
 import java.util.Collection;
@@ -29,7 +33,10 @@ import java.util.Collection;
  * implementations.
  *
  * @since 0.9
+ * @deprecated since 2.0: there is no longer a need for this intermediate abstract class.  Just implement the
+ * {@link org.apache.shiro.authc.strategy.AuthenticationStrategy} interface directly.
  */
+@Deprecated
 public abstract class AbstractAuthenticationStrategy implements AuthenticationStrategy {
 
     /**

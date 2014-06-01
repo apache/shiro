@@ -19,7 +19,12 @@
 package org.apache.shiro.realm.activedirectory;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.account.Account;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAccount;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -40,7 +45,7 @@ import javax.naming.NamingException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 
 /**
@@ -110,6 +115,10 @@ public class ActiveDirectoryRealmTest {
 
             credentialsMatcher = new CredentialsMatcher() {
                 public boolean doCredentialsMatch(AuthenticationToken object, AuthenticationInfo object1) {
+                    return true;
+                }
+
+                public boolean credentialsMatch(AuthenticationToken token, Account account) {
                     return true;
                 }
             };

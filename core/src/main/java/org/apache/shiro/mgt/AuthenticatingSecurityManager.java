@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.mgt;
 
+import org.apache.shiro.account.Account;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -39,7 +40,9 @@ import org.apache.shiro.util.LifecycleUtils;
  * possible, suitable default instances for all dependencies are created upon instantiation.
  *
  * @since 0.9
+ * @deprecated in 2.0 in favor of the simpler {@link ApplicationSecurityManager} implementation.
  */
+@Deprecated
 public abstract class AuthenticatingSecurityManager extends RealmSecurityManager {
 
     /**
@@ -102,8 +105,13 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     /**
      * Delegates to the wrapped {@link org.apache.shiro.authc.Authenticator Authenticator} for authentication.
      */
+    @Deprecated
     public AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
         return this.authenticator.authenticate(token);
+    }
+
+    public Account authenticateAccount(AuthenticationToken authenticationToken) throws AuthenticationException {
+        return this.authenticator.authenticateAccount(authenticationToken);
     }
 
     public void destroy() {

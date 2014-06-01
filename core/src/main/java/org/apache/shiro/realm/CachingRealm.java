@@ -44,7 +44,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @see #onLogout(org.apache.shiro.subject.PrincipalCollection)
  * @see #getAvailablePrincipal(org.apache.shiro.subject.PrincipalCollection)
  * @since 0.9
+ * @deprecated since 2.0 if favor of the {@link AccountStoreRealm} configured with an {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware, LogoutAware {
 
     private static final Logger log = LoggerFactory.getLogger(CachingRealm.class);

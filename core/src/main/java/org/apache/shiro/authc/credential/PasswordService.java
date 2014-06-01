@@ -54,10 +54,10 @@ import org.apache.shiro.util.ByteSource;
  * <pre>
  * [main]
  * ...
- * passwordService = org.apache.shiro.authc.credential.DefaultPasswordService
+ * passwordService = {@link org.apache.shiro.authc.credential.DefaultPasswordService org.apache.shiro.authc.credential.DefaultPasswordService}
  * # configure the passwordService to use the settings you desire
  * ...
- * passwordMatcher = org.apache.shiro.authc.credential.PasswordMatcher
+ * passwordMatcher = {@link org.apache.shiro.authc.credential.PasswordMatcher org.apache.shiro.authc.credential.PasswordMatcher}
  * passwordMatcher.passwordService = $passwordService
  * ...
  * # Finally, set the matcher on a realm that requires password matching for account authentication:

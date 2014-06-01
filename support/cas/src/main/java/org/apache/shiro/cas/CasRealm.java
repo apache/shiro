@@ -30,7 +30,11 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
-import org.jasig.cas.client.validation.*;
+import org.jasig.cas.client.validation.Assertion;
+import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
+import org.jasig.cas.client.validation.Saml11TicketValidator;
+import org.jasig.cas.client.validation.TicketValidationException;
+import org.jasig.cas.client.validation.TicketValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +58,9 @@ import java.util.Map;
  * to the attributes previously retrieved).
  *
  * @since 1.2
+ * @deprecated since 2.0 if favor of the {@link org.apache.shiro.realm.AccountStoreRealm} configured with an CAS-specific {@link org.apache.shiro.account.AccountStore AccountStore}.
  */
+@Deprecated
 public class CasRealm extends AuthorizingRealm {
 
     // default name of the CAS attribute for remember me authentication (CAS 3.4.10+)
