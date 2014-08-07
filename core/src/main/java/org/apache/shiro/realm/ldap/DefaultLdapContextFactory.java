@@ -20,11 +20,13 @@ package org.apache.shiro.realm.ldap;
 
 import java.util.Hashtable;
 import java.util.Map;
+import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 
+import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +57,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
      * to enable LDAP connection pooling.
      */
     protected static final String SUN_CONNECTION_POOLING_PROPERTY = "com.sun.jndi.ldap.connect.pool";
+    private static final String SIMPLE_AUTHENTICATION_MECHANISM_NAME = "simple";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -62,7 +65,7 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultLdapContextFactory.class);
 
-    protected String authentication = "simple";
+    protected String authentication = SIMPLE_AUTHENTICATION_MECHANISM_NAME;
 
     protected String principalSuffix = null;
 
@@ -254,6 +257,61 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
                     "with pooling [" + (usePooling ? "enabled" : "disabled") + "]");
         }
 
+        // validate the config before creating the context
+        validateAuthenticationInfo(env);
+
+        return createLdapContext(env);
+    }
+
+    /**
+     * Creates and returns a new {@link javax.naming.ldap.InitialLdapContext} instance.  This method exists primarily
+     * to support testing where a mock LdapContext can be returned instead of actually creating a connection, but
+     * subclasses are free to provide a different implementation if necessary.
+     *
+     * @param env the JNDI environment settings used to create the LDAP connection
+     * @return an LdapConnection
+     * @throws NamingException if a problem occurs creating the connection
+     */
+    protected LdapContext createLdapContext(Hashtable env) throws NamingException {
         return new InitialLdapContext(env, null);
     }
+
+
+    /**
+     * Validates the configuration in the JNDI <code>environment</code> settings and throws an exception if a problem
+     * exists.
+     * <p/>
+     * This implementation will throw a {@link AuthenticationException} if the authentication mechanism is set to
+     * 'simple', the principal is non-empty, and the credentials are empty (as per
+     * <a href="http://tools.ietf.org/html/rfc4513#section-5.1.2">rfc4513 section-5.1.2</a>).
+     *
+     * @param environment the JNDI environment settings to be validated
+     * @throws AuthenticationException if a configuration problem is detected
+     */
+    private void validateAuthenticationInfo(Hashtable<String, Object> environment)
+        throws AuthenticationException
+    {
+        // validate when using Simple auth both principal and credentials are set
+        if(SIMPLE_AUTHENTICATION_MECHANISM_NAME.equals(environment.get(Context.SECURITY_AUTHENTICATION))) {
+
+            // only validate credentials if we have a non-empty principal
+            if( environment.get(Context.SECURITY_PRINCIPAL) != null &&
+                StringUtils.hasText( String.valueOf( environment.get(Context.SECURITY_PRINCIPAL) ))) {
+
+                Object credentials = environment.get(Context.SECURITY_CREDENTIALS);
+
+                // from the FAQ, we need to check for empty credentials:
+                // http://docs.oracle.com/javase/tutorial/jndi/ldap/faq.html
+                if( credentials == null ||
+                    (credentials instanceof byte[] && ((byte[])credentials).length <= 0) || // empty byte[]
+                    (credentials instanceof char[] && ((char[])credentials).length <= 0) || // empty char[]
+                    (String.class.isInstance(credentials) && !StringUtils.hasText(String.valueOf(credentials)))) {
+
+                    throw new javax.naming.AuthenticationException("LDAP Simple authentication requires both a "
+                                                                       + "principal and credentials.");
+                }
+            }
+        }
+    }
+
 }
