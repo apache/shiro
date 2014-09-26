@@ -64,11 +64,18 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.4</version>
+                <version>1.7</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjtools</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                    <showWeaveInfo>true</showWeaveInfo>
+                    <complianceLevel>${jdk.version}</complianceLevel>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
                 </configuration>
                 <executions>
                     <execution>
@@ -90,7 +97,7 @@
                         <Export-Package>org.apache.shiro.aspectj*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            org.aspectj*;version="[1.6.0, 2.0.0)",
+                            org.aspectj*;version="[1.8.0, 2.0.0)",
                             *
                         </Import-Package>
                     </instructions>

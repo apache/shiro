@@ -59,7 +59,7 @@ Design Changes
 
   or, even simpler for Groovy or JSTL:
 
-  subject.attributes[username]
+  subject.attributes['username']
 
   This change affords a huge number of simplifications/conveniences for the Shriro user community, dev team, and
   bean-compatible tools and frameworks.
@@ -72,7 +72,7 @@ Design Changes
 
   2. 'Account' is an inherently more intuitive name.  The < 2.0 'AuthenticationInfo' interface name actually always
      represented an Account, and the name 'AuthenticationInfo' is abstract and fairly unintuitive.  Now it is more
-     obvious/explicity.
+     obvious/explicit.
 
   3. Shiro's old PrincipalCollection concept is being removed.  Account instead represents principals with a
      new name, called 'attributes' as a simple Map<String,Object> collections, as described above.
