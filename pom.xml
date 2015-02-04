@@ -89,7 +89,7 @@
         <slf4j.version>1.6.4</slf4j.version>
         <spring.version>3.1.0.RELEASE</spring.version>
         <guice.version>3.0</guice.version>
-        <guava.version>r09</guava.version>
+        <guava.version>18.0</guava.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>3.1</easymock.version>
