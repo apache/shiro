@@ -78,7 +78,10 @@ public abstract class AbstractFilter extends ServletContextSupport implements Fi
      */
     protected String getInitParam(String paramName) {
         FilterConfig config = getFilterConfig();
-        return StringUtils.clean(config.getInitParameter(paramName));
+        if (config != null) {
+            return StringUtils.clean(config.getInitParameter(paramName));
+        }
+        return null;
     }
 
     /**

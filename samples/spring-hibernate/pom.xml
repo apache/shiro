@@ -23,7 +23,8 @@
     <parent>
         <groupId>org.apache.shiro.samples</groupId>
         <artifactId>shiro-samples</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.2.3</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -130,12 +131,16 @@
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
+            <artifactId>ehcache-core</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

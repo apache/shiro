@@ -86,7 +86,7 @@ public class AuthorizingRealmTest {
     @Test
     public void testCreateAccountOverride() {
 
-        Realm realm = new AllowAllRealm() {
+        AuthorizingRealm realm = new AllowAllRealm() {
             @Override
             protected AuthenticationInfo buildAuthenticationInfo(Object principal, Object credentials) {
                 String username = (String) principal;
@@ -107,7 +107,7 @@ public class AuthorizingRealmTest {
 
     @Test
     public void testNullAuthzInfo() {
-        Realm realm = new AuthorizingRealm() {
+	AuthorizingRealm realm = new AuthorizingRealm() {
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
                 return null;
             }

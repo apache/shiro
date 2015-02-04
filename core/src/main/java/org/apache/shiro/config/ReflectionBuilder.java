@@ -22,10 +22,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
-import org.apache.shiro.util.ClassUtils;
-import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.Nameable;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +34,9 @@ import java.util.*;
  * Object builder that uses reflection and Apache Commons BeanUtils to build objects given a
  * map of "property values".  Typically these come from the Shiro INI configuration and are used
  * to construct or modify the SecurityManager, its dependencies, and web-based security filters.
+ * <p/>
+ * Recognizes {@link Factory} implementations and will call
+ * {@link org.apache.shiro.util.Factory#getInstance() getInstance} to satisfy any reference to this bean.
  *
  * @since 0.9
  */
@@ -51,6 +51,11 @@ public class ReflectionBuilder {
     private static final String GLOBAL_PROPERTY_PREFIX = "shiro";
     private static final char MAP_KEY_VALUE_DELIMITER = ':';
     private static final String HEX_BEGIN_TOKEN = "0x";
+    private static final String NULL_VALUE_TOKEN = "null";
+    private static final String EMPTY_STRING_VALUE_TOKEN = "\"\"";
+    private static final char STRING_VALUE_DELIMETER = '"';
+    private static final char MAP_PROPERTY_BEGIN_TOKEN = '[';
+    private static final char MAP_PROPERTY_END_TOKEN = ']';
 
     private Map<String, ?> objects;
 
@@ -120,6 +125,9 @@ public class ReflectionBuilder {
             }
         }
 
+        //SHIRO-413: init method must be called for constructed objects that are Initializable
+        LifecycleUtils.init(objects.values());
+
         return objects;
     }
 
@@ -128,7 +136,7 @@ public class ReflectionBuilder {
         Object currentInstance = objects.get(name);
         if (currentInstance != null) {
             log.info("An instance with name '{}' already exists.  " +
-                    "Redefining this object as a new instance of type []", name, value);
+                    "Redefining this object as a new instance of type {}", name, value);
         }
 
         Object instance;//name with no property, assume right hand side of equals sign is the class name:
@@ -228,7 +236,11 @@ public class ReflectionBuilder {
     protected Object resolveReference(String reference) {
         String id = getId(reference);
         log.debug("Encountered object reference '{}'.  Looking up object with id '{}'", reference, id);
-        return getReferencedObject(id);
+        final Object referencedObject = getReferencedObject(id);
+        if (referencedObject instanceof Factory) {
+            return ((Factory) referencedObject).getInstance();
+        }
+        return referencedObject;
     }
 
     protected boolean isTypedProperty(Object object, String propertyName, Class clazz) {
@@ -258,6 +270,15 @@ public class ReflectionBuilder {
         if (tokens == null || tokens.length <= 0) {
             return null;
         }
+
+        //SHIRO-423: check to see if the value is a referenced Set already, and if so, return it immediately:
+        if (tokens.length == 1 && isReference(tokens[0])) {
+            Object reference = resolveReference(tokens[0]);
+            if (reference instanceof Set) {
+                return (Set)reference;
+            }
+        }
+
         Set<String> setTokens = new LinkedHashSet<String>(Arrays.asList(tokens));
 
         //now convert into correct values and/or references:
@@ -274,6 +295,14 @@ public class ReflectionBuilder {
                 StringUtils.DEFAULT_QUOTE_CHAR, StringUtils.DEFAULT_QUOTE_CHAR, true, true);
         if (tokens == null || tokens.length <= 0) {
             return null;
+        }
+
+        //SHIRO-423: check to see if the value is a referenced Map already, and if so, return it immediately:
+        if (tokens.length == 1 && isReference(tokens[0])) {
+            Object reference = resolveReference(tokens[0]);
+            if (reference instanceof Map) {
+                return (Map)reference;
+            }
         }
 
         Map<String, String> mapTokens = new LinkedHashMap<String, String>(tokens.length);
@@ -298,11 +327,44 @@ public class ReflectionBuilder {
         return map;
     }
 
+    // @since 1.2.2
+    // TODO: make protected in 1.3+
+    private Collection<?> toCollection(String sValue) {
+
+        String[] tokens = StringUtils.split(sValue);
+        if (tokens == null || tokens.length <= 0) {
+            return null;
+        }
+
+        //SHIRO-423: check to see if the value is a referenced Collection already, and if so, return it immediately:
+        if (tokens.length == 1 && isReference(tokens[0])) {
+            Object reference = resolveReference(tokens[0]);
+            if (reference instanceof Collection) {
+                return (Collection)reference;
+            }
+        }
+
+        //now convert into correct values and/or references:
+        List<Object> values = new ArrayList<Object>(tokens.length);
+        for (String token : tokens) {
+            Object value = resolveValue(token);
+            values.add(value);
+        }
+        return values;
+    }
 
     protected List<?> toList(String sValue) {
         String[] tokens = StringUtils.split(sValue);
         if (tokens == null || tokens.length <= 0) {
             return null;
+        }
+
+        //SHIRO-423: check to see if the value is a referenced List already, and if so, return it immediately:
+        if (tokens.length == 1 && isReference(tokens[0])) {
+            Object reference = resolveReference(tokens[0]);
+            if (reference instanceof List) {
+                return (List)reference;
+            }
         }
 
         //now convert into correct values and/or references:
@@ -339,39 +401,165 @@ public class ReflectionBuilder {
         return value;
     }
 
+    protected String checkForNullOrEmptyLiteral(String stringValue) {
+        if (stringValue == null) {
+            return null;
+        }
+        //check if the value is the actual literal string 'null' (expected to be wrapped in quotes):
+        if (stringValue.equals("\"null\"")) {
+            return NULL_VALUE_TOKEN;
+        }
+        //or the actual literal string of two quotes '""' (expected to be wrapped in quotes):
+        else if (stringValue.equals("\"\"\"\"")) {
+            return EMPTY_STRING_VALUE_TOKEN;
+        } else {
+            return stringValue;
+        }
+    }
+    
+    protected void applyProperty(Object object, String propertyPath, Object value) {
+
+        int mapBegin = propertyPath.indexOf(MAP_PROPERTY_BEGIN_TOKEN);
+        int mapEnd = -1;
+        String mapPropertyPath = null;
+        String keyString = null;
+
+        String remaining = null;
+        
+        if (mapBegin >= 0) {
+            //a map is being referenced in the overall property path.  Find just the map's path:
+            mapPropertyPath = propertyPath.substring(0, mapBegin);
+            //find the end of the map reference:
+            mapEnd = propertyPath.indexOf(MAP_PROPERTY_END_TOKEN, mapBegin);
+            //find the token in between the [ and the ] (the map/array key or index):
+            keyString = propertyPath.substring(mapBegin+1, mapEnd);
+
+            //find out if there is more path reference to follow.  If not, we're at a terminal of the OGNL expression
+            if (propertyPath.length() > (mapEnd+1)) {
+                remaining = propertyPath.substring(mapEnd+1);
+                if (remaining.startsWith(".")) {
+                    remaining = StringUtils.clean(remaining.substring(1));
+                }
+            }
+        }
+        
+        if (remaining == null) {
+            //we've terminated the OGNL expression.  Check to see if we're assigning a property or a map entry:
+            if (keyString == null) {
+                //not a map or array value assignment - assign the property directly:
+                setProperty(object, propertyPath, value);
+            } else {
+                //we're assigning a map or array entry.  Check to see which we should call:
+                if (isTypedProperty(object, mapPropertyPath, Map.class)) {
+                    Map map = (Map)getProperty(object, mapPropertyPath);
+                    Object mapKey = resolveValue(keyString);
+                    //noinspection unchecked
+                    map.put(mapKey, value);
+                } else {
+                    //must be an array property.  Convert the key string to an index:
+                    int index = Integer.valueOf(keyString);
+                    setIndexedProperty(object, mapPropertyPath, index, value);
+                }
+            }
+        } else {
+            //property is being referenced as part of a nested path.  Find the referenced map/array entry and
+            //recursively call this method with the remaining property path
+            Object referencedValue = null;
+            if (isTypedProperty(object, mapPropertyPath, Map.class)) {
+                Map map = (Map)getProperty(object, mapPropertyPath);
+                Object mapKey = resolveValue(keyString);
+                referencedValue = map.get(mapKey);
+            } else {
+                //must be an array property:
+                int index = Integer.valueOf(keyString);
+                referencedValue = getIndexedProperty(object, mapPropertyPath, index);
+            }
+
+            if (referencedValue == null) {
+                throw new ConfigurationException("Referenced map/array value '" + mapPropertyPath + "[" +
+                keyString + "]' does not exist.");
+            }
+
+            applyProperty(referencedValue, remaining, value);
+        }
+    }
+    
+    private void setProperty(Object object, String propertyPath, Object value) {
+        try {
+            if (log.isTraceEnabled()) {
+                log.trace("Applying property [{}] value [{}] on object of type [{}]",
+                        new Object[]{propertyPath, value, object.getClass().getName()});
+            }
+            BeanUtils.setProperty(object, propertyPath, value);
+        } catch (Exception e) {
+            String msg = "Unable to set property '" + propertyPath + "' with value [" + value + "] on object " +
+                    "of type " + (object != null ? object.getClass().getName() : null) + ".  If " +
+                    "'" + value + "' is a reference to another (previously defined) object, prefix it with " +
+                    "'" + OBJECT_REFERENCE_BEGIN_TOKEN + "' to indicate that the referenced " +
+                    "object should be used as the actual value.  " +
+                    "For example, " + OBJECT_REFERENCE_BEGIN_TOKEN + value;
+            throw new ConfigurationException(msg, e);
+        }
+    }
+    
+    private Object getProperty(Object object, String propertyPath) {
+        try {
+            return PropertyUtils.getProperty(object, propertyPath);
+        } catch (Exception e) {
+            throw new ConfigurationException("Unable to access property '" + propertyPath + "'", e);
+        }
+    }
+    
+    private void setIndexedProperty(Object object, String propertyPath, int index, Object value) {
+        try {
+            PropertyUtils.setIndexedProperty(object, propertyPath, index, value);
+        } catch (Exception e) {
+            throw new ConfigurationException("Unable to set array property '" + propertyPath + "'", e);
+        }
+    }
+    
+    private Object getIndexedProperty(Object object, String propertyPath, int index) {
+        try {
+            return PropertyUtils.getIndexedProperty(object, propertyPath, index);
+        } catch (Exception e) {
+            throw new ConfigurationException("Unable to acquire array property '" + propertyPath + "'", e);
+        }
+    }
+    
+    protected boolean isIndexedPropertyAssignment(String propertyPath) {
+        return propertyPath.endsWith("" + MAP_PROPERTY_END_TOKEN);
+    }
 
     protected void applyProperty(Object object, String propertyName, String stringValue) {
 
         Object value;
 
-        if (isTypedProperty(object, propertyName, Set.class)) {
+        if (NULL_VALUE_TOKEN.equals(stringValue)) {
+            value = null;
+        } else if (EMPTY_STRING_VALUE_TOKEN.equals(stringValue)) {
+            value = StringUtils.EMPTY_STRING;
+        } else if (isIndexedPropertyAssignment(propertyName)) {
+            String checked = checkForNullOrEmptyLiteral(stringValue);
+            value = resolveValue(checked);
+        } else if (isTypedProperty(object, propertyName, Set.class)) {
             value = toSet(stringValue);
         } else if (isTypedProperty(object, propertyName, Map.class)) {
             value = toMap(stringValue);
-        } else if (isTypedProperty(object, propertyName, List.class) ||
-                isTypedProperty(object, propertyName, Collection.class)) {
+        } else if (isTypedProperty(object, propertyName, List.class)) {
             value = toList(stringValue);
+        } else if (isTypedProperty(object, propertyName, Collection.class)) {
+            value = toCollection(stringValue);
         } else if (isTypedProperty(object, propertyName, byte[].class)) {
             value = toBytes(stringValue);
+        } else if (isTypedProperty(object, propertyName, ByteSource.class)) {
+            byte[] bytes = toBytes(stringValue);
+            value = ByteSource.Util.bytes(bytes);
         } else {
-            value = resolveValue(stringValue);
+            String checked = checkForNullOrEmptyLiteral(stringValue);
+            value = resolveValue(checked);
         }
 
-        try {
-            if (log.isTraceEnabled()) {
-                log.trace("Applying property [{}] value [{}] on object of type [{}]",
-                        new Object[]{propertyName, value, object.getClass().getName()});
-            }
-            BeanUtils.setProperty(object, propertyName, value);
-        } catch (Exception e) {
-            String msg = "Unable to set property '" + propertyName + "' with value [" + stringValue + "] on object " +
-                    "of type " + (object != null ? object.getClass().getName() : null) + ".  If " +
-                    "'" + stringValue + "' is a reference to another (previously defined) object, prefix it with " +
-                    "'" + OBJECT_REFERENCE_BEGIN_TOKEN + "' to indicate that the referenced " +
-                    "object should be used as the actual value.  " +
-                    "For example, " + OBJECT_REFERENCE_BEGIN_TOKEN + stringValue;
-            throw new ConfigurationException(msg, e);
-        }
+        applyProperty(object, propertyName, value);
     }
 
 }

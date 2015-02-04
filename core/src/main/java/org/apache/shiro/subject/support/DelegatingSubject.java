@@ -28,6 +28,7 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.ProxiedSession;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.SessionException;
 import org.apache.shiro.session.mgt.DefaultSessionContext;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.ExecutionException;
@@ -35,15 +36,13 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.util.ThreadContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Implementation of the {@code Subject} interface that delegates
@@ -61,7 +60,7 @@ import java.util.concurrent.Callable;
  * data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered
  * much more elegant to let the underlying {@code SecurityManager} implementation or its delegate components
  * manage caching, not this class.  A {@code SecurityManager} is considered a business-tier component,
- * where caching strategies are better suited.
+ * where caching strategies are better managed.
  * <p/>
  * Applications from large and clustered to simple and JVM-local all benefit from
  * stateless architectures.  This implementation plays a part in the stateless programming
@@ -69,9 +68,7 @@ import java.util.concurrent.Callable;
  *
  * @since 0.1
  */
-public class DelegatingSubject implements Subject, Serializable {
-
-    private static final long serialVersionUID = -5094259915319399138L;
+public class DelegatingSubject implements Subject {
 
     private static final Logger log = LoggerFactory.getLogger(DelegatingSubject.class);
 
@@ -82,7 +79,10 @@ public class DelegatingSubject implements Subject, Serializable {
     protected boolean authenticated;
     protected String host;
     protected Session session;
-    private List<PrincipalCollection> runAsPrincipals; //supports assumed identities (aka 'run as')
+    /**
+     * @since 1.2
+     */
+    protected boolean sessionCreationEnabled;
 
     protected transient SecurityManager securityManager;
 
@@ -92,6 +92,12 @@ public class DelegatingSubject implements Subject, Serializable {
 
     public DelegatingSubject(PrincipalCollection principals, boolean authenticated, String host,
                              Session session, SecurityManager securityManager) {
+        this(principals, authenticated, host, session, true, securityManager);
+    }
+
+    //since 1.2
+    public DelegatingSubject(PrincipalCollection principals, boolean authenticated, String host,
+                             Session session, boolean sessionCreationEnabled, SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager argument cannot be null.");
         }
@@ -101,8 +107,8 @@ public class DelegatingSubject implements Subject, Serializable {
         this.host = host;
         if (session != null) {
             this.session = decorate(session);
-            this.runAsPrincipals = getRunAsPrincipals(this.session);
         }
+        this.sessionCreationEnabled = sessionCreationEnabled;
     }
 
     protected Session decorate(Session session) {
@@ -144,7 +150,8 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     public PrincipalCollection getPrincipals() {
-        return CollectionUtils.isEmpty(this.runAsPrincipals) ? this.principals : this.runAsPrincipals.get(0);
+        List<PrincipalCollection> runAsPrincipals = getRunAsPrincipalsStack();
+        return CollectionUtils.isEmpty(runAsPrincipals) ? this.principals : runAsPrincipals.get(0);
     }
 
     public boolean isPermitted(String permission) {
@@ -233,8 +240,10 @@ public class DelegatingSubject implements Subject, Serializable {
         assertAuthzCheckPossible();
         securityManager.checkRole(getPrincipals(), role);
     }
-    
+
     public void checkRoles(String... roleIdentifiers) throws AuthorizationException {
+        assertAuthzCheckPossible();
+        securityManager.checkRoles(getPrincipals(), roleIdentifiers);
     }
 
     public void checkRoles(Collection<String> roles) throws AuthorizationException {
@@ -243,7 +252,7 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     public void login(AuthenticationToken token) throws AuthenticationException {
-        clearRunAsIdentities();
+        clearRunAsIdentitiesInternal();
         Subject subject = securityManager.login(this, token);
 
         PrincipalCollection principals;
@@ -275,11 +284,9 @@ public class DelegatingSubject implements Subject, Serializable {
         Session session = subject.getSession(false);
         if (session != null) {
             this.session = decorate(session);
-            this.runAsPrincipals = getRunAsPrincipals(this.session);
         } else {
             this.session = null;
         }
-        ThreadContext.bind(this);
     }
 
     public boolean isAuthenticated() {
@@ -291,16 +298,39 @@ public class DelegatingSubject implements Subject, Serializable {
         return principals != null && !principals.isEmpty() && !isAuthenticated();
     }
 
+    /**
+     * Returns {@code true} if this Subject is allowed to create sessions, {@code false} otherwise.
+     *
+     * @return {@code true} if this Subject is allowed to create sessions, {@code false} otherwise.
+     * @since 1.2
+     */
+    protected boolean isSessionCreationEnabled() {
+        return this.sessionCreationEnabled;
+    }
+
     public Session getSession() {
         return getSession(true);
     }
 
     public Session getSession(boolean create) {
         if (log.isTraceEnabled()) {
-            log.trace("attempting to get session; create = " + create + "; session is null = " + (this.session == null) + "; session has id = " + (this.session != null && session.getId() != null));
+            log.trace("attempting to get session; create = " + create +
+                    "; session is null = " + (this.session == null) +
+                    "; session has id = " + (this.session != null && session.getId() != null));
         }
 
         if (this.session == null && create) {
+
+            //added in 1.2:
+            if (!isSessionCreationEnabled()) {
+                String msg = "Session creation has been disabled for the current subject.  This exception indicates " +
+                        "that there is either a programming error (using a session when it should never be " +
+                        "used) or that Shiro's configuration needs to be adjusted to allow Sessions to be created " +
+                        "for the current Subject.  See the " + DisabledSessionException.class.getName() + " JavaDoc " +
+                        "for more.";
+                throw new DisabledSessionException(msg);
+            }
+
             log.trace("Starting session for host {}", getHost());
             SessionContext sessionContext = createSessionContext();
             Session session = this.securityManager.start(sessionContext);
@@ -317,15 +347,24 @@ public class DelegatingSubject implements Subject, Serializable {
         return sessionContext;
     }
 
-    public void logout() {
+    private void clearRunAsIdentitiesInternal() {
+        //try/catch added for SHIRO-298
         try {
             clearRunAsIdentities();
+        } catch (SessionException se) {
+            log.debug("Encountered session exception trying to clear 'runAs' identities during logout.  This " +
+                    "can generally safely be ignored.", se);
+        }
+    }
+
+    public void logout() {
+        try {
+            clearRunAsIdentitiesInternal();
             this.securityManager.logout(this);
         } finally {
             this.session = null;
             this.principals = null;
             this.authenticated = false;
-            this.runAsPrincipals = null;
             //Don't set securityManager to null here - the Subject can still be
             //used, it is just considered anonymous at this point.  The SecurityManager instance is
             //necessary if the subject would log in again or acquire a new session.  This is in response to
@@ -399,19 +438,33 @@ public class DelegatingSubject implements Subject, Serializable {
     }
 
     public boolean isRunAs() {
-        return !CollectionUtils.isEmpty(this.runAsPrincipals);
+        List<PrincipalCollection> stack = getRunAsPrincipalsStack();
+        return !CollectionUtils.isEmpty(stack);
     }
 
     public PrincipalCollection getPreviousPrincipals() {
-        return isRunAs() ? this.principals : null;
+        PrincipalCollection previousPrincipals = null;
+        List<PrincipalCollection> stack = getRunAsPrincipalsStack();
+        int stackSize = stack != null ? stack.size() : 0;
+        if (stackSize > 0) {
+            if (stackSize == 1) {
+                previousPrincipals = this.principals;
+            } else {
+                //always get the one behind the current:
+                assert stack != null;
+                previousPrincipals = stack.get(1);
+            }
+        }
+        return previousPrincipals;
     }
 
     public PrincipalCollection releaseRunAs() {
         return popIdentity();
     }
 
-    @SuppressWarnings({"unchecked"})
-    private List<PrincipalCollection> getRunAsPrincipals(Session session) {
+    @SuppressWarnings("unchecked")
+    private List<PrincipalCollection> getRunAsPrincipalsStack() {
+        Session session = getSession(false);
         if (session != null) {
             return (List<PrincipalCollection>) session.getAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
         }
@@ -423,7 +476,6 @@ public class DelegatingSubject implements Subject, Serializable {
         if (session != null) {
             session.removeAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
         }
-        this.runAsPrincipals = null;
     }
 
     private void pushIdentity(PrincipalCollection principals) throws NullPointerException {
@@ -431,29 +483,29 @@ public class DelegatingSubject implements Subject, Serializable {
             String msg = "Specified Subject principals cannot be null or empty for 'run as' functionality.";
             throw new NullPointerException(msg);
         }
-        if (this.runAsPrincipals == null) {
-            this.runAsPrincipals = new ArrayList<PrincipalCollection>();
+        List<PrincipalCollection> stack = getRunAsPrincipalsStack();
+        if (stack == null) {
+            stack = new CopyOnWriteArrayList<PrincipalCollection>();
         }
-        this.runAsPrincipals.add(0, principals);
+        stack.add(0, principals);
         Session session = getSession();
-        session.setAttribute(RUN_AS_PRINCIPALS_SESSION_KEY, this.runAsPrincipals);
+        session.setAttribute(RUN_AS_PRINCIPALS_SESSION_KEY, stack);
     }
 
     private PrincipalCollection popIdentity() {
         PrincipalCollection popped = null;
-        if (!CollectionUtils.isEmpty(this.runAsPrincipals)) {
-            popped = this.runAsPrincipals.remove(0);
+
+        List<PrincipalCollection> stack = getRunAsPrincipalsStack();
+        if (!CollectionUtils.isEmpty(stack)) {
+            popped = stack.remove(0);
             Session session;
-            if (!CollectionUtils.isEmpty(this.runAsPrincipals)) {
-                //persist the changed deque to the session
+            if (!CollectionUtils.isEmpty(stack)) {
+                //persist the changed stack to the session
                 session = getSession();
-                session.setAttribute(RUN_AS_PRINCIPALS_SESSION_KEY, this.runAsPrincipals);
+                session.setAttribute(RUN_AS_PRINCIPALS_SESSION_KEY, stack);
             } else {
-                //deque is empty, remove it from the session:
-                session = getSession(false);
-                if (session != null) {
-                    session.removeAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
-                }
+                //stack is empty, remove it from the session:
+                clearRunAsIdentities();
             }
         }
 

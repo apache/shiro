@@ -66,15 +66,31 @@ public class SimpleSession implements ValidatingSession, Serializable {
     private static final int HOST_BIT_MASK = 1 << bitIndexCounter++;
     private static final int ATTRIBUTES_BIT_MASK = 1 << bitIndexCounter++;
 
-    private Serializable id;
-    private Date startTimestamp;
-    private Date stopTimestamp;
-    private Date lastAccessTime;
-    private long timeout;
-    private boolean expired;
-    private String host;
-
-    private Map<Object, Object> attributes;
+    // ==============================================================
+    // NOTICE:
+    //
+    // The following fields are marked as transient to avoid double-serialization.
+    // They are in fact serialized (even though 'transient' usually indicates otherwise),
+    // but they are serialized explicitly via the writeObject and readObject implementations
+    // in this class.
+    //
+    // If we didn't declare them as transient, the out.defaultWriteObject(); call in writeObject would
+    // serialize all non-transient fields as well, effectively doubly serializing the fields (also
+    // doubling the serialization size).
+    //
+    // This finding, with discussion, was covered here:
+    //
+    // http://mail-archives.apache.org/mod_mbox/shiro-user/201109.mbox/%3C4E81BCBD.8060909@metaphysis.net%3E
+    //
+    // ==============================================================
+    private transient Serializable id;
+    private transient Date startTimestamp;
+    private transient Date stopTimestamp;
+    private transient Date lastAccessTime;
+    private transient long timeout;
+    private transient boolean expired;
+    private transient String host;
+    private transient Map<Object, Object> attributes;
 
     public SimpleSession() {
         this.timeout = DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT; //TODO - remove concrete reference to DefaultSessionManager

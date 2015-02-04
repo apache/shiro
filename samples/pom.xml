@@ -22,7 +22,8 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.2.3</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -39,6 +40,22 @@
         <module>spring</module>
         <module>spring-hibernate</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                <!-- Turn off this plugin - it often fails with the example projects:
+                     http://shiro-developer.582600.n2.nabble.com/Failed-releases-and-Apache-Rat-tp7577605.html -->
+                    <skip>true</skip>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <reporting>
         <plugins>

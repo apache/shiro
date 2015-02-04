@@ -19,6 +19,6 @@
 /**
  * Shiro-specific implementations of the Servlet API (Servlet Filters, et al).
  *
- * @see IniShiroFilter
+ * @see ShiroFilter
  */
 package org.apache.shiro.web.servlet;

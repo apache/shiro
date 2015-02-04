@@ -22,7 +22,8 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.2.3</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -36,7 +37,7 @@
             <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>quartz</groupId>
+            <groupId>org.opensymphony.quartz</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
         <!-- Test dependencies -->
@@ -66,7 +67,7 @@
                         <Export-Package>org.apache.shiro.quartz*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            org.quartz*;version="[1.5.0, 1.6.0)", 
+                            org.quartz*;version="[1.6, 2)",
                             *
                         </Import-Package>
                     </instructions>

@@ -19,15 +19,9 @@
 package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.ClassUtils;
-import org.apache.shiro.web.filter.authc.AnonymousFilter;
-import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
-import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
-import org.apache.shiro.web.filter.authc.UserFilter;
-import org.apache.shiro.web.filter.authz.HttpMethodPermissionFilter;
-import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
-import org.apache.shiro.web.filter.authz.PortFilter;
-import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
-import org.apache.shiro.web.filter.authz.SslFilter;
+import org.apache.shiro.web.filter.authc.*;
+import org.apache.shiro.web.filter.authz.*;
+import org.apache.shiro.web.filter.session.NoSessionCreationFilter;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
@@ -46,6 +40,8 @@ public enum DefaultFilter {
     anon(AnonymousFilter.class),
     authc(FormAuthenticationFilter.class),
     authcBasic(BasicHttpAuthenticationFilter.class),
+    logout(LogoutFilter.class),
+    noSessionCreation(NoSessionCreationFilter.class),
     perms(PermissionsAuthorizationFilter.class),
     port(PortFilter.class),
     rest(HttpMethodPermissionFilter.class),

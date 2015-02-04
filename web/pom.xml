@@ -23,7 +23,8 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.2.3</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -79,7 +80,12 @@
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.web</Bundle-SymbolicName>
                         <Export-Package>org.apache.shiro.web*;version=${project.version}</Export-Package>
-                        <Import-Package>org.apache.shiro*;version="${shiro.osgi.importRange}",*</Import-Package>
+                        <!-- javax.servlet.jsp* marked as optional per SHIRO-390: -->
+                        <Import-Package>
+                            org.apache.shiro*;version="${shiro.osgi.importRange}",
+                            javax.servlet.jsp*;resolution:=optional,
+                            *
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>

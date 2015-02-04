@@ -26,9 +26,8 @@ import org.apache.shiro.util.ByteSource;
  * inherited {@link #toHex() toHex()} and {@link #toBase64() toBase64()} methods.
  * <p/>
  * The bytes returned by the parent interface's {@link #getBytes() getBytes()} are the hashed value of the
- * original input source.
+ * original input source, also known as the 'checksum' or 'digest'.
  *
- * @see AbstractHash
  * @see Md2Hash
  * @see Md5Hash
  * @see Sha1Hash
@@ -48,4 +47,21 @@ public interface Hash extends ByteSource {
      * @since 1.1
      */
     String getAlgorithmName();
+
+    /**
+     * Returns a salt used to compute the hash or {@code null} if no salt was used.
+     *
+     * @return a salt used to compute the hash or {@code null} if no salt was used.
+     * @since 1.2
+     */
+    ByteSource getSalt();
+
+    /**
+     * Returns the number of hash iterations used to compute the hash.
+     *
+     * @return the number of hash iterations used to compute the hash.
+     * @since 1.2
+     */
+    int getIterations();
+
 }

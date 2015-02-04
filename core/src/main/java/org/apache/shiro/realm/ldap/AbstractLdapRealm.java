@@ -162,6 +162,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     ============================================*/
 
     protected void onInit() {
+        super.onInit();
         ensureContextFactory();
     }
 

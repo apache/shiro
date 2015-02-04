@@ -21,11 +21,15 @@ package org.apache.shiro.web.util;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.web.env.EnvironmentLoader;
+import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -90,7 +94,7 @@ public class WebUtils {
 
     /**
      * Return the path within the web application for the given request.
-     * <p>Detects include request URL if called within a RequestDispatcher include.
+     * Detects include request URL if called within a RequestDispatcher include.
      * <p/>
      * For example, for a request to URL
      * <p/>
@@ -135,7 +139,7 @@ public class WebUtils {
         }
         return normalize(decodeAndCleanUriString(request, uri));
     }
-    
+
     /**
      * Normalize a relative URI path that may have relative values ("/./",
      * "/../", and so on ) it it.  <strong>WARNING</strong> - This method is
@@ -145,9 +149,9 @@ public class WebUtils {
      * Tomcat trunk, r939305
      *
      * @param path Relative path to be normalized
-     * 
+     * @return normalized path
      */
-    private static String normalize(String path) {
+    public static String normalize(String path) {
         return normalize(path, true);
     }
 
@@ -159,8 +163,9 @@ public class WebUtils {
      * Normalize operations were was happily taken from org.apache.catalina.util.RequestUtil in
      * Tomcat trunk, r939305
      *
-     * @param path Relative path to be normalized
+     * @param path             Relative path to be normalized
      * @param replaceBackSlash Should '\\' be replaced with '/'
+     * @return normalized path
      */
     private static String normalize(String path, boolean replaceBackSlash) {
 
@@ -186,7 +191,7 @@ public class WebUtils {
             if (index < 0)
                 break;
             normalized = normalized.substring(0, index) +
-                normalized.substring(index + 1);
+                    normalized.substring(index + 1);
         }
 
         // Resolve occurrences of "/./" in the normalized path
@@ -195,7 +200,7 @@ public class WebUtils {
             if (index < 0)
                 break;
             normalized = normalized.substring(0, index) +
-                normalized.substring(index + 2);
+                    normalized.substring(index + 2);
         }
 
         // Resolve occurrences of "/../" in the normalized path
@@ -207,14 +212,14 @@ public class WebUtils {
                 return (null);  // Trying to go outside our context
             int index2 = normalized.lastIndexOf('/', index - 1);
             normalized = normalized.substring(0, index2) +
-                normalized.substring(index + 3);
+                    normalized.substring(index + 3);
         }
 
         // Return the normalized path that we have completed
         return (normalized);
 
     }
-   
+
 
     /**
      * Decode the supplied URI string and strips any extraneous portion after a ';'.
@@ -251,6 +256,77 @@ public class WebUtils {
     }
 
     /**
+     * Find the Shiro {@link WebEnvironment} for this web application, which is typically loaded via the
+     * {@link org.apache.shiro.web.env.EnvironmentLoaderListener}.
+     * <p/>
+     * This implementation rethrows an exception that happened on environment startup to differentiate between a failed
+     * environment startup and no environment at all.
+     *
+     * @param sc ServletContext to find the web application context for
+     * @return the root WebApplicationContext for this web app
+     * @throws IllegalStateException if the root WebApplicationContext could not be found
+     * @see org.apache.shiro.web.env.EnvironmentLoader#ENVIRONMENT_ATTRIBUTE_KEY
+     * @since 1.2
+     */
+    public static WebEnvironment getRequiredWebEnvironment(ServletContext sc)
+            throws IllegalStateException {
+
+        WebEnvironment we = getWebEnvironment(sc);
+        if (we == null) {
+            throw new IllegalStateException("No WebEnvironment found: no EnvironmentLoaderListener registered?");
+        }
+        return we;
+    }
+
+    /**
+     * Find the Shiro {@link WebEnvironment} for this web application, which is typically loaded via
+     * {@link org.apache.shiro.web.env.EnvironmentLoaderListener}.
+     * <p/>
+     * This implementation rethrows an exception that happened on environment startup to differentiate between a failed
+     * environment startup and no environment at all.
+     *
+     * @param sc ServletContext to find the web application context for
+     * @return the root WebApplicationContext for this web app, or <code>null</code> if none
+     * @see org.apache.shiro.web.env.EnvironmentLoader#ENVIRONMENT_ATTRIBUTE_KEY
+     * @since 1.2
+     */
+    public static WebEnvironment getWebEnvironment(ServletContext sc) {
+        return getWebEnvironment(sc, EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY);
+    }
+
+    /**
+     * Find the Shiro {@link WebEnvironment} for this web application.
+     *
+     * @param sc       ServletContext to find the web application context for
+     * @param attrName the name of the ServletContext attribute to look for
+     * @return the desired WebEnvironment for this web app, or <code>null</code> if none
+     * @since 1.2
+     */
+    public static WebEnvironment getWebEnvironment(ServletContext sc, String attrName) {
+        if (sc == null) {
+            throw new IllegalArgumentException("ServletContext argument must not be null.");
+        }
+        Object attr = sc.getAttribute(attrName);
+        if (attr == null) {
+            return null;
+        }
+        if (attr instanceof RuntimeException) {
+            throw (RuntimeException) attr;
+        }
+        if (attr instanceof Error) {
+            throw (Error) attr;
+        }
+        if (attr instanceof Exception) {
+            throw new IllegalStateException((Exception) attr);
+        }
+        if (!(attr instanceof WebEnvironment)) {
+            throw new IllegalStateException("Context attribute is not of type WebEnvironment: " + attr);
+        }
+        return (WebEnvironment) attr;
+    }
+
+
+    /**
      * Decode the given source string with a URLDecoder. The encoding will be taken
      * from the request, falling back to the default "ISO-8859-1".
      * <p>The default implementation uses <code>URLDecoder.decode(input, enc)</code>.
@@ -268,8 +344,7 @@ public class WebUtils {
         String enc = determineEncoding(request);
         try {
             return URLDecoder.decode(source, enc);
-        }
-        catch (UnsupportedEncodingException ex) {
+        } catch (UnsupportedEncodingException ex) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not decode request string [" + source + "] with encoding '" + enc +
                         "': falling back to platform default encoding; exception message: " + ex.getMessage());
@@ -359,6 +434,47 @@ public class WebUtils {
         ServletRequest request = source.getServletRequest();
         ServletResponse response = source.getServletResponse();
         return request instanceof HttpServletRequest && response instanceof HttpServletResponse;
+    }
+
+    /**
+     * Returns {@code true} if a session is allowed to be created for a subject-associated request, {@code false}
+     * otherwise.
+     * <p/>
+     * <b>This method exists for Shiro's internal framework needs and should never be called by Shiro end-users.  It
+     * could be changed/removed at any time.</b>
+     *
+     * @param requestPairSource a {@link RequestPairSource} instance, almost always a
+     *                          {@link org.apache.shiro.web.subject.WebSubject WebSubject} instance.
+     * @return {@code true} if a session is allowed to be created for a subject-associated request, {@code false}
+     *         otherwise.
+     */
+    public static boolean _isSessionCreationEnabled(Object requestPairSource) {
+        if (requestPairSource instanceof RequestPairSource) {
+            RequestPairSource source = (RequestPairSource) requestPairSource;
+            return _isSessionCreationEnabled(source.getServletRequest());
+        }
+        return true; //by default
+    }
+
+    /**
+     * Returns {@code true} if a session is allowed to be created for a subject-associated request, {@code false}
+     * otherwise.
+     * <p/>
+     * <b>This method exists for Shiro's internal framework needs and should never be called by Shiro end-users.  It
+     * could be changed/removed at any time.</b>
+     *
+     * @param request incoming servlet request.
+     * @return {@code true} if a session is allowed to be created for a subject-associated request, {@code false}
+     *         otherwise.
+     */
+    public static boolean _isSessionCreationEnabled(ServletRequest request) {
+        if (request != null) {
+            Object val = request.getAttribute(DefaultSubjectContext.SESSION_CREATION_ENABLED);
+            if (val != null && val instanceof Boolean) {
+                return (Boolean) val;
+            }
+        }
+        return true; //by default
     }
 
     /**

@@ -114,6 +114,30 @@ public class BasicHttpFilterAuthenticationTest {
 		verify(response);
     }
 
+    @Test
+    public void createTokenColonInPassword() throws Exception {
+        testFilter = new BasicHttpAuthenticationFilter();
+        HttpServletRequest request = createMock(HttpServletRequest.class);
+        expect(request.getHeader("Authorization")).andReturn(createAuthorizationHeader("pedro", "pass:word"));
+        expect(request.getRemoteHost()).andReturn("localhost");
+
+        HttpServletResponse response = createMock(HttpServletResponse.class);
+
+        replay(request);
+        replay(response);
+
+		AuthenticationToken token = testFilter.createToken(request, response);
+		assertNotNull(token);
+		assertTrue("Token is not a username and password token.", token instanceof UsernamePasswordToken);
+
+		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+		assertEquals("pedro", upToken.getUsername());
+		assertEquals("pass:word", new String(upToken.getPassword()));
+
+		verify(request);
+		verify(response);
+    }
+
     private String createAuthorizationHeader(String username, String password) {
     	return "Basic " + new String(Base64.encode((username + ":" + password).getBytes()));
     }

@@ -22,7 +22,8 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.2.3</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -51,6 +52,10 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-guice</artifactId>
         </dependency>
     </dependencies>
 

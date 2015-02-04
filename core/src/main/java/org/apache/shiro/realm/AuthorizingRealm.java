@@ -19,10 +19,7 @@
 package org.apache.shiro.realm;
 
 import org.apache.shiro.authc.credential.CredentialsMatcher;
-import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.authz.Permission;
-import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.*;
 import org.apache.shiro.authz.permission.*;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
@@ -56,11 +53,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 0.2
  */
 public abstract class AuthorizingRealm extends AuthenticatingRealm
-        implements Initializable, PermissionResolverAware, RolePermissionResolverAware {
+        implements Authorizer, Initializable, PermissionResolverAware, RolePermissionResolverAware {
 
     //TODO - complete JavaDoc
 
-    /*--------------------------------------------
+    /*-------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
     private static final Logger log = LoggerFactory.getLogger(AuthorizingRealm.class);
@@ -72,7 +69,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
 
     private static final AtomicInteger INSTANCE_COUNT = new AtomicInteger();
 
-    /*--------------------------------------------
+    /*-------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
     /**
@@ -86,11 +83,27 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
 
     private RolePermissionResolver permissionRoleResolver;
 
-    /*--------------------------------------------
+    /*-------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
 
     public AuthorizingRealm() {
+        this(null, null);
+    }
+
+    public AuthorizingRealm(CacheManager cacheManager) {
+        this(cacheManager, null);
+    }
+
+    public AuthorizingRealm(CredentialsMatcher matcher) {
+        this(null, matcher);
+    }
+
+    public AuthorizingRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
+        super();
+        if (cacheManager != null) setCacheManager(cacheManager);
+        if (matcher != null) setCredentialsMatcher(matcher);
+
         this.authorizationCachingEnabled = true;
         this.permissionResolver = new WildcardPermissionResolver();
 
@@ -101,19 +114,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         }
     }
 
-    public AuthorizingRealm(CacheManager cacheManager) {
-        super(cacheManager);
-    }
-
-    public AuthorizingRealm(CredentialsMatcher matcher) {
-        super(matcher);
-    }
-
-    public AuthorizingRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
-        super(cacheManager, matcher);
-    }
-
-    /*--------------------------------------------
+    /*-------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
 
@@ -162,12 +163,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      * <p/>
      * The default value is {@code true}.
      *
-     * @param authorizationCachingEnabled the value to set
+     * @param authenticationCachingEnabled the value to set
      */
     @SuppressWarnings({"UnusedDeclaration"})
-    public void setAuthorizationCachingEnabled(boolean authorizationCachingEnabled) {
-        this.authorizationCachingEnabled = authorizationCachingEnabled;
-        if (authorizationCachingEnabled) {
+    public void setAuthorizationCachingEnabled(boolean authenticationCachingEnabled) {
+        this.authorizationCachingEnabled = authenticationCachingEnabled;
+        if (authenticationCachingEnabled) {
             setCachingEnabled(true);
         }
     }
@@ -177,6 +178,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
     }
 
     public void setPermissionResolver(PermissionResolver permissionResolver) {
+        if (permissionResolver == null) throw new IllegalArgumentException("Null PermissionResolver is not allowed");
         this.permissionResolver = permissionResolver;
     }
 
@@ -212,16 +214,14 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      * subclass implementations for each authorization check.</li>
      * </ol>
      */
-    public final void init() {
+    protected void onInit() {
+        super.onInit();
         //trigger obtaining the authorization cache if possible
         getAvailableAuthorizationCache();
-        onInit();
-    }
-
-    protected void onInit() {
     }
 
     protected void afterCacheManagerSet() {
+        super.afterCacheManagerSet();
         //trigger obtaining the authorization cache if possible
         getAvailableAuthorizationCache();
     }
@@ -307,7 +307,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      * @return the authorization information for the account associated with the specified {@code principals},
      *         or {@code null} if no account could be found.
      */
-    protected AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals) {
+    public AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals) {
 
         if (principals == null) {
             return null;
@@ -367,6 +367,10 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      * After this method is called, the next authorization check for that same account will result in a call to
      * {@link #getAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection) getAuthorizationInfo}, and the
      * resulting return value will be cached before being returned so it can be reused for later authorization checks.
+     * <p/>
+     * If you wish to clear out all associated cached data (and not just authorization data), use the
+     * {@link #clearCache(org.apache.shiro.subject.PrincipalCollection)} method instead (which will in turn call this
+     * method by default).
      *
      * @param principals the principals of the account for which to clear the cached AuthorizationInfo.
      */
@@ -628,11 +632,11 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         AuthorizationInfo info = getAuthorizationInfo(principal);
         checkRoles(roles, info);
     }
-    
+
     public void checkRoles(PrincipalCollection principal, String... roles) throws AuthorizationException {
-	checkRoles(principal, Arrays.asList(roles));
+        checkRoles(principal, Arrays.asList(roles));
     }
-    
+
     protected void checkRoles(Collection<String> roles, AuthorizationInfo info) {
         if (roles != null && !roles.isEmpty()) {
             for (String roleName : roles) {
@@ -642,46 +646,18 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
     }
 
     /**
-     * If authorization caching is enabled, this will remove the AuthorizationInfo from the cache.
-     * Subclasses are free to override for additional behavior, but be sure to call {@code super.onLogout}
-     * to ensure cache cleanup.
+     * Calls {@code super.doClearCache} to ensure any cached authentication data is removed and then calls
+     * {@link #clearCachedAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection)} to remove any cached
+     * authorization data.
+     * <p/>
+     * If overriding in a subclass, be sure to call {@code super.doClearCache} to ensure this behavior is maintained.
      *
-     * @param principals the application-specific Subject/user identifier.
+     * @param principals the principals of the account for which to clear any cached AuthorizationInfo
+     * @since 1.2
      */
-    public void onLogout(PrincipalCollection principals) {
+    @Override
+    protected void doClearCache(PrincipalCollection principals) {
+        super.doClearCache(principals);
         clearCachedAuthorizationInfo(principals);
-    }
-
-    /**
-     * A utility method for subclasses that returns the first available principal of interest to this particular realm.
-     * The heuristic used to acquire the principal is as follows:
-     * <ul>
-     * <li>Attempt to get <em>this particular Realm's</em> 'primary' principal in the {@code PrincipalCollection} via a
-     * <code>principals.{@link PrincipalCollection#fromRealm(String) fromRealm}({@link #getName() getName()})</code>
-     * call.</li>
-     * <li>If the previous call does not result in any principals, attempt to get the overall 'primary' principal
-     * from the PrincipalCollection via {@link org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal()}.</li>
-     * <li>If there are no principals from that call (or the PrincipalCollection argument was null to begin with),
-     * return {@code null}</li>
-     * </ul>
-     *
-     * @param principals the PrincipalCollection holding all principals (from all realms) associated with a single Subject.
-     * @return the 'primary' principal attributed to this particular realm, or the fallback 'master' principal if it
-     *         exists, or if not {@code null}.
-     * @since 1.0
-     */
-    protected Object getAvailablePrincipal(PrincipalCollection principals) {
-        if (principals == null || principals.isEmpty()) {
-            return null;
-        }
-        Object primary;
-        Collection thisPrincipals = principals.fromRealm(getName());
-        if (thisPrincipals != null && !thisPrincipals.isEmpty()) {
-            primary = thisPrincipals.iterator().next();
-        } else {
-            //no principals attributed to this particular realm.  Fall back to the 'master' primary:
-            primary = principals.getPrimaryPrincipal();
-        }
-        return primary;
     }
 }

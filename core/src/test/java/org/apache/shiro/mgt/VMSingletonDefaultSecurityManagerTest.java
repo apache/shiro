@@ -56,18 +56,22 @@ public class VMSingletonDefaultSecurityManagerTest {
         sm.setRealm(new IniRealm(ini));
         SecurityUtils.setSecurityManager(sm);
 
-        Subject subject = SecurityUtils.getSubject();
+        try {
+            Subject subject = SecurityUtils.getSubject();
 
-        AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
-        subject.login(token);
-        subject.getSession().setAttribute("key", "value");
-        assertTrue(subject.getSession().getAttribute("key").equals("value"));
+            AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
+            subject.login(token);
+            subject.getSession().setAttribute("key", "value");
+            assertTrue(subject.getSession().getAttribute("key").equals("value"));
 
-        subject = SecurityUtils.getSubject();
+            subject = SecurityUtils.getSubject();
 
-        assertTrue(subject.isAuthenticated());
-        assertTrue(subject.getSession().getAttribute("key").equals("value"));
-
-        sm.destroy();
+            assertTrue(subject.isAuthenticated());
+            assertTrue(subject.getSession().getAttribute("key").equals("value"));
+        } finally {
+            sm.destroy();
+            //SHIRO-270:
+            SecurityUtils.setSecurityManager(null);
+        }
     }
 }

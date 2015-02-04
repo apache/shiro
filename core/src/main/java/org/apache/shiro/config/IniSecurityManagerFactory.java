@@ -31,7 +31,12 @@ import org.apache.shiro.util.Nameable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A {@link Factory} that creates {@link SecurityManager} instances based on {@link Ini} configuration.
@@ -132,21 +137,7 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
             }
         }
 
-        initRealms(securityManager);
-
         return securityManager;
-    }
-
-    private void initRealms(SecurityManager securityManager) {
-        Collection<Realm> realms = getRealms(securityManager);
-        if (!CollectionUtils.isEmpty(realms)) {
-            LifecycleUtils.init(realms);
-        }
-    }
-
-    private Collection<Realm> getRealms(SecurityManager securityManager) {
-        assertRealmSecurityManager(securityManager);
-        return ((RealmSecurityManager) securityManager).getRealms();
     }
 
     protected Map<String, ?> createDefaults(Ini ini, Ini.Section mainSection) {
@@ -173,7 +164,8 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
     private void addToRealms(Collection<Realm> realms, RealmFactory factory) {
         LifecycleUtils.init(factory);
         Collection<Realm> factoryRealms = factory.getRealms();
-        if (!CollectionUtils.isEmpty(realms)) {
+        //SHIRO-238: check factoryRealms (was 'realms'):
+        if (!CollectionUtils.isEmpty(factoryRealms)) {
             realms.addAll(factoryRealms);
         }
     }
@@ -251,8 +243,10 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
      * @return a new Realm instance reflecting the account data discovered in the {@code Ini}.
      */
     protected Realm createRealm(Ini ini) {
-        IniRealm realm = new IniRealm(ini);
+        //IniRealm realm = new IniRealm(ini); changed to support SHIRO-322
+        IniRealm realm = new IniRealm();
         realm.setName(INI_REALM_NAME);
+        realm.setIni(ini); //added for SHIRO-322
         return realm;
     }
 }

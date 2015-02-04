@@ -30,7 +30,7 @@
 
 <p><a href="<c:url value="/home.jsp"/>">Return to the home page.</a></p>
 
-<p><a href="<c:url value="/logout.jsp"/>">Log out.</a></p>
+<p><a href="<c:url value="/logout"/>">Log out.</a></p>
 
 </body>
 </html>

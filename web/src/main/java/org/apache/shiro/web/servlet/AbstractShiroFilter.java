@@ -47,12 +47,35 @@ import java.util.concurrent.Callable;
  * {@code SecurityManager} and {@code FilterChainResolver} by calling
  * {@link #setSecurityManager(org.apache.shiro.web.mgt.WebSecurityManager)} and
  * {@link #setFilterChainResolver(org.apache.shiro.web.filter.mgt.FilterChainResolver)} methods respectively.
+ * <h3>Static SecurityManager</h3>
+ * By default the {@code SecurityManager} instance enabled by this filter <em>will not</em> be enabled in static
+ * memory via the {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}
+ * method.  Instead, it is expected that Subject instances will always be constructed on a request-processing thread
+ * via instances of this Filter class.
+ * <p/>
+ * However, if you need to construct {@code Subject} instances on separate (non request-processing) threads, it might
+ * be easiest to enable the SecurityManager to be available in static memory via the
+ * {@link SecurityUtils#getSecurityManager()} method.  You can do this by additionally specifying an {@code init-param}:
+ * <pre>
+ * &lt;filter&gt;
+ *     ... other config here ...
+ *     &lt;init-param&gt;
+ *         &lt;param-name&gt;staticSecurityManagerEnabled&lt;/param-name&gt;
+ *         &lt;param-value&gt;true&lt;/param-value&gt;
+ *     &lt;/init-param&gt;
+ * &lt;/filter&gt;
+ * </pre>
+ * See the Shiro <a href="http://shiro.apache.org/subject.html">Subject documentation</a> for more information as to
+ * if you would do this, particularly the sections on the {@code Subject.Builder} and Thread Association.
  *
  * @since 1.0
+ * @see <a href="http://shiro.apache.org/subject.html">Subject documentation</a>
  */
 public abstract class AbstractShiroFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractShiroFilter.class);
+
+    private static final String STATIC_INIT_PARAM_NAME = "staticSecurityManagerEnabled";
 
     // Reference to the security manager used by this filter
     private WebSecurityManager securityManager;
@@ -60,7 +83,15 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
     // Used to determine which chain should handle an incoming request/response
     private FilterChainResolver filterChainResolver;
 
+    /**
+     * Whether or not to bind the constructed SecurityManager instance to static memory (via
+     * SecurityUtils.setSecurityManager).  This was added to support https://issues.apache.org/jira/browse/SHIRO-287
+     * @since 1.2
+     */
+    private boolean staticSecurityManagerEnabled;
+
     protected AbstractShiroFilter() {
+        this.staticSecurityManagerEnabled = false;
     }
 
     public WebSecurityManager getSecurityManager() {
@@ -79,9 +110,68 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
         this.filterChainResolver = filterChainResolver;
     }
 
+    /**
+     * Returns {@code true} if the constructed {@link #getSecurityManager() securityManager} reference should be bound
+     * to static memory (via
+     * {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}),
+     * {@code false} otherwise.
+     * <p/>
+     * The default value is {@code false}.
+     * <p/>
+     *
+     *
+     * @return {@code true} if the constructed {@link #getSecurityManager() securityManager} reference should be bound
+     *         to static memory (via {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}),
+     *         {@code false} otherwise.
+     * @since 1.2
+     * @see <a href="https://issues.apache.org/jira/browse/SHIRO-287">SHIRO-287</a>
+     */
+    public boolean isStaticSecurityManagerEnabled() {
+        return staticSecurityManagerEnabled;
+    }
+
+    /**
+     * Sets if the constructed {@link #getSecurityManager() securityManager} reference should be bound
+     * to static memory (via {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}).
+     * <p/>
+     * The default value is {@code false}.
+     *
+     * @param staticSecurityManagerEnabled if the constructed {@link #getSecurityManager() securityManager} reference
+     *                                       should be bound to static memory (via
+     *                                       {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}).
+     * @since 1.2
+     * @see <a href="https://issues.apache.org/jira/browse/SHIRO-287">SHIRO-287</a>
+     */
+    public void setStaticSecurityManagerEnabled(boolean staticSecurityManagerEnabled) {
+        this.staticSecurityManagerEnabled = staticSecurityManagerEnabled;
+    }
+
     protected final void onFilterConfigSet() throws Exception {
+        //added in 1.2 for SHIRO-287:
+        applyStaticSecurityManagerEnabledConfig();
         init();
         ensureSecurityManager();
+        //added in 1.2 for SHIRO-287:
+        if (isStaticSecurityManagerEnabled()) {
+            SecurityUtils.setSecurityManager(getSecurityManager());
+        }
+    }
+
+    /**
+     * Checks if the init-param that configures the filter to use static memory has been configured, and if so,
+     * sets the {@link #setStaticSecurityManagerEnabled(boolean)} attribute with the configured value.
+     *
+     * @since 1.2
+     * @see <a href="https://issues.apache.org/jira/browse/SHIRO-287">SHIRO-287</a>
+     */
+    private void applyStaticSecurityManagerEnabledConfig() {
+        String value = getInitParam(STATIC_INIT_PARAM_NAME);
+        if (value != null) {
+            Boolean b = Boolean.valueOf(value);
+            if (b != null) {
+                setStaticSecurityManagerEnabled(b);
+            }
+        }
     }
 
     public void init() throws Exception {

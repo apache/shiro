@@ -72,7 +72,7 @@ public class DefaultSerializer<T> implements Serializer<T> {
         ByteArrayInputStream bais = new ByteArrayInputStream(serialized);
         BufferedInputStream bis = new BufferedInputStream(bais);
         try {
-            ObjectInputStream ois = new ObjectInputStream(bis);
+            ObjectInputStream ois = new ClassResolvingObjectInputStream(bis);
             @SuppressWarnings({"unchecked"})
             T deserialized = (T) ois.readObject();
             ois.close();

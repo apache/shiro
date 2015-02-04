@@ -19,6 +19,9 @@
 package org.apache.shiro.web.mgt;
 
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.DefaultSubjectDAO;
+import org.apache.shiro.mgt.SessionStorageEvaluator;
+import org.apache.shiro.mgt.SubjectDAO;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
@@ -27,10 +30,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
-import org.apache.shiro.web.session.mgt.DefaultWebSessionContext;
-import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
-import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
-import org.apache.shiro.web.session.mgt.WebSessionKey;
+import org.apache.shiro.web.session.mgt.*;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
@@ -56,13 +56,20 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
 
     private static final Logger log = LoggerFactory.getLogger(DefaultWebSecurityManager.class);
 
+    @Deprecated
     public static final String HTTP_SESSION_MODE = "http";
+    @Deprecated
     public static final String NATIVE_SESSION_MODE = "native";
 
+    /**
+     * @deprecated as of 1.2.  This should NOT be used for anything other than determining if the sessionMode has changed.
+     */
+    @Deprecated
     private String sessionMode;
 
     public DefaultWebSecurityManager() {
         super();
+        ((DefaultSubjectDAO) this.subjectDAO).setSessionStorageEvaluator(new DefaultWebSessionStorageEvaluator());
         this.sessionMode = HTTP_SESSION_MODE;
         setSubjectFactory(new DefaultWebSubjectFactory());
         setRememberMeManager(new CookieRememberMeManager());
@@ -87,6 +94,31 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     @Override
+    //since 1.2.1 for fixing SHIRO-350
+    public void setSubjectDAO(SubjectDAO subjectDAO) {
+        super.setSubjectDAO(subjectDAO);
+        applySessionManagerToSessionStorageEvaluatorIfPossible();
+    }
+
+    //since 1.2.1 for fixing SHIRO-350
+    @Override
+    protected void afterSessionManagerSet() {
+        super.afterSessionManagerSet();
+        applySessionManagerToSessionStorageEvaluatorIfPossible();
+    }
+
+    //since 1.2.1 for fixing SHIRO-350:
+    private void applySessionManagerToSessionStorageEvaluatorIfPossible() {
+        SubjectDAO subjectDAO = getSubjectDAO();
+        if (subjectDAO instanceof DefaultSubjectDAO) {
+            SessionStorageEvaluator evaluator = ((DefaultSubjectDAO)subjectDAO).getSessionStorageEvaluator();
+            if (evaluator instanceof DefaultWebSessionStorageEvaluator) {
+                ((DefaultWebSessionStorageEvaluator)evaluator).setSessionManager(getSessionManager());
+            }
+        }
+    }
+
+    @Override
     protected SubjectContext copy(SubjectContext subjectContext) {
         if (subjectContext instanceof WebSubjectContext) {
             return new DefaultWebSubjectContext((WebSubjectContext) subjectContext);
@@ -95,11 +127,19 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     @SuppressWarnings({"UnusedDeclaration"})
+    @Deprecated
     public String getSessionMode() {
         return sessionMode;
     }
 
+    /**
+     * @param sessionMode
+     * @deprecated since 1.2
+     */
+    @Deprecated
     public void setSessionMode(String sessionMode) {
+        log.warn("The 'sessionMode' property has been deprecated.  Please configure an appropriate WebSessionManager " +
+                "instance instead of using this property.  This property/method will be removed in a later version.");
         String mode = sessionMode;
         if (mode == null) {
             throw new IllegalArgumentException("sessionMode argument cannot be null.");
@@ -117,27 +157,47 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         if (recreate) {
             LifecycleUtils.destroy(getSessionManager());
             SessionManager sessionManager = createSessionManager(mode);
-            setSessionManager(sessionManager);
+            this.setInternalSessionManager(sessionManager);
         }
+    }
+
+    @Override
+    public void setSessionManager(SessionManager sessionManager) {
+        this.sessionMode = null;
+        if (sessionManager != null && !(sessionManager instanceof WebSessionManager)) {
+            if (log.isWarnEnabled()) {
+                String msg = "The " + getClass().getName() + " implementation expects SessionManager instances " +
+                        "that implement the " + WebSessionManager.class.getName() + " interface.  The " +
+                        "configured instance is of type [" + sessionManager.getClass().getName() + "] which does not " +
+                        "implement this interface..  This may cause unexpected behavior.";
+                log.warn(msg);
+            }
+        }
+        setInternalSessionManager(sessionManager);
+    }
+
+    /**
+     * @param sessionManager
+     * @since 1.2
+     */
+    private void setInternalSessionManager(SessionManager sessionManager) {
+        super.setSessionManager(sessionManager);
     }
 
     /**
      * @since 1.0
      */
     public boolean isHttpSessionMode() {
-        return this.sessionMode == null || this.sessionMode.equals(HTTP_SESSION_MODE);
+        SessionManager sessionManager = getSessionManager();
+        return sessionManager instanceof WebSessionManager && ((WebSessionManager)sessionManager).isServletContainerSessions();
     }
 
     protected SessionManager createSessionManager(String sessionMode) {
-        if (sessionMode == null || sessionMode.equalsIgnoreCase(HTTP_SESSION_MODE)) {
-            if (log.isInfoEnabled()) {
-                log.info(HTTP_SESSION_MODE + " mode - enabling ServletContainerSessionManager (HTTP-only Sessions)");
-            }
+        if (sessionMode == null || !sessionMode.equalsIgnoreCase(NATIVE_SESSION_MODE)) {
+            log.info("{} mode - enabling ServletContainerSessionManager (HTTP-only Sessions)", HTTP_SESSION_MODE);
             return new ServletContainerSessionManager();
         } else {
-            if (log.isInfoEnabled()) {
-                log.info(NATIVE_SESSION_MODE + " mode - enabling DefaultWebSessionManager (HTTP + heterogeneous-client sessions)");
-            }
+            log.info("{} mode - enabling DefaultWebSessionManager (non-HTTP and HTTP Sessions)", NATIVE_SESSION_MODE);
             return new DefaultWebSessionManager();
         }
     }

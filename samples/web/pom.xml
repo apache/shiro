@@ -23,7 +23,8 @@
     <parent>
         <groupId>org.apache.shiro.samples</groupId>
         <artifactId>shiro-samples</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.2.3</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -67,6 +68,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -108,10 +110,6 @@
             <artifactId>jsp-2.1-jetty</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>taglibs</groupId>
-            <artifactId>standard</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

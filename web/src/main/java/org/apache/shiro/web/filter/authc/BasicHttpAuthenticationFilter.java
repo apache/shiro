@@ -28,6 +28,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 
 
 /**
@@ -212,6 +213,14 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
     }
 
     /**
+     * Delegates to {@link #isLoginAttempt(javax.servlet.ServletRequest, javax.servlet.ServletResponse) isLoginAttempt}.
+     */
+    @Override
+    protected final boolean isLoginRequest(ServletRequest request, ServletResponse response) {
+        return this.isLoginAttempt(request, response);
+    }
+
+    /**
      * Returns the {@link #AUTHORIZATION_HEADER AUTHORIZATION_HEADER} from the specified ServletRequest.
      * <p/>
      * This implementation merely casts the request to an <code>HttpServletRequest</code> and returns the header:
@@ -243,8 +252,9 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
      *         the {@link #getAuthzScheme() authzScheme}.
      */
     protected boolean isLoginAttempt(String authzHeader) {
-        String authzScheme = getAuthzScheme().toLowerCase();
-        return authzHeader.toLowerCase().startsWith(authzScheme);
+        //SHIRO-415: use English Locale:
+        String authzScheme = getAuthzScheme().toLowerCase(Locale.ENGLISH);
+        return authzHeader.toLowerCase(Locale.ENGLISH).startsWith(authzScheme);
     }
 
     /**
@@ -354,6 +364,6 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
      */
     protected String[] getPrincipalsAndCredentials(String scheme, String encoded) {
         String decoded = Base64.decodeToString(encoded);
-        return decoded.split(":");
+        return decoded.split(":", 2);
     }
 }

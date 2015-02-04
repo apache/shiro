@@ -300,13 +300,13 @@ public interface Subject {
      *          if this Subject does not have all of the specified roles.
      */
     void checkRoles(Collection<String> roleIdentifiers) throws AuthorizationException;
-    
+
     /**
      * Same as {@link #checkRoles(Collection<String> roleIdentifiers) checkRoles(Collection<String> roleIdentifiers)} but
      * doesn't require a collection as a an argument.
      * Asserts this Subject has all of the specified roles by returning quietly if they do or throwing an
      * {@link org.apache.shiro.authz.AuthorizationException} if they do not.
-     * 
+     *
      * @param roleIdentifiers roleIdentifiers the application-specific role identifiers to check (usually role ids or role names).
      * @throws AuthorizationException org.apache.shiro.authz.AuthorizationException
      *          if this Subject does not have all of the specified roles.
@@ -757,6 +757,23 @@ public interface Subject {
             if (!CollectionUtils.isEmpty(principals)) {
                 this.subjectContext.setPrincipals(principals);
             }
+            return this;
+        }
+
+        /**
+         * Configures whether or not the created Subject instance can create a new {@code Session} if one does not
+         * already exist.  If set to {@code false}, any application calls to
+         * {@code subject.getSession()} or {@code subject.getSession(true))} will result in a SessionException.
+         * <p/>
+         * This setting is {@code true} by default, as most applications find value in sessions.
+         *
+         * @param enabled whether or not the created Subject instance can create a new {@code Session} if one does not
+         *                already exist.
+         * @return this {@code Builder} instance for method chaining.
+         * @since 1.2
+         */
+        public Builder sessionCreationEnabled(boolean enabled) {
+            this.subjectContext.setSessionCreationEnabled(enabled);
             return this;
         }
 

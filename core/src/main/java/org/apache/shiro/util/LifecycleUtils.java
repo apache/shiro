@@ -65,6 +65,8 @@ public abstract class LifecycleUtils {
     public static void destroy(Object o) {
         if (o instanceof Destroyable) {
             destroy((Destroyable) o);
+        } else if (o instanceof Collection) {
+            destroy((Collection)o);
         }
     }
 

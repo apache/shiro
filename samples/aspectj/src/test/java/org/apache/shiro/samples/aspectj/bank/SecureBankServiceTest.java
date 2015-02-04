@@ -19,28 +19,25 @@
 package org.apache.shiro.samples.aspectj.bank;
 
 import junit.framework.Assert;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.junit.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SecureBankServiceTest {
 
-    private static Logger logger;
+    private static Logger logger = LoggerFactory.getLogger(SecureBankServiceTest.class);
     private static SecureBankService service;
     private static int testCounter;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        BasicConfigurator.resetConfiguration();
-        BasicConfigurator.configure();
-        logger = Logger.getLogger(SecureBankServiceTest.class.getSimpleName());
-
         Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiroBankServiceTest.ini");
         SecurityManager securityManager = factory.getInstance();
         SecurityUtils.setSecurityManager(securityManager);
@@ -200,6 +197,12 @@ public class SecureBankServiceTest {
         service.closeAccount(accountId);
     }
 
+    @Test(expected = UnauthorizedException.class)
+    public void testCloseAccount_unauthorizedAttempt() throws Exception {
+        loginAsUser();
+        long accountId = createAndValidateAccountFor("Chris Smith");
+        service.closeAccount(accountId);
+    }
 
     protected long createAndValidateAccountFor(String anOwner) throws Exception {
         long createdId = service.createNewAccount(anOwner);

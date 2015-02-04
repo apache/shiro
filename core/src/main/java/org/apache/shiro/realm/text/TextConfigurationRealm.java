@@ -38,7 +38,7 @@ import java.util.*;
  * specifies a name and an optional collection of assigned Permissions.  Users can be assigned Roles, and Roles can be
  * assigned Permissions.  By transitive association, each User 'has' all of their Role's Permissions.
  * <p/>
- * User and user-to-role definitinos are specified via the {@link #setUserDefinitions} method and
+ * User and user-to-role definitions are specified via the {@link #setUserDefinitions} method and
  * Role-to-permission definitions are specified via the {@link #setRoleDefinitions} method.
  *
  * @since 0.9
@@ -47,11 +47,23 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
 
     //TODO - complete JavaDoc
 
-    private String userDefinitions;
-    private String roleDefinitions;
+    private volatile String userDefinitions;
+    private volatile String roleDefinitions;
 
     public TextConfigurationRealm() {
         super();
+    }
+
+    /**
+     * Will call 'processDefinitions' on startup.
+     *
+     * @since 1.2
+     * @see <a href="https://issues.apache.org/jira/browse/SHIRO-223">SHIRO-223</a>
+     */
+    @Override
+    protected void onInit() {
+        super.onInit();
+        processDefinitions();
     }
 
     public String getUserDefinitions() {
@@ -131,7 +143,6 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         if (roleDefs == null || roleDefs.isEmpty()) {
             return;
         }
-
         for (String rolename : roleDefs.keySet()) {
             String value = roleDefs.get(rolename);
 
@@ -147,7 +158,6 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
     }
 
     protected void processUserDefinitions() throws ParseException {
-
         String userDefinitions = getUserDefinitions();
         if (userDefinitions == null) {
             return;
@@ -162,7 +172,6 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         if (userDefs == null || userDefs.isEmpty()) {
             return;
         }
-
         for (String username : userDefs.keySet()) {
 
             String value = userDefs.get(username);

@@ -30,7 +30,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.2.3</version>
 
     <name>Apache Shiro</name>
     <url>http://shiro.apache.org/</url>
@@ -41,9 +41,9 @@
     <inceptionYear>2004</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/trunk</developerConnection>
-        <url>http://svn.apache.org/repos/asf/shiro/trunk</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.2.3</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.2.3</developerConnection>
+        <url>http://svn.apache.org/repos/asf/shiro/tags/shiro-root-1.2.3</url>
     </scm>
     <issueManagement>
         <system>Jira</system>
@@ -58,19 +58,45 @@
         <site>
             <id>shiro.website</id>
             <name>Apache Shiro Site</name>
-            <url>scp://people.apache.org/www/shiro.apache.org/static/latest</url>
+            <url>scm:svn:https://svn.apache.org/repos/asf/shiro/site/publish/static/latest</url>
         </site>
     </distributionManagement>
 
     <properties>
-        <shiro.osgi.importRange>[1.1.0, 2.0.0)</shiro.osgi.importRange>
+
+        <!-- Replaced by the build number plugin at build time: -->
+        <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
+
+        <!-- non-dependency-based properties: -->
+        <shiro.osgi.importRange>[1.2, 2)</shiro.osgi.importRange>
+
+        <!-- Compile 3rd party dependencies: -->
+        <!-- Don't change this version without also changing the shiro-aspect and shiro-features
+             modules' OSGi metadata: -->
+        <aspectj.version>1.6.12</aspectj.version>
+        <commons.cli.version>1.2</commons.cli.version>
+        <commons.codec.version>1.4</commons.codec.version>
         <crowd.version>1.5.2</crowd.version>
-        <jdk.version>1.5</jdk.version>
-        <slf4j.version>1.5.6</slf4j.version>
+        <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
+             modules' OSGi metadata: -->
+        <ehcache.version>2.5.0</ehcache.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
-        <jetty.version>6.1.21</jetty.version>
-        <spring.version>2.5.6</spring.version>
-        <groovy.version>1.6.2</groovy.version>
+        <jdk.version>1.5</jdk.version>
+        <jetty.version>6.1.26</jetty.version>
+        <!-- Don't change this version without also changing the shiro-quartz and shiro-features
+             modules' OSGi metadata: -->
+        <quartz.version>1.6.1</quartz.version>
+        <slf4j.version>1.6.4</slf4j.version>
+        <spring.version>3.1.0.RELEASE</spring.version>
+        <guice.version>3.0</guice.version>
+        <guava.version>r09</guava.version>
+
+        <!-- Test 3rd-party dependencies: -->
+        <easymock.version>3.1</easymock.version>
+        <gmaven.version>1.3</gmaven.version>
+        <groovy.version>1.8.5</groovy.version>
+        <junit.version>4.8.2</junit.version>
+
     </properties>
 
     <mailingLists>
@@ -142,6 +168,22 @@
             <name>Tim Veil</name>
             <email>tveil@apache.org</email>
         </developer>
+        <developer>
+            <id>bdemers</id>
+            <name>Brian Demers</name>
+            <email>bdemers@apache.org</email>
+            <url>http://about.me/brian.demers</url>
+            <organization>Sonatype</organization>
+            <organizationUrl>http://www.sonatype.com/</organizationUrl>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>jbunting</id>
+            <name>Jared Bunting</name>
+            <email>jbunting@apache.org</email>
+            <organization>Apache Software Foundation</organization>
+            <timezone>-6</timezone>
+        </developer>
     </developers>
 
     <modules>
@@ -149,6 +191,7 @@
         <module>web</module>
         <module>support</module>
         <module>samples</module>
+        <module>tools</module>
         <module>all</module>
     </modules>
 
@@ -163,22 +206,27 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.0</version>
+                    <version>1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>2.1.1</version>
+                    <version>3.1</version>    
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-publish-plugin</artifactId>
+                    <version>1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
-                    <version>0.7</version>
+                    <version>0.8</version>
                     <configuration>
                     		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                         <excludes>
-                            <exclude>README-runtime-requirements.txt</exclude>
                             <exclude>**/.externalToolBuilders/*</exclude>
+                            <exclude>**/infinitest.filters</exclude>
                             <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                             <exclude>velocity.log</exclude>
                         </excludes>
@@ -189,7 +237,115 @@
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>1.2</version>
                 </plugin>
-            </plugins>    
+                <!-- Allow writing tests in Groovy: -->
+                <plugin>
+                    <groupId>org.codehaus.gmaven</groupId>
+                    <artifactId>gmaven-plugin</artifactId>
+                    <version>${gmaven.version}</version>
+                    <configuration>
+                        <providerSelection>1.7</providerSelection>
+                        <source>src/main/groovy</source>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.gmaven.runtime</groupId>
+                            <artifactId>gmaven-runtime-1.7</artifactId>
+                            <version>${gmaven.version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.codehaus.groovy</groupId>
+                                    <artifactId>groovy-all</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.codehaus.groovy</groupId>
+                            <artifactId>groovy-all</artifactId>
+                            <version>${groovy.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                	<groupId>org.eclipse.m2e</groupId>
+                	<artifactId>lifecycle-mapping</artifactId>
+                	<version>1.0.0</version>
+                	<configuration>
+                		<lifecycleMappingMetadata>
+                			<pluginExecutions>
+                				<pluginExecution>
+                					<pluginExecutionFilter>
+                						<groupId>
+                							org.codehaus.mojo
+                						</groupId>
+                						<artifactId>
+                							aspectj-maven-plugin
+                						</artifactId>
+                						<versionRange>
+                							[1.3,)
+                						</versionRange>
+                						<goals>
+                							<goal>test-compile</goal>
+                							<goal>compile</goal>
+                						</goals>
+                					</pluginExecutionFilter>
+                					<action>
+                						<ignore />
+                					</action>
+                				</pluginExecution>
+                				<pluginExecution>
+                					<pluginExecutionFilter>
+                						<groupId>
+                							org.apache.maven.plugins
+                						</groupId>
+                						<artifactId>
+                							maven-antrun-plugin
+                						</artifactId>
+                						<versionRange>
+                							[1.3,)
+                						</versionRange>
+                						<goals>
+                							<goal>run</goal>
+                						</goals>
+                					</pluginExecutionFilter>
+                					<action>
+                						<ignore />
+                					</action>
+                				</pluginExecution>
+                				<pluginExecution>
+                					<pluginExecutionFilter>
+                						<groupId>
+                							org.codehaus.mojo
+                						</groupId>
+                						<artifactId>
+                							dependency-maven-plugin
+                						</artifactId>
+                						<versionRange>
+                							[1.0,)
+                						</versionRange>
+                						<goals>
+                							<goal>unpack</goal>
+                						</goals>
+                					</pluginExecutionFilter>
+                					<action>
+                						<ignore />
+                					</action>
+                				</pluginExecution>
+                			</pluginExecutions>
+                		</lifecycleMappingMetadata>
+                	</configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>1.7</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>dependency-maven-plugin</artifactId>
+                    <version>1.0</version>
+                </plugin>
+            </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
@@ -208,32 +364,114 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12</version>
+                <configuration>
+                    <printSummary>true</printSummary>
+                </configuration>
+            </plugin>
+            <!-- Allow Groovy tests to run: -->
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>${gmaven.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Add SVN Revision To A JAR Manifest
+                     - http://maven.apache.org/plugin-developers/cookbook/add-svn-revision-to-manifest.html
+                -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.0-beta-4</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                    <revisionOnScmFailure>${project.version}</revisionOnScmFailure>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <SCM-Revision>${buildNumber}</SCM-Revision>
+                            <SCM-url>${project.scm.url}</SCM-url>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <!-- "install" needed because we have interrelated dependencies between the modules and we are releasing them all the same - especially consider shiro-all -->
-                    <preparationGoals>clean install</preparationGoals>
+                    <preparationGoals>clean apache-rat:check install</preparationGoals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <!-- This configuration copied from apache:apache:7 parent pom -->
                     <useReleaseProfile>false</useReleaseProfile>
-                    <goals>deploy site-deploy</goals>
-                    <arguments>-Papache-release</arguments>
+                    <goals>deploy site site:stage</goals>
+                    <arguments>-Pdocs,apache-release</arguments>
                     <mavenExecutorId>forked-path</mavenExecutorId>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <nexusUrl>https://repository.apache.org</nexusUrl>
+                    <serverId>apache.releases.https</serverId>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <dependencies>
+        <!-- Automatically inherited dependencies.  The only ones that should be in here
+             are test dependencies.  Actual compile or runtime dependencies should be
+             explicitly declared in a child module, referencing the dependency defined
+             in this file's <dependencyManagement> section. -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.4</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
-            <version>2.4</version>
+            <version>${easymock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Writing tests in groovy is fast!: -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovy.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -268,6 +506,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-guice</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-aspectj</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -292,6 +535,29 @@
             </dependency>
 
             <!-- 3rd party dependencies -->
+            <dependency>
+                <!-- used for the 'hasher' command line tool: -->
+                <groupId>commons-cli</groupId>
+                <artifactId>commons-cli</artifactId>
+                <version>${commons.cli.version}</version>
+            </dependency>
+            <dependency>
+                <!-- runtime dependency for the shiro-cas module: -->
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons.codec.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
             <dependency>
                 <!-- Used for Atlassian Crowd Realm - not required for the framework: -->
                 <groupId>com.atlassian.crowd</groupId>
@@ -326,7 +592,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.7.0</version>
+                <version>1.8.3</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -350,7 +616,7 @@
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>jstl</artifactId>
-                <version>1.2</version>
+                <version>1.1.2</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -362,7 +628,7 @@
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.15</version>
+                <version>1.2.16</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -390,8 +656,8 @@
             </dependency>
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>1.4.1</version>
+                <artifactId>ehcache-core</artifactId>
+                <version>${ehcache.version}</version>
                 <optional>true</optional>
                 <exclusions>
                     <exclusion>
@@ -472,7 +738,31 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
-                <artifactId>spring</artifactId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+                <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring.version}</version>
+                <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
                 <version>${spring.version}</version>
                 <optional>true</optional>
                 <exclusions>
@@ -498,31 +788,46 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
-                <optional>true</optional>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>quartz</groupId>
-                <artifactId>quartz</artifactId>
-                <version>1.5.2</version>
-                <optional>true</optional>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>taglibs</groupId>
-                <artifactId>standard</artifactId>
-                <version>1.1.2</version>
                 <scope>test</scope>
+                <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject.extensions</groupId>
+                <artifactId>guice-multibindings</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject.extensions</groupId>
+                <artifactId>guice-servlet</artifactId>
+                <version>${guice.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opensymphony.quartz</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${quartz.version}</version>
+                <optional>true</optional>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -595,7 +900,6 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
-                    <linkXref>true</linkXref>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <targetJdk>1.5</targetJdk>
                 </configuration>
@@ -611,12 +915,12 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <version>0.7</version>
+                <version>0.8</version>
                 <configuration>
                 		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                     <excludes>
-                        <exclude>README-runtime-requirements.txt</exclude>
                         <exclude>**/.externalToolBuilders/*</exclude>
+                        <exclude>**/infinitest.filters</exclude>
                         <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                         <exclude>velocity.log</exclude>
                     </excludes>
@@ -714,7 +1018,7 @@
                 <site>
                     <id>shiro.website</id>
                     <name>Apache Shiro Site</name>
-                    <url>scp://people.apache.org/www/shiro.apache.org/static/${project.version}</url>
+                    <url>scm:svn:https://svn.apache.org/repos/asf/shiro/site/publish/static/${project.version}</url>
                 </site>
             </distributionManagement>
         </profile>

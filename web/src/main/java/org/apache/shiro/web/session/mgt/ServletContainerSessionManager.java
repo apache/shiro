@@ -21,7 +21,6 @@ package org.apache.shiro.web.session.mgt;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
-import org.apache.shiro.session.mgt.AbstractSessionManager;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.web.session.HttpServletSession;
@@ -33,25 +32,26 @@ import javax.servlet.http.HttpSession;
 
 
 /**
- * SessionManager implementation providing Session implementations that are merely wrappers for the
- * Servlet container's HttpSession.
+ * SessionManager implementation providing {@link Session} implementations that are merely wrappers for the
+ * Servlet container's {@link HttpSession}.
  * <p/>
  * Despite its name, this implementation <em>does not</em> itself manage Sessions since the Servlet container
  * provides the actual management support.  This class mainly exists to 'impersonate' a regular Shiro
- * <tt>SessionManager</tt> so it can be pluggable into a normal Shiro configuration in a pure web application.
+ * {@code SessionManager} so it can be pluggable into a normal Shiro configuration in a pure web application.
  * <p/>
  * Note that because this implementation relies on the {@link HttpSession HttpSession}, it is only functional in a
- * servlet container.  I.e. it is <em>NOT</em> capable of supporting Sessions any clients other than
- * {@code HttpRequest/HttpResponse} based clients.
+ * servlet container - it is not capable of supporting Sessions for any clients other than those using the HTTP
+ * protocol.
  * <p/>
- * Therefore, if you need {@code Session} access from heterogenous client mediums (e.g. web pages,
- * Flash applets, Java Web Start applications, etc.), use the {@link DefaultWebSessionManager DefaultWebSessionManager}
+ * Therefore, if you need {@code Session} support for heterogeneous clients (e.g. web browsers,
+ * RMI clients, etc), use the {@link DefaultWebSessionManager DefaultWebSessionManager}
  * instead.  The {@code DefaultWebSessionManager} supports both traditional web-based access as well as non web-based
  * clients.
  *
  * @since 0.9
+ * @see DefaultWebSessionManager
  */
-public class ServletContainerSessionManager extends AbstractSessionManager {
+public class ServletContainerSessionManager implements WebSessionManager {
 
     //TODO - complete JavaDoc
 
@@ -107,9 +107,8 @@ public class ServletContainerSessionManager extends AbstractSessionManager {
 
         HttpSession httpSession = request.getSession();
 
-        //ensure that the httpSession timeout reflects what is configured:
-        long timeoutMillis = getGlobalSessionTimeout();
-        httpSession.setMaxInactiveInterval((int) (timeoutMillis / MILLIS_PER_SECOND));
+        //SHIRO-240: DO NOT use the 'globalSessionTimeout' value here on the acquired session.
+        //see: https://issues.apache.org/jira/browse/SHIRO-240
 
         String host = getHost(sessionContext);
 
@@ -120,4 +119,14 @@ public class ServletContainerSessionManager extends AbstractSessionManager {
         return new HttpServletSession(httpSession, host);
     }
 
+    /**
+     * This implementation always delegates to the servlet container for sessions, so this method returns
+     * {@code true} always.
+     *
+     * @return {@code true} always
+     * @since 1.2
+     */
+	public boolean isServletContainerSessions() {
+		return true;
+	}
 }

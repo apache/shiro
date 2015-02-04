@@ -21,6 +21,7 @@ package org.apache.shiro.authc.pam;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,7 +155,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
     protected void assertRealmsConfigured() throws IllegalStateException {
         Collection<Realm> realms = getRealms();
-        if (realms == null || realms.isEmpty()) {
+        if (CollectionUtils.isEmpty(realms)) {
             String msg = "Configuration error:  No realms have been configured!  One or more realms must be " +
                     "present to execute an authentication attempt.";
             throw new IllegalStateException(msg);
@@ -205,6 +206,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
         }
 
         for (Realm realm : realms) {
+
+            aggregate = strategy.beforeAttempt(realm, token, aggregate);
 
             if (realm.supports(token)) {
 
@@ -281,7 +284,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     public void onLogout(PrincipalCollection principals) {
         super.onLogout(principals);
         Collection<Realm> realms = getRealms();
-        if (realms != null && !realms.isEmpty()) {
+        if (!CollectionUtils.isEmpty(realms)) {
             for (Realm realm : realms) {
                 if (realm instanceof LogoutAware) {
                     ((LogoutAware) realm).onLogout(principals);

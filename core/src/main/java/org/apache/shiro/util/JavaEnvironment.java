@@ -144,4 +144,20 @@ public abstract class JavaEnvironment {
     public static boolean isAtLeastVersion15() {
         return getMajorVersion() >= JAVA_15;
     }
+
+    /**
+     * Convenience method to determine if the current JVM is at least
+     * Java 1.6 (Java 6).
+     *
+     * @return <code>true</code> if the current JVM is at least Java 1.6
+     * @see #getMajorVersion()
+     * @see #JAVA_15
+     * @see #JAVA_16
+     * @see #JAVA_17
+     *
+     * @since 1.2
+     */
+    public static boolean isAtLeastVersion16() {
+        return getMajorVersion() >= JAVA_16;
+    }
 }

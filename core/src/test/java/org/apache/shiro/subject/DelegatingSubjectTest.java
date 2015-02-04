@@ -146,34 +146,75 @@ public class DelegatingSubjectTest {
         Ini.Section users = ini.addSection("users");
         users.put("user1", "user1,role1");
         users.put("user2", "user2,role2");
+        users.put("user3", "user3,role3");
         IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
         SecurityManager sm = factory.getInstance();
 
+        //login as user1
         Subject subject = new Subject.Builder(sm).buildSubject();
         subject.login(new UsernamePasswordToken("user1", "user1"));
 
-        assertTrue(subject.getPrincipal().equals("user1"));
-        assertTrue(subject.hasRole("role1"));
         assertFalse(subject.isRunAs());
-        assertNull(subject.getPreviousPrincipals());
+        assertEquals("user1", subject.getPrincipal());
+        assertTrue(subject.hasRole("role1"));
+        assertFalse(subject.hasRole("role2"));
+        assertFalse(subject.hasRole("role3"));
+        assertNull(subject.getPreviousPrincipals()); //no previous principals since we haven't called runAs yet
 
+        //runAs user2:
         subject.runAs(new SimplePrincipalCollection("user2", IniSecurityManagerFactory.INI_REALM_NAME));
-
-        assertFalse(subject.getPrincipal().equals("user1"));
-        assertFalse(subject.hasRole("role1"));
-        assertTrue(subject.getPrincipal().equals("user2"));
-        assertTrue(subject.hasRole("role2"));
         assertTrue(subject.isRunAs());
-        assertFalse(CollectionUtils.isEmpty(subject.getPreviousPrincipals()));
-        assertTrue(subject.getPreviousPrincipals().getPrimaryPrincipal().equals("user1"));
+        assertEquals("user2", subject.getPrincipal());
+        assertTrue(subject.hasRole("role2"));
+        assertFalse(subject.hasRole("role1"));
+        assertFalse(subject.hasRole("role3"));
 
+        //assert we still have the previous (user1) principals:
+        PrincipalCollection previous = subject.getPreviousPrincipals();
+        assertFalse(CollectionUtils.isEmpty(previous));
+        assertTrue(previous.getPrimaryPrincipal().equals("user1"));
+
+        //test the stack functionality:  While as user2, run as user3:
+        subject.runAs(new SimplePrincipalCollection("user3", IniSecurityManagerFactory.INI_REALM_NAME));
+        assertTrue(subject.isRunAs());
+        assertEquals("user3", subject.getPrincipal());
+        assertTrue(subject.hasRole("role3"));
+        assertFalse(subject.hasRole("role1"));
+        assertFalse(subject.hasRole("role2"));
+
+        //assert we still have the previous (user2) principals in the stack:
+        previous = subject.getPreviousPrincipals();
+        assertFalse(CollectionUtils.isEmpty(previous));
+        assertTrue(previous.getPrimaryPrincipal().equals("user2"));
+
+        //drop down to user2:
         subject.releaseRunAs();
-        assertTrue(subject.getPrincipal().equals("user1"));
-        assertTrue(subject.hasRole("role1"));
+
+        //assert still run as:
+        assertTrue(subject.isRunAs());
+        assertEquals("user2", subject.getPrincipal());
+        assertTrue(subject.hasRole("role2"));
+        assertFalse(subject.hasRole("role1"));
+        assertFalse(subject.hasRole("role3"));
+
+        //assert we still have the previous (user1) principals:
+        previous = subject.getPreviousPrincipals();
+        assertFalse(CollectionUtils.isEmpty(previous));
+        assertTrue(previous.getPrimaryPrincipal().equals("user1"));
+
+        //drop down to original user1:
+        subject.releaseRunAs();
+
+        //assert we're no longer runAs:
         assertFalse(subject.isRunAs());
-        assertNull(subject.getPreviousPrincipals());
+        assertEquals("user1", subject.getPrincipal());
+        assertTrue(subject.hasRole("role1"));
+        assertFalse(subject.hasRole("role2"));
+        assertFalse(subject.hasRole("role3"));
+        assertNull(subject.getPreviousPrincipals()); //no previous principals in orig state
 
         subject.logout();
+
         LifecycleUtils.destroy(sm);
     }
 }

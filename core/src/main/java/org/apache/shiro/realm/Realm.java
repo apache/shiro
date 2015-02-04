@@ -21,8 +21,6 @@ package org.apache.shiro.realm;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authz.Authorizer;
-
 
 /**
  * A <tt>Realm</tt> is a security component that can access application-specific security entities
@@ -62,7 +60,7 @@ import org.apache.shiro.authz.Authorizer;
  * @see org.apache.shiro.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator
  * @since 0.1
  */
-public interface Realm extends Authorizer {
+public interface Realm {
 
     /**
      * Returns the (application-unique) name assigned to this <code>Realm</code>. All realms configured for a single

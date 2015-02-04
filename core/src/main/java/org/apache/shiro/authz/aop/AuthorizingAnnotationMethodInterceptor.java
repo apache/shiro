@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.authz.aop;
 
-import org.apache.shiro.aop.AnnotationHandler;
 import org.apache.shiro.aop.AnnotationMethodInterceptor;
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.MethodInvocation;
@@ -81,6 +80,15 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
      * @throws AuthorizationException if the method invocation is not allowed to continue/execute.
      */
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
-        ((AuthorizingAnnotationHandler)getHandler()).assertAuthorized(getAnnotation(mi));
+        try {
+            ((AuthorizingAnnotationHandler)getHandler()).assertAuthorized(getAnnotation(mi));
+        }
+        catch(AuthorizationException ae) {
+            // Annotation handler doesn't know why it was called, so add the information here if possible. 
+            // Don't wrap the exception here since we don't want to mask the specific exception, such as 
+            // UnauthenticatedException etc. 
+            if (ae.getCause() == null) ae.initCause(new AuthorizationException("Not authorized to invoke method: " + mi.getMethod()));
+            throw ae;
+        }         
     }
 }

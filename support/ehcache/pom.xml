@@ -22,7 +22,8 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.2.3</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -37,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
+            <artifactId>ehcache-core</artifactId>
         </dependency>
         <!-- Test dependencies -->
         <dependency>
@@ -63,11 +64,12 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.ehcache</Bundle-SymbolicName>
-                        <Export-Package>org.apache.shiro.ehcache*;version=${project.version}</Export-Package>
+                        <Export-Package>org.apache.shiro.cache.ehcache*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            net.sf.ehcache*;version="[1.4.0, 2.0.0)", 
-                            *</Import-Package>
+                            net.sf.ehcache*;version="[2.3, 3)",
+                            *
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
