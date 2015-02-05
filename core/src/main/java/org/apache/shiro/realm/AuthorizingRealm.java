@@ -307,7 +307,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      * @return the authorization information for the account associated with the specified {@code principals},
      *         or {@code null} if no account could be found.
      */
-    protected AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals) {
+    public AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals) {
 
         if (principals == null) {
             return null;
