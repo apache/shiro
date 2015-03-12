@@ -90,7 +90,22 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>webstart-maven-plugin</artifactId>
-                <version>1.0-beta-3</version>
+                <version>1.0-beta-6</version>
+                <dependencies>
+                    <!-- The following two dependencies are needed when building with JDK 1.8
+                         This has been fixed in 1.0-beta-7 (which is not released yet) -->
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>webstart-pack200-impl</artifactId>
+                        <version>1.0-beta-6</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>keytool-api-1.7</artifactId>
+                        <version>1.5</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -111,13 +126,15 @@
                     </jnlp>
 
                     <sign>
-                        <keystore>jsecurity-sample.jks</keystore>
+                        <keystore>${build.directory}/jnlp/jsecurity-sample.jks</keystore>
                         <storepass>jsecurity</storepass>
                         <alias>jsecurity</alias>
                         <verify>false</verify>
                     </sign>
                     <!-- BUILDING PROCESS -->
-                    <pack200>true</pack200>
+                    <pack200>
+                        <enabled>true</enabled>
+                    </pack200>
                     <verbose>false</verbose>
 
                 </configuration>

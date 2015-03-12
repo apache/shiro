@@ -179,8 +179,7 @@
             <name>Brian Demers</name>
             <email>bdemers@apache.org</email>
             <url>http://about.me/brian.demers</url>
-            <organization>Sonatype</organization>
-            <organizationUrl>http://www.sonatype.com/</organizationUrl>
+            <organization>Apache Software Foundation</organization>
             <timezone>-5</timezone>
         </developer>
         <developer>
