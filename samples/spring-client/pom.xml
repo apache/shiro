@@ -126,7 +126,7 @@
                     </jnlp>
 
                     <sign>
-                        <keystore>${build.directory}/jnlp/jsecurity-sample.jks</keystore>
+                        <keystore>${project.build.directory}/jnlp/jsecurity-sample.jks</keystore>
                         <storepass>jsecurity</storepass>
                         <alias>jsecurity</alias>
                         <verify>false</verify>

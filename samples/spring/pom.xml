@@ -99,11 +99,11 @@
                         <id>replace-jnlp-file</id>
                         <phase>process-resources</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <!-- move would be more appropriate but it would fail on repetitive executions of
                                      jetty:run for example, leaving the original in place doesn't hurt -->
                                 <copy file="${project.build.directory}/${project.build.finalName}/shiro.jnlp.jsp" todir="${project.build.directory}/${project.build.finalName}/WEB-INF/resources" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
