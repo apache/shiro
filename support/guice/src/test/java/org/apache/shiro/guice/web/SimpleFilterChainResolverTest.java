@@ -18,13 +18,14 @@
  */
 package org.apache.shiro.guice.web;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.name.Names;
-import org.apache.shiro.util.PatternMatcher;
-import org.apache.shiro.web.util.WebUtils;
-import org.easymock.IMocksControl;
-import org.junit.Test;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createStrictControl;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.same;
+import static org.junit.Assert.assertNull;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,11 +33,15 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertNull;
+import org.apache.shiro.util.PatternMatcher;
+import org.apache.shiro.web.util.WebUtils;
+import org.easymock.IMocksControl;
+import org.junit.Test;
+
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 
 
 /**
@@ -88,9 +93,9 @@ public class SimpleFilterChainResolverTest {
         Filter filter2a = ctrl.createMock(Filter.class);
         Filter filter2b = ctrl.createMock(Filter.class);
 
-        expect(injector.getInstance(key2a)).andReturn(filter2a);
+        expect((Filter)injector.getInstance(key2a)).andReturn(filter2a);
         filter2a.doFilter(same(request), same(response), anyObject(FilterChain.class));
-        expect(injector.getInstance(key2b)).andReturn(filter2b);
+        expect((Filter)injector.getInstance(key2b)).andReturn(filter2b);
         filter2b.doFilter(same(request), same(response), anyObject(FilterChain.class));
         originalChain.doFilter(request, response);
 

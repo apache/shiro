@@ -18,23 +18,37 @@
  */
 package org.apache.shiro.guice;
 
-import com.google.inject.*;
-import com.google.inject.name.Names;
-import com.google.inject.spi.Message;
-import com.google.inject.spi.TypeEncounter;
-import org.apache.shiro.guice.aop.ShiroAopModule;
-import org.apache.shiro.guice.web.ShiroWebModule;
+import static org.easymock.EasyMock.and;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.createControl;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.aop.DefaultAnnotationResolver;
 import org.apache.shiro.crypto.BlowfishCipherService;
+import org.apache.shiro.guice.aop.ShiroAopModule;
+import org.apache.shiro.guice.web.ShiroWebModule;
 import org.easymock.Capture;
 import org.easymock.IMocksControl;
 import org.junit.Test;
 
-import java.util.Collections;
-
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import com.google.inject.ConfigurationException;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.MembersInjector;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
+import com.google.inject.spi.Message;
+import com.google.inject.spi.TypeEncounter;
 
 /**
  * Test Cases::
@@ -83,7 +97,7 @@ public class BeanTypeListenerTest {
         expect(injector.getInstance(Key.get(String.class, Names.named("shiro.myProperty")))).andReturn(property);
         expect(injector.getInstance(Key.get(String.class, Names.named("shiro.unavailableProperty"))))
                 .andThrow(new ConfigurationException(Collections.singleton(new Message("Not Available!"))));
-        expect(injector.getInstance(BeanTypeListener.MAP_KEY)).andReturn(Collections.EMPTY_MAP).anyTimes();
+        expect((Map)injector.getInstance(BeanTypeListener.MAP_KEY)).andReturn(Collections.EMPTY_MAP).anyTimes();
 
         control.replay();
 
