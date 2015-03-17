@@ -18,19 +18,21 @@
  */
 package org.apache.shiro.guice.web;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import org.apache.shiro.util.PatternMatcher;
-import org.apache.shiro.web.filter.mgt.FilterChainResolver;
-import org.apache.shiro.web.util.WebUtils;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.util.Map;
+
+import com.google.inject.Injector;
+import com.google.inject.Key;
+
+import org.apache.shiro.util.PatternMatcher;
+import org.apache.shiro.web.filter.mgt.FilterChainResolver;
+import org.apache.shiro.web.util.WebUtils;
 
 class SimpleFilterChainResolver implements FilterChainResolver {
     private final Map<String, Key<? extends Filter>[]> chains;
@@ -47,12 +49,20 @@ class SimpleFilterChainResolver implements FilterChainResolver {
         String path = WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
         for (final String pathPattern : chains.keySet()) {
             if (patternMatcher.matches(pathPattern, path)) {
-                return new SimpleFilterChain(originalChain, Iterators.transform(Iterators.forArray(chains.get(pathPattern)),
-                        new Function<Key<? extends Filter>, Filter>() {
-                            public Filter apply(Key<? extends Filter> input) {
-                                return injector.getInstance(input);
-                            }
-                        }));
+                final Iterator<Key<? extends Filter>> chain = Arrays.asList(chains.get(pathPattern)).iterator();
+                return new SimpleFilterChain(originalChain, new Iterator<Filter>() {
+                    public boolean hasNext() {
+                        return chain.hasNext();
+                    }
+
+                    public Filter next() {
+                        return injector.getInstance(chain.next());
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                });
             }
         }
         return null;

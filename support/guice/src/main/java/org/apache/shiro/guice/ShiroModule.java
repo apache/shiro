@@ -18,14 +18,13 @@
  */
 package org.apache.shiro.guice;
 
-import com.google.common.collect.Sets;
-import com.google.inject.Key;
-import com.google.inject.PrivateModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.binder.AnnotatedBindingBuilder;
-import com.google.inject.binder.LinkedBindingBuilder;
-import com.google.inject.multibindings.Multibinder;
-import com.google.inject.util.Types;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+
+import javax.annotation.PreDestroy;
+
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.env.Environment;
 import org.apache.shiro.mgt.DefaultSecurityManager;
@@ -35,10 +34,13 @@ import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.util.Destroyable;
 
-import javax.annotation.PreDestroy;
-import java.util.Collection;
-import java.util.Set;
-import java.util.WeakHashMap;
+import com.google.inject.Key;
+import com.google.inject.PrivateModule;
+import com.google.inject.TypeLiteral;
+import com.google.inject.binder.AnnotatedBindingBuilder;
+import com.google.inject.binder.LinkedBindingBuilder;
+import com.google.inject.multibindings.Multibinder;
+import com.google.inject.util.Types;
 
 
 /**
@@ -48,8 +50,7 @@ import java.util.WeakHashMap;
  */
 public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
-    private Set<Destroyable> destroyables = Sets.newSetFromMap(new WeakHashMap<Destroyable, Boolean>());
-
+	private Set<Destroyable> destroyables = Collections.newSetFromMap(new WeakHashMap<Destroyable, Boolean>());
     public void configure() {
         this.binder().requireExplicitBindings();
         // setup security manager
