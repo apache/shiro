@@ -18,34 +18,43 @@
  */
 package org.apache.shiro.guice.web;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.servlet.Filter;
+import javax.servlet.ServletContext;
+
 import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.binder.AnnotatedBindingBuilder;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
-import org.apache.shiro.guice.ShiroModule;
+
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.env.Environment;
+import org.apache.shiro.guice.ShiroModule;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.PathMatchingFilter;
-import org.apache.shiro.web.filter.authc.*;
-import org.apache.shiro.web.filter.authz.*;
+import org.apache.shiro.web.filter.authc.AnonymousFilter;
+import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
+import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.apache.shiro.web.filter.authc.LogoutFilter;
+import org.apache.shiro.web.filter.authc.UserFilter;
+import org.apache.shiro.web.filter.authz.HttpMethodPermissionFilter;
+import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
+import org.apache.shiro.web.filter.authz.PortFilter;
+import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
+import org.apache.shiro.web.filter.authz.SslFilter;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.filter.session.NoSessionCreationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
-
-import javax.servlet.Filter;
-import javax.servlet.ServletContext;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Sets up Shiro lifecycles within Guice, enables the injecting of Shiro objects, and binds a default
@@ -131,26 +140,27 @@ public abstract class ShiroWebModule extends ShiroModule {
     }
 
     private void setupFilterChainConfigs() {
-        Table<Key<? extends PathMatchingFilter>, String, String> configs = HashBasedTable.create();
-
+        Map<Key<? extends PathMatchingFilter>, Map<String, String>> configs = new HashMap<Key<? extends PathMatchingFilter>, Map<String, String>>();
         for (Map.Entry<String, Key<? extends Filter>[]> filterChain : filterChains.entrySet()) {
             for (int i = 0; i < filterChain.getValue().length; i++) {
                 Key<? extends Filter> key = filterChain.getValue()[i];
                 if (key instanceof FilterConfigKey) {
-                    FilterConfigKey<? extends PathMatchingFilter> configKey = (FilterConfigKey<? extends PathMatchingFilter>) key;
-                    key = configKey.getKey();
-                    filterChain.getValue()[i] = key;
-                    if (!PathMatchingFilter.class.isAssignableFrom(key.getTypeLiteral().getRawType())) {
-                        throw new ConfigurationException("Config information requires a PathMatchingFilter - can't apply to " + key.getTypeLiteral().getRawType());
-                    }
-                    configs.put(castToPathMatching(key), filterChain.getKey(), configKey.getConfigValue());
-                } else if (PathMatchingFilter.class.isAssignableFrom(key.getTypeLiteral().getRawType())) {
-                    configs.put(castToPathMatching(key), filterChain.getKey(), "");
-                }
+	                  FilterConfigKey<? extends PathMatchingFilter> configKey = (FilterConfigKey<? extends PathMatchingFilter>) key;
+	                  key = configKey.getKey();
+	                  filterChain.getValue()[i] = key;
+	                  if (!PathMatchingFilter.class.isAssignableFrom(key.getTypeLiteral().getRawType())) {
+	                      throw new ConfigurationException("Config information requires a PathMatchingFilter - can't apply to " + key.getTypeLiteral().getRawType());
+	                  }
+	                  if (configs.get(castToPathMatching(key)) == null) configs.put(castToPathMatching(key), new HashMap<String, String>());
+	                  configs.get(castToPathMatching(key)).put(filterChain.getKey(), configKey.getConfigValue());
+	              } else if (PathMatchingFilter.class.isAssignableFrom(key.getTypeLiteral().getRawType())) {
+	                  if (configs.get(castToPathMatching(key)) == null) configs.put(castToPathMatching(key), new HashMap<String, String>());
+	                  configs.get(castToPathMatching(key)).put(filterChain.getKey(), "");
+	              }
             }
         }
-        for (Key<? extends PathMatchingFilter> filterKey : configs.rowKeySet()) {
-            bindPathMatchingFilter(filterKey, configs.row(filterKey));
+        for (Key<? extends PathMatchingFilter> filterKey : configs.keySet()) {
+            bindPathMatchingFilter(filterKey, configs.get(filterKey));
         }
     }
 
