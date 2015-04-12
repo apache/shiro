@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,7 +75,11 @@ public abstract class ThreadContext {
      * @return the map of bound resources
      */
     public static Map<Object, Object> getResources() {
-        return resources != null ? new HashMap<Object, Object>(resources.get()) : null;
+        if (resources.get() == null){
+            return Collections.emptyMap();
+        } else {
+            return new HashMap<Object, Object>(resources.get());
+        }
     }
 
     /**
@@ -89,6 +94,7 @@ public abstract class ThreadContext {
         if (CollectionUtils.isEmpty(newResources)) {
             return;
         }
+        ensureResourcesInitialized();
         resources.get().clear();
         resources.get().putAll(newResources);
     }
@@ -103,7 +109,14 @@ public abstract class ThreadContext {
      * @since 1.0
      */
     private static Object getValue(Object key) {
-        return resources.get().get(key);
+        Map<Object, Object> perThreadResources = resources.get();
+        return perThreadResources != null ? perThreadResources.get(key) : null;
+    }
+
+    private static void ensureResourcesInitialized(){
+        if (resources.get() == null){
+           resources.set(new HashMap<Object, Object>());
+        }
     }
 
     /**
@@ -154,6 +167,7 @@ public abstract class ThreadContext {
             return;
         }
 
+        ensureResourcesInitialized();
         resources.get().put(key, value);
 
         if (log.isTraceEnabled()) {
@@ -172,7 +186,8 @@ public abstract class ThreadContext {
      *         under the specified <tt>key</tt> name.
      */
     public static Object remove(Object key) {
-        Object value = resources.get().remove(key);
+        Map<Object, Object> perThreadResources = resources.get();
+        Object value = perThreadResources != null ? perThreadResources.remove(key) : null;
 
         if ((value != null) && log.isTraceEnabled()) {
             String msg = "Removed value of type [" + value.getClass().getName() + "] for key [" +
@@ -316,9 +331,6 @@ public abstract class ThreadContext {
     }
     
     private static final class InheritableThreadLocalMap<T extends Map<Object, Object>> extends InheritableThreadLocal<Map<Object, Object>> {
-        protected Map<Object, Object> initialValue() {
-            return new HashMap<Object, Object>();
-        }
 
         /**
          * This implementation was added to address a
