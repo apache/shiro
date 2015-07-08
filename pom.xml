@@ -81,7 +81,7 @@
              modules' OSGi metadata: -->
         <ehcache.version>2.5.0</ehcache.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
-        <jdk.version>1.5</jdk.version>
+        <jdk.version>1.6</jdk.version>
         <jetty.version>6.1.26</jetty.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
@@ -368,6 +368,29 @@
                 <configuration>
                     <printSummary>true</printSummary>
                 </configuration>
+            </plugin>
+            <!-- repository.apache.org doesn't accept connections from jdk 1.6 (https://issues.apache.org/jira/browse/BUILDS-85) so use toolchains
+            to require jdk 1.6 for compiling but deploy using a newer jdk
+            -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-toolchains-plugin</artifactId>
+              <version>1.1</version>
+              <configuration>
+                <toolchains>
+                  <jdk>
+                    <version>1.6</version>
+                    <vendor>sun</vendor>
+                  </jdk>
+                </toolchains>               
+              </configuration>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>toolchain</goal>
+                  </goals>
+                </execution>
+              </executions>
             </plugin>
             <!-- Allow Groovy tests to run: -->
             <plugin>
