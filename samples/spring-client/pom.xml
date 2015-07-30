@@ -35,6 +35,7 @@
 
     <properties>
         <shiro.session.id>${sessionId}</shiro.session.id>
+        <keytoolVersion>1.5</keytoolVersion>
     </properties>
 
     <dependencies>
@@ -90,7 +91,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>webstart-maven-plugin</artifactId>
-                <version>1.0-beta-3</version>
+                <version>1.0-beta-7</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -111,16 +112,40 @@
                     </jnlp>
 
                     <sign>
-                        <keystore>jsecurity-sample.jks</keystore>
+                        <keystore>${project.build.directory}/jnlp/jsecurity-sample.jks</keystore>
                         <storepass>jsecurity</storepass>
                         <alias>jsecurity</alias>
                         <verify>false</verify>
                     </sign>
                     <!-- BUILDING PROCESS -->
-                    <pack200>true</pack200>
+                    <pack200>
+                        <enabled>true</enabled>
+                    </pack200>
                     <verbose>false</verbose>
 
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>keytool-api</artifactId>
+                        <version>${keytoolVersion}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>keytool-api-1.5</artifactId>
+                        <version>${keytoolVersion}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>keytool-api-1.6</artifactId>
+                        <version>${keytoolVersion}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>keytool-api-1.7</artifactId>
+                        <version>${keytoolVersion}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
