@@ -35,6 +35,7 @@
 
     <properties>
         <shiro.session.id>${sessionId}</shiro.session.id>
+        <keytoolVersion>1.5</keytoolVersion>
     </properties>
 
     <dependencies>
@@ -111,7 +112,7 @@
                     </jnlp>
 
                     <sign>
-                        <keystore>${project.basedir}/src/main/jnlp/resources/jsecurity-sample.jks</keystore>
+                        <keystore>${project.build.directory}/jnlp/jsecurity-sample.jks</keystore>
                         <storepass>jsecurity</storepass>
                         <alias>jsecurity</alias>
                         <verify>false</verify>
@@ -123,6 +124,28 @@
                     <verbose>false</verbose>
 
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>keytool-api</artifactId>
+                        <version>${keytoolVersion}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>keytool-api-1.5</artifactId>
+                        <version>${keytoolVersion}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>keytool-api-1.6</artifactId>
+                        <version>${keytoolVersion}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>keytool-api-1.7</artifactId>
+                        <version>${keytoolVersion}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
