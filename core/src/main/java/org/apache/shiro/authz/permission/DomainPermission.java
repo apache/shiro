@@ -131,7 +131,6 @@ public class DomainPermission extends WildcardPermission {
     }
 
     protected void setTargets(Set<String> targets) {
-        this.targets = targets;
         if (this.targets != null && this.targets.equals(targets)) {
             return;
         }
