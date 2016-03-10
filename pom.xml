@@ -41,9 +41,10 @@
     <inceptionYear>2004</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/trunk</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/trunk</developerConnection>
-        <url>http://svn.apache.org/repos/asf/shiro/trunk</url>
+        <connection>scm:git:https://git.apache.org/shiro.git</connection>
+        <developerConnection>scm:git:git://git.apache.org/shiro.git</developerConnection>
+        <url>https://github.com/apache/shiro/tree/${project.scm.tag}</url>
+        <tag>master</tag>
     </scm>
     <issueManagement>
         <system>Jira</system>
@@ -222,7 +223,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>3.5</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.wagon</groupId>
@@ -234,7 +235,7 @@
                 <plugin>
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
-                    <version>0.8</version>
+                    <version>0.11</version>
                     <configuration>
                     		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                         <excludes>
@@ -418,12 +419,12 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- Add SVN Revision To A JAR Manifest
+                <!-- Add Git sha1 To A JAR Manifest
                      - http://maven.apache.org/plugin-developers/cookbook/add-svn-revision-to-manifest.html
                 -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.0</version>
+                <version>1.4</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -1040,7 +1041,7 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <version>0.8</version>
+                <version>0.11</version>
                 <configuration>
                 		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                     <excludes>

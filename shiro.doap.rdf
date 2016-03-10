@@ -84,10 +84,10 @@
             </Version>
         </release>
         <repository>
-            <SVNRepository>
-                <location rdf:resource="http://svn.apache.org/repos/asf/shiro"/>
-                <browse rdf:resource="http://svn.apache.org/repos/asf/shiro"/>
-            </SVNRepository>
+          <GitRepository>
+            <location rdf:resource="https://git.apache.org/shiro.git"/>
+            <browse rdf:resource="https://git.apache.org/shiro.git"/>
+          </GitRepository>
         </repository>
         <maintainer>
             <foaf:Person>

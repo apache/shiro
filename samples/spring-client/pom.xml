@@ -90,7 +90,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>webstart-maven-plugin</artifactId>
-                <version>1.0-beta-3</version>
+                <version>1.0-beta-7</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -111,13 +111,15 @@
                     </jnlp>
 
                     <sign>
-                        <keystore>jsecurity-sample.jks</keystore>
+                        <keystore>${project.basedir}/src/main/jnlp/resources/jsecurity-sample.jks</keystore>
                         <storepass>jsecurity</storepass>
                         <alias>jsecurity</alias>
                         <verify>false</verify>
                     </sign>
                     <!-- BUILDING PROCESS -->
-                    <pack200>true</pack200>
+                    <pack200>
+                        <enabled>true</enabled>
+                    </pack200>
                     <verbose>false</verbose>
 
                 </configuration>
