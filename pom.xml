@@ -243,6 +243,7 @@
                             <exclude>**/infinitest.filters</exclude>
                             <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                             <exclude>velocity.log</exclude>
+                            <exclude>CONTRIBUTING.md</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
@@ -1049,6 +1050,7 @@
                         <exclude>**/infinitest.filters</exclude>
                         <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                         <exclude>velocity.log</exclude>
+                        <exclude>CONTRIBUTING.md</exclude>
                     </excludes>
                 </configuration>
             </plugin>
