@@ -116,6 +116,39 @@ public class SimpleCookieTest extends TestCase {
         testRootContextPath(null);
     }
 
+    @Test
+    public void testReadValueInvalidPath() throws Exception {
+        expect(mockRequest.getRequestURI()).andStubReturn("/foo/index.jsp");
+        expect(mockRequest.getCookies()).andStubReturn(new javax.servlet.http.Cookie[] { new javax.servlet.http.Cookie(this.cookie.getName(), "value") });
+        replay(mockRequest);
+        replay(mockResponse);
+
+        this.cookie.setPath("/bar/index.jsp");
+        assertEquals(null, this.cookie.readValue(mockRequest, mockResponse));
+    }
+
+    @Test
+    public void testReadValuePrefixPath() throws Exception {
+        expect(mockRequest.getRequestURI()).andStubReturn("/bar/index.jsp");
+        expect(mockRequest.getCookies()).andStubReturn(new javax.servlet.http.Cookie[] { new javax.servlet.http.Cookie(this.cookie.getName(), "value") });
+        replay(mockRequest);
+        replay(mockResponse);
+
+        this.cookie.setPath("/bar");
+        assertEquals("value", this.cookie.readValue(mockRequest, mockResponse));
+    }
+
+    @Test
+    public void testReadValueInvalidPrefixPath() throws Exception {
+        expect(mockRequest.getRequestURI()).andStubReturn("/foobar/index.jsp");
+        expect(mockRequest.getCookies()).andStubReturn(new javax.servlet.http.Cookie[] { new javax.servlet.http.Cookie(this.cookie.getName(), "value") });
+        replay(mockRequest);
+        replay(mockResponse);
+
+        this.cookie.setPath("/foo");
+        assertEquals(null, this.cookie.readValue(mockRequest, mockResponse));
+    }
+
     private static <T extends javax.servlet.http.Cookie> T eqCookie(final T in) {
         reportMatcher(new IArgumentMatcher() {
             public boolean matches(Object o) {
