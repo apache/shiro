@@ -329,6 +329,24 @@ public class SimpleCookie implements Cookie {
     }
 
     /**
+     * Check whether the given {@code cookiePath} matches the {@code requestPath}
+     *
+     * @param cookiePath
+     * @param requestPath
+     * @return
+     * @see <a href="https://tools.ietf.org/html/rfc6265#section-5.1.4">RFC 6265, Section 5.1.4 "Paths and Path-Match"</a>
+     */
+    private boolean pathMatches(String cookiePath, String requestPath) {
+        if (!requestPath.startsWith(cookiePath)) {
+            return false;
+        }
+
+        return requestPath.length() == cookiePath.length()
+            || cookiePath.charAt(cookiePath.length() - 1) == '/'
+            || requestPath.charAt(cookiePath.length()) == '/';
+    }
+
+    /**
      * Formats a date into a cookie date compatible string (Netscape's specification).
      *
      * @param date the date to format
@@ -362,8 +380,14 @@ public class SimpleCookie implements Cookie {
         String value = null;
         javax.servlet.http.Cookie cookie = getCookie(request, name);
         if (cookie != null) {
-            value = cookie.getValue();
-            log.debug("Found '{}' cookie value [{}]", name, value);
+            // Validate that the cookie is used at the correct place.
+            String path = StringUtils.clean(getPath());
+            if (path != null && !pathMatches(path, request.getRequestURI())) {
+                log.warn("Found '{}' cookie at path '{}', but should be only used for '{}'", new Object[] { name, request.getRequestURI(), path});
+            } else {
+                value = cookie.getValue();
+                log.debug("Found '{}' cookie value [{}]", name, value);
+            }
         } else {
             log.trace("No '{}' cookie value", name);
         }
