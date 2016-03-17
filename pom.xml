@@ -41,9 +41,10 @@
     <inceptionYear>2004</inceptionYear>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/shiro/branches/1.2.x</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/shiro/branches/1.2.x</developerConnection>
-        <url>http://svn.apache.org/repos/asf/shiro/branches/1.2.x</url>
+        <connection>scm:git:https://git-wip-us.apache.org/repos/asf/shiro.git</connection>
+        <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/shiro.git</developerConnection>
+        <url>https://github.com/apache/shiro/tree/${project.scm.tag}</url>
+        <tag>1.2.x</tag>
     </scm>
     <issueManagement>
         <system>Jira</system>
@@ -384,12 +385,12 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- Add SVN Revision To A JAR Manifest
+                <!-- Add Git sha1 To A JAR Manifest
                      - http://maven.apache.org/plugin-developers/cookbook/add-svn-revision-to-manifest.html
                 -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.0-beta-4</version>
+                <version>1.4</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -909,7 +910,7 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <version>0.8</version>
+                <version>0.11</version>
                 <configuration>
                 		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                     <excludes>
