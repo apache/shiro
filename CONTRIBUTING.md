@@ -3,7 +3,7 @@ Contributing to Apache Shiro
 
 Summary
 -------
-This document covers how to contribute to the ACS project. These instructions assume you have a GitHub.com account, so if you don't have one you will have to create one. Your proposed code changes will be published to your own fork of the ACS project and you will submit a Pull Request for your changes to be added.
+This document covers how to contribute to the Apache Shiro project. These instructions assume you have a GitHub.com account, so if you don't have one you will have to create one. Your proposed code changes will be published to your own fork of the Apache Shiro project and you will submit a Pull Request for your changes to be added.
 
 _Lets get started!!!_
 
@@ -48,7 +48,7 @@ $ git commit -a -m "descriptive commit message for your changes"
 Rebase `feature_x` to include updates from `upstream/master`
 ------------------------------------------------------------
 
-It is important that you maintain an up-to-date `master` branch in your local repository.  This is done by rebasing in the code changes from `upstream/master` (the official ACS project repository) into your local repository.  You will want to do this before you start working on a feature as well as right before you submit your changes as a pull request.  I recommend you do this process periodically while you work to make sure you are working off the most recent project code.
+It is important that you maintain an up-to-date `master` branch in your local repository.  This is done by rebasing in the code changes from `upstream/master` (the official Apache Shiro project repository) into your local repository.  You will want to do this before you start working on a feature as well as right before you submit your changes as a pull request.  I recommend you do this process periodically while you work to make sure you are working off the most recent project code.
 
 This process will do the following:
 
