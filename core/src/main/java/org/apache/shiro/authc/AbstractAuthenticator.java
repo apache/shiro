@@ -188,7 +188,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     public final AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
 
         if (token == null) {
-            throw new IllegalArgumentException("Method argumet (authentication token) cannot be null.");
+            throw new IllegalArgumentException("Method argument (authentication token) cannot be null.");
         }
 
         log.trace("Authentication attempt received for token [{}]", token);
@@ -212,6 +212,8 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
                 String msg = "Authentication failed for token submission [" + token + "].  Possible unexpected " +
                         "error? (Typical or expected login exceptions should extend from AuthenticationException).";
                 ae = new AuthenticationException(msg, t);
+                if (log.isWarnEnabled())
+                    log.warn(msg, t);
             }
             try {
                 notifyFailure(token, ae);

@@ -18,8 +18,15 @@
  */
 package org.apache.shiro.authc;
 
+import org.apache.log4j.Appender;
+import org.apache.log4j.Layout;
+import org.apache.log4j.Logger;
+import org.apache.log4j.SimpleLayout;
+import org.apache.log4j.WriterAppender;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
@@ -150,6 +157,38 @@ public class AbstractAuthenticatorTest {
         };
         AuthenticationToken token = newToken();
         abstractAuthenticator.authenticate(token);
+    }
+
+    @Test
+    public void logExceptionAfterDoAuthenticateThrowsNonAuthenticationException() {
+        Logger logger = Logger.getLogger(AbstractAuthenticator.class);
+
+        // NOTE: log4j is a test dependency
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Layout layout = new SimpleLayout();
+        Appender appender = new WriterAppender(layout, out);
+        logger.addAppender(appender);
+
+        final String expectedExceptionMessage = "exception thrown for test logExceptionAfterDoAuthenticateThrowsNonAuthenticationException";
+
+        abstractAuthenticator = new AbstractAuthenticator() {
+            protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
+                throw new IllegalArgumentException(expectedExceptionMessage);
+            }
+        };
+        AuthenticationToken token = newToken();
+
+        try{
+            abstractAuthenticator.authenticate(token);
+            fail("the expected AuthenticationException was not thrown");
+        }catch(AuthenticationException expectedException){
+        }
+
+        String logMsg = out.toString();
+        assertTrue(logMsg.contains("WARN"));
+        assertTrue(logMsg.contains("java.lang.IllegalArgumentException: "+ expectedExceptionMessage));
+
+        logger.removeAppender(appender);
     }
 
 }
