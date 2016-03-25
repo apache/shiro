@@ -126,6 +126,9 @@ public class CasFilter extends AuthenticatingFilter {
     @Override
     protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException ae, ServletRequest request,
                                      ServletResponse response) {
+        if (logger.isDebugEnabled()) {
+            logger.debug( "Authentication exception", ae );
+        }
         // is user authenticated or in remember me mode ?
         Subject subject = getSubject(request, response);
         if (subject.isAuthenticated() || subject.isRemembered()) {
