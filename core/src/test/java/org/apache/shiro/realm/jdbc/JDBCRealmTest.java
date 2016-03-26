@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.realm.jdbc;
 
+import com.sun.org.apache.xml.internal.security.utils.Base64;
+import java.io.UnsupportedEncodingException;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -39,6 +41,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.codec.Hex;
 
 
 /**
@@ -167,6 +171,106 @@ public class JDBCRealmTest {
         } catch (IncorrectCredentialsException ex) {
             // Expected
         }
+    }
+    
+    @Test
+    public void testSaltCryptHexSuccess() throws Exception {
+        String testMethodName = name.getMethodName();
+        JdbcRealm realm = realmMap.get(testMethodName);
+        createSaltCryptSchema(testMethodName);
+        realm.setSaltStyle(JdbcRealm.SaltStyle.CRYPT);
+        
+        HashedCredentialsMatcher hashedCredentialsMatcher=new HashedCredentialsMatcher(Sha256Hash.ALGORITHM_NAME);
+        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
+        realm.setCredentialsMatcher(hashedCredentialsMatcher);
+        
+        Subject.Builder builder = new Subject.Builder(securityManager);
+        Subject currentUser = builder.buildSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
+        currentUser.login(token);
+        currentUser.logout();
+    }
+    
+    @Test
+    public void testSaltCryptBase64Success() throws Exception {
+        String testMethodName = name.getMethodName();
+        JdbcRealm realm = realmMap.get(testMethodName);
+        createSaltCryptSchema(testMethodName);
+        realm.setSaltStyle(JdbcRealm.SaltStyle.CRYPT);
+        
+        HashedCredentialsMatcher hashedCredentialsMatcher=new HashedCredentialsMatcher(Sha256Hash.ALGORITHM_NAME);
+        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(false);
+        realm.setCredentialsMatcher(hashedCredentialsMatcher);
+        
+        Subject.Builder builder = new Subject.Builder(securityManager);
+        Subject currentUser = builder.buildSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
+        currentUser.login(token);
+        currentUser.logout();
+    }
+    
+    @Test
+    public void testSaltCryptWrongPassword() throws Exception {
+        String testMethodName = name.getMethodName();
+        JdbcRealm realm = realmMap.get(testMethodName);
+        createSaltCryptSchema(testMethodName);
+        realm.setSaltStyle(JdbcRealm.SaltStyle.CRYPT);
+        
+        HashedCredentialsMatcher hashedCredentialsMatcher=new HashedCredentialsMatcher(Sha256Hash.ALGORITHM_NAME);
+        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
+        realm.setCredentialsMatcher(hashedCredentialsMatcher);
+        
+        Subject.Builder builder = new Subject.Builder(securityManager);
+        Subject currentUser = builder.buildSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(username, "passwrd");
+        try {
+            currentUser.login(token);
+        } catch (IncorrectCredentialsException ex) {
+            // Expected
+        }
+        
+        assert !currentUser.isAuthenticated();
+    }
+    
+    @Test
+    public void testSaltCryptNoAlgoSuccess() throws Exception {
+        String testMethodName = name.getMethodName();
+        JdbcRealm realm = realmMap.get(testMethodName);
+        createSaltCryptNoAlgoSchema(testMethodName);
+        realm.setSaltStyle(JdbcRealm.SaltStyle.CRYPT);
+        
+        HashedCredentialsMatcher hashedCredentialsMatcher=new HashedCredentialsMatcher(Sha256Hash.ALGORITHM_NAME);
+        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
+        realm.setCredentialsMatcher(hashedCredentialsMatcher);
+        
+        Subject.Builder builder = new Subject.Builder(securityManager);
+        Subject currentUser = builder.buildSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
+        currentUser.login(token);
+        currentUser.logout();
+    }
+    
+    @Test
+    public void testSaltCryptNoAlgoWrongPassword() throws Exception {
+        String testMethodName = name.getMethodName();
+        JdbcRealm realm = realmMap.get(testMethodName);
+        createSaltCryptNoAlgoSchema(testMethodName);
+        realm.setSaltStyle(JdbcRealm.SaltStyle.CRYPT);
+        
+        HashedCredentialsMatcher hashedCredentialsMatcher=new HashedCredentialsMatcher(Sha256Hash.ALGORITHM_NAME);
+        hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
+        realm.setCredentialsMatcher(hashedCredentialsMatcher);
+        
+        Subject.Builder builder = new Subject.Builder(securityManager);
+        Subject currentUser = builder.buildSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(username, "passwrd");
+        try {
+            currentUser.login(token);
+        } catch (IncorrectCredentialsException ex) {
+            // Expected
+        }
+        
+        assert !currentUser.isAuthenticated();
     }
     
     @Test
@@ -340,6 +444,78 @@ public class JDBCRealmTest {
             sql.executeUpdate("insert into users values ('" + username + "', '" + password + "', '" + salt + "')");
         } catch (SQLException ex) {
             Assert.fail("Exception creating test database");
+        } finally {
+            JdbcUtils.closeStatement(sql);
+            JdbcUtils.closeConnection(conn);
+        }
+        createRolesAndPermissions(ds);
+        realmMap.get(testName).setDataSource(ds);
+        dsMap.put(testName, ds);
+    }
+    
+    /**
+     * Creates a test database with a separate salt column in the users table. Sets the
+     * DataSource of the realm associated with the test to a DataSource connected to the database.
+     */
+    protected void createSaltCryptSchema(String testName) {
+        jdbcDataSource ds = new jdbcDataSource();
+        ds.setDatabase("jdbc:hsqldb:mem:" + name);
+        ds.setUser("SA");
+        ds.setPassword("");
+        Connection conn = null;
+        Statement sql = null;
+        try {
+            conn = ds.getConnection();
+            sql = conn.createStatement();
+            sql.executeUpdate(
+                    "create table users (username varchar(20), password varchar(255))");
+            Sha256Hash sha256Hash = new Sha256Hash(plainTextPassword, salt);
+            String password = ((HashedCredentialsMatcher) realmMap.get(testName).getCredentialsMatcher()).isStoredCredentialsHexEncoded()
+                    ? "$5" + "$" + Hex.encodeToString(salt.getBytes("UTF8")) + "$" + sha256Hash.toHex()
+                    : "$5" + "$" + Base64.encode(salt.getBytes("UTF8")) + "$" + sha256Hash.toBase64();
+            sql.executeUpdate("insert into users values ('" + username + "', '" + password + "')");
+        } catch (SQLException ex) {
+            Assert.fail("Exception creating test database");
+        } catch (UnsupportedEncodingException ex) {
+            Assert.fail("Exception encoding the salt");
+        } finally {
+            JdbcUtils.closeStatement(sql);
+            JdbcUtils.closeConnection(conn);
+        }
+        createRolesAndPermissions(ds);
+        realmMap.get(testName).setDataSource(ds);
+        dsMap.put(testName, ds);
+    }
+    
+    /**
+     * Creates a test database with a separate salt column in the users table. Sets the
+     * DataSource of the realm associated with the test to a DataSource connected to the database.
+     */
+    protected void createSaltCryptNoAlgoSchema(String testName) {
+        jdbcDataSource ds = new jdbcDataSource();
+        ds.setDatabase("jdbc:hsqldb:mem:" + name);
+        ds.setUser("SA");
+        ds.setPassword("");
+        Connection conn = null;
+        Statement sql = null;
+        try {
+            conn = ds.getConnection();
+            sql = conn.createStatement();
+            sql.executeUpdate(
+                    "create table users (username varchar(20), password varchar(255))");
+            Sha256Hash sha256Hash = new Sha256Hash(plainTextPassword, salt);
+            HashedCredentialsMatcher hashedCredentialsMatcher=new HashedCredentialsMatcher(Sha256Hash.ALGORITHM_NAME);
+            hashedCredentialsMatcher.setStoredCredentialsHexEncoded(true);
+            realmMap.get(testName).setCredentialsMatcher(hashedCredentialsMatcher);
+            
+            String password = ((HashedCredentialsMatcher) realmMap.get(testName).getCredentialsMatcher()).isStoredCredentialsHexEncoded()
+                    ? "$" + Hex.encodeToString(salt.getBytes("UTF8")) + "$" + sha256Hash.toHex()
+                    : "$" + Base64.encode(salt.getBytes("UTF8")) + "$" + sha256Hash.toBase64();
+            sql.executeUpdate("insert into users values ('" + username + "', '" + password + "')");
+        } catch (SQLException ex) {
+            Assert.fail("Exception creating test database");
+        } catch (UnsupportedEncodingException ex) {
+            Assert.fail("Exception encoding the salt");
         } finally {
             JdbcUtils.closeStatement(sql);
             JdbcUtils.closeConnection(conn);

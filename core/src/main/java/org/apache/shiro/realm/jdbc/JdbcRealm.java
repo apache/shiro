@@ -44,6 +44,13 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import org.apache.shiro.authc.credential.CredentialsMatcher;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.codec.Base64;
+import org.apache.shiro.codec.Hex;
+import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.apache.shiro.crypto.hash.Sha512Hash;
 
 
 /**
@@ -76,6 +83,11 @@ public class JdbcRealm extends AuthorizingRealm {
      * The default query used to retrieve account data for the user when {@link #saltStyle} is COLUMN.
      */
     protected static final String DEFAULT_SALTED_AUTHENTICATION_QUERY = "select password, password_salt from users where username = ?";
+    
+    /**
+     * The default query used to retrieve account data for the user when {@link #saltStyle} is COLUMN.
+     */
+    protected static final String DEFAULT_CRYPT_SALTED_AUTHENTICATION_QUERY = "select password from users where username = ?";
 
     /**
      * The default query used to retrieve the roles that apply to a user.
@@ -198,6 +210,8 @@ public class JdbcRealm extends AuthorizingRealm {
         this.saltStyle = saltStyle;
         if (saltStyle == SaltStyle.COLUMN && authenticationQuery.equals(DEFAULT_AUTHENTICATION_QUERY)) {
             authenticationQuery = DEFAULT_SALTED_AUTHENTICATION_QUERY;
+        } else if (saltStyle == SaltStyle.CRYPT && authenticationQuery.equals(DEFAULT_AUTHENTICATION_QUERY)) {
+            authenticationQuery = DEFAULT_CRYPT_SALTED_AUTHENTICATION_QUERY;
         }
     }
 
@@ -227,9 +241,72 @@ public class JdbcRealm extends AuthorizingRealm {
                 password = getPasswordForUser(conn, username)[0];
                 break;
             case CRYPT:
-                // TODO: separate password and hash from getPasswordForUser[0]
-                throw new ConfigurationException("Not implemented yet");
-                //break;
+                /*
+                http://www.slashroot.in/how-are-passwords-stored-linux-understanding-hashing-shadow-utils
+                
+                Example: $1$Etg2ExUZ$F9NTP7omafhKIlqaBMqng1
+
+                The above shown encoded hash value can be further classified into three different fields as below.
+                1. The first field is a numerical number that tell's you the hashing algorithm that's being used.
+
+                $1 = MD5 hashing algorithm.
+                $2 =Blowfish Algorithm is in use.
+                $2a=eksblowfish Algorithm
+                $5 =SHA-256 Algorithm
+                $6 =SHA-512 Algorithm
+
+                2. The second field is the salt value
+                Salt value is nothing but a random data that's generated to combine with the original password, inorder to increase the strength of the hash..
+
+                3.The last field is the hash value of salt+user password (we will be discussing this shortly).
+                
+                */
+                
+                String[] crypt=getPasswordForUser(conn, username)[0].split("\\$");
+                CredentialsMatcher credentialsMatcher = getCredentialsMatcher();
+                if (credentialsMatcher instanceof HashedCredentialsMatcher) {
+                    HashedCredentialsMatcher hashedCredentialsMatcher=(HashedCredentialsMatcher) credentialsMatcher;
+                            
+                    switch (crypt.length) {
+                        // hash algorithm is not set
+                        case 3:
+                            
+                            // Hex decoding is ugly and should not be used really    
+                            salt=hashedCredentialsMatcher.isStoredCredentialsHexEncoded()
+                                    ? new String(Hex.decode(crypt[1]))
+                                    : Base64.decodeToString(crypt[1]);
+                            password=crypt[2];
+                            break;
+                        
+                        // hash algorithm is set
+                        case 4:
+                            String hashAlgorithm=crypt[1];
+                                if (hashAlgorithm.equals("6")) 
+                                    hashedCredentialsMatcher.setHashAlgorithmName(Sha512Hash.ALGORITHM_NAME);
+                                else if (hashAlgorithm.equals("5")) 
+                                    hashedCredentialsMatcher.setHashAlgorithmName(Sha256Hash.ALGORITHM_NAME);
+                                else if (hashAlgorithm.equals("1")) 
+                                    hashedCredentialsMatcher.setHashAlgorithmName(Md5Hash.ALGORITHM_NAME);
+                                else if (hashAlgorithm.equals("2")) 
+                                    throw new AuthenticationException("Requested 'Blowfish' algorithm is not supported. Can not validate the token.");
+                                else if (hashAlgorithm.equals("2a")) 
+                                    throw new AuthenticationException("Requested 'eksblowfish' algorithm is not supported. Can not validate the token.");
+
+                                setCredentialsMatcher(credentialsMatcher);
+
+                            // Hex decoding is ugly and should not be used really    
+                            salt=hashedCredentialsMatcher.isStoredCredentialsHexEncoded()
+                                    ? new String(Hex.decode(crypt[2]))
+                                    : Base64.decodeToString(crypt[2]);
+                            
+                            password=crypt[3];
+                            break;
+                        default:
+                            throw new AuthenticationException("Unable to parse 'crypt' from password. Can not validate the token.");
+                    }
+                }
+                
+                break;
             case COLUMN:
                 String[] queryResults = getPasswordForUser(conn, username);
                 password = queryResults[0];
