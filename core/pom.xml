@@ -29,7 +29,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-core</artifactId>
     <name>Apache Shiro :: Core</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <build>
         <plugins>
@@ -45,7 +45,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- <plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
@@ -59,7 +59,19 @@
                         </Import-Package>
                     </instructions>
                 </configuration>
-            </plugin> -->
+            </plugin>
+	    <plugin>
+		<groupId>org.apache.felix</groupId>
+		<artifactId>maven-scr-plugin</artifactId>
+		<executions>
+		    <execution>
+			<id>generate-scr-scrdescriptor</id>
+			<goals>
+			    <goal>scr</goal>
+			</goals>
+		    </execution>
+		</executions>
+	    </plugin>
         </plugins>
     </build>
 
@@ -110,6 +122,24 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
+	
+	<!-- OSGi core classes -->
+	    <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.compendium</artifactId>
+            </dependency>
+	    <dependency>
+	    <groupId>org.apache.felix</groupId>
+	    <artifactId>org.apache.felix.scr.annotations</artifactId>
+	</dependency>
+	<dependency>
+	    <groupId>org.apache.felix</groupId>
+	    <artifactId>org.apache.felix.scr.ds-annotations</artifactId>    	
+	</dependency>
         <!-- JDBC Realm tests: -->
         <dependency>
             <groupId>hsqldb</groupId>
