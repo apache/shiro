@@ -41,6 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
+import org.apache.shiro.subject.support.SubjectThreadState;
+import org.apache.shiro.util.ThreadState;
 
 /**
  * The Shiro framework's default concrete implementation of the {@link SecurityManager} interface,
@@ -582,6 +584,12 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             }
         }
     }
+
+    public ThreadState createSubjectThreadState(Subject subject) {
+	return new SubjectThreadState(subject);
+    }
+    
+    
 
     protected void stopSession(Subject subject) {
         Session s = subject.getSession(false);

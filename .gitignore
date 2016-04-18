@@ -35,6 +35,11 @@ bin/
 target/
 
 #
+# Netbeans metadata
+#
+.nb-configuration.xml
+
+#
 # Maven release metadata
 #
 release.properties

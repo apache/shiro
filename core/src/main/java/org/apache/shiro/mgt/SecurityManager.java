@@ -25,6 +25,7 @@ import org.apache.shiro.authz.Authorizer;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
+import org.apache.shiro.util.ThreadState;
 
 
 /**
@@ -111,4 +112,19 @@ public interface SecurityManager extends Authenticator, Authorizer, SessionManag
      */
     Subject createSubject(SubjectContext context);
 
+    
+    /**
+     * Creates a {@code ThreadState} instance matching the logic required to bind a subject for this SecurityManager.
+     * <p/>
+     * Because the requirements for what data each SecurityManager might need to persist to a thread varies, this method
+     * allows for the SecurityManager to return a ThreadState instance that matches its internal requiements.
+     * <h4>Usage</h4>
+     * The method returns a ThreadState implementation specific to this Subject and SecurityManager. No further action is taken by the method, to actually
+     * bind or release the ThreadState, invoke the corresponding methods on it.
+     *
+     * @param subject the subject to create a ThreadState for.
+     * @return the {@code ThreadState} used to bind subjects for this SecurityManager.
+     * @since 2.alpha.0
+     */
+    ThreadState createSubjectThreadState(Subject subject);
 }

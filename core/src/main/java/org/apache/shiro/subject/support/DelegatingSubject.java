@@ -18,6 +18,10 @@
  */
 package org.apache.shiro.subject.support;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.HostAuthenticationToken;
@@ -34,15 +38,12 @@ import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.Adapter;
 import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.StaticAdapter;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Implementation of the {@code Subject} interface that delegates
@@ -84,7 +85,7 @@ public class DelegatingSubject implements Subject {
      */
     protected boolean sessionCreationEnabled;
 
-    protected transient SecurityManager securityManager;
+    protected transient Adapter<SecurityManager> securityManagerSource = new StaticAdapter<SecurityManager>();
 
     public DelegatingSubject(SecurityManager securityManager) {
         this(null, false, null, null, securityManager);
@@ -98,10 +99,19 @@ public class DelegatingSubject implements Subject {
     //since 1.2
     public DelegatingSubject(PrincipalCollection principals, boolean authenticated, String host,
                              Session session, boolean sessionCreationEnabled, SecurityManager securityManager) {
+        this(principals, authenticated, host, session, sessionCreationEnabled, null, securityManager);
+    }
+    
+    //since 2.alpha.0
+    public DelegatingSubject(PrincipalCollection principals, boolean authenticated, String host,
+                             Session session, boolean sessionCreationEnabled, Adapter<SecurityManager> securityManagerAdapter, SecurityManager securityManager) {
         if (securityManager == null) {
             throw new IllegalArgumentException("SecurityManager argument cannot be null.");
         }
-        this.securityManager = securityManager;
+	if(securityManagerAdapter != null){
+	    securityManagerSource = securityManagerAdapter;
+	}
+	securityManagerSource.setInstance(securityManager); //Will throw IllegalStateException in adapter does not support setting the SecurityManager.
         this.principals = principals;
         this.authenticated = authenticated;
         this.host = host;
@@ -119,7 +129,7 @@ public class DelegatingSubject implements Subject {
     }
 
     public SecurityManager getSecurityManager() {
-        return securityManager;
+        return securityManagerSource.getInstance();
     }
 
     private static boolean isEmpty(PrincipalCollection pc) {
@@ -159,16 +169,16 @@ public class DelegatingSubject implements Subject {
     }
 
     public boolean isPermitted(String permission) {
-        return hasPrincipals() && securityManager.isPermitted(getPrincipals(), permission);
+        return hasPrincipals() && securityManagerSource.getInstance().isPermitted(getPrincipals(), permission);
     }
 
     public boolean isPermitted(Permission permission) {
-        return hasPrincipals() && securityManager.isPermitted(getPrincipals(), permission);
+        return hasPrincipals() && securityManagerSource.getInstance().isPermitted(getPrincipals(), permission);
     }
 
     public boolean[] isPermitted(String... permissions) {
         if (hasPrincipals()) {
-            return securityManager.isPermitted(getPrincipals(), permissions);
+            return securityManagerSource.getInstance().isPermitted(getPrincipals(), permissions);
         } else {
             return new boolean[permissions.length];
         }
@@ -176,18 +186,18 @@ public class DelegatingSubject implements Subject {
 
     public boolean[] isPermitted(List<Permission> permissions) {
         if (hasPrincipals()) {
-            return securityManager.isPermitted(getPrincipals(), permissions);
+            return securityManagerSource.getInstance().isPermitted(getPrincipals(), permissions);
         } else {
             return new boolean[permissions.size()];
         }
     }
 
     public boolean isPermittedAll(String... permissions) {
-        return hasPrincipals() && securityManager.isPermittedAll(getPrincipals(), permissions);
+        return hasPrincipals() && securityManagerSource.getInstance().isPermittedAll(getPrincipals(), permissions);
     }
 
     public boolean isPermittedAll(Collection<Permission> permissions) {
-        return hasPrincipals() && securityManager.isPermittedAll(getPrincipals(), permissions);
+        return hasPrincipals() && securityManagerSource.getInstance().isPermittedAll(getPrincipals(), permissions);
     }
 
     protected void assertAuthzCheckPossible() throws AuthorizationException {
@@ -206,58 +216,58 @@ public class DelegatingSubject implements Subject {
 
     public void checkPermission(String permission) throws AuthorizationException {
         assertAuthzCheckPossible();
-        securityManager.checkPermission(getPrincipals(), permission);
+        securityManagerSource.getInstance().checkPermission(getPrincipals(), permission);
     }
 
     public void checkPermission(Permission permission) throws AuthorizationException {
         assertAuthzCheckPossible();
-        securityManager.checkPermission(getPrincipals(), permission);
+        securityManagerSource.getInstance().checkPermission(getPrincipals(), permission);
     }
 
     public void checkPermissions(String... permissions) throws AuthorizationException {
         assertAuthzCheckPossible();
-        securityManager.checkPermissions(getPrincipals(), permissions);
+        securityManagerSource.getInstance().checkPermissions(getPrincipals(), permissions);
     }
 
     public void checkPermissions(Collection<Permission> permissions) throws AuthorizationException {
         assertAuthzCheckPossible();
-        securityManager.checkPermissions(getPrincipals(), permissions);
+        securityManagerSource.getInstance().checkPermissions(getPrincipals(), permissions);
     }
 
     public boolean hasRole(String roleIdentifier) {
-        return hasPrincipals() && securityManager.hasRole(getPrincipals(), roleIdentifier);
+        return hasPrincipals() && securityManagerSource.getInstance().hasRole(getPrincipals(), roleIdentifier);
     }
 
     public boolean[] hasRoles(List<String> roleIdentifiers) {
         if (hasPrincipals()) {
-            return securityManager.hasRoles(getPrincipals(), roleIdentifiers);
+            return securityManagerSource.getInstance().hasRoles(getPrincipals(), roleIdentifiers);
         } else {
             return new boolean[roleIdentifiers.size()];
         }
     }
 
     public boolean hasAllRoles(Collection<String> roleIdentifiers) {
-        return hasPrincipals() && securityManager.hasAllRoles(getPrincipals(), roleIdentifiers);
+        return hasPrincipals() && securityManagerSource.getInstance().hasAllRoles(getPrincipals(), roleIdentifiers);
     }
 
     public void checkRole(String role) throws AuthorizationException {
         assertAuthzCheckPossible();
-        securityManager.checkRole(getPrincipals(), role);
+        securityManagerSource.getInstance().checkRole(getPrincipals(), role);
     }
 
     public void checkRoles(String... roleIdentifiers) throws AuthorizationException {
         assertAuthzCheckPossible();
-        securityManager.checkRoles(getPrincipals(), roleIdentifiers);
+        securityManagerSource.getInstance().checkRoles(getPrincipals(), roleIdentifiers);
     }
 
     public void checkRoles(Collection<String> roles) throws AuthorizationException {
         assertAuthzCheckPossible();
-        securityManager.checkRoles(getPrincipals(), roles);
+        securityManagerSource.getInstance().checkRoles(getPrincipals(), roles);
     }
 
     public void login(AuthenticationToken token) throws AuthenticationException {
         clearRunAsIdentitiesInternal();
-        Subject subject = securityManager.login(this, token);
+        Subject subject = securityManagerSource.getInstance().login(this, token);
 
         PrincipalCollection principals;
 
@@ -337,7 +347,7 @@ public class DelegatingSubject implements Subject {
 
             log.trace("Starting session for host {}", getHost());
             SessionContext sessionContext = createSessionContext();
-            Session session = this.securityManager.start(sessionContext);
+            Session session = this.securityManagerSource.getInstance().start(sessionContext);
             this.session = decorate(session);
         }
         return this.session;
@@ -364,7 +374,7 @@ public class DelegatingSubject implements Subject {
     public void logout() {
         try {
             clearRunAsIdentitiesInternal();
-            this.securityManager.logout(this);
+            this.securityManagerSource.getInstance().logout(this);
         } finally {
             this.session = null;
             this.principals = null;
