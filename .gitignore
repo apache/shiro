@@ -37,7 +37,7 @@ target/
 #
 # Netbeans metadata
 #
-.nb-configuration.xml
+/nb-configuration.xml
 
 #
 # Maven release metadata
@@ -45,3 +45,4 @@ target/
 release.properties
 pom.xml.*
 -
+

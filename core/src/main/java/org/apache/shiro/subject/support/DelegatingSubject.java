@@ -406,7 +406,7 @@ public class DelegatingSubject implements Subject {
     }
 
     public <V> Callable<V> associateWith(Callable<V> callable) {
-        return new SubjectCallable<V>(this, callable);
+        return new SubjectCallable<V>(getSecurityManager().createSubjectThreadState(this), callable);
     }
 
     public Runnable associateWith(Runnable runnable) {
@@ -417,7 +417,7 @@ public class DelegatingSubject implements Subject {
                     "another Thread.";
             throw new UnsupportedOperationException(msg);
         }
-        return new SubjectRunnable(this, runnable);
+        return new SubjectRunnable(getSecurityManager().createSubjectThreadState(this), runnable);
     }
 
     private class StoppingAwareProxiedSession extends ProxiedSession {

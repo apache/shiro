@@ -35,6 +35,8 @@ import org.junit.Test;
 
 import java.io.Serializable;
 import java.util.concurrent.Callable;
+import org.apache.shiro.subject.support.SubjectThreadState;
+import org.easymock.EasyMock;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.junit.Assert.*;
@@ -87,11 +89,13 @@ public class DelegatingSubjectTest {
     public void testExecuteCallable() {
 
         String username = "jsmith";
-
+	
         SecurityManager securityManager = createNiceMock(SecurityManager.class);
-        PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
+	PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
         final Subject sourceSubject = new DelegatingSubject(identity, true, null, null, securityManager);
-
+	EasyMock.expect(securityManager.createSubjectThreadState(sourceSubject)).andReturn(new SubjectThreadState(sourceSubject));
+	EasyMock.replay(securityManager);
+	
         assertNull(ThreadContext.getSubject());
         assertNull(ThreadContext.getSecurityManager());
 
@@ -121,7 +125,9 @@ public class DelegatingSubjectTest {
         SecurityManager securityManager = createNiceMock(SecurityManager.class);
         PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
         final Subject sourceSubject = new DelegatingSubject(identity, true, null, null, securityManager);
-
+	EasyMock.expect(securityManager.createSubjectThreadState(sourceSubject)).andReturn(new SubjectThreadState(sourceSubject));
+	EasyMock.replay(securityManager);
+	
         assertNull(ThreadContext.getSubject());
         assertNull(ThreadContext.getSecurityManager());
 
