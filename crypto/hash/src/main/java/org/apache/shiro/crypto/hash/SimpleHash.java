@@ -346,7 +346,7 @@ public class SimpleHash extends AbstractHash {
             digest.update(salt);
         }
         byte[] hashed = digest.digest(bytes);
-        int iterations = hashIterations - DEFAULT_ITERATIONS; //already hashed once above
+        int iterations = hashIterations - 1; //already hashed once above
         //iterate remaining number:
         for (int i = 0; i < iterations; i++) {
             digest.reset();
