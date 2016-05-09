@@ -70,9 +70,7 @@
 
         <!-- non-dependency-based properties: -->
         <shiro.osgi.importRange>[2, 3)</shiro.osgi.importRange>
-	<osgi.core.version>5.0.0</osgi.core.version>
-	<osgi.scr.annotation.version>1.9.12</osgi.scr.annotation.version>
-	<osgi.scr.annotationprocessor.version>1.2.8</osgi.scr.annotationprocessor.version>
+	
         <!-- Compile 3rd party dependencies: -->
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
@@ -97,7 +95,15 @@
         <guice.version>3.0</guice.version>
         <guava.version>r09</guava.version>
 
-        <!-- Test 3rd-party dependencies: -->
+        <!--OSGi properties-->
+	<osgi.core.version>5.0.0</osgi.core.version>
+	<osgi.scr.annotation.version>1.9.12</osgi.scr.annotation.version>
+	<osgi.scr.annotationprocessor.version>1.2.8</osgi.scr.annotationprocessor.version>
+	<karaf.target.version>4.0.4</karaf.target.version>
+	<pax.exam.version>4.8.0</pax.exam.version>
+	<pax.url.aether.version>2.4.1</pax.url.aether.version>
+	
+	<!-- Test 3rd-party dependencies: -->
         <easymock.version>3.1</easymock.version>
         <gmaven.version>1.4</gmaven.version>
         <groovy.version>1.8.5</groovy.version>
@@ -636,6 +642,69 @@
                 <artifactId>org.osgi.compendium</artifactId>
                 <version>${osgi.core.version}</version>
                 <scope>provided</scope>
+            </dependency>
+	    
+	    <!-- OSGi DS modules and utilities -->
+	    <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-support-osgi</artifactId>
+                <version>${project.version}</version>
+		<scope>provided</scope>
+            </dependency>
+	    <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-osgi-authstrategyone</artifactId>
+                <version>${project.version}</version>
+		<scope>provided</scope>
+            </dependency>
+	    <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-osgi-defaultsecuritymanager</artifactId>
+                <version>${project.version}</version>
+		<scope>provided</scope>
+            </dependency>
+	    <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-osgi-delegatingsubjectfactory</artifactId>
+                <version>${project.version}</version>
+		<scope>provided</scope>
+            </dependency>
+	    <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-osgi-eventbus</artifactId>
+                <version>${project.version}</version>
+		<scope>provided</scope>
+            </dependency>
+<!--	    Remembermanager not in use yet
+	    <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-osgi-remembermemanager</artifactId>
+                <version>${project.version}</version>
+		<scope>provided</scope>
+            </dependency>-->
+	    <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-osgi-sessionmanager</artifactId>
+                <version>${project.version}</version>
+		<scope>provided</scope>
+            </dependency>
+	    <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-osgi-sessionfactory</artifactId>
+                <version>${project.version}</version>
+		<scope>provided</scope>
+            </dependency>
+	    <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-karaf-feature</artifactId>
+                <version>${project.version}</version>
+		<scope>provided</scope>
+            </dependency>
+	    <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-osgi-itest</artifactId>
+                <version>${project.version}</version>
+		<scope>provided</scope>
             </dependency>
 	    
 	    <!-- Declarative Services annotations-->

@@ -32,9 +32,15 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>securitymanager</module>
-        <module>eventbus</module>
-		<module>sessionmanager</module>
+	    <module>securitymanager</module>
+	    <module>eventbus</module>
+	    <module>sessionmanager</module>
+	    <module>subjectfactory</module>
+	    <module>sessionfactory</module>		
+	    <module>authstrategyonlyone</module>
+		
+	    <module>karaf_feature</module>
+	    <module>itest</module>
 	</modules>
 
 </project>

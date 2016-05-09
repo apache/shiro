@@ -35,6 +35,7 @@ import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  *
@@ -135,7 +136,7 @@ public class OSGiSecurityManager extends DefaultSecurityManager{
 	setEventBus(null);
     }
     
-    @Reference(updated = "updatedRememberMeManager", unbind = "unbindRememberMeManager", policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MANDATORY)
+    @Reference(updated = "updatedRememberMeManager", unbind = "unbindRememberMeManager", policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.OPTIONAL)
     public void bindRememberMeManager(RememberMeManager rmm){
 	setRememberMeManager(rmm);
 	
@@ -175,7 +176,7 @@ public class OSGiSecurityManager extends DefaultSecurityManager{
 	realmAuthenticator.setAuthenticationStrategy(null);
     }
     
-    @Reference(updated = "updatedSubjectFactory", unbind = "unbindSubjectFactory", policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MANDATORY)
+    @Reference(updated = "updatedSubjectFactory", unbind = "unbindSubjectFactory", policy = ReferencePolicy.DYNAMIC, cardinality = ReferenceCardinality.MANDATORY, policyOption = ReferencePolicyOption.GREEDY)
     public void bindSubjectFactory(SubjectFactory sm){
 	setSubjectFactory(sm);
     }

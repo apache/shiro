@@ -27,8 +27,8 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>shiro-osgi-sessionmanager</artifactId>
-    <name>Apache Shiro :: Support :: OSGi :: SessionManager</name>
+    <artifactId>shiro-osgi-delegatingsubjectfactory</artifactId>
+    <name>Apache Shiro :: Support :: OSGi :: DelegatingSubjectFactory</name>
     <packaging>bundle</packaging>
 
     <dependencies>
@@ -74,7 +74,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-SymbolicName>org.apache.shiro.osgi.sessionmanager</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>org.apache.shiro.osgi.delegatingsubjectfactory</Bundle-SymbolicName>
 			<Export-Package></Export-Package>
 			<Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.shiro.mgt.osgi.securitymanager;
+package org.apache.shiro.mgt.osgi.subjectfactory;
 
 import org.apache.shiro.mgt.DefaultSubjectFactory;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
@@ -25,23 +26,32 @@ import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.OSGiAdapter;
 import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
 
 /**
  *
  * @author mnn
  */
-public class OSGiSubjectFactory extends DefaultSubjectFactory{
-    BundleContext bundlecontext;
+@Component(name = "OSGiSecurityManager", service = SubjectFactory.class, immediate = true)
+public class OSGiSubjectFactory extends DefaultSubjectFactory implements SubjectFactory{
+    BundleContext bundleContext;
 
     public OSGiSubjectFactory(BundleContext context) {
-	this.bundlecontext = context;
+	this.bundleContext = context;
+    }
+
+    public OSGiSubjectFactory() {
     }
     
+    @Activate
+    public void activate(BundleContext bundleContext){
+	this.bundleContext = bundleContext;
+    }
     
-
     @Override
     protected Subject newSubjectInstance(PrincipalCollection principals, boolean authenticated, String host, Session session, SecurityManager securityManager) {
-	return new DelegatingSubject(principals, authenticated, host, session, true, new OSGiAdapter<SecurityManager>(bundlecontext, bundlecontext.getServiceReference(SecurityManager.class)), securityManager);
+	return new DelegatingSubject(principals, authenticated, host, session, true, new OSGiAdapter<SecurityManager>(bundleContext, bundleContext.getServiceReference(SecurityManager.class)), securityManager);
     }
 
     @Override
@@ -54,7 +64,7 @@ public class OSGiSubjectFactory extends DefaultSubjectFactory{
         boolean authenticated = context.resolveAuthenticated();
         String host = context.resolveHost();
 
-        return new DelegatingSubject(principals, authenticated, host, session, sessionCreationEnabled, new OSGiAdapter<SecurityManager>(bundlecontext, bundlecontext.getServiceReference(SecurityManager.class)), securityManager);
+        return new DelegatingSubject(principals, authenticated, host, session, sessionCreationEnabled, new OSGiAdapter<SecurityManager>(bundleContext, bundleContext.getServiceReference(SecurityManager.class)), securityManager);
     }
     
     
