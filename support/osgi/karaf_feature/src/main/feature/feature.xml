@@ -3,6 +3,8 @@
 	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.0.0" 
 	  name="Apache-Shiro">
+  <repository>mvn:org.apache.karaf.features/standard/${karaf.target.version}/xml/features</repository>
+  <repository>mvn:org.apache.shiro/shiro-features/${project.version}/xml/features</repository>
   
   <feature name="Preset_Default" version="${project.version}">
       <feature>Default_SecurityManager</feature>
@@ -12,20 +14,28 @@
   </feature>
 
   <feature name="Default_SecurityManager" version="${project.version}">
+      <feature>scr</feature>
+      <feature>shiro-core</feature>
       <bundle>mvn:${project.groupId}/shiro-osgi-defaultsecuritymanager/${project.version}</bundle>
       <bundle>mvn:${project.groupId}/shiro-osgi-delegatingsubjectfactory/${project.version}</bundle>
   </feature>
 
   <feature name="Default_SessionManager" version="${project.version}">
+      <feature>scr</feature>
+      <feature>shiro-core</feature>
       <bundle>mvn:${project.groupId}/shiro-osgi-sessionmanager/${project.version}</bundle>
       <bundle>mvn:${project.groupId}/shiro-osgi-sessionfactory/${project.version}</bundle>
   </feature>
   
   <feature name="Default_EventBus" version="${project.version}">
+      <feature>scr</feature>
+      <feature>shiro-core</feature>
       <bundle>mvn:${project.groupId}/shiro-osgi-eventbus/${project.version}</bundle>
   </feature>
   
   <feature name="AuthStrategyOne" version="${project.version}">
+      <feature>scr</feature>
+      <feature>shiro-core</feature>
       <bundle>mvn:${project.groupId}/shiro-osgi-authstrategyone/${project.version}</bundle>
   </feature>
       

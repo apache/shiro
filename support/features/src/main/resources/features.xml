@@ -22,6 +22,8 @@
     <!-- Shiro core features: -->
 
     <feature name="shiro-core" version="${project.version}" resolver="(obr)">
+	<bundle>mvn:commons-beanutils/commons-beanutils/${commons.beanutils.version}</bundle>
+	<bundle>mvn:commons-collections/commons-collections/${commons.collections.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-core/${project.version}</bundle>
     </feature>
 

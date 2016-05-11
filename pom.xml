@@ -75,6 +75,12 @@
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
         <aspectj.version>1.6.12</aspectj.version>
+	<!-- Don't change this version without also changing the shiro-aspect and shiro-features
+             modules' OSGi metadata: -->
+	<commons.beanutils.version>1.8.3</commons.beanutils.version>
+	<!-- Don't change this version without also changing the shiro-aspect and shiro-features
+             modules' OSGi metadata: -->
+	<commons.collections.version>3.2.1</commons.collections.version>
         <commons.cli.version>1.2</commons.cli.version>
         <commons.codec.version>1.4</commons.codec.version>
         <crowd.version>1.5.2</crowd.version>
@@ -813,7 +819,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.8.3</version>
+                <version>${commons.beanutils.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>

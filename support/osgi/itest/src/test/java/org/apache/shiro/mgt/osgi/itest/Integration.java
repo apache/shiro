@@ -19,6 +19,7 @@ package org.apache.shiro.mgt.osgi.itest;
 import java.io.File;
 import java.net.URISyntaxException;
 import javax.inject.Inject;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -45,6 +46,11 @@ public class Integration {
          @Inject
     private BundleContext bundleContext;
 
+	 
+	 @BeforeClass
+    public static void beforeClass(){
+	
+    }
 	 
 	     @Configuration
 public Option[] config() throws URISyntaxException {
@@ -88,8 +94,6 @@ public Option[] config() throws URISyntaxException {
     @Test
     public void testPresence() throws Exception {
 
-	Thread.sleep(10000000);
-	//assertNotNull(producer);
-	//assertNotNull(consumer);
+	System.in.read();
     }
 }
