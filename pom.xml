@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF8"?>
+<?xml version="1.0" encoding="UTF8"?>
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements.  See the NOTICE file
@@ -30,7 +30,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.5-SNAPSHOT</version>
+    <version>1.2.5</version>
 
     <name>Apache Shiro</name>
     <url>http://shiro.apache.org/</url>
