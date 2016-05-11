@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>7</version>
+        <version>17</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -211,7 +211,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.3</version>    
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -427,6 +426,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
+                    <!-- do not update upstream, with a pending release. -->
+                    <pushChanges>false</pushChanges>
+                    <localCheckout>true</localCheckout>
                     <!-- "install" needed because we have interrelated dependencies between the modules and we are releasing them all the same - especially consider shiro-all -->
                     <preparationGoals>clean apache-rat:check install</preparationGoals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -993,7 +995,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>2.0.4</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
