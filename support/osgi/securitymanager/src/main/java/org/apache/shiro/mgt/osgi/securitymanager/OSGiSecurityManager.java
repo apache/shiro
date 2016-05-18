@@ -16,9 +16,11 @@
 
 package org.apache.shiro.mgt.osgi.securitymanager;
 
+import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.authc.pam.AuthenticationStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.cache.CacheManager;
@@ -29,6 +31,7 @@ import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleReference;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
@@ -41,7 +44,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  *
  * @author mnn
  */
-@Component(name = "OSGiSecurityManager", immediate = true)
+@Component(name = "OSGiSecurityManager", immediate = true, service = SecurityManager.class)
 public class OSGiSecurityManager extends DefaultSecurityManager{
     private Lock realmLock = new ReentrantLock();
     
@@ -72,7 +75,7 @@ public class OSGiSecurityManager extends DefaultSecurityManager{
     public void bindRealm(Realm realm){
 	realmLock.lock();
 	try{
-	    TreeSet<Realm> realms = new TreeSet<Realm>();
+	    TreeSet<Realm> realms = new TreeSet<Realm>(new BundleServiceComparator());
 	    realms.add(realm);
 	    setRealms(realms);
 	    realmAuthorizer.setRealms(realms);
@@ -85,7 +88,7 @@ public class OSGiSecurityManager extends DefaultSecurityManager{
     public void updatedRealm(Realm realm){
 	realmLock.lock();
 	try{
-	    TreeSet<Realm> realms = new TreeSet<Realm>();
+	    TreeSet<Realm> realms = new TreeSet<Realm>(new BundleServiceComparator());
 	    realms.remove(realm);
 	    realms.add(realm);
 	    setRealms(realms);
@@ -99,7 +102,7 @@ public class OSGiSecurityManager extends DefaultSecurityManager{
     public void unbindRealm(Realm realm){
 	realmLock.lock();
 	try{
-	    TreeSet<Realm> realms = new TreeSet<Realm>();
+	    TreeSet<Realm> realms = new TreeSet<Realm>(new BundleServiceComparator());
 	    realms.remove(realm);
 	    setRealms(realms);
 	    realmAuthorizer.setRealms(realms);
@@ -200,4 +203,22 @@ public class OSGiSecurityManager extends DefaultSecurityManager{
     protected void afterCacheManagerSet(){}
     @Override
     protected void afterSessionManagerSet(){}
+    
+    
+    private class BundleServiceComparator implements Comparator<Object>{
+
+	public int compare(Object o1, Object o2) {
+	    try{
+	    BundleReference object1BundleRef = (BundleReference)o1.getClass().getClassLoader();
+	    BundleReference object2BundleRef = (BundleReference)o2.getClass().getClassLoader();
+	    Long bundle1ID = object1BundleRef.getBundle().getBundleId();
+	    Long bundle2ID = object2BundleRef.getBundle().getBundleId();
+	    return bundle1ID.compareTo(bundle2ID);
+	    }catch(ClassCastException ex){
+		throw new IllegalArgumentException("Could not cast the classloader of o1 or o2 to a BundleReference. Are we running in an OSGi container?", ex);
+	    }
+	}
+	
+    }
+    
 }

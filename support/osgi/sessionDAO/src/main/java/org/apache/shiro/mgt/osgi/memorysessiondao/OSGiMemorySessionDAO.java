@@ -14,36 +14,17 @@
  * limitations under the License.
  */
 
-package org.apache.shiro.util;
+package org.apache.shiro.mgt.osgi.memorysessiondao;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
+import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.osgi.service.component.annotations.Component;
 
 /**
  *
  * @author mnn
- * @param <T>
  */
-public class OSGiAdapter<T extends Object> implements Adapter<T>{
-    ServiceTracker<T, T> tracker;
-
-    public OSGiAdapter(BundleContext context, ServiceReference<T> ref) {
-	tracker = new ServiceTracker<T, T>(context, ref, null);
-	tracker.open();
-    }
-    
-    
-
-    public T getInstance() {
-	return tracker.getService();
-    }
-
-    public void setInstance(T toSet) throws IllegalStateException {
-	
-    }
-    
-    
-    
+@Component(name = "OSGiMemorySessionDAO", service = SessionDAO.class)
+public class OSGiMemorySessionDAO extends MemorySessionDAO{
     
 }

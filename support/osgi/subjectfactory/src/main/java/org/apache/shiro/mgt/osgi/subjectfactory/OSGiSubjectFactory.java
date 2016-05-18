@@ -33,7 +33,7 @@ import org.osgi.service.component.annotations.Component;
  *
  * @author mnn
  */
-@Component(name = "OSGiSecurityManager", service = SubjectFactory.class, immediate = true)
+@Component(name = "OSGiDefaultSubjectFactory", service = SubjectFactory.class, immediate = true)
 public class OSGiSubjectFactory extends DefaultSubjectFactory implements SubjectFactory{
     BundleContext bundleContext;
 

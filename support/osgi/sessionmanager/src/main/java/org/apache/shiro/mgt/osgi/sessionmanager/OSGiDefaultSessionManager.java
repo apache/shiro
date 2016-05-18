@@ -17,8 +17,6 @@
 package org.apache.shiro.mgt.osgi.sessionmanager;
 
 import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.session.InvalidSessionException;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;

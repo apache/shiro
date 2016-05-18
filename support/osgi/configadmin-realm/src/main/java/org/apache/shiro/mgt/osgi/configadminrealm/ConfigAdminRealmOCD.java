@@ -14,36 +14,16 @@
  * limitations under the License.
  */
 
-package org.apache.shiro.util;
+package org.apache.shiro.mgt.osgi.configadminrealm;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 /**
  *
  * @author mnn
- * @param <T>
  */
-public class OSGiAdapter<T extends Object> implements Adapter<T>{
-    ServiceTracker<T, T> tracker;
-
-    public OSGiAdapter(BundleContext context, ServiceReference<T> ref) {
-	tracker = new ServiceTracker<T, T>(context, ref, null);
-	tracker.open();
-    }
-    
-    
-
-    public T getInstance() {
-	return tracker.getService();
-    }
-
-    public void setInstance(T toSet) throws IllegalStateException {
-	
-    }
-    
-    
-    
-    
+@ObjectClassDefinition(name = "ConfigAdminRealm", id = "org.apache.shiro.realm.configadminrealm", pid = "org.apache.shiro.realm.configadminrealm")
+@interface ConfigAdminRealmOCD {
+  String[] user() default "shiro/shiro,shiro";
+  String[] role() default "shiro/shiro";
 }

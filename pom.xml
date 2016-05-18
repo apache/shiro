@@ -104,6 +104,7 @@
         <!--OSGi properties-->
 	<osgi.core.version>5.0.0</osgi.core.version>
 	<osgi.scr.annotation.version>1.9.12</osgi.scr.annotation.version>
+	<osgi.metatype.annotation.version>1.3.0</osgi.metatype.annotation.version>
 	<osgi.scr.annotationprocessor.version>1.2.8</osgi.scr.annotationprocessor.version>
 	<karaf.target.version>4.0.4</karaf.target.version>
 	<pax.exam.version>4.8.0</pax.exam.version>
@@ -724,6 +725,12 @@
 		<groupId>org.apache.felix</groupId>
 		<artifactId>org.apache.felix.scr.ds-annotations</artifactId>
 		<version>${osgi.scr.annotationprocessor.version}</version>
+		<scope>provided</scope>
+	    </dependency>
+	    <dependency>
+		<groupId>org.osgi</groupId>
+		<artifactId>org.osgi.service.metatype.annotations</artifactId>
+		<version>${osgi.metatype.annotation.version}</version>
 		<scope>provided</scope>
 	    </dependency>
 	    

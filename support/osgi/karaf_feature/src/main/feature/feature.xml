@@ -11,6 +11,8 @@
       <feature>Default_SessionManager</feature>
       <feature>Default_EventBus</feature>
       <feature>AuthStrategyOne</feature>
+      <feature>MemorySessionDAO</feature>
+      <feature>ConfigAdminRealm</feature>
   </feature>
 
   <feature name="Default_SecurityManager" version="${project.version}">
@@ -37,6 +39,18 @@
       <feature>scr</feature>
       <feature>shiro-core</feature>
       <bundle>mvn:${project.groupId}/shiro-osgi-authstrategyone/${project.version}</bundle>
+  </feature>
+  
+  <feature name="MemorySessionDAO" version="${project.version}">
+      <feature>scr</feature>
+      <feature>shiro-core</feature>
+      <bundle>mvn:${project.groupId}/shiro-osgi-sessiondao/${project.version}</bundle>
+  </feature>
+  
+  <feature name="ConfigAdminRealm" version="${project.version}">
+      <feature>scr</feature>
+      <feature>shiro-core</feature>
+      <bundle>mvn:${project.groupId}/shiro-osgi-configadminrealm/${project.version}</bundle>
   </feature>
       
   

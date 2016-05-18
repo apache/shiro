@@ -37,7 +37,9 @@
 	    <module>sessionmanager</module>
 	    <module>subjectfactory</module>
 	    <module>sessionfactory</module>		
+	    <module>sessionDAO</module>		
 	    <module>authstrategyonlyone</module>
+		<module>configadmin-realm</module>
 		
 	    <module>karaf_feature</module>
 	    <module>itest</module>

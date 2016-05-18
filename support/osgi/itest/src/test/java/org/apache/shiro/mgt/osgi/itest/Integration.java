@@ -19,20 +19,38 @@ package org.apache.shiro.mgt.osgi.itest;
 import java.io.File;
 import java.net.URISyntaxException;
 import javax.inject.Inject;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.realm.Realm;
+import org.apache.shiro.subject.Subject;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
+import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -43,8 +61,14 @@ import org.osgi.framework.BundleContext;
 @ExamReactorStrategy(PerMethod.class)
 public class Integration {
     
-         @Inject
+    @Inject
     private BundleContext bundleContext;
+    
+    @Inject
+    private Realm realm;
+    
+    @Inject
+    private SecurityManager securityManager;
 
 	 
 	 @BeforeClass
@@ -87,13 +111,32 @@ public Option[] config() throws URISyntaxException {
         keepRuntimeFolder(),
 	features(karafStandardRepo, "webconsole"),
 	features(shiroRepo, "Preset_Default"),
-	
-   };
-}
+	KarafDistributionOption.logLevel(LogLevelOption.LogLevel.INFO),
+	replaceConfigurationFile("etc/org.apache.shiro.realm.configadminrealm.cfg", new File(this.getClass().getClassLoader().getResource("org/apache/shiro/mgt/osgi/itest/configadminrealm.cfg").toURI())),
+    };
+    }
 
-    @Test
+//    @Before
+//    public void beforeTest() throws InterruptedException {
+//        while (bundleContext.getBundle("mvn:org.apache.shiro/shiro-osgi-defaultsecuritymanager/0.1-SNAPSHOT").getState() != Bundle.ACTIVE) {
+//            Thread.sleep(200);
+//        }
+//    }
+
+    @Test @Ignore
     public void testPresence() throws Exception {
-
 	System.in.read();
     }
+    
+    @Test
+    public void testConfigRealm() throws Exception {
+	//Thread.sleep(30000);
+	Subject subject = SecurityUtils.getSubject();
+	UsernamePasswordToken loginToken = new UsernamePasswordToken("admin", "admin".toCharArray());
+	subject.login(loginToken);
+	assertTrue(subject.hasRole("adminrole"));
+	assertTrue(subject.isPermitted("adminpermission"));
+    }
+    
+    
 }
