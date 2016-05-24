@@ -40,7 +40,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Adapter;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.StaticAdapter;
+import org.apache.shiro.util.ObjectReferenceAdapter;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +85,7 @@ public class DelegatingSubject implements Subject {
      */
     protected boolean sessionCreationEnabled;
 
-    protected transient Adapter<SecurityManager> securityManagerSource = new StaticAdapter<SecurityManager>();
+    protected transient Adapter<SecurityManager> securityManagerSource = new ObjectReferenceAdapter<SecurityManager>();
 
     public DelegatingSubject(SecurityManager securityManager) {
         this(null, false, null, null, securityManager);

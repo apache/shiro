@@ -20,13 +20,13 @@ package org.apache.shiro.util;
  *
  * @author mnn
  */
-public class StaticAdapter<T extends Object> implements Adapter<T>{
+public class ObjectReferenceAdapter<T extends Object> implements Adapter<T>{
     private T object;
 
-    public StaticAdapter() {
+    public ObjectReferenceAdapter() {
     }
 
-    public StaticAdapter(T object) {
+    public ObjectReferenceAdapter(T object) {
 	this.object = object;
     }
 
