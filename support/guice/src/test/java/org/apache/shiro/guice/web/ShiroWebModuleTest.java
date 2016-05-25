@@ -100,7 +100,7 @@ public class ShiroWebModuleTest {
 
             @Override
             protected void bindWebSecurityManager(AnnotatedBindingBuilder<? super WebSecurityManager> bind) {
-                bind.to(MyDefaultWebSecurityManager.class);
+                bind.to(MyDefaultWebSecurityManager.class).asEagerSingleton();
             }
         });
         SecurityManager securityManager = injector.getInstance(SecurityManager.class);
@@ -109,7 +109,8 @@ public class ShiroWebModuleTest {
         WebSecurityManager webSecurityManager = injector.getInstance(WebSecurityManager.class);
         assertNotNull(webSecurityManager);
         assertTrue(webSecurityManager instanceof MyDefaultWebSecurityManager);
-
+        // SHIRO-435: Check both keys SecurityManager and WebSecurityManager are bound to the same instance
+        assertTrue( securityManager == webSecurityManager );
     }
 
     @Test
@@ -132,7 +133,7 @@ public class ShiroWebModuleTest {
 
             @Override
             protected void bindWebEnvironment(AnnotatedBindingBuilder<? super WebEnvironment> bind) {
-                bind.to(MyWebEnvironment.class);
+                bind.to(MyWebEnvironment.class).asEagerSingleton();
             }
         });
         Environment environment = injector.getInstance(Environment.class);
@@ -141,6 +142,8 @@ public class ShiroWebModuleTest {
         WebEnvironment webEnvironment = injector.getInstance(WebEnvironment.class);
         assertNotNull(webEnvironment);
         assertTrue(webEnvironment instanceof MyWebEnvironment);
+        // SHIRO-435: Check both keys Environment and WebEnvironment are bound to the same instance
+        assertTrue( environment == webEnvironment );
     }
 
     public static class MyDefaultWebSecurityManager extends DefaultWebSecurityManager {
