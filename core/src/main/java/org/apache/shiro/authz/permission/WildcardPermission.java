@@ -188,6 +188,10 @@ public class WildcardPermission implements Permission, Serializable {
         return this.parts;
     }
 
+    protected void setParts(List<Set<String>> parts) {
+        this.parts = parts;
+    }
+
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
