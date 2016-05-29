@@ -182,6 +182,15 @@ public class WildcardPermission implements Permission, Serializable {
         return this.parts;
     }
 
+    /**
+     * Sets the pre-split String parts of this <code>WildcardPermission</code>.
+     * @since 1.3.0
+     * @param parts pre-split String parts.
+     */
+    protected void setParts(List<Set<String>> parts) {
+        this.parts = parts;
+    }
+
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
