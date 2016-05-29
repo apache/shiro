@@ -154,14 +154,16 @@ public class WildcardPermission implements Permission, Serializable {
             throw new IllegalArgumentException("Wildcard string cannot be null or empty. Make sure permission strings are properly formatted.");
         }
 
+        if (!caseSensitive) {
+            wildcardString = wildcardString.toLowerCase();
+        }
+
         List<String> parts = CollectionUtils.asList(wildcardString.split(PART_DIVIDER_TOKEN));
 
         this.parts = new ArrayList<Set<String>>();
         for (String part : parts) {
             Set<String> subparts = CollectionUtils.asSet(part.split(SUBPART_DIVIDER_TOKEN));
-            if (!caseSensitive) {
-                subparts = lowercase(subparts);
-            }
+
             if (subparts.isEmpty()) {
                 throw new IllegalArgumentException("Wildcard string cannot contain parts with only dividers. Make sure permission strings are properly formatted.");
             }
@@ -171,14 +173,6 @@ public class WildcardPermission implements Permission, Serializable {
         if (this.parts.isEmpty()) {
             throw new IllegalArgumentException("Wildcard string cannot contain only dividers. Make sure permission strings are properly formatted.");
         }
-    }
-
-    private Set<String> lowercase(Set<String> subparts) {
-        Set<String> lowerCasedSubparts = new LinkedHashSet<String>(subparts.size());
-        for (String subpart : subparts) {
-            lowerCasedSubparts.add(subpart.toLowerCase());
-        }
-        return lowerCasedSubparts;
     }
 
     /*--------------------------------------------
