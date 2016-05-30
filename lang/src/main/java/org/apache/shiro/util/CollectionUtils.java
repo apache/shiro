@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.util;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -39,6 +39,11 @@ public class CollectionUtils {
         if (elements == null || elements.length == 0) {
             return Collections.emptySet();
         }
+
+        if (elements.length == 1) {
+            return Collections.singleton(elements[0]);
+        }
+
         LinkedHashSet<E> set = new LinkedHashSet<E>(elements.length * 4 / 3 + 1);
         Collections.addAll(set, elements);
         return set;
@@ -97,11 +102,9 @@ public class CollectionUtils {
         if (elements == null || elements.length == 0) {
             return Collections.emptyList();
         }
-        // Avoid integer overflow when a large array is passed in
-        int capacity = computeListCapacity(elements.length);
-        ArrayList<E> list = new ArrayList<E>(capacity);
-        Collections.addAll(list, elements);
-        return list;
+
+        // Integer overflow does not occur when a large array is passed in because the list array already exists
+        return Arrays.asList(elements);
     }
 
     /*public static <E> Deque<E> asDeque(E... elements) {
