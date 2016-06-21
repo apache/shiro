@@ -59,6 +59,11 @@ public abstract class JavaEnvironment {
      */
     public static final int JAVA_17 = 4;
 
+    /**
+     * Constant identifying the 1.8 JVM.
+     */
+    public static final int JAVA_18 = 5;
+
     /** The virtual machine version, i.e. <code>System.getProperty("java.version");</code>. */
     private static final String version;
 
@@ -76,13 +81,19 @@ public abstract class JavaEnvironment {
     static {
         version = System.getProperty("java.version");
         // version String should look like "1.4.2_10"
-        if (version.indexOf("1.7.") != -1) {
+
+// NOTE:   JDK 1.9 will be versioned differently '9' and/or 9.x.x
+// https://blogs.oracle.com/java-platform-group/entry/a_new_jdk_9_version
+
+        if (version.contains("1.8.")) {
+            majorVersion = JAVA_18;
+        } else if (version.contains("1.7.")) {
             majorVersion = JAVA_17;
-        } else if (version.indexOf("1.6.") != -1) {
+        } else if (version.contains("1.6.")) {
             majorVersion = JAVA_16;
-        } else if (version.indexOf("1.5.") != -1) {
+        } else if (version.contains("1.5.")) {
             majorVersion = JAVA_15;
-        } else if (version.indexOf("1.4.") != -1) {
+        } else if (version.contains("1.4.")) {
             majorVersion = JAVA_14;
         } else {
             // else leave 1.3 as default (it's either 1.3 or unknown)
@@ -112,6 +123,7 @@ public abstract class JavaEnvironment {
      * @see #JAVA_15
      * @see #JAVA_16
      * @see #JAVA_17
+     * @see #JAVA_18
      */
     public static int getMajorVersion() {
         return majorVersion;
@@ -126,6 +138,7 @@ public abstract class JavaEnvironment {
      * @see #JAVA_15
      * @see #JAVA_16
      * @see #JAVA_17
+     * @see #JAVA_18
      */
     public static boolean isAtLeastVersion14() {
         return getMajorVersion() >= JAVA_14;
@@ -140,6 +153,7 @@ public abstract class JavaEnvironment {
      * @see #JAVA_15
      * @see #JAVA_16
      * @see #JAVA_17
+     * @see #JAVA_18
      */
     public static boolean isAtLeastVersion15() {
         return getMajorVersion() >= JAVA_15;
@@ -154,6 +168,7 @@ public abstract class JavaEnvironment {
      * @see #JAVA_15
      * @see #JAVA_16
      * @see #JAVA_17
+     * @see #JAVA_18
      *
      * @since 1.2
      */
