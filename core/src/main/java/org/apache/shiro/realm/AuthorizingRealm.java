@@ -244,8 +244,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
                 }
                 this.authorizationCache = cacheManager.getCache(cacheName);
             } else {
-                if (log.isInfoEnabled()) {
-                    log.info("No cache or cacheManager properties have been set.  Authorization cache cannot " +
+                if (log.isDebugEnabled()) {
+                    log.debug("No cache or cacheManager properties have been set.  Authorization cache cannot " +
                             "be obtained.");
                 }
             }
