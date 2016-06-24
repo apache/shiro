@@ -135,6 +135,20 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <!-- Ideally we want to override the parent here, so the normal report is not generated
+                         For configuration, we would add the 'combine.self="override"' attribute. -->
+                    <reportSets>
+                        <reportSet>
+                            <id>javadoc-aggregate</id>
+                            <reports>
+                                <report>report-aggregate</report>
+                            </reports>
+                        </reportSet>
+                    </reportSets>
+                </plugin>
         </plugins>
     </reporting>
 </project>
