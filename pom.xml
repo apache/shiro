@@ -975,6 +975,16 @@
 
     <profiles>
         <profile>
+            <id>jdk8</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <!-- Needed for the javadoc plugin when using JDK 1.8 -->
+                <additionalparam>-Xdoclint:none</additionalparam>
+            </properties>
+        </profile>
+        <profile>
             <id>docs</id>
             <build>
                 <plugins>
