@@ -30,7 +30,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.6-SNAPSHOT</version>
+    <version>1.2.6</version>
 
     <name>Apache Shiro</name>
     <url>http://shiro.apache.org/</url>
@@ -44,7 +44,7 @@
         <connection>scm:git:https://git-wip-us.apache.org/repos/asf/shiro.git</connection>
         <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/shiro.git</developerConnection>
         <url>https://github.com/apache/shiro/tree/${project.scm.tag}</url>
-        <tag>1.2.x</tag>
+        <tag>shiro-root-1.2.6</tag>
     </scm>
     <issueManagement>
         <system>Jira</system>
