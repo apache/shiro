@@ -90,8 +90,8 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
                 }  
             });                  
             this.service.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
-            this.enabled = true;
         }
+        this.enabled = true;
     }
 
     public void run() {
@@ -107,7 +107,9 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
     }
 
     public void disableSessionValidation() {
-        this.service.shutdownNow();
+        if (this.service != null) {
+            this.service.shutdownNow();
+        }
         this.enabled = false;
     }
 }
