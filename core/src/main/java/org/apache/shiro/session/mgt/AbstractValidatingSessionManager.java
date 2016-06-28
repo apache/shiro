@@ -236,7 +236,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
     protected void afterSessionValidationEnabled() {
     }
 
-    protected void disableSessionValidation() {
+    protected synchronized void disableSessionValidation() {
         beforeSessionValidationDisabled();
         SessionValidationScheduler scheduler = getSessionValidationScheduler();
         if (scheduler != null) {
