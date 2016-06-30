@@ -243,6 +243,7 @@
                             <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                             <exclude>velocity.log</exclude>
                             <exclude>CONTRIBUTING.md</exclude>
+                            <exclude>README.md</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
@@ -1047,6 +1048,7 @@
                         <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                         <exclude>velocity.log</exclude>
                         <exclude>CONTRIBUTING.md</exclude>
+                        <exclude>README.md</exclude>
                     </excludes>
                 </configuration>
             </plugin>

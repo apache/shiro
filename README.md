@@ -1,4 +1,4 @@
-<img src="http://shiro.apache.org/assets/images/apache-shiro-logo.png" align="right" />
+[<img src="http://shiro.apache.org/assets/images/apache-shiro-logo.png" align="right" />](http://shiro.apache.org)
 
 [![Build Status](https://builds.apache.org/job/Shiro/badge/icon)](https://builds.apache.org/job/Shiro)
 
