@@ -59,6 +59,11 @@ public class DefaultAnnotationResolver implements AnnotationResolver {
 
         }
         Annotation annotation = m.getAnnotation(clazz);
-        return annotation == null ? mi.getThis().getClass().getAnnotation(clazz) : annotation;
+        if (annotation == null ) {
+            Object miThis = mi.getThis();
+            //SHIRO-473 - miThis could be null for static methods, just return null
+            annotation = miThis != null ? miThis.getClass().getAnnotation(clazz) : null;
+        }
+        return annotation;
     }
 }

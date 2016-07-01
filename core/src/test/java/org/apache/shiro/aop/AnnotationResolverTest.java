@@ -60,5 +60,15 @@ public class AnnotationResolverTest {
         replay(methodInvocation);
 	assertNotNull(annotationResolver.getAnnotation(methodInvocation, RequiresUser.class));
     }
+
+    @Test
+    public void testNullMethodInvocation() throws SecurityException, NoSuchMethodException {
+        MethodInvocation methodInvocation = createMock(MethodInvocation.class);
+        Method method = MyFixture.class.getDeclaredMethod("operateThis");
+        expect(methodInvocation.getMethod()).andReturn(method);
+        expect(methodInvocation.getThis()).andReturn(null);
+        replay(methodInvocation);
+        assertNull(annotationResolver.getAnnotation(methodInvocation, RequiresUser.class));
+    }
 }
 
