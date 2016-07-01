@@ -24,6 +24,7 @@ import org.apache.shiro.codec.CodecSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.MessageDigest;
 import java.util.Arrays;
 
 
@@ -103,7 +104,7 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
             }
             byte[] tokenBytes = toBytes(tokenCredentials);
             byte[] accountBytes = toBytes(accountCredentials);
-            return Arrays.equals(tokenBytes, accountBytes);
+            return MessageDigest.isEqual(tokenBytes, accountBytes);
         } else {
             return accountCredentials.equals(tokenCredentials);
         }
