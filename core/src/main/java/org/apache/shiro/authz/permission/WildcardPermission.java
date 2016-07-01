@@ -24,6 +24,7 @@ import org.apache.shiro.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -235,9 +236,15 @@ public class WildcardPermission implements Permission, Serializable {
         StringBuilder buffer = new StringBuilder();
         for (Set<String> part : parts) {
             if (buffer.length() > 0) {
-                buffer.append(":");
+                buffer.append(PART_DIVIDER_TOKEN);
             }
-            buffer.append(part);
+            Iterator<String> partIt = part.iterator();
+            while(partIt.hasNext()) {
+                buffer.append(partIt.next());
+                if (partIt.hasNext()) {
+                    buffer.append(SUBPART_DIVIDER_TOKEN);
+                }
+            }
         }
         return buffer.toString();
     }
