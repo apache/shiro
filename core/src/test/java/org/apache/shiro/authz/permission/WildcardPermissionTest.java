@@ -126,7 +126,17 @@ public class WildcardPermissionTest {
         assertFalse(p2.implies(p1));
         assertFalse(p3.implies(p1));
         assertTrue(p2.implies(p3));
+    }
 
+    /**
+     * Validates WildcardPermissions with that contain the same list parts are equal.
+     */
+    @Test
+    public void testListDifferentOrder() {
+
+        WildcardPermission p6 = new WildcardPermission("one,two:three,four");
+        WildcardPermission p6DiffOrder = new WildcardPermission("two,one:four,three");
+        assertTrue(p6.equals(p6DiffOrder));
     }
 
     @Test
@@ -196,4 +206,23 @@ public class WildcardPermissionTest {
 
     }
 
+    @Test
+    public void testToString() {
+        WildcardPermission p1 = new WildcardPermission("*");
+        WildcardPermission p2 = new WildcardPermission("one");
+        WildcardPermission p3 = new WildcardPermission("one:two");
+        WildcardPermission p4 = new WildcardPermission("one,two:three,four");
+        WildcardPermission p5 = new WildcardPermission("one,two:three,four,five:six:seven,eight");
+
+        assertTrue("*".equals(p1.toString()));
+        assertTrue(p1.equals(new WildcardPermission(p1.toString())));
+        assertTrue("one".equals(p2.toString()));
+        assertTrue(p2.equals(new WildcardPermission(p2.toString())));
+        assertTrue("one:two".equals(p3.toString()));
+        assertTrue(p3.equals(new WildcardPermission(p3.toString())));
+        assertTrue("one,two:three,four".equals(p4.toString()));
+        assertTrue(p4.equals(new WildcardPermission(p4.toString())));
+        assertTrue("one,two:three,four,five:six:seven,eight".equals(p5.toString()));
+        assertTrue(p5.equals(new WildcardPermission(p5.toString())));
+    }
 }
