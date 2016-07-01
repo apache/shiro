@@ -412,7 +412,7 @@ public class SimpleHash extends AbstractHash {
     public boolean equals(Object o) {
         if (o instanceof Hash) {
             Hash other = (Hash) o;
-            return Arrays.equals(getBytes(), other.getBytes());
+            return MessageDigest.isEqual(getBytes(), other.getBytes());
         }
         return false;
     }

@@ -277,7 +277,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
     public boolean equals(Object o) {
         if (o instanceof Hash) {
             Hash other = (Hash) o;
-            return Arrays.equals(getBytes(), other.getBytes());
+            return MessageDigest.isEqual(getBytes(), other.getBytes());
         }
         return false;
     }
