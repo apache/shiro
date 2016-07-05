@@ -25,41 +25,33 @@
             <artifactId>shiro-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.0_spec</artifactId>
-            <version>1.0</version>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-interceptor_1.1_spec</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
+            <groupId>javax.interceptor</groupId>
+            <artifactId>javax.interceptor-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
-            <version>1.0</version>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_3.0_spec</artifactId>
-            <version>1.0</version>
-            <scope>test</scope>
         </dependency>
 
+        <!-- No tests ? -->
         <!--<dependency>-->
-            <!--<groupId>junit</groupId>-->
-            <!--<artifactId>junit</artifactId>-->
+            <!--<groupId>org.apache.geronimo.specs</groupId>-->
+            <!--<artifactId>geronimo-servlet_3.0_spec</artifactId>-->
+            <!--<version>1.0</version>-->
             <!--<scope>test</scope>-->
         <!--</dependency>-->
-        <dependency>
-            <groupId>org.apache.openwebbeans.test</groupId>
-            <artifactId>cditest-owb</artifactId>
-            <version>1.1.8</version>
-            <scope>test</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.apache.openwebbeans.test</groupId>-->
+            <!--<artifactId>cditest-owb</artifactId>-->
+            <!--<version>1.1.8</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
 
     </dependencies>
     <build>

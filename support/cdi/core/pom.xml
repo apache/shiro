@@ -21,20 +21,18 @@
             <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.0_spec</artifactId>
-            <version>1.0</version>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-interceptor_1.1_spec</artifactId>
-            <version>1.0</version>
+            <groupId>javax.interceptor</groupId>
+            <artifactId>javax.interceptor-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
-            <version>1.0</version>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
         </dependency>
+
 
         <dependency>
             <groupId>org.ops4j.pax.exam</groupId>
@@ -73,14 +71,14 @@
                     </instructions>
                 </configuration>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-surefire-plugin</artifactId>-->
-                <!--<configuration>-->
-                  <!--<forkCount>1</forkCount>-->
-                 <!--<reuseForks>0</reuseForks>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                  <forkCount>1</forkCount>
+                 <reuseForks>0</reuseForks>
+                </configuration>
+            </plugin>
             
         </plugins>
     </build>
@@ -89,7 +87,7 @@
         <profile>
             <id>openwebbeans</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <dependencies>
                 <dependency>
@@ -108,27 +106,27 @@
             </dependencies>
         </profile>
 
-        <!--<profile>-->
-            <!--<id>weld</id>-->
-            <!--<activation>-->
-                <!--<activeByDefault>false</activeByDefault>-->
-            <!--</activation>-->
-            <!--<dependencies>-->
-                <!--<dependency>-->
-                    <!--<groupId>org.jboss.weld</groupId>-->
-                    <!--<artifactId>weld-core</artifactId>-->
-                    <!--<version>1.1.13.Final</version>-->
-                    <!--<scope>test</scope>-->
-                <!--</dependency>-->
+        <profile>
+            <id>weld</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.jboss.weld</groupId>
+                    <artifactId>weld-core</artifactId>
+                    <version>1.1.13.Final</version>
+                    <scope>test</scope>
+                </dependency>
 
-                <!--<dependency>-->
-                    <!--<groupId>org.ops4j.pax.exam</groupId>-->
-                    <!--<artifactId>pax-exam-container-weld</artifactId>-->
-                    <!--<version>${pax.exam.version}</version>-->
-                    <!--<scope>test</scope>-->
-                <!--</dependency>-->
-            <!--</dependencies>-->
-        <!--</profile>-->
+                <dependency>
+                    <groupId>org.ops4j.pax.exam</groupId>
+                    <artifactId>pax-exam-container-weld</artifactId>
+                    <version>${pax.exam.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
 
     </profiles>
 
