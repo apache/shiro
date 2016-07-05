@@ -22,8 +22,7 @@ import org.apache.shiro.cdi.ShiroIni;
 
 
 /**
- * @author Harald Wellmann
- * 
+ *
  */
 @ShiroIni
 public class Curry implements Food {

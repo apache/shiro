@@ -29,9 +29,6 @@ import javax.naming.NamingException;
  * {@link #setBeanManager(BeanManager)}.
  * <p>
  * TODO In CDI 1.1, CDI.current().getBeanManager() should be used instead.
- * 
- * @author Harald Wellmann
- * 
  */
 public class BeanManagerProvider {
 

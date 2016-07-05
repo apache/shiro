@@ -20,7 +20,6 @@ package org.apache.shiro.cdi.impl;
 
 
 /**
- * @author Harald Wellmann
  *
  */
 public interface Food {

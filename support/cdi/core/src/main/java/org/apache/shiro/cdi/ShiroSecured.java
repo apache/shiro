@@ -39,9 +39,6 @@ import javax.interceptor.InterceptorBinding;
  * </ul>
  * The secured methods will fail with an {@code AuthorizationException} if the current subject
  * does not match the security constraints.
- * 
- * @author Harald Wellmann
- *
  */
 @Inherited
 @InterceptorBinding

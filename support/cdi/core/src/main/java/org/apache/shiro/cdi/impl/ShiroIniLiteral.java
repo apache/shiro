@@ -25,9 +25,6 @@ import org.apache.shiro.cdi.ShiroIni;
 
 /**
  * A literal for the {@link ShiroIni} annotation.
- * 
- * @author Harald Wellmann
- *
  */
 public class ShiroIniLiteral extends AnnotationLiteral<ShiroIni> {
    

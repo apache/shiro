@@ -31,9 +31,6 @@ import org.apache.shiro.config.Ini.Section;
 /**
  * A CDI-aware extension of {@code IniSecurityManagerFactory}, allowing to reference CDI
  * managed beans qualified with {@code @ShiroIni} in Shiro INI files.
- *  
- * @author Harald Wellmann
- *
  */
 public class CdiIniSecurityManagerFactory extends IniSecurityManagerFactory {
     

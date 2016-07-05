@@ -39,9 +39,6 @@ import javax.inject.Qualifier;
  * <p>
  * In all other cases (e.g. for producer methods), Shiro will log a warning and the bean will not be
  * available in the Shiro environment.
- * 
- * @author Harald Wellmann
- * 
  */
 @Qualifier
 @Target({ TYPE, METHOD, PARAMETER, FIELD })

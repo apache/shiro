@@ -40,9 +40,6 @@ import org.slf4j.LoggerFactory;
  * Contextual references of these beans are eagerly created when this class is instantiated. This
  * is the main reason for using the dedicated {@code ShiroIni} qualifier, to avoid instantiating
  * <em>all</em> named beans.
- * 
- * @author Harald Wellmann
- * 
  */
 public class NamedBeanMap implements Map<String, Object> {
 

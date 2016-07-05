@@ -33,8 +33,6 @@ import org.apache.shiro.cdi.impl.BeanManagerProvider;
 /**
  * An extension of {@link IniWebEnvironment} which makes CDI beans qualified with 
  * {@code @ShiroIni} available to Shiro, to be referenced in INI files.
- *
- * @author Harald Wellmann
  */
 public class CdiIniWebEnvironment extends IniWebEnvironment {
     

@@ -32,9 +32,6 @@ import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
  * A CDI-aware extension of {@link WebIniSecurityManagerFactory}. Constructs a named bean
  * map from the CDI BeanManager and uses these beans as additional default for Shiro
  * bean lookup.
- * 
- * @author Harald Wellmann
- *
  */
 public class CdiWebIniSecurityManagerFactory extends WebIniSecurityManagerFactory {
     

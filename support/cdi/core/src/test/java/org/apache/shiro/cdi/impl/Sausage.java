@@ -22,7 +22,6 @@ import org.apache.shiro.cdi.ShiroIni;
 
 
 /**
- * @author Harald Wellmann
  * 
  */
 @ShiroIni
