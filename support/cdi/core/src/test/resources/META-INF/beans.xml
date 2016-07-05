@@ -18,6 +18,6 @@
           http://java.sun.com/xml/ns/javaee http://docs.jboss.org/cdi/beans_1_0.xsd
           http://jboss.org/schema/weld/beans http://jboss.org/schema/weld/beans_1_1.xsd">
     <interceptors>
-        <class>org.ops4j.pax.shiro.cdi.interceptor.ShiroInterceptor</class>
+        <class>org.apache.shiro.cdi.interceptor.ShiroInterceptor</class>
     </interceptors>          
 </beans>
