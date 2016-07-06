@@ -422,6 +422,17 @@ public class ReflectionBuilder {
             throw new ConfigurationException(msg, e);
         }
     }
+    //@since 1.3 : be able to set an enum value for an object property
+    protected Enum toEnum(Object object, String propertyName, String sValue) {
+        try {
+            PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(object, propertyName);
+            Class<? extends Enum> propertyClazz = (Class<? extends Enum>) descriptor.getPropertyType();
+            return Enum.valueOf(propertyClazz, sValue);
+        } catch (Exception e) {
+            String msg = "Unable to cast property [" + propertyName + "] into an enum for value " + sValue;
+            throw new ConfigurationException(msg, e);
+        }
+    }
 
     protected Set<?> toSet(String sValue) {
         String[] tokens = StringUtils.split(sValue);
@@ -698,6 +709,8 @@ public class ReflectionBuilder {
         } else if (isIndexedPropertyAssignment(propertyName)) {
             String checked = checkForNullOrEmptyLiteral(stringValue);
             value = resolveValue(checked);
+        } else if (isTypedProperty(object, propertyName, Enum.class)) {
+            value = toEnum(object, propertyName, stringValue);
         } else if (isTypedProperty(object, propertyName, Set.class)) {
             value = toSet(stringValue);
         } else if (isTypedProperty(object, propertyName, Map.class)) {

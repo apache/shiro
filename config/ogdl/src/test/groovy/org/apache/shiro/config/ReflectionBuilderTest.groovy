@@ -524,4 +524,44 @@ class ReflectionBuilderTest {
         assertEquals(5, bean.getIntProp());
         assertEquals("someString", bean.getStringProp());
     }
+
+    @Test
+    public void testParsingEnum() {
+
+        String objectName = "myObject";
+        String objectProperty = objectName + ".enumProperty";
+        String listProperty = objectName + ".enumList";
+        String mapProperty = objectName + ".enumMap";
+
+        ReflectionBuilder reflectionBuilder = new ReflectionBuilder();
+        // Order matters
+        Map<String, String> lines = new LinkedHashMap<String, String>();
+        lines.put(objectName, SimpleEnumPropertyObject.class.getName());
+
+        lines.put(objectProperty, SimpleEnum.VALUE2.toString());
+        lines.put(listProperty, SimpleEnum.VALUE2.toString() +", " + SimpleEnum.VALUE1.toString() );
+        lines.put(mapProperty, "two:"+ SimpleEnum.VALUE2.toString() +", one:" + SimpleEnum.VALUE1.toString() );
+
+        Map<String, Object> results = reflectionBuilder.buildObjects(lines);
+
+        // check that buildObjects returns the expected object
+        Object obj = results.get(objectName);
+        assertTrue(obj instanceof SimpleEnumPropertyObject);
+        SimpleEnumPropertyObject myObject = (SimpleEnumPropertyObject)obj;
+        assertEquals(SimpleEnum.VALUE2, myObject.getEnumProperty());
+
+        // now getBean should do the same thing
+        obj = reflectionBuilder.getBean(objectName);
+        assertTrue(obj instanceof SimpleEnumPropertyObject);
+        myObject = (SimpleEnumPropertyObject)obj;
+        assertEquals(SimpleEnum.VALUE2, myObject.getEnumProperty());
+
+        // TODO: FIX these
+        def expectedResultList = [SimpleEnum.VALUE2, SimpleEnum.VALUE1];
+        assertEquals(expectedResultList, myObject.getEnumList());
+
+        def expectedResultMap = [two: SimpleEnum.VALUE2, one: SimpleEnum.VALUE1]
+        assertEquals(expectedResultMap, myObject.getEnumMap());
+
+    }
 }
