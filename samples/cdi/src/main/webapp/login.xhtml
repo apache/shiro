@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
+
+<h1>Shiro CDI Web Sample</h1>
+
+<p>Enter "admin" and password "secret", or "user" and password "changeme" to log in.</p>
+
+<h:body>
+    <h:form id="login">        
+        <h:panelGrid columns="2">
+            <h:outputLabel for="username" value="User"/>
+            <h:inputText id="username" value="#{login.userName}" />
+            <h:outputLabel for="password" value="Password"/>
+            <h:inputSecret id="password" value="#{login.password}" />
+            <h:commandButton value="Submit" />
+        </h:panelGrid>
+
+    </h:form>
+</h:body>
+
+</html>

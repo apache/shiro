@@ -104,6 +104,11 @@
     </build>
 
     <profiles>
+
+        <!--
+        TODO: we should support one or the other directly
+        If we need to run ITs against other containers, we should setup individual IT sub modules.
+        -->
         <profile>
             <id>openwebbeans</id>
             <activation>

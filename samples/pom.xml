@@ -39,6 +39,7 @@
         <module>spring-client</module>
         <module>spring</module>
         <module>spring-hibernate</module>
+        <module>cdi</module>
     </modules>
 
     <reporting>
