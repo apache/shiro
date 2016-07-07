@@ -215,7 +215,7 @@ public class SimpleCookie implements Cookie {
         addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly);
     }
 
-    private void addCookieHeader(HttpServletResponse response, String name, String value, String comment,
+    protected void addCookieHeader(HttpServletResponse response, String name, String value, String comment,
                                  String domain, String path, int maxAge, int version,
                                  boolean secure, boolean httpOnly) {
 
