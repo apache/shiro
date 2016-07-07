@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
     private ScheduledExecutorService service;
     private long interval = DefaultSessionManager.DEFAULT_SESSION_VALIDATION_INTERVAL;
     private boolean enabled = false;
+    private String threadNamePrefix = "SessionValidationThread-";
 
     public ExecutorServiceSessionValidationScheduler() {
         super();
@@ -74,6 +76,14 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
         return this.enabled;
     }
 
+    public void setThreadNamePrefix(String threadNamePrefix) {
+        this.threadNamePrefix = threadNamePrefix;
+    }
+
+    public String getThreadNamePrefix() {
+        return this.threadNamePrefix;
+    }
+
     /**
      * Creates a single thread {@link ScheduledExecutorService} to validate sessions at fixed intervals 
      * and enables this scheduler. The executor is created as a daemon thread to allow JVM to shut down
@@ -83,11 +93,14 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
     public void enableSessionValidation() {
         if (this.interval > 0l) {
             this.service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {  
-	        public Thread newThread(Runnable r) {  
-	            Thread thread = new Thread(r);  
-	            thread.setDaemon(true);  
-	            return thread;  
-                }  
+	            private final AtomicInteger count = new AtomicInteger(1);
+
+	            public Thread newThread(Runnable r) {  
+	                Thread thread = new Thread(r);  
+	                thread.setDaemon(true);  
+	                thread.setName(threadNamePrefix + count.getAndIncrement());
+	                return thread;  
+	            }  
             });                  
             this.service.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
         }
