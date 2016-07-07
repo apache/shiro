@@ -40,6 +40,32 @@
         <module>features</module>
         <module>cas</module>
     </modules>
+    <profiles>
+        <profile>
+            <!-- If activated, this profile will include guice 4 dependency and run shiro tests under guice 4 lib -->
+            <id>guice4-test</id>
+            <modules>
+                <module>guice</module>
+                <module>guice-4-test</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>aspectj</module>
+                <module>ehcache</module>
+                <module>quartz</module>
+                <module>spring</module>
+                <module>guice</module>
+                <module>features</module>
+                <module>cas</module>
+            </modules>
+        </profile>
+    </profiles>
+
 
 </project>
 
