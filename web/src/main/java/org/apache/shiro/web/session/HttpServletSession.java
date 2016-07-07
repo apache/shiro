@@ -75,7 +75,7 @@ public class HttpServletSession implements Session {
 
     public long getTimeout() throws InvalidSessionException {
         try {
-            return httpSession.getMaxInactiveInterval() * 1000;
+            return httpSession.getMaxInactiveInterval() * 1000L;
         } catch (Exception e) {
             throw new InvalidSessionException(e);
         }
