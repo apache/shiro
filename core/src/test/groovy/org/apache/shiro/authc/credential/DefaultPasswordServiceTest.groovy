@@ -139,5 +139,22 @@ class DefaultPasswordServiceTest extends GroovyTestCase {
 
         assertTrue service.passwordsMatch("12345", formatted)
     }
+    
+    void testTurkishLocal() {
 
+        Locale locale = Locale.getDefault();
+
+        // tr_TR
+        Locale.setDefault(new Locale("tr", "TR"));
+
+        try {
+            PasswordService passwordService = new DefaultPasswordService();
+            String password = "333";
+            String enc = passwordService.encryptPassword(password);
+            assertTrue(passwordService.passwordsMatch(password, enc));
+        }
+        finally {
+            Locale.setDefault(locale);
+        }
+    }
 }

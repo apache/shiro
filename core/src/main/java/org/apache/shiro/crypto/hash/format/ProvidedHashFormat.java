@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
+import java.util.Locale;
+
 /**
  * An enum representing Shiro's default provided {@link HashFormat} implementations.
  *
@@ -55,7 +57,9 @@ public enum ProvidedHashFormat {
             return null;
         }
         try {
-            return valueOf(id.toUpperCase());
+            // Use English Locale, some Locales handle uppercase/lower differently. i.e. Turkish and upper case 'i'
+            // is not 'I'. And 'SHIRO1' would be 'SHİRO1'
+            return valueOf(id.toUpperCase(Locale.ENGLISH));
         } catch (IllegalArgumentException ignored) {
             return null;
         }
