@@ -19,6 +19,8 @@
 package org.apache.shiro.authz.aop;
 
 import org.apache.shiro.aop.AnnotationResolver;
+import org.apache.shiro.aop.MethodInvocation;
+import org.apache.shiro.authz.AuthorizationException;
 
 /**
  * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresPermissions RequiresPermissions} annotation is declared, and if so, performs
@@ -46,6 +48,21 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
      */
     public PermissionAnnotationMethodInterceptor(AnnotationResolver resolver) {
         super( new PermissionAnnotationHandler(), resolver);
+    }
+
+    public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
+        try {
+            PermissionAnnotationHandler.class.cast(getHandler()).assertAuthorized(getAnnotation(mi), mi);
+        }
+        catch(AuthorizationException ae) {
+            // Annotation handler doesn't know why it was called, so add the information here if possible.
+            // Don't wrap the exception here since we don't want to mask the specific exception, such as
+            // UnauthenticatedException etc.
+            if (ae.getCause() == null) {
+                ae.initCause(new AuthorizationException("Not authorized to invoke method: " + mi.getMethod()));
+            }
+            throw ae;
+        }
     }
 
     /*

@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.authz.aop;
 
+import org.apache.shiro.aop.MethodInvocation;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -25,11 +26,29 @@ import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.Test;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /**
  * Test cases for the {@link PermissionAnnotationHandler} class.
  */
 public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport {
+//    public static final MethodInvocation METHOD_INVOCATION = new MethodInvocation() {
+//        public Object proceed() throws Throwable {
+//            return null;
+//        }
+//
+//        public Method getMethod() {
+//            return null;
+//        }
+//
+//        public Object[] getArguments() {
+//            return new Object[0];
+//        }
+//
+//        public Object getThis() {
+//            return null;
+//        }
+//    };
 
     //Added to satisfy SHIRO-146
 

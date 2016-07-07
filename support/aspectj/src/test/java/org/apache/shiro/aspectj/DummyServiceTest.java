@@ -30,7 +30,11 @@ import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  */
@@ -38,6 +42,7 @@ public class DummyServiceTest {
 
     private static DummyService SECURED_SERVICE;
     private static DummyService RESTRICTED_SERVICE;
+    private static TemplatedDummyService TEMPLATED_SERVICE;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -51,6 +56,7 @@ public class DummyServiceTest {
 
         SECURED_SERVICE = new SecuredDummyService();
         RESTRICTED_SERVICE = new RestrictedDummyService();
+        TEMPLATED_SERVICE = new TemplatedDummyService();
     }
 
     @AfterClass
@@ -190,4 +196,28 @@ public class DummyServiceTest {
         RESTRICTED_SERVICE.retrieve();
     }
 
+    // TEST TEMPLATED
+    @Test
+    public void testTemplatedOk_asAdmin() throws Exception {
+        loginAsAdmin();
+        TEMPLATED_SERVICE.retrieve("dummy");
+    }
+
+    @Test(expected = UnauthorizedException.class)
+    public void testTemplatedKo_asAdmin() throws Exception {
+        loginAsAdmin();
+        TEMPLATED_SERVICE.retrieve("missing");
+    }
+
+    @Test
+    public void testTemplatedParamOk_asAdmin() throws Exception {
+        loginAsAdmin();
+        TEMPLATED_SERVICE.retrieve(new TemplatedDummyService.Param("dummy"));
+    }
+
+    @Test(expected = UnauthorizedException.class)
+    public void testTemplatedParamKo_asAdmin() throws Exception {
+        loginAsAdmin();
+        TEMPLATED_SERVICE.retrieve(new TemplatedDummyService.Param("missing"));
+    }
 }
