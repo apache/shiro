@@ -49,14 +49,14 @@ import java.util.Map;
  * For example, consider the following two identical configurations:
  * <pre>
  * [main]
- * ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
+ * ldapRealm = org.apache.shiro.realm.ldap.DefaultLdapRealm
  * ldapRealm.contextFactory.url = ldap://localhost:389
  * ldapRealm.contextFactory.authenticationMechanism = DIGEST-MD5
  * </pre>
  * and
  * <pre>
  * [main]
- * ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
+ * ldapRealm = org.apache.shiro.realm.ldap.DefaultLdapRealm
  * ldapRealm.contextFactory.environment[java.naming.provider.url] = ldap://localhost:389
  * ldapRealm.contextFactory.environment[java.naming.security.authentication] = DIGEST-MD5
  * </pre>
@@ -68,7 +68,7 @@ import java.util.Map;
  * For example:
  * <pre>
  * [main]
- * ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
+ * ldapRealm = org.apache.shiro.realm.ldap.DefaultLdapRealm
  * ldapRealm.contextFactory.url = ldap://localhost:389
  * ldapRealm.contextFactory.authenticationMechanism = DIGEST-MD5
  * ldapRealm.contextFactory.environment[some.other.obscure.jndi.key] = some value

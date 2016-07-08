@@ -22,7 +22,7 @@ import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
 
 /**
- * Interface that encapsulates the creation of {@code LdapContext} objects that are used by {@link JndiLdapRealm}s to
+ * Interface that encapsulates the creation of {@code LdapContext} objects that are used by {@link DefaultLdapRealm}s to
  * perform authentication attempts and query for authorization data.
  *
  * @since 0.2
