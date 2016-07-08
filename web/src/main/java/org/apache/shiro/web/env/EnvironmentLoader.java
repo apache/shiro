@@ -195,7 +195,7 @@ public class EnvironmentLoader {
         Class<?> clazz = determineWebEnvironmentClass(sc);
         if (!MutableWebEnvironment.class.isAssignableFrom(clazz)) {
             throw new ConfigurationException("Custom WebEnvironment class [" + clazz.getName() +
-                    "] is not of required type [" + WebEnvironment.class.getName() + "]");
+                    "] is not of required type [" + MutableWebEnvironment.class.getName() + "]");
         }
 
         String configLocations = sc.getInitParameter(CONFIG_LOCATIONS_PARAM);
@@ -223,6 +223,11 @@ public class EnvironmentLoader {
         return environment;
     }
 
+    /**
+     * Any additional customization of the Environment can be by overriding this method. For example setup shared
+     * resources, etc. By default this method does nothing.
+     * @param environment
+     */
     protected void customizeEnvironment(WebEnvironment environment) {
     }
 
@@ -235,9 +240,21 @@ public class EnvironmentLoader {
         servletContext.log("Cleaning up Shiro Environment");
         try {
             Object environment = servletContext.getAttribute(ENVIRONMENT_ATTRIBUTE_KEY);
+            if (environment instanceof WebEnvironment) {
+                finalizeEnvironment((WebEnvironment) environment);
+            }
             LifecycleUtils.destroy(environment);
         } finally {
             servletContext.removeAttribute(ENVIRONMENT_ATTRIBUTE_KEY);
         }
+    }
+
+    /**
+     * Any additional cleanup of the Environment can be done by overriding this method.  For example clean up shared
+     * resources, etc. By default this method does nothing.
+     * @param environment
+     * @since 1.3
+     */
+    protected void finalizeEnvironment(WebEnvironment environment) {
     }
 }
