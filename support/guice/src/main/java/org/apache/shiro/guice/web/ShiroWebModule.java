@@ -233,7 +233,62 @@ public abstract class ShiroWebModule extends ShiroModule {
     }
 
     protected static <T extends PathMatchingFilter> Key<T> config(Key<T> baseKey, String configValue) {
-        return new FilterConfigKey<T>(baseKey, configValue);
+        if (detectGuiceVersion() == 3) {
+            return new FilterConfigKey<T>(baseKey, configValue);
+        }
+        else {
+            if (ROLES == baseKey) {
+                return (Key<T>) new RolesAuthorizationConfigKey(configValue);
+            } else if (PERMS == baseKey) {
+                return (Key<T>) new PermissionsAuthorizationConfigKey(configValue);
+            } else if (REST == baseKey) {
+                return (Key<T>) new HttpMethodPermissionConfigKey(configValue);
+            } else if (PORT == baseKey) {
+                return (Key<T>) new PortConfigKey(configValue);
+            } else if (SSL == baseKey) {
+                return (Key<T>) new SslConfigKey(configValue);
+            }
+            throw new IllegalArgumentException("You may not configure a custom filter!");
+        }
+    }
+
+    private static int detectGuiceVersion() {
+        try {
+            Class.forName("com.google.inject.multibindings.MapKey");
+            return 4;
+        } catch (ClassNotFoundException e) {
+            return 3;
+        }
+    }
+
+    private static class RolesAuthorizationConfigKey extends FilterConfigKey<RolesAuthorizationFilter> {
+        private RolesAuthorizationConfigKey(String configValue) {
+            super(ROLES, configValue);
+        }
+    }
+
+    private static class PermissionsAuthorizationConfigKey extends FilterConfigKey<PermissionsAuthorizationFilter> {
+        private PermissionsAuthorizationConfigKey(String configValue) {
+            super(PERMS, configValue);
+        }
+    }
+
+    private static class HttpMethodPermissionConfigKey extends FilterConfigKey<HttpMethodPermissionFilter> {
+        private HttpMethodPermissionConfigKey(String configValue) {
+            super(REST, configValue);
+        }
+    }
+
+    private static class PortConfigKey extends FilterConfigKey<PortFilter> {
+        private PortConfigKey(String configValue) {
+            super(PORT, configValue);
+        }
+    }
+
+    private static class SslConfigKey extends FilterConfigKey<SslFilter> {
+        private SslConfigKey(String configValue) {
+            super(SSL, configValue);
+        }
     }
 
     @SuppressWarnings({"UnusedDeclaration"})

@@ -28,7 +28,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-guice-4-test</artifactId>
-    <name>Apache Shiro :: Support :: Guice</name>
+    <name>Apache Shiro :: Support :: Guice4-Test</name>
     <packaging>bundle</packaging>
 
     <properties>
