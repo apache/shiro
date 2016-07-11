@@ -21,6 +21,8 @@ package org.apache.shiro.realm;
 import org.apache.shiro.authc.LogoutAware;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.CacheManagerAware;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Nameable;
@@ -45,7 +47,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @see #getAvailablePrincipal(org.apache.shiro.subject.PrincipalCollection)
  * @since 0.9
  */
-public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware, LogoutAware {
+public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware, LogoutAware, EventBusAware {
 
     private static final Logger log = LoggerFactory.getLogger(CachingRealm.class);
 
@@ -59,6 +61,7 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
     private String name;
     private boolean cachingEnabled;
     private CacheManager cacheManager;
+    private EventBus eventBus;
 
     /**
      * Default no-argument constructor that defaults
@@ -213,4 +216,37 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
 
         return primary;
     }
+
+    /**
+     * Returns the EventBus used to publish Realm events.
+     *
+     * @return the EventBus used to publish Realm events.
+     * @since 1.3
+     */
+    protected EventBus getEventBus() {
+        return eventBus;
+    }
+
+    /**
+     * Sets the EventBus to use to publish Realm events.
+     *
+     * @param eventBus the EventBus to use to publish Realm events.
+     * @since 1.3
+     */
+    public void setEventBus(EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
+
+    /**
+     * Publishes events on the event bus if the event bus is non-null, otherwise does nothing.
+     *
+     * @param event the event to publish on the event bus if the event bus exists.
+     * @since 1.3
+     */
+    protected void publishEvent(Object event) {
+        if (this.eventBus != null) {
+            this.eventBus.publish(event);
+        }
+    }
+
 }

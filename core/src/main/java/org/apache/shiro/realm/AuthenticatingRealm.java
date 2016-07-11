@@ -28,6 +28,7 @@ import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
+import org.apache.shiro.realm.event.RealmEvent;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.Initializable;
 import org.slf4j.Logger;
@@ -565,25 +566,38 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      */
     public final AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
-        AuthenticationInfo info = getCachedAuthenticationInfo(token);
-        if (info == null) {
-            //otherwise not cached, perform the lookup:
-            info = doGetAuthenticationInfo(token);
-            log.debug("Looked up AuthenticationInfo [{}] from doGetAuthenticationInfo", info);
-            if (token != null && info != null) {
-                cacheAuthenticationInfoIfPossible(token, info);
+        try {
+            AuthenticationInfo info = getCachedAuthenticationInfo(token);
+            boolean infoCached = false;
+            if (info == null) {
+                //otherwise not cached, perform the lookup:
+                info = doGetAuthenticationInfo(token);
+                log.debug("Looked up AuthenticationInfo [{}] from doGetAuthenticationInfo", info);
+
+                if (token != null && info != null) {
+                    cacheAuthenticationInfoIfPossible(token, info);
+                }
+
+            } else {
+                infoCached = true;
+                log.debug("Using cached authentication info [{}] to perform credentials matching.", info);
             }
-        } else {
-            log.debug("Using cached authentication info [{}] to perform credentials matching.", info);
-        }
 
-        if (info != null) {
-            assertCredentialsMatch(token, info);
-        } else {
-            log.debug("No AuthenticationInfo found for submitted AuthenticationToken [{}].  Returning null.", token);
-        }
+            if (info != null) {
+                assertCredentialsMatch(token, info);
+                publishEvent(new RealmEvent.AuthenticationEvent(getName(), info.getPrincipals(), infoCached));
+            } else {
+                publishEvent(new RealmEvent.AuthenticationFailureEvent(getName()));
+                log.debug("No AuthenticationInfo found for submitted AuthenticationToken [{}].  Returning null.", token);
+            }
 
-        return info;
+            return info;
+        }
+        catch (AuthenticationException e) {
+            // fire the event, then re-throw
+            publishEvent(new RealmEvent.AuthenticationFailureEvent(getName(), e));
+            throw e;
+        }
     }
 
     /**

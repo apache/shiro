@@ -21,8 +21,13 @@ package org.apache.shiro.realm
 import org.apache.shiro.authc.credential.CredentialsMatcher
 import org.apache.shiro.cache.Cache
 import org.apache.shiro.cache.CacheManager
+import org.apache.shiro.event.EventBus
+import org.apache.shiro.realm.event.RealmEvent
 import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.authc.*
+import org.easymock.Capture
+import org.easymock.EasyMock
+
 import static org.easymock.EasyMock.*
 
 /**
@@ -113,6 +118,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
 
         expect(token.getCredentials()).andReturn(password).anyTimes();
         expect(info.getCredentials()).andReturn(password).anyTimes();
+        expect(info.getPrincipals()).andReturn(null).anyTimes(); // called for events
 
         replay token, info
 
@@ -160,6 +166,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         expect(cache.put(eq(username), same(info))).andReturn null
 
         expect(info.getCredentials()).andReturn(password)
+        expect(info.getPrincipals()).andReturn(null).anyTimes(); // called for events
 
         replay cacheManager, cache, token, info
 
@@ -193,6 +200,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         expect(cache.get(eq(username))).andReturn info
 
         expect(info.getCredentials()).andReturn(password)
+        expect(info.getPrincipals()).andReturn(null).anyTimes(); // called for events
 
         replay cacheManager, cache, token, info
 
@@ -270,6 +278,144 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         }
 
         verify matcher, token, info
+    }
+
+    void testAuthcEventPublished() {
+
+        def username = "foo"
+        def password = "bar"
+
+        def eventBus = createStrictMock(EventBus)
+        def token = createStrictMock(AuthenticationToken)
+        def info = createStrictMock(AuthenticationInfo)
+        def principal = createMock(PrincipalCollection);
+
+        expect(token.getPrincipal()).andReturn(username).anyTimes()
+        expect(token.getCredentials()).andReturn(password).anyTimes()
+        expect(info.getCredentials()).andReturn(password)
+        expect(info.getPrincipals()).andReturn(principal).anyTimes(); // called for events
+
+        def eventCapture = new Capture<RealmEvent.AuthenticationEvent>()
+        expect(eventBus.publish(capture(eventCapture)))
+
+        replay eventBus, token, info, principal
+
+        AuthenticatingRealm realm = new TestAuthenticatingRealm()
+        realm.info = info
+        realm.eventBus = eventBus
+
+        def returnedInfo = realm.getAuthenticationInfo(token)
+
+        assertSame info, returnedInfo
+
+        verify token, info, eventBus, principal
+        assertEquals(new RealmEvent.AuthenticationEvent(realm.name, principal, false), eventCapture.value)
+    }
+
+    void testAuthcEventPublishedCached() {
+
+        def username = "foo"
+        def password = "bar"
+
+        def eventBus = createStrictMock(EventBus)
+        def cacheManager = createStrictMock(CacheManager)
+        def cache = createStrictMock(Cache)
+        def token = createStrictMock(AuthenticationToken)
+        def info = createStrictMock(AuthenticationInfo)
+
+        def principal = createMock(PrincipalCollection);
+
+        expect(cacheManager.getCache(isA(String))).andReturn cache
+        expect(token.getPrincipal()).andReturn(username).anyTimes()
+        expect(token.getCredentials()).andReturn(password).anyTimes()
+
+        expect(cache.get(eq(username))).andReturn info
+
+        expect(info.getCredentials()).andReturn(password)
+        expect(info.getPrincipals()).andReturn(principal).anyTimes(); // called for events
+        def eventCapture = new Capture<RealmEvent.AuthenticationEvent>()
+        expect(eventBus.publish(capture(eventCapture)))
+
+        replay eventBus, cacheManager, cache, token, info, principal
+
+        AuthenticatingRealm realm = new TestAuthenticatingRealm()
+        realm.info = info
+        realm.eventBus = eventBus
+
+        realm.cacheManager = cacheManager
+        realm.authenticationCachingEnabled = true
+
+        def returnedInfo = realm.getAuthenticationInfo(token)
+
+        assertSame info, returnedInfo
+
+        verify cacheManager, cache, token, info, eventBus, principal
+        assertEquals(new RealmEvent.AuthenticationEvent(realm.name, principal, true), eventCapture.value)
+    }
+
+    void testAuthcFailureEventPublished() {
+
+        def username = "foo"
+        def password = "bar"
+
+        def eventBus = createStrictMock(EventBus)
+        def token = createStrictMock(AuthenticationToken)
+        def info = createStrictMock(AuthenticationInfo)
+        def principal = createMock(PrincipalCollection);
+
+        expect(token.getPrincipal()).andReturn(username).anyTimes()
+        expect(token.getCredentials()).andReturn(password).anyTimes()
+        expect(info.getCredentials()).andReturn("invalid-password")
+        expect(info.getPrincipals()).andReturn(principal).anyTimes(); // called for events
+
+        def eventCapture = new Capture<RealmEvent.AuthenticationEvent>()
+        expect(eventBus.publish(capture(eventCapture)))
+
+        replay eventBus, token, info, principal
+
+        AuthenticatingRealm realm = new TestAuthenticatingRealm()
+        realm.info = info
+        realm.eventBus = eventBus
+
+        def actualException = null;
+
+        try {
+            realm.getAuthenticationInfo(token)
+            fail("Expected AuthenitcationException")
+        }
+        catch (AuthenticationException e) {
+            actualException = e
+        }
+
+        verify token, info, eventBus, principal
+        assertEquals(new RealmEvent.AuthenticationFailureEvent(realm.name, actualException), eventCapture.value)
+    }
+
+    void testAuthcFailureEventPublishedNullInfo() {
+
+        def username = "foo"
+        def password = "bar"
+
+        def eventBus = createStrictMock(EventBus)
+        def token = createStrictMock(AuthenticationToken)
+        def info = createStrictMock(AuthenticationInfo)
+        def principal = createMock(PrincipalCollection);
+
+        expect(token.getPrincipal()).andReturn(username).anyTimes()
+        expect(token.getCredentials()).andReturn(password).anyTimes()
+
+        def eventCapture = new Capture<RealmEvent.AuthenticationEvent>()
+        expect(eventBus.publish(capture(eventCapture)))
+
+        replay eventBus, token, info, principal
+
+        AuthenticatingRealm realm = new TestAuthenticatingRealm()
+        realm.eventBus = eventBus
+
+        assertNull realm.getAuthenticationInfo(token)
+
+        verify token, info, eventBus, principal
+        assertEquals(new RealmEvent.AuthenticationFailureEvent(realm.name), eventCapture.value)
     }
 
 
