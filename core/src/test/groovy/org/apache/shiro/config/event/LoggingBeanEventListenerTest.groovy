@@ -16,27 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.config.event;
+package org.apache.shiro.config.event
 
-import org.apache.shiro.event.Subscribe;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.Test
 
 /**
- * A stock bean listener implementation that logs all BeanEvents as TRACE log statements.
- *
  * @since 1.3
  */
-public class LoggingBeanEventListener {
+class LoggingBeanEventListenerTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingBeanEventListener.class);
-    private static final String SUFFIX = BeanEvent.class.getSimpleName();
+    /**
+     * Test that LoggingBeanEventListener attempts to substring class names of BeanEvents that contain the
+     * string 'BeanEvent'.
+     */
+    @Test
+    void testMisnamedBeanEventClass() {
 
-    @Subscribe
-    public void onEvent(BeanEvent e) {
-        String className = e.getClass().getSimpleName();
-        int i = className.lastIndexOf(SUFFIX);
-        String subclassPrefix = i > 0 ? className.substring(0, i) : className;
-        logger.trace("{} bean '{}' [{}]", new Object[]{subclassPrefix, e.getBeanName(), e.getBean()});
+        def m = [foo: 'bar'] as Map<String,Object>
+        Object o = new Object()
+        BeanEvent evt = new MisnamedBean('baz', o, m)
+
+        // This was previously throwing a StringIndexOutOfBoundsException
+        new LoggingBeanEventListener().onEvent(evt)
+    }
+
+    private class MisnamedBean extends BeanEvent {
+        MisnamedBean(String beanName, Object bean, Map<String, Object> beanContext) {
+            super(beanName, bean, beanContext)
+        }
     }
 }
