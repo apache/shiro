@@ -21,6 +21,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.config.event.BeanEvent;
+import org.apache.shiro.event.EventBus;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -30,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Simple Quickstart application showing how to use Shiro's API with Guice integration.
  *
- * @since 0.9 RC2
+ * @since 1.3
  */
 public class QuickstartGuice {
 
@@ -42,6 +44,9 @@ public class QuickstartGuice {
         // We will utilize standard Guice bootstrapping to create a Shiro SecurityManager.
         Injector injector = Guice.createInjector(new QuickstartShiroModule());
         SecurityManager securityManager = injector.getInstance(SecurityManager.class);
+
+        // no events to fire yet, so just come up with something.
+        injector.getInstance(EventBus.class).publish(new BeanEvent("test", new Object(), null){});
 
         // for this simple example quickstart, make the SecurityManager
         // accessible as a JVM singleton.  Most applications wouldn't do this
