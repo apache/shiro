@@ -176,6 +176,43 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
     public void setAuthcScheme(String authcScheme) {
         this.authcScheme = authcScheme;
     }
+    
+    /**
+     * The Basic authentication filter can be configured with a list of HTTP methods to which it should apply. This
+     * method ensures that authentication is <em>only</em> required for those HTTP methods specified. For example,
+     * if you had the configuration:
+     * <pre>
+     *    [urls]
+     *    /basic/** = authcBasic[POST,PUT,DELETE]
+     * </pre>
+     * then a GET request would not required authentication but a POST would.
+     * @param request The current HTTP servlet request.
+     * @param response The current HTTP servlet response.
+     * @param mappedValue The array of configured HTTP methods as strings. This is empty if no methods are configured.
+     */
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        HttpServletRequest httpRequest = WebUtils.toHttp(request);
+        String httpMethod = httpRequest.getMethod();
+        
+        // Check whether the current request's method requires authentication.
+        // If no methods have been configured, then all of them require auth,
+        // otherwise only the declared ones need authentication.
+        String[] methods = (String[]) (mappedValue == null ? new String[0] : mappedValue);
+        boolean authcRequired = methods.length == 0;
+        for (String m : methods) {
+            if (httpMethod.equalsIgnoreCase(m)) {
+                authcRequired = true;
+                break;
+            }
+        }
+        
+        if (authcRequired) {
+            return super.isAccessAllowed(request, response, mappedValue);
+        }
+        else {
+            return true;
+        }
+    }
 
     /**
      * Processes unauthenticated requests. It handles the two-stage request/challenge authentication protocol.
