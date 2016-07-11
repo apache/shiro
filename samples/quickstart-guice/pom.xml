@@ -63,6 +63,8 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-guice</artifactId>
         </dependency>
+
+        <!-- configure logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
@@ -70,8 +72,13 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
