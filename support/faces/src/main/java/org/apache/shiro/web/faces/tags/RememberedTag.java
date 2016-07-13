@@ -31,7 +31,7 @@ import javax.faces.view.facelets.TagConfig;
  * guarantees that the current user has logged in <em>during their current session</em>, proving they really are
  * who they say they are.
  *
- * @since 1.3
+ * @since 2.0
  */
 public class RememberedTag extends SecureTagHandler {
 

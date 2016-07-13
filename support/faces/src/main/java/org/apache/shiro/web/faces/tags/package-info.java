@@ -23,7 +23,7 @@
  * <p>Shiro JSF Tags can be used to evalute or not evaluate (show or not show) parts of a JSF page
  * based on the current user's authentication status and/or authorization (access control) abilities.</p>
  *
- * @since 1.3
+ * @since 2.0
  */
 package org.apache.shiro.web.faces.tags;
 

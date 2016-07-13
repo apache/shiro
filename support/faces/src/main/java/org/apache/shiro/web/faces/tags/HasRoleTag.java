@@ -21,7 +21,7 @@ package org.apache.shiro.web.faces.tags;
 import javax.faces.view.facelets.TagConfig;
 
 /**
- * @since 1.3
+ * @since 2.0
  */
 public class HasRoleTag extends AuthorizationTagHandler {
 

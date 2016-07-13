@@ -28,7 +28,7 @@ import javax.faces.view.facelets.TagConfig;
  * Tag handler which shows or hides body content based on the current Subject's authorization state.  'Authorization
  * state' means whether or not they have or do not have a role or whether they are permitted to do something or not.
  *
- * @since 1.3
+ * @since 2.0
  */
 public abstract class AuthorizationTagHandler extends SecureTagHandler {
 

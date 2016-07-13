@@ -32,7 +32,7 @@ import java.io.IOException;
 /**
  * Base class for all Shiro TagHandlers
  * 
- * @since 1.3
+ * @since 2.0
  */
 public abstract class SecureTagHandler extends TagHandler {
 

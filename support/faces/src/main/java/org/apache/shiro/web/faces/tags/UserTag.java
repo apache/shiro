@@ -32,7 +32,7 @@ import javax.faces.view.facelets.TagConfig;
  * <p/>
  * The logically opposite tag of this one is the {@link GuestTag}.
  *
- * @since 1.3
+ * @since 2.0
  */
 public class UserTag extends SecureTagHandler {
 

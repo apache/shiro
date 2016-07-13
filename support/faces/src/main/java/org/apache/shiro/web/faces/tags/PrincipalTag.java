@@ -37,7 +37,7 @@ import java.lang.reflect.Modifier;
  * If no principal is found or the user is not authenticated, the tag displays nothing unless a
  * {@code defaultValue} is specified.
  *
- * @since 1.3
+ * @since 2.0
  */
 public class PrincipalTag extends SecureComponent {
 
