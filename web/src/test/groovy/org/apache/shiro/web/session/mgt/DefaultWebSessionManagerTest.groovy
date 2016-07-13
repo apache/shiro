@@ -126,6 +126,7 @@ public class DefaultWebSessionManagerTest {
                 ShiroHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+        request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.TRUE);
 
         replay(cookie);
         replay(request);
@@ -160,6 +161,7 @@ public class DefaultWebSessionManagerTest {
                 ShiroHttpServletRequest.URL_SESSION_ID_SOURCE);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+        request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.TRUE);
 
         replay(cookie);
         replay(request);
@@ -195,6 +197,7 @@ public class DefaultWebSessionManagerTest {
                 ShiroHttpServletRequest.URL_SESSION_ID_SOURCE);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+        request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.TRUE);
 
         replay(cookie);
         replay(request);
@@ -225,6 +228,7 @@ public class DefaultWebSessionManagerTest {
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, ShiroHttpServletRequest.URL_SESSION_ID_SOURCE);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+        request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.TRUE);
 
         replay(request);
         replay(response);

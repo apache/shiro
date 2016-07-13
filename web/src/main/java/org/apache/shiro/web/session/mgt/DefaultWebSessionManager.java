@@ -51,12 +51,14 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
     private Cookie sessionIdCookie;
     private boolean sessionIdCookieEnabled;
+    private boolean sessionIdUrlRewritingEnabled;
 
     public DefaultWebSessionManager() {
         Cookie cookie = new SimpleCookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
         cookie.setHttpOnly(true); //more secure, protects against XSS attacks
         this.sessionIdCookie = cookie;
         this.sessionIdCookieEnabled = true;
+        this.sessionIdUrlRewritingEnabled = true;
     }
 
     public Cookie getSessionIdCookie() {
@@ -75,6 +77,15 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     @SuppressWarnings({"UnusedDeclaration"})
     public void setSessionIdCookieEnabled(boolean sessionIdCookieEnabled) {
         this.sessionIdCookieEnabled = sessionIdCookieEnabled;
+    }
+
+    public boolean isSessionIdUrlRewritingEnabled() {
+        return sessionIdUrlRewritingEnabled;
+    }
+
+    @SuppressWarnings({"UnusedDeclaration"})
+    public void setSessionIdUrlRewritingEnabled(boolean sessionIdUrlRewritingEnabled) {
+        this.sessionIdUrlRewritingEnabled = sessionIdUrlRewritingEnabled;
     }
 
     private void storeSessionId(Serializable currentId, HttpServletRequest request, HttpServletResponse response) {
@@ -139,6 +150,10 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             //onUnknownSession method below will be invoked and we'll remove the attribute at that time.
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
         }
+
+        // always set rewrite flag - SHIRO-361
+        request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, isSessionIdUrlRewritingEnabled());
+
         return id;
     }
 
