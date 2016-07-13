@@ -136,6 +136,11 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      */
     protected boolean isEncodeable(final String location) {
 
+        // First check if URL rewriting is enabled globally
+        // Disable session rewriting for anything except an explicit TRUE
+        if (!Boolean.TRUE.equals(request.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)))
+            return (false);
+
         if (location == null)
             return (false);
 
