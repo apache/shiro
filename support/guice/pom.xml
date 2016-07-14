@@ -31,10 +31,6 @@
     <name>Apache Shiro :: Support :: Guice</name>
     <packaging>bundle</packaging>
 
-    <properties>
-        <guice.version>3.0</guice.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -68,6 +64,16 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -91,5 +97,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

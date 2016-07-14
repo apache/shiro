@@ -1077,5 +1077,13 @@
                 </site>
             </distributionManagement>
         </profile>
+
+        <profile>
+            <id>guice4</id>
+            <properties>
+                <guice.version>4.1.0</guice.version>
+            </properties>
+        </profile>
+
     </profiles>
 </project>

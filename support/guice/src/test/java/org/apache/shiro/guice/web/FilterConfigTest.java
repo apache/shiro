@@ -45,7 +45,8 @@ public class FilterConfigTest {
                 bindRealm().to(ShiroModuleTest.MockRealm.class);
 
                 addFilterChain("/index.html", AUTHC_BASIC);
-                addFilterChain("/index2.html", config(PERMS, "permission"));
+//                addFilterChain("/index2.html", config(PERMS, "permission"));
+                addFilterChain("/index2.html", filterConfig(PERMS, "permission"));
             }
 
             @Provides
