@@ -62,12 +62,6 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkMode>never</forkMode>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
             </plugin>

@@ -31,7 +31,6 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 
 import javax.inject.Singleton;
-import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import java.net.MalformedURLException;
 import java.net.URL;

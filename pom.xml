@@ -111,6 +111,22 @@
 
     </properties>
 
+    <modules>
+        <module>lang</module>
+        <module>crypto</module>
+        <module>event</module>
+        <module>cache</module>
+        <module>config</module>
+        <module>core</module>
+        <module>web</module>
+        <module>support</module>
+        <module>samples</module>
+        <module>tools</module>
+        <module>all</module>
+        <module>integration-tests</module>
+        <module>test-coverage</module>
+    </modules>
+
     <mailingLists>
         <mailingList>
             <name>Apache Shiro Users Mailing List</name>
@@ -197,21 +213,6 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
-
-    <modules>
-        <module>lang</module>
-        <module>crypto</module>
-        <module>event</module>
-        <module>cache</module>
-        <module>config</module>
-        <module>core</module>
-        <module>web</module>
-        <module>support</module>
-        <module>samples</module>
-        <module>tools</module>
-        <module>all</module>
-        <module>test-coverage</module>
-    </modules>
 
     <build>
         <pluginManagement>
@@ -415,6 +416,25 @@
                         </excludes>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-maven-plugin</artifactId>
+                    <version>${jetty.version}</version>
+                    <configuration>
+                        <contextPath>/</contextPath>
+                        <httpConnector>
+                            <port>9080</port>
+                            <idleTimeout>60000</idleTimeout>
+                        </httpConnector>
+                        <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+                            <filename>./target/yyyy_mm_dd.request.log</filename>
+                            <retainDays>90</retainDays>
+                            <append>true</append>
+                            <extended>false</extended>
+                            <logTimeZone>GMT</logTimeZone>
+                        </requestLog>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -476,6 +496,13 @@
                                 <goal>prepare-agent</goal>
                             </goals>
                         </execution>
+                        <execution>
+                            <id>prepare-agent-integration</id>
+                            <phase>pre-integration-test</phase>
+                            <goals>
+                                <goal>prepare-agent-integration</goal>
+                            </goals>
+                        </execution>
                     </executions>
                 </plugin>
             <!-- Allow Groovy tests to run: -->
@@ -516,7 +543,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>3.0.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -1091,6 +1118,12 @@
                 <version>1.1.2</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.github.mjeanroy</groupId>
+                <artifactId>junit-servers-jetty</artifactId>
+                <version>0.4.2</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     
@@ -1186,7 +1219,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.5</version>
+                <version>2.19.1</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -1236,8 +1269,9 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <reportSets>
                     <reportSet>
-                        <id>javadoc-aggregate</id>
+                        <id>jacoco-aggregate</id>
                         <reports>
+                            <report>report-integration</report>
                             <report>report</report>
                         </reports>
                     </reportSet>

@@ -17,19 +17,17 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
-        <groupId>org.apache.shiro.samples</groupId>
-        <artifactId>shiro-samples</artifactId>
-		<version>2.alpha.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+		<groupId>org.apache.shiro.integrationtests</groupId>
+		<artifactId>shiro-integration-tests</artifactId>
+		<version>1.4.0-SNAPSHOT</version>
 	</parent>
 
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>samples-guice</artifactId>
-	<name>Apache Shiro :: Samples :: Guice Web</name>
+	<artifactId>shiro-its-guice3</artifactId>
+	<name>Apache Shiro :: ITs :: Guice 3</name>
 	<packaging>war</packaging>
 
 	<build>
@@ -84,6 +82,12 @@
 	        <scope>runtime</scope>
 	    </dependency>
 
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-guice</artifactId>
+			<version>${project.version}</version>
+			<classifier>tests</classifier>
+		</dependency>
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
@@ -106,7 +110,6 @@
         <dependency>
             <groupId>com.github.mjeanroy</groupId>
             <artifactId>junit-servers-jetty</artifactId>
-            <version>0.4.2</version>
             <scope>test</scope>
         </dependency>
 	</dependencies>
