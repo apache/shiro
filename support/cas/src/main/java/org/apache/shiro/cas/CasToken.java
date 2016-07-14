@@ -24,7 +24,10 @@ import org.apache.shiro.authc.RememberMeAuthenticationToken;
  * This class represents a token for a CAS authentication (service ticket + user id + remember me).
  *
  * @since 1.2
+ * @see <a href="https://github.com/bujiio/buji-pac4j">buji-pac4j</a>
+ * @deprecated replaced with Shiro integration in <a href="https://github.com/bujiio/buji-pac4j">buji-pac4j</a>.
  */
+@Deprecated
 public class CasToken implements RememberMeAuthenticationToken {
     
     private static final long serialVersionUID = 8587329689973009598L;

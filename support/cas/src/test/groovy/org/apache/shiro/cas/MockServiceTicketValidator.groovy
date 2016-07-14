@@ -27,7 +27,10 @@ import org.jasig.cas.client.validation.TicketValidator
 
 /**
  * @since 1.2
+ * @see <a href="https://github.com/bujiio/buji-pac4j">buji-pac4j</a>
+ * @deprecated replaced with Shiro integration in <a href="https://github.com/bujiio/buji-pac4j">buji-pac4j</a>.
  */
+@Deprecated
 class MockServiceTicketValidator implements TicketValidator {
 
     /**

@@ -54,7 +54,10 @@ import java.util.Map;
  * to the attributes previously retrieved).
  *
  * @since 1.2
+ * @see <a href="https://github.com/bujiio/buji-pac4j">buji-pac4j</a>
+ * @deprecated replaced with Shiro integration in <a href="https://github.com/bujiio/buji-pac4j">buji-pac4j</a>.
  */
+@Deprecated
 public class CasRealm extends AuthorizingRealm {
 
     // default name of the CAS attribute for remember me authentication (CAS 3.4.10+)

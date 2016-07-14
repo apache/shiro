@@ -22,7 +22,10 @@ package org.apache.shiro.cas
  * Unit tests for the {@link CasToken} implementation.
  *
  * @since 1.2
+ * @see <a href="https://github.com/bujiio/buji-pac4j">buji-pac4j</a>
+ * @deprecated replaced with Shiro integration in <a href="https://github.com/bujiio/buji-pac4j">buji-pac4j</a>.
  */
+@Deprecated
 class CasTokenTest extends GroovyTestCase {
 
     void testPrincipal() {
