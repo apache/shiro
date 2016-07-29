@@ -192,6 +192,31 @@ public class DefaultSessionManagerTest {
         verify(sessionDAO); //verify that the delete call was actually made on the DAO
     }
 
+    /**
+     * Tests a bug introduced by SHIRO-443, where a custom sessionValidationScheduler would not be started.
+     */
+    @Test
+    public void testEnablingOfCustomSessionValidationScheduler() {
+
+        // using the default impl of sessionValidationScheduler, as the but effects any scheduler we set directly via
+        // sessionManager.setSessionValidationScheduler(), commonly used in INI configuration.
+        ExecutorServiceSessionValidationScheduler sessionValidationScheduler = new ExecutorServiceSessionValidationScheduler();
+        DefaultSessionManager sessionManager = new DefaultSessionManager();
+        sessionManager.setSessionValidationScheduler(sessionValidationScheduler);
+
+        // starting a session will trigger the starting of the validator
+        try {
+            Session session = sessionManager.start(null);
+
+            // now sessionValidationScheduler should be enabled
+            assertTrue("sessionValidationScheduler was not enabled", sessionValidationScheduler.isEnabled());
+        }
+        finally {
+            // cleanup after test
+            sessionManager.destroy();
+        }
+    }
+
     public static <T extends Session> T eqSessionTimeout(long timeout) {
         EasyMock.reportMatcher(new SessionTimeoutMatcher(timeout));
         return null;
