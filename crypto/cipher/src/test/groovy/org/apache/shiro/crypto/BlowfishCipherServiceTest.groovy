@@ -20,6 +20,7 @@ package org.apache.shiro.crypto
 
 import org.apache.shiro.codec.CodecSupport
 import org.apache.shiro.util.ByteSource
+import org.apache.shiro.util.CollectionUtils
 import org.junit.Test
 
 import static junit.framework.Assert.assertTrue
@@ -45,8 +46,13 @@ public class BlowfishCipherServiceTest {
         for (String plain : PLAINTEXTS) {
             byte[] plaintext = CodecSupport.toBytes(plain);
             ByteSource ciphertext = blowfish.encrypt(plaintext, key);
-            ByteSource decrypted = blowfish.decrypt(ciphertext.getBytes(), key);
-            assertTrue(Arrays.equals(plaintext, decrypted.getBytes()));
+            ByteSourceBroker broker = blowfish.decrypt(ciphertext.getBytes(), key);
+            byte[] decrypted = broker.getClonedBytes()
+            try {
+                assertTrue(Arrays.equals(plaintext, decrypted));
+            } finally {
+                CollectionUtils.wipe(decrypted);
+            }
         }
     }
 
@@ -68,7 +74,11 @@ public class BlowfishCipherServiceTest {
             cipher.decrypt(cipherIn, plainOut, key);
 
             byte[] decrypted = plainOut.toByteArray();
-            assertTrue(Arrays.equals(plaintext, decrypted));
+            try {
+                assertTrue(Arrays.equals(plaintext, decrypted));
+            } finally {
+                CollectionUtils.wipe(decrypted);
+            }
         }
 
     }

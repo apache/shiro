@@ -20,6 +20,8 @@ package org.apache.shiro.crypto
 
 import org.apache.shiro.codec.CodecSupport
 import org.apache.shiro.util.ByteSource
+import org.apache.shiro.util.CollectionUtils
+import org.apache.shiro.util.Destroyable
 import org.junit.Test
 
 import static junit.framework.Assert.*
@@ -45,8 +47,16 @@ public class AesCipherServiceTest {
         for (String plain : PLAINTEXTS) {
             byte[] plaintext = CodecSupport.toBytes(plain);
             ByteSource ciphertext = aes.encrypt(plaintext, key);
-            ByteSource decrypted = aes.decrypt(ciphertext.getBytes(), key);
-            assertTrue(Arrays.equals(plaintext, decrypted.getBytes()));
+            ByteSourceBroker broker = aes.decrypt(ciphertext.getBytes(), key);
+            broker.useBytes(new ByteSourceUser() {
+                @Override
+                void use(byte[] bytes) {
+                    assertTrue(Arrays.equals(plaintext, bytes));
+                }
+            });
+            if (broker instanceof Destroyable) {
+                ((Destroyable) broker).destroy();
+            }
         }
     }
 
@@ -68,7 +78,11 @@ public class AesCipherServiceTest {
             cipher.decrypt(cipherIn, plainOut, key);
 
             byte[] decrypted = plainOut.toByteArray();
-            assertTrue(Arrays.equals(plaintext, decrypted));
+            try {
+                assertTrue(Arrays.equals(plaintext, decrypted));
+            } finally {
+                CollectionUtils.wipe(decrypted);
+            }
         }
     }
 }

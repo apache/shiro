@@ -107,6 +107,20 @@ public class CollectionUtils {
         return Arrays.asList(elements);
     }
 
+    /**
+     * For security, sensitive information in array should be zeroed-out at end of use (SHIRO-349).
+     * @param value An array holding sensitive data
+     */
+    public static void wipe(Object value) {
+        if (value instanceof byte[]) {
+            byte[] array = (byte[]) value;
+            Arrays.fill(array, (byte) 0);
+        } else if (value instanceof char[]) {
+            char[] array = (char[]) value;
+            Arrays.fill(array, '\u0000');
+        }
+    }
+
     /*public static <E> Deque<E> asDeque(E... elements) {
         if (elements == null || elements.length == 0) {
             return new ArrayDeque<E>();
