@@ -344,7 +344,11 @@ public abstract class JcaCipherService implements CipherService {
         return ByteSource.Util.bytes(output);
     }
 
-    public ByteSource decrypt(byte[] ciphertext, byte[] key) throws CryptoException {
+    public ByteSourceBroker decrypt(byte[] ciphertext, byte[] key) throws CryptoException {
+        return new SimpleByteSourceBroker(this, ciphertext, key);
+    }
+
+    ByteSource decryptInternal(byte[] ciphertext, byte[] key) throws CryptoException {
 
         byte[] encrypted = ciphertext;
 
@@ -379,10 +383,10 @@ public abstract class JcaCipherService implements CipherService {
             }
         }
 
-        return decrypt(encrypted, key, iv);
+        return decryptInternal(encrypted, key, iv);
     }
 
-    private ByteSource decrypt(byte[] ciphertext, byte[] key, byte[] iv) throws CryptoException {
+    private ByteSource decryptInternal(byte[] ciphertext, byte[] key, byte[] iv) throws CryptoException {
         if (log.isTraceEnabled()) {
             log.trace("Attempting to decrypt incoming byte array of length " +
                     (ciphertext != null ? ciphertext.length : 0));

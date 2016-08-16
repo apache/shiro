@@ -24,6 +24,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.crypto.AesCipherService;
+import org.apache.shiro.crypto.ByteSourceBroker;
 import org.apache.shiro.crypto.CipherService;
 import org.apache.shiro.io.DefaultSerializer;
 import org.apache.shiro.io.Serializer;
@@ -31,6 +32,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -379,14 +381,17 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      */
     public PrincipalCollection getRememberedPrincipals(SubjectContext subjectContext) {
         PrincipalCollection principals = null;
+        byte[] bytes = null;
         try {
-            byte[] bytes = getRememberedSerializedIdentity(subjectContext);
+            bytes = getRememberedSerializedIdentity(subjectContext);
             //SHIRO-138 - only call convertBytesToPrincipals if bytes exist:
             if (bytes != null && bytes.length > 0) {
                 principals = convertBytesToPrincipals(bytes, subjectContext);
             }
         } catch (RuntimeException re) {
             principals = onRememberedPrincipalFailure(re, subjectContext);
+        } finally {
+            CollectionUtils.wipe(bytes);
         }
 
         return principals;
@@ -476,8 +481,8 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         byte[] serialized = encrypted;
         CipherService cipherService = getCipherService();
         if (cipherService != null) {
-            ByteSource byteSource = cipherService.decrypt(encrypted, getDecryptionCipherKey());
-            serialized = byteSource.getBytes();
+            ByteSourceBroker broker = cipherService.decrypt(encrypted, getDecryptionCipherKey());
+            serialized = broker.getClonedBytes();
         }
         return serialized;
     }
