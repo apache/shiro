@@ -423,7 +423,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
 
     /**
      * Called when an exception is thrown while trying to retrieve principals.  The default implementation logs a
-     * debug message and forgets ('unremembers') the problem identity by calling
+     * warning message and forgets ('unremembers') the problem identity by calling
      * {@link #forgetIdentity(SubjectContext) forgetIdentity(context)} and then immediately re-throws the
      * exception to allow the calling component to react accordingly.
      * <p/>
@@ -439,11 +439,14 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return nothing - the original {@code RuntimeException} is propagated in all cases.
      */
     protected PrincipalCollection onRememberedPrincipalFailure(RuntimeException e, SubjectContext context) {
-        if (log.isDebugEnabled()) {
-            log.debug("There was a failure while trying to retrieve remembered principals.  This could be due to a " +
+
+        if (log.isWarnEnabled()) {
+            String message = "There was a failure while trying to retrieve remembered principals.  This could be due to a " +
                     "configuration problem or corrupted principals.  This could also be due to a recently " +
-                    "changed encryption key.  The remembered identity will be forgotten and not used for this " +
-                    "request.", e);
+                    "changed encryption key, if you are using a shiro.ini file, this property would be " +
+                    "'securityManager.rememberMeManager.cipherKey' see: http://shiro.apache.org/web.html#Web-RememberMeServices. " +
+                    "The remembered identity will be forgotten and not used for this request.";
+            log.warn(message);
         }
         forgetIdentity(context);
         //propagate - security manager implementation will handle and warn appropriately
