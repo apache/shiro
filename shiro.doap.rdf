@@ -111,6 +111,13 @@
                 <revision>1.3.0</revision>
             </Version>
         </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 1.3.1</name>
+                <created>2016-08-29</created>
+                <revision>1.3.1</revision>
+            </Version>
+        </release>
 
         <repository>
           <GitRepository>
