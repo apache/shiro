@@ -27,7 +27,7 @@
 
     <feature name="shiro-web" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">shiro-core</feature>
-        <feature version="[2,4)">war</feature>
+        <feature version="[2,4]">war</feature>
         <bundle>mvn:org.apache.shiro/shiro-web/${project.version}</bundle>
     </feature>
 
