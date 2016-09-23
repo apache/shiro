@@ -23,25 +23,36 @@
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
         <version>1.4.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>shiro-support</artifactId>
-    <name>Apache Shiro :: Support</name>
+    <artifactId>shiro-spring-boot</artifactId>
+    <name>Apache Shiro :: Support :: Spring Boot Parent</name>
     <packaging>pom</packaging>
 
+    <properties>
+        <!-- These spring-boot modules require spring 4 -->
+        <spring.version>4.3.2.RELEASE</spring.version>
+    </properties>
+
     <modules>
-        <module>aspectj</module>
-        <module>ehcache</module>
-        <module>hazelcast</module>
-        <module>quartz</module>
-        <module>spring</module>
-        <module>guice</module>
-        <module>features</module>
-        <module>cas</module>
-        <module>spring-boot</module>
+        <module>spring-boot-starter</module>
+        <module>spring-boot-web-starter</module>
     </modules>
 
-</project>
+    <dependencyManagement>
+        <dependencies>
+            <!--
+            The spring test API uses mockito, as much as I prefer mockito over easymock, one mock framework is
+            probably enough, so putting in this pom makes that more obvious.
+            -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>1.10.17</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
+</project>
