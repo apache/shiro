@@ -75,10 +75,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-cas</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-ehcache</artifactId>
         </dependency>
         <dependency>

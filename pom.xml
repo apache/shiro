@@ -92,16 +92,22 @@
         <quartz.version>1.6.1</quartz.version>
         <slf4j.version>1.6.4</slf4j.version>
         <spring.version>3.1.0.RELEASE</spring.version>
+        <spring-boot.version>1.4.0.RELEASE</spring-boot.version>
         <guice.version>3.0</guice.version>
 
         <!-- Test 3rd-party dependencies: -->
-        <easymock.version>3.1</easymock.version>
-        <gmaven.version>1.4</gmaven.version>
+        <easymock.version>3.4</easymock.version>
+        <gmaven.version>1.3</gmaven.version>
         <groovy.version>1.8.5</groovy.version>
-        <junit.version>4.8.2</junit.version>
+        <junit.version>4.12</junit.version>
         <!-- so we can mock static methods in 3rd party libraries that sometimes don't use proper interfaces
              ahem, hazelcast, ahem... -->
-        <powermock.version>1.5</powermock.version>
+        <powermock.version>1.6.5</powermock.version>
+
+        <maven.compiler.source>${jdk.version}</maven.compiler.source>
+        <maven.compiler.target>${jdk.version}</maven.compiler.target>
+
+        <root.dir>${session.executionRootDirectory}</root.dir>
 
     </properties>
 
@@ -204,6 +210,7 @@
         <module>samples</module>
         <module>tools</module>
         <module>all</module>
+        <module>test-coverage</module>
     </modules>
 
     <build>
@@ -244,6 +251,9 @@
                             <exclude>velocity.log</exclude>
                             <exclude>CONTRIBUTING.md</exclude>
                             <exclude>README.md</exclude>
+                            <exclude>**/*.json</exclude>
+                            <exclude>**/spring.factories</exclude>
+                            <exclude>**/spring.provides</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
@@ -385,6 +395,21 @@
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.7.7.201606060606</version>
                 </plugin>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>3.0</version>
+                    <configuration>
+                        <aggregate>true</aggregate>
+                        <header>${root.dir}/src/license/header.txt</header>
+                        <headerDefinitions>
+                            <headerDefinition>${root.dir}/src/license/header_format.xml</headerDefinition>
+                        </headerDefinitions>
+                        <excludes>
+                            <exclude>**/*.txt</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -507,6 +532,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
+            <version>2.0.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <version>${easymock.version}</version>
@@ -601,11 +631,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-cas</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-ehcache</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -639,6 +664,16 @@
             <dependency>
                 <groupId>org.apache.shiro.samples</groupId>
                 <artifactId>samples-spring-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring-boot-web-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -936,6 +971,29 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+
+            <!-- Spring Boot-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-test</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
@@ -1056,6 +1114,9 @@
                         <exclude>velocity.log</exclude>
                         <exclude>CONTRIBUTING.md</exclude>
                         <exclude>README.md</exclude>
+                        <exclude>**/*.json</exclude>
+                        <exclude>**/spring.factories</exclude>
+                        <exclude>**/spring.provides</exclude>
                     </excludes>
                 </configuration>
             </plugin>
