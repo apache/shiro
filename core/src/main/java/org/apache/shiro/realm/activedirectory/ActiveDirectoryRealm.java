@@ -155,7 +155,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         return new SimpleAuthorizationInfo(roleNames);
     }
 
-    private Set<String> getRoleNamesForUser(String username, LdapContext ldapContext) throws NamingException {
+    protected Set<String> getRoleNamesForUser(String username, LdapContext ldapContext) throws NamingException {
         Set<String> roleNames;
         roleNames = new LinkedHashSet<String>();
 
