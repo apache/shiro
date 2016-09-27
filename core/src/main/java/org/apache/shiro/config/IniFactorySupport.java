@@ -25,6 +25,9 @@ import org.apache.shiro.util.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Base support class for {@link Factory} implementations that generate their instance(s) based on
  * {@link Ini} configuration.
@@ -39,6 +42,8 @@ public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
 
     private Ini ini;
 
+    private Map<String, ?> defaultBeans;
+
     protected IniFactorySupport() {
     }
 
@@ -52,6 +57,26 @@ public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
 
     public void setIni(Ini ini) {
         this.ini = ini;
+    }
+
+    /**
+     * Returns a mapping of String to bean representing the default set of object used by the factory.
+     * These beans can be used by this factory in conjunction with objects parsed from the INI configuration.
+     * @return A Map of default objects, or <code>null</code>.
+     * @since 1.4
+     */
+    protected Map<String, ?> getDefaults() {
+        return defaultBeans;
+    }
+
+    /**
+     * Sets the default objects used by this factory. These defaults may be used in conjunction with the INI
+     * configuration.
+     * @param defaultBeans String to object mapping used for default configuration in this factory.
+     * @since 1.4
+     */
+    public void setDefaults(Map<String, ?> defaultBeans) {
+        this.defaultBeans = defaultBeans;
     }
 
     /**

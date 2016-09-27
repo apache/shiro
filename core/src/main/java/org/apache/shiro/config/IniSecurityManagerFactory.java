@@ -159,6 +159,12 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
             }
         }
 
+        // The values from 'getDefaults()' will override the above.
+        Map<String, ?> defaultBeans = getDefaults();
+        if (!CollectionUtils.isEmpty(defaultBeans)) {
+            defaults.putAll(defaultBeans);
+        }
+
         return defaults;
     }
 

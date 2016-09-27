@@ -49,8 +49,6 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     private FilterConfig filterConfig;
 
-    private Map<String, ?> defaultBeans;
-
     public IniFilterChainResolverFactory() {
         super();
     }
@@ -61,7 +59,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     public IniFilterChainResolverFactory(Ini ini, Map<String, ?> defaultBeans) {
         this(ini);
-        this.defaultBeans = defaultBeans;
+        this.setDefaults(defaultBeans);
     }
 
     public FilterConfig getFilterConfig() {
@@ -113,8 +111,9 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         }
         //User-provided objects must come _after_ the default filters - to allow the user-provided
         //ones to override the default filters if necessary.
-        if (!CollectionUtils.isEmpty(this.defaultBeans)) {
-            defaults.putAll(this.defaultBeans);
+        Map<String, ?> defaultBeans = getDefaults();
+        if (!CollectionUtils.isEmpty(defaultBeans)) {
+            defaults.putAll(defaultBeans);
         }
 
         Map<String, Filter> filters = getFilters(section, defaults);
