@@ -47,7 +47,7 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <!-- Test dependencies - scope set appropriately already in the parent pom-->
         <dependency>
