@@ -73,6 +73,9 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
 
     protected String systemPassword = null;
 
+    //SHIRO-115 - prevent potential code injection:
+    protected String searchFilter = "(&(objectClass=*)(userPrincipalName={0}))";
+
     private LdapContextFactory ldapContextFactory = null;
 
     /*--------------------------------------------
@@ -155,6 +158,11 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
      */
     public void setLdapContextFactory(LdapContextFactory ldapContextFactory) {
         this.ldapContextFactory = ldapContextFactory;
+    }
+
+
+    public void setSearchFilter(String searchFilter) {
+        this.searchFilter = searchFilter;
     }
 
     /*--------------------------------------------
