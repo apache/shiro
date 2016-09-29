@@ -22,10 +22,7 @@ import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniFactorySupport;
 import org.apache.shiro.io.ResourceUtils;
-import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.Initializable;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.util.*;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
@@ -37,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -47,6 +45,7 @@ import java.util.Map;
 public class IniWebEnvironment extends ResourceBasedWebEnvironment implements Initializable, Destroyable {
 
     public static final String DEFAULT_WEB_INI_RESOURCE_PATH = "/WEB-INF/shiro.ini";
+    public static final String FILTER_CHAIN_RESOLVER_NAME = "filterChainResolver";
 
     private static final Logger log = LoggerFactory.getLogger(IniWebEnvironment.class);
 
@@ -259,7 +258,13 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
             Ini.Section filters = ini.getSection(IniFilterChainResolverFactory.FILTERS);
             if (!CollectionUtils.isEmpty(urls) || !CollectionUtils.isEmpty(filters)) {
                 //either the urls section or the filters section was defined.  Go ahead and create the resolver:
-                IniFilterChainResolverFactory factory = new IniFilterChainResolverFactory(ini, this.objects);
+
+                Factory<FilterChainResolver> factory = (Factory<FilterChainResolver>) this.objects.get(FILTER_CHAIN_RESOLVER_NAME);
+                if (factory instanceof IniFactorySupport) {
+                    IniFactorySupport iniFactory = (IniFactorySupport) factory;
+                    iniFactory.setIni(ini);
+                    iniFactory.setDefaults(this.objects);
+                }
                 resolver = factory.getInstance();
             }
         }
@@ -268,12 +273,16 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
     }
 
     protected WebSecurityManager createWebSecurityManager() {
-        WebIniSecurityManagerFactory factory;
+        WebIniSecurityManagerFactory factory = new WebIniSecurityManagerFactory();
+
         Ini ini = getIni();
-        if (CollectionUtils.isEmpty(ini)) {
-            factory = new WebIniSecurityManagerFactory();
-        } else {
-            factory = new WebIniSecurityManagerFactory(ini);
+        if (!CollectionUtils.isEmpty(ini)) {
+            factory.setIni(ini);
+        }
+
+        Map<String, Object> defaults = getDefaults();
+        if (!CollectionUtils.isEmpty(defaults)) {
+            factory.setDefaults(defaults);
         }
 
         WebSecurityManager wsm = (WebSecurityManager)factory.getInstance();
@@ -381,5 +390,11 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      */
     public void setIni(Ini ini) {
         this.ini = ini;
+    }
+
+    protected Map<String, Object> getDefaults() {
+        Map<String, Object> defaults = new HashMap<String, Object>();
+        defaults.put(FILTER_CHAIN_RESOLVER_NAME, new IniFilterChainResolverFactory());
+        return defaults;
     }
 }
