@@ -49,8 +49,8 @@ class IniWebEnvironmentTest {
         env.init()
 
         assertNotNull env.objects
-        //asserts that the objects size = securityManager (1) + the event bus (1) + num custom objects + num default filters
-        def expectedSize = 3 + DefaultFilter.values().length
+        //asserts that the objects size = securityManager (1) + the event bus (1) + filterChainResolverFactory (1) + num custom objects + num default filters
+        def expectedSize = 4 + DefaultFilter.values().length
         assertEquals expectedSize, env.objects.size()
         assertNotNull env.objects['securityManager']
         assertNotNull env.objects['compositeBean']
