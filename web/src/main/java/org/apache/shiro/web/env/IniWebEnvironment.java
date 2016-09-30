@@ -60,6 +60,20 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      * configuration and calling {@link #configure() configure} for actual instance configuration.
      */
     public void init() {
+
+        setIni(parseConfig());
+
+        configure();
+    }
+
+    /**
+     * Loads configuration {@link Ini} from {@link #getConfigLocations()} if set, otherwise falling back
+     * to the {@link #getDefaultConfigLocations()}. Finally any Ini objects will be merged with the value returned
+     * from {@link #getFrameworkIni()}
+     * @return Ini configuration to be used by this Environment.
+     * @since 1.4
+     */
+    protected Ini parseConfig() {
         Ini ini = getIni();
 
         String[] configLocations = getConfigLocations();
@@ -82,14 +96,15 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
             ini = getDefaultIni();
         }
 
+        // Allow for integrations to provide default that will be merged other configuration.
+        // to retain backwards compatibility this must be a different method then 'getDefaultIni()'
+        ini = mergeIni(getFrameworkIni(), ini);
+
         if (CollectionUtils.isEmpty(ini)) {
             String msg = "Shiro INI configuration was either not found or discovered to be empty/unconfigured.";
             throw new ConfigurationException(msg);
         }
-
-        setIni(ini);
-
-        configure();
+        return ini;
     }
 
     protected void configure() {
@@ -103,6 +118,50 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         if (resolver != null) {
             setFilterChainResolver(resolver);
         }
+    }
+
+    /**
+     * Extension point to allow subclasses to provide an {@link Ini} configuration that will be merged into the
+     * users configuration.  The users configuration will override anything set here.
+     * <p>
+     * <strong>NOTE:</strong> Framework developers should use with caution. It is possible a user could provide
+     * configuration that would conflict with the frameworks configuration.  For example: if this method returns an
+     * Ini object with the following configuration:
+     * <pre><code>
+     *     [main]
+     *     realm = com.myco.FoobarRealm
+     *     realm.foobarSpecificField = A string
+     * </code></pre>
+     * And the user provides a similar configuration:
+     * <pre><code>
+     *     [main]
+     *     realm = net.differentco.MyCustomRealm
+     * </code></pre>
+     *
+     * This would merge into:
+     * <pre><code>
+     *     [main]
+     *     realm = net.differentco.MyCustomRealm
+     *     realm.foobarSpecificField = A string
+     * </code></pre>
+     *
+     * This may cause a configuration error if <code>MyCustomRealm</code> does not contain the field <code>foobarSpecificField</code>.
+     * This can be avoided if the Framework Ini uses more unique names, such as <code>foobarRealm</code>. which would result
+     * in a merged configuration that looks like:
+     * <pre><code>
+     *     [main]
+     *     foobarRealm = com.myco.FoobarRealm
+     *     foobarRealm.foobarSpecificField = A string
+     *     realm = net.differentco.MyCustomRealm
+     * </code></pre>
+     *
+     * </p>
+     *
+     * @return Ini configuration used by the framework integrations.
+     * @since 1.4
+     */
+    protected Ini getFrameworkIni() {
+        return null;
     }
 
     protected Ini getSpecifiedIni(String[] configLocations) throws ConfigurationException {
@@ -122,6 +181,23 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         }
 
         return ini;
+    }
+
+    protected Ini mergeIni(Ini ini1, Ini ini2) {
+
+        if (ini1 == null) {
+            return ini2;
+        }
+
+        if (ini2 == null) {
+            return ini1;
+        }
+
+        // at this point we have two valid ini objects, create a new one and merge the contents of 2 into 1
+        Ini iniResult = new Ini(ini1);
+        iniResult.merge(ini2);
+
+        return iniResult;
     }
 
     protected Ini getDefaultIni() {

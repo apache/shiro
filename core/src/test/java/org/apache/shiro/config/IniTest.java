@@ -23,6 +23,8 @@ import org.junit.Test;
 
 import java.util.Scanner;
 
+import static org.hamcrest.Matchers.*;
+
 /**
  * Unit test for the {@link Ini} class.
  *
@@ -159,5 +161,105 @@ public class IniTest {
         assertEquals("value3", section.get("prop3"));
         assertEquals("value 4", section.get("prop4"));
         assertEquals("some long value", section.get("prop5"));
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Test
+    public void testPutAll() {
+
+        Ini ini1 = new Ini();
+        ini1.setSectionProperty("section1", "key1", "value1");
+
+        Ini ini2 = new Ini();
+        ini2.setSectionProperty("section2", "key2", "value2");
+
+        ini1.putAll(ini2);
+
+        assertThat(ini1.getSectionNames(), allOf(
+                hasItem("section1"),
+                hasItem("section2")
+        ));
+
+        // two sections each with one property
+        assertThat(ini1.getSectionNames(), hasSize(2));
+        assertThat(ini1.getSection("section2"), aMapWithSize(1));
+        assertThat(ini1.getSection("section1"), aMapWithSize(1));
+
+        // adding a value directly to ini2's section will update ini1
+        ini2.setSectionProperty("section2", "key2.2", "value2.2");
+        assertThat(ini1.getSection("section2"), aMapWithSize(2));
+
+        Ini ini3 = new Ini();
+        ini3.setSectionProperty("section1", "key1.3", "value1.3");
+
+        // this will replace the whole section
+        ini1.putAll(ini3);
+        assertThat(ini1.getSection("section1"), aMapWithSize(1));
+
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Test
+    public void testMerge() {
+
+        Ini ini1 = new Ini();
+        ini1.setSectionProperty("section1", "key1", "value1");
+
+        Ini ini2 = new Ini();
+        ini2.setSectionProperty("section2", "key2", "value2");
+
+        ini1.merge(ini2);
+
+        assertThat(ini1.getSectionNames(), allOf(
+                hasItem("section1"),
+                hasItem("section2")
+        ));
+
+        // two sections each with one property
+        assertThat(ini1.getSectionNames(), hasSize(2));
+        assertThat(ini1.getSection("section2"), aMapWithSize(1));
+        assertThat(ini1.getSection("section1"), aMapWithSize(1));
+
+        // updating the original ini2, will NOT effect ini1
+        ini2.setSectionProperty("section2", "key2.2", "value2.2");
+        assertThat(ini1.getSection("section2"), aMapWithSize(1));
+
+        Ini ini3 = new Ini();
+        ini3.setSectionProperty("section1", "key1.3", "value1.3");
+
+        // after merging the section will contain 2 values
+        ini1.merge(ini3);
+        assertThat(ini1.getSection("section1"), aMapWithSize(2));
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Test
+    public void testCreateWithDefaults() {
+
+        Ini ini1 = new Ini();
+        ini1.setSectionProperty("section1", "key1", "value1");
+
+        Ini ini2 = new Ini(ini1);
+        ini2.setSectionProperty("section2", "key2", "value2");
+
+        assertThat(ini2.getSectionNames(), allOf(
+                hasItem("section1"),
+                hasItem("section2")
+        ));
+
+        // two sections each with one property
+        assertThat(ini2.getSectionNames(), hasSize(2));
+        assertThat(ini2.getSection("section2"), aMapWithSize(1));
+        assertThat(ini2.getSection("section1"), aMapWithSize(1));
+
+        // updating the original ini1, will NOT effect ini2
+        ini1.setSectionProperty("section1", "key1.1", "value1.1");
+        assertThat(ini2.getSection("section1"), allOf(aMapWithSize(1), hasEntry("key1", "value1")));
     }
 }
