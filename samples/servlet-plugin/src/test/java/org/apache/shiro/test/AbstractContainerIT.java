@@ -56,19 +56,8 @@ public abstract class AbstractContainerIT {
     @BeforeClass
     public static void startContainer() throws Exception {
 
-        File[] warFiles = new File("target").listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".war");
-            }
-        });
-
-        assertEquals("Expected only one war file in target directory, run 'mvn clean' and try again", 1, warFiles.length);
-
-        String warDir = warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
-
         EmbeddedJettyConfiguration config = EmbeddedJettyConfiguration.builder()
-                .withWebapp(warDir)
+                .withWebapp(getWarDir())
                 .build();
 
         jetty = new EmbeddedJetty(config) {
@@ -129,6 +118,19 @@ public abstract class AbstractContainerIT {
 
     protected static String getBaseUri() {
         return "http://localhost:" + port + "/";
+    }
+
+    protected static String getWarDir() {
+        File[] warFiles = new File("target").listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".war");
+            }
+        });
+
+        assertEquals("Expected only one war file in target directory, run 'mvn clean' and try again", 1, warFiles.length);
+
+        return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
     }
 
     @Before

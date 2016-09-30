@@ -20,8 +20,7 @@ package org.apache.shiro.test;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebAssert;
-import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
+import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -31,7 +30,9 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-public class ContainerIntegrationTest extends AbstractContainerTest {
+public class ContainerIntegrationIT {
+
+    protected final WebClient webClient = new WebClient();
 
     @Before
     public void logOut() throws IOException {
@@ -45,6 +46,11 @@ public class ContainerIntegrationTest extends AbstractContainerTest {
         }
     }
 
+    protected static String getBaseUri() {
+        String port = System.getProperty("jetty.port", "9080");
+        return "http://localhost:" + port + "/";
+    }
+
     @Test
     public void logIn() throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 
@@ -56,24 +62,4 @@ public class ContainerIntegrationTest extends AbstractContainerTest {
         // This'll throw an expection if not logged in
         page.getAnchorByHref("/logout");
     }
-
-    @Test
-    public void logInAndRememberMe() throws Exception {
-        HtmlPage page = webClient.getPage(getBaseUri() + "login.jsp");
-        HtmlForm form = page.getFormByName("loginform");
-        form.<HtmlInput>getInputByName("username").setValueAttribute("root");
-        form.<HtmlInput>getInputByName("password").setValueAttribute("secret");
-        HtmlCheckBoxInput checkbox = form.getInputByName("rememberMe");
-        checkbox.setChecked(true);
-        page = form.<HtmlInput>getInputByName("submit").click();
-        server.stop();
-        server.start();
-        page = webClient.getPage(getBaseUri());
-        // page.getAnchorByHref("/logout");
-        WebAssert.assertLinkPresentWithText(page, "Log out");
-        page = page.getAnchorByHref("/account").click();
-        // login page should be shown again - user remembered but not authenticated
-        WebAssert.assertFormPresent(page, "loginform");
-    }
-
 }
