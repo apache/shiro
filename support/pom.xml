@@ -42,6 +42,7 @@
         <module>openid4j</module>
         <module>features</module>
         <module>spring-boot</module>
+        <module>servlet-plugin</module>
     </modules>
 
 </project>
