@@ -42,6 +42,7 @@
         <module>spring-boot-web</module>
         <module>guice</module>
         <module>quickstart-guice</module>
+        <module>servlet-plugin</module>
     </modules>
 
     <reporting>
