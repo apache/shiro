@@ -83,6 +83,8 @@ public class ReflectionBuilder {
 
     private static final String EVENT_BUS_NAME = "eventBus";
 
+    private final Interpolator interpolator;
+
     private final Map<String, Object> objects;
     /**
      * @since 1.3
@@ -110,6 +112,9 @@ public class ReflectionBuilder {
     }
 
     public ReflectionBuilder(Map<String, ?> defaults) {
+
+        this.interpolator = createInterpolator();
+
         this.objects = createDefaultObjectMap();
         this.registeredEventSubscribers = new LinkedHashMap<String,Object>();
         apply(defaults);
@@ -247,7 +252,8 @@ public class ReflectionBuilder {
 
             for (Map.Entry<String, String> entry : kvPairs.entrySet()) {
                 String lhs = entry.getKey();
-                String rhs = entry.getValue();
+                String rhs = (String) interpolator.interpolate(entry.getValue());
+//                String rhs = entry.getValue();
 
                 String beanId = parseBeanId(lhs);
                 if (beanId != null) { //a beanId could be parsed, so the line is a bean instance definition
@@ -718,6 +724,15 @@ public class ReflectionBuilder {
         }
 
         applyProperty(object, propertyName, value);
+    }
+
+    private Interpolator createInterpolator() {
+
+        if (ClassUtils.isAvailable("org.apache.commons.configuration2.interpol.ConfigurationInterpolator")) {
+            return new CommonsInterpolator();
+        }
+
+        return new DefaultInterpolator();
     }
 
     private class BeanConfigurationProcessor {

@@ -27,6 +27,7 @@ import org.apache.shiro.util.CollectionUtils
 import org.junit.Test
 
 import static org.junit.Assert.*
+import static org.hamcrest.Matchers.*
 
 /**
  * Unit tests for the {@link ReflectionBuilder} implementation.
@@ -446,6 +447,63 @@ class ReflectionBuilderTest {
 
         assertDestroyedEvents("listenerOne", objects, 4); //3 beans defined after it + its own destroyed event
         assertDestroyedEvents("listenerTwo", objects, 3); //2 beans defined after it + its own destroyed event
+    }
+
+
+    /**
+     * @since 1.4
+     */
+    @Test
+    void testSimpleInterpolation() {
+
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBeanFactory", "org.apache.shiro.config.SimpleBeanFactory");
+        defs.put("simpleBeanFactory.factoryInt", "5");
+        defs.put("simpleBeanFactory.factoryString", "\${os.name}");
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.simpleBean", '$simpleBeanFactory');
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        assertFalse(CollectionUtils.isEmpty(objects));
+        CompositeBean compositeBean = (CompositeBean) objects.get("compositeBean");
+        SimpleBean bean = compositeBean.getSimpleBean();
+        assertNotNull(bean);
+        assertEquals(5, bean.getIntProp());
+        assertEquals(System.getProperty("os.name"), bean.getStringProp());
+
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Test
+    void testInterpolationForMapKeysAndLists() {
+
+        // using os.name and os.arch because they are available on every system
+
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
+        defs.put("simpleBean1.stringList", "\${os.name}, \${os.arch}");
+        defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.simpleBeanMap", '\${os.name}:$simpleBean1, two:$simpleBean2');
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        assertFalse(CollectionUtils.isEmpty(objects));
+
+        CompositeBean compositeBean = (CompositeBean) objects.get("compositeBean");
+        assertNotNull(compositeBean);
+
+        def beanMap = compositeBean.getSimpleBeanMap()
+        assertNotNull(beanMap)
+        assertThat beanMap, allOf(hasKey(System.getProperty("os.name")), hasKey("two"), aMapWithSize(2))
+
+        def beanOne = beanMap.get(System.getProperty("os.name"))
+        assertThat beanOne.stringList, allOf(hasItem(System.getProperty("os.name")), hasItem(System.getProperty("os.arch")), hasSize(2))
+
+        assertNotNull(beanMap.get("two"))
     }
 
     void assertInstantiatedEvents(String name, Map<String, ?> objects, int expected) {

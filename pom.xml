@@ -670,6 +670,20 @@
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
             </dependency>
+
+            <dependency>
+                <!-- optional dep for the reflection builder -->
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-configuration2</artifactId>
+                <version>2.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
             <dependency>
                 <!-- Used for Atlassian Crowd Realm - not required for the framework: -->
                 <groupId>com.atlassian.crowd</groupId>

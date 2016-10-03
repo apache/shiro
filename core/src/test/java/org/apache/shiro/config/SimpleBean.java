@@ -31,6 +31,7 @@ public class SimpleBean {
     private int intProp;
     private byte[] byteArrayProp = null;
 
+    private List<String> stringList;
     private List<SimpleBean> simpleBeans;
 
     public SimpleBean() {
@@ -78,5 +79,13 @@ public class SimpleBean {
 
     public void setSimpleBeans(List<SimpleBean> simpleBeans) {
         this.simpleBeans = simpleBeans;
+    }
+
+    public List<String> getStringList() {
+        return stringList;
+    }
+
+    public void setStringList(List<String> stringList) {
+        this.stringList = stringList;
     }
 }
