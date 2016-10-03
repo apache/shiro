@@ -16,20 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.config
+package org.apache.shiro.config;
 
-class SimpleBean {
+/**
+ * This {@link Interpolator} simply returns the original value.  This is implementation is useful when interpolation
+ * is not desired.
+ *
+ * @since 1.4
+ */
+public class DefaultInterpolator implements Interpolator {
 
-    String name;
-    String stringProp;
-    int intProp;
-    byte[] byteArrayProp;
-    List<SimpleBean> simpleBeans;
-    List<String> stringList;
-    Map<String,Object> mapProp = new LinkedHashMap<String,Object>();
-
-    public SimpleBean(){}
-    public SimpleBean(String name) {
-        this.name = name
+    /**
+     * Simply returns the original <code>value</code>.
+     *
+     * @param value value to be interpolated.
+     * @return Simply returns the original <code>value</code>.
+     */
+    @Override
+    public String interpolate(String value) {
+        return value;
     }
 }

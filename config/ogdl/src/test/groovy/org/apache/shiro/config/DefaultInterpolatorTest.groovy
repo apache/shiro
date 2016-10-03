@@ -18,18 +18,31 @@
  */
 package org.apache.shiro.config
 
-class SimpleBean {
+import org.junit.Test
 
-    String name;
-    String stringProp;
-    int intProp;
-    byte[] byteArrayProp;
-    List<SimpleBean> simpleBeans;
-    List<String> stringList;
-    Map<String,Object> mapProp = new LinkedHashMap<String,Object>();
+import static org.junit.Assert.*
 
-    public SimpleBean(){}
-    public SimpleBean(String name) {
-        this.name = name
+/**
+ * Tests for {@link DefaultInterpolator}.
+ * @since 1.4
+ */
+public class DefaultInterpolatorTest {
+
+    @Test
+    void testBasicOperation() {
+
+        def interpolator = new DefaultInterpolator();
+
+        assertNull interpolator.interpolate(null);
+
+        def sourceString = """
+            \${sys:os.name}
+            \${foobar}
+            \${env:HOSTTYPE}
+            Some other text
+        """
+
+        assertSame sourceString, interpolator.interpolate(sourceString)
     }
+
 }

@@ -18,18 +18,40 @@
  */
 package org.apache.shiro.config
 
-class SimpleBean {
+import org.junit.Test
 
-    String name;
-    String stringProp;
-    int intProp;
-    byte[] byteArrayProp;
-    List<SimpleBean> simpleBeans;
-    List<String> stringList;
-    Map<String,Object> mapProp = new LinkedHashMap<String,Object>();
+import static org.junit.Assert.*
 
-    public SimpleBean(){}
-    public SimpleBean(String name) {
-        this.name = name
+/**
+ * Tests for {@link CommonsInterpolator}.
+ * @since 1.4
+ */
+class CommonsInterpolatorTest {
+
+    @SuppressWarnings("unused")
+    public final static String TEST_ME = "success";
+
+    @Test
+    void testBasicOperation() {
+
+        def interpolator = new CommonsInterpolator();
+
+        assertNull interpolator.interpolate(null);
+
+        def sourceString = """
+            \${os.name}
+            \${foobar}
+            \${const:org.apache.shiro.config.CommonsInterpolatorTest.TEST_ME}
+            Some other text
+        """
+
+        def expectedResult = """
+            ${System.getProperty("os.name")}
+            \${foobar}
+            success
+            Some other text
+        """.toString()
+
+        assertEquals expectedResult, interpolator.interpolate(sourceString)
     }
 }

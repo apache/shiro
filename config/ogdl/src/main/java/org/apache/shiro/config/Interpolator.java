@@ -16,20 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.config
+package org.apache.shiro.config;
 
-class SimpleBean {
+/**
+ * Basic String interpolation interface.  Typically implementations will use the Maven/Ant like notation: ${key}, but
+ * This is up to the implementation.
+ *
+ * @since 1.4
+ */
+public interface Interpolator {
 
-    String name;
-    String stringProp;
-    int intProp;
-    byte[] byteArrayProp;
-    List<SimpleBean> simpleBeans;
-    List<String> stringList;
-    Map<String,Object> mapProp = new LinkedHashMap<String,Object>();
-
-    public SimpleBean(){}
-    public SimpleBean(String name) {
-        this.name = name
-    }
+    /**
+     * Interpolates <code>value</code> and returns the result.
+     * @param value the source text
+     * @return the String result of the interpolation, or <code>value</code>, if there was not change.
+     */
+    String interpolate(String value);
 }
