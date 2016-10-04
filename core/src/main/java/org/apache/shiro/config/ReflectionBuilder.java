@@ -83,9 +83,14 @@ public class ReflectionBuilder {
 
     private static final String EVENT_BUS_NAME = "eventBus";
 
-    private final Interpolator interpolator;
-
     private final Map<String, Object> objects;
+
+    /**
+     * Interpolation allows for ${key} substitution of values.
+     * @since 1.4
+     */
+    private Interpolator interpolator;
+
     /**
      * @since 1.3
      */
@@ -252,8 +257,7 @@ public class ReflectionBuilder {
 
             for (Map.Entry<String, String> entry : kvPairs.entrySet()) {
                 String lhs = entry.getKey();
-                String rhs = (String) interpolator.interpolate(entry.getValue());
-//                String rhs = entry.getValue();
+                String rhs = interpolator.interpolate(entry.getValue());
 
                 String beanId = parseBeanId(lhs);
                 if (beanId != null) { //a beanId could be parsed, so the line is a bean instance definition
@@ -733,6 +737,14 @@ public class ReflectionBuilder {
         }
 
         return new DefaultInterpolator();
+    }
+
+    /**
+     * Sets the {@link Interpolator} used when evaluating the right side of the expressions.
+     * @since 1.4
+     */
+    public void setInterpolator(Interpolator interpolator) {
+        this.interpolator = interpolator;
     }
 
     private class BeanConfigurationProcessor {
