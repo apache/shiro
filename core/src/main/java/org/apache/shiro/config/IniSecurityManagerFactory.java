@@ -61,9 +61,11 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
      * source will be resolved to use to build the instance.
      */
     public IniSecurityManagerFactory() {
+        this.builder = new ReflectionBuilder();
     }
 
     public IniSecurityManagerFactory(Ini config) {
+        this();
         setIni(config);
     }
 
@@ -76,13 +78,13 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
     }
 
     public void destroy() {
-        if(this.builder != null) {
-            builder.destroy();
+        if(getReflectionBuilder() != null) {
+            getReflectionBuilder().destroy();
         }
     }
 
     private SecurityManager getSecurityManagerBean() {
-        return builder.getBean(SECURITY_MANAGER_NAME, SecurityManager.class);
+        return getReflectionBuilder().getBean(SECURITY_MANAGER_NAME, SecurityManager.class);
     }
 
     protected SecurityManager createDefaultInstance() {
@@ -102,12 +104,17 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
     }
 
     private SecurityManager createSecurityManager(Ini ini) {
+        return createSecurityManager(ini, getConfigSection(ini));
+    }
+
+    private Ini.Section getConfigSection(Ini ini) {
+
         Ini.Section mainSection = ini.getSection(MAIN_SECTION_NAME);
         if (CollectionUtils.isEmpty(mainSection)) {
             //try the default:
             mainSection = ini.getSection(Ini.DEFAULT_SECTION_NAME);
         }
-        return createSecurityManager(ini, mainSection);
+        return mainSection;
     }
 
     protected boolean isAutoApplyRealms(SecurityManager securityManager) {
@@ -128,8 +135,8 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
     @SuppressWarnings({"unchecked"})
     private SecurityManager createSecurityManager(Ini ini, Ini.Section mainSection) {
 
-        Map<String, ?> defaults = createDefaults(ini, mainSection);
-        Map<String, ?> objects = buildInstances(mainSection, defaults);
+        getReflectionBuilder().setObjects(createDefaults(ini, mainSection));
+        Map<String, ?> objects = buildInstances(mainSection);
 
         SecurityManager securityManager = getSecurityManagerBean();
 
@@ -170,9 +177,8 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
         return defaults;
     }
 
-    private Map<String, ?> buildInstances(Ini.Section section, Map<String, ?> defaults) {
-        this.builder = new ReflectionBuilder(defaults);
-        return this.builder.buildObjects(section);
+    private Map<String, ?> buildInstances(Ini.Section section) {
+        return getReflectionBuilder().buildObjects(section);
     }
 
     private void addToRealms(Collection<Realm> realms, RealmFactory factory) {
@@ -262,5 +268,25 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
         realm.setName(INI_REALM_NAME);
         realm.setIni(ini); //added for SHIRO-322
         return realm;
+    }
+
+    /**
+     * Returns the ReflectionBuilder instance used to create SecurityManagers object graph.
+     * @return ReflectionBuilder instance used to create SecurityManagers object graph.
+     * @since 1.4
+     */
+    public ReflectionBuilder getReflectionBuilder() {
+        return builder;
+    }
+
+    /**
+     * Sets the ReflectionBuilder that will be used to create the SecurityManager based on the contents of
+     * the Ini configuration.
+     * @param builder The ReflectionBuilder used to parse the Ini configuration.
+     * @since 1.4
+     */
+    @SuppressWarnings("unused")
+    public void setReflectionBuilder(ReflectionBuilder builder) {
+        this.builder = builder;
     }
 }

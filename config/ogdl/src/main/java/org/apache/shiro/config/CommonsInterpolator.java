@@ -69,4 +69,8 @@ public class CommonsInterpolator implements Interpolator {
     public String interpolate(String value) {
         return (String) interpolator.interpolate(value);
     }
+
+    public ConfigurationInterpolator getConfigurationInterpolator() {
+        return interpolator;
+    }
 }

@@ -54,6 +54,12 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      */
     private Ini ini;
 
+    private WebIniSecurityManagerFactory factory;
+
+    public IniWebEnvironment() {
+        factory = new WebIniSecurityManagerFactory();
+    }
+
     /**
      * Initializes this instance by resolving any potential (explicit or resource-configured) {@link Ini}
      * configuration and calling {@link #configure() configure} for actual instance configuration.
@@ -273,7 +279,6 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
     }
 
     protected WebSecurityManager createWebSecurityManager() {
-        WebIniSecurityManagerFactory factory = new WebIniSecurityManagerFactory();
 
         Ini ini = getIni();
         if (!CollectionUtils.isEmpty(ini)) {
@@ -396,5 +401,26 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         Map<String, Object> defaults = new HashMap<String, Object>();
         defaults.put(FILTER_CHAIN_RESOLVER_NAME, new IniFilterChainResolverFactory());
         return defaults;
+    }
+
+    /**
+     * Returns the SecurityManager factory used by this WebEnvironment.
+     *
+     * @return the SecurityManager factory used by this WebEnvironment.
+     * @since 1.4
+     */
+    @SuppressWarnings("unused")
+    protected WebIniSecurityManagerFactory getSecurityManagerFactory() {
+        return factory;
+    }
+
+    /**
+     * Allows for setting the SecurityManager factory which will be used to create the SecurityManager.
+     *
+     * @param factory the SecurityManager factory to used.
+     * @since 1.4
+     */
+    protected void setSecurityManagerFactory(WebIniSecurityManagerFactory factory) {
+        this.factory = factory;
     }
 }
