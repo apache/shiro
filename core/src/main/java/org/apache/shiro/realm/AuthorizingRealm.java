@@ -431,7 +431,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         if (resolver != null && !CollectionUtils.isEmpty(stringPerms)) {
             perms = new LinkedHashSet<Permission>(stringPerms.size());
             for (String strPermission : stringPerms) {
-                Permission permission = getPermissionResolver().resolvePermission(strPermission);
+                Permission permission = resolver.resolvePermission(strPermission);
                 perms.add(permission);
             }
         }
