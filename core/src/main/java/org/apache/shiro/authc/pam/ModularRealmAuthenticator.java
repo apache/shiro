@@ -219,9 +219,9 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                     info = realm.getAuthenticationInfo(token);
                 } catch (Throwable throwable) {
                     t = throwable;
-                    if (log.isWarnEnabled()) {
+                    if (log.isTraceEnabled()) {
                         String msg = "Realm [" + realm + "] threw an exception during a multi-realm authentication attempt:";
-                        log.warn(msg, t);
+                        log.trace(msg, t);
                     }
                 }
 
