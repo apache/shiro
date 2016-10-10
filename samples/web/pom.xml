@@ -38,40 +38,6 @@
     </properties>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.mortbay.jetty</groupId>
-                    <artifactId>maven-jetty-plugin</artifactId>
-                    <version>${jetty.version}</version>
-                    <configuration>
-                        <contextPath>/</contextPath>
-                        <stopPort>8005</stopPort>
-                        <stopKey>STOP</stopKey>
-                        <connectors>
-                            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-                                <port>${jetty.port}</port>
-                                <maxIdleTime>60000</maxIdleTime>
-                            </connector>
-                        </connectors>
-                        <requestLog implementation="org.mortbay.jetty.NCSARequestLog">
-                            <filename>./target/yyyy_mm_dd.request.log</filename>
-                            <retainDays>90</retainDays>
-                            <append>true</append>
-                            <extended>false</extended>
-                            <logTimeZone>GMT</logTimeZone>
-                        </requestLog>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.mortbay.jetty</groupId>
-                            <artifactId>jsp-2.1-jetty</artifactId>
-                            <version>${jetty.version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -80,8 +46,23 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>maven-jetty-plugin</artifactId>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty.version}</version>
+                <configuration>
+                    <contextPath>/</contextPath>
+                    <httpConnector>
+                        <port>9080</port>
+                        <idleTimeout>60000</idleTimeout>
+                    </httpConnector>
+                    <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+                        <filename>./target/yyyy_mm_dd.request.log</filename>
+                        <retainDays>90</retainDays>
+                        <append>true</append>
+                        <extended>false</extended>
+                        <logTimeZone>GMT</logTimeZone>
+                    </requestLog>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -126,68 +107,33 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>runtime</scope>
         </dependency>
-    </dependencies>
 
-    <profiles>
-        <profile>
-            <id>run-ITs</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>maven-jetty-plugin</artifactId>
-                        <executions>
-                            <!-- start jetty before ITs -->
-                            <execution>
-                                <id>start-jetty</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <scanIntervalSeconds>0</scanIntervalSeconds>
-                                    <daemon>true</daemon>
-                                </configuration>
-                            </execution>
-                            <!-- Stop jetty after ITs -->
-                            <execution>
-                                <id>stop-jetty</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.8</version>
-                        <executions>
-                            <execution>
-                                <id>sleep-for-a-while</id>
-                                <phase>post-integration-test</phase>
-                                <configuration>
-                                    <target>
-                                        <!-- This is dirty looking, but this old version needs it or the shutdown
-                                        hook will print exceptions, the build will still pass, so it is mostly cosmetic.
-                                        -->
-                                        <echo>Waiting for Jetty to stop</echo>
-                                        <sleep seconds="${jetty.postIT.sleep}" />
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+        <dependency>
+            <groupId>net.sourceforge.htmlunit</groupId>
+            <artifactId>htmlunit</artifactId>
+            <version>2.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>apache-jsp</artifactId>
+            <version>${jetty.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>apache-jstl</artifactId>
+            <version>${jetty.version}</version>
+            <type>pom</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.mjeanroy</groupId>
+            <artifactId>junit-servers-jetty</artifactId>
+            <version>0.4.2</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 
 </project>

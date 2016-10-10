@@ -31,7 +31,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-public class ContainerIntegrationTest extends AbstractContainerTest {
+public class ContainerIntegrationIT extends AbstractContainerIT {
 
     @Before
     public void logOut() throws IOException {
@@ -66,8 +66,8 @@ public class ContainerIntegrationTest extends AbstractContainerTest {
         HtmlCheckBoxInput checkbox = form.getInputByName("rememberMe");
         checkbox.setChecked(true);
         page = form.<HtmlInput>getInputByName("submit").click();
-        server.stop();
-        server.start();
+        jetty.stop();
+        jetty.start();
         page = webClient.getPage(getBaseUri());
         // page.getAnchorByHref("/logout");
         WebAssert.assertLinkPresentWithText(page, "Log out");

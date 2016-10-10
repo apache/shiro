@@ -31,10 +31,6 @@
     <name>Apache Shiro :: Samples :: Servlet Plugin</name>
     <packaging>war</packaging>
 
-    <properties>
-        <jetty.version>9.3.0.M1</jetty.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -74,7 +70,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>1.2</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>

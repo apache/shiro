@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 
-public class ContainerIntegrationIT {
+public class ContainerIntegrationIT extends AbstractContainerIT {
 
     protected final WebClient webClient = new WebClient();
 
@@ -45,11 +45,6 @@ public class ContainerIntegrationIT {
         catch (ElementNotFoundException e) {
             //Ignore
         }
-    }
-
-    protected static String getBaseUri() {
-        String port = System.getProperty("jetty.port", "9080");
-        return "http://localhost:" + port + "/";
     }
 
     @Test
