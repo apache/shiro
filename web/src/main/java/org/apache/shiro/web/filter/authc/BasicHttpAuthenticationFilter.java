@@ -28,7 +28,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 
 /**
@@ -197,10 +199,11 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
         // Check whether the current request's method requires authentication.
         // If no methods have been configured, then all of them require auth,
         // otherwise only the declared ones need authentication.
-        String[] methods = (String[]) (mappedValue == null ? new String[0] : mappedValue);
-        boolean authcRequired = methods.length == 0;
+
+        Set<String> methods = httpMethodsFromOptions((String[])mappedValue);
+        boolean authcRequired = methods.size() == 0;
         for (String m : methods) {
-            if (httpMethod.equalsIgnoreCase(m)) {
+            if (httpMethod.toUpperCase(Locale.ENGLISH).equals(m)) { // list of methods is in upper case
                 authcRequired = true;
                 break;
             }
@@ -212,6 +215,21 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
         else {
             return true;
         }
+    }
+
+    private Set<String> httpMethodsFromOptions(String[] options) {
+        Set<String> methods = new HashSet<String>();
+
+        if (options != null) {
+            for (String option : options) {
+                // to be backwards compatible with 1.3, we can ONLY check for known args
+                // ideally we would just validate HTTP methods, but someone could already be using this for webdav
+                if (!option.equalsIgnoreCase(PERMISSIVE)) {
+                    methods.add(option.toUpperCase(Locale.ENGLISH));
+                }
+            }
+        }
+        return methods;
     }
 
     /**
