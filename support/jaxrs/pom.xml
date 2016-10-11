@@ -22,39 +22,41 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>2.alpha.0-SNAPSHOT</version>
+        <version>1.4.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.shiro.samples</groupId>
-    <artifactId>shiro-samples</artifactId>
-    <name>Apache Shiro :: Samples</name>
-    <packaging>pom</packaging>
+    <artifactId>shiro-jaxrs</artifactId>
+    <name>Apache Shiro :: Support :: JAX-RS</name>
+    <packaging>jar</packaging>
 
-    <modules>
-        <module>aspectj</module>
-        <module>quickstart</module>
-        <module>web</module>
-        <module>spring-client</module>
-        <module>spring</module>
-        <module>spring-hibernate</module>
-        <module>spring-boot-web</module>
-        <module>guice</module>
-        <module>quickstart-guice</module>
-        <module>servlet-plugin</module>
-        <module>jaxrs</module>
-    </modules>
 
-    <reporting>
-        <plugins>
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
+    <dependencies>
+
+        <!-- Shiro Deps -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
+        <!-- Test Deps -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+
 </project>
-
