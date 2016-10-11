@@ -89,7 +89,7 @@
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
         <quartz.version>1.6.1</quartz.version>
-        <slf4j.version>1.6.4</slf4j.version>
+        <slf4j.version>1.7.21</slf4j.version>
         <spring.version>3.1.0.RELEASE</spring.version>
         <spring-boot.version>1.4.0.RELEASE</spring-boot.version>
         <guice.version>3.0</guice.version>
@@ -210,6 +210,11 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
@@ -619,6 +624,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-jaxrs</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-all</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -690,6 +700,11 @@
                 <groupId>com.atlassian.crowd</groupId>
                 <artifactId>crowd-integration-client</artifactId>
                 <version>${crowd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.1.7</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
