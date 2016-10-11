@@ -32,8 +32,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <aspectj.bundle.version>1.6.16_1</aspectj.bundle.version>
-        <ehcache.bundle.version>2.5.3_1</ehcache.bundle.version>
+        <aspectj.bundle.version>1.8.9_1</aspectj.bundle.version>
+        <ehcache.bundle.version>2.6.11_1</ehcache.bundle.version>
         <hazelcast.bundle.version>2.4.1_1</hazelcast.bundle.version>
         <quartz.bundle.version>1.6.1_1</quartz.bundle.version>
         <!-- Not a Shiro dependency - used for quartz bundle resolution only (see features.xml): -->
