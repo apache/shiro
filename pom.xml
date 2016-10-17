@@ -607,79 +607,79 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-web</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-servlet-plugin</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-ehcache</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-quartz</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-guice</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-aspectj</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-cas</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-jaxrs</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-all</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro.samples</groupId>
                 <artifactId>samples-spring-client</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring-boot-web-starter</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
             </dependency>
 
             <!-- Intra project test dependencies: -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
-                <version>${project.version}</version>
+                <version>1.4.0-SNAPSHOT</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
