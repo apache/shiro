@@ -82,7 +82,7 @@
              modules' OSGi metadata: -->
         <ehcache.version>2.5.3</ehcache.version>
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
-        <hazelcast.version>2.4.1</hazelcast.version>
+        <hazelcast.version>3.7.2</hazelcast.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
         <jdk.version>1.5</jdk.version>
         <jetty.version>6.1.26</jetty.version>
@@ -803,7 +803,7 @@
             <dependency>
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast</artifactId>
-                <version>2.4.1</version>
+                <version>3.7.2</version>
             </dependency>
             <dependency>
                 <!-- Used for sample applications only - not required for the framework: -->
