@@ -73,12 +73,14 @@ class ShiroSecurityContextTest {
         def originalSecurityContext = mock(SecurityContext)
         def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
-        ThreadContext.bind(subject)
 
+        expect(subject.getPrincipal()).andReturn("TestUser")
         expect(requestContext.getSecurityContext()).andReturn(originalSecurityContext).anyTimes()
         expect(subject.getPrincipals()).andReturn(new SimplePrincipalCollection("TestUser", "realm"))
 
         replay requestContext, originalSecurityContext, subject
+
+        ThreadContext.bind(subject)
 
         def resultPrincipal = shrioContext.getUserPrincipal()
         assertSame "TestUser", resultPrincipal.getName()
@@ -92,13 +94,15 @@ class ShiroSecurityContextTest {
         def originalSecurityContext = mock(SecurityContext)
         def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
-        ThreadContext.bind(subject)
 
+        expect(subject.getPrincipal()).andReturn(null)
         expect(requestContext.getSecurityContext()).andReturn(originalSecurityContext).anyTimes()
         expect(subject.getPrincipals()).andReturn(null)
         expect(originalSecurityContext.getUserPrincipal()).andReturn(null)
 
         replay requestContext, originalSecurityContext, subject
+
+        ThreadContext.bind(subject)
 
         assertNull shrioContext.getUserPrincipal()
 
@@ -111,12 +115,15 @@ class ShiroSecurityContextTest {
         def originalSecurityContext = mock(SecurityContext)
         def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
-        ThreadContext.bind(subject)
+        def testPrincipal = new TestPrincipal("Tester")
 
+        expect(subject.getPrincipal()).andReturn(testPrincipal)
         expect(requestContext.getSecurityContext()).andReturn(originalSecurityContext).anyTimes()
-        expect(subject.getPrincipals()).andReturn(new SimplePrincipalCollection(new TestPrincipal("Tester"), "test-realm"))
+        expect(subject.getPrincipals()).andReturn(new SimplePrincipalCollection(testPrincipal, "test-realm"))
 
         replay requestContext, originalSecurityContext, subject
+
+        ThreadContext.bind(subject)
 
         def resultPrincipal = shrioContext.getUserPrincipal()
         assertSame "Tester", resultPrincipal.getName()
@@ -130,12 +137,14 @@ class ShiroSecurityContextTest {
         def originalSecurityContext = mock(SecurityContext)
         def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
-        ThreadContext.bind(subject)
 
+        expect(subject.getPrincipal()).andReturn("test-principal")
         expect(requestContext.getSecurityContext()).andReturn(originalSecurityContext).anyTimes()
         expect(subject.hasRole("test-role")).andReturn(true)
 
         replay requestContext, originalSecurityContext, subject
+
+        ThreadContext.bind(subject)
 
         assertTrue shrioContext.isUserInRole("test-role")
 
@@ -148,12 +157,14 @@ class ShiroSecurityContextTest {
         def originalSecurityContext = mock(SecurityContext)
         def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
-        ThreadContext.bind(subject)
 
+        expect(subject.getPrincipal()).andReturn("test-principal")
         expect(requestContext.getSecurityContext()).andReturn(originalSecurityContext).anyTimes()
         expect(subject.hasRole("test-role")).andReturn(false)
 
         replay requestContext, originalSecurityContext, subject
+
+        ThreadContext.bind(subject)
 
         assertFalse shrioContext.isUserInRole("test-role")
 
@@ -166,13 +177,15 @@ class ShiroSecurityContextTest {
         def originalSecurityContext = mock(SecurityContext)
         def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
-        ThreadContext.bind(subject)
 
+        expect(subject.getPrincipal()).andReturn(null) // we are just testing equality here
         expect(requestContext.getSecurityContext()).andReturn(originalSecurityContext).anyTimes()
         expect(subject.getPrincipals()).andReturn(new SimplePrincipalCollection("Tester", "test-realm"))
         expect(subject.getPrincipals()).andReturn(new SimplePrincipalCollection("Tester", "test-realm"))
 
         replay requestContext, originalSecurityContext, subject
+
+        ThreadContext.bind(subject)
 
         def result1Principal = shrioContext.getUserPrincipal()
         def result2Principal = shrioContext.getUserPrincipal()

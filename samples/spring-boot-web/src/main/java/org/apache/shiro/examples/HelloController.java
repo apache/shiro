@@ -43,7 +43,7 @@ public class HelloController {
 
         PrincipalCollection principalCollection = subject.getPrincipals();
 
-        if (!CollectionUtils.isEmpty(principalCollection)) {
+        if (principalCollection != null && !principalCollection.isEmpty()) {
             Collection<Map> principalMaps = subject.getPrincipals().byType(Map.class);
             if (CollectionUtils.isEmpty(principalMaps)) {
                 name = subject.getPrincipal().toString();

@@ -41,7 +41,7 @@ public class AccountInfoController {
 
         PrincipalCollection principalCollection = subject.getPrincipals();
 
-        if (!CollectionUtils.isEmpty(principalCollection)) {
+        if (principalCollection != null && !principalCollection.isEmpty()) {
             name = principalCollection.getPrimaryPrincipal().toString();
         }
 
