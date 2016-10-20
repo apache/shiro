@@ -28,7 +28,7 @@
 <h1>Apache Shiro Quickstart</h1>
 
 <p>Hi <shiro:guest>Guest</shiro:guest><shiro:user><shiro:principal/></shiro:user>!
-    ( <shiro:user><a href="<c:url value="/logout"/>">Log out</a></shiro:user>
+    ( <shiro:user>  <a href="<c:url value="/logout"/>" onclick="document.getElementById('logout_form').submit();return false;">logout</a> </shiro:user>
     <shiro:guest><a href="<c:url value="/login.jsp"/>">Log in</a> (sample accounts provided)</shiro:guest> )
 </p>
 
@@ -64,6 +64,6 @@
     <shiro:lacksRole name="schwartz">schwartz<br/></shiro:lacksRole>
 </p>
 
-
+<form id="logout_form" action="<c:url value="/logout"/>" method="post"></form>
 </body>
 </html>
