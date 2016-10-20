@@ -16,21 +16,19 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   --%>
-<%@ include file="../include.jsp" %>
+<%@ include file="include.jsp" %>
 
 <html>
 <head>
     <link type="text/css" rel="stylesheet" href="<c:url value="/style.css"/>"/>
 </head>
-<body>
+<body onload="document.getElementById('logout_form').submit();return false;">
 
-<h2>Users only</h2>
+<h2>If you are not automatically redirected, click the 'Logout' button.</h2>
 
-<p>You are currently logged in.</p>
+<form id="logout_form" name="logout_form" action="<c:url value="/logout"/>" method="post">
+    <input type="submit" value="Logout">
+</form>
 
-<p><a href="<c:url value="/home.jsp"/>">Return to the home page.</a></p>
-
-<p><a href="<c:url value="/logout"/>" onclick="document.getElementById('logout_form').submit();return false;">Log out.</a></p>
-<form id="logout_form" action="<c:url value="/logout"/>" method="post"></form>
 </body>
 </html>
