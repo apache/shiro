@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+
+    <suppress>
+        <notes><![CDATA[ file name: tomcat-embed-core-8.5.5.jar ]]></notes>
+        <sha1>d55e12a418ff99ecd723a118c2a28bb91079972d</sha1>
+        <cpe>cpe:/a:apache:tomcat:8.5.5</cpe>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[ file name: tomcat-embed-websocket-8.5.5.jar ]]></notes>
+        <sha1>fd99cd1cd4c824abdf03466f0509f067747f0d1a</sha1>
+        <cpe>cpe:/a:apache:tomcat:8.5.5</cpe>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[ file name: opensaml-1.1.jar ]]></notes>
+        <sha1>21ec22368b6baa211a29887e162aa4cf9a8f3c60</sha1>
+        <cpe>cpe:/a:internet2:opensaml:1.1</cpe>
+    </suppress>
+
+</suppressions>
