@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.samples.guice;
 
+import org.apache.shiro.testing.web.AbstractContainerIT;
+
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebAssert;

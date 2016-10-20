@@ -565,7 +565,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -683,8 +682,19 @@
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.shiro.integrationtests</groupId>
+                <artifactId>shiro-its-support</artifactId>
+                <version>1.4.0-SNAPSHOT</version>
+            </dependency>
 
             <!-- 3rd party dependencies -->
+
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
             <dependency>
                 <!-- used for the 'hasher' command line tool: -->
                 <groupId>commons-cli</groupId>
@@ -839,6 +849,11 @@
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast</artifactId>
                 <version>3.7.2</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sourceforge.htmlunit</groupId>
+                <artifactId>htmlunit</artifactId>
+                <version>2.23</version>
             </dependency>
             <dependency>
                 <!-- Used for sample applications only - not required for the framework: -->
@@ -1031,7 +1046,6 @@
                 <groupId>com.github.mjeanroy</groupId>
                 <artifactId>junit-servers-jetty</artifactId>
                 <version>0.4.2</version>
-                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

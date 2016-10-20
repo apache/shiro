@@ -18,26 +18,16 @@
   ~ under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
-        <groupId>org.apache.shiro.samples</groupId>
-        <artifactId>shiro-samples</artifactId>
+		<groupId>org.apache.shiro.integrationtests</groupId>
+		<artifactId>shiro-integration-tests</artifactId>
 		<version>1.4.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>samples-guice</artifactId>
-	<name>Apache Shiro :: Samples :: Guice Web</name>
-	<packaging>war</packaging>
-
-	<build>
-	    <plugins>
-			<plugin>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-			</plugin>
-	    </plugins>
-	</build>
+	<artifactId>shiro-its-support</artifactId>
+	<name>Apache Shiro :: ITs :: Support</name>
 
 	<dependencies>
 	    <dependency>
@@ -60,22 +50,7 @@
 	        <artifactId>log4j</artifactId>
 	        <scope>runtime</scope>
 	    </dependency>
-	    <dependency>
-	        <groupId>org.apache.shiro</groupId>
-	        <artifactId>shiro-core</artifactId>
-	    </dependency>
-	    <dependency>
-	        <groupId>org.apache.shiro</groupId>
-	        <artifactId>shiro-web</artifactId>
-	    </dependency>
-		<dependency>
-		    <groupId>org.apache.shiro</groupId>
-		    <artifactId>shiro-guice</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.inject.extensions</groupId>
-			<artifactId>guice-servlet</artifactId>
-		</dependency>
+
 	    <dependency>
 	        <groupId>org.slf4j</groupId>
 	        <artifactId>jcl-over-slf4j</artifactId>
@@ -85,27 +60,37 @@
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>apache-jsp</artifactId>
             <version>${jetty.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>apache-jstl</artifactId>
             <version>${jetty.version}</version>
             <type>pom</type>
-            <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.mjeanroy</groupId>
+            <artifactId>junit-servers-jetty</artifactId>
+        </dependency>
 		<dependency>
-			<groupId>org.apache.shiro.integrationtests</groupId>
-			<artifactId>shiro-its-support</artifactId>
-			<scope>test</scope>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>compile</scope>
 		</dependency>
+
+		<!-- dependency on the Base64 class
+		     in 2.0 this is split out, so this dep will be removed
+		     in the future
+		 -->
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+		</dependency>
+
 	</dependencies>
 
 </project>

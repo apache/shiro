@@ -16,11 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.web.jaxrs;
+package org.apache.shiro.testing.web;
 
+import org.apache.shiro.codec.Base64;
+
+import com.gargoylesoftware.htmlunit.WebClient;
 import com.github.mjeanroy.junit.servers.jetty.EmbeddedJetty;
 import com.github.mjeanroy.junit.servers.jetty.EmbeddedJettyConfiguration;
-import org.apache.shiro.codec.Base64;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.resource.FileResource;
@@ -46,9 +48,9 @@ import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractContainerIT {
 
-    private static EmbeddedJetty jetty;
+    protected static EmbeddedJetty jetty;
 
-    private static int port = 0;
+    protected final WebClient webClient = new WebClient();
 
     @BeforeClass
     public static void startContainer() throws Exception {
@@ -108,13 +110,12 @@ public abstract class AbstractContainerIT {
         };
 
         jetty.start();
-        port = jetty.getPort();
 
         assertTrue(jetty.isStarted());
     }
 
     protected static String getBaseUri() {
-        return "http://localhost:" + port + "/";
+        return "http://localhost:" + jetty.getPort() + "/";
     }
 
     protected static String getWarDir() {
@@ -130,13 +131,6 @@ public abstract class AbstractContainerIT {
         return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
     }
 
-    @AfterClass
-    public static void stopContainer() {
-        if (jetty != null) {
-            jetty.stop();
-        }
-    }
-
     protected static String getBasicAuthorizationHeaderValue(String username, String password) throws UnsupportedEncodingException {
         String authorizationHeader = username + ":" + password;
         byte[] valueBytes;
@@ -145,4 +139,15 @@ public abstract class AbstractContainerIT {
         return "Basic " + authorizationHeader;
     }
 
+    @Before
+    public void beforeTest() {
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
+    }
+
+    @AfterClass
+    public static void stopContainer() {
+        if (jetty != null) {
+            jetty.stop();
+        }
+    }
 }

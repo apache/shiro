@@ -93,9 +93,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.mjeanroy</groupId>
-            <artifactId>junit-servers-jetty</artifactId>
-            <version>0.4.2</version>
+            <groupId>org.apache.shiro.integrationtests</groupId>
+            <artifactId>shiro-its-support</artifactId>
             <scope>test</scope>
         </dependency>
 
