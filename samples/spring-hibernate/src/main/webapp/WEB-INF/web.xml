@@ -56,7 +56,7 @@
  -  =================================================================== -->
     <filter>
         <filter-name>openSessionInViewFilter</filter-name>
-        <filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
+        <filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
     </filter>
 
     <!-- Shiro Filter is defined in the spring application context: -->
