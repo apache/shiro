@@ -405,6 +405,11 @@
                         </requestLog>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>1.4.3</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -1261,6 +1266,52 @@
                     <url>scm:svn:https://svn.apache.org/repos/asf/shiro/site/publish/static/${project.version}</url>
                 </site>
             </distributionManagement>
+        </profile>
+        <profile>
+            <!--  NOTE: this plugin config will return false positives, usage will require
+                  human interpretation (and should NOT be used to fail builds)
+            -->
+            <id>owasp</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <suppressionFile>${root.dir}/src/owasp-suppression.xml</suppressionFile>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <suppressionFile>${root.dir}/src/owasp-suppression.xml</suppressionFile>
+                            <name>OWASP Dependency Check</name>
+                        </configuration>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>aggregate</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
         </profile>
     </profiles>
 </project>
