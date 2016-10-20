@@ -81,7 +81,7 @@ public class Role {
         this.description = description;
     }
 
-    @CollectionOfElements
+    @ElementCollection(targetClass=String.class)
     @JoinTable(name="roles_permissions")
     @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
     public Set<String> getPermissions() {

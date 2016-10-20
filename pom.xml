@@ -90,8 +90,8 @@
              modules' OSGi metadata: -->
         <quartz.version>1.6.1</quartz.version>
         <slf4j.version>1.7.21</slf4j.version>
-        <spring.version>3.1.0.RELEASE</spring.version>
-        <spring-boot.version>1.4.0.RELEASE</spring-boot.version>
+        <spring.version>3.2.17.RELEASE</spring.version>
+        <spring-boot.version>1.4.1.RELEASE</spring-boot.version>
         <guice.version>3.0</guice.version>
 
         <!-- Test 3rd-party dependencies: -->
@@ -99,6 +99,7 @@
         <gmaven.version>1.3</gmaven.version>
         <groovy.version>2.4.7</groovy.version>
         <junit.version>4.12</junit.version>
+        <hibernate.version>4.2.21.Final</hibernate.version>
         <!-- so we can mock static methods in 3rd party libraries that sometimes don't use proper interfaces
              ahem, hazelcast, ahem... -->
         <powermock.version>1.6.5</powermock.version>
@@ -863,8 +864,8 @@
             <dependency>
                 <!-- Used for sample applications only - not required for the framework: -->
                 <groupId>org.hibernate</groupId>
-                <artifactId>hibernate</artifactId>
-                <version>3.2.6.ga</version>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
                 <optional>true</optional>
                 <exclusions>
                     <exclusion>
@@ -927,7 +928,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-annotations</artifactId>
-                <version>3.2.1.ga</version>
+                <version>3.5.6-Final</version>
                 <optional>true</optional>
             </dependency>
             <dependency>
