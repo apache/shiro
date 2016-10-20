@@ -98,7 +98,7 @@
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>3.4</easymock.version>
         <gmaven.version>1.3</gmaven.version>
-        <groovy.version>1.8.5</groovy.version>
+        <groovy.version>2.4.7</groovy.version>
         <junit.version>4.12</junit.version>
         <!-- so we can mock static methods in 3rd party libraries that sometimes don't use proper interfaces
              ahem, hazelcast, ahem... -->
@@ -917,6 +917,11 @@
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
                 <artifactId>groovy-all</artifactId>
+                <version>${groovy.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy</artifactId>
                 <version>${groovy.version}</version>
             </dependency>
             <dependency>
