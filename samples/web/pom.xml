@@ -85,7 +85,6 @@
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
-            <version>2.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -105,13 +104,6 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>runtime</scope>
         </dependency>
-
-        <dependency>
-            <groupId>net.sourceforge.htmlunit</groupId>
-            <artifactId>htmlunit</artifactId>
-            <version>2.6</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>apache-jsp</artifactId>
@@ -126,9 +118,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.mjeanroy</groupId>
-            <artifactId>junit-servers-jetty</artifactId>
-            <version>0.4.2</version>
+            <groupId>org.apache.shiro.integrationtests</groupId>
+            <artifactId>shiro-its-support</artifactId>
             <scope>test</scope>
         </dependency>
 

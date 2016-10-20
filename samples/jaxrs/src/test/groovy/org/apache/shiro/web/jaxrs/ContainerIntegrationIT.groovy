@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.web.jaxrs
 
+import org.apache.shiro.testing.web.AbstractContainerIT
 import org.junit.Test;
 
 import static com.jayway.restassured.RestAssured.*
