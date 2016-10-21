@@ -250,6 +250,7 @@
                             <exclude>**/*.json</exclude>
                             <exclude>**/spring.factories</exclude>
                             <exclude>**/spring.provides</exclude>
+                            <exclude>**/*.md</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
