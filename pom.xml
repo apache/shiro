@@ -30,7 +30,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.4.0-RC1</version>
 
     <name>Apache Shiro</name>
     <url>http://shiro.apache.org/</url>
@@ -44,7 +44,7 @@
         <connection>scm:git:https://git-wip-us.apache.org/repos/asf/shiro.git</connection>
         <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/shiro.git</developerConnection>
         <url>https://github.com/apache/shiro/tree/${project.scm.tag}</url>
-        <tag>1.2.x</tag>
+        <tag>shiro-root-1.4.0-RC1</tag>
     </scm>
     <issueManagement>
         <system>Jira</system>
@@ -613,86 +613,86 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-web</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-servlet-plugin</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-ehcache</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-quartz</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-guice</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-aspectj</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-cas</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-jaxrs</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-all</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro.samples</groupId>
                 <artifactId>samples-spring-client</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring-boot-starter</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring-boot-web-starter</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
 
             <!-- Intra project test dependencies: -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro.integrationtests</groupId>
                 <artifactId>shiro-its-support</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
+                <version>1.4.0-RC1</version>
             </dependency>
 
             <!-- 3rd party dependencies -->
