@@ -22,7 +22,6 @@ import org.apache.shiro.codec.Base64
 import org.apache.shiro.codec.CodecSupport
 import org.apache.shiro.codec.Hex
 import org.apache.shiro.config.event.BeanEvent
-import org.apache.shiro.util.CollectionUtils
 import org.junit.Test
 
 import static org.junit.Assert.*
@@ -277,7 +276,7 @@ class ReflectionBuilderTest {
         defs.put("compositeBean.simpleBeanSet", '$simpleBean1, $simpleBean2, $simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         Set<SimpleBean> simpleBeans = cBean.getSimpleBeanSet();
@@ -297,7 +296,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder(['set': set]);
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         Set<SimpleBean> simpleBeans = cBean.getSimpleBeanSet();
@@ -318,7 +317,7 @@ class ReflectionBuilderTest {
         defs.put("compositeBean.simpleBeanList", '$simpleBean1, $simpleBean2, $simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         List<SimpleBean> simpleBeans = cBean.getSimpleBeanList();
@@ -338,7 +337,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder(['list': list]);
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         def simpleBeans = cBean.getSimpleBeanList();
@@ -358,7 +357,7 @@ class ReflectionBuilderTest {
         defs.put("compositeBean.simpleBeanCollection", '$simpleBean1, $simpleBean2, $simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         Collection<SimpleBean> simpleBeans = cBean.getSimpleBeanCollection();
@@ -379,7 +378,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder(['collection': c]);
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         def simpleBeans = cBean.getSimpleBeanCollection();
@@ -403,7 +402,7 @@ class ReflectionBuilderTest {
         defs.put("simpleBean.byteArrayProp", hexValue);
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         SimpleBean bean = (SimpleBean) objects.get("simpleBean");
         assertNotNull(bean);
         byte[] beanBytes = bean.getByteArrayProp();
@@ -440,7 +439,7 @@ class ReflectionBuilderTest {
         defs.put("compositeBean.simpleBeanMap", 'simpleBean1:$simpleBean1, simpleBean2:$simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         Map map = cBean.getSimpleBeanMap();
@@ -464,7 +463,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder(['map': map]);
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         def simpleBeansMap = cBean.getSimpleBeanMap();
@@ -486,7 +485,7 @@ class ReflectionBuilderTest {
         defs.put("compositeBean.simpleBean.simpleBeans", '$simpleBean2, $simpleBean3');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         SimpleBean nested = cBean.getSimpleBean();
@@ -519,7 +518,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean compositeBean = (CompositeBean) objects.get("compositeBean");
         SimpleBean bean = compositeBean.getSimpleBean();
         assertNotNull(bean);
@@ -546,7 +545,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map<String, ?> objects = builder.buildObjects(ini.getSections().iterator().next());
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
 
         assertInstantiatedEvents("listenerOne", objects, 4) //3 beans following + its own instantiated event
         assertConfiguredEvents("listenerOne", objects, 4) //3 beans following + its own configured event
@@ -578,7 +577,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean compositeBean = (CompositeBean) objects.get("compositeBean");
         SimpleBean bean = compositeBean.getSimpleBean();
         assertNotNull(bean);
@@ -604,7 +603,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
 
         CompositeBean compositeBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(compositeBean);

@@ -34,7 +34,6 @@ import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.util.Assert;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.ClassUtils;
-import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.Factory;
 import org.apache.shiro.util.LifecycleUtils;
 import org.apache.shiro.util.Nameable;
@@ -126,7 +125,7 @@ public class ReflectionBuilder {
     }
 
     private void apply(Map<String, ?> objects) {
-        if(!CollectionUtils.isEmpty(objects)) {
+        if(!isEmpty(objects)) {
             this.objects.putAll(objects);
         }
         EventBus found = findEventBus(this.objects);
@@ -183,13 +182,13 @@ public class ReflectionBuilder {
     //@since 1.3
     private boolean isEventSubscriber(Object bean, String name) {
         List annotatedMethods = ClassUtils.getAnnotatedMethods(bean.getClass(), Subscribe.class);
-        return !CollectionUtils.isEmpty(annotatedMethods);
+        return !isEmpty(annotatedMethods);
     }
 
     //@since 1.3
     protected EventBus findEventBus(Map<String,?> objects) {
 
-        if (CollectionUtils.isEmpty(objects)) {
+        if (isEmpty(objects)) {
             return null;
         }
 
@@ -987,6 +986,19 @@ public class ReflectionBuilder {
         public String getRootBeanName() {
             return this.rootBeanName;
         }
+    }
+
+    //////////////////////////
+    // From CollectionUtils //
+    //////////////////////////
+    // CollectionUtils cannot be removed from shiro-core until 2.0 as it has a dependency on PrincipalCollection
+
+    private static boolean isEmpty(Map m) {
+        return m == null || m.isEmpty();
+    }
+
+    private static boolean isEmpty(Collection c) {
+        return c == null || c.isEmpty();
     }
 
 }

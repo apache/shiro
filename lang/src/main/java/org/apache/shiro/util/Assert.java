@@ -270,7 +270,7 @@ public abstract class Assert {
      * @throws IllegalArgumentException if the collection is <code>null</code> or has no elements
      */
     public static void notEmpty(Collection collection, String message) {
-        if (CollectionUtils.isEmpty(collection)) {
+        if (isEmpty(collection)) {
             throw new IllegalArgumentException(message);
         }
     }
@@ -296,7 +296,7 @@ public abstract class Assert {
      * @throws IllegalArgumentException if the map is <code>null</code> or has no entries
      */
     public static void notEmpty(Map map, String message) {
-        if (CollectionUtils.isEmpty(map)) {
+        if (isEmpty(map)) {
             throw new IllegalArgumentException(message);
         }
     }
@@ -402,6 +402,20 @@ public abstract class Assert {
      */
     public static void state(boolean expression) {
         state(expression, "[Assertion failed] - this state invariant must be true");
+    }
+
+
+    //////////////////////////
+    // From CollectionUtils //
+    //////////////////////////
+    // CollectionUtils cannot be removed from shiro-core until 2.0 as it has a dependency on PrincipalCollection
+
+    private static boolean isEmpty(Map m) {
+        return m == null || m.isEmpty();
+    }
+
+    private static boolean isEmpty(Collection c) {
+        return c == null || c.isEmpty();
     }
 
 }

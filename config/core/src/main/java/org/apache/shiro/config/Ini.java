@@ -19,7 +19,6 @@
 package org.apache.shiro.config;
 
 import org.apache.shiro.io.ResourceUtils;
-import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -438,7 +437,7 @@ public class Ini implements Map<String, Ini.Section> {
     }
 
     public String toString() {
-        if (CollectionUtils.isEmpty(this.sections)) {
+        if (this.sections == null || this.sections.isEmpty()) {
             return "<empty INI>";
         } else {
             StringBuilder sb = new StringBuilder("sections=");
