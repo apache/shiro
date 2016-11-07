@@ -40,6 +40,7 @@
         <module>guice</module>
         <module>openid4j</module>
         <module>features</module>
+        <module>cas</module>
         <module>spring-boot</module>
         <module>servlet-plugin</module>
         <module>jaxrs</module>
