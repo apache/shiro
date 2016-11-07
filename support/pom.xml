@@ -35,7 +35,6 @@
         <module>aspectj</module>
         <module>ehcache</module>
         <module>hazelcast</module>
-        <module>faces</module>
         <module>quartz</module>
         <module>spring</module>
         <module>guice</module>
