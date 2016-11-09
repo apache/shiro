@@ -16,10 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.examples;
+package org.apache.shiro.samples;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.CollectionUtils;
@@ -27,13 +26,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.Map;
 
 @Controller
-public class AccountInfoController {
+public class HelloController {
 
-    @RequiresRoles("admin")
-    @RequestMapping("/account-info")
-    public String home(Model model) {
+    @SuppressWarnings("Duplicates")
+    @RequestMapping("/")
+    public String home(HttpServletRequest request, Model model) {
 
         String name = "World";
 
@@ -42,12 +44,18 @@ public class AccountInfoController {
         PrincipalCollection principalCollection = subject.getPrincipals();
 
         if (principalCollection != null && !principalCollection.isEmpty()) {
-            name = principalCollection.getPrimaryPrincipal().toString();
+            Collection<Map> principalMaps = subject.getPrincipals().byType(Map.class);
+            if (CollectionUtils.isEmpty(principalMaps)) {
+                name = subject.getPrincipal().toString();
+            }
+            else {
+                name = (String) principalMaps.iterator().next().get("username");
+            }
         }
 
         model.addAttribute("name", name);
 
-        return "account-info";
+        return "hello";
     }
 
 }

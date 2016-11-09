@@ -29,7 +29,7 @@
         <servlet-class>org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet</servlet-class>
         <init-param>
             <param-name>javax.ws.rs.Application</param-name>
-            <param-value>org.apache.shiro.sample.jaxrs.SampleApplication</param-value>
+            <param-value>org.apache.shiro.samples.jaxrs.SampleApplication</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

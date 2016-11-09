@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.sample.jaxrs.resources;
+package org.apache.shiro.samples.jaxrs.resources;
 
 
 import javax.ws.rs.DefaultValue;

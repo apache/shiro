@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.sample.jaxrs;
+package org.apache.shiro.samples.jaxrs;
 
-import org.apache.shiro.sample.jaxrs.resources.HelloResource;
-import org.apache.shiro.sample.jaxrs.resources.SecureResource;
+import org.apache.shiro.samples.jaxrs.resources.HelloResource;
+import org.apache.shiro.samples.jaxrs.resources.SecureResource;
 import org.apache.shiro.web.jaxrs.ShiroFeature;
 
 import javax.ws.rs.ApplicationPath;
