@@ -34,13 +34,13 @@ public class ShiroSessionScopeTest {
     public void testScope() throws Exception {
         Subject subject = createMock(Subject.class);
         try {
+            ThreadContext.bind(subject);
+
             final Key<SomeClass> key = Key.get(SomeClass.class);
             Provider<SomeClass> mockProvider = createMock(Provider.class);
             Session session = createMock(Session.class);
 
             SomeClass retuned = new SomeClass();
-
-            expect(subject.getPrincipal()).andReturn("testUser").anyTimes();
 
             expect(subject.getSession()).andReturn(session);
             expect(session.getAttribute(key)).andReturn(null);
@@ -51,8 +51,6 @@ public class ShiroSessionScopeTest {
 
 
             replay(subject, mockProvider, session);
-
-            ThreadContext.bind(subject);
 
             ShiroSessionScope underTest = new ShiroSessionScope();
 

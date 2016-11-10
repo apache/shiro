@@ -22,7 +22,6 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,12 +52,6 @@ public abstract class ThreadContext {
 
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
     public static final String SUBJECT_KEY = ThreadContext.class.getName() + "_SUBJECT_KEY";
-
-	/**
-     * The key of the subject in SLF4Js Mapped Diagnostic Context ({@link MDC}). This can be used to
-     * show the subject in the logs. The subject is displayed in the logs using the pattern <pre>%X{shiroSubject}</pre>.
-     */
-    private static final String SUBJECT_KEY_MDC = "shiroSubject";
 
     private static final ThreadLocal<Map<Object, Object>> resources = new InheritableThreadLocalMap<Map<Object, Object>>();
 
@@ -307,7 +300,6 @@ public abstract class ThreadContext {
     public static void bind(Subject subject) {
         if (subject != null) {
             put(SUBJECT_KEY, subject);
-            MDC.put(SUBJECT_KEY_MDC, String.valueOf(subject.getPrincipal()));
         }
     }
 
@@ -326,7 +318,6 @@ public abstract class ThreadContext {
      * @since 0.2
      */
     public static Subject unbindSubject() {
-        MDC.remove(SUBJECT_KEY_MDC);
         return (Subject) remove(SUBJECT_KEY);
     }
     
