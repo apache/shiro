@@ -158,7 +158,7 @@ public class DefaultHashService implements ConfigurableHashService {
 
         ByteSource publicSalt = getPublicSalt(request);
         ByteSource privateSalt = getPrivateSalt();
-        ByteSource salt = ByteSource.Util.combine(privateSalt, publicSalt);
+        ByteSource salt = combine(privateSalt, publicSalt);
 
         Hash computed = new SimpleHash(algorithmName, source, salt, iterations);
 
@@ -231,6 +231,45 @@ public class DefaultHashService implements ConfigurableHashService {
         }
 
         return publicSalt;
+    }
+
+    /**
+     * Combines the specified 'private' salt bytes with the specified additional extra bytes to use as the
+     * total salt during hash computation.  {@code privateSaltBytes} will be {@code null} }if no private salt has been
+     * configured.
+     *
+     * @param privateSalt the (possibly {@code null}) 'private' salt to combine with the specified extra bytes
+     * @param publicSalt  the extra bytes to use in addition to the given private salt.
+     * @return a combination of the specified private salt bytes and extra bytes that will be used as the total
+     *         salt during hash computation.
+     */
+    protected ByteSource combine(ByteSource privateSalt, ByteSource publicSalt) {
+
+        byte[] privateSaltBytes = privateSalt != null ? privateSalt.getBytes() : null;
+        int privateSaltLength = privateSaltBytes != null ? privateSaltBytes.length : 0;
+
+        byte[] publicSaltBytes = publicSalt != null ? publicSalt.getBytes() : null;
+        int extraBytesLength = publicSaltBytes != null ? publicSaltBytes.length : 0;
+
+        int length = privateSaltLength + extraBytesLength;
+
+        if (length <= 0) {
+            return null;
+        }
+
+        byte[] combined = new byte[length];
+
+        int i = 0;
+        for (int j = 0; j < privateSaltLength; j++) {
+            assert privateSaltBytes != null;
+            combined[i++] = privateSaltBytes[j];
+        }
+        for (int j = 0; j < extraBytesLength; j++) {
+            assert publicSaltBytes != null;
+            combined[i++] = publicSaltBytes[j];
+        }
+
+        return ByteSource.Util.bytes(combined);
     }
 
     public void setHashAlgorithmName(String name) {
