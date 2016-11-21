@@ -35,9 +35,11 @@ import java.security.Principal;
 public class ShiroSecurityContext implements SecurityContext {
 
     final private ContainerRequestContext containerRequestContext;
+    final private SecurityContext originalSecurityContext;
 
     public ShiroSecurityContext(ContainerRequestContext containerRequestContext) {
         this.containerRequestContext = containerRequestContext;
+        this.originalSecurityContext = containerRequestContext.getSecurityContext();
     }
 
     @Override
@@ -55,7 +57,7 @@ public class ShiroSecurityContext implements SecurityContext {
             }
         }
         else {
-            result = containerRequestContext.getSecurityContext().getUserPrincipal();
+            result = originalSecurityContext.getUserPrincipal();
         }
 
         return result;

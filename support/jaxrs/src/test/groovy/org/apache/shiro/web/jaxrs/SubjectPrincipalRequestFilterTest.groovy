@@ -22,6 +22,7 @@ import org.easymock.Capture
 import org.junit.Test
 
 import javax.ws.rs.container.ContainerRequestContext
+import javax.ws.rs.core.SecurityContext
 
 import static org.easymock.EasyMock.*
 import static org.junit.Assert.*
@@ -38,12 +39,14 @@ class SubjectPrincipalRequestFilterTest {
 
         def contextCapture = new Capture<ShiroSecurityContext>()
         def requestContext = mock(ContainerRequestContext)
+        def originalSecurityContext = mock(SecurityContext)
+        expect(requestContext.getSecurityContext()).andReturn(originalSecurityContext)
         expect(requestContext.setSecurityContext(capture(contextCapture)))
-        replay requestContext
+        replay requestContext, originalSecurityContext
 
         filter.filter(requestContext)
 
-        verify requestContext
+        verify requestContext, originalSecurityContext
         assertSame requestContext, contextCapture.value.containerRequestContext
     }
 

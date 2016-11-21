@@ -41,12 +41,12 @@ class ShiroSecurityContextTest {
     void testIsSecure() {
         def requestContext = mock(ContainerRequestContext)
         def originalSecurityContext = mock(SecurityContext)
-        def shrioContext = new ShiroSecurityContext(requestContext)
 
         expect(requestContext.getSecurityContext()).andReturn(originalSecurityContext).anyTimes()
         expect(originalSecurityContext.isSecure()).andReturn(true)
         replay requestContext, originalSecurityContext
 
+        def shrioContext = new ShiroSecurityContext(requestContext)
         assertTrue shrioContext.isSecure()
 
         verify requestContext, originalSecurityContext
@@ -56,12 +56,12 @@ class ShiroSecurityContextTest {
     void testGetAuthenticationScheme() {
         def requestContext = mock(ContainerRequestContext)
         def originalSecurityContext = mock(SecurityContext)
-        def shrioContext = new ShiroSecurityContext(requestContext)
 
         expect(requestContext.getSecurityContext()).andReturn(originalSecurityContext).anyTimes()
         expect(originalSecurityContext.getAuthenticationScheme()).andReturn("https")
         replay requestContext, originalSecurityContext
 
+        def shrioContext = new ShiroSecurityContext(requestContext)
         assertEquals "https", shrioContext.getAuthenticationScheme()
 
         verify requestContext, originalSecurityContext
@@ -71,7 +71,6 @@ class ShiroSecurityContextTest {
     void testGetUserPrincipalWithString() {
         def requestContext = mock(ContainerRequestContext)
         def originalSecurityContext = mock(SecurityContext)
-        def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
         ThreadContext.bind(subject)
 
@@ -80,6 +79,7 @@ class ShiroSecurityContextTest {
 
         replay requestContext, originalSecurityContext, subject
 
+        def shrioContext = new ShiroSecurityContext(requestContext)
         def resultPrincipal = shrioContext.getUserPrincipal()
         assertSame "TestUser", resultPrincipal.getName()
 
@@ -90,7 +90,6 @@ class ShiroSecurityContextTest {
     void testGetUserPrincipalNoPrincipal() {
         def requestContext = mock(ContainerRequestContext)
         def originalSecurityContext = mock(SecurityContext)
-        def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
         ThreadContext.bind(subject)
 
@@ -100,6 +99,7 @@ class ShiroSecurityContextTest {
 
         replay requestContext, originalSecurityContext, subject
 
+        def shrioContext = new ShiroSecurityContext(requestContext)
         assertNull shrioContext.getUserPrincipal()
 
         verify requestContext, originalSecurityContext, subject
@@ -109,7 +109,6 @@ class ShiroSecurityContextTest {
     void testGetUserPrincipalPrincipalObject() {
         def requestContext = mock(ContainerRequestContext)
         def originalSecurityContext = mock(SecurityContext)
-        def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
         ThreadContext.bind(subject)
 
@@ -118,6 +117,7 @@ class ShiroSecurityContextTest {
 
         replay requestContext, originalSecurityContext, subject
 
+        def shrioContext = new ShiroSecurityContext(requestContext)
         def resultPrincipal = shrioContext.getUserPrincipal()
         assertSame "Tester", resultPrincipal.getName()
 
@@ -128,7 +128,6 @@ class ShiroSecurityContextTest {
     void testUserInRoleTrue() {
         def requestContext = mock(ContainerRequestContext)
         def originalSecurityContext = mock(SecurityContext)
-        def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
         ThreadContext.bind(subject)
 
@@ -137,6 +136,7 @@ class ShiroSecurityContextTest {
 
         replay requestContext, originalSecurityContext, subject
 
+        def shrioContext = new ShiroSecurityContext(requestContext)
         assertTrue shrioContext.isUserInRole("test-role")
 
         verify requestContext, originalSecurityContext, subject
@@ -146,7 +146,6 @@ class ShiroSecurityContextTest {
     void testUserInRoleFalse() {
         def requestContext = mock(ContainerRequestContext)
         def originalSecurityContext = mock(SecurityContext)
-        def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
         ThreadContext.bind(subject)
 
@@ -155,6 +154,7 @@ class ShiroSecurityContextTest {
 
         replay requestContext, originalSecurityContext, subject
 
+        def shrioContext = new ShiroSecurityContext(requestContext)
         assertFalse shrioContext.isUserInRole("test-role")
 
         verify requestContext, originalSecurityContext, subject
@@ -164,7 +164,6 @@ class ShiroSecurityContextTest {
     void testPrincipalEquals() {
         def requestContext = mock(ContainerRequestContext)
         def originalSecurityContext = mock(SecurityContext)
-        def shrioContext = new ShiroSecurityContext(requestContext)
         def subject = mock(Subject)
         ThreadContext.bind(subject)
 
@@ -174,6 +173,7 @@ class ShiroSecurityContextTest {
 
         replay requestContext, originalSecurityContext, subject
 
+        def shrioContext = new ShiroSecurityContext(requestContext)
         def result1Principal = shrioContext.getUserPrincipal()
         def result2Principal = shrioContext.getUserPrincipal()
 
