@@ -23,7 +23,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
@@ -77,6 +77,8 @@ public final class Hasher {
     private static final Option SALT_GEN = new Option("gs", "gensalt", false, "generate and use a random salt. Defaults to true when password hashing, false otherwise.");
     private static final Option NO_SALT_GEN = new Option("ngs", "nogensalt", false, "do NOT generate and use a random salt (valid during password hashing).");
     private static final Option SALT_GEN_SIZE = new Option("gss", "gensaltsize", true, "the number of salt bits (not bytes!) to generate.  Defaults to 128.");
+    private static final Option PRIVATE_SALT = new Option("ps", "privatesalt", true, "use the specified private salt.  <arg> is plaintext.");
+    private static final Option PRIVATE_SALT_BYTES = new Option("psb", "privatesaltbytes", true, "use the specified private salt bytes.  <arg> is hex or base64 encoded text.");
 
     private static final String SALT_MUTEX_MSG = createMutexMessage(SALT, SALT_BYTES);
 
@@ -92,12 +94,13 @@ public final class Hasher {
 
     public static void main(String[] args) {
 
-        CommandLineParser parser = new PosixParser();
+        CommandLineParser parser = new DefaultParser();
 
         Options options = new Options();
         options.addOption(HELP).addOption(DEBUG).addOption(ALGORITHM).addOption(ITERATIONS);
         options.addOption(RESOURCE).addOption(PASSWORD).addOption(PASSWORD_NC);
         options.addOption(SALT).addOption(SALT_BYTES).addOption(SALT_GEN).addOption(SALT_GEN_SIZE).addOption(NO_SALT_GEN);
+        options.addOption(PRIVATE_SALT).addOption(PRIVATE_SALT_BYTES);
         options.addOption(FORMAT);
 
         boolean debug = false;
@@ -110,6 +113,8 @@ public final class Hasher {
         String saltBytesString = null;
         boolean generateSalt = false;
         int generatedSaltSize = DEFAULT_GENERATED_SALT_SIZE;
+        String privateSaltString = null;
+        String privateSaltBytesString = null;
 
         String formatString = null;
 
@@ -161,6 +166,12 @@ public final class Hasher {
                     throw new IllegalArgumentException("Generated salt size must be a multiple of 8 (e.g. 128, 192, 256, 512, etc).");
                 }
             }
+            if (line.hasOption(PRIVATE_SALT.getOpt())) {
+                privateSaltString = line.getOptionValue(PRIVATE_SALT.getOpt());
+            }
+            if (line.hasOption(PRIVATE_SALT_BYTES.getOpt())) {
+                privateSaltBytesString = line.getOptionValue(PRIVATE_SALT_BYTES.getOpt());
+            }
             if (line.hasOption(FORMAT.getOpt())) {
                 formatString = line.getOptionValue(FORMAT.getOpt());
             }
@@ -209,9 +220,14 @@ public final class Hasher {
                 }
             }
 
-            ByteSource salt = getSalt(saltString, saltBytesString, generateSalt, generatedSaltSize);
+            ByteSource publicSalt = getSalt(saltString, saltBytesString, generateSalt, generatedSaltSize);
+            ByteSource privateSalt = getSalt(privateSaltString, privateSaltBytesString, false, generatedSaltSize);
+            ByteSource salt = ByteSource.Util.combine(privateSalt, publicSalt);
 
             SimpleHash hash = new SimpleHash(algorithm, source, salt, iterations);
+            hash.setBytes(hash.getBytes());
+            // Only expose the public salt - not the real/combined salt that might have been used:
+            hash.setSalt(publicSalt);
 
             if (formatString == null) {
                 //Output format was not specified.  Default to 'shiro1' when password hashing, and 'hex' for
@@ -374,6 +390,17 @@ public final class Hasher {
                 "hash later, generated salts will be printed, defaulting to base64\n" +
                 "encoding.  If you prefer to use hex encoding, additionally use the\n" +
                 "-sgh/--saltgeneratedhex option." +
+                "\n\n" +
+                "Specifying a private salt:" +
+                "\n\n" +
+                "You may specify a private salt using the -ps/--privatesalt option followed\n" +
+                "by the private salt value.  If the private salt value is a base64 or hex \n" +
+                "string representing a byte array, you must specify the -psb/--privatesaltbytes\n" +
+                "option to indicate this, otherwise the text value bytes will be used directly." +
+                "\n\n" +
+                "When using -psb/--privatesaltbytes, the -ps/--privatesalt value is expected to\n" +
+                "be a base64-encoded string by default.  If the value is a hex-encoded string,\n" +
+                "you must prefix the string with 0x (zero x) to indicate a hex value." +
                 "\n\n" +
                 "Files, URLs and classpath resources:\n" +
                 "---------------------------------\n" +

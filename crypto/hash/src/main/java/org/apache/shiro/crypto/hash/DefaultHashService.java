@@ -21,6 +21,7 @@ package org.apache.shiro.crypto.hash;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.ByteSource.Util;
 
 /**
  * Default implementation of the {@link HashService} interface, supporting a customizable hash algorithm name,
@@ -242,34 +243,14 @@ public class DefaultHashService implements ConfigurableHashService {
      * @param publicSalt  the extra bytes to use in addition to the given private salt.
      * @return a combination of the specified private salt bytes and extra bytes that will be used as the total
      *         salt during hash computation.
+     *
+     * @since 1.4
+     * @deprecated In Shiro 1.4 use {@link Util#combine(ByteSource, ByteSource) ByteSource.Util.combine(ByteSource privateSalt, ByteSource publicSalt)} instead
      */
+    @Deprecated
     protected ByteSource combine(ByteSource privateSalt, ByteSource publicSalt) {
 
-        byte[] privateSaltBytes = privateSalt != null ? privateSalt.getBytes() : null;
-        int privateSaltLength = privateSaltBytes != null ? privateSaltBytes.length : 0;
-
-        byte[] publicSaltBytes = publicSalt != null ? publicSalt.getBytes() : null;
-        int extraBytesLength = publicSaltBytes != null ? publicSaltBytes.length : 0;
-
-        int length = privateSaltLength + extraBytesLength;
-
-        if (length <= 0) {
-            return null;
-        }
-
-        byte[] combined = new byte[length];
-
-        int i = 0;
-        for (int j = 0; j < privateSaltLength; j++) {
-            assert privateSaltBytes != null;
-            combined[i++] = privateSaltBytes[j];
-        }
-        for (int j = 0; j < extraBytesLength; j++) {
-            assert publicSaltBytes != null;
-            combined[i++] = publicSaltBytes[j];
-        }
-
-        return ByteSource.Util.bytes(combined);
+        return Util.combine(privateSalt, publicSalt);
     }
 
     public void setHashAlgorithmName(String name) {
