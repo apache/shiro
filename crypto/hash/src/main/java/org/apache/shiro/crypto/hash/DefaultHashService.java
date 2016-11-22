@@ -242,7 +242,7 @@ public class DefaultHashService implements ConfigurableHashService {
      * @param privateSalt the (possibly {@code null}) 'private' salt to combine with the specified extra bytes
      * @param publicSalt  the extra bytes to use in addition to the given private salt.
      * @return a combination of the specified private salt bytes and extra bytes that will be used as the total
-     *          salt during hash computation.
+     *         salt during hash computation.
      *
      * @since 1.4
      * @deprecated In Shiro 1.4 use {@link Util#combine(ByteSource, ByteSource) ByteSource.Util.combine(ByteSource privateSalt, ByteSource publicSalt)} instead
