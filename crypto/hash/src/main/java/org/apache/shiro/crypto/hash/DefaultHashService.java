@@ -21,6 +21,7 @@ package org.apache.shiro.crypto.hash;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.ByteSource.Util;
 
 /**
  * Default implementation of the {@link HashService} interface, supporting a customizable hash algorithm name,
@@ -158,7 +159,7 @@ public class DefaultHashService implements ConfigurableHashService {
 
         ByteSource publicSalt = getPublicSalt(request);
         ByteSource privateSalt = getPrivateSalt();
-        ByteSource salt = ByteSource.Util.combine(privateSalt, publicSalt);
+        ByteSource salt = combine(privateSalt, publicSalt);
 
         Hash computed = new SimpleHash(algorithmName, source, salt, iterations);
 
@@ -231,6 +232,25 @@ public class DefaultHashService implements ConfigurableHashService {
         }
 
         return publicSalt;
+    }
+
+    /**
+     * Combines the specified 'private' salt bytes with the specified additional extra bytes to use as the
+     * total salt during hash computation.  {@code privateSaltBytes} will be {@code null} }if no private salt has been
+     * configured.
+     *
+     * @param privateSalt the (possibly {@code null}) 'private' salt to combine with the specified extra bytes
+     * @param publicSalt  the extra bytes to use in addition to the given private salt.
+     * @return a combination of the specified private salt bytes and extra bytes that will be used as the total
+     *          salt during hash computation.
+     *
+     * @since 1.4
+     * @deprecated In Shiro 1.4 use {@link Util#combine(ByteSource, ByteSource) ByteSource.Util.combine(ByteSource privateSalt, ByteSource publicSalt)} instead
+     */
+    @Deprecated
+    protected ByteSource combine(ByteSource privateSalt, ByteSource publicSalt) {
+
+        return Util.combine(privateSalt, publicSalt);
     }
 
     public void setHashAlgorithmName(String name) {

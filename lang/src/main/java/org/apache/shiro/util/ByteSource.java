@@ -188,7 +188,7 @@ public interface ByteSource {
             }
         }
 
-        /**
+       /**
         * Combines the specified 'private' salt bytes with the specified additional extra bytes to use as the
         * total salt during hash computation.  {@code privateSaltBytes} will be {@code null} }if no private salt has been
         * configured.
