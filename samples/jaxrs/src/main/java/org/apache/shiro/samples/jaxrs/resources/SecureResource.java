@@ -25,11 +25,14 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+
+import static org.glassfish.grizzly.http.util.Header.Allow;
 
 @Path("secure")
 @Produces({"application/json","plain/text"})
@@ -71,5 +74,11 @@ public class SecureResource {
         return "protected";
     }
 
+    @RolesAllowed("admin")
+    @Path("RolesAllowed")
+    @GET
+    public String protectedByRolesAllowed() {
+        return "protected";
+    }
 
 }

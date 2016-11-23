@@ -80,6 +80,12 @@
             <artifactId>shiro-jaxrs</artifactId>
         </dependency>
 
+        <!-- enable optional support for javax.annotation.security annotations -->
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
+
         <dependency>
             <!-- Required for any libraries that expect to call the commons logging APIs -->
             <groupId>org.slf4j</groupId>

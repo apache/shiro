@@ -96,6 +96,31 @@ public class ContainerIntegrationIT extends AbstractContainerIT {
     }
 
     @Test
+    void testSecuredRolesAllowed() {
+
+        get(getBaseUri() + "secure/RolesAllowed")
+                .then()
+                .assertThat().statusCode(is(401))
+
+        given()
+                .header("Authorization", getBasicAuthorizationHeaderValue("guest", "guest"))
+                .when()
+                .get(getBaseUri() + "secure/RolesAllowed")
+                .then()
+                .assertThat()
+                .statusCode(is(403)).and()
+
+        given()
+                .header("Authorization", getBasicAuthorizationHeaderValue("root", "secret"))
+                .when()
+                .get(getBaseUri() + "secure/RolesAllowed")
+                .then()
+                .assertThat()
+                .statusCode(is(200)).and()
+                .body(equalTo("protected"))
+    }
+
+    @Test
     void testSecuredRequiresPermissions() {
 
         get(getBaseUri() + "secure/RequiresPermissions")

@@ -20,6 +20,7 @@ package org.apache.shiro.samples.jaxrs;
 
 import org.apache.shiro.samples.jaxrs.resources.HelloResource;
 import org.apache.shiro.samples.jaxrs.resources.SecureResource;
+import org.apache.shiro.web.jaxrs.JavaxSecurityAnnotationFilterFeature;
 import org.apache.shiro.web.jaxrs.ShiroFeature;
 
 import javax.ws.rs.ApplicationPath;
@@ -40,6 +41,9 @@ public class SampleApplication extends Application {
 
         // register Shiro
         classes.add(ShiroFeature.class);
+
+        // optional javax.annotations.security support
+        classes.add(JavaxSecurityAnnotationFilterFeature.class);
 
         // register resources
         classes.add(HelloResource.class);
