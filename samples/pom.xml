@@ -47,6 +47,8 @@
         <module>quickstart-guice</module>
         <module>servlet-plugin</module>
         <module>jaxrs</module>
+        <module>cdi-core</module>
+        <module>cdi-web</module>
     </modules>
 
     <reporting>
