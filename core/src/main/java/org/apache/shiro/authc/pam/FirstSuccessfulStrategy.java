@@ -37,6 +37,17 @@ import java.util.Collection;
  */
 public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
+    private boolean shortCircuitFlag;
+
+    public void setShortCircuitFlag(boolean shortCircuitFlag) {
+
+        this.shortCircuitFlag = shortCircuitFlag;
+    }
+
+    public boolean getShortCircuitFlag() {
+        return shortCircuitFlag;
+    }
+
     /**
      * Returns {@code null} immediately, relying on this class's {@link #merge merge} implementation to return
      * only the first {@code info} object it encounters, ignoring all subsequent ones.
