@@ -23,14 +23,14 @@ import org.apache.shiro.authc.AuthenticationException;
 
 /**
  * Exception thrown during the authentication process using
- * {@link org.apache.shiro.authc.pam.ShortCircuitFirstSuccessfulStrategy}. 
+ * {@link org.apache.shiro.authc.pam.FirstSuccessfulStrategy}, with 
+ * <code>shortCircuitFlag</code> set.  
  * This is a signal to short circuit the authentication from proceeding 
  * with subsequent {@link org.apache.shiro.realm.Realm Realm}s 
  * after a first successful authentication.
  *
  * @see org.apache.shiro.authc.pam.AuthenticationStrategy
  * @see org.apache.shiro.authc.pam.FirstSuccessfulStrategy
- * @see org.apache.shiro.authc.pam.ShortCircuitFirstSuccessfulStrategy
  * @since 1.4.1
  */
 public class ShortCircuitIterationException extends AuthenticationException {

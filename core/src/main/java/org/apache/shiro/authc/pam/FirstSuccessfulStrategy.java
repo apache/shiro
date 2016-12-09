@@ -56,6 +56,22 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
         return null;
     }
 
+
+    /**
+     * Throws ShortCircuitIterationException if shortCircuitFlag is set and authentication is 
+     * successful with a previously consulted realm. 
+     * Returns the <code>aggregate</code> method argument, without modification
+     * otherwise.
+     */
+    public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {
+        if (getShortCircuitFlag() && aggregate != null && isEmpty(aggregate.getPrincipals())) {
+            throw new ShortCircuitIterationException();
+        }
+        return aggregate;
+    }
+
+    
+
     private static boolean isEmpty(PrincipalCollection pc) {
         return pc == null || pc.isEmpty();
     }
