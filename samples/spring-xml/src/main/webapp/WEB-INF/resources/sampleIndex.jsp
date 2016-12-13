@@ -63,7 +63,7 @@
 
 
     <form action="<c:url value="/s/index"/>" method="POST">
-        Enter value here to store in session: <input type="text" name="value" value="${value}" size="30"/>
+        Enter value here to store in session: <input type="text" name="value" value="${command.value}" size="30"/>
         <input type="submit" value="Save"/>
         <button type="button" onclick="document.location.href='<c:url value="/s/index"/>';">Refresh</button>
     </form>
@@ -71,7 +71,9 @@
 
     <p>
         Click <a href="<c:url value="/s/shiro.jnlp?sessionId=${subjectSession.id}"/>">here</a> to launch webstart
-        application.
+        application. (Need to be running <span style="font-weight:bold">mvn jetty:run-exploded</span> to have webstart
+        app
+        resources available through the webapp context)
     </p>
 
 

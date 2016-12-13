@@ -18,29 +18,19 @@
  */
 package org.apache.shiro.samples.spring.web;
 
-import org.apache.shiro.SecurityUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
- * Controller responsible for logging out the current user by invoking
- * {@link org.apache.shiro.subject.Subject#logout()}
- *
- * @since 0.1
+ * Implements the root {@code welcome-file}j as a {@code @RequestMapping}.
  */
-@Component
-@RequestMapping("/s/logout")
-public class LogoutController extends AbstractController {
+@Controller
+@RequestMapping({"/"})
+public class RootRedirectController {
 
     @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        SecurityUtils.getSubject().logout();
-        return new ModelAndView("redirect:login");
+    public String redirect() {
+        return "redirect:/s/login";
     }
 }

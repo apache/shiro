@@ -22,12 +22,14 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.samples.spring.SampleManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.SimpleFormController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -37,9 +39,7 @@ import java.util.Map;
  *
  * @since 0.1
  */
-@Controller
-@RequestMapping("/s/index")
-public class IndexController {
+public class IndexController extends SimpleFormController {
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
@@ -49,7 +49,6 @@ public class IndexController {
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
 
-    @Autowired
     private SampleManager sampleManager;
 
     /*--------------------------------------------
@@ -68,44 +67,39 @@ public class IndexController {
     |               M E T H O D S               |
     ============================================*/
 
-    @RequestMapping(method = RequestMethod.GET)
-    protected String doGet(Model model) {
+    protected Object formBackingObject(HttpServletRequest request) throws Exception {
+        SessionValueCommand command = (SessionValueCommand) createCommand();
 
-        buildModel(model);
-        model.addAttribute("value", sampleManager.getValue());
-
-        return "sampleIndex";
+        command.setValue(sampleManager.getValue());
+        return command;
     }
 
-    protected Model buildModel(Model model) {
-
+    protected Map<String, Object> referenceData(HttpServletRequest request, Object command, Errors errors) throws Exception {
         Subject subject = SecurityUtils.getSubject();
         boolean hasRole1 = subject.hasRole("role1");
         boolean hasRole2 = subject.hasRole("role2");
 
-        model.addAttribute("hasRole1", hasRole1);
-        model.addAttribute("hasRole2", hasRole2);
+        Map<String, Object> refData = new HashMap<String, Object>();
+        refData.put("hasRole1", hasRole1);
+        refData.put("hasRole2", hasRole2);
 
         Session session = subject.getSession();
         Map<Object, Object> sessionAttributes = new LinkedHashMap<Object, Object>();
         for (Object key : session.getAttributeKeys()) {
             sessionAttributes.put(key, session.getAttribute(key));
         }
-        model.addAttribute("sessionAttributes", sessionAttributes);
+        refData.put("sessionAttributes", sessionAttributes);
 
-        model.addAttribute("subjectSession", subject.getSession());
-        return model;
+        refData.put("subjectSession", subject.getSession());
+        return refData;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    protected String doPost(@RequestParam("value") String newSessionValue, Model model) {
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object obj, BindException errors) throws Exception {
+        SessionValueCommand command = (SessionValueCommand) obj;
 
-        sampleManager.setValue(newSessionValue);
+        sampleManager.setValue(command.getValue());
 
-        buildModel(model);
-        model.addAttribute("value", sampleManager.getValue());
-
-        return "sampleIndex";
+        return showForm(request, response, errors);
     }
 
 }

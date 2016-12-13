@@ -32,7 +32,9 @@
 
     <p>
         <span style="color: red;">
-                ${errorInvalidLogin}
+            <spring:bind path="command.*">
+                ${status.errorMessage}
+            </spring:bind>
         </span>
     </p>
 

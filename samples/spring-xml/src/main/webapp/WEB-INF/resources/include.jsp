@@ -16,34 +16,9 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   --%>
-<%@ include file="include.jsp" %>
+<%@ page session="false" %>
 
-<html>
-
-<head>
-    <link type="text/css" rel="stylesheet" href="<c:url value="/shiro.css"/>"/>
-</head>
-
-<body onload="document.forms[0].elements[0].focus();">
-
-<div id="contentBox">
-
-    <h1>Shiro Login</h1>
-
-    <p>
-        <span style="color: red;">
-                ${errorInvalidLogin}
-        </span>
-    </p>
-
-    <form action="login" method="POST">
-        Username: <input id="username" name="username" type="text"/><br/><br/>
-        Password: <input name="password" type="password"/><br/><br/>
-        <input type="submit" value="Login"/>
-    </form>
-
-    <p>Try logging in with username/passwords: user1/user1 and user2/user2.</p>
-</div>
-</body>
-
-</html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>

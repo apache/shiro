@@ -38,6 +38,7 @@
         <module>web</module>
         <module>spring-client</module>
         <module>spring</module>
+        <module>spring-xml</module>
         <module>spring-hibernate</module>
         <module>spring-boot-web</module>
         <module>guice</module>

@@ -119,7 +119,7 @@
                     </sign>
                     <!-- BUILDING PROCESS -->
                     <pack200>
-                        <enabled>true</enabled>
+                        <enabled>false</enabled>
                     </pack200>
                     <verbose>false</verbose>
 

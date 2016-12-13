@@ -28,8 +28,8 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>samples-spring</artifactId>
-    <name>Apache Shiro :: Samples :: Spring</name>
+    <artifactId>samples-spring-xml</artifactId>
+    <name>Apache Shiro :: Samples :: Spring XML</name>
     <packaging>war</packaging>
     <description>
     	Spring-based web application sample demonstrating Shiro's capabilities. Uses samples-spring module
