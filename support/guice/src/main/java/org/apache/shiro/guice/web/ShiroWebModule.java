@@ -141,7 +141,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         Map<Key<? extends Filter>, Map<String, String>> filterToPathToConfig = new HashMap<Key<? extends Filter>, Map<String, String>>();
 
         // At the same time build a map to return with Path -> Key[]
-        Map<String, Key<? extends Filter>[]> resultConfigMap = new HashMap<String, Key<? extends Filter>[]>();
+        Map<String, Key<? extends Filter>[]> resultConfigMap = new LinkedHashMap<String, Key<? extends Filter>[]>();
 
         for (Map.Entry<String, FilterConfig<? extends Filter>[]> filterChain : filterChains.entrySet()) {
 
