@@ -19,6 +19,7 @@
 package org.apache.shiro.samples.spring.config;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.samples.spring.BootstrapDataPopulator;
