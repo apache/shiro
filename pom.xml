@@ -61,6 +61,7 @@
             <name>Apache Shiro Site</name>
             <url>scp://people.apache.org/www/shiro.apache.org/static/latest</url>
         </site>
+        <downloadUrl>https://shiro.apache.org/download.html</downloadUrl>
     </distributionManagement>
 
     <properties>
@@ -173,6 +174,9 @@
             <organization>Stormpath</organization>
             <organizationUrl>http://www.stormpath.com</organizationUrl>
             <timezone>-8</timezone>
+            <roles>
+                <role>PMC Chair</role>
+            </roles>
         </developer>
         <developer>
             <id>kaosko</id>
@@ -200,9 +204,9 @@
             <id>bdemers</id>
             <name>Brian Demers</name>
             <email>bdemers@apache.org</email>
-            <url>http://about.me/brian.demers</url>
-            <organization>Sonatype</organization>
-            <organizationUrl>http://www.sonatype.com/</organizationUrl>
+            <url>https://stormpath.com/blog/author/bdemers</url>
+            <organization>Stormpath</organization>
+            <organizationUrl>https://stormpath.com/</organizationUrl>
             <timezone>-5</timezone>
         </developer>
         <developer>
@@ -475,6 +479,52 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-doap-plugin</artifactId>
+                <version>1.2</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <artifact>
+
+                    </artifact>
+                    <doapOptions>
+                        <!-- See http://projects.apache.org/languages.html -->
+                        <programmingLanguage>Java</programmingLanguage>
+                        <!-- http://projects.apache.org/categories.html -->
+                        <category>library, web-framework</category>
+                        <!--<category>library, web-framework, security</category>-->
+                        <bugDatabase>${project.issueManagement.url}</bugDatabase>
+                        <created>${project.inceptionYear}-01-01</created>
+                        <description>${project.description}</description>
+                        <downloadPage>${project.distributionManagement.downloadUrl}</downloadPage>
+                        <homepage>${project.url}</homepage>
+                        <mailingList>${project.url}/mail-lists.html</mailingList>
+                        <name>${project.name}</name>
+                        <shortdesc>A simple to use Java Security Framework.</shortdesc>
+                        <vendor>${project.organization.name}</vendor>
+                    </doapOptions>
+
+                    <asfExtOptions>
+                        <charter>The mission of the Apache Shiro project is to create and maintain an easy to use authentication and authorization framework.</charter>
+
+                        <!-- Default values -->
+                        <pmc>${project.url}</pmc>
+                        <name>${project.name}</name>
+                    </asfExtOptions>
+
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>site</id>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
