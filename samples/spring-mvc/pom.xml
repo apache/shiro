@@ -36,10 +36,14 @@
     	as the web start application.
     </description>
 
+    <properties>
+        <jetty.version>9.4.0.v20161208</jetty.version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
-                <!-- Note	that you need	to run mvn jetty:run-exploded	to test	the	webstart application -->
+                <!-- Note	that you need	to run mvn jetty:run-war	to test	the	webstart application -->
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
@@ -49,9 +53,6 @@
                     </httpConnector>
                     <webApp>
                         <contextPath>/shiro-samples-spring</contextPath>
-                        <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-                            <resourcesAsCSV>${project.build.directory}/extra/,src/main/webapp</resourcesAsCSV>
-                        </baseResource>
                     </webApp>
                 </configuration>
             </plugin>
@@ -81,10 +82,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>3.0.0</version>
                 <configuration>
                     <webResources>
                         <resource>
-                            <!-- this is relative to the pom.xml directory -->
                             <directory>${project.build.directory}/extra</directory>
                         </resource>
                     </webResources>
@@ -107,6 +108,11 @@
             <artifactId>shiro-ehcache</artifactId>
         </dependency>
         <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+            <optional>false</optional>
+        </dependency>
+        <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
         </dependency>
@@ -121,23 +127,18 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-context</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>

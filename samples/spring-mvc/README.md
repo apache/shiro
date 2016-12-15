@@ -7,7 +7,7 @@ Run the Example
 ---------------
 
 ```
-mvn jetty:run
+mvn jetty:run-war
 ```
 
 Browse to `http://localhost:8080/shiro-samples-spring`
