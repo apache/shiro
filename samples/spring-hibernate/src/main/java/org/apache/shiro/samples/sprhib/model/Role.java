@@ -20,7 +20,6 @@ package org.apache.shiro.samples.sprhib.model;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 
 import javax.persistence.*;

@@ -71,12 +71,6 @@
             <scope>compile</scope>
             <optional>false</optional>
         </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-annotations</artifactId>
-            <scope>compile</scope>
-            <optional>false</optional>
-        </dependency>
         <!-- needed by Hibernate at runtime: -->
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -104,6 +98,10 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
