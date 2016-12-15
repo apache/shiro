@@ -17,8 +17,6 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
@@ -30,5 +28,7 @@
                     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
     <mvc:resources mapping="/*.jar" location="/WEB-INF/resources/" />
+    <mvc:resources mapping="/*.css" location="/" />
+    <mvc:resources mapping="/*.png" location="/" />
 
 </beans>

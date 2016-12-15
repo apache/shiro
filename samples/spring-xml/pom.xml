@@ -49,9 +49,6 @@
                     </httpConnector>
                     <webApp>
                         <contextPath>/shiro-samples-spring</contextPath>
-                        <baseResource implementation="org.eclipse.jetty.util.resource.ResourceCollection">
-                            <resourcesAsCSV>${project.build.directory}/extra/,src/main/webapp</resourcesAsCSV>
-                        </baseResource>
                     </webApp>
                 </configuration>
             </plugin>
@@ -105,6 +102,11 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-ehcache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache-core</artifactId>
+            <optional>false</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
