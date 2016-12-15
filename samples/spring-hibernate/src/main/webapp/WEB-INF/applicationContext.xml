@@ -87,10 +87,11 @@
         <!-- Single realm app (realm configured next, below).  If you have multiple realms, use the 'realms'
       property instead. -->
         <property name="realm" ref="sampleRealm"/>
-        <!-- Uncomment this next property if you want heterogenous session access or clusterable/distributable
-             sessions.  The default value is 'http' which uses the Servlet container's HttpSession as the underlying
-             Session implementation.
-        <property name="sessionMode" value="native"/> -->
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="sessionIdUrlRewritingEnabled" value="false"/>
     </bean>
 
     <!-- Post processor that automatically invokes init() and destroy() methods -->

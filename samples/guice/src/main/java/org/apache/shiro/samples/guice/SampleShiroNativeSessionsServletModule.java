@@ -55,7 +55,7 @@ public class SampleShiroNativeSessionsServletModule extends ShiroWebModule {
         this.addFilterChain("/login.jsp", AUTHC);
         this.addFilterChain("/logout", LOGOUT);
         this.addFilterChain("/account/**", AUTHC);
-        this.addFilterChain("/remoting/**", AUTHC, config(ROLES, "b2bClient"), config(PERMS, "remote:invoke:lan,wan"));
+        this.addFilterChain("/remoting/**", filterConfig(AUTHC), filterConfig(ROLES, "b2bClient"), filterConfig(PERMS, "remote:invoke:lan,wan"));
     }
 
     @Provides
@@ -69,6 +69,7 @@ public class SampleShiroNativeSessionsServletModule extends ShiroWebModule {
     protected void bindSessionManager(AnnotatedBindingBuilder<SessionManager> bind) {
         bind.to(DefaultWebSessionManager.class);
         bindConstant().annotatedWith(Names.named("shiro.globalSessionTimeout")).to(5000L);
+        bindConstant().annotatedWith(Names.named("shiro.sessionIdUrlRewritingEnabled")).to(false);
         bind(DefaultWebSessionManager.class);
         bind(Cookie.class).toInstance(new SimpleCookie("myCookie"));
     }
