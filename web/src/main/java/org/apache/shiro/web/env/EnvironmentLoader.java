@@ -28,6 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ServiceLoader;
+
 
 /**
  * An {@code EnvironmentLoader} is responsible for loading a web application's Shiro {@link WebEnvironment}
@@ -162,19 +167,103 @@ public class EnvironmentLoader {
      * @return the WebEnvironment implementation class to use
      * @see #ENVIRONMENT_CLASS_PARAM
      * @see IniWebEnvironment
+     * @see #determineWebEnvironment(ServletContext)
+     * @see #getDefaultWebEnvironmentClass()
+     * @deprecated This method is not longer used by Shiro, and will be removed in future versions,
+     * use {@link #determineWebEnvironment(ServletContext)} or {@link #determineWebEnvironment(ServletContext)}
      */
+    @Deprecated
     protected Class<?> determineWebEnvironmentClass(ServletContext servletContext) {
+        Class<? extends WebEnvironment> webEnvironmentClass = webEnvironmentClassFromServletContext(servletContext);
+        if( webEnvironmentClass != null) {
+            return webEnvironmentClass;
+        } else {
+
+            return getDefaultWebEnvironmentClass();
+        }
+    }
+
+    private Class<? extends WebEnvironment> webEnvironmentClassFromServletContext(ServletContext servletContext) {
+
+        Class<? extends WebEnvironment> webEnvironmentClass = null;
         String className = servletContext.getInitParameter(ENVIRONMENT_CLASS_PARAM);
         if (className != null) {
             try {
-                return ClassUtils.forName(className);
+                webEnvironmentClass = ClassUtils.forName(className);
             } catch (UnknownClassException ex) {
                 throw new ConfigurationException(
                         "Failed to load custom WebEnvironment class [" + className + "]", ex);
             }
-        } else {
-            return IniWebEnvironment.class;
         }
+        return webEnvironmentClass;
+    }
+
+    private WebEnvironment webEnvironmentFromServiceLoader() {
+
+        WebEnvironment webEnvironment = null;
+        // try to load WebEnvironment as a service
+        ServiceLoader<WebEnvironment> serviceLoader = ServiceLoader.load(WebEnvironment.class);
+        Iterator<WebEnvironment> iterator = serviceLoader.iterator();
+
+        // Use the first one
+        if (iterator.hasNext()) {
+            webEnvironment = iterator.next();
+        }
+        // if there are others, throw an error
+        if (iterator.hasNext()) {
+            List<String> allWebEnvironments = new ArrayList<String>();
+            for (Iterator<WebEnvironment> iter = serviceLoader.iterator(); iter.hasNext(); ) {
+                allWebEnvironments.add(iter.next().getClass().getName());
+            }
+            throw new ConfigurationException("ServiceLoader for class [" + WebEnvironment.class + "] returned more then one " +
+                    "result.  ServiceLoader must return zero or exactly one result for this class. Found: " + allWebEnvironments);
+        }
+        return webEnvironment;
+    }
+
+    /**
+     * Returns the default WebEnvironment class, which is unless overridden: {@link IniWebEnvironment}.
+     * @return the default WebEnvironment class.
+     */
+    protected Class<? extends WebEnvironment> getDefaultWebEnvironmentClass() {
+        return IniWebEnvironment.class;
+    }
+
+    /**
+     * Return the WebEnvironment implementation class to use, based on the order of:
+     * <ul>
+     *     <li>A custom WebEnvironment class - specified in the {@code servletContext} {@link #ENVIRONMENT_ATTRIBUTE_KEY} property</li>
+     *     <li>{@code ServiceLoader.load(WebEnvironment.class)} - (if more then one instance is found a {@link ConfigurationException} will be thrown</li>
+     *     <li>A call to {@link #getDefaultWebEnvironmentClass()} (default: {@link IniWebEnvironment})</li>
+     * </ul>
+     *
+     * @param servletContext current servlet context
+     * @return the WebEnvironment implementation class to use
+     * @see #ENVIRONMENT_CLASS_PARAM
+     * @param servletContext the {@code servletContext} to query the {@code ENVIRONMENT_ATTRIBUTE_KEY} property from
+     * @return the {@code WebEnvironment} to be used
+     */
+    protected WebEnvironment determineWebEnvironment(ServletContext servletContext) {
+
+        Class<? extends WebEnvironment> webEnvironmentClass = webEnvironmentClassFromServletContext(servletContext);
+        WebEnvironment webEnvironment = null;
+
+        // try service loader next
+        if (webEnvironmentClass == null) {
+            webEnvironment = webEnvironmentFromServiceLoader();
+        }
+
+        // if webEnvironment is not set, and ENVIRONMENT_CLASS_PARAM prop was not set, use the default
+        if (webEnvironmentClass == null && webEnvironment == null) {
+            webEnvironmentClass = getDefaultWebEnvironmentClass();
+        }
+
+        // at this point, we anything is set for the webEnvironmentClass, load it.
+        if (webEnvironmentClass != null) {
+            webEnvironment = (WebEnvironment) ClassUtils.newInstance(webEnvironmentClass);
+        }
+
+        return webEnvironment;
     }
 
     /**
@@ -193,23 +282,23 @@ public class EnvironmentLoader {
      */
     protected WebEnvironment createEnvironment(ServletContext sc) {
 
-        Class<?> clazz = determineWebEnvironmentClass(sc);
-        if (!MutableWebEnvironment.class.isAssignableFrom(clazz)) {
-            throw new ConfigurationException("Custom WebEnvironment class [" + clazz.getName() +
+        WebEnvironment webEnvironment = determineWebEnvironment(sc);
+        if (!MutableWebEnvironment.class.isInstance(webEnvironment)) {
+            throw new ConfigurationException("Custom WebEnvironment class [" + webEnvironment.getClass().getName() +
                     "] is not of required type [" + MutableWebEnvironment.class.getName() + "]");
         }
 
         String configLocations = sc.getInitParameter(CONFIG_LOCATIONS_PARAM);
         boolean configSpecified = StringUtils.hasText(configLocations);
 
-        if (configSpecified && !(ResourceConfigurable.class.isAssignableFrom(clazz))) {
-            String msg = "WebEnvironment class [" + clazz.getName() + "] does not implement the " +
+        if (configSpecified && !(ResourceConfigurable.class.isInstance(webEnvironment))) {
+            String msg = "WebEnvironment class [" + webEnvironment.getClass().getName() + "] does not implement the " +
                     ResourceConfigurable.class.getName() + "interface.  This is required to accept any " +
                     "configured " + CONFIG_LOCATIONS_PARAM + "value(s).";
             throw new ConfigurationException(msg);
         }
 
-        MutableWebEnvironment environment = (MutableWebEnvironment) ClassUtils.newInstance(clazz);
+        MutableWebEnvironment environment = (MutableWebEnvironment) webEnvironment;
 
         environment.setServletContext(sc);
 
