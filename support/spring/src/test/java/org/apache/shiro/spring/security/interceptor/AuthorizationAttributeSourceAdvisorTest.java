@@ -55,6 +55,19 @@ public class AuthorizationAttributeSourceAdvisorTest {
         }
     }
 
+    @RequiresAuthentication
+    interface SafeServiceInterface {
+        String someMethod();
+    }
+
+    static class SafeServiceImpl implements SafeServiceInterface {
+
+        @Override
+        public String someMethod() {
+            return "";
+        }
+    }
+
     @Test
     public void matches() throws NoSuchMethodException {
         assertTrue(
@@ -77,6 +90,17 @@ public class AuthorizationAttributeSourceAdvisorTest {
                 "not annotated method, should not match",
                 new AuthorizationAttributeSourceAdvisor().matches(
                         ServiceInterface.class.getDeclaredMethod("unsecuredMethod"), ServiceImpl.class
+                ));
+
+        assertTrue(
+                "the method declaration is in the interface with type-annotation, should match",
+                new AuthorizationAttributeSourceAdvisor().matches(
+                        SafeServiceInterface.class.getDeclaredMethod("someMethod"), SafeServiceInterface.class
+                ));
+        assertTrue(
+                "the method declaration is in the interface with type-annotation, should match",
+                new AuthorizationAttributeSourceAdvisor().matches(
+                        SafeServiceImpl.class.getDeclaredMethod("someMethod"), SafeServiceImpl.class
                 ));
 
     }
