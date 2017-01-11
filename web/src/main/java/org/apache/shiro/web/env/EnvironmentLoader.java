@@ -212,11 +212,13 @@ public class EnvironmentLoader {
         // if there are others, throw an error
         if (iterator.hasNext()) {
             List<String> allWebEnvironments = new ArrayList<String>();
-            for (Iterator<WebEnvironment> iter = serviceLoader.iterator(); iter.hasNext(); ) {
-                allWebEnvironments.add(iter.next().getClass().getName());
+            allWebEnvironments.add(webEnvironment.getClass().getName());
+            while (iterator.hasNext()) {
+                allWebEnvironments.add(iterator.next().getClass().getName());
             }
             throw new ConfigurationException("ServiceLoader for class [" + WebEnvironment.class + "] returned more then one " +
-                    "result.  ServiceLoader must return zero or exactly one result for this class. Found: " + allWebEnvironments);
+                    "result.  ServiceLoader must return zero or exactly one result for this class. Select one using the " +
+                    "servlet init parameter '"+ ENVIRONMENT_CLASS_PARAM +"'. Found: " + allWebEnvironments);
         }
         return webEnvironment;
     }
