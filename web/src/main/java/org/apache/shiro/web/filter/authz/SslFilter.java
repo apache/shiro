@@ -112,11 +112,11 @@ public class SslFilter extends PortFilter {
      */
     @Override
     protected void postHandle(ServletRequest request, ServletResponse response)  {
-        if (hsts.enabled) {
+        if (hsts.isEnabled()) {
             StringBuilder directives = new StringBuilder(64)
                     .append("max-age=").append(hsts.getMaxAge());
             
-            if (hsts.includeSubDomains) {
+            if (hsts.isIncludeSubDomains()) {
                 directives.append("; includeSubDomains");
             }
             
@@ -130,17 +130,18 @@ public class SslFilter extends PortFilter {
      */
     public class HSTS {
         
+        public static final String HTTP_HEADER = "Strict-Transport-Security";
+        
         public static final boolean DEFAULT_ENABLED = false;
         public static final int DEFAULT_MAX_AGE = 31536000; // approx. one year in seconds
         public static final boolean DEFAULT_INCLUDE_SUB_DOMAINS = false;
-        
-        public static final String HTTP_HEADER = "Strict-Transport-Security";
         
         private boolean enabled;
         private int maxAge;
         private boolean includeSubDomains;
         
         public HSTS() {
+            this.enabled = DEFAULT_ENABLED;
             this.maxAge = DEFAULT_MAX_AGE;
             this.includeSubDomains = DEFAULT_INCLUDE_SUB_DOMAINS;
         }

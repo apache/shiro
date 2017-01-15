@@ -18,49 +18,85 @@
  */
 package org.apache.shiro.web.filter.authz;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.Test;
 
 import static org.apache.shiro.web.filter.authz.SslFilter.HSTS.*;
+import org.easymock.Capture;
+import org.easymock.CaptureType;
 import static org.easymock.EasyMock.*;
+import org.easymock.IAnswer;
 import static org.junit.Assert.*;
+import org.junit.Before;
 
 public class SslFilterTest {
+    
+    private HttpServletRequest request;
+    private HttpServletResponse response;
+    private SslFilter sslFilter;
+    
+    @Before
+    public void before() {
+        request = createNiceMock(HttpServletRequest.class);
+        response = createNiceMock(HttpServletResponse.class);
+        sslFilter = new SslFilter();
+        
+        final Map<String,String> headers = new HashMap<String,String>();
+        
+        final Capture<String> capturedName = newCapture();
+        final Capture<String> capturedValue = newCapture();
+        
+        // mock HttpServletResponse.getHeader
+        expect(response.getHeader(capture(capturedName))).andAnswer(new IAnswer<String>() {
+            @Override
+            public String answer() throws Throwable {
+                String name = capturedName.getValue();
+                return headers.get(name);
+            }
+            
+        });
+        
+        // mock HttpServletResponse.addHeader
+        response.addHeader(capture(capturedName), capture(capturedValue));
+        expectLastCall().andAnswer(new IAnswer<Void>() {
+            @Override
+            public Void answer() throws Throwable {
+                String name = capturedName.getValue();
+                String value = capturedValue.getValue();
+                headers.put(name, value);
+                return (null);
+            }
+        });
+        
+        replay(response);
+    }
 
     @Test
     public void testDisabledByDefault() {
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
-
-        SslFilter sslFilter = new SslFilter();
-
         sslFilter.postHandle(request, response);
         assertNull(response.getHeader(HTTP_HEADER));
     }
 
     @Test
     public void testDefaultValues() {
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
-
-//        String expected = new StringBuilder()
-//                .append(HTTP_HEADER)
-//                .append(": ")
-//                .append("max-age=")
-//                .append(DEFAULT_MAX_AGE)
-//                .toString();
-//        expect(response.addHeader(expected, expected))
-//                .andReturn(expected)
-//                .anyTimes();
-        replay(response);
-//        
-        SslFilter sslFilter = new SslFilter();
         sslFilter.getHsts().setEnabled(true);
-
         sslFilter.postHandle(request, response);
-
-        //assertEquals(expected, response.getHeader(HTTP_HEADER));
+        assertEquals("max-age=" + DEFAULT_MAX_AGE, response.getHeader(HTTP_HEADER));
     }
+    
+    @Test
+    public void testSetProperties() {
+        sslFilter.getHsts().setEnabled(true);
+        sslFilter.getHsts().setMaxAge(7776000);
+        sslFilter.getHsts().setIncludeSubDomains(true);
+        sslFilter.postHandle(request, response);
+        
+        String expected = "max-age=" + 7776000 + "; includeSubDomains";
 
+        assertEquals(expected, response.getHeader(HTTP_HEADER));
+    }
+    
 }
