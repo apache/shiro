@@ -36,7 +36,11 @@ import javax.servlet.http.HttpServletResponse;
  * will prevent <b>any</b> communications from being sent over HTTP to the 
  * specified domain and will instead send all communications over HTTPS.
  * </p>
- * <b>Warning:</b> Use this setting only if you plan to enable SSL on every path.
+ * The {@link #getMaxAge() maxAge} property defaults {@code 31536000}, and 
+ * {@link #isIncludeSubDomains includeSubDomains} is {@code false}.
+ * </p>
+ * <b>Warning:</b> Use this setting with care and only if you plan to enable 
+ * SSL on every path.
  * </p>
  * Example configs:
  * <pre>
@@ -100,31 +104,44 @@ public class SslFilter extends PortFilter {
         return super.isAccessAllowed(request, response, mappedValue) && request.isSecure();
     }
 
+    /**
+     * If HTTP Strict Transport Security (HSTS) is enabled the HTTP header
+     * will be written, otherwise this method does nothing.
+     * @param request the incoming {@code ServletRequest}
+     * @param response the outgoing {@code ServletResponse}
+     */
     @Override
-    protected void postHandle(ServletRequest request, ServletResponse response) throws Exception {
+    protected void postHandle(ServletRequest request, ServletResponse response)  {
         if (hsts.enabled) {
-            StringBuilder directives = new StringBuilder(64);
-            directives.append("max-age=").append(hsts.getMaxAge());
+            StringBuilder directives = new StringBuilder(64)
+                    .append("max-age=").append(hsts.getMaxAge());
+            
             if (hsts.includeSubDomains) {
                 directives.append("; includeSubDomains");
             }
+            
             HttpServletResponse resp = (HttpServletResponse) response;
-            resp.addHeader("Strict-Transport-Security", directives.toString());
+            resp.addHeader(HSTS.HTTP_HEADER, directives.toString());
         }
     }
     
+    /**
+     * Helper class for HTTP Strict Transport Security (HSTS)
+     */
     public class HSTS {
         
-        static final boolean DEFAULT_ENABLED = false;
-        public static final int DEFAULT_EXPIRE_TIME = 31536000; // approx. one year in seconds
+        public static final boolean DEFAULT_ENABLED = false;
+        public static final int DEFAULT_MAX_AGE = 31536000; // approx. one year in seconds
         public static final boolean DEFAULT_INCLUDE_SUB_DOMAINS = false;
+        
+        public static final String HTTP_HEADER = "Strict-Transport-Security";
         
         private boolean enabled;
         private int maxAge;
         private boolean includeSubDomains;
         
         public HSTS() {
-            this.maxAge = DEFAULT_EXPIRE_TIME;
+            this.maxAge = DEFAULT_MAX_AGE;
             this.includeSubDomains = DEFAULT_INCLUDE_SUB_DOMAINS;
         }
 
@@ -151,6 +168,5 @@ public class SslFilter extends PortFilter {
         public void setIncludeSubDomains(boolean includeSubDomains) {
             this.includeSubDomains = includeSubDomains;
         }
-        
     }
 }
