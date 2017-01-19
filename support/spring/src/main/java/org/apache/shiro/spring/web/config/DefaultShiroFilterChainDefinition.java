@@ -18,8 +18,7 @@
  */
 package org.apache.shiro.spring.web.config;
 
-
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -27,7 +26,7 @@ import java.util.Map;
  */
 public class DefaultShiroFilterChainDefinition implements ShiroFilterChainDefinition {
 
-    final private Map<String, String> filterChainDefinitionMap = new HashMap<String, String>();
+    final private Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 
     public void addPathDefinition(String antPath, String definition) {
         filterChainDefinitionMap.put(antPath, definition);
