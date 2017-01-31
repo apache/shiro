@@ -325,9 +325,8 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
      * @return false - this sends the challenge to be sent back
      */
     protected boolean sendChallenge(ServletRequest request, ServletResponse response) {
-        if (log.isDebugEnabled()) {
-            log.debug("Authentication required: sending 401 Authentication challenge response.");
-        }
+        log.debug("Authentication required: sending 401 Authentication challenge response.");
+
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         String authcHeader = getAuthcScheme() + " realm=\"" + getApplicationName() + "\"";
@@ -359,9 +358,7 @@ public class BasicHttpAuthenticationFilter extends AuthenticatingFilter {
             return createToken("", "", request, response);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Attempting to execute login with headers [" + authorizationHeader + "]");
-        }
+        log.debug("Attempting to execute login with auth header");
 
         String[] prinCred = getPrincipalsAndCredentials(authorizationHeader, request);
         if (prinCred == null || prinCred.length < 2) {
