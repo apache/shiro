@@ -19,12 +19,14 @@
 package org.apache.shiro.spring.web.config;
 
 import org.apache.shiro.mgt.RememberMeManager;
+import org.apache.shiro.mgt.SessionStorageEvaluator;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.config.AbstractShiroConfiguration;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
 import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
@@ -142,6 +144,11 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
     @Override
     protected SubjectFactory subjectFactory() {
         return new DefaultWebSubjectFactory();
+    }
+
+    @Override
+    protected SessionStorageEvaluator sessionStorageEvaluator() {
+        return new DefaultWebSessionStorageEvaluator();
     }
 
     protected SessionsSecurityManager createSecurityManager() {
