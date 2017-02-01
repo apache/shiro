@@ -20,6 +20,10 @@ package org.apache.shiro.web.filter.authz;
 
 import java.util.Collection;
 
+/**
+ * Represents a source of information for IP restrictions (see IpFilter)
+ * @since 1.4.0
+ */
 public interface IpSource {
 
     /**

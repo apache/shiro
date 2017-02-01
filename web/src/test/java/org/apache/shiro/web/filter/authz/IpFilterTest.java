@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.Test;
 
 import javax.servlet.ServletRequest;
@@ -36,7 +35,7 @@ import static org.junit.Assert.assertFalse;
 /**
  * Test cases for the {@link AuthorizationFilter} class.
  */
-public class IpFilterTest extends SecurityManagerTestSupport {
+public class IpFilterTest {
 
     @Test
     public void accessShouldBeDeniedByDefault() throws Exception {

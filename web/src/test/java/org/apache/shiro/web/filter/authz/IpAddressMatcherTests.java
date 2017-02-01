@@ -21,7 +21,6 @@ import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
 /**
- * @author Modified by Richard Wheeldon from an original by Luke Taylor for Spring Security
  * @since 1.4.0
  */
 public class IpAddressMatcherTests {

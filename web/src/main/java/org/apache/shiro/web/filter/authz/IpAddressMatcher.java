@@ -26,7 +26,7 @@ import java.util.Arrays;
  * Both IPv6 and IPv4 addresses are supported, but a matcher which is configured with an
  * IPv4 address will never match a request which returns an IPv6 address, and vice-versa.
  *
- * @author Luke Taylor originally written for Spring Security
+ * @see <a href="https://github.com/spring-projects/spring-security/blob/master/web/src/main/java/org/springframework/security/web/util/matcher/IpAddressMatcher.java">Original Spring Security version</a>
  * @since 1.4.0
  */
 public final class IpAddressMatcher {

@@ -38,7 +38,7 @@ import java.util.Collection;
  * <p/>
  * Example config:
  * <pre>
- * [filters]
+ * [main]
  * localLan = org.apache.shiro.web.filter.authz.IpFilter
  * localLan.authorizedIps = 192.168.10.0/24
  * localLan.deniedIps = 192.168.10.10/32
@@ -49,7 +49,7 @@ import java.util.Collection;
  * /another/path/** = localLan
  * </pre>
  *
- * @since 1.0
+ * @since 1.4
  */
 public class IpFilter extends AuthorizationFilter {
 

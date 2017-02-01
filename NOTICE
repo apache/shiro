@@ -9,7 +9,7 @@ on initial ideas from Dr. Heinz Kabutz's publicly posted version
 available at http://www.javaspecialists.eu/archive/Issue015.html,
 with continued modifications.  
 
-Certain parts (StringUtils etc.) of the source code for this 
-product was copied for simplicity and to reduce dependencies 
-from the source code developed by the Spring Framework Project 
-(http://www.springframework.org).
+Certain parts (StringUtils, IpAddressMatcher, etc.) of the source
+code for this  product was copied for simplicity and to reduce
+dependencies  from the source code developed by the Spring Framework
+Project  (http://www.springframework.org).
