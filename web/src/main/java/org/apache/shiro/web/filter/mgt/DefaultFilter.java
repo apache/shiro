@@ -40,6 +40,7 @@ public enum DefaultFilter {
     anon(AnonymousFilter.class),
     authc(FormAuthenticationFilter.class),
     authcBasic(BasicHttpAuthenticationFilter.class),
+    ip(IpFilter.class),
     logout(LogoutFilter.class),
     noSessionCreation(NoSessionCreationFilter.class),
     perms(PermissionsAuthorizationFilter.class),
