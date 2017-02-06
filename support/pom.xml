@@ -43,6 +43,7 @@
         <module>spring-boot</module>
         <module>servlet-plugin</module>
         <module>jaxrs</module>
+        <module>cdi</module>
     </modules>
 
 </project>
