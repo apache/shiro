@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.cdi.setup;
+package org.apache.shiro.cdi.setup.servlet;
 
 import org.apache.shiro.cdi.configurer.SecurityManagerConfigurer;
 import org.apache.shiro.cdi.extension.ShiroExtension;
