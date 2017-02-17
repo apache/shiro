@@ -21,5 +21,8 @@ package org.apache.shiro.cdi.literal;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.interceptor.InterceptorBinding;
 
+/**
+ * This is an internal literal intended to be used by shiro-cdi extension add @InterceptorBinding on shiro interception api.
+ */
 public class InterceptorBindingLiteral extends AnnotationLiteral<InterceptorBinding> implements InterceptorBinding {
 }

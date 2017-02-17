@@ -21,5 +21,8 @@ package org.apache.shiro.cdi.literal;
 import javax.enterprise.inject.Any;
 import javax.enterprise.util.AnnotationLiteral;
 
+/**
+ * This is an internal literal intended to enable @Any for shiro-cdi beans.
+ */
 public class AnyLiteral extends AnnotationLiteral<Any> implements Any {
 }

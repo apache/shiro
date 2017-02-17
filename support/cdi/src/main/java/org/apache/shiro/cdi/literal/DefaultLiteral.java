@@ -21,5 +21,8 @@ package org.apache.shiro.cdi.literal;
 import javax.enterprise.inject.Default;
 import javax.enterprise.util.AnnotationLiteral;
 
+/**
+ * This is an internal literal intended to enable @Default for shiro-cdi beans.
+ */
 public class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
 }

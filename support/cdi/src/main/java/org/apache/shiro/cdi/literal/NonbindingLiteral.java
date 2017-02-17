@@ -21,5 +21,9 @@ package org.apache.shiro.cdi.literal;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.enterprise.util.Nonbinding;
 
+/**
+ * This is an internal literal intended to enable shiro-cdi extension to make shiro interception annotations
+ * automatically CDI friendly and ignore parameter values in bindings.
+ */
 public class NonbindingLiteral extends AnnotationLiteral<Nonbinding> implements Nonbinding  {
 }
