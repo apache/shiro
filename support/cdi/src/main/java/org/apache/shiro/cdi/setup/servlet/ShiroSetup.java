@@ -20,7 +20,7 @@ package org.apache.shiro.cdi.setup.servlet;
 
 import org.apache.shiro.cdi.configurer.SecurityManagerConfigurer;
 import org.apache.shiro.cdi.extension.ShiroExtension;
-import org.apache.shiro.cdi.http.AsyncContextWrapper;
+import org.apache.shiro.cdi.servlet.AsyncContextWrapper;
 import org.apache.shiro.env.Environment;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;

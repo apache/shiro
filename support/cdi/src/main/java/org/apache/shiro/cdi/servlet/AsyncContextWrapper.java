@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.cdi.http;
+package org.apache.shiro.cdi.servlet;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncListener;
