@@ -65,43 +65,43 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
-public class CDITest {
+public class CDIIT {
     @Parameterized.Parameters
     public static Case[] parameters() {
         return new Case[]{
                 new Case("user", "pwd", new Consumer() {
                     @Override
-                    public void accept(final CDITest test) {
+                    public void accept(final CDIIT test) {
                         test.service.authenticated();
                     }
                 }),
                 new Case("user", "pwd", new Consumer() {
                     @Override
-                    public void accept(final CDITest test) {
+                    public void accept(final CDIIT test) {
                         test.service.user();
                     }
                 }),
                 new Case("user", "pwd", new Consumer() {
                     @Override
-                    public void accept(final CDITest test) {
+                    public void accept(final CDIIT test) {
                         test.service.permTest();
                     }
                 }),
                 new Case("user", "pwd", new Consumer() {
                     @Override
-                    public void accept(final CDITest test) {
+                    public void accept(final CDIIT test) {
                         test.service.roleTest();
                     }
                 }),
                 new Case(null, null, new Consumer() {
                     @Override
-                    public void accept(final CDITest test) {
+                    public void accept(final CDIIT test) {
                         test.service.guest();
                     }
                 }),
                 new Case("user", "pwd", new Consumer() {
                     @Override
-                    public void accept(final CDITest test) {
+                    public void accept(final CDIIT test) {
                         try {
                             test.service.role2Test();
                             fail();
@@ -112,7 +112,7 @@ public class CDITest {
                 }),
                 new Case("user", "pwd", new Consumer() {
                     @Override
-                    public void accept(final CDITest test) {
+                    public void accept(final CDIIT test) {
                         try {
                             test.service.perm2Test();
                             fail();
@@ -123,7 +123,7 @@ public class CDITest {
                 }),
                 new Case("user", "pwd", new Consumer() {
                     @Override
-                    public void accept(final CDITest test) {
+                    public void accept(final CDIIT test) {
                         final Client client = ClientBuilder.newClient();
                         try {
                             assertEquals("ok", client.target("http://localhost:" + CONTAINER.getConfiguration().getHttpPort())
@@ -231,7 +231,7 @@ public class CDITest {
     }
 
     interface Consumer {
-        void accept(CDITest test);
+        void accept(CDIIT test);
     }
 
     @Path("service")
