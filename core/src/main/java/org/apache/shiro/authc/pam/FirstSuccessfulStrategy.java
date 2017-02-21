@@ -37,15 +37,15 @@ import java.util.Collection;
  */
 public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
-    private boolean shortCircuitFlag;
+    private boolean stopAfterFirstSuccess;
 
-    public void setShortCircuitFlag(boolean shortCircuitFlag) {
+    public void setStopAfterFirstSuccess (boolean stopAfterFirstSuccess ) {
 
-        this.shortCircuitFlag = shortCircuitFlag;
+        this.stopAfterFirstSuccess  = stopAfterFirstSuccess ;
     }
 
-    public boolean getShortCircuitFlag() {
-        return shortCircuitFlag;
+    public boolean getStopAfterFirstSuccess() {
+        return stopAfterFirstSuccess ;
     }
 
     /**
@@ -58,13 +58,13 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
 
     /**
-     * Throws ShortCircuitIterationException if shortCircuitFlag is set and authentication is 
+     * Throws ShortCircuitIterationException if stopAfterFirstSuccess is set and authentication is 
      * successful with a previously consulted realm. 
      * Returns the <code>aggregate</code> method argument, without modification
      * otherwise.
      */
     public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {
-        if (getShortCircuitFlag() && aggregate != null && isEmpty(aggregate.getPrincipals())) {
+        if (getStopAfterFirstSuccess() && aggregate != null && isEmpty(aggregate.getPrincipals())) {
             throw new ShortCircuitIterationException();
         }
         return aggregate;
