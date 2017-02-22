@@ -49,7 +49,7 @@ public class FirstSuccessfulStrategyTest {
     }
 
     @Test (expected=ShortCircuitIterationException.class)
-    public void testBeforeAttemptShortCircuitIterationException() {
+    public void testBeforeAttemptStopAfterFirstSuccess() {
         AuthenticationInfo aggregate = new SimpleAuthenticationInfo();
         strategy.beforeAttempt(null, null, aggregate);
     }
