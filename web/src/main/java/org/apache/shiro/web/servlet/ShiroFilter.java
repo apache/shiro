@@ -23,20 +23,16 @@ import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.util.WebUtils;
 
 /**
- * Primary Shiro Filter for web applications configuring Shiro via Servlet
- * &lt;listener&gt; in web.xml.
+ * Primary Shiro Filter for web applications configuring Shiro via Servlet &lt;listener&gt; in web.xml.
  * <p/>
- * As of Shiro 1.2, this is Shiro's preferred filter for {@code web.xml}
- * configuration. It expects the presence of a Shiro
- * {@link org.apache.shiro.web.env.WebEnvironment WebEnvironment} in the
- * {@code ServletContext}, also configured via {@code web.xml}.
- * <h2>Usage</h2> As this Filter expects an available
- * {@link org.apache.shiro.web.env.WebEnvironment WebEnvironment} instance to be
- * configured, it must be defined in {@code web.xml} with the companion
- * {@link org.apache.shiro.web.env.EnvironmentLoaderListener
- * EnvironmentLoaderListener}, which performs the necessary environment setup.
- * For example:
- * 
+ * As of Shiro 1.2, this is Shiro's preferred filter for {@code web.xml} configuration.  It expects the presence of a
+ * Shiro {@link org.apache.shiro.web.env.WebEnvironment WebEnvironment} in the {@code ServletContext}, also
+ * configured via {@code web.xml}.
+ * <h2>Usage</h2>
+ * As this Filter expects an available {@link org.apache.shiro.web.env.WebEnvironment WebEnvironment} instance to
+ * be configured, it must be defined in {@code web.xml} with the companion
+ * {@link org.apache.shiro.web.env.EnvironmentLoaderListener EnvironmentLoaderListener}, which performs the necessary
+ * environment setup.  For example:
  * <pre>
  * &lt;listener&gt;
  *     &lt;listener-class&gt;{@link org.apache.shiro.web.env.EnvironmentLoaderListener}&lt;/listener-class&gt;
@@ -54,71 +50,33 @@ import org.apache.shiro.web.util.WebUtils;
  *     &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
  * &lt;/filter-mapping&gt;
  * </pre>
- * 
- * Configuration options (configuration file paths, etc) are specified as part
- * of the {@code EnvironmentLoaderListener} configuration. See the
- * {@link org.apache.shiro.web.env.EnvironmentLoader EnvironmentLoader} JavaDoc
- * for configuration options.
+ * Configuration options (configuration file paths, etc) are specified as part of the
+ * {@code EnvironmentLoaderListener} configuration.  See the
+ * {@link org.apache.shiro.web.env.EnvironmentLoader EnvironmentLoader} JavaDoc for configuration options.
  *
  * @see org.apache.shiro.web.env.EnvironmentLoader EnvironmentLoader
- * @see org.apache.shiro.web.env.EnvironmentLoaderListener
- *      EnvironmentLoaderListener
- * @see <a href="http://shiro.apache.org/web.html">Apache Shiro Web
- *      Documentation</a>
+ * @see org.apache.shiro.web.env.EnvironmentLoaderListener EnvironmentLoaderListener
+ * @see <a href="http://shiro.apache.org/web.html">Apache Shiro Web Documentation</a>
  * @since 1.2
  */
 public class ShiroFilter extends AbstractShiroFilter {
 
-	private final boolean instantiateWebEnvironmentIfNotAvailable;
+    /**
+     * Configures this instance based on the existing {@link org.apache.shiro.web.env.WebEnvironment} instance
+     * available to the currently accessible {@link #getServletContext() servletContext}.
+     *
+     * @see org.apache.shiro.web.env.EnvironmentLoaderListener
+     * @since 1.2
+     */
+    @Override
+    public void init() throws Exception {
+        WebEnvironment env = WebUtils.getRequiredWebEnvironment(getServletContext());
 
-	/**
-	 * @since 1.4
-	 * @see WebEnvironmentShiroFilter
-	 */
-	public ShiroFilter() {
-		this(false);
-	}
+        setSecurityManager(env.getWebSecurityManager());
 
-	/**
-	 * 
-	 * @param instantiateWebEnvironmentIfNotAvailable
-	 * @since 1.4
-	 * @see WebEnvironmentShiroFilter
-	 */
-	public ShiroFilter(boolean instantiateWebEnvironmentIfNotAvailable) {
-		this.instantiateWebEnvironmentIfNotAvailable = instantiateWebEnvironmentIfNotAvailable;
-	}
-
-	/**
-	 * Configures this instance based on the existing
-	 * {@link org.apache.shiro.web.env.WebEnvironment} instance available to the
-	 * currently accessible {@link #getServletContext() servletContext}.
-	 *
-	 * @see org.apache.shiro.web.env.EnvironmentLoaderListener
-	 * @since 1.2
-	 */
-	@Override
-	public void init() throws Exception {
-		WebEnvironment env = WebUtils.getRequiredWebEnvironment(getServletContext(),
-				instantiateWebEnvironmentIfNotAvailable);
-
-		setSecurityManager(env.getWebSecurityManager());
-
-		FilterChainResolver resolver = env.getFilterChainResolver();
-		if (resolver != null) {
-			setFilterChainResolver(resolver);
-		}
-	}
-
-	/**
-	 * @since 1.4
-	 * @see WebEnvironmentShiroFilter
-	 */
-	@Override
-	public void destroy() {
- 		if(instantiateWebEnvironmentIfNotAvailable) {
- 			WebUtils.destroyWebEnvironment(getServletContext());
- 		}
-		super.destroy();
-	}
+        FilterChainResolver resolver = env.getFilterChainResolver();
+        if (resolver != null) {
+            setFilterChainResolver(resolver);
+        }
+    }
 }
