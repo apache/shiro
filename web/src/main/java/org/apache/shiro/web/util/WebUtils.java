@@ -63,6 +63,15 @@ public class WebUtils {
     public static final String SAVED_REQUEST_KEY = "shiroSavedRequest";
 
     /**
+	 * If the {@link WebEnvironment} was instantiated within
+	 * {@link #getRequiredWebEnvironment(ServletContext, boolean)} this
+	 * attribute contains the respective {@link EnvironmentLoader}
+	 * 
+	 * @since 1.4
+	 */
+	public static final String INSTANTIATED_WEB_ENVIRONMENT = "instantiatedWebEnvironment";
+    
+    /**
      * Standard Servlet 2.3+ spec request attributes for include URI and paths.
      * <p>If included via a RequestDispatcher, the current resource will see the
      * originating request. Its own URI and paths are exposed as request attributes.
@@ -272,12 +281,55 @@ public class WebUtils {
     public static WebEnvironment getRequiredWebEnvironment(ServletContext sc)
             throws IllegalStateException {
 
-        WebEnvironment we = getWebEnvironment(sc);
-        if (we == null) {
-            throw new IllegalStateException("No WebEnvironment found: no EnvironmentLoaderListener registered?");
-        }
-        return we;
+    	return getRequiredWebEnvironment(sc, false);
     }
+    
+	/**
+	 * 
+	 * @param sc ServletContext to retrieve EnvironmentLoader and call destroy
+	 * @since 1.4
+	 */
+	public static void destroyWebEnvironment(ServletContext sc) {
+		EnvironmentLoader environmentLoader = (EnvironmentLoader) sc.getAttribute(INSTANTIATED_WEB_ENVIRONMENT);
+		if (environmentLoader != null) {
+			environmentLoader.destroyEnvironment(sc);
+		}
+	}
+    
+	/**
+	 * Find the Shiro {@link WebEnvironment} for this web application, which is
+	 * typically loaded via the
+	 * {@link org.apache.shiro.web.env.EnvironmentLoaderListener}.
+	 * <p/>
+	 * This implementation re-throws an exception that happened on environment
+	 * startup to differentiate between a failed environment startup and no
+	 * environment at all.
+	 *
+	 * @param sc
+	 *            ServletContext to find the web application context for
+	 * @param instantiateIfNotAvailable
+	 *            Instantiate a {@link WebEnvironment} if it is not provided
+	 * @return the root WebApplicationContext for this web app
+	 * @throws IllegalStateException
+	 *             if the root WebApplicationContext could not be found
+	 * @see org.apache.shiro.web.env.EnvironmentLoader#ENVIRONMENT_ATTRIBUTE_KEY
+	 * @see WebUtils#INSTANTIATED_WEB_ENVIRONMENT
+	 * @since 1.4
+	 */
+	public static WebEnvironment getRequiredWebEnvironment(ServletContext sc, boolean instantiateIfNotAvailable)
+			throws IllegalStateException {
+
+		WebEnvironment we = getWebEnvironment(sc);
+		if (we == null) {
+			if (!instantiateIfNotAvailable) {
+				throw new IllegalStateException("No WebEnvironment found: no EnvironmentLoaderListener registered?");
+			}
+			EnvironmentLoader environmentLoader = new EnvironmentLoader();
+			we = environmentLoader.initEnvironment(sc);
+			sc.setAttribute(INSTANTIATED_WEB_ENVIRONMENT, environmentLoader);
+		}
+		return we;
+	}
 
     /**
      * Find the Shiro {@link WebEnvironment} for this web application, which is typically loaded via

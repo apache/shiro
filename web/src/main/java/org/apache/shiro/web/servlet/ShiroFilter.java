@@ -61,6 +61,26 @@ import org.apache.shiro.web.util.WebUtils;
  */
 public class ShiroFilter extends AbstractShiroFilter {
 
+	private final boolean instantiateWebEnvironmentIfNotAvailable;
+
+	/**
+	 * @since 1.4
+	 * @see WebEnvironmentShiroFilter
+	 */
+	public ShiroFilter() {
+		this(false);
+	}
+
+	/**
+	 * 
+	 * @param instantiateWebEnvironmentIfNotAvailable
+	 * @since 1.4
+	 * @see WebEnvironmentShiroFilter
+	 */
+	public ShiroFilter(boolean instantiateWebEnvironmentIfNotAvailable) {
+		this.instantiateWebEnvironmentIfNotAvailable = instantiateWebEnvironmentIfNotAvailable;
+	}
+	
     /**
      * Configures this instance based on the existing {@link org.apache.shiro.web.env.WebEnvironment} instance
      * available to the currently accessible {@link #getServletContext() servletContext}.
@@ -70,13 +90,26 @@ public class ShiroFilter extends AbstractShiroFilter {
      */
     @Override
     public void init() throws Exception {
-        WebEnvironment env = WebUtils.getRequiredWebEnvironment(getServletContext());
+    	WebEnvironment env = WebUtils.getRequiredWebEnvironment(getServletContext(),
+				instantiateWebEnvironmentIfNotAvailable);
 
-        setSecurityManager(env.getWebSecurityManager());
+		setSecurityManager(env.getWebSecurityManager());
 
-        FilterChainResolver resolver = env.getFilterChainResolver();
-        if (resolver != null) {
-            setFilterChainResolver(resolver);
-        }
+		FilterChainResolver resolver = env.getFilterChainResolver();
+		if (resolver != null) {
+			setFilterChainResolver(resolver);
+		}
     }
+    
+    /**
+	 * @since 1.4
+	 * @see WebEnvironmentShiroFilter
+	 */
+	@Override
+	public void destroy() {
+ 		if(instantiateWebEnvironmentIfNotAvailable) {
+ 			WebUtils.destroyWebEnvironment(getServletContext());
+ 		}
+		super.destroy();
+	}
 }
