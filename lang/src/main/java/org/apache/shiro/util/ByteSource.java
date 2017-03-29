@@ -20,6 +20,7 @@ package org.apache.shiro.util;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.Serializable;
 
 /**
  * A {@code ByteSource} wraps a byte array and provides additional encoding operations.  Most users will find the
@@ -27,7 +28,7 @@ import java.io.InputStream;
  *
  * @since 1.0
  */
-public interface ByteSource {
+public interface ByteSource extends Serializable {
 
     /**
      * Returns the wrapped byte array.
