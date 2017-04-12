@@ -18,24 +18,30 @@
  */
 package org.apache.shiro.spring.config.web.autoconfigure;
 
+import java.util.List;
+
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.pam.AuthenticationStrategy;
 import org.apache.shiro.authz.Authorizer;
-import org.apache.shiro.mgt.*;
+import org.apache.shiro.config.Ini;
+import org.apache.shiro.mgt.RememberMeManager;
+import org.apache.shiro.mgt.SessionStorageEvaluator;
+import org.apache.shiro.mgt.SessionsSecurityManager;
+import org.apache.shiro.mgt.SubjectDAO;
+import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.spring.config.web.autoconfigure.exception.NoRealmBeanConfiguredException;
 import org.apache.shiro.spring.web.config.AbstractShiroWebConfiguration;
 import org.apache.shiro.web.servlet.Cookie;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-
-import java.util.List;
 
 /**
  * @since 1.4.0
@@ -133,6 +139,28 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     @Override
     protected SessionsSecurityManager securityManager(List<Realm> realms) {
         return super.securityManager(realms);
+    }
+    
+    @Bean
+    @ConditionalOnResource(resources = "classpath:shiro.ini")
+    protected Realm iniClasspathRealm() {
+        Ini ini = Ini.fromResourcePath("classpath:shiro.ini");
+        IniRealm iniRealm = new IniRealm( ini );
+        return iniRealm;
+    }
+    
+    @Bean
+    @ConditionalOnResource(resources = "classpath:META-INF/shiro.ini")
+    protected Realm iniMetaInfClasspathRealm() {
+        Ini ini = Ini.fromResourcePath("classpath:META-INF/shiro.ini");
+        IniRealm iniRealm = new IniRealm( ini );
+        return iniRealm;
+    }
+    
+    @Bean
+    @ConditionalOnMissingBean(Realm.class)
+    protected Realm missingRealm() {
+        throw new NoRealmBeanConfiguredException();
     }
 
 }
