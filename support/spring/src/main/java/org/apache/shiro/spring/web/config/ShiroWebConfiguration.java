@@ -117,4 +117,9 @@ public class ShiroWebConfiguration extends AbstractShiroWebConfiguration {
         return super.securityManager(realms);
     }
 
+    @Bean
+    @Override
+    protected ShiroFilterChainDefinition shiroFilterChainDefinition() {
+        return super.shiroFilterChainDefinition();
+    }
 }
