@@ -1275,7 +1275,7 @@
             </activation>
             <properties>
                 <!-- Needed for the javadoc plugin when using JDK 1.8 -->
-                <additionalparam>-Xdoclint:none</additionalparam>
+                <additionalparam>-Xdoclint:none --allow-script-in-comments</additionalparam>
             </properties>
         </profile>
         <profile>
