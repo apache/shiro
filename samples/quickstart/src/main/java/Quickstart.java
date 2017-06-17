@@ -19,7 +19,12 @@
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniSecurityManagerFactory;
+import org.apache.shiro.env.BasicIniEnvironment;
+import org.apache.shiro.env.DefaultEnvironment;
+import org.apache.shiro.env.Environment;
+import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -47,8 +52,11 @@ public class Quickstart {
 
         // Use the shiro.ini file at the root of the classpath
         // (file: and url: prefixes load from files and urls respectively):
-        Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
-        SecurityManager securityManager = factory.getInstance();
+
+        Ini config = Ini.fromResourcePath("classpath:shiro.ini");
+        Environment environment = new BasicIniEnvironment(config);
+        SecurityManager securityManager = environment.getSecurityManager();
+
 
         // for this simple example quickstart, make the SecurityManager
         // accessible as a JVM singleton.  Most applications wouldn't do this
