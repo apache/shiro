@@ -47,6 +47,12 @@ public interface Cookie {
      */
     public static final String ROOT_PATH = "/";
 
+    public enum SameSiteOptions {
+        NONE,
+        LAX,
+        STRICT,
+    }
+
     String getName();
 
     void setName(String name);
@@ -82,6 +88,10 @@ public interface Cookie {
     void setHttpOnly(boolean httpOnly);
 
     boolean isHttpOnly();
+
+    void setSameSite(SameSiteOptions sameSite);
+
+    SameSiteOptions getSameSite();
 
     void saveTo(HttpServletRequest request, HttpServletResponse response);
 
