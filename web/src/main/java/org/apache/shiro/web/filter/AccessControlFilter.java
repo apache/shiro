@@ -25,6 +25,7 @@ import org.apache.shiro.web.util.WebUtils;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Superclass for any filter that controls access to a resource and may redirect the user to the login page
@@ -100,15 +101,15 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
     /**
      * Returns <code>true</code> if the request is allowed to proceed through the filter normally, or <code>false</code>
      * if the request should be handled by the
-     * {@link #onAccessDenied(ServletRequest,ServletResponse,Object) onAccessDenied(request,response,mappedValue)}
+     * {@link #onAccessDenied(ServletRequest, ServletResponse, Object) onAccessDenied(request,response,mappedValue)}
      * method instead.
      *
      * @param request     the incoming <code>ServletRequest</code>
      * @param response    the outgoing <code>ServletResponse</code>
      * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings.
      * @return <code>true</code> if the request should proceed through the filter normally, <code>false</code> if the
-     *         request should be processed by this filter's
-     *         {@link #onAccessDenied(ServletRequest,ServletResponse,Object)} method instead.
+     * request should be processed by this filter's
+     * {@link #onAccessDenied(ServletRequest, ServletResponse, Object)} method instead.
      * @throws Exception if an error occurs during processing.
      */
     protected abstract boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception;
@@ -118,14 +119,14 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed}
      * method, retaining the {@code mappedValue} that was used during configuration.
      * <p/>
-     * This method immediately delegates to {@link #onAccessDenied(ServletRequest,ServletResponse)} as a
+     * This method immediately delegates to {@link #onAccessDenied(ServletRequest, ServletResponse)} as a
      * convenience in that most post-denial behavior does not need the mapped config again.
      *
      * @param request     the incoming <code>ServletRequest</code>
      * @param response    the outgoing <code>ServletResponse</code>
      * @param mappedValue the config specified for the filter in the matching request's filter chain.
      * @return <code>true</code> if the request should continue to be processed; false if the subclass will
-     *         handle/render the response directly.
+     * handle/render the response directly.
      * @throws Exception if there is an error processing the request.
      * @since 1.0
      */
@@ -141,21 +142,21 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * @param request  the incoming <code>ServletRequest</code>
      * @param response the outgoing <code>ServletResponse</code>
      * @return <code>true</code> if the request should continue to be processed; false if the subclass will
-     *         handle/render the response directly.
+     * handle/render the response directly.
      * @throws Exception if there is an error processing the request.
      */
     protected abstract boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception;
 
     /**
      * Returns <code>true</code> if
-     * {@link #isAccessAllowed(ServletRequest,ServletResponse,Object) isAccessAllowed(Request,Response,Object)},
+     * {@link #isAccessAllowed(ServletRequest, ServletResponse, Object) isAccessAllowed(Request,Response,Object)},
      * otherwise returns the result of
-     * {@link #onAccessDenied(ServletRequest,ServletResponse,Object) onAccessDenied(Request,Response,Object)}.
+     * {@link #onAccessDenied(ServletRequest, ServletResponse, Object) onAccessDenied(Request,Response,Object)}.
      *
      * @return <code>true</code> if
-     *         {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed},
-     *         otherwise returns the result of
-     *         {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse) onAccessDenied}.
+     * {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed},
+     * otherwise returns the result of
+     * {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse) onAccessDenied}.
      * @throws Exception if an error occurs.
      */
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
@@ -187,9 +188,29 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * @param response the outgoing <code>ServletResponse</code>
      * @throws IOException if an error occurs.
      */
+
     protected void saveRequestAndRedirectToLogin(ServletRequest request, ServletResponse response) throws IOException {
         saveRequest(request);
-        redirectToLogin(request, response);
+        redirectToLogin(request, response, null, true);
+    }
+
+    /**
+     *  Convenience method for subclasses to use when a login redirect is required.
+     *  especially very useful when your application running behind a proxy server that has
+     *  different context. also very useful for subclasses pass parameters to the login page
+     * <p/>
+     * This implementation simply calls {@link #saveRequest(javax.servlet.ServletRequest) saveRequest(request)}
+     * and then {@link #redirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse) redirectToLogin(request,response)}.
+     *
+     * @param request the incoming <code>ServletRequest</code>
+     * @param response the outgoing <code>ServletResponse</code>
+     * @param queryParams a map of parameters that should be set as request parameters for the new request.
+     * @param contextRelative true if the URL is relative to the servlet context path, or false if the URL is absolute.
+     * @throws IOException
+     */
+    protected void saveRequestAndRedirectToLogin(ServletRequest request, ServletResponse response, Map queryParams, boolean contextRelative) throws IOException {
+        saveRequest(request);
+        redirectToLogin(request, response, queryParams, contextRelative);
     }
 
     /**
@@ -222,9 +243,32 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * @param response the outgoing <code>ServletResponse</code>
      * @throws IOException if an error occurs.
      */
+
     protected void redirectToLogin(ServletRequest request, ServletResponse response) throws IOException {
         String loginUrl = getLoginUrl();
-        WebUtils.issueRedirect(request, response, loginUrl);
+        WebUtils.issueRedirect(request, response, loginUrl, null, true);
+    }
+
+    /**
+     * Convenience method for subclasses that merely acquires the {@link #getLoginUrl() getLoginUrl} and redirects
+     * the request to that url. especially very useful when your application running behind a proxy server that has
+     * different context. also very useful for subclasses pass parameters to the login page
+     * <p/>
+     * <b>N.B.</b>  If you want to issue a redirect with the intention of allowing the user to then return to their
+     * originally requested URL, don't use this method directly.  Instead you should call
+     * {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse, java.util.Map, boolean)
+     * saveRequestAndRedirectToLogin(request,response)}, which will save the current request state so that it can
+     * be reconstructed and re-used after a successful login.
+     *
+     * @param request         the incoming <code>ServletRequest</code>
+     * @param response        the outgoing <code>ServletResponse</code>
+     * @param queryParams     a map of parameters that should be set as request parameters for the new request.
+     * @param contextRelative true if the URL is relative to the servlet context path, or false if the URL is absolute.
+     * @throws IOException
+     */
+    protected void redirectToLogin(ServletRequest request, ServletResponse response, Map queryParams, boolean contextRelative) throws IOException {
+        String loginUrl = getLoginUrl();
+        WebUtils.issueRedirect(request, response, loginUrl, queryParams, contextRelative);
     }
 
 }

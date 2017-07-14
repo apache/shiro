@@ -165,7 +165,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
                         "Authentication url [" + getLoginUrl() + "]");
             }
 
-            saveRequestAndRedirectToLogin(request, response);
+            saveRequestAndRedirectToLogin(request, response, null, false);
             return false;
         }
     }
