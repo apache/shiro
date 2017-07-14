@@ -165,7 +165,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
                         "Authentication url [" + getLoginUrl() + "]");
             }
 
-            saveRequestAndRedirectToLogin(request, response, null, false);
+            saveRequestAndRedirectToLogin(request, response, null, true);
             return false;
         }
     }
@@ -203,7 +203,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
     protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e,
                                      ServletRequest request, ServletResponse response) {
         if (log.isDebugEnabled()) {
-            log.debug( "Authentication exception", e );
+            log.debug("Authentication exception", e);
         }
         setFailureAttribute(request, e);
         //login failed, let request continue back to the login page:
