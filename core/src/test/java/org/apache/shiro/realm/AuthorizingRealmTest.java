@@ -40,7 +40,7 @@ import java.util.*;
 /**
  * Simple test case for AuthorizingRealm.
  * <p/>
- * TODO - this could/should be expaned to be more robust end to end test for the AuthorizingRealm
+ * TODO - this could/should be expanded to be more robust end to end test for the AuthorizingRealm
  */
 public class AuthorizingRealmTest {
 

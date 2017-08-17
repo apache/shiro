@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>2.alpha.0-SNAPSHOT</version>
+        <version>1.4.1-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -32,9 +32,9 @@
     <packaging>pom</packaging>
 
     <properties>
-        <aspectj.bundle.version>1.6.16_1</aspectj.bundle.version>
-        <ehcache.bundle.version>2.5.3_1</ehcache.bundle.version>
-        <hazelcast.bundle.version>2.4.1_1</hazelcast.bundle.version>
+        <aspectj.bundle.version>1.8.9_1</aspectj.bundle.version>
+        <ehcache.bundle.version>2.6.11_1</ehcache.bundle.version>
+        <hazelcast.bundle.version>3.7.2_1</hazelcast.bundle.version>
         <quartz.bundle.version>1.6.1_1</quartz.bundle.version>
         <!-- Not a Shiro dependency - used for quartz bundle resolution only (see features.xml): -->
         <commons.collections.version>3.2.1</commons.collections.version>

@@ -177,7 +177,7 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
         
         HttpServletRequest request = createMock(HttpServletRequest.class);
         expect(request.getMethod()).andReturn("GET");
-        expect(request.getMethod()).andReturn("POST");
+        expect(request.getMethod()).andReturn("post");
         expect(request.getHeader("Authorization")).andReturn(createAuthorizationHeader("pedro", "")).anyTimes();
         expect(request.getRemoteHost()).andReturn("localhost").anyTimes();
         replay(request);
@@ -185,7 +185,7 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
         HttpServletResponse response = createMock(HttpServletResponse.class);
         replay(response);
         
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[] { "post", "put", "delete" });
+        boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[] { "POST", "put", "delete" });
         assertTrue("Access not allowed for GET", accessAllowed);
         
         accessAllowed = testFilter.isAccessAllowed(request, response, new String[] { "post", "put", "delete" });
@@ -231,6 +231,68 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
         assertTrue("Access allowed for GET", !accessAllowed);
         
         accessAllowed = testFilter.isAccessAllowed(request, response, null);
+        assertTrue("Access allowed for POST", !accessAllowed);
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Test
+    public void permissiveEnabledWithLoginTest() {
+        testFilter = new BasicHttpAuthenticationFilter();
+
+        HttpServletRequest request = createMock(HttpServletRequest.class);
+        expect(request.getHeader("Authorization")).andReturn(createAuthorizationHeader("pedro", "")).anyTimes();
+        expect(request.getRemoteHost()).andReturn("localhost").anyTimes();
+        expect(request.getMethod()).andReturn("GET");
+        replay(request);
+
+        HttpServletResponse response = createMock(HttpServletResponse.class);
+        replay(response);
+
+        String[] mappedValue = {"permissive"};
+        boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue);
+        assertTrue("Access allowed for GET", !accessAllowed); // login attempt should always be false
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Test
+    public void permissiveEnabledTest() {
+        testFilter = new BasicHttpAuthenticationFilter();
+
+        HttpServletRequest request = createMock(HttpServletRequest.class);
+        expect(request.getHeader("Authorization")).andReturn(null).anyTimes();
+        expect(request.getRemoteHost()).andReturn("localhost").anyTimes();
+        expect(request.getMethod()).andReturn("GET");
+        replay(request);
+
+        HttpServletResponse response = createMock(HttpServletResponse.class);
+        replay(response);
+
+        String[] mappedValue = {"permissive"};
+        boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue);
+        assertTrue("Access should be allowed for GET", accessAllowed); // non-login attempt, return true
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Test
+    public void httpMethodRequiresAuthenticationWithPermissive() throws Exception {
+        testFilter = new BasicHttpAuthenticationFilter();
+
+        HttpServletRequest request = createMock(HttpServletRequest.class);
+        expect(request.getHeader("Authorization")).andReturn(createAuthorizationHeader("pedro", ""));
+        expect(request.getRemoteHost()).andReturn("localhost");
+        expect(request.getMethod()).andReturn("POST");
+        replay(request);
+
+        HttpServletResponse response = createMock(HttpServletResponse.class);
+        replay(response);
+
+        boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[] {"permissive", "POST", "PUT", "DELETE" });
         assertTrue("Access allowed for POST", !accessAllowed);
     }
 

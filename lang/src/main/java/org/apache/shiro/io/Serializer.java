@@ -37,7 +37,7 @@ public interface Serializer<T> {
      *
      * @param o the Object to convert into a byte[] array.
      * @return a byte[] array representing the Object's state that can be restored later.
-     * @throws SerializationException if an error occurrs converting the Object into a byte[] array.
+     * @throws SerializationException if an error occurs converting the Object into a byte[] array.
      */
     byte[] serialize(T o) throws SerializationException;
 
@@ -47,7 +47,7 @@ public interface Serializer<T> {
      *
      * @param serialized the raw data resulting from a previous {@link #serialize(Object) serialize} call.
      * @return the Object that was previously serialized into the raw byte[] array.
-     * @throws SerializationException if an error occurrs converting the raw byte[] array back into an Object.
+     * @throws SerializationException if an error occurs converting the raw byte[] array back into an Object.
      */
     T deserialize(byte[] serialized) throws SerializationException;
 }

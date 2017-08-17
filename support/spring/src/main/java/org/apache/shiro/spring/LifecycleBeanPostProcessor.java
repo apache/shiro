@@ -134,4 +134,15 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
         // LifecycleBeanPostProcessor needs Order. See https://issues.apache.org/jira/browse/SHIRO-222
         return order;
     }
+
+    /**
+     * Return true only if <code>bean</code> implements Destroyable.
+     * @param bean bean to check if requires destruction.
+     * @return true only if <code>bean</code> implements Destroyable.
+     * @since 1.4
+     */
+    @SuppressWarnings("unused")
+    public boolean requiresDestruction(Object bean) {
+        return (bean instanceof Destroyable);
+    }
 }

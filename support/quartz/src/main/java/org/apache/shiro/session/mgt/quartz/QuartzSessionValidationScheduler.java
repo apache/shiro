@@ -64,7 +64,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
 
     /**
      * The configured Quartz scheduler to use to schedule the Quartz job.  If no scheduler is
-     * configured, the schedular will be retrieved by calling {@link StdSchedulerFactory#getDefaultScheduler()}
+     * configured, the scheduler will be retrieved by calling {@link StdSchedulerFactory#getDefaultScheduler()}
      */
     private Scheduler scheduler;
 

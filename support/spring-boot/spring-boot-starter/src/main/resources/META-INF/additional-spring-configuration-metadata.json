@@ -1,0 +1,16 @@
+{
+  "groups": [
+    {
+      "name": "shiro"
+    },
+  ],
+  "properties": [
+
+    {
+      "name": "shiro.enabled",
+      "type": "java.lang.Boolean",
+      "description": "A boolean flag that can disable all Shiro Spring Boot starters.  This is mostly useful during testing or debugging, or if you want to compare behavior when Shiro is enabled or disabled.",
+      "defaultValue": true
+    },
+  ]
+}

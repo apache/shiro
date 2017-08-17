@@ -21,10 +21,11 @@ package org.apache.shiro.config
 import org.apache.shiro.codec.Base64
 import org.apache.shiro.codec.CodecSupport
 import org.apache.shiro.codec.Hex
-import org.apache.shiro.util.CollectionUtils
+import org.apache.shiro.config.event.BeanEvent
 import org.junit.Test
 
 import static org.junit.Assert.*
+import static org.hamcrest.Matchers.*
 
 /**
  * Unit tests for the {@link ReflectionBuilder} implementation.
@@ -275,7 +276,7 @@ class ReflectionBuilderTest {
         defs.put("compositeBean.simpleBeanSet", '$simpleBean1, $simpleBean2, $simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         Set<SimpleBean> simpleBeans = cBean.getSimpleBeanSet();
@@ -295,7 +296,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder(['set': set]);
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         Set<SimpleBean> simpleBeans = cBean.getSimpleBeanSet();
@@ -316,7 +317,7 @@ class ReflectionBuilderTest {
         defs.put("compositeBean.simpleBeanList", '$simpleBean1, $simpleBean2, $simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         List<SimpleBean> simpleBeans = cBean.getSimpleBeanList();
@@ -336,7 +337,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder(['list': list]);
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         def simpleBeans = cBean.getSimpleBeanList();
@@ -356,7 +357,7 @@ class ReflectionBuilderTest {
         defs.put("compositeBean.simpleBeanCollection", '$simpleBean1, $simpleBean2, $simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         Collection<SimpleBean> simpleBeans = cBean.getSimpleBeanCollection();
@@ -377,7 +378,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder(['collection': c]);
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         def simpleBeans = cBean.getSimpleBeanCollection();
@@ -401,7 +402,7 @@ class ReflectionBuilderTest {
         defs.put("simpleBean.byteArrayProp", hexValue);
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         SimpleBean bean = (SimpleBean) objects.get("simpleBean");
         assertNotNull(bean);
         byte[] beanBytes = bean.getByteArrayProp();
@@ -438,7 +439,7 @@ class ReflectionBuilderTest {
         defs.put("compositeBean.simpleBeanMap", 'simpleBean1:$simpleBean1, simpleBean2:$simpleBean2');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         Map map = cBean.getSimpleBeanMap();
@@ -462,7 +463,7 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder(['map': map]);
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         def simpleBeansMap = cBean.getSimpleBeanMap();
@@ -484,7 +485,7 @@ class ReflectionBuilderTest {
         defs.put("compositeBean.simpleBean.simpleBeans", '$simpleBean2, $simpleBean3');
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean cBean = (CompositeBean) objects.get("compositeBean");
         assertNotNull(cBean);
         SimpleBean nested = cBean.getSimpleBean();
@@ -517,11 +518,157 @@ class ReflectionBuilderTest {
 
         ReflectionBuilder builder = new ReflectionBuilder();
         Map objects = builder.buildObjects(defs);
-        assertFalse(CollectionUtils.isEmpty(objects));
+        assertThat(objects, aMapWithSize(greaterThan(0)))
         CompositeBean compositeBean = (CompositeBean) objects.get("compositeBean");
         SimpleBean bean = compositeBean.getSimpleBean();
         assertNotNull(bean);
         assertEquals(5, bean.getIntProp());
         assertEquals("someString", bean.getStringProp());
+    }
+
+    @Test
+    void testBeanListeners() {
+
+        def ini = new Ini();
+        ini.load '''
+            loggingListener = org.apache.shiro.config.event.LoggingBeanEventListener
+            listenerOne = org.apache.shiro.config.RecordingBeanListener
+            listenerTwo = org.apache.shiro.config.RecordingBeanListener
+
+            simpleBeanFactory = org.apache.shiro.config.SimpleBeanFactory
+            simpleBeanFactory.factoryInt = 5
+            simpleBeanFactory.factoryString = someString
+
+            compositeBean = org.apache.shiro.config.CompositeBean
+            compositeBean.simpleBean = $simpleBeanFactory
+        '''
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map<String, ?> objects = builder.buildObjects(ini.getSections().iterator().next());
+        assertThat(objects, aMapWithSize(greaterThan(0)))
+
+        assertInstantiatedEvents("listenerOne", objects, 4) //3 beans following + its own instantiated event
+        assertConfiguredEvents("listenerOne", objects, 4) //3 beans following + its own configured event
+        assertInitializedEvents("listenerOne", objects, 4) //3 beans following + its own initialized event
+
+        assertInstantiatedEvents("listenerTwo", objects, 3) //2 beans following + its own instantiated event
+        assertConfiguredEvents("listenerTwo", objects, 3); //2 beans following + its own configured event
+        assertInitializedEvents("listenerTwo", objects, 3); //2 beans following + its own initialized event
+
+        builder.destroy();
+
+        assertDestroyedEvents("listenerOne", objects, 4); //3 beans defined after it + its own destroyed event
+        assertDestroyedEvents("listenerTwo", objects, 3); //2 beans defined after it + its own destroyed event
+    }
+
+
+    /**
+     * @since 1.4
+     */
+    @Test
+    void testSimpleInterpolation() {
+
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBeanFactory", "org.apache.shiro.config.SimpleBeanFactory");
+        defs.put("simpleBeanFactory.factoryInt", "5");
+        defs.put("simpleBeanFactory.factoryString", "\${os.name}");
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.simpleBean", '$simpleBeanFactory');
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        assertThat(objects, aMapWithSize(greaterThan(0)))
+        CompositeBean compositeBean = (CompositeBean) objects.get("compositeBean");
+        SimpleBean bean = compositeBean.getSimpleBean();
+        assertNotNull(bean);
+        assertEquals(5, bean.getIntProp());
+        assertEquals(System.getProperty("os.name"), bean.getStringProp());
+
+    }
+
+    /**
+     * @since 1.4
+     */
+    @Test
+    void testInterpolationForMapKeysAndLists() {
+
+        // using os.name and os.arch because they are available on every system
+
+        Map<String, String> defs = new LinkedHashMap<String, String>();
+        defs.put("simpleBean1", "org.apache.shiro.config.SimpleBean");
+        defs.put("simpleBean1.stringList", "\${os.name}, \${os.arch}");
+        defs.put("simpleBean2", "org.apache.shiro.config.SimpleBean");
+        defs.put("compositeBean", "org.apache.shiro.config.CompositeBean");
+        defs.put("compositeBean.simpleBeanMap", '\${os.name}:$simpleBean1, two:$simpleBean2');
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map objects = builder.buildObjects(defs);
+        assertThat(objects, aMapWithSize(greaterThan(0)))
+
+        CompositeBean compositeBean = (CompositeBean) objects.get("compositeBean");
+        assertNotNull(compositeBean);
+
+        def beanMap = compositeBean.getSimpleBeanMap()
+        assertNotNull(beanMap)
+        assertThat beanMap, allOf(hasKey(System.getProperty("os.name")), hasKey("two"), aMapWithSize(2))
+
+        def beanOne = beanMap.get(System.getProperty("os.name"))
+        assertThat beanOne.stringList, allOf(hasItem(System.getProperty("os.name")), hasItem(System.getProperty("os.arch")), hasSize(2))
+
+        assertNotNull(beanMap.get("two"))
+    }
+
+    void assertInstantiatedEvents(String name, Map<String, ?> objects, int expected) {
+        def bean = objects.get(name) as RecordingBeanListener
+        def events = bean.getInstantiatedEvents()
+        assertEquals(expected, events.size())
+
+        checkType(name, events, "simpleBeanFactory", SimpleBeanFactory);
+        checkType(name, events, "compositeBean", CompositeBean);
+    }
+
+    void assertConfiguredEvents(String name, Map<String, ?> objects, int expected) {
+        def bean = objects.get(name) as RecordingBeanListener
+        def events = bean.getConfiguredEvents();
+        assertEquals(expected, events.size())
+
+        checkType(name, events, "listenerTwo", RecordingBeanListener);
+        checkType(name, events, "simpleBeanFactory", SimpleBeanFactory);
+        checkType(name, events, "compositeBean", CompositeBean);
+    }
+
+    void assertInitializedEvents(String name, Map<String, ?> objects, int expected) {
+        def bean = objects.get(name) as RecordingBeanListener
+        def events = bean.getInitializedEvents();
+        assertEquals(expected, events.size())
+
+        checkType(name, events, "listenerTwo", RecordingBeanListener);
+        checkType(name, events, "simpleBeanFactory", SimpleBeanFactory);
+        checkType(name, events, "compositeBean", CompositeBean);
+    }
+
+    void assertDestroyedEvents(String name, Map<String, ?> objects, int expected) {
+        def bean = objects.get(name) as RecordingBeanListener
+        def events = bean.getDestroyedEvents();
+        assertEquals(expected, events.size())
+
+        if (expected > 3) {
+            checkType(name, events, "listenerOne", RecordingBeanListener);
+        }
+        checkType(name, events, "listenerTwo", RecordingBeanListener);
+        checkType(name, events, "simpleBeanFactory", SimpleBeanFactory);
+        checkType(name, events, "compositeBean", CompositeBean);
+    }
+
+    void checkType(String instanceName, List<? extends BeanEvent> events, String name, Class<?> expectedType) {
+        for(BeanEvent event: events) {
+            if(event.getBeanName().equals(name)) {
+                assertTrue("Notification for bean " + name + " did not provide an instance of " + expectedType
+                        + " to listener " + instanceName,
+                expectedType.isInstance(event.getBean()))
+                return;
+            }
+        }
+        fail("No bean named " + name + " was ever notified to listener " + instanceName + ".");
     }
 }

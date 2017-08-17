@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.shiro.samples</groupId>
         <artifactId>shiro-samples</artifactId>
-        <version>2.alpha.0-SNAPSHOT</version>
+        <version>1.4.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -32,27 +32,24 @@
     <name>Apache Shiro :: Samples :: Web</name>
     <packaging>war</packaging>
 
+    <properties>
+        <jetty.port>9080</jetty.port>
+        <jetty.postIT.sleep>1</jetty.postIT.sleep>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <forkMode>never</forkMode>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>maven-jetty-plugin</artifactId>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
                     <contextPath>/</contextPath>
-                    <connectors>
-                        <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-                            <port>9080</port>
-                            <maxIdleTime>60000</maxIdleTime>
-                        </connector>
-                    </connectors>
-                    <requestLog implementation="org.mortbay.jetty.NCSARequestLog">
+                    <httpConnector>
+                        <port>9080</port>
+                        <idleTimeout>60000</idleTimeout>
+                    </httpConnector>
+                    <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
                         <filename>./target/yyyy_mm_dd.request.log</filename>
                         <retainDays>90</retainDays>
                         <append>true</append>
@@ -72,7 +69,7 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -88,7 +85,6 @@
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
-            <version>2.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -100,18 +96,6 @@
             <artifactId>shiro-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty</artifactId>
-            <version>${jetty.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jsp-2.1-jetty</artifactId>
-            <version>${jetty.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
         </dependency>
@@ -120,6 +104,25 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>apache-jsp</artifactId>
+            <version>${jetty.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>apache-jstl</artifactId>
+            <version>${jetty.version}</version>
+            <type>pom</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro.integrationtests</groupId>
+            <artifactId>shiro-its-support</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

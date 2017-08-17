@@ -100,7 +100,7 @@ public interface AuthenticationStrategy {
 
     /**
      * Method invoked by the ModularAuthenticator signifying that all of its configured Realms have been consulted
-     * for account data, allowing post-proccessing after all realms have completed.
+     * for account data, allowing post-processing after all realms have completed.
      *
      * <p>Returns the final AuthenticationInfo object that will be returned from the Authenticator to the authenticate() caller.
      * This is most likely the aggregate AuthenticationInfo object that has been populated by many realms, but the actual return value is

@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.cache;
 
-import org.apache.shiro.util.CollectionUtils;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -84,7 +82,7 @@ public class MapCache<K, V> implements Cache<K, V> {
 
     public Collection<V> values() {
         Collection<V> values = map.values();
-        if (!CollectionUtils.isEmpty(values)) {
+        if (!map.isEmpty()) {
             return Collections.unmodifiableCollection(values);
         }
         return Collections.emptySet();

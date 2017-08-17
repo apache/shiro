@@ -19,7 +19,6 @@
 package org.apache.shiro.config;
 
 import org.apache.shiro.io.ResourceUtils;
-import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -303,6 +302,57 @@ public class Ini implements Map<String, Ini.Section> {
         }
     }
 
+    /**
+     * Merges the contents of <code>m</code>'s {@link Section} objects into self.
+     * This differs from {@link Ini#putAll(Map)}, in that each section is merged with the existing one.
+     * For example the following two ini blocks are merged and the result is the third<BR/>
+     * <p>
+     * Initial:
+     * <pre>
+     * <code>[section1]
+     * key1 = value1
+     *
+     * [section2]
+     * key2 = value2
+     * </code> </pre>
+     *
+     * To be merged:
+     * <pre>
+     * <code>[section1]
+     * foo = bar
+     *
+     * [section2]
+     * key2 = new value
+     * </code> </pre>
+     *
+     * Result:
+     * <pre>
+     * <code>[section1]
+     * key1 = value1
+     * foo = bar
+     *
+     * [section2]
+     * key2 = new value
+     * </code> </pre>
+     *
+     * </p>
+     *
+     * @param m map to be merged
+     * @since 1.4
+     */
+    public void merge(Map<String, Section> m) {
+
+        if (m != null) {
+            for (Entry<String, Section> entry : m.entrySet()) {
+                Section section = this.getSection(entry.getKey());
+                if (section == null) {
+                    section = addSection(entry.getKey());
+                }
+                section.putAll(entry.getValue());
+            }
+        }
+    }
+
     private void addSection(String name, StringBuilder content) {
         if (content.length() > 0) {
             String contentString = content.toString();
@@ -387,7 +437,7 @@ public class Ini implements Map<String, Ini.Section> {
     }
 
     public String toString() {
-        if (CollectionUtils.isEmpty(this.sections)) {
+        if (this.sections == null || this.sections.isEmpty()) {
             return "<empty INI>";
         } else {
             StringBuilder sb = new StringBuilder("sections=");

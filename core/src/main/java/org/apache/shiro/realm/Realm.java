@@ -26,8 +26,8 @@ import org.apache.shiro.authc.AuthenticationToken;
  * A <tt>Realm</tt> is a security component that can access application-specific security entities
  * such as users, roles, and permissions to determine authentication and authorization operations.
  *
- * <p><tt>Realm</tt>s usually have a 1-to-1 correspondance with a datasource such as a relational database,
- * file sysetem, or other similar resource.  As such, implementations of this interface use datasource-specific APIs to
+ * <p><tt>Realm</tt>s usually have a 1-to-1 correspondence with a datasource such as a relational database,
+ * file system, or other similar resource.  As such, implementations of this interface use datasource-specific APIs to
  * determine authorization data (roles, permissions, etc), such as JDBC, File IO, Hibernate or JPA, or any other
  * Data Access API.  They are essentially security-specific
  * <a href="http://en.wikipedia.org/wiki/Data_Access_Object" target="_blank">DAO</a>s.
@@ -98,7 +98,7 @@ public interface Realm {
      *         or <tt>null</tt> if no account could be found.
      * @throws org.apache.shiro.authc.AuthenticationException
      *          if there is an error obtaining or constructing an AuthenticationInfo object based on the
-     *          specified <tt>token</tt> or implementation-specifc login behavior fails.
+     *          specified <tt>token</tt> or implementation-specific login behavior fails.
      */
     AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException;
 

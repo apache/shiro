@@ -38,7 +38,7 @@ public class SampleShiroGuiceBootstrap extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(new SampleShiroServletModule(servletContext), ShiroWebModule.guiceFilterModule());
-//        return Guice.createInjector(new SampleShiroNativeSessionsServletModule(servletContext), ShiroWebModule.guiceFilterModule());
+//        return Guice.createInjector(new SampleShiroServletModule(servletContext), ShiroWebModule.guiceFilterModule());
+        return Guice.createInjector(new SampleShiroNativeSessionsServletModule(servletContext), ShiroWebModule.guiceFilterModule());
     }
 }

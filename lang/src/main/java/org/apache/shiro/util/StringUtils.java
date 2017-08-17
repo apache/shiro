@@ -475,7 +475,7 @@ public class StringUtils {
             return null;
         }
         String[] split = split(delimited, separator.charAt(0));
-        return CollectionUtils.asSet(split);
+        return asSet(split);
     }
 
     /**
@@ -497,6 +497,26 @@ public class StringUtils {
             sb.append(remaining);
         }
         return sb.toString();
+    }
+
+    //////////////////////////
+    // From CollectionUtils //
+    //////////////////////////
+    // CollectionUtils cannot be removed from shiro-core until 2.0 as it has a dependency on PrincipalCollection
+
+
+    private static <E> Set<E> asSet(E... elements) {
+        if (elements == null || elements.length == 0) {
+            return Collections.emptySet();
+        }
+
+        if (elements.length == 1) {
+            return Collections.singleton(elements[0]);
+        }
+
+        LinkedHashSet<E> set = new LinkedHashSet<E>(elements.length * 4 / 3 + 1);
+        Collections.addAll(set, elements);
+        return set;
     }
 
 }

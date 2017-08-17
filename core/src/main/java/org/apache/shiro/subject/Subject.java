@@ -52,7 +52,7 @@ import java.util.concurrent.Callable;
  * type-safe method.  (Shiro's default implementations do String-to-Permission conversion for these methods using
  * {@link org.apache.shiro.authz.permission.PermissionResolver PermissionResolver}s.)
  * <p/>
- * These overloaded *Permission methods forgo type-saftey for the benefit of convenience and simplicity,
+ * These overloaded *Permission methods forgo type-safety for the benefit of convenience and simplicity,
  * so you should choose which ones to use based on your preferences and needs.
  *
  * @since 0.1
@@ -557,7 +557,7 @@ public interface Subject {
      * Releases the current 'run as' (assumed) identity and reverts back to the previous 'pre run as'
      * identity that existed before {@code #runAs runAs} was called.
      * <p/>
-     * This method returne 'run as' (assumed) identity being released or {@code null} if this {@code Subject} is not
+     * This method returns 'run as' (assumed) identity being released or {@code null} if this {@code Subject} is not
      * operating under an assumed identity.
      *
      * @return the 'run as' (assumed) identity being released or {@code null} if this {@code Subject} is not operating

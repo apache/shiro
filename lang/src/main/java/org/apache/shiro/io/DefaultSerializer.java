@@ -78,7 +78,7 @@ public class DefaultSerializer<T> implements Serializer<T> {
             ois.close();
             return deserialized;
         } catch (Exception e) {
-            String msg = "Unable to deserialze argument byte array.";
+            String msg = "Unable to deserialize argument byte array.";
             throw new SerializationException(msg, e);
         }
     }

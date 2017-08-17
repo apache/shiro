@@ -18,20 +18,32 @@
  */
 package org.apache.shiro.guice;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 
 import javax.annotation.PreDestroy;
 
+import com.google.inject.Provider;
+import com.google.inject.matcher.Matchers;
+import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.env.Environment;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.EventBusAware;
+import org.apache.shiro.event.Subscribe;
+import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.util.ClassUtils;
 import org.apache.shiro.util.Destroyable;
 
 import com.google.inject.Key;
@@ -41,6 +53,8 @@ import com.google.inject.binder.AnnotatedBindingBuilder;
 import com.google.inject.binder.LinkedBindingBuilder;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.util.Types;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -50,6 +64,8 @@ import com.google.inject.util.Types;
  */
 public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
+    private final Logger log = LoggerFactory.getLogger(ShiroModule.class);
+
 	private Set<Destroyable> destroyables = Collections.newSetFromMap(new WeakHashMap<Destroyable, Boolean>());
     public void configure() {
         // setup security manager
@@ -57,19 +73,23 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         bindSessionManager(bind(SessionManager.class));
         bindEnvironment(bind(Environment.class));
         bindListener(BeanTypeListener.MATCHER, new BeanTypeListener());
+        bindEventBus(bind(EventBus.class));
+        bindListener(Matchers.any(), new SubscribedEventTypeListener());
+        bindListener(Matchers.any(), new EventBusAwareTypeListener());
         final DestroyableInjectionListener.DestroyableRegistry registry = new DestroyableInjectionListener.DestroyableRegistry() {
             public void add(Destroyable destroyable) {
                 ShiroModule.this.add(destroyable);
             }
 
             @PreDestroy
-            public void destroy() throws Exception {
+            public void destroy() {
                 ShiroModule.this.destroy();
             }
         };
         bindListener(LifecycleTypeListener.MATCHER, new LifecycleTypeListener(registry));
 
         expose(SecurityManager.class);
+        expose(EventBus.class);
 
         configureShiro();
         bind(realmCollectionKey())
@@ -153,18 +173,67 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
     }
 
     /**
+     * Binds the EventBus.  Override this method in order to provide your own {@link EventBus} binding.
+     * @param bind
+     * @since 1.4
+     */
+    protected void bindEventBus(AnnotatedBindingBuilder<EventBus> bind) {
+        bind.to(DefaultEventBus.class).asEagerSingleton();
+    }
+
+    /**
      * Destroys all beans created within this module that implement {@link org.apache.shiro.util.Destroyable}.  Should be called when this
      * module will no longer be used.
      *
      * @throws Exception
      */
-    public final void destroy() throws Exception {
+    public final void destroy() {
         for (Destroyable destroyable : destroyables) {
-            destroyable.destroy();
+            try {
+                destroyable.destroy();
+            }
+            catch(Exception e) {
+                log.warn("Error destroying component class: " + destroyable.getClass(), e);
+            }
         }
     }
 
     public void add(Destroyable destroyable) {
         this.destroyables.add(destroyable);
+    }
+
+    private class SubscribedEventTypeListener implements TypeListener {
+        @Override
+        public <I> void hear(TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
+
+            final Provider<EventBus> eventBusProvider = typeEncounter.getProvider(EventBus.class);
+
+            List<Method> methods = ClassUtils.getAnnotatedMethods(typeLiteral.getRawType(), Subscribe.class);
+            if (methods != null && !methods.isEmpty()) {
+                typeEncounter.register( new InjectionListener<I>() {
+                    @Override
+                    public void afterInjection(Object o) {
+                        eventBusProvider.get().register(o);
+                    }
+                });
+            }
+        }
+    }
+
+    private class EventBusAwareTypeListener implements TypeListener {
+        @Override
+        public <I> void hear(TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
+
+            final Provider<EventBus> eventBusProvider = typeEncounter.getProvider(EventBus.class);
+
+            if (EventBusAware.class.isAssignableFrom(typeLiteral.getRawType())) {
+                typeEncounter.register( new InjectionListener<I>() {
+                    @Override
+                    public void afterInjection(Object o) {
+                        ((EventBusAware)o).setEventBus(eventBusProvider.get());
+                    }
+                });
+            }
+        }
     }
 }

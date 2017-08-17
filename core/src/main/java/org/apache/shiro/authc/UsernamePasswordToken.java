@@ -23,7 +23,7 @@ package org.apache.shiro.authc;
  * class also implements the {@link RememberMeAuthenticationToken RememberMeAuthenticationToken} interface to support
  * &quot;Remember Me&quot; services across user sessions as well as the
  * {@link org.apache.shiro.authc.HostAuthenticationToken HostAuthenticationToken} interface to retain the host name
- * or IP address location from where the authentication attempt is occuring.</p>
+ * or IP address location from where the authentication attempt is occurring.</p>
  * <p/>
  * <p>&quot;Remember Me&quot; authentications are disabled by default, but if the application developer wishes to allow
  * it for a login attempt, all that is necessary is to call {@link #setRememberMe setRememberMe(true)}.  If the underlying
@@ -100,7 +100,7 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
      * during an authentication attempt, with a <tt>null</tt> {@link #getHost() host} and
      * a <tt>rememberMe</tt> default of <tt>false</tt>
      * <p/>
-     * <p>This is a convience constructor and maintains the password internally via a character
+     * <p>This is a convenience constructor and maintains the password internally via a character
      * array, i.e. <tt>password.toCharArray();</tt>.  Note that storing a password as a String
      * in your code could have possible security implications as noted in the class JavaDoc.</p>
      *
@@ -117,7 +117,7 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
      *
      * @param username the username submitted for authentication
      * @param password the password string submitted for authentication
-     * @param host     the host name or IP string from where the attempt is occuring
+     * @param host     the host name or IP string from where the attempt is occurring
      * @since 0.2
      */
     public UsernamePasswordToken(final String username, final char[] password, final String host) {
@@ -128,13 +128,13 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted, the
      * inetAddress from where the attempt is occurring, and a default <tt>rememberMe</tt> value of <tt>false</tt>
      * <p/>
-     * <p>This is a convience constructor and maintains the password internally via a character
+     * <p>This is a convenience constructor and maintains the password internally via a character
      * array, i.e. <tt>password.toCharArray();</tt>.  Note that storing a password as a String
      * in your code could have possible security implications as noted in the class JavaDoc.</p>
      *
      * @param username the username submitted for authentication
      * @param password the password string submitted for authentication
-     * @param host     the host name or IP string from where the attempt is occuring
+     * @param host     the host name or IP string from where the attempt is occurring
      * @since 1.0
      */
     public UsernamePasswordToken(final String username, final String password, final String host) {
@@ -158,7 +158,7 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted, as well as if the user
      * wishes their identity to be remembered across sessions.
      * <p/>
-     * <p>This is a convience constructor and maintains the password internally via a character
+     * <p>This is a convenience constructor and maintains the password internally via a character
      * array, i.e. <tt>password.toCharArray();</tt>.  Note that storing a password as a String
      * in your code could have possible security implications as noted in the class JavaDoc.</p>
      *
@@ -173,12 +173,12 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
 
     /**
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted, if the user
-     * wishes their identity to be remembered across sessions, and the inetAddress from where the attempt is ocurring.
+     * wishes their identity to be remembered across sessions, and the inetAddress from where the attempt is occurring.
      *
      * @param username   the username submitted for authentication
      * @param password   the password character array submitted for authentication
      * @param rememberMe if the user wishes their identity to be remembered across sessions
-     * @param host       the host name or IP string from where the attempt is occuring
+     * @param host       the host name or IP string from where the attempt is occurring
      * @since 1.0
      */
     public UsernamePasswordToken(final String username, final char[] password,
@@ -193,16 +193,16 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
 
     /**
      * Constructs a new UsernamePasswordToken encapsulating the username and password submitted, if the user
-     * wishes their identity to be remembered across sessions, and the inetAddress from where the attempt is ocurring.
+     * wishes their identity to be remembered across sessions, and the inetAddress from where the attempt is occurring.
      * <p/>
-     * <p>This is a convience constructor and maintains the password internally via a character
+     * <p>This is a convenience constructor and maintains the password internally via a character
      * array, i.e. <tt>password.toCharArray();</tt>.  Note that storing a password as a String
      * in your code could have possible security implications as noted in the class JavaDoc.</p>
      *
      * @param username   the username submitted for authentication
      * @param password   the password string submitted for authentication
      * @param rememberMe if the user wishes their identity to be remembered across sessions
-     * @param host       the host name or IP string from where the attempt is occuring
+     * @param host       the host name or IP string from where the attempt is occurring
      * @since 1.0
      */
     public UsernamePasswordToken(final String username, final String password,
@@ -245,7 +245,7 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
     /**
      * Sets the password for submission during an authentication attempt.
      *
-     * @param password the password to be used for submission during an authentication attemp.
+     * @param password the password to be used for submission during an authentication attempt.
      */
     public void setPassword(char[] password) {
         this.password = password;
@@ -293,7 +293,7 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
      * <p>(Shiro's default Authenticator
      * allows <tt>null</tt> hosts to allow localhost and proxy server environments).</p>
      *
-     * @param host the host name or IP string from where the attempt is occuring
+     * @param host the host name or IP string from where the attempt is occurring
      * @since 1.0
      */
     public void setHost(String host) {
@@ -313,10 +313,10 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
     }
 
     /**
-     * Sets if the submitting user wishes their identity (pricipal(s)) to be remembered across sessions.  Unless
+     * Sets if the submitting user wishes their identity (principal(s)) to be remembered across sessions.  Unless
      * overridden, the default value is <tt>false</tt>, indicating <em>not</em> to be remembered across sessions.
      *
-     * @param rememberMe value inidicating if the user wishes their identity (principal(s)) to be remembered across
+     * @param rememberMe value indicating if the user wishes their identity (principal(s)) to be remembered across
      *                   sessions.
      * @since 0.9
      */
@@ -348,7 +348,7 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
 
     /**
      * Returns the String representation.  It does not include the password in the resulting
-     * string for security reasons to prevent accidentially printing out a password
+     * string for security reasons to prevent accidentally printing out a password
      * that might be widely viewable).
      *
      * @return the String representation of the <tt>UsernamePasswordToken</tt>, omitting

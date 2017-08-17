@@ -19,7 +19,7 @@
 /**
  * Core interfaces and exceptions supporting Authorization (access control).
  * <p/>
- * Shiro abbreviates the word 'AuthoriZation' as <tt>authz</tt> to distinguish it seperately from
+ * Shiro abbreviates the word 'AuthoriZation' as <tt>authz</tt> to distinguish it separately from
  * 'AuthentiCation', abbreviated as <tt>authc</tt>.
  * <p/>
  * This package's primary interface of interest, which is the core of Shiro authorization functionality,

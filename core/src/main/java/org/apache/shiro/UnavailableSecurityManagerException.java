@@ -29,4 +29,12 @@ public class UnavailableSecurityManagerException extends ShiroException {
     public UnavailableSecurityManagerException(String message) {
         super(message);
     }
+
+    /**
+     * @deprecated This constructor is NOT used by Shiro directly, and will be removed in the future.
+     */
+    @Deprecated
+    public UnavailableSecurityManagerException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

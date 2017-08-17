@@ -26,7 +26,7 @@ package org.apache.shiro.codec;
  * Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies</cite> by Freed and Borenstein.
  * <p/>
  * This class was borrowed from Apache Commons Codec SVN repository (rev. 618419) with modifications
- * to enable Base64 conversion without a full dependecny on Commons Codec.  We didn't want to reinvent the wheel of
+ * to enable Base64 conversion without a full dependency on Commons Codec.  We didn't want to reinvent the wheel of
  * great work they've done, but also didn't want to force every Shiro user to depend on the commons-codec.jar
  * <p/>
  * As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
@@ -152,7 +152,7 @@ public class Base64 {
     }
 
     /**
-     * Returns whether or not the <code>octect</code> is in the base 64 alphabet.
+     * Returns whether or not the <code>octet</code> is in the base 64 alphabet.
      *
      * @param octect The value to test
      * @return <code>true</code> if the value is defined in the the base 64 alphabet, <code>false</code> otherwise.
@@ -415,7 +415,7 @@ public class Base64 {
     }
 
     /**
-     * Decodes Base64 data into octects
+     * Decodes Base64 data into octets
      *
      * @param base64Data Byte array containing Base64 data
      * @return Array containing decoded data.

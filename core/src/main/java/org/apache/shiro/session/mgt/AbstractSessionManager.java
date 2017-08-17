@@ -79,7 +79,7 @@ public abstract class AbstractSessionManager implements SessionManager {
      * <p/>
      * Unless overridden by calling this method, the default value is {@link #DEFAULT_GLOBAL_SESSION_TIMEOUT}.
      *
-     * @param globalSessionTimeout the time in milliseconds that any session may remain idel before expiring.
+     * @param globalSessionTimeout the time in milliseconds that any session may remain idle before expiring.
      */
     public void setGlobalSessionTimeout(long globalSessionTimeout) {
         this.globalSessionTimeout = globalSessionTimeout;

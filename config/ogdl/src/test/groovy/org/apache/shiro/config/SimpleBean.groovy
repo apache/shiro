@@ -25,6 +25,7 @@ class SimpleBean {
     int intProp;
     byte[] byteArrayProp;
     List<SimpleBean> simpleBeans;
+    List<String> stringList;
     Map<String,Object> mapProp = new LinkedHashMap<String,Object>();
 
     public SimpleBean(){}

@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>2.alpha.0-SNAPSHOT</version>
+        <version>1.4.1-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -31,7 +31,7 @@
     <name>Apache Shiro :: Configuration :: OGDL</name>
     <description>Support for Shiro's Object Graph Definition Language (mostly used in Ini configuration) where
         declared name/value pairs are interpreted to create an object graph</description>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <build>
         <plugins>
@@ -46,6 +46,21 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>org.apache.shiro.config.core</Bundle-SymbolicName>
+                        <Export-Package>org.apache.shiro.config*;version=${project.version}</Export-Package>
+                        <Import-Package>
+                            org.apache.shiro*;version="${shiro.osgi.importRange}",
+                            *
+                        </Import-Package>
+                    </instructions>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -66,6 +81,12 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-configuration2</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- Test dependencies: -->
