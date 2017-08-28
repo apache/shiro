@@ -111,12 +111,16 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
         if (log.isDebugEnabled()) {
             log.debug("Executing session validation...");
         }
-        long startTime = System.currentTimeMillis();
-        this.sessionManager.validateSessions();
-        long stopTime = System.currentTimeMillis();
-        if (log.isDebugEnabled()) {
-            log.debug("Session validation completed successfully in " + (stopTime - startTime) + " milliseconds.");
-        }
+		try{
+			long startTime = System.currentTimeMillis();
+			this.sessionManager.validateSessions();
+			long stopTime = System.currentTimeMillis();
+			if (log.isDebugEnabled()) {
+				log.debug("Session validation completed successfully in " + (stopTime - startTime) + " milliseconds.");
+			}
+		}catch(Throwable e){
+			log.error("Session validation failed: " , e);
+		}
     }
 
     public void disableSessionValidation() {
