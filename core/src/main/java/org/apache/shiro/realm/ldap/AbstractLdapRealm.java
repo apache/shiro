@@ -28,7 +28,11 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+import javax.naming.ldap.LdapContext;
 
 /**
  * <p>A {@link org.apache.shiro.realm.Realm} that authenticates with an LDAP
@@ -73,10 +77,14 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
 
     protected String systemPassword = null;
 
+    private String authenticationSearchFilter = null;
+
     //SHIRO-115 - prevent potential code injection:
-    protected String searchFilter = "(&(objectClass=*)(userPrincipalName={0}))";
+    protected String authorizationSearchFilter = "(&(objectClass=*)(userPrincipalName={0}))";
 
     private LdapContextFactory ldapContextFactory = null;
+
+    private UserDnTemplate userDnTemplate = null;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -85,6 +93,13 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
+
+    /**
+     * @see DefaultLdapRealm#setUserDnTemplate(String)
+     */
+    public void setUserDnTemplate(String template) throws IllegalArgumentException {
+        userDnTemplate = UserDnTemplate.fromString(template);
+    }
 
     /*--------------------------------------------
     |               M E T H O D S               |
@@ -161,8 +176,21 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     }
 
 
+    /**
+     * Configures search filter for user lookup during authorization.
+     * In order to keep compatibility with previous versions of Shiro, this
+     * is separate from {@link #setUserSearchFilter(String)}.
+     */
     public void setSearchFilter(String searchFilter) {
-        this.searchFilter = searchFilter;
+        this.authorizationSearchFilter = searchFilter;
+    }
+
+    /**
+     * Configures search filter for user lookup.
+     */
+    public void setUserSearchFilter(String userSearchFilter) {
+        this.authenticationSearchFilter = userSearchFilter;
+        this.authorizationSearchFilter = userSearchFilter;
     }
 
     /*--------------------------------------------
@@ -247,4 +275,61 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
      */
     protected abstract AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principal, LdapContextFactory ldapContextFactory) throws NamingException;
 
+    /**
+     * Returns all users accounts with a given name.
+     *
+     * @param username     account identity submitted during authentication.
+     * @param searchFilter either {@link #authenticationSearchFilter} or {@link #authorizationSearchFilter}
+     * @param ldapContext  LDAP connection.
+     * @return user accounts with a given name.
+     * @throws NamingException if a naming exception is encountered.
+     */
+    protected NamingEnumeration lookupUsername(String username, String searchFilter, LdapContext ldapContext) throws NamingException {
+        SearchControls searchCtls = new SearchControls();
+        searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
+        String userPrincipalName = username;
+        if (principalSuffix != null) {
+            userPrincipalName += principalSuffix;
+        }
+
+        Object[] searchArguments = new Object[]{userPrincipalName};
+
+        return ldapContext.search(searchBase, searchFilter, searchArguments, searchCtls);
+    }
+
+    /**
+     * Resolves user DN.
+     *
+     * First resolution step shares the logic with {@link DefaultLdapRealm}: if
+     * {@link #userDnTemplate} is configured, then it is used to construct user
+     * DN by inserting principal name at placeholder position.
+     *
+     * If {@link #userDnTemplate} is not configured, then LDAP lookup is
+     * performed using {@link #authenticationSearchFilter}. An exception is
+     * thrown in case lookup fails.
+     *
+     * Finally, if neither {@link #userDnTemplate} nor
+     * {@link #authenticationSearchFilter} are configured, principal name is
+     * assumed to be a DN and is returned as is.
+     *
+     * @param principal           account identity submitted during authentication.
+     * @param ldapContextFactory  factory used to retrieve LDAP connections.
+     * @return a user's DN.
+     * @throws NamingException if user's DN could not be resolved or if a naming exception is encountered.
+     */
+    protected String getUserDn(String principal, LdapContextFactory ldapContextFactory) throws NamingException {
+        if (userDnTemplate != null) {
+            return userDnTemplate.getUserDn(principal);
+        }
+        if (authenticationSearchFilter != null) {
+            NamingEnumeration answer = lookupUsername(principal, authenticationSearchFilter, ldapContextFactory.getSystemLdapContext());
+            if (answer.hasMoreElements()) {
+                return ((SearchResult) answer.next()).getNameInNamespace();
+            } else {
+                throw new NamingException("Unknown principal: " + principal);
+            }
+        }
+        return principal;
+    }
 }

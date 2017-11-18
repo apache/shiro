@@ -39,6 +39,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
+import java.rmi.Naming;
 import java.util.*;
 
 
@@ -105,7 +106,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         // Binds using the username and password provided by the user.
         LdapContext ctx = null;
         try {
-            ctx = ldapContextFactory.getLdapContext(upToken.getUsername(), String.valueOf(upToken.getPassword()));
+            ctx = ldapContextFactory.getLdapContext(getUserDn(upToken.getUsername(), ldapContextFactory), String.valueOf(upToken.getPassword()));
         } finally {
             LdapUtils.closeContext(ctx);
         }
@@ -159,17 +160,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         Set<String> roleNames;
         roleNames = new LinkedHashSet<String>();
 
-        SearchControls searchCtls = new SearchControls();
-        searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-
-        String userPrincipalName = username;
-        if (principalSuffix != null) {
-            userPrincipalName += principalSuffix;
-        }
-
-        Object[] searchArguments = new Object[]{userPrincipalName};
-
-        NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchArguments, searchCtls);
+        NamingEnumeration answer = lookupUsername(username, authorizationSearchFilter, ldapContext);
 
         while (answer.hasMoreElements()) {
             SearchResult sr = (SearchResult) answer.next();
