@@ -85,11 +85,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultLdapRealm.class);
 
-    //The zero index currently means nothing, but could be utilized in the future for other substitution techniques.
-    private static final String USERDN_SUBSTITUTION_TOKEN = "{0}";
-
-    private String userDnPrefix;
-    private String userDnSuffix;
+    private UserDnTemplate userDnTemplate = UserDnTemplate.EMPTY;
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -123,25 +119,25 @@ public class DefaultLdapRealm extends AuthorizingRealm {
     /**
      * Returns the User DN prefix to use when building a runtime User DN value or {@code null} if no
      * {@link #getUserDnTemplate() userDnTemplate} has been configured.  If configured, this value is the text that
-     * occurs before the {@link #USERDN_SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
+     * occurs before the {@link UserDnTemplate#SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
      *
      * @return the the User DN prefix to use when building a runtime User DN value or {@code null} if no
      *         {@link #getUserDnTemplate() userDnTemplate} has been configured.
      */
     protected String getUserDnPrefix() {
-        return userDnPrefix;
+        return userDnTemplate.getPrefix();
     }
 
     /**
      * Returns the User DN suffix to use when building a runtime User DN value.  or {@code null} if no
      * {@link #getUserDnTemplate() userDnTemplate} has been configured.  If configured, this value is the text that
-     * occurs after the {@link #USERDN_SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
+     * occurs after the {@link UserDnTemplate#SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
      *
      * @return the User DN suffix to use when building a runtime User DN value or {@code null} if no
      *         {@link #getUserDnTemplate() userDnTemplate} has been configured.
      */
     protected String getUserDnSuffix() {
-        return userDnSuffix;
+        return userDnTemplate.getSuffix();
     }
 
     /*--------------------------------------------
@@ -179,24 +175,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * @see LdapContextFactory#getLdapContext(Object,Object)
      */
     public void setUserDnTemplate(String template) throws IllegalArgumentException {
-        if (!StringUtils.hasText(template)) {
-            String msg = "User DN template cannot be null or empty.";
-            throw new IllegalArgumentException(msg);
-        }
-        int index = template.indexOf(USERDN_SUBSTITUTION_TOKEN);
-        if (index < 0) {
-            String msg = "User DN template must contain the '" +
-                    USERDN_SUBSTITUTION_TOKEN + "' replacement token to understand where to " +
-                    "insert the runtime authentication principal.";
-            throw new IllegalArgumentException(msg);
-        }
-        String prefix = template.substring(0, index);
-        String suffix = template.substring(prefix.length() + USERDN_SUBSTITUTION_TOKEN.length());
-        if (log.isDebugEnabled()) {
-            log.debug("Determined user DN prefix [{}] and suffix [{}]", prefix, suffix);
-        }
-        this.userDnPrefix = prefix;
-        this.userDnSuffix = suffix;
+        userDnTemplate = UserDnTemplate.fromString(template);
     }
 
     /**
@@ -206,7 +185,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * @return the User Distinguished Name (DN) template to use when creating User DNs at runtime.
      */
     public String getUserDnTemplate() {
-        return getUserDn(USERDN_SUBSTITUTION_TOKEN);
+        return userDnTemplate.toString();
     }
 
     /**
@@ -225,29 +204,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * @see LdapContextFactory#getLdapContext(Object, Object)
      */
     protected String getUserDn(String principal) throws IllegalArgumentException, IllegalStateException {
-        if (!StringUtils.hasText(principal)) {
-            throw new IllegalArgumentException("User principal cannot be null or empty for User DN construction.");
-        }
-        String prefix = getUserDnPrefix();
-        String suffix = getUserDnSuffix();
-        if (prefix == null && suffix == null) {
-            log.debug("userDnTemplate property has not been configured, indicating the submitted " +
-                    "AuthenticationToken's principal is the same as the User DN.  Returning the method argument " +
-                    "as is.");
-            return principal;
-        }
-
-        int prefixLength = prefix != null ? prefix.length() : 0;
-        int suffixLength = suffix != null ? suffix.length() : 0;
-        StringBuilder sb = new StringBuilder(prefixLength + principal.length() + suffixLength);
-        if (prefixLength > 0) {
-            sb.append(prefix);
-        }
-        sb.append(principal);
-        if (suffixLength > 0) {
-            sb.append(suffix);
-        }
-        return sb.toString();
+        return userDnTemplate.getUserDn(principal);
     }
 
     /**
