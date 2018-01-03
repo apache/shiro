@@ -31,7 +31,6 @@
     <name>Apache Shiro :: Configuration :: OGDL</name>
     <description>Support for Shiro's Object Graph Definition Language (mostly used in Ini configuration) where
         declared name/value pairs are interpreted to create an object graph</description>
-    <packaging>bundle</packaging>
 
     <build>
         <plugins>
@@ -46,21 +45,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>org.apache.shiro.config.core</Bundle-SymbolicName>
-                        <Export-Package>org.apache.shiro.config*;version=${project.version}</Export-Package>
-                        <Import-Package>
-                            org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            *
-                        </Import-Package>
-                    </instructions>
-                </configuration>
             </plugin>
         </plugins>
     </build>

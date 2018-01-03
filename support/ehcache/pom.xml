@@ -34,7 +34,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-cache</artifactId>
+            <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
