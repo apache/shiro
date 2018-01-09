@@ -19,6 +19,9 @@
 package org.apache.shiro.realm.text;
 
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.permission.PermissionResolver;
+import org.apache.shiro.authz.permission.WildcardPermissionResolver;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.junit.Test;
@@ -247,6 +250,77 @@ public class TextConfigurationRealmTest {
         assertTrue("account doesn't exist when it should", realm.accountExists("user1"));
         testThread.test();
     }
+    
+    @Test
+    public void testProcessRoleConfigurationDefinitions_caseSensitive() throws InterruptedException  {
+       realm = new TestRealm() {
+            public void test(Thread runnable) throws InterruptedException {
+//                // While the realm's lock is held by this thread user definitions cannot be processed
+//                // Obtain the realm's locks
+//                USERS_LOCK.writeLock().lock();
+//                try {
+                   runnable.start();
+//                    Thread.sleep(500);
+//                    // No account until lock is released and user definitions are processed
+//                    assertFalse("account exists when it shouldn't", realm.accountExists("user1"));
+//                } finally {
+//                    USERS_LOCK.writeLock().unlock();
+//                }
+            }
+        };
+        TestThread testThread = new TestThread(new Runnable() {
+            public void run() {
+                try {
+                    realm.processRoleConfigDefinitions();
+                } catch (ParseException e) {
+                    fail("Unable to parse user definitions");
+                }
+            }
+        });
+        realm.setRoleConfigDefinitions( "caseSensitiveWildCardPermissions=true" );
+        Thread testTask = new Thread(testThread);
+        realm.test(testTask);
+        testTask.join(500);
+        PermissionResolver resolver = realm.getPermissionResolver();
+        assertTrue("Resolver does not implement WildCardPermissionsResolver", resolver instanceof WildcardPermissionResolver);
+        assertTrue("WildcardPermissionsResolver is not case sensitive", ((WildcardPermissionResolver) resolver).isCaseSensitive());
+        testThread.test();
+    }
+
+    @Test
+    public void testProcessRoleConfigurationDefinitions_PermissionResolver() throws InterruptedException  {
+       realm = new TestRealm() {
+            public void test(Thread runnable) throws InterruptedException {
+//                // While the realm's lock is held by this thread user definitions cannot be processed
+//                // Obtain the realm's locks
+//                USERS_LOCK.writeLock().lock();
+//                try {
+                   runnable.start();
+//                    Thread.sleep(500);
+//                    // No account until lock is released and user definitions are processed
+//                    assertFalse("account exists when it shouldn't", realm.accountExists("user1"));
+//                } finally {
+//                    USERS_LOCK.writeLock().unlock();
+//                }
+            }
+        };
+        TestThread testThread = new TestThread(new Runnable() {
+            public void run() {
+                try {
+                    realm.processRoleConfigDefinitions();
+                } catch (ParseException e) {
+                    fail("Unable to parse user definitions");
+                }
+            }
+        });
+        realm.setRoleConfigDefinitions( "permissionsResolver="+TestPermissionResolver.class.getName() );
+        Thread testTask = new Thread(testThread);
+        realm.test(testTask);
+        testTask.join(500);
+        PermissionResolver resolver = realm.getPermissionResolver();
+        assertTrue("Resolver is not instance of TestPermissionResolver", resolver instanceof TestPermissionResolver);
+        testThread.test();
+    }
 
     /*
      * A Class that captures a thread's assertion error.
@@ -278,5 +352,20 @@ public class TextConfigurationRealmTest {
      */
     private abstract class TestRealm extends TextConfigurationRealm {
         abstract public void test(Thread runnable) throws InterruptedException;
+    }
+    
+    /*
+     * Provides a class for permisison resolver replacement testing.
+     */
+    private static class TestPermissionResolver implements PermissionResolver {
+        
+        public TestPermissionResolver() {}
+
+        @Override
+        public Permission resolvePermission(String permissionString) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+        
     }
 }

@@ -46,6 +46,7 @@ public class IniRealm extends TextConfigurationRealm {
 
     public static final String USERS_SECTION_NAME = "users";
     public static final String ROLES_SECTION_NAME = "roles";
+    public static final String ROLES_CONFIG_SECTION_NAME = "roles.config";
 
     private static transient final Logger log = LoggerFactory.getLogger(IniRealm.class);
 
@@ -168,12 +169,19 @@ public class IniRealm extends TextConfigurationRealm {
         processDefinitions(ini);
     }
 
+    
     private void processDefinitions(Ini ini) {
         if (CollectionUtils.isEmpty(ini)) {
             log.warn("{} defined, but the ini instance is null or empty.", getClass().getSimpleName());
             return;
         }
 
+        Ini.Section rolesConfigSection = ini.getSection(ROLES_CONFIG_SECTION_NAME);
+        if (!CollectionUtils.isEmpty(rolesConfigSection)) {
+            log.debug("Discovered the [{}] section.  Processing...", ROLES_CONFIG_SECTION_NAME);
+            processRoleConfigDefinitions(rolesConfigSection);           
+        }
+        
         Ini.Section rolesSection = ini.getSection(ROLES_SECTION_NAME);
         if (!CollectionUtils.isEmpty(rolesSection)) {
             log.debug("Discovered the [{}] section.  Processing...", ROLES_SECTION_NAME);

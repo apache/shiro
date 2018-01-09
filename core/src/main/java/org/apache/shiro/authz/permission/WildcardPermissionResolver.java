@@ -28,7 +28,34 @@ import org.apache.shiro.authz.Permission;
  * @since 0.9
  */
 public class WildcardPermissionResolver implements PermissionResolver {
+    boolean caseSensitive;
+    
+    /**
+     * Constructor to specify case sensitivity for the resolved premissions.
+     * @param caseSensitive true if permissions should be case sensitive.
+     */
+    public WildcardPermissionResolver(boolean caseSensitive) {
+        this.caseSensitive=caseSensitive;
+    }
 
+    /**
+     * Default constructor. 
+     * Equivalent to calling WildcardPermissionResolver(false)
+     * 
+     * @see WildcardPermissionResolver#WildcardPermissionResolver(boolean)
+     */
+    public WildcardPermissionResolver() {
+        this(false);
+    }
+
+    /**
+     * Return true if this resolver produces case sensitive permissions.
+     * @return true if this resolver produces case sensitive permissions.
+     */
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+    
     /**
      * Returns a new {@link WildcardPermission WildcardPermission} instance constructed based on the specified
      * <tt>permissionString</tt>.
@@ -38,6 +65,6 @@ public class WildcardPermissionResolver implements PermissionResolver {
      *         <tt>permissionString</tt>
      */
     public Permission resolvePermission(String permissionString) {
-        return new WildcardPermission(permissionString);
+        return new WildcardPermission(permissionString, caseSensitive);
     }
 }

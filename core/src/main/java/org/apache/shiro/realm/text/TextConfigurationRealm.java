@@ -21,11 +21,15 @@ package org.apache.shiro.realm.text;
 import org.apache.shiro.authc.SimpleAccount;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.SimpleRole;
+import org.apache.shiro.authz.permission.PermissionResolver;
+import org.apache.shiro.authz.permission.WildcardPermissionResolver;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.SimpleAccountRealm;
 import org.apache.shiro.util.PermissionUtils;
 import org.apache.shiro.util.StringUtils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,6 +58,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
 
     private volatile String userDefinitions;
     private volatile String roleDefinitions;
+    private volatile String roleConfigDefinitions;
 
     public TextConfigurationRealm() {
         super();
@@ -98,7 +103,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
     public String getRoleDefinitions() {
         return roleDefinitions;
     }
-
+    
     /**
      * Sets a newline (\n) delimited String that defines role-to-permission definitions.
      * <p/>
@@ -124,9 +129,19 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
     public void setRoleDefinitions(String roleDefinitions) {
         this.roleDefinitions = roleDefinitions;
     }
+    
+    public String getRoleConfigDefinitions() {
+        return roleConfigDefinitions;
+    }
+
+    public void setRoleConfigDefinitions(String roleConfigDefinitions)
+    {
+        this.roleConfigDefinitions = roleConfigDefinitions;
+    }
 
     protected void processDefinitions() {
         try {
+            processRoleConfigDefinitions();
             processRoleDefinitions();
             processUserDefinitions();
         } catch (ParseException e) {
@@ -135,6 +150,51 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         }
     }
 
+    protected void processRoleConfigDefinitions() throws ParseException {
+        String roleConfigDefinitions = getRoleConfigDefinitions();
+        if (roleConfigDefinitions == null) {
+            return;
+        }
+        Map<String, String> roleConfigs = toMap(toLines(roleConfigDefinitions));
+        processRoleConfigDefinitions(roleConfigs);
+    }
+    
+    protected void processRoleConfigDefinitions(Map<String, String> roleDefs) {
+        if (roleDefs == null || roleDefs.isEmpty()) {
+            return;
+        }
+        for (String cfgOption : roleDefs.keySet()) {
+            // use a no-arg permission resolver.
+            if (cfgOption.equals( "permissionsResolver" ))
+            {
+                try {
+                    Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass( roleDefs.get(cfgOption) );
+                    Constructor<?> c = clazz.getConstructor();
+                    setPermissionResolver(  (PermissionResolver) c.newInstance() );
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalArgumentException( String.format( "Unable to construct %s",roleDefs.get(cfgOption) ), e );
+                } catch (NoSuchMethodException e) {
+                    throw new IllegalArgumentException( String.format( "Unable to construct %s",roleDefs.get(cfgOption) ), e );
+                } catch (SecurityException e) {
+                    throw new IllegalArgumentException( String.format( "Unable to construct %s",roleDefs.get(cfgOption) ), e );
+                } catch (InstantiationException e) {
+                    throw new IllegalArgumentException( String.format( "Unable to construct %s",roleDefs.get(cfgOption) ), e );
+                } catch (IllegalAccessException e) {
+                    throw new IllegalArgumentException( String.format( "Unable to construct %s",roleDefs.get(cfgOption) ), e );
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException( String.format( "Unable to construct %s",roleDefs.get(cfgOption) ), e );
+                } catch (InvocationTargetException e) {
+                    throw new IllegalArgumentException( String.format( "Unable to construct %s",roleDefs.get(cfgOption) ), e );
+                }
+            
+            }
+            if (cfgOption.equals(  "caseSensitiveWildCardPermissions" ))
+            {
+                boolean b = Boolean.valueOf( roleDefs.get(cfgOption).trim() );
+                setPermissionResolver( new WildcardPermissionResolver( b ));
+            }          
+        }
+    }
     protected void processRoleDefinitions() throws ParseException {
         String roleDefinitions = getRoleDefinitions();
         if (roleDefinitions == null) {
@@ -144,6 +204,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         processRoleDefinitions(roleDefs);
     }
 
+   
     protected void processRoleDefinitions(Map<String, String> roleDefs) {
         if (roleDefs == null || roleDefs.isEmpty()) {
             return;
