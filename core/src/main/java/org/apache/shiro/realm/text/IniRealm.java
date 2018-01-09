@@ -29,10 +29,13 @@ import org.slf4j.LoggerFactory;
  * {@link org.apache.shiro.authc.SimpleAccount SimpleAccount} instances based on
  * {@link Ini} configuration.
  * <p/>
- * This implementation looks for two {@link Ini.Section sections} in the {@code Ini} configuration:
+ * This implementation looks for three {@link Ini.Section sections} in the {@code Ini} configuration:
  * <pre>
  * [users]
  * # One or more {@link org.apache.shiro.realm.text.TextConfigurationRealm#setUserDefinitions(String) user definitions}
+ * ...
+ * [roles_config]
+ * # One or more {@link org.apache.shiro.realm.text.TextConfigurationRealm#setRoleConfigDefinitions(String) role configuration definitions}
  * ...
  * [roles]
  * # One or more {@link org.apache.shiro.realm.text.TextConfigurationRealm#setRoleDefinitions(String) role definitions}</pre>
@@ -46,7 +49,7 @@ public class IniRealm extends TextConfigurationRealm {
 
     public static final String USERS_SECTION_NAME = "users";
     public static final String ROLES_SECTION_NAME = "roles";
-    public static final String ROLES_CONFIG_SECTION_NAME = "roles.config";
+    public static final String ROLES_CONFIG_SECTION_NAME = "roles_config";
 
     private static transient final Logger log = LoggerFactory.getLogger(IniRealm.class);
 

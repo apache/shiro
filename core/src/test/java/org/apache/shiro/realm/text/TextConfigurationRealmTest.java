@@ -255,17 +255,7 @@ public class TextConfigurationRealmTest {
     public void testProcessRoleConfigurationDefinitions_caseSensitive() throws InterruptedException  {
        realm = new TestRealm() {
             public void test(Thread runnable) throws InterruptedException {
-//                // While the realm's lock is held by this thread user definitions cannot be processed
-//                // Obtain the realm's locks
-//                USERS_LOCK.writeLock().lock();
-//                try {
                    runnable.start();
-//                    Thread.sleep(500);
-//                    // No account until lock is released and user definitions are processed
-//                    assertFalse("account exists when it shouldn't", realm.accountExists("user1"));
-//                } finally {
-//                    USERS_LOCK.writeLock().unlock();
-//                }
             }
         };
         TestThread testThread = new TestThread(new Runnable() {
@@ -291,17 +281,7 @@ public class TextConfigurationRealmTest {
     public void testProcessRoleConfigurationDefinitions_PermissionResolver() throws InterruptedException  {
        realm = new TestRealm() {
             public void test(Thread runnable) throws InterruptedException {
-//                // While the realm's lock is held by this thread user definitions cannot be processed
-//                // Obtain the realm's locks
-//                USERS_LOCK.writeLock().lock();
-//                try {
-                   runnable.start();
-//                    Thread.sleep(500);
-//                    // No account until lock is released and user definitions are processed
-//                    assertFalse("account exists when it shouldn't", realm.accountExists("user1"));
-//                } finally {
-//                    USERS_LOCK.writeLock().unlock();
-//                }
+                runnable.start();
             }
         };
         TestThread testThread = new TestThread(new Runnable() {
@@ -313,7 +293,7 @@ public class TextConfigurationRealmTest {
                 }
             }
         });
-        realm.setRoleConfigDefinitions( "permissionsResolver="+TestPermissionResolver.class.getName() );
+        realm.setRoleConfigDefinitions( "permissionResolver="+TestPermissionResolver.class.getName() );
         Thread testTask = new Thread(testThread);
         realm.test(testTask);
         testTask.join(500);

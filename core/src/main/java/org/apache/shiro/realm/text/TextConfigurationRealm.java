@@ -134,6 +134,25 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         return roleConfigDefinitions;
     }
 
+    /**
+     * Sets a newline (\n) delimited String that defines role configuration definitions.
+     * <p/>
+     * <p>Each line in the string must be one of the following name value pairs:</p>
+     * <p/>
+     * <p><code><em>permissionResolver</em> = <em>PermissionResolverClass</em></code></p>
+     * <p/>
+     * <p>where <em>permissionsResolverClass</em> is the name of a class implementing PermissionResolver interface
+     * and that has a no-argument constructor.  If not set the WildCardPermissionsResolver is used.</p>
+     * <p/>
+     * 
+     * <p><code><em>caseSensitiveWildCardPermissions</em> = <em>true</em></code></p>
+     * <p/>
+     * <p>Sets the cases sensitive flag on the default WildCardPermissionsResolver.  Using this paramter
+     * has the side effect of resetting the permissionsResolver to WildCardPermissionsResolver. 
+     * <p/>
+     *
+     * @param roleConfigDefinitions the role configuration options to be parsed at initialization
+     */
     public void setRoleConfigDefinitions(String roleConfigDefinitions)
     {
         this.roleConfigDefinitions = roleConfigDefinitions;
@@ -165,7 +184,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         }
         for (String cfgOption : roleDefs.keySet()) {
             // use a no-arg permission resolver.
-            if (cfgOption.equals( "permissionsResolver" ))
+            if (cfgOption.equals( "permissionResolver" ))
             {
                 try {
                     Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass( roleDefs.get(cfgOption) );
