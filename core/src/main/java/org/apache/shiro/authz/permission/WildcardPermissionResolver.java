@@ -49,6 +49,13 @@ public class WildcardPermissionResolver implements PermissionResolver {
     }
 
     /**
+     * Set the case sensitivity of the resolved Wildcard permissions.
+     * @param state the caseSensitive flag state for resolved permissions.
+     */
+    public void setCaseSensitive(boolean state) {
+        this.caseSensitive = state;
+    }
+    /**
      * Return true if this resolver produces case sensitive permissions.
      * @return true if this resolver produces case sensitive permissions.
      */
