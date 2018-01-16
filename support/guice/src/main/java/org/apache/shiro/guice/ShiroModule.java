@@ -29,7 +29,6 @@ import javax.annotation.PreDestroy;
 
 import com.google.inject.Provider;
 import com.google.inject.matcher.Matchers;
-import com.google.inject.name.Names;
 import com.google.inject.spi.InjectionListener;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
@@ -54,6 +53,8 @@ import com.google.inject.binder.AnnotatedBindingBuilder;
 import com.google.inject.binder.LinkedBindingBuilder;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.util.Types;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -62,6 +63,8 @@ import com.google.inject.util.Types;
  * {@link #bindRealm() bindRealm}.
  */
 public abstract class ShiroModule extends PrivateModule implements Destroyable {
+
+    private final Logger log = LoggerFactory.getLogger(ShiroModule.class);
 
 	private Set<Destroyable> destroyables = Collections.newSetFromMap(new WeakHashMap<Destroyable, Boolean>());
     public void configure() {
@@ -79,7 +82,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
             }
 
             @PreDestroy
-            public void destroy() throws Exception {
+            public void destroy() {
                 ShiroModule.this.destroy();
             }
         };
@@ -184,9 +187,14 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
      *
      * @throws Exception
      */
-    public final void destroy() throws Exception {
+    public final void destroy() {
         for (Destroyable destroyable : destroyables) {
-            destroyable.destroy();
+            try {
+                destroyable.destroy();
+            }
+            catch(Exception e) {
+                log.warn("Error destroying component class: " + destroyable.getClass(), e);
+            }
         }
     }
 

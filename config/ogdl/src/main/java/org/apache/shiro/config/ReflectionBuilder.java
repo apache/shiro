@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.config;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.SuppressPropertiesBeanIntrospector;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
 import org.apache.shiro.config.event.BeanEvent;
@@ -104,6 +104,11 @@ public class ReflectionBuilder {
      */
     private final Map<String,Object> registeredEventSubscribers;
 
+    /**
+     * @since 1.4
+     */
+    private final BeanUtilsBean beanUtilsBean;
+
     //@since 1.3
     private Map<String,Object> createDefaultObjectMap() {
         Map<String,Object> map = new LinkedHashMap<String, Object>();
@@ -116,6 +121,10 @@ public class ReflectionBuilder {
     }
 
     public ReflectionBuilder(Map<String, ?> defaults) {
+
+        // SHIRO-619
+        beanUtilsBean = new BeanUtilsBean();
+        beanUtilsBean.getPropertyUtils().addBeanIntrospector(SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
 
         this.interpolator = createInterpolator();
 
@@ -343,7 +352,7 @@ public class ReflectionBuilder {
     protected void applyGlobalProperty(Map objects, String property, String value) {
         for (Object instance : objects.values()) {
             try {
-                PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(instance, property);
+                PropertyDescriptor pd = beanUtilsBean.getPropertyUtils().getPropertyDescriptor(instance, property);
                 if (pd != null) {
                     applyProperty(instance, property, value);
                 }
@@ -415,7 +424,7 @@ public class ReflectionBuilder {
             throw new NullPointerException("type (class) argument cannot be null.");
         }
         try {
-            PropertyDescriptor descriptor = PropertyUtils.getPropertyDescriptor(object, propertyName);
+            PropertyDescriptor descriptor = beanUtilsBean.getPropertyUtils().getPropertyDescriptor(object, propertyName);
             if (descriptor == null) {
                 String msg = "Property '" + propertyName + "' does not exist for object of " +
                         "type " + object.getClass().getName() + ".";
@@ -656,7 +665,7 @@ public class ReflectionBuilder {
                 log.trace("Applying property [{}] value [{}] on object of type [{}]",
                         new Object[]{propertyPath, value, object.getClass().getName()});
             }
-            BeanUtils.setProperty(object, propertyPath, value);
+            beanUtilsBean.setProperty(object, propertyPath, value);
         } catch (Exception e) {
             String msg = "Unable to set property '" + propertyPath + "' with value [" + value + "] on object " +
                     "of type " + (object != null ? object.getClass().getName() : null) + ".  If " +
@@ -670,7 +679,7 @@ public class ReflectionBuilder {
     
     private Object getProperty(Object object, String propertyPath) {
         try {
-            return PropertyUtils.getProperty(object, propertyPath);
+            return beanUtilsBean.getPropertyUtils().getProperty(object, propertyPath);
         } catch (Exception e) {
             throw new ConfigurationException("Unable to access property '" + propertyPath + "'", e);
         }
@@ -678,7 +687,7 @@ public class ReflectionBuilder {
     
     private void setIndexedProperty(Object object, String propertyPath, int index, Object value) {
         try {
-            PropertyUtils.setIndexedProperty(object, propertyPath, index, value);
+            beanUtilsBean.getPropertyUtils().setIndexedProperty(object, propertyPath, index, value);
         } catch (Exception e) {
             throw new ConfigurationException("Unable to set array property '" + propertyPath + "'", e);
         }
@@ -686,7 +695,7 @@ public class ReflectionBuilder {
     
     private Object getIndexedProperty(Object object, String propertyPath, int index) {
         try {
-            return PropertyUtils.getIndexedProperty(object, propertyPath, index);
+            return beanUtilsBean.getPropertyUtils().getIndexedProperty(object, propertyPath, index);
         } catch (Exception e) {
             throw new ConfigurationException("Unable to acquire array property '" + propertyPath + "'", e);
         }

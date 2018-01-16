@@ -1,1 +1,3 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration = org.apache.shiro.spring.config.web.autoconfigure.ShiroBeanAutoConfiguration,org.apache.shiro.spring.config.web.autoconfigure.ShiroWebAutoConfiguration,org.apache.shiro.spring.config.web.autoconfigure.ShiroWebFilterConfiguration,org.apache.shiro.spring.config.web.autoconfigure.ShiroAnnotationProcessorAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration = \
+  org.apache.shiro.spring.config.web.autoconfigure.ShiroWebAutoConfiguration,\
+  org.apache.shiro.spring.config.web.autoconfigure.ShiroWebFilterConfiguration

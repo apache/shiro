@@ -29,13 +29,13 @@ import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.spring.boot.autoconfigure.exception.NoRealmBeanConfiguredException;
 import org.apache.shiro.spring.config.AbstractShiroConfiguration;
-import org.apache.shiro.spring.config.ShiroBeanConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
@@ -59,6 +59,13 @@ public class ShiroAutoConfiguration extends AbstractShiroConfiguration {
     @Override
     protected Authenticator authenticator() {
         return super.authenticator();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @Override
+    protected Authorizer authorizer() {
+        return super.authorizer();
     }
 
     @Bean
@@ -108,6 +115,24 @@ public class ShiroAutoConfiguration extends AbstractShiroConfiguration {
     @Override
     protected SessionsSecurityManager securityManager(List<Realm> realms) {
         return super.securityManager(realms);
+    }
+
+    @Bean
+    @ConditionalOnResource(resources = "classpath:shiro.ini")
+    protected Realm iniClasspathRealm() {
+        return iniRealmFromLocation("classpath:shiro.ini");
+    }
+
+    @Bean
+    @ConditionalOnResource(resources = "classpath:META-INF/shiro.ini")
+    protected Realm iniMetaInfClasspathRealm() {
+        return iniRealmFromLocation("classpath:META-INF/shiro.ini");
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(Realm.class)
+    protected Realm missingRealm() {
+        throw new NoRealmBeanConfiguredException();
     }
 
 
