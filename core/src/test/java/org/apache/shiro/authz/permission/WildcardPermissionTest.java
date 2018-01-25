@@ -239,4 +239,30 @@ public class WildcardPermissionTest {
         assertTrue("one,two:three,four,five:six:seven,eight".equals(p5.toString()));
         assertTrue(p5.equals(new WildcardPermission(p5.toString())));
     }
+
+    @Test
+    public void testWildcardLeftTermination() {
+        WildcardPermission p1, p2, p3, p4;
+
+        p1 = new WildcardPermission("one");
+        p2 = new WildcardPermission("one:*");
+        p3 = new WildcardPermission("one:*:*");
+        p4 = new WildcardPermission("one:read");
+
+        assertTrue(p1.implies(p2));
+        assertTrue(p1.implies(p3));
+        assertTrue(p1.implies(p4));
+
+        assertTrue(p2.implies(p1));
+        assertTrue(p2.implies(p3));
+        assertTrue(p2.implies(p4));
+
+        assertTrue(p3.implies(p1));
+        assertTrue(p3.implies(p2));
+        assertTrue(p3.implies(p4));
+
+        assertFalse(p4.implies(p1));
+        assertFalse(p4.implies(p2));
+        assertFalse(p4.implies(p3));
+    }
 }
