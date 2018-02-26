@@ -158,7 +158,8 @@ public abstract class ShiroWebModule extends ShiroModule {
 
                 // initialize key in filterToPathToConfig, if it doesn't exist
                 if (filterToPathToConfig.get(key) == null) {
-                    filterToPathToConfig.put((key), new HashMap<String, String>());
+                	// Fix for SHIRO-621: REST filter bypassing matched path
+                    filterToPathToConfig.put((key), new LinkedHashMap<String, String>());
                 }
                 // now set the value
                 filterToPathToConfig.get(key).put(path, config);
