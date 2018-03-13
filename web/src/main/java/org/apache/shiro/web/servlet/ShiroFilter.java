@@ -27,7 +27,8 @@ import org.apache.shiro.web.util.WebUtils;
  * <p/>
  * As of Shiro 1.2, this is Shiro's preferred filter for {@code web.xml} configuration.  It expects the presence of a
  * Shiro {@link org.apache.shiro.web.env.WebEnvironment WebEnvironment} in the {@code ServletContext}, also
- * configured via {@code web.xml}.
+ * configured via {@code web.xml}.<br>
+ * If a WebEnvironment is not available, e.g. within an OSGi usage scenario, ShiroFilter may instantiate one.
  * <h2>Usage</h2>
  * As this Filter expects an available {@link org.apache.shiro.web.env.WebEnvironment WebEnvironment} instance to
  * be configured, it must be defined in {@code web.xml} with the companion
@@ -57,14 +58,15 @@ import org.apache.shiro.web.util.WebUtils;
  * @see org.apache.shiro.web.env.EnvironmentLoader EnvironmentLoader
  * @see org.apache.shiro.web.env.EnvironmentLoaderListener EnvironmentLoaderListener
  * @see <a href="http://shiro.apache.org/web.html">Apache Shiro Web Documentation</a>
- * @since 1.2
+ * @since 1.2 initial implementation
+ * @since 1.5 ShiroFilter may instantiate a web environment if none available
  */
 public class ShiroFilter extends AbstractShiroFilter {
 
 	private final boolean instantiateWebEnvironmentIfNotAvailable;
 
 	/**
-	 * @since 1.4
+	 * @since 1.5
 	 * @see WebEnvironmentShiroFilter
 	 */
 	public ShiroFilter() {
@@ -74,7 +76,8 @@ public class ShiroFilter extends AbstractShiroFilter {
 	/**
 	 * 
 	 * @param instantiateWebEnvironmentIfNotAvailable
-	 * @since 1.4
+	 *            instantiate a {@link WebEnvironment} if none is available
+	 * @since 1.5
 	 * @see WebEnvironmentShiroFilter
 	 */
 	public ShiroFilter(boolean instantiateWebEnvironmentIfNotAvailable) {
@@ -90,19 +93,19 @@ public class ShiroFilter extends AbstractShiroFilter {
      */
     @Override
     public void init() throws Exception {
-    	WebEnvironment env = WebUtils.getRequiredWebEnvironment(getServletContext(),
-				instantiateWebEnvironmentIfNotAvailable);
+    		WebEnvironment env = WebUtils.getRequiredWebEnvironment(getServletContext(),
+			instantiateWebEnvironmentIfNotAvailable);
 
-		setSecurityManager(env.getWebSecurityManager());
+        setSecurityManager(env.getWebSecurityManager());
 
-		FilterChainResolver resolver = env.getFilterChainResolver();
-		if (resolver != null) {
-			setFilterChainResolver(resolver);
-		}
+        FilterChainResolver resolver = env.getFilterChainResolver();
+        if (resolver != null) {
+            setFilterChainResolver(resolver);
+        }
     }
     
     /**
-	 * @since 1.4
+	 * @since 1.5
 	 * @see WebEnvironmentShiroFilter
 	 */
 	@Override

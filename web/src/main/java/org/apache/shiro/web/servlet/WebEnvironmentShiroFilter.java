@@ -8,7 +8,7 @@ import org.apache.shiro.web.env.WebEnvironment;
  * in an OSGI environment, where the possibility to register the resp.
  * ServletContextListener might not be available.
  * 
- * @since 1.4
+ * @since 1.5
  */
 public class WebEnvironmentShiroFilter extends ShiroFilter {
 
