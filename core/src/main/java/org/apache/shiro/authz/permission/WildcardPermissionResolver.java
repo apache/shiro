@@ -45,7 +45,7 @@ public class WildcardPermissionResolver implements PermissionResolver {
      * @see WildcardPermissionResolver#WildcardPermissionResolver(boolean)
      */
     public WildcardPermissionResolver() {
-        this(false);
+        this(WildcardPermission.DEFAULT_CASE_SENSITIVE);
     }
 
     /**
