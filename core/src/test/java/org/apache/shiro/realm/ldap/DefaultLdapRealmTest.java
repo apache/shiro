@@ -82,6 +82,28 @@ public class DefaultLdapRealmTest {
         assertEquals(template, realm.getUserDnTemplate());
     }
 
+    @Test(expected=IllegalArgumentException.class)
+    public void testSetUserAuthenticationTemplateNull() {
+        realm.setUserAuthenticationTemplate(null);
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testSetUserAuthenticationTemplateEmpty() {
+        realm.setUserAuthenticationTemplate("  ");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testSetUserAuthenticationTemplateWithoutToken() {
+        realm.setUserAuthenticationTemplate("@mycompany.com");
+    }
+
+    @Test
+    public void testUserAuthenticationTemplate() {
+        String template = "{0}@mycompany.com";
+        realm.setUserAuthenticationTemplate(template);
+        assertEquals(template, realm.getUserAuthenticationTemplate());
+    }
+
     @Test
     public void testUserDnTemplateSubstitution() throws NamingException {
         realm.setUserDnTemplate("uid={0},ou=users,dc=mycompany,dc=com");

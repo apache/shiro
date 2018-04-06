@@ -33,7 +33,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.naming.AuthenticationNotSupportedException;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
 
 /**
@@ -78,7 +82,6 @@ import javax.naming.ldap.LdapContext;
  * properties as necessary.
  *
  * @see JndiLdapContextFactory
- *
  * @since 1.3
  */
 public class DefaultLdapRealm extends AuthorizingRealm {
@@ -86,10 +89,16 @@ public class DefaultLdapRealm extends AuthorizingRealm {
     private static final Logger log = LoggerFactory.getLogger(DefaultLdapRealm.class);
 
     //The zero index currently means nothing, but could be utilized in the future for other substitution techniques.
-    private static final String USERDN_SUBSTITUTION_TOKEN = "{0}";
+    private static final String AUTHENTICATION_SUBSTITUTION_TOKEN = "{0}";
 
+    @Deprecated
     private String userDnPrefix;
+    @Deprecated
     private String userDnSuffix;
+    private String userAuthenticationPrefix;
+    private String userAuthenticationSuffix;
+    private String userSearchBase;
+    private String userSearchFilter;
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -123,11 +132,12 @@ public class DefaultLdapRealm extends AuthorizingRealm {
     /**
      * Returns the User DN prefix to use when building a runtime User DN value or {@code null} if no
      * {@link #getUserDnTemplate() userDnTemplate} has been configured.  If configured, this value is the text that
-     * occurs before the {@link #USERDN_SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
+     * occurs before the {@link #AUTHENTICATION_SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
      *
      * @return the the User DN prefix to use when building a runtime User DN value or {@code null} if no
      *         {@link #getUserDnTemplate() userDnTemplate} has been configured.
      */
+    @Deprecated
     protected String getUserDnPrefix() {
         return userDnPrefix;
     }
@@ -135,13 +145,46 @@ public class DefaultLdapRealm extends AuthorizingRealm {
     /**
      * Returns the User DN suffix to use when building a runtime User DN value.  or {@code null} if no
      * {@link #getUserDnTemplate() userDnTemplate} has been configured.  If configured, this value is the text that
-     * occurs after the {@link #USERDN_SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
+     * occurs after the {@link #AUTHENTICATION_SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
      *
      * @return the User DN suffix to use when building a runtime User DN value or {@code null} if no
-     *         {@link #getUserDnTemplate() userDnTemplate} has been configured.
+     * {@link #getUserDnTemplate() userDnTemplate} has been configured.
      */
+    @Deprecated
     protected String getUserDnSuffix() {
         return userDnSuffix;
+    }
+
+    /**
+     * Returns the User authentication prefix to use when building a runtime User authentication value or User DN prefix if no
+     * {@link #getUserAuthenticationTemplate() userAuthenticationTemplate} has been configured.  If configured, this value is the text that
+     * occurs before the {@link #AUTHENTICATION_SUBSTITUTION_TOKEN} in the {@link #getUserAuthenticationTemplate() userAuthenticationTemplate} value.
+     *
+     * @return the the User DN prefix to use when building a runtime User DN value or {@code null} if no
+     * {@link #getUserAuthenticationTemplate() userAuthenticationTemplate} has been configured.
+     */
+    protected String getUserAuthenticationPrefix() {
+        return userAuthenticationPrefix != null ? userAuthenticationPrefix : getUserDnPrefix();
+    }
+
+    /**
+     * Returns the User DN suffix to use when building a runtime User DN value.  or {@code null} if no
+     * {@link #getUserDnTemplate() userDnTemplate} has been configured.  If configured, this value is the text that
+     * occurs after the {@link #AUTHENTICATION_SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
+     *
+     * @return the User DN suffix to use when building a runtime User DN value or {@code null} if no
+     * {@link #getUserDnTemplate() userDnTemplate} has been configured.
+     */
+    protected String getUserAuthenticationSuffix() {
+        return userAuthenticationSuffix != null ? userAuthenticationSuffix : getUserDnSuffix();
+    }
+
+    public String getUserSearchBase() {
+        return userSearchBase;
+    }
+
+    public String getUserSearchFilter() {
+        return userSearchFilter;
     }
 
     /*--------------------------------------------
@@ -173,25 +216,27 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * incorrect as most LDAP directories expect a fully-qualified User DN as opposed to the raw uid or username.  So,
      * ensure you set this property to match your environment!
      *
+     * @deprecated Use {@link #setUserAuthenticationTemplate(String)} instead
      * @param template the User Distinguished Name template to use for runtime substitution
      * @throws IllegalArgumentException if the template is null, empty, or does not contain the
      *                                  {@code {0}} substitution token.
      * @see LdapContextFactory#getLdapContext(Object,Object)
      */
+    @Deprecated
     public void setUserDnTemplate(String template) throws IllegalArgumentException {
         if (!StringUtils.hasText(template)) {
             String msg = "User DN template cannot be null or empty.";
             throw new IllegalArgumentException(msg);
         }
-        int index = template.indexOf(USERDN_SUBSTITUTION_TOKEN);
+        int index = template.indexOf(AUTHENTICATION_SUBSTITUTION_TOKEN);
         if (index < 0) {
             String msg = "User DN template must contain the '" +
-                    USERDN_SUBSTITUTION_TOKEN + "' replacement token to understand where to " +
+                    AUTHENTICATION_SUBSTITUTION_TOKEN + "' replacement token to understand where to " +
                     "insert the runtime authentication principal.";
             throw new IllegalArgumentException(msg);
         }
         String prefix = template.substring(0, index);
-        String suffix = template.substring(prefix.length() + USERDN_SUBSTITUTION_TOKEN.length());
+        String suffix = template.substring(prefix.length() + AUTHENTICATION_SUBSTITUTION_TOKEN.length());
         if (log.isDebugEnabled()) {
             log.debug("Determined user DN prefix [{}] and suffix [{}]", prefix, suffix);
         }
@@ -200,39 +245,142 @@ public class DefaultLdapRealm extends AuthorizingRealm {
     }
 
     /**
+     * Sets the User Authentication template to use when creating User Authentication at runtime. This can be either a
+     * User DN or a user principal name depending on your LDAP environment.
+     * <p/>
+     * If no template is configured, the raw {@code AuthenticationToken}
+     * {@link AuthenticationToken#getPrincipal() principal} will be used as the LDAP principal.  This is likely
+     * incorrect as most LDAP directories expect a fully-qualified User DN or principal name as opposed to the raw
+     * uid or username.  So, ensure you set this property to match your environment!
+     *
+     * @param template the User Authentication template to use for runtime substitution
+     * @throws IllegalArgumentException if the template is null, empty, or does not contain the
+     *                                  {@code {0}} substitution token.
+     * @see LdapContextFactory#getLdapContext(Object, Object)
+     */
+    public void setUserAuthenticationTemplate(String template) throws IllegalArgumentException {
+        if (!StringUtils.hasText(template)) {
+            String msg = "User authentication template cannot be null or empty.";
+            throw new IllegalArgumentException(msg);
+        }
+        int index = template.indexOf(AUTHENTICATION_SUBSTITUTION_TOKEN);
+        if (index < 0) {
+            String msg = "User authentication template must contain the '" +
+                    AUTHENTICATION_SUBSTITUTION_TOKEN + "' replacement token to understand where to " +
+                    "insert the runtime authentication principal.";
+            throw new IllegalArgumentException(msg);
+        }
+        String prefix = template.substring(0, index);
+        String suffix = template.substring(prefix.length() + AUTHENTICATION_SUBSTITUTION_TOKEN.length());
+        if (log.isDebugEnabled()) {
+            log.debug("Determined user DN prefix [{}] and suffix [{}]", prefix, suffix);
+        }
+        this.userAuthenticationPrefix = prefix;
+        this.userAuthenticationSuffix = suffix;
+    }
+
+    public void setUserSearchBase(String userSearchBase) {
+        this.userSearchBase = userSearchBase;
+    }
+
+    public void setUserSearchFilter(String userSearchFilter) {
+        this.userSearchFilter = userSearchFilter;
+    }
+
+    /**
      * Returns the User Distinguished Name (DN) template to use when creating User DNs at runtime - see the
      * {@link #setUserDnTemplate(String) setUserDnTemplate} JavaDoc for a full explanation.
      *
+     * @deprecated Use {@link #getUserAuthenticationTemplate()} instead
      * @return the User Distinguished Name (DN) template to use when creating User DNs at runtime.
      */
+    @Deprecated
     public String getUserDnTemplate() {
-        return getUserDn(USERDN_SUBSTITUTION_TOKEN);
+        return getUserDn(AUTHENTICATION_SUBSTITUTION_TOKEN);
     }
 
     /**
      * Returns the LDAP User Distinguished Name (DN) to use when acquiring an
      * {@link javax.naming.ldap.LdapContext LdapContext} from the {@link LdapContextFactory}.
      * <p/>
-     * If the the {@link #getUserDnTemplate() userDnTemplate} property has been set, this implementation will construct
-     * the User DN by substituting the specified {@code principal} into the configured template.  If the
-     * {@link #getUserDnTemplate() userDnTemplate} has not been set, the method argument will be returned directly
-     * (indicating that the submitted authentication token principal <em>is</em> the User DN).
+     * If no {@link #getUserSearchFilter() userSearchFilter} or {@link #getUserSearchBase()} userSearchBase} property
+     * has been set, this implementation will construct the User DN by substituting the specified {@code principal}
+     * into the configured template.
+     * <p/>
+     * In all other cases the User DN will be retrieved by searching for the user based on the provided
+     * {@link #getUserSearchFilter() userSearchFilter} and {@link #getUserSearchBase()} userSearchBase}.
      *
-     * @param principal the principal to substitute into the configured {@link #getUserDnTemplate() userDnTemplate}.
+     * @param principal the principal to substitute into the configured {@link #getUserSearchFilter() userSerachFilter}.
      * @return the constructed User DN to use at runtime when acquiring an {@link javax.naming.ldap.LdapContext}.
-     * @throws IllegalArgumentException if the method argument is null or empty
+     * @throws IllegalArgumentException if the method argument is null or empty, or if the {@link #getUserSearchFilter()
+     *                                  userSearchFilter} or {@link #getUserSearchBase()} userSearchBase} are not set up accordingly.
      * @throws IllegalStateException    if the {@link #getUserDnTemplate userDnTemplate} has not been set.
      * @see LdapContextFactory#getLdapContext(Object, Object)
      */
     protected String getUserDn(String principal) throws IllegalArgumentException, IllegalStateException {
+        String searchFilter = getUserSearchFilter();
+        String searchBase = getUserSearchBase();
+        if (!StringUtils.hasText(searchFilter) || !StringUtils.hasText(searchBase)) {
+            return getUserAuthentication(principal);
+        }
+        SearchControls searchCtls = new SearchControls();
+        searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        searchCtls.setReturningAttributes(new String[]{"distinguishedName"});
+        try {
+            NamingEnumeration answer = getContextFactory().getSystemLdapContext().search(searchBase, searchFilter, new String[]{principal}, searchCtls);
+            if (!answer.hasMore()) {
+                log.error("Could not find user with username " + principal + " in searchbase " + userSearchBase);
+                return null;
+            }
+            SearchResult sr = (SearchResult) answer.next();
+            Attributes attributes = sr.getAttributes();
+            if (attributes == null || attributes.get("distinguishedName") == null) {
+                log.error("Could not find distinguishedName for user with username " + principal);
+                return null;
+            }
+            return (String) attributes.get("distinguishedName").get();
+        } catch (NamingException e) {
+            throw new IllegalArgumentException("Could not query for the distinquishedName using the searchBase and " +
+                    "searchFilter", e);
+        }
+    }
+
+    /**
+     * Returns the User Authentication template to use for authenticating at runtime - see the
+     * {@link #setUserAuthenticationTemplate(String) setUserAuthenticationTemplate} JavaDoc for a full explanation.
+     *
+     * @return the User Authentication template to use when authenticating at runtime.
+     */
+    public String getUserAuthenticationTemplate() {
+        return getUserAuthentication(AUTHENTICATION_SUBSTITUTION_TOKEN);
+    }
+
+
+    /**
+     * Returns the LDAP User Distinguished Name (DN) to use when acquiring an
+     * {@link javax.naming.ldap.LdapContext LdapContext} from the {@link LdapContextFactory}.
+     * <p/>
+     * If the the {@link #getUserAuthenticationTemplate() userAuthenticationTemplate} property has been set, this
+     * implementation will construct the User authentication by substituting the specified {@code principal} into the
+     * configured template.  If the {@link #getUserAuthenticationTemplate() userAuthenticationTemplate} has not been
+     * set, the method argument will be returned directly (indicating that the submitted authentication token principal
+     * <em>is</em> the User Authentication).
+     *
+     * @param principal the principal to substitute into the configured {@link #getUserAuthenticationTemplate() userAuthenticationTemplate}.
+     * @return the constructed User DN to use at runtime when acquiring an {@link javax.naming.ldap.LdapContext}.
+     * @throws IllegalArgumentException if the method argument is null or empty
+     * @throws IllegalStateException    if the {@link #getUserAuthenticationTemplate() userAuthenticationTemplate} has not been set.
+     * @see LdapContextFactory#getLdapContext(Object, Object)
+     */
+    protected String getUserAuthentication(String principal) throws IllegalArgumentException, IllegalStateException {
         if (!StringUtils.hasText(principal)) {
             throw new IllegalArgumentException("User principal cannot be null or empty for User DN construction.");
         }
-        String prefix = getUserDnPrefix();
-        String suffix = getUserDnSuffix();
+        String prefix = getUserAuthenticationPrefix();
+        String suffix = getUserAuthenticationSuffix();
         if (prefix == null && suffix == null) {
-            log.debug("userDnTemplate property has not been configured, indicating the submitted " +
-                    "AuthenticationToken's principal is the same as the User DN.  Returning the method argument " +
+            log.debug("userAuthenticationTemplate property has not been configured, indicating the submitted " +
+                    "AuthenticationToken's principal is the same as the User Authentication.  Returning the method argument " +
                     "as is.");
             return principal;
         }
@@ -339,7 +487,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
         Object principal = token.getPrincipal();
         if (principal instanceof String) {
             String sPrincipal = (String) principal;
-            return getUserDn(sPrincipal);
+            return getUserAuthentication(sPrincipal);
         }
         return principal;
     }
