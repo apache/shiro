@@ -234,5 +234,5 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         assertNotNull(subject);
         assertEquals("user1", subject.getPrincipal());
     }
-
+    
 }
