@@ -23,6 +23,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -91,7 +92,7 @@ public abstract class AuthenticatingFilter extends AuthenticationFilter {
      * @return the <code>InetAddress</code> to associate with the login attempt.
      */
     protected String getHost(ServletRequest request) {
-        return request.getRemoteHost();
+        return WebUtils.getRemoteAddr(request);
     }
 
     /**

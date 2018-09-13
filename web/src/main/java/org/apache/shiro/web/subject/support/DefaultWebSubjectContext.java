@@ -22,6 +22,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
+import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -52,7 +53,7 @@ public class DefaultWebSubjectContext extends DefaultSubjectContext implements W
         if (host == null) {
             ServletRequest request = resolveServletRequest();
             if (request != null) {
-                host = request.getRemoteHost();
+                host = WebUtils.getRemoteAddr(request);
             }
         }
         return host;

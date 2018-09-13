@@ -76,7 +76,7 @@ public class ServletContainerSessionManager implements WebSessionManager {
 
         HttpSession httpSession = request.getSession(false);
         if (httpSession != null) {
-            session = createSession(httpSession, request.getRemoteHost());
+            session = createSession(httpSession, WebUtils.getRemoteAddr(request));
         }
 
         return session;
@@ -87,7 +87,7 @@ public class ServletContainerSessionManager implements WebSessionManager {
         if (host == null) {
             ServletRequest request = WebUtils.getRequest(context);
             if (request != null) {
-                host = request.getRemoteHost();
+                host = WebUtils.getRemoteAddr(request);
             }
         }
         return host;
