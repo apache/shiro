@@ -17,52 +17,52 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<features name="shiro-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+<features name="shiro-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.4.0">
 
     <!-- Shiro core features: -->
 
-    <feature name="shiro-core" version="${project.version}" resolver="(obr)">
+    <feature name="shiro-core" version="${project.version}">
         <bundle>mvn:org.apache.shiro/shiro-core/${project.version}</bundle>
     </feature>
 
-    <feature name="shiro-web" version="${project.version}" resolver="(obr)">
+    <feature name="shiro-web" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
-        <feature version="[2,4)">war</feature>
+        <feature version="[2,5)">war</feature>
         <bundle>mvn:org.apache.shiro/shiro-web/${project.version}</bundle>
     </feature>
 
     <!-- 3rd party support (alphabetized please): -->
 
-    <feature name="shiro-aspectj" version="${project.version}" resolver="(obr)">
+    <feature name="shiro-aspectj" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
         <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aspectj/${aspectj.bundle.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-aspectj/${project.version}</bundle>
     </feature>
 
-    <feature name="shiro-cas" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">shiro-core</feature>
-        <!-- Is there a CAS client osgi bundle somewhere?
-        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aspectj/${casclient.bundle.version}</bundle>
-        -->
+    <feature name="shiro-cas" version="${project.version}">
+        <feature prerequisite='true'>wrap</feature>
+        <feature version="${project.version}">shiro-web</feature>
+        <bundle dependency='true'>wrap:mvn:org.jasig.cas.client/cas-client-core/${cas.client.core.version}$Export-Package=org.jasig*;version=${cas.client.core.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-cas/${project.version}</bundle>
     </feature>
 
-    <feature name="shiro-ehcache" version="${project.version}" resolver="(obr)">
+    <feature name="shiro-ehcache" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
         <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/${ehcache.bundle.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-ehcache/${project.version}</bundle>
     </feature>
 
-    <feature name="shiro-hazelcast" version="${project.version}" resolver="(obr)">
+    <feature name="shiro-hazelcast" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
-        <!-- Is there a Hazelcast osgi bundle somewhere? The following line just assumes it exists: -->
-        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hazelcast/${hazelcast.bundle.version}</bundle>
+        <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+        <bundle>mvn:org.apache.geronimo.specs/geronimo-annotation_1.3_spec/1.1</bundle>
+        <bundle>mvn:com.hazelcast/hazelcast-all/${hazelcast.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-hazelcast/${project.version}</bundle>
     </feature>
 
     <!--
     TODO enable when openid4j module is done
-    <feature name="shiro-openid4j" version="${project.version}" resolver="(obr)">
+    <feature name="shiro-openid4j" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
         <feature version="${project.version}">shiro-web</feature>
         <feature version="[3,4)">spring</feature>
@@ -72,16 +72,16 @@
     </feature>
     -->
 
-    <feature name="shiro-quartz" version="${project.version}" resolver="(obr)">
+    <feature name="shiro-quartz" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
         <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons.collections.version}</bundle>
         <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/${quartz.bundle.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-quartz/${project.version}</bundle>
     </feature>
 
-    <feature name="shiro-spring" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">shiro-core</feature>
-        <feature version="[3,4)">spring</feature>
+    <feature name="shiro-spring" version="${project.version}">
+        <feature version="${project.version}">shiro-web</feature>
+        <feature version="[4,5)">spring</feature>
         <bundle>mvn:org.apache.shiro/shiro-spring/${project.version}</bundle>
     </feature>
 
