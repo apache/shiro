@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.spring.config.web.autoconfigure;
 
+import javax.servlet.DispatcherType;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.AbstractShiroWebFilterConfiguration;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
@@ -46,6 +47,7 @@ public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfigura
     protected FilterRegistrationBean filterShiroFilterRegistrationBean() throws Exception {
 
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR);
         filterRegistrationBean.setFilter((AbstractShiroFilter) shiroFilterFactoryBean().getObject());
         filterRegistrationBean.setOrder(1);
 
