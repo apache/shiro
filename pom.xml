@@ -216,6 +216,14 @@
             <organization>Apache Software Foundation</organization>
             <timezone>-6</timezone>
         </developer>
+        <developer>
+            <id>fpapon</id>
+            <name>Francois Papon</name>
+            <email>fpapon@apache.org</email>
+            <organization>Yupiik</organization>
+            <organizationUrl>https://www.yupiik.com/</organizationUrl>
+            <timezone>+4</timezone>
+        </developer>
     </developers>
 
     <build>
