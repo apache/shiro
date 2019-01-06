@@ -41,8 +41,8 @@
     <inceptionYear>2004</inceptionYear>
 
     <scm>
-        <connection>scm:git:https://git-wip-us.apache.org/repos/asf/shiro.git</connection>
-        <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/shiro.git</developerConnection>
+        <connection>scm:git:https://gitbox.apache.org/repos/asf/shiro.git</connection>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/shiro.git</developerConnection>
         <url>https://github.com/apache/shiro/tree/${project.scm.tag}</url>
         <tag>master</tag>
     </scm>
