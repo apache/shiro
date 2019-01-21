@@ -383,6 +383,7 @@
                 <version>2.19.1</version>
                 <configuration>
                     <printSummary>true</printSummary>
+                    <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
             <plugin>
@@ -390,6 +391,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.19.1</version>
                 <configuration>
+                    <useSystemClassLoader>false</useSystemClassLoader>
                     <includes>
                         <include>**/*IT.java</include>
                         <include>**/*IT.groovy</include>
