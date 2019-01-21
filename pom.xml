@@ -358,7 +358,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>1.4.4</version>
+                    <version>4.0.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
