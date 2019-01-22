@@ -23,12 +23,13 @@
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
         <version>1.4.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-jaxrs</artifactId>
     <name>Apache Shiro :: Support :: JAX-RS</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
 
     <dependencies>
@@ -57,5 +58,24 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>org.apache.shiro.web.jaxrs</Bundle-SymbolicName>
+                        <Export-Package>org.apache.shiro.web.jaxrs*;version=${project.version}</Export-Package>
+                        <Import-Package>
+                            org.apache.shiro*;version="${shiro.osgi.importRange}",
+                            *
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
