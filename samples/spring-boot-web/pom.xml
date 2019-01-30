@@ -32,11 +32,6 @@
     <artifactId>samples-spring-boot-web</artifactId>
     <name>Apache Shiro :: Samples :: Spring Boot Web</name>
 
-    <properties>
-        <!-- These spring-boot modules require spring 4 -->
-        <spring.version>4.3.2.RELEASE</spring.version>
-    </properties>
-
     <dependencies>
 
         <dependency>
