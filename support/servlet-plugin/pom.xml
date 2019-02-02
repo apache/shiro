@@ -26,6 +26,7 @@
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
         <version>1.4.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>shiro-servlet-plugin</artifactId>

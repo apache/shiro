@@ -21,9 +21,9 @@
 
     <parent>
         <groupId>org.apache.shiro</groupId>
-        <artifactId>shiro-root</artifactId>
+        <artifactId>shiro-config</artifactId>
         <version>1.4.1-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
