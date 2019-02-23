@@ -38,7 +38,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         realm.init()
 
         assertEquals name, realm.name
-        assertEquals name + AuthenticatingRealm.DEFAULT_AUTHORIZATION_CACHE_SUFFIX, realm.authenticationCacheName
+        assertEquals name + AuthenticatingRealm.DEFAULT_AUTHENTICATION_CACHE_SUFFIX, realm.authenticationCacheName
 
         realm.authenticationCacheName = "bar"
 
@@ -210,7 +210,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
     void testLogoutWithAuthenticationCachingEnabled() {
 
         def realmName = "testRealm"
-        def authcCacheName = realmName + AuthenticatingRealm.DEFAULT_AUTHORIZATION_CACHE_SUFFIX
+        def authcCacheName = realmName + AuthenticatingRealm.DEFAULT_AUTHENTICATION_CACHE_SUFFIX
         def username = "foo"
 
         def cacheManager = createStrictMock(CacheManager)
