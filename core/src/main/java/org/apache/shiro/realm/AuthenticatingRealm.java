@@ -123,7 +123,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      *
      * @since 1.2
      */
-    private static final String DEFAULT_AUTHORIZATION_CACHE_SUFFIX = ".authenticationCache";
+    private static final String DEFAULT_AUTHENTICATION_CACHE_SUFFIX = ".authenticationCache";
 
     /**
      * Credentials matcher used to determine if the provided credentials match the credentials stored in the data store.
@@ -166,7 +166,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
         this.authenticationCachingEnabled = false;
 
         int instanceNumber = INSTANCE_COUNT.getAndIncrement();
-        this.authenticationCacheName = getClass().getName() + DEFAULT_AUTHORIZATION_CACHE_SUFFIX;
+        this.authenticationCacheName = getClass().getName() + DEFAULT_AUTHENTICATION_CACHE_SUFFIX;
         if (instanceNumber > 0) {
             this.authenticationCacheName = this.authenticationCacheName + "." + instanceNumber;
         }
@@ -346,7 +346,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
         if (authcCacheName != null && authcCacheName.startsWith(getClass().getName())) {
             //get rid of the default heuristically-created cache name.  Create a more meaningful one
             //based on the application-unique Realm name:
-            this.authenticationCacheName = name + DEFAULT_AUTHORIZATION_CACHE_SUFFIX;
+            this.authenticationCacheName = name + DEFAULT_AUTHENTICATION_CACHE_SUFFIX;
         }
     }
 
