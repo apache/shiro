@@ -39,7 +39,6 @@
         <module>spring-client</module>
         <module>spring</module>
         <module>spring-mvc</module>
-        <module>spring-xml</module>
         <module>spring-hibernate</module>
         <module>spring-boot</module>
         <module>spring-boot-web</module>
