@@ -53,7 +53,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Bundle-SymbolicName>org.apache.shiro.config.core</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>org.apache.shiro.config.ogdl</Bundle-SymbolicName>
                         <Export-Package>org.apache.shiro.config*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
