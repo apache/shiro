@@ -38,11 +38,11 @@
         <module>quartz</module>
         <module>spring</module>
         <module>guice</module>
-        <module>features</module>
         <module>cas</module>
         <module>spring-boot</module>
         <module>servlet-plugin</module>
         <module>jaxrs</module>
+        <module>features</module>
     </modules>
 
 </project>
