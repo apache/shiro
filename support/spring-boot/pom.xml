@@ -31,11 +31,6 @@
     <name>Apache Shiro :: Support :: Spring Boot Parent</name>
     <packaging>pom</packaging>
 
-    <properties>
-        <!-- These spring-boot modules require spring 4 -->
-        <spring.version>4.3.2.RELEASE</spring.version>
-    </properties>
-
     <modules>
         <module>spring-boot-starter</module>
         <module>spring-boot-web-starter</module>
