@@ -32,6 +32,10 @@
     <name>Apache Shiro :: Samples</name>
     <packaging>pom</packaging>
 
+    <properties>
+        <japicmp.skip>true</japicmp.skip>
+    </properties>
+
     <modules>
         <module>aspectj</module>
         <module>quickstart</module>

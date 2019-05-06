@@ -31,6 +31,10 @@
     <name>Apache Shiro :: Support :: Guice</name>
     <packaging>bundle</packaging>
 
+    <properties>
+        <japicmp.skip>true</japicmp.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
