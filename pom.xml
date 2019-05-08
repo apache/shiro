@@ -89,7 +89,7 @@
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
         <hazelcast.version>3.7.2</hazelcast.version>
         <hsqldb.version>1.8.0.7</hsqldb.version>
-        <jdk.version>1.6</jdk.version>
+        <jdk.version>1.8</jdk.version>
         <jetty.version>9.3.0.M1</jetty.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
