@@ -78,7 +78,7 @@
              modules' OSGi metadata: -->
         <aspectj.version>1.8.9</aspectj.version>
         <cas.client.core.version>3.2.2</cas.client.core.version>
-        <commons.cli.version>1.3.1</commons.cli.version>
+        <commons.cli.version>1.4</commons.cli.version>
         <commons.codec.version>1.10</commons.codec.version>
         <commons.configuration2.version>2.2</commons.configuration2.version>
         <commons.lang3.version>3.3.2</commons.lang3.version>
