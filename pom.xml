@@ -78,6 +78,7 @@
              modules' OSGi metadata: -->
         <aspectj.version>1.8.9</aspectj.version>
         <cas.client.core.version>3.2.2</cas.client.core.version>
+        <commons.beanutils.version>1.9.3</commons.beanutils.version>
         <commons.cli.version>1.4</commons.cli.version>
         <commons.codec.version>1.12</commons.codec.version>
         <commons.configuration2.version>2.2</commons.configuration2.version>
@@ -97,17 +98,23 @@
              modules' OSGi metadata: -->
         <quartz.version>1.6.1</quartz.version>
         <slf4j.version>1.7.21</slf4j.version>
+        <logback.version>1.1.7</logback.version>
+        <log4j.version>1.2.17</log4j.version>
         <spring.version>4.3.22.RELEASE</spring.version>
         <spring-boot.version>1.5.19.RELEASE</spring-boot.version>
         <guice.version>3.0</guice.version>
         <jaxrs.api.version>2.0.1</jaxrs.api.version>
+        <htmlunit.version>2.23</htmlunit.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>3.4</easymock.version>
         <gmaven.version>1.5</gmaven.version>
         <groovy.version>2.4.7</groovy.version>
         <junit.version>4.12</junit.version>
+        <junit.server.jetty.version>0.4.2</junit.server.jetty.version>
         <hibernate.version>4.2.21.Final</hibernate.version>
+        <hibernate.annotations.version>3.5.6-Final</hibernate.annotations.version>
+        <taglib.standard.version>1.1.2</taglib.standard.version>
         <!-- so we can mock static methods in 3rd party libraries that sometimes don't use proper interfaces
              ahem, hazelcast, ahem... -->
         <powermock.version>1.6.6</powermock.version>
@@ -836,7 +843,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.1.7</version>
+                <version>${logback.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -866,7 +873,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.3</version>
+                <version>${commons.beanutils.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -902,7 +909,7 @@
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.17</version>
+                <version>${log4j.version}</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -948,12 +955,12 @@
             <dependency>
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast</artifactId>
-                <version>3.7.2</version>
+                <version>${hazelcast.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.htmlunit</groupId>
                 <artifactId>htmlunit</artifactId>
-                <version>2.23</version>
+                <version>${htmlunit.version}</version>
             </dependency>
             <dependency>
                 <!-- Used for sample applications only - not required for the framework: -->
@@ -1022,7 +1029,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-annotations</artifactId>
-                <version>3.5.6-Final</version>
+                <version>${hibernate.annotations.version}</version>
                 <optional>true</optional>
             </dependency>
             <dependency>
@@ -1151,13 +1158,13 @@
             <dependency>
                 <groupId>taglibs</groupId>
                 <artifactId>standard</artifactId>
-                <version>1.1.2</version>
+                <version>${taglib.standard.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.github.mjeanroy</groupId>
                 <artifactId>junit-servers-jetty</artifactId>
-                <version>0.4.2</version>
+                <version>${junit.server.jetty.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
