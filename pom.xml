@@ -126,6 +126,10 @@
 
     </properties>
 
+    <prerequisites>
+        <maven>3.5.0</maven>
+    </prerequisites>
+
     <modules>
         <module>lang</module>
         <module>crypto</module>
@@ -394,6 +398,11 @@
                         </parameter>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.0.0-M2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -598,6 +607,28 @@
                     <nexusUrl>https://repository.apache.org</nexusUrl>
                     <serverId>apache.releases.https</serverId>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.5.0,4)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>[1.8,)</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
