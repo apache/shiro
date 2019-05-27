@@ -69,6 +69,7 @@
         <shiro.previousVersion>1.4.1</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
+        <jacoco.skip>true</jacoco.skip>
 
         <!-- non-dependency-based properties: -->
         <shiro.osgi.importRange>[1.2, 2)</shiro.osgi.importRange>
@@ -139,9 +140,9 @@
         <module>core</module>
         <module>web</module>
         <module>support</module>
-        <module>samples</module>
         <module>tools</module>
         <module>all</module>
+        <module>samples</module>
         <module>integration-tests</module>
         <module>test-coverage</module>
     </modules>
@@ -1355,6 +1356,16 @@
 
     <profiles>
         <profile>
+            <id>fast</id>
+            <properties>
+                <maven.test.skip.exec>true</maven.test.skip.exec>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+            <build>
+                <defaultGoal>install</defaultGoal>
+            </build>
+        </profile>
+        <profile>
             <id>jdk8</id>
             <activation>
                 <jdk>[1.8,)</jdk>
@@ -1457,6 +1468,9 @@
         </profile>
         <profile>
             <id>ci</id>
+            <properties>
+                <jacoco.skip>false</jacoco.skip>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
