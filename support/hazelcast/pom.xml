@@ -32,7 +32,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <hazelcast.osgi.importRange>[2.4, 4)</hazelcast.osgi.importRange>
+        <hazelcast.osgi.importRange>[3, 4)</hazelcast.osgi.importRange>
     </properties>
 
     <dependencies>
