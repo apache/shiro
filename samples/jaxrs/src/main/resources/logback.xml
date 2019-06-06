@@ -29,5 +29,5 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <logger name="org.apache.shiro.web.jaxrs" level="DEBUG"/>
+    <logger name="org.apache.shiro.web.jaxrs" level="INFO"/>
 </configuration>
