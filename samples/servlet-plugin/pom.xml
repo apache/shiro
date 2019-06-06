@@ -107,12 +107,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.mjeanroy</groupId>
-            <artifactId>junit-servers-jetty</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.shiro.integrationtests</groupId>
             <artifactId>shiro-its-support</artifactId>
             <scope>test</scope>
