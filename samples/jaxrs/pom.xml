@@ -32,11 +32,6 @@
     <name>Apache Shiro :: Samples :: JAX-RS</name>
     <packaging>war</packaging>
 
-
-    <properties>
-        <jetty.version>9.3.0.M1</jetty.version>
-    </properties>
-
     <build>
         <pluginManagement>
             <plugins>
