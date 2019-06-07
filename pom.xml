@@ -98,11 +98,11 @@
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
         <quartz.version>1.6.1</quartz.version>
-        <slf4j.version>1.7.21</slf4j.version>
+        <slf4j.version>1.7.26</slf4j.version>
         <logback.version>1.1.7</logback.version>
         <log4j.version>1.2.17</log4j.version>
-        <spring.version>4.3.22.RELEASE</spring.version>
-        <spring-boot.version>1.5.19.RELEASE</spring-boot.version>
+        <spring.version>4.3.24.RELEASE</spring.version>
+        <spring-boot.version>1.5.21.RELEASE</spring-boot.version>
         <guice.version>3.0</guice.version>
         <jaxrs.api.version>2.0.1</jaxrs.api.version>
         <htmlunit.version>2.35.0</htmlunit.version>
@@ -114,7 +114,6 @@
         <junit.version>4.12</junit.version>
         <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
         <hibernate.version>4.2.21.Final</hibernate.version>
-        <hibernate.annotations.version>3.5.6-Final</hibernate.annotations.version>
         <taglib.standard.version>1.1.2</taglib.standard.version>
         <!-- so we can mock static methods in 3rd party libraries that sometimes don't use proper interfaces
              ahem, hazelcast, ahem... -->
@@ -1056,12 +1055,6 @@
                 <artifactId>geronimo-jta_1.1_spec</artifactId>
                 <version>1.1.1</version>
                 <scope>runtime</scope>
-                <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-annotations</artifactId>
-                <version>${hibernate.annotations.version}</version>
                 <optional>true</optional>
             </dependency>
             <dependency>
