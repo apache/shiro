@@ -30,7 +30,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.JdbcUtils;
 import org.apache.shiro.util.ThreadContext;
-import org.hsqldb.jdbc.jdbcDataSource;
+import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.*;
 import org.junit.rules.TestName;
 
@@ -294,7 +294,7 @@ public class JDBCRealmTest {
      * are executed in multithreaded mode, each test method gets its own database.)
      */
     protected void createDefaultSchema(String testName, boolean salted) {
-        jdbcDataSource ds = new jdbcDataSource();
+        JDBCDataSource ds = new JDBCDataSource();
         ds.setDatabase("jdbc:hsqldb:mem:" + name);
         ds.setUser("SA");
         ds.setPassword("");
@@ -303,7 +303,7 @@ public class JDBCRealmTest {
         try {
             conn = ds.getConnection();
             sql = conn.createStatement();
-            sql.executeUpdate("create table users (username varchar(20), password varchar(20))");
+            sql.executeUpdate("create table users (username varchar(20), password varchar(100))");
             Sha256Hash sha256Hash = salted ? new Sha256Hash(plainTextPassword, salt) :
                 new Sha256Hash(plainTextPassword);
             String password = sha256Hash.toHex();
@@ -324,7 +324,7 @@ public class JDBCRealmTest {
      * DataSource of the realm associated with the test to a DataSource connected to the database.
      */
     protected void createSaltColumnSchema(String testName) {
-        jdbcDataSource ds = new jdbcDataSource();
+        JDBCDataSource ds = new JDBCDataSource();
         ds.setDatabase("jdbc:hsqldb:mem:" + name);
         ds.setUser("SA");
         ds.setPassword("");
@@ -334,7 +334,7 @@ public class JDBCRealmTest {
             conn = ds.getConnection();
             sql = conn.createStatement();
             sql.executeUpdate(
-                    "create table users (username varchar(20), password varchar(20), password_salt varchar(20))");
+                    "create table users (username varchar(20), password varchar(100), password_salt varchar(20))");
             Sha256Hash sha256Hash = new Sha256Hash(plainTextPassword, salt);
             String password = sha256Hash.toHex();
             sql.executeUpdate("insert into users values ('" + username + "', '" + password + "', '" + salt + "')");

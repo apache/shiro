@@ -92,7 +92,7 @@
         <ehcache.version>2.6.11</ehcache.version>
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
         <hazelcast.version>3.12</hazelcast.version>
-        <hsqldb.version>1.8.0.7</hsqldb.version>
+        <hsqldb.version>2.4.1</hsqldb.version>
         <jdk.version>1.8</jdk.version>
         <jetty.version>9.4.18.v20190429</jetty.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
@@ -913,7 +913,7 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>hsqldb</groupId>
+                <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>${hsqldb.version}</version>
                 <scope>runtime</scope>
