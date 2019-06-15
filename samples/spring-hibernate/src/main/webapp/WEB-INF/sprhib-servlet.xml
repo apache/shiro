@@ -38,12 +38,12 @@
 
     <!-- Enable annotation-based controllers using @Controller annotations -->
     <bean id="annotationUrlMapping"
-          class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+          class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
         <property name="interceptors" ref="currentUserInterceptor"/>
     </bean>
 
     <bean id="annotationMethodHandlerAdapter"
-          class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+          class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"/>
 
     <!-- All views are JSPs loaded from /WEB-INF/jsp -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">

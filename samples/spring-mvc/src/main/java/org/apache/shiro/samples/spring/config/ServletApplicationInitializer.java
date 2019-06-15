@@ -23,7 +23,6 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.util.Log4jConfigListener;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -44,8 +43,6 @@ public class ServletApplicationInitializer implements WebApplicationInitializer 
 
         // Manage the lifecycle of the root application context
         container.addListener(new ContextLoaderListener(appContext));
-
-        container.addListener(new Log4jConfigListener());
 
         FilterRegistration.Dynamic shiroFilter = container.addFilter("shiroFilterFactoryBean", DelegatingFilterProxy.class);
         shiroFilter.setInitParameter("targetFilterLifecycle", "true");
