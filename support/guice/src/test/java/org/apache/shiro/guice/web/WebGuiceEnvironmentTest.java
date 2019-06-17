@@ -48,7 +48,7 @@ public class WebGuiceEnvironmentTest {
         FilterChainResolver filterChainResolver = createMock(FilterChainResolver.class);
         ServletContext servletContext = createMock(ServletContext.class);
 
-        Capture<WebGuiceEnvironment> capture = new Capture<WebGuiceEnvironment>();
+        Capture<WebGuiceEnvironment> capture = Capture.newInstance();
         servletContext.setAttribute(eq(EnvironmentLoaderListener.ENVIRONMENT_ATTRIBUTE_KEY), and(anyObject(WebGuiceEnvironment.class), capture(capture)));
 
         replay(servletContext, securityManager, filterChainResolver);

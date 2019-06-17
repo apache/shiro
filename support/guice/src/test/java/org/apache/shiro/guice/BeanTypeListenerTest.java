@@ -74,7 +74,7 @@ public class BeanTypeListenerTest {
 
         expect(injectorProvider.get()).andReturn(injector).anyTimes();
 
-        Capture<MembersInjector<SomeInjectableBean>> capture = new Capture<MembersInjector<SomeInjectableBean>>();
+        Capture<MembersInjector<SomeInjectableBean>> capture = Capture.newInstance();
         encounter.register(and(anyObject(MembersInjector.class), capture(capture)));
 
         SecurityManager securityManager = control.createMock(SecurityManager.class);
