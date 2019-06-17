@@ -46,7 +46,7 @@ public class HttpServletSessionTest {
         final int expectedTimeoutInSeconds = 30 * 24 * 60 * 60;  // 30 days.
         final long expectedLongValue = expectedTimeoutInSeconds * 1000L;
 
-        Capture<Integer> capturedInt = new Capture<Integer>();
+        Capture<Integer> capturedInt = Capture.newInstance();
         // use a capture to make sure the setter is doing the right thing.
         mockSession.setMaxInactiveInterval(captureInt(capturedInt));
         expect(mockSession.getMaxInactiveInterval()).andReturn(expectedTimeoutInSeconds);
