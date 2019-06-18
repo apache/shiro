@@ -31,10 +31,6 @@
 	<name>Apache Shiro :: ITs :: Guice 4</name>
 	<packaging>war</packaging>
 
-	<properties>
-		<guice.version>4.1.0</guice.version>
-	</properties>
-
 	<build>
 	    <plugins>
 			<plugin>
