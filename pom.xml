@@ -77,12 +77,12 @@
         <!-- Compile 3rd party dependencies: -->
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
-        <aspectj.version>1.8.9</aspectj.version>
+        <aspectj.version>1.9.4</aspectj.version>
         <cas.client.core.version>3.2.2</cas.client.core.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
         <commons.cli.version>1.4</commons.cli.version>
         <commons.codec.version>1.12</commons.codec.version>
-        <commons.configuration2.version>2.2</commons.configuration2.version>
+        <commons.configuration2.version>2.5</commons.configuration2.version>
         <commons.lang3.version>3.3.2</commons.lang3.version>
         <commons.lang.version>2.4</commons.lang.version>
         <commons.logging.version>1.2</commons.logging.version>
@@ -91,8 +91,8 @@
              modules' OSGi metadata: -->
         <ehcache.version>2.6.11</ehcache.version>
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
-        <hazelcast.version>3.12</hazelcast.version>
-        <hsqldb.version>2.4.1</hsqldb.version>
+        <hazelcast.version>3.12.1</hazelcast.version>
+        <hsqldb.version>2.5.0</hsqldb.version>
         <jdk.version>1.8</jdk.version>
         <jetty.version>9.4.18.v20190429</jetty.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
@@ -101,8 +101,8 @@
         <slf4j.version>1.7.26</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <log4j.version>1.2.17</log4j.version>
-        <spring.version>5.1.7.RELEASE</spring.version>
-        <spring-boot.version>2.1.5.RELEASE</spring-boot.version>
+        <spring.version>5.1.8.RELEASE</spring.version>
+        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
         <guice.version>4.2.2</guice.version>
         <jaxrs.api.version>2.0.1</jaxrs.api.version>
         <htmlunit.version>2.35.0</htmlunit.version>
@@ -110,7 +110,7 @@
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>4.0.2</easymock.version>
         <gmaven.version>1.5</gmaven.version>
-        <groovy.version>2.4.7</groovy.version>
+        <groovy.version>2.4.9</groovy.version>
         <junit.version>4.12</junit.version>
         <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
         <hibernate.version>5.4.3.Final</hibernate.version>
@@ -645,8 +645,8 @@
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>java-hamcrest</artifactId>
-            <version>2.0.0.0</version>
+            <artifactId>hamcrest-core</artifactId>
+            <version>2.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -682,121 +682,121 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-lang</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-cache</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-config-core</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-config-ogdl</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-crypto-core</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-crypto-hash</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-crypto-cipher</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-event</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-web</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-servlet-plugin</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- Shiro 3rd party support (keep this alphabetically ordered based on the artifactId please): -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-aspectj</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-cas</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-ehcache</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-quartz</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-guice</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-hazelcast</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-jaxrs</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-all</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- Shiro samples: -->
             <dependency>
                 <groupId>org.apache.shiro.samples</groupId>
                 <artifactId>samples-spring-client</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring-boot-starter</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring-boot-web-starter</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
 
 
@@ -804,21 +804,21 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-config-ogdl</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro.integrationtests</groupId>
                 <artifactId>shiro-its-support</artifactId>
-                <version>1.5.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- 3rd party dependencies -->
