@@ -78,7 +78,6 @@
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
         <aspectj.version>1.9.4</aspectj.version>
-        <cas.client.core.version>3.2.2</cas.client.core.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
         <commons.cli.version>1.4</commons.cli.version>
         <commons.codec.version>1.14</commons.codec.version>
@@ -750,11 +749,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-cas</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-ehcache</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -845,13 +839,6 @@
                 <groupId>javax.annotation</groupId>
                 <artifactId>javax.annotation-api</artifactId>
                 <version>${javax.annotation.api.version}</version>
-            </dependency>
-            <dependency>
-                <!-- runtime dependency for the shiro-cas module: -->
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${commons.codec.version}</version>
-                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>

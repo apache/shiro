@@ -76,10 +76,6 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-aspectj</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-cas</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.shiro</groupId>
