@@ -81,7 +81,7 @@
 
     <feature name="shiro-spring" version="${project.version}">
         <feature version="${project.version}">shiro-web</feature>
-        <feature version="[4,5)">spring</feature>
+        <feature version="[4,6)">spring</feature>
         <bundle>mvn:org.apache.shiro/shiro-spring/${project.version}</bundle>
     </feature>
 
