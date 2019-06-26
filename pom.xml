@@ -83,10 +83,8 @@
         <commons.cli.version>1.4</commons.cli.version>
         <commons.codec.version>1.12</commons.codec.version>
         <commons.configuration2.version>2.5</commons.configuration2.version>
-        <commons.lang3.version>3.3.2</commons.lang3.version>
-        <commons.lang.version>2.4</commons.lang.version>
+        <commons.lang3.version>3.9</commons.lang3.version>
         <commons.logging.version>1.2</commons.logging.version>
-        <crowd.version>1.5.2</crowd.version>
         <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
              modules' OSGi metadata: -->
         <ehcache.version>2.6.11</ehcache.version>
@@ -865,12 +863,6 @@
                 </exclusions>
             </dependency>
 
-            <dependency>
-                <!-- Used for Atlassian Crowd Realm - not required for the framework: -->
-                <groupId>com.atlassian.crowd</groupId>
-                <artifactId>crowd-integration-client</artifactId>
-                <version>${crowd.version}</version>
-            </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
