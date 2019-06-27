@@ -31,7 +31,9 @@ package org.apache.shiro.util;
  * thanks to Rod Johnson, Juergen Hoeller, and Rick Evans for making this available.</em>
  *
  * @since 0.2
+ * @deprecated This class is no longer used in Shiro and will be removed in the next major version.
  */
+@Deprecated
 public abstract class JavaEnvironment {
 
     /**
