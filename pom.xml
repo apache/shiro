@@ -112,7 +112,7 @@
         <junit.version>4.12</junit.version>
         <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
         <hibernate.version>5.4.3.Final</hibernate.version>
-        <taglib.standard.version>1.1.2</taglib.standard.version>
+        <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <!-- so we can mock static methods in 3rd party libraries that sometimes don't use proper interfaces
              ahem, hazelcast, ahem... -->
         <powermock.version>2.0.2</powermock.version>
@@ -918,9 +918,15 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>1.2</version>
+                <groupId>org.apache.taglibs</groupId>
+                <artifactId>taglibs-standard-spec</artifactId>
+                <version>${taglibs.standard.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.taglibs</groupId>
+                <artifactId>taglibs-standard-impl</artifactId>
+                <version>${taglibs.standard.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -1171,12 +1177,6 @@
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>taglibs</groupId>
-                <artifactId>standard</artifactId>
-                <version>${taglib.standard.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.github.mjeanroy</groupId>
