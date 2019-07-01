@@ -41,9 +41,14 @@
 
 	<dependencies>
 	    <dependency>
-	        <groupId>javax.servlet</groupId>
-	        <artifactId>jstl</artifactId>
-			<scope>compile</scope>
+		<groupId>org.apache.taglibs</groupId>
+		<artifactId>taglibs-standard-spec</artifactId>
+		<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+		<groupId>org.apache.taglibs</groupId>
+		<artifactId>taglibs-standard-impl</artifactId>
+		<scope>compile</scope>
 	    </dependency>
 	    <dependency>
 	        <groupId>javax.servlet</groupId>
