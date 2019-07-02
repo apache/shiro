@@ -40,7 +40,6 @@ import org.apache.shiro.crypto.hash.format.HexFormat;
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
 import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.util.ByteSource;
-import org.apache.shiro.util.JavaEnvironment;
 import org.apache.shiro.util.StringUtils;
 
 import java.io.File;
@@ -443,11 +442,6 @@ public final class Hasher {
     }
 
     private static char[] readPassword(boolean confirm) {
-        if (!JavaEnvironment.isAtLeastVersion16()) {
-            String msg = "Password hashing (prompt without echo) uses the java.io.Console to read passwords " +
-                    "safely.  This is only available on Java 1.6 platforms and later.";
-            throw new IllegalArgumentException(msg);
-        }
         java.io.Console console = System.console();
         if (console == null) {
             throw new IllegalStateException("java.io.Console is not available on the current JVM.  Cannot read passwords.");
