@@ -18,12 +18,10 @@
  */
 package org.apache.shiro.web.mgt;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.crypto.AesCipherService;
-import org.apache.shiro.crypto.CipherService;
+import org.apache.shiro.codec.Base64;
 import org.apache.shiro.crypto.CryptoException;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
