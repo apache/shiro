@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.samples.aspectj.bank;
 
-import junit.framework.Assert;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -28,6 +27,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -106,61 +106,61 @@ public class SecureBankServiceTest {
     public void testDepositInto_singleTx() throws Exception {
         loginAsUser();
         long accountId = createAndValidateAccountFor("Joe Smith");
-        makeDepositAndValidateAccount(accountId, 250.00d, "Joe Smith");
+        makeDepositAndValidateAccount(accountId, 250, "Joe Smith");
     }
 
     @Test
     public void testDepositInto_multiTxs() throws Exception {
         loginAsUser();
         long accountId = createAndValidateAccountFor("Everett Smith");
-        makeDepositAndValidateAccount(accountId, 50.00d, "Everett Smith");
-        makeDepositAndValidateAccount(accountId, 300.00d, "Everett Smith");
-        makeDepositAndValidateAccount(accountId, 85.00d, "Everett Smith");
-        assertAccount("Everett Smith", true, 435.00d, 3, accountId);
+        makeDepositAndValidateAccount(accountId, 50, "Everett Smith");
+        makeDepositAndValidateAccount(accountId, 300, "Everett Smith");
+        makeDepositAndValidateAccount(accountId, 85, "Everett Smith");
+        assertAccount("Everett Smith", true, 435, 3, accountId);
     }
 
     @Test(expected = NotEnoughFundsException.class)
     public void testWithdrawFrom_emptyAccount() throws Exception {
         loginAsUser();
         long accountId = createAndValidateAccountFor("Wally Smith");
-        service.withdrawFrom(accountId, 100.00d);
+        service.withdrawFrom(accountId, 100);
     }
 
     @Test(expected = NotEnoughFundsException.class)
     public void testWithdrawFrom_notEnoughFunds() throws Exception {
         loginAsUser();
         long accountId = createAndValidateAccountFor("Frank Smith");
-        makeDepositAndValidateAccount(accountId, 50.00d, "Frank Smith");
-        service.withdrawFrom(accountId, 100.00d);
+        makeDepositAndValidateAccount(accountId, 50, "Frank Smith");
+        service.withdrawFrom(accountId, 100);
     }
 
     @Test
     public void testWithdrawFrom_singleTx() throws Exception {
         loginAsUser();
         long accountId = createAndValidateAccountFor("Al Smith");
-        makeDepositAndValidateAccount(accountId, 500.00d, "Al Smith");
-        makeWithdrawalAndValidateAccount(accountId, 100.00d, "Al Smith");
-        assertAccount("Al Smith", true, 400.00d, 2, accountId);
+        makeDepositAndValidateAccount(accountId, 500, "Al Smith");
+        makeWithdrawalAndValidateAccount(accountId, 100, "Al Smith");
+        assertAccount("Al Smith", true, 400, 2, accountId);
     }
 
     @Test
     public void testWithdrawFrom_manyTxs() throws Exception {
         loginAsUser();
         long accountId = createAndValidateAccountFor("Zoe Smith");
-        makeDepositAndValidateAccount(accountId, 500.00d, "Zoe Smith");
-        makeWithdrawalAndValidateAccount(accountId, 100.00d, "Zoe Smith");
-        makeWithdrawalAndValidateAccount(accountId, 75.00d, "Zoe Smith");
-        makeWithdrawalAndValidateAccount(accountId, 125.00d, "Zoe Smith");
-        assertAccount("Zoe Smith", true, 200.00d, 4, accountId);
+        makeDepositAndValidateAccount(accountId, 500, "Zoe Smith");
+        makeWithdrawalAndValidateAccount(accountId, 100, "Zoe Smith");
+        makeWithdrawalAndValidateAccount(accountId, 75, "Zoe Smith");
+        makeWithdrawalAndValidateAccount(accountId, 125, "Zoe Smith");
+        assertAccount("Zoe Smith", true, 200, 4, accountId);
     }
 
     @Test
     public void testWithdrawFrom_upToZero() throws Exception {
         loginAsUser();
         long accountId = createAndValidateAccountFor("Zoe Smith");
-        makeDepositAndValidateAccount(accountId, 500.00d, "Zoe Smith");
-        makeWithdrawalAndValidateAccount(accountId, 500.00d, "Zoe Smith");
-        assertAccount("Zoe Smith", true, 0.00d, 2, accountId);
+        makeDepositAndValidateAccount(accountId, 500, "Zoe Smith");
+        makeWithdrawalAndValidateAccount(accountId, 500, "Zoe Smith");
+        assertAccount("Zoe Smith", true, 0, 2, accountId);
     }
 
     @Test
@@ -171,21 +171,21 @@ public class SecureBankServiceTest {
         logoutCurrentSubject();
         loginAsSuperviser();
         double closingBalance = service.closeAccount(accountId);
-        Assert.assertEquals(0.00d, closingBalance);
-        assertAccount("Chris Smith", false, 0.00d, 1, accountId);
+        Assert.assertEquals(0, (int)closingBalance);
+        assertAccount("Chris Smith", false, 0, 1, accountId);
     }
 
     @Test
     public void testCloseAccount_withBalance() throws Exception {
         loginAsUser();
         long accountId = createAndValidateAccountFor("Gerry Smith");
-        makeDepositAndValidateAccount(accountId, 385.00d, "Gerry Smith");
+        makeDepositAndValidateAccount(accountId, 385, "Gerry Smith");
 
         logoutCurrentSubject();
         loginAsSuperviser();
         double closingBalance = service.closeAccount(accountId);
-        Assert.assertEquals(385.00d, closingBalance);
-        assertAccount("Gerry Smith", false, 0.00d, 2, accountId);
+        Assert.assertEquals(385, (int)closingBalance);
+        assertAccount("Gerry Smith", false, 0, 2, accountId);
     }
 
     @Test(expected = InactiveAccountException.class)
@@ -196,8 +196,8 @@ public class SecureBankServiceTest {
         logoutCurrentSubject();
         loginAsSuperviser();
         double closingBalance = service.closeAccount(accountId);
-        Assert.assertEquals(0.00d, closingBalance);
-        assertAccount("Chris Smith", false, 0.00d, 1, accountId);
+        Assert.assertEquals(0, (int)closingBalance);
+        assertAccount("Chris Smith", false, 0, 1, accountId);
         service.closeAccount(accountId);
     }
 
@@ -210,33 +210,33 @@ public class SecureBankServiceTest {
 
     protected long createAndValidateAccountFor(String anOwner) throws Exception {
         long createdId = service.createNewAccount(anOwner);
-        assertAccount(anOwner, true, 0.0d, 0, createdId);
+        assertAccount(anOwner, true, 0, 0, createdId);
         return createdId;
     }
 
-    protected double makeDepositAndValidateAccount(long anAccountId, double anAmount, String eOwnerName) throws Exception {
+    protected double makeDepositAndValidateAccount(long anAccountId, int anAmount, String eOwnerName) throws Exception {
         double previousBalance = service.getBalanceOf(anAccountId);
         int previousTxCount = service.getTxHistoryFor(anAccountId).length;
         double newBalance = service.depositInto(anAccountId, anAmount);
-        Assert.assertEquals(previousBalance + anAmount, newBalance);
-        assertAccount(eOwnerName, true, newBalance, 1 + previousTxCount, anAccountId);
+        Assert.assertEquals((int)previousBalance + anAmount, (int)newBalance);
+        assertAccount(eOwnerName, true, (int)newBalance, 1 + previousTxCount, anAccountId);
         return newBalance;
     }
 
-    protected double makeWithdrawalAndValidateAccount(long anAccountId, double anAmount, String eOwnerName) throws Exception {
+    protected double makeWithdrawalAndValidateAccount(long anAccountId, int anAmount, String eOwnerName) throws Exception {
         double previousBalance = service.getBalanceOf(anAccountId);
         int previousTxCount = service.getTxHistoryFor(anAccountId).length;
         double newBalance = service.withdrawFrom(anAccountId, anAmount);
-        Assert.assertEquals(previousBalance - anAmount, newBalance);
-        assertAccount(eOwnerName, true, newBalance, 1 + previousTxCount, anAccountId);
+        Assert.assertEquals((int)previousBalance - anAmount, (int)newBalance);
+        assertAccount(eOwnerName, true, (int)newBalance, 1 + previousTxCount, anAccountId);
         return newBalance;
     }
 
 
-    public static void assertAccount(String eOwnerName, boolean eIsActive, double eBalance, int eTxLogCount, long actualAccountId) throws Exception {
+    public static void assertAccount(String eOwnerName, boolean eIsActive, int eBalance, int eTxLogCount, long actualAccountId) throws Exception {
         Assert.assertEquals(eOwnerName, service.getOwnerOf(actualAccountId));
         Assert.assertEquals(eIsActive, service.isAccountActive(actualAccountId));
-        Assert.assertEquals(eBalance, service.getBalanceOf(actualAccountId));
+        Assert.assertEquals(eBalance, (int)service.getBalanceOf(actualAccountId));
         Assert.assertEquals(eTxLogCount, service.getTxHistoryFor(actualAccountId).length);
     }
 }

@@ -30,8 +30,10 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.UUID;
 
-import static junit.framework.Assert.*;
 import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests for the {@link JndiLdapContextFactory} class.

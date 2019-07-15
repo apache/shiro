@@ -22,7 +22,7 @@ import org.apache.shiro.codec.CodecSupport
 import org.apache.shiro.util.ByteSource
 import org.junit.Test
 
-import static junit.framework.Assert.assertTrue
+import static org.junit.Assert.assertTrue
 
 /**
  * Test cases for the {@link BlowfishCipherService} class.

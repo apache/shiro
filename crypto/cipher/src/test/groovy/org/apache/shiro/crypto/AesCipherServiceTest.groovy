@@ -18,11 +18,11 @@
  */
 package org.apache.shiro.crypto
 
+import static org.junit.Assert.*;
+
 import org.apache.shiro.codec.CodecSupport
 import org.apache.shiro.util.ByteSource
 import org.junit.Test
-
-import static junit.framework.Assert.*
 
 /**
  * Test class for the AesCipherService class.
