@@ -27,8 +27,8 @@ import org.junit.Test;
 import javax.servlet.Filter;
 import java.util.Map;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TODO - Class JavaDoc

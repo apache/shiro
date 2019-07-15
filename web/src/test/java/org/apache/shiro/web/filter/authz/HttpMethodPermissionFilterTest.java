@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 

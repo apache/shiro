@@ -22,15 +22,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.naming.AuthenticationException;
-import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.UUID;
 
-import static junit.framework.Assert.*;
 import static org.easymock.EasyMock.createNiceMock;
 
 /**
