@@ -1,0 +1,15 @@
+language: java
+
+jdk:
+- oraclejdk8
+- openjdk11
+
+# skip the Travis-CI install phase because Maven handles that directly
+install:
+- 'true'
+
+script:
+- "mv -e -Pci,docs install apache-rat:check"
+
+after_success:
+- bash <(curl -s https://codecov.io/bash) -f test-coverage/target/site/jacoco-aggregate/jacoco.xml
