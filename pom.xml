@@ -81,7 +81,7 @@
         <cas.client.core.version>3.2.2</cas.client.core.version>
         <commons.beanutils.version>1.9.3</commons.beanutils.version>
         <commons.cli.version>1.4</commons.cli.version>
-        <commons.codec.version>1.12</commons.codec.version>
+        <commons.codec.version>1.13</commons.codec.version>
         <commons.configuration2.version>2.5</commons.configuration2.version>
         <commons.lang3.version>3.9</commons.lang3.version>
         <commons.logging.version>1.2</commons.logging.version>
