@@ -1241,7 +1241,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.12.0</version>
                 <configuration>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <targetJdk>1.5</targetJdk>
