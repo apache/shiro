@@ -30,4 +30,5 @@
     </root>
 
     <logger name="org.apache.shiro.web.jaxrs" level="INFO"/>
+    <logger name="org.eclipse.jetty.annotations.AnnotationParser" level="ERROR"/>
 </configuration>
