@@ -59,7 +59,7 @@
             <!-- for Optional SAML ticket validation: -->
             <groupId>org.apache.santuario</groupId>
             <artifactId>xmlsec</artifactId>
-            <version>1.4.3</version>
+            <version>2.1.4</version>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
