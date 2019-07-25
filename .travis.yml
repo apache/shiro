@@ -19,7 +19,8 @@ language: java
 
 jdk:
 - openjdk8
-- openjdk11
+#- openjdk11
+# Running into a problem with junit-servers-jetty with Java 11
 
 # skip the Travis-CI install phase because Maven handles that directly
 install:
