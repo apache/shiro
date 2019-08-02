@@ -22,6 +22,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.codec.Base64;
+import org.apache.shiro.codec.CodecSupport;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.crypto.hash.Sha256Hash;
@@ -142,8 +144,9 @@ public class JDBCRealmTest {
     public void testSaltColumnSuccess() throws Exception {
         String testMethodName = name.getMethodName();
         JdbcRealm realm = realmMap.get(testMethodName);
-        createSaltColumnSchema(testMethodName);
+        createSaltColumnSchema(testMethodName, false);
         realm.setSaltStyle(JdbcRealm.SaltStyle.COLUMN);
+        realm.setSaltIsBase64Encoded(false);
         
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
@@ -153,12 +156,45 @@ public class JDBCRealmTest {
     }
     
     @Test
+    public void testBase64EncodedSaltColumnSuccess() throws Exception {
+        String testMethodName = name.getMethodName();
+        JdbcRealm realm = realmMap.get(testMethodName);
+        createSaltColumnSchema(testMethodName, true);
+        realm.setSaltStyle(JdbcRealm.SaltStyle.COLUMN);
+
+        Subject.Builder builder = new Subject.Builder(securityManager);
+        Subject currentUser = builder.buildSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
+        currentUser.login(token);
+        currentUser.logout();
+    }
+
+    @Test
     public void testSaltColumnWrongPassword() throws Exception {
         String testMethodName = name.getMethodName();
         JdbcRealm realm = realmMap.get(testMethodName);
-        createSaltColumnSchema(testMethodName);
+        createSaltColumnSchema(testMethodName, false);
         realm.setSaltStyle(JdbcRealm.SaltStyle.COLUMN);
+        realm.setSaltIsBase64Encoded(false);
         
+        Subject.Builder builder = new Subject.Builder(securityManager);
+        Subject currentUser = builder.buildSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken(username, "passwrd");
+        try {
+            currentUser.login(token);
+        } catch (IncorrectCredentialsException ex) {
+            // Expected
+        }
+    }
+
+    @Test
+    public void testBase64SaltColumnWrongPassword() throws Exception {
+        String testMethodName = name.getMethodName();
+        JdbcRealm realm = realmMap.get(testMethodName);
+        createSaltColumnSchema(testMethodName, true);
+        realm.setSaltStyle(JdbcRealm.SaltStyle.COLUMN);
+        realm.setSaltIsBase64Encoded(false);
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, "passwrd");
@@ -322,8 +358,10 @@ public class JDBCRealmTest {
     /**
      * Creates a test database with a separate salt column in the users table. Sets the
      * DataSource of the realm associated with the test to a DataSource connected to the database.
+     * @param The name of the test which is used as the key when saving the created realm in the realmMap
+     * @param base64EncodeSalt if true, the salt will be base64 encoded before it's stored in the database
      */
-    protected void createSaltColumnSchema(String testName) {
+    protected void createSaltColumnSchema(String testName, boolean base64EncodeSalt) {
         JDBCDataSource ds = new JDBCDataSource();
         ds.setDatabase("jdbc:hsqldb:mem:" + name);
         ds.setUser("SA");
@@ -337,7 +375,8 @@ public class JDBCRealmTest {
                     "create table users (username varchar(20), password varchar(100), password_salt varchar(20))");
             Sha256Hash sha256Hash = new Sha256Hash(plainTextPassword, salt);
             String password = sha256Hash.toHex();
-            sql.executeUpdate("insert into users values ('" + username + "', '" + password + "', '" + salt + "')");
+            String maybeBase64EncodedSalt = base64EncodeSalt ? Base64.encodeToString(CodecSupport.toBytes(salt)) : salt;
+            sql.executeUpdate("insert into users values ('" + username + "', '" + password + "', '" + maybeBase64EncodedSalt + "')");
         } catch (SQLException ex) {
             Assert.fail("Exception creating test database");
         } finally {
