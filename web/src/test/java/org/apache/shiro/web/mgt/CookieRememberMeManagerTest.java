@@ -71,6 +71,7 @@ public class CookieRememberMeManagerTest {
         expect(cookie.getVersion()).andReturn(SimpleCookie.DEFAULT_VERSION);
         expect(cookie.isSecure()).andReturn(false);
         expect(cookie.isHttpOnly()).andReturn(true);
+        expect(cookie.getSameSite()).andReturn(org.apache.shiro.web.servlet.Cookie.SameSiteOptions.LAX);
 
         UsernamePasswordToken token = new UsernamePasswordToken("user", "secret");
         token.setRememberMe(true);
