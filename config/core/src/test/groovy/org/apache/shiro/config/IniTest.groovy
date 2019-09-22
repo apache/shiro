@@ -118,6 +118,26 @@ public class IniTest {
         kv = Ini.Section.splitKeyValue(test);
         assertEquals("Truth", kv[0]);
         assertEquals("Beauty", kv[1]);
+
+        test = "Tru\\th=Beauty";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+
+        test = "Truth\\=Beauty";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+
+        test = "Truth=Beau\\ty";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+
+        test = "Truth=Beauty\\";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
     }
 
     @Test(expected = IllegalArgumentException.class)
