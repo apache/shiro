@@ -92,18 +92,18 @@
         <hazelcast.version>3.12.1</hazelcast.version>
         <hsqldb.version>2.5.0</hsqldb.version>
         <jdk.version>1.8</jdk.version>
-        <jetty.version>9.4.18.v20190429</jetty.version>
+        <jetty.version>9.4.20.v20190813</jetty.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
         <quartz.version>1.6.1</quartz.version>
         <slf4j.version>1.7.26</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <log4j.version>1.2.17</log4j.version>
-        <spring.version>5.1.8.RELEASE</spring.version>
-        <spring-boot.version>2.1.6.RELEASE</spring-boot.version>
+        <spring.version>5.1.10.RELEASE</spring.version>
+        <spring-boot.version>2.1.9.RELEASE</spring-boot.version>
         <guice.version>4.2.2</guice.version>
         <jaxrs.api.version>2.0.1</jaxrs.api.version>
-        <htmlunit.version>2.35.0</htmlunit.version>
+        <htmlunit.version>2.36.0</htmlunit.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>4.0.2</easymock.version>
@@ -374,7 +374,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>4.0.2</version>
+                    <version>5.2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.siom79.japicmp</groupId>
