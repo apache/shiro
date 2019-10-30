@@ -59,6 +59,9 @@
                             org.apache.commons.configuration2*;resolution:=optional,
                             *
                         </Import-Package>
+                        <DynamicImport-Package>
+                            org.apache.shiro.*
+                        </DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>
