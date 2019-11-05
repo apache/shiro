@@ -23,13 +23,17 @@ import org.apache.shiro.cache.Cache
 import org.apache.shiro.cache.CacheManager
 import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.authc.*
+import org.junit.Test
+
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link AuthenticatingRealm} implementation.
  */
-class AuthenticatingRealmTest extends GroovyTestCase {
+class AuthenticatingRealmTest {
 
+    @Test
     void testSetName() {
         AuthenticatingRealm realm = new TestAuthenticatingRealm()
         def name = "foo"
@@ -46,6 +50,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         assertEquals "bar", realm.authenticationCacheName
     }
 
+    @Test
     void testSupports() {
         def password = "foo"
         def token = new UsernamePasswordToken("username", password);
@@ -55,6 +60,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         assertTrue realm.supports(token)
     }
 
+    @Test
     void testSupportsWithCustomAuthenticationTokenClass() {
 
         def token = createStrictMock(RememberMeAuthenticationToken)
@@ -69,6 +75,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         verify token
     }
 
+    @Test
     void testNewInstanceWithCacheManager() {
         def cacheManager = createStrictMock(CacheManager)
 
@@ -81,6 +88,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         verify cacheManager
     }
 
+    @Test
     void testNewInstanceWithCredentialsMatcher() {
         def matcher = createStrictMock(CredentialsMatcher)
 
@@ -92,6 +100,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         verify matcher
     }
 
+    @Test
     void testSetCache() {
         def cache = createStrictMock(Cache)
 
@@ -105,6 +114,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         verify cache
     }
 
+    @Test
     void testGetAuthenticationInfo() {
 
         def password = "foo"
@@ -126,6 +136,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         verify token, info
     }
 
+    @Test
     void testGetAuthenticationInfoWithNullReturnValue() {
 
         def token = createStrictMock(AuthenticationToken)
@@ -142,6 +153,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         verify token, info
     }
 
+    @Test
     void testAuthenticationCachingEnabledWithCacheMiss() {
 
         def username = "foo"
@@ -176,6 +188,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         verify cacheManager, cache, token, info
     }
 
+    @Test
     void testAuthenticationCachingEnabledWithCacheHit() {
 
         def username = "foo"
@@ -207,6 +220,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         verify cacheManager, cache, token, info
     }
 
+    @Test
     void testLogoutWithAuthenticationCachingEnabled() {
 
         def realmName = "testRealm"
@@ -238,6 +252,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         verify cacheManager, cache, token, info, principals
     }
 
+    @Test
     void testAssertCredentialsMatchWithNullCredentialsMatcher() {
         AuthenticatingRealm realm = new TestAuthenticatingRealm();
         realm.credentialsMatcher = null
@@ -251,6 +266,7 @@ class AuthenticatingRealmTest extends GroovyTestCase {
         }
     }
 
+    @Test
     void testAssertCredentialsMatchFailure() {
 
         def matcher = createStrictMock(CredentialsMatcher)

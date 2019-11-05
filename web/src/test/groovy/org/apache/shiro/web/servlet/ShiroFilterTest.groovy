@@ -24,13 +24,17 @@ import org.apache.shiro.web.env.EnvironmentLoader
 import org.apache.shiro.web.env.WebEnvironment
 import org.apache.shiro.web.filter.mgt.FilterChainResolver
 import org.apache.shiro.web.mgt.WebSecurityManager
+import org.junit.Test
+
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for {@link ShiroFilter}.
  */
-class ShiroFilterTest extends GroovyTestCase {
+class ShiroFilterTest {
 
+    @Test
     void testInit() {
 
         def filterConfig = createStrictMock(FilterConfig)

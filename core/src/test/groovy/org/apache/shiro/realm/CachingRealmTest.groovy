@@ -23,13 +23,16 @@ import org.apache.shiro.authc.AuthenticationToken
 import org.apache.shiro.cache.Cache
 import org.apache.shiro.cache.CacheManager
 import org.apache.shiro.subject.PrincipalCollection
+import org.junit.Test
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link CachingRealm} implementation.
  */
-class CachingRealmTest extends GroovyTestCase {
+class CachingRealmTest {
 
+    @Test
     void testCachingEnabled() {
 
         CachingRealm realm = new TestCachingRealm()
@@ -39,6 +42,7 @@ class CachingRealmTest extends GroovyTestCase {
         assertFalse realm.cachingEnabled
     }
 
+    @Test
     void testSetName() {
 
         CachingRealm realm = new TestCachingRealm()
@@ -50,6 +54,7 @@ class CachingRealmTest extends GroovyTestCase {
     }
 
 
+    @Test
     void testNewInstanceWithCacheManager() {
 
         def cacheManager = createStrictMock(CacheManager)
@@ -61,6 +66,7 @@ class CachingRealmTest extends GroovyTestCase {
         assertTrue realm.templateMethodCalled
     }
 
+    @Test
     void testOnLogout() {
 
         def realmName = "testRealm"
@@ -85,6 +91,7 @@ class CachingRealmTest extends GroovyTestCase {
         verify cacheManager, cache, principals
     }
 
+    @Test
     void testGetAvailablePrincipalWithRealmPrincipals() {
 
         def realmName = "testRealm"
@@ -107,6 +114,7 @@ class CachingRealmTest extends GroovyTestCase {
         verify principals
     }
 
+    @Test
     void testGetAvailablePrincipalWithoutRealmPrincipals() {
 
         def realmName = "testRealm"
