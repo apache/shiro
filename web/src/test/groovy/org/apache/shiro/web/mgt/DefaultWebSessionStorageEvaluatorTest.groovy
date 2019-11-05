@@ -25,15 +25,19 @@ import org.apache.shiro.subject.Subject
 import org.apache.shiro.subject.support.DefaultSubjectContext
 import org.apache.shiro.web.subject.WebSubject
 import org.apache.shiro.web.util.RequestPairSource
+import org.junit.Test
+
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link DefaultWebSessionStorageEvaluator} implementation.
  *
  * @since 1.2
  */
-class DefaultWebSessionStorageEvaluatorTest extends GroovyTestCase {
+class DefaultWebSessionStorageEvaluatorTest {
 
+    @Test
     void testWithSession() {
 
         DefaultWebSessionStorageEvaluator evaluator = new DefaultWebSessionStorageEvaluator()
@@ -50,6 +54,7 @@ class DefaultWebSessionStorageEvaluatorTest extends GroovyTestCase {
         verify subject, session
     }
 
+    @Test
     void testWithoutSessionAndNonWebSubject() {
 
         DefaultWebSessionStorageEvaluator evaluator = new DefaultWebSessionStorageEvaluator()
@@ -65,6 +70,7 @@ class DefaultWebSessionStorageEvaluatorTest extends GroovyTestCase {
         verify subject
     }
 
+    @Test
     void testWithoutSessionAndGenerallyDisabled() {
 
         DefaultWebSessionStorageEvaluator evaluator = new DefaultWebSessionStorageEvaluator()
@@ -81,6 +87,7 @@ class DefaultWebSessionStorageEvaluatorTest extends GroovyTestCase {
         verify subject
     }
 
+    @Test
     void testWebSubjectWithoutSessionAndGenerallyEnabled() {
 
         DefaultWebSessionStorageEvaluator evaluator = new DefaultWebSessionStorageEvaluator()
@@ -100,6 +107,7 @@ class DefaultWebSessionStorageEvaluatorTest extends GroovyTestCase {
         verify subject, request, response
     }
 
+    @Test
     void testWebSubjectWithoutSessionAndGenerallyEnabledButRequestDisabled() {
 
         DefaultWebSessionStorageEvaluator evaluator = new DefaultWebSessionStorageEvaluator()
@@ -119,6 +127,7 @@ class DefaultWebSessionStorageEvaluatorTest extends GroovyTestCase {
         verify subject, request, response
     }
 
+    @Test
     void testWebSubjectWithoutSessionAndGenerallyEnabledWithNonBooleanRequestAttribute() {
 
         DefaultWebSessionStorageEvaluator evaluator = new DefaultWebSessionStorageEvaluator()

@@ -21,6 +21,10 @@ package org.apache.shiro.cas
 import org.apache.shiro.authc.AuthenticationInfo
 import org.apache.shiro.authz.AuthorizationInfo
 
+import org.junit.Test
+
+import static org.junit.Assert.*
+
 /**
  * Unit tests for the {@link CasRealm} implementation.
  *
@@ -29,7 +33,7 @@ import org.apache.shiro.authz.AuthorizationInfo
  * @deprecated replaced with Shiro integration in <a href="https://github.com/bujiio/buji-pac4j">buji-pac4j</a>.
  */
 @Deprecated
-class CasRealmTest extends GroovyTestCase {
+class CasRealmTest {
 
     /**
      * Creates a CAS realm with a ticket validator mock.
@@ -40,6 +44,7 @@ class CasRealmTest extends GroovyTestCase {
         new CasRealm(ticketValidator: new MockServiceTicketValidator());
     }
 
+    @Test
     void testNoAttribute() {
         CasRealm casRealm = createCasRealm();
         CasToken casToken = new CasToken('$=defaultId');
@@ -53,6 +58,7 @@ class CasRealmTest extends GroovyTestCase {
         assertNull authorizationInfo.roles
     }
 
+    @Test
     void testNoAttributeDefaultRoleAndPermission() {
         CasRealm casRealm = createCasRealm();
         casRealm.defaultRoles = "defaultRole"
@@ -68,6 +74,7 @@ class CasRealmTest extends GroovyTestCase {
         assertTrue authorizationInfo.stringPermissions.contains("defaultPermission")
     }
 
+    @Test
     void testNoAttributeDefaultRolesAndPermissions() {
         CasRealm casRealm = createCasRealm();
         casRealm.defaultRoles = "defaultRole1, defaultRole2"
@@ -87,6 +94,7 @@ class CasRealmTest extends GroovyTestCase {
         assertTrue authzInfo.stringPermissions.contains("defaultPermission2")
     }
 
+    @Test
     void testRoleAndPermission() {
         CasRealm casRealm = createCasRealm();
         casRealm.roleAttributeNames = "role"
@@ -104,6 +112,7 @@ class CasRealmTest extends GroovyTestCase {
         assertTrue authzInfo.stringPermissions.contains("aPermission")
     }
 
+    @Test
     void testRolesAndPermissions() {
         CasRealm casRealm = createCasRealm();
         casRealm.setRoleAttributeNames("role1 , role2");
@@ -130,6 +139,7 @@ class CasRealmTest extends GroovyTestCase {
         assertTrue authzInfo.stringPermissions.contains("permission22")
     }
 
+    @Test
     void testNotRememberMe() {
         CasRealm casRealm = createCasRealm();
         CasToken casToken = new CasToken("\$=defaultId|$CasRealm.DEFAULT_REMEMBER_ME_ATTRIBUTE_NAME=false");
@@ -144,6 +154,7 @@ class CasRealmTest extends GroovyTestCase {
         assertNull authzInfo.roles
     }
 
+    @Test
     void testRememberMe() {
         CasRealm casRealm = createCasRealm();
         CasToken casToken = new CasToken("\$=defaultId|$CasRealm.DEFAULT_REMEMBER_ME_ATTRIBUTE_NAME=true");
@@ -158,6 +169,7 @@ class CasRealmTest extends GroovyTestCase {
         assertNull authzInfo.roles
     }
 
+    @Test
     void testRememberMeNewAttributeName() {
         CasRealm casRealm = createCasRealm();
         casRealm.rememberMeAttributeName = "rme"

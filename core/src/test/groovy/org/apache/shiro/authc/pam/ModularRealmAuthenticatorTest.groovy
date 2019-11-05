@@ -21,21 +21,26 @@ package org.apache.shiro.authc.pam
 import org.apache.shiro.realm.Realm
 import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.authc.*
+import org.junit.Test
+
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link ModularRealmAuthenticator} implementation.
  *
  * @since 1.2
  */
-class ModularRealmAuthenticatorTest extends GroovyTestCase {
+class ModularRealmAuthenticatorTest {
 
+    @Test
     void testNewInstance() {
         ModularRealmAuthenticator mra = new ModularRealmAuthenticator()
         assertNotNull mra.authenticationStrategy
         assertTrue mra.authenticationStrategy instanceof AtLeastOneSuccessfulStrategy
     }
 
+    @Test
     void testDoAuthenticateNoRealms() {
 
         def token = createStrictMock(AuthenticationToken)
@@ -52,6 +57,7 @@ class ModularRealmAuthenticatorTest extends GroovyTestCase {
         verify token
     }
 
+    @Test
     void testSingleRealmAuthenticationSuccess() {
 
         def realm = createStrictMock(Realm)
@@ -71,6 +77,7 @@ class ModularRealmAuthenticatorTest extends GroovyTestCase {
         verify realm, token, info
     }
 
+    @Test
     void testSingleRealmAuthenticationWithUnsupportedToken() {
 
         def realm = createStrictMock(Realm)
@@ -92,6 +99,7 @@ class ModularRealmAuthenticatorTest extends GroovyTestCase {
         verify realm, token
     }
 
+    @Test
     void testSingleRealmAuthenticationWithNullAuthenticationInfo() {
 
         def realm = createStrictMock(Realm)
@@ -114,6 +122,7 @@ class ModularRealmAuthenticatorTest extends GroovyTestCase {
         verify realm, token
     }
 
+    @Test
     void testMultiRealmAuthenticationSuccess() {
 
         def realm1 = createStrictMock(Realm)
@@ -152,6 +161,7 @@ class ModularRealmAuthenticatorTest extends GroovyTestCase {
         verify realm1, realm1Info, realm2, realm2Info, token, aggregate, strategy
     }
 
+    @Test
     void testMultiRealmAuthenticationWithAuthenticationException() {
 
         def realm1 = createStrictMock(Realm)
@@ -190,6 +200,7 @@ class ModularRealmAuthenticatorTest extends GroovyTestCase {
         verify realm1, realm1Info, realm2, token, aggregate, strategy
     }
 
+    @Test
     void testOnLogout() {
 
         def realm = createStrictMock(LogoutAwareRealm)

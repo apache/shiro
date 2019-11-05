@@ -18,51 +18,62 @@
  */
 package org.apache.shiro.event.support
 
+import org.junit.Before
+import org.junit.Test
+
 import static org.easymock.EasyMock.createStrictMock
+import static org.junit.Assert.*
 
 /**
  * @since 1.3
  */
-class EventListenerComparatorTest extends GroovyTestCase {
+class EventListenerComparatorTest {
 
     EventListenerComparator comparator
 
-    @Override
-    protected void setUp() {
+    @Before
+    void setUp() {
         comparator = new EventListenerComparator()
     }
 
+    @Test
     void testANull() {
         def result = comparator.compare(null, createStrictMock(EventListener))
         assertEquals(-1, result)
     }
 
+    @Test
     void testBNull() {
         def result = comparator.compare(createStrictMock(EventListener), null)
         assertEquals 1, result
     }
 
+    @Test
     void testBothNull() {
         assertEquals 0, comparator.compare(null, null)
     }
 
+    @Test
     void testBothSame() {
         def mock = createStrictMock(EventListener)
         assertEquals 0, comparator.compare(mock, mock)
     }
 
+    @Test
     void testBothEventListener() {
         def a = createStrictMock(EventListener)
         def b = createStrictMock(EventListener)
         assertEquals 0, comparator.compare(a, b)
     }
 
+    @Test
     void testATypedListenerBNormalListener() {
         def a = createStrictMock(TypedEventListener)
         def b = createStrictMock(EventListener)
         assertEquals(-1, comparator.compare(a, b))
     }
 
+    @Test
     void testANormalBTypedListener() {
         def a = createStrictMock(EventListener)
         def b = createStrictMock(TypedEventListener)

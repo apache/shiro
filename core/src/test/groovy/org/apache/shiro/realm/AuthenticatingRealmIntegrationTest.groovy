@@ -24,14 +24,18 @@ import org.apache.shiro.config.Ini
 import org.apache.shiro.config.IniSecurityManagerFactory
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.subject.Subject
+import org.junit.Test
+
+import static org.junit.Assert.*
 
 /**
  * Integration tests for the AuthenticatingRealm implementation.
  *
  * @since 1.2.1
  */
-class AuthenticatingRealmIntegrationTest extends GroovyTestCase {
+class AuthenticatingRealmIntegrationTest {
 
+    @Test
     void testShiro354() {
 
         Ini ini = new Ini();

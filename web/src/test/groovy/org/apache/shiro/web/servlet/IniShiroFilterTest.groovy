@@ -22,13 +22,17 @@ import javax.servlet.FilterConfig
 import javax.servlet.ServletContext
 import javax.servlet.ServletException
 import org.apache.shiro.io.ResourceUtils
+import org.junit.Test
+
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link IniShiroFilter} implementation.
  */
-class IniShiroFilterTest extends GroovyTestCase {
+class IniShiroFilterTest {
 
+    @Test
     void testDefaultWebInfConfig() {
         def filterConfig = createMock(FilterConfig)
         def servletContext = createStrictMock(ServletContext)
@@ -50,6 +54,7 @@ class IniShiroFilterTest extends GroovyTestCase {
         verify filterConfig, servletContext
     }
 
+    @Test
     void testResourceConfig() {
         def filterConfig = createMock(FilterConfig)
         def servletContext = createStrictMock(ServletContext)
@@ -67,6 +72,7 @@ class IniShiroFilterTest extends GroovyTestCase {
         verify filterConfig, servletContext
     }
 
+    @Test
     void testResourceConfigWithoutResource() {
         def filterConfig = createMock(FilterConfig)
         def servletContext = createStrictMock(ServletContext)
@@ -90,6 +96,7 @@ class IniShiroFilterTest extends GroovyTestCase {
         verify filterConfig, servletContext
     }
 
+    @Test
     void testDefaultClasspathConfig() {
 
         def filterConfig = createStrictMock(FilterConfig)
@@ -109,7 +116,7 @@ class IniShiroFilterTest extends GroovyTestCase {
         verify filterConfig, servletContext
     }
 
-
+    @Test
     void testSimpleConfig() {
         def config = """
         [filters]

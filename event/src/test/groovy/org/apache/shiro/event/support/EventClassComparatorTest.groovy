@@ -18,47 +18,59 @@
  */
 package org.apache.shiro.event.support
 
+import org.junit.Before
+import org.junit.Test
+
+import static org.junit.Assert.*
+
 /**
  * Tests for the {@link EventClassComparator} implementation.
  *
  * @since 1.3
  */
-class EventClassComparatorTest extends GroovyTestCase {
+class EventClassComparatorTest {
 
     EventClassComparator comparator
 
-    @Override
-    protected void setUp() {
+    @Before
+    void setUp() {
         comparator = new EventClassComparator()
     }
 
+    @Test
     void testANull() {
         def result = comparator.compare(null, Object)
         assertEquals(-1, result)
     }
 
+    @Test
     void testBNull() {
         def result = comparator.compare(Object, null)
         assertEquals 1, result
     }
 
+    @Test
     void testBothNull() {
         assertEquals 0, comparator.compare(null, null)
     }
 
+    @Test
     void testBothSame() {
         assertEquals 0, comparator.compare(Object, Object)
     }
 
+    @Test
     void testAParentOfB() {
         assertEquals 1, comparator.compare(Number, Integer)
     }
 
+    @Test
     void testBParentOfA() {
         assertEquals(-1, comparator.compare(Integer, Number))
     }
 
+    @Test
     void testUnrelated() {
-        assertEquals(0, comparator.compare(Integer, Boolean))
+        assertEquals 0, comparator.compare(Integer, Boolean)
     }
 }

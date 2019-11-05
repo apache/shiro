@@ -18,17 +18,23 @@
  */
 package org.apache.shiro.event.support
 
+import org.junit.Test
+
+import static org.junit.Assert.*
+
 /**
  * @since 1.3
  */
-class AnnotationEventListenerResolverTest extends GroovyTestCase {
+class AnnotationEventListenerResolverTest {
 
+    @Test
     void testSetGetAnnotationClass() {
         def resolver = new AnnotationEventListenerResolver();
         resolver.setAnnotationClass(Override.class) //any old annotation will do for the test
         assertSame Override.class, resolver.getAnnotationClass()
     }
 
+    @Test
     void testNullInstanceArgument() {
         def resolver = new AnnotationEventListenerResolver()
         def collection = resolver.getEventListeners(null)
@@ -36,6 +42,7 @@ class AnnotationEventListenerResolverTest extends GroovyTestCase {
         assertTrue collection.isEmpty()
     }
 
+    @Test
     void testNoAnnotationsArgument() {
         def resolver = new AnnotationEventListenerResolver()
         def collection = resolver.getEventListeners(new NotAnnotatedSubscriber())
