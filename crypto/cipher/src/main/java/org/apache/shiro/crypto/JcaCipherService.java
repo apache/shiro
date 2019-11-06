@@ -590,13 +590,18 @@ public abstract class JcaCipherService implements CipherService {
 
         javax.crypto.Cipher cipher = newCipherInstance(streaming);
         java.security.Key jdkKey = new SecretKeySpec(key, getAlgorithmName());
-        IvParameterSpec ivSpec = null;
+        AlgorithmParameterSpec ivSpec = null;
+
         if (iv != null && iv.length > 0) {
-            ivSpec = new IvParameterSpec(iv);
+            ivSpec = createParameterSpec(iv, streaming);
         }
 
         init(cipher, jcaCipherMode, jdkKey, ivSpec, getSecureRandom());
 
         return cipher;
+    }
+
+    protected AlgorithmParameterSpec createParameterSpec(byte[] iv, boolean streaming) {
+        return new IvParameterSpec(iv);
     }
 }
