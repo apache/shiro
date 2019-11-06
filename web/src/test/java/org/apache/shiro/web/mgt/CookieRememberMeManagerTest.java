@@ -125,13 +125,13 @@ public class CookieRememberMeManagerTest {
 
         //The following base64 string was determined from the log output of the above 'onSuccessfulLogin' test.
         //This will have to change any time the PrincipalCollection implementation changes:
-        final String userPCAesBase64 = "WlD5MLzzZznN3dQ1lPJO/eScSuY245k29aECNmjUs31o7Yu478hWhaM5Sj" +
-                "jmoe900/72JNu3hcJaPG6Q17Vuz4F8x0kBjbFnPVx4PqzsZYT6yreeS2jwO6OwfI+efqXOKyB2a5KPtnr" +
-                "7jt5kZsyH38XJISb81cf6xqTGUru8zC+kNqJFz7E5RpO0kraBofS5jhMm45gDVjDRkjgPJAzocVWMtrza" +
-                "zy67P8eb+kMSBCqGI251JTNAGboVgQ28KjfaAJ/6LXRJUj7kB7CGia7mgRk+hxzEJGDs81at5VOPqODJr" +
-                "xb8tcIdemFUFIkiYVP9bGs4dP3ECtmw7aNrCzv+84sx3vRFUrd5DbDYpEuE12hF2Y9owDK9sxStbXoF0y" +
-                "A32dhfGDIqS+agsass0sWn8WX2TM9i8SxrUjiFbxqyIG49HbqGrZp5QLM9IuIwO+TzGfF1FzumQGdwmWT" +
-                "xkVapw5UESl34YvA615cb+82ue1I=";
+        final String userPCAesBase64 = "0o6DCfePYTjK4q579qzUFEfkeGRvbBOdKHp2y8/nGAltt1Vz8uW0Z8igeO" +
+                "Tq/yBmcw25f3Q0ui/Leg3x0iQZWhw9Bbu0mFHmHsGxEd6mPwtUpSegIjyX5c/kZpqnb7QLdajPWiczX8P" +
+                "Oc2Eku5+8ye1u38Y8uKlklHxcYCPh0pRiDSBxfjPsLaDfOpGbmPjZd4SVg68i/++TvUjqBNJyb+pDix3f" +
+                "PeuPvReWGcE50iovezVZrEfDOAQ0cZYW35ShypMWOmE9yZnb+p8++StDyAUegryyuIa4pjuRzfMh9D+sN" +
+                "F9tm/EnDC1VCer2S/a0AGlWAQiM7jrWt1sNinZcKIrvShaWI21tONJt8WhozNS2H72lk4p92rfLNHeglT" +
+                "xObxIYxLfTI9KiToSe1nYmpQmbBO8x1wWDkWBG//EqRvhgbIfQVqJp12T0fJC1nFuZuVhw/ZanaAZGDk8" +
+                "7aLMiw3T6FBZtWaspgvfH+0TJrTD8Ra386ekNXNN8JW8=";
 
         Cookie[] cookies = new Cookie[]{
                 new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
@@ -165,13 +165,13 @@ public class CookieRememberMeManagerTest {
 
         //The following base64 string was determined from the log output of the above 'onSuccessfulLogin' test.
         //This will have to change any time the PrincipalCollection implementation changes:
-        final String userPCAesBase64 = "WlD5MLzzZznN3dQ1lPJO/eScSuY245k29aECNmjUs31o7Yu478hWhaM5Sj" +
-            "jmoe900/72JNu3hcJaPG6Q17Vuz4F8x0kBjbFnPVx4PqzsZYT6yreeS2jwO6OwfI+efqXOKyB2a5KPtnr" +
-            "7jt5kZsyH38XJISb81cf6xqTGUru8zC+kNqJFz7E5RpO0kraBofS5jhMm45gDVjDRkjgPJAzocVWMtrza" +
-            "zy67P8eb+kMSBCqGI251JTNAGboVgQ28KjfaAJ/6LXRJUj7kB7CGia7mgRk+hxzEJGDs81at5VOPqODJr" +
-            "xb8tcIdemFUFIkiYVP9bGs4dP3ECtmw7aNrCzv+84sx3vRFUrd5DbDYpEuE12hF2Y9owDK9sxStbXoF0y" +
-            "A32dhfGDIqS+agsass0sWn8WX2TM9i8SxrUjiFbxqyIG49HbqGrZp5QLM9IuIwO+TzGfF1FzumQGdwmWT" +
-            "xkVapw5UESl34YvA615cb+82ue1I=";
+        final String userPCAesBase64 = "0o6DCfePYTjK4q579qzUFEfkeGRvbBOdKHp2y8/nGAltt1Vz8uW0Z8igeO" +
+                "Tq/yBmcw25f3Q0ui/Leg3x0iQZWhw9Bbu0mFHmHsGxEd6mPwtUpSegIjyX5c/kZpqnb7QLdajPWiczX8P" +
+                "Oc2Eku5+8ye1u38Y8uKlklHxcYCPh0pRiDSBxfjPsLaDfOpGbmPjZd4SVg68i/++TvUjqBNJyb+pDix3f" +
+                "PeuPvReWGcE50iovezVZrEfDOAQ0cZYW35ShypMWOmE9yZnb+p8++StDyAUegryyuIa4pjuRzfMh9D+sN" +
+                "F9tm/EnDC1VCer2S/a0AGlWAQiM7jrWt1sNinZcKIrvShaWI21tONJt8WhozNS2H72lk4p92rfLNHeglT" +
+                "xObxIYxLfTI9KiToSe1nYmpQmbBO8x1wWDkWBG//EqRvhgbIfQVqJp12T0fJC1nFuZuVhw/ZanaAZGDk8" +
+                "7aLMiw3T6FBZtWaspgvfH+0TJrTD8Ra386ekNXNN8JW8=";
 
         Cookie[] cookies = new Cookie[]{
             new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
