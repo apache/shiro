@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.spring.boot.autoconfigure.web;
+package org.apache.shiro.spring.boot.autoconfigure.application;
 
 
 import org.apache.shiro.event.EventBus;
@@ -24,8 +24,6 @@ import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.event.Subscribe;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.text.TextConfigurationRealm;
-import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
-import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -33,10 +31,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableAutoConfiguration
-public class ShiroWebAutoConfigurationTestApplication {
+public class ShiroAutoConfigurationTestApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ShiroWebAutoConfigurationTestApplication.class, args);
+        SpringApplication.run(ShiroAutoConfigurationTestApplication.class, args);
     }
 
     @Bean
@@ -51,11 +49,6 @@ public class ShiroWebAutoConfigurationTestApplication {
                                  "user=read");
         realm.setCachingEnabled(true);
         return realm;
-    }
-
-    @Bean
-    ShiroFilterChainDefinition shiroFilterChainDefinition() {
-        return new DefaultShiroFilterChainDefinition();
     }
 
     @Bean

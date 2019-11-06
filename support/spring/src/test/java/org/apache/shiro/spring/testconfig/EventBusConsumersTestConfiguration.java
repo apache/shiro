@@ -16,22 +16,46 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.spring.config;
+package org.apache.shiro.spring.testconfig;
 
 
 import org.apache.shiro.event.EventBus;
-import org.apache.shiro.event.support.DefaultEventBus;
+import org.apache.shiro.event.EventBusAware;
+import org.apache.shiro.event.Subscribe;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class EventBusTestConfiguration {
+public class EventBusConsumersTestConfiguration {
 
     @Bean
-    protected EventBus eventBus() {
-        return new DefaultEventBus();
+    protected EventBusAwareObject eventBusAwareObject() {
+        return new EventBusAwareObject();
     }
 
+    @Bean
+    protected EventSubscriber subscriber(){
+        return new EventSubscriber();
+    }
 
+    public class EventBusAwareObject implements EventBusAware {
+
+        private EventBus eventBus;
+
+        public EventBus getEventBus() {
+            return eventBus;
+        }
+
+        public void setEventBus(EventBus eventBus) {
+            this.eventBus = eventBus;
+        }
+    }
+
+    public class EventSubscriber {
+
+        @Subscribe
+        public void listen(Object object) {}
+
+    }
 
 }
