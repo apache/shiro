@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.spring.config;
+package org.apache.shiro.spring.testconfig;
 
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.permission.PermissionResolver;

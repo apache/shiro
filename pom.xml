@@ -107,8 +107,8 @@
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>4.0.2</easymock.version>
-        <gmaven.version>1.5</gmaven.version>
-        <groovy.version>2.4.9</groovy.version>
+        <gmaven.version>1.8.0</gmaven.version>
+        <groovy.version>2.5.8</groovy.version>
         <junit.version>4.12</junit.version>
         <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
         <hibernate.version>5.4.3.Final</hibernate.version>
@@ -296,28 +296,13 @@
                 </plugin>
                 <!-- Allow writing tests in Groovy: -->
                 <plugin>
-                    <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>gmaven-plugin</artifactId>
+                    <groupId>org.codehaus.gmavenplus</groupId>
+                    <artifactId>gmavenplus-plugin</artifactId>
                     <version>${gmaven.version}</version>
-                    <configuration>
-                        <providerSelection>1.7</providerSelection>
-                        <source>src/main/groovy</source>
-                    </configuration>
                     <dependencies>
                         <dependency>
-                            <groupId>org.codehaus.gmaven.runtime</groupId>
-                            <artifactId>gmaven-runtime-1.7</artifactId>
-                            <version>${gmaven.version}</version>
-                            <exclusions>
-                                <exclusion>
-                                    <groupId>org.codehaus.groovy</groupId>
-                                    <artifactId>groovy-all</artifactId>
-                                </exclusion>
-                            </exclusions>
-                        </dependency>
-                        <dependency>
                             <groupId>org.codehaus.groovy</groupId>
-                            <artifactId>groovy-all</artifactId>
+                            <artifactId>groovy</artifactId>
                             <version>${groovy.version}</version>
                         </dependency>
                     </dependencies>
@@ -480,14 +465,16 @@
                 </plugin>
             <!-- Allow Groovy tests to run: -->
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
                 <version>${gmaven.version}</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
+                            <goal>addTestSources</goal>
+                            <goal>generateTestStubs</goal>
+                            <goal>compileTests</goal>
+                            <goal>removeTestStubs</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -656,7 +643,7 @@
         <!-- Writing tests in groovy is fast!: -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
+            <artifactId>groovy</artifactId>
             <version>${groovy.version}</version>
             <scope>test</scope>
         </dependency>
@@ -958,11 +945,6 @@
                         <artifactId>jmxri</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-all</artifactId>
-                <version>${groovy.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>

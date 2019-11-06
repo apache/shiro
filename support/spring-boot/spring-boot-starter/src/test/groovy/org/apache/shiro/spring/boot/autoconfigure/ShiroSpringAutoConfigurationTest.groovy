@@ -18,8 +18,9 @@
  */
 package org.apache.shiro.spring.boot.autoconfigure
 
-import org.apache.shiro.spring.boot.autoconfigure.ShiroAutoConfigurationTestApplication.EventBusAwareObject;
-import org.apache.shiro.spring.boot.autoconfigure.ShiroAutoConfigurationTestApplication.SubscribedListener;
+import org.apache.shiro.spring.boot.autoconfigure.application.ShiroAutoConfigurationTestApplication
+import org.apache.shiro.spring.boot.autoconfigure.application.ShiroAutoConfigurationTestApplication.EventBusAwareObject
+import org.apache.shiro.spring.boot.autoconfigure.application.ShiroAutoConfigurationTestApplication.SubscribedListener
 
 import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.event.EventBus

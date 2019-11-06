@@ -16,29 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.spring.config;
+package org.apache.shiro.spring.testconfig;
 
-import org.apache.shiro.realm.Realm;
-import org.apache.shiro.realm.text.TextConfigurationRealm;
+
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.support.DefaultEventBus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 @Configuration
-public class RealmTestConfiguration {
+public class EventBusTestConfiguration {
 
     @Bean
-//    @DependsOn("lifecycleBeanPostProcessor")
-    @SuppressWarnings("Duplicates")
-    Realm getTextConfigurationRealm() {
-
-        TextConfigurationRealm realm = new TextConfigurationRealm();
-        realm.setUserDefinitions("joe.coder=password,user\n" +
-                "jill.coder=password,admin");
-
-        realm.setRoleDefinitions("admin=read,write\n" +
-                "user=read");
-        realm.setCachingEnabled(true);
-        return realm;
+    protected EventBus eventBus() {
+        return new DefaultEventBus();
     }
+
+
+
 }

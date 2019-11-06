@@ -18,8 +18,9 @@
  */
 package org.apache.shiro.spring.boot.autoconfigure.web
 
-import org.apache.shiro.spring.boot.autoconfigure.web.ShiroWebAutoConfigurationTestApplication.EventBusAwareObject
-import org.apache.shiro.spring.boot.autoconfigure.web.ShiroWebAutoConfigurationTestApplication.SubscribedListener
+import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication
+import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication.EventBusAwareObject
+import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication.SubscribedListener
 
 import org.apache.shiro.event.EventBus
 import org.apache.shiro.mgt.DefaultSecurityManager
