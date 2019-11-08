@@ -30,7 +30,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.4.2-SNAPSHOT</version>
+    <version>1.4.2</version>
 
     <name>Apache Shiro</name>
     <url>http://shiro.apache.org/</url>
@@ -44,7 +44,7 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/shiro.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/shiro.git</developerConnection>
         <url>https://github.com/apache/shiro/tree/${project.scm.tag}</url>
-        <tag>master</tag>
+        <tag>shiro-root-1.4.2</tag>
     </scm>
     <issueManagement>
         <system>Jira</system>
@@ -620,121 +620,121 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-lang</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-cache</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-config-core</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-config-ogdl</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-crypto-core</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-crypto-hash</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-crypto-cipher</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-event</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-web</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-servlet-plugin</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
 
             <!-- Shiro 3rd party support (keep this alphabetically ordered based on the artifactId please): -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-aspectj</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-cas</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-ehcache</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-quartz</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-guice</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-hazelcast</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-jaxrs</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-all</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
 
             <!-- Shiro samples: -->
             <dependency>
                 <groupId>org.apache.shiro.samples</groupId>
                 <artifactId>samples-spring-client</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring-boot-starter</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring-boot-web-starter</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
 
 
@@ -742,21 +742,21 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-config-ogdl</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro.integrationtests</groupId>
                 <artifactId>shiro-its-support</artifactId>
-                <version>1.4.2-SNAPSHOT</version>
+                <version>1.4.2</version>
             </dependency>
 
             <!-- 3rd party dependencies -->
