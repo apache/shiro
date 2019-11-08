@@ -91,6 +91,7 @@
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
         <hazelcast.version>3.12.1</hazelcast.version>
         <hsqldb.version>2.5.0</hsqldb.version>
+        <javax.annotation.api.version>1.3.2</javax.annotation.api.version>
         <jdk.version>1.8</jdk.version>
         <jetty.version>9.4.20.v20190813</jetty.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
@@ -818,6 +819,11 @@
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
                 <version>${commons.cli.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>${javax.annotation.api.version}</version>
             </dependency>
             <dependency>
                 <!-- runtime dependency for the shiro-cas module: -->
