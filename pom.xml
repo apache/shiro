@@ -101,7 +101,7 @@
         <logback.version>1.2.3</logback.version>
         <log4j.version>1.2.17</log4j.version>
         <spring.version>5.1.10.RELEASE</spring.version>
-        <spring-boot.version>2.1.9.RELEASE</spring-boot.version>
+        <spring-boot.version>2.1.10.RELEASE</spring-boot.version>
         <guice.version>4.2.2</guice.version>
         <jaxrs.api.version>2.0.1</jaxrs.api.version>
         <htmlunit.version>2.36.0</htmlunit.version>
