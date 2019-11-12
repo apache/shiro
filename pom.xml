@@ -418,7 +418,6 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.0.0-M3</version>
                 <configuration>
-                    <useSystemClassLoader>false</useSystemClassLoader>
                     <includes>
                         <include>**/*IT.java</include>
                         <include>**/*IT.groovy</include>
