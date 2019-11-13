@@ -248,6 +248,16 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <source>${jdk.version}</source>
+                        <attach>true</attach>
+                        <excludePackageNames>org.apache.shiro.samples.*</excludePackageNames>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.2.2</version>
                 </plugin>
@@ -1231,7 +1241,7 @@
                 <version>3.12.0</version>
                 <configuration>
                     <sourceEncoding>utf-8</sourceEncoding>
-                    <targetJdk>1.5</targetJdk>
+                    <targetJdk>${jdk.version}</targetJdk>
                 </configuration>
             </plugin>
             <plugin>
@@ -1342,10 +1352,22 @@
             <activation>
                 <jdk>[1.8,)</jdk>
             </activation>
-            <properties>
-                <!-- Needed for the javadoc plugin when using JDK 1.8 -->
-                <additionalparam>-Xdoclint:none --allow-script-in-comments</additionalparam>
-            </properties>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <configuration>
+                                <additionalJOptions>
+                                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                                    <additionalJOption>--allow-script-in-comments</additionalJOption>
+                                </additionalJOptions>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
         </profile>
         <profile>
             <id>docs</id>
@@ -1354,7 +1376,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.9.1</version>
                         <executions>
                             <execution>
                                 <id>attach-api-docs</id>
