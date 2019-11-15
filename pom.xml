@@ -96,7 +96,7 @@
         <jetty.version>9.4.20.v20190813</jetty.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
-        <quartz.version>1.6.1</quartz.version>
+        <quartz.version>2.3.2</quartz.version>
         <slf4j.version>1.7.26</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <log4j.version>1.2.17</log4j.version>
@@ -370,7 +370,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>5.2.2</version>
+                    <version>5.2.4</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.siom79.japicmp</groupId>
@@ -1164,16 +1164,10 @@
                 <version>${guice.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.opensymphony.quartz</groupId>
+                <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
                 <version>${quartz.version}</version>
                 <optional>true</optional>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.github.mjeanroy</groupId>

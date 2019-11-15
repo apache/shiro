@@ -33,12 +33,14 @@
 
     <properties>
         <aspectj.bundle.version>1.9.4_1</aspectj.bundle.version>
+        <c3p0-bundle-version>0.9.5.4_1</c3p0-bundle-version>
         <ehcache.bundle.version>2.6.11_1</ehcache.bundle.version>
-        <quartz.bundle.version>1.6.1_1</quartz.bundle.version>
+        <hikaricp-version>2.4.13</hikaricp-version>
+        <quartz.bundle.version>2.3.2_1</quartz.bundle.version>
         <!-- Not a Shiro dependency - used for quartz bundle resolution only (see features.xml): -->
         <commons.collections.version>3.2.2</commons.collections.version>
         <!-- karaf plugin version -->
-        <karaf.version>4.2.6</karaf.version>
+        <karaf.version>4.2.7</karaf.version>
     </properties>
 
     <dependencies>

@@ -75,6 +75,8 @@
     <feature name="shiro-quartz" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
         <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons.collections.version}</bundle>
+        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}</bundle>
+        <bundle dependency='true'>mvn:com.zaxxer/HikariCP-java7/${hikaricp-version}</bundle>
         <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/${quartz.bundle.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-quartz/${project.version}</bundle>
     </feature>
