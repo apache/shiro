@@ -18,10 +18,13 @@
  */
 package org.apache.shiro.session.mgt.quartz;
 
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 
 import org.slf4j.Logger;
@@ -30,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionValidationScheduler;
 import org.apache.shiro.session.mgt.ValidatingSessionManager;
+
+import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
 
 /**
@@ -153,12 +158,16 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         }
 
         try {
-            SimpleTrigger trigger = new SimpleTrigger(getClass().getName(),
-                    Scheduler.DEFAULT_GROUP,
-                    SimpleTrigger.REPEAT_INDEFINITELY,
-                    sessionValidationInterval);
+            TriggerBuilder<SimpleTrigger> triggerBuilder =
+                TriggerBuilder.newTrigger()
+                    .withIdentity(getClass().getName(), Scheduler.DEFAULT_GROUP)
+                    .withSchedule(simpleSchedule()
+                        .withIntervalInMilliseconds(sessionValidationInterval)
+                        .withRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY));
+            SimpleTrigger trigger = triggerBuilder.build();
 
-            JobDetail detail = new JobDetail(JOB_NAME, Scheduler.DEFAULT_GROUP, QuartzSessionValidationJob.class);
+            JobDetail detail = JobBuilder.newJob(QuartzSessionValidationJob.class)
+            		.withIdentity(JOB_NAME, Scheduler.DEFAULT_GROUP).build();
             detail.getJobDataMap().put(QuartzSessionValidationJob.SESSION_MANAGER_KEY, sessionManager);
 
             Scheduler scheduler = getScheduler();
@@ -207,7 +216,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         }
 
         try {
-            scheduler.unscheduleJob(JOB_NAME, Scheduler.DEFAULT_GROUP);
+            scheduler.unscheduleJob(TriggerKey.triggerKey(JOB_NAME, Scheduler.DEFAULT_GROUP));
             if (log.isDebugEnabled()) {
                 log.debug("Quartz session validation job stopped successfully.");
             }

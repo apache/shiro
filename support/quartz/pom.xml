@@ -37,7 +37,7 @@
             <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opensymphony.quartz</groupId>
+            <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
         </dependency>
         <!-- Test dependencies -->
@@ -67,7 +67,7 @@
                         <Export-Package>org.apache.shiro.session.mgt.quartz*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            org.quartz*;version="[1.6, 2)",
+                            org.quartz*;version="[1.7.2, 3)",
                             *
                         </Import-Package>
                     </instructions>
