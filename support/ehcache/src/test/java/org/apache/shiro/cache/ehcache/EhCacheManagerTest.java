@@ -26,6 +26,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import java.util.Collection;
+import java.util.Set;
+
 /**
  * TODO - Class JavaDoc
  *
@@ -73,6 +76,126 @@ public class EhCacheManagerTest {
         String value = cache.get("hello");
         assertNotNull(value);
         assertEquals(value, "world");
+    }
+
+    @Test
+    public void testRemove() {
+        net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
+        assertNull(ehCacheManager);
+
+        Cache<String, String> cache = cacheManager.getCache("test");
+
+        ehCacheManager = cacheManager.getCacheManager();
+        assertNotNull(ehCacheManager);
+
+        assertNotNull(cache);
+        cache.put("hello", "world");
+        cache.put("hello2", "world2");
+        String value = cache.get("hello");
+        assertNotNull(value);
+        assertEquals(value, "world");
+        assertEquals("world2", cache.get("hello2"));
+        assertEquals(2, cache.size());
+
+        assertEquals("world", cache.remove("hello"));
+        assertEquals(1, cache.size());
+        assertEquals("world2", cache.remove("hello2"));
+        assertEquals(0, cache.size());
+
+        assertNull(cache.remove("blah"));
+    }
+
+    @Test
+    public void testClear() {
+        net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
+        assertNull(ehCacheManager);
+
+        Cache<String, String> cache = cacheManager.getCache("test");
+
+        ehCacheManager = cacheManager.getCacheManager();
+        assertNotNull(ehCacheManager);
+
+        assertNotNull(cache);
+        cache.put("hello", "world");
+        cache.put("hello2", "world2");
+        String value = cache.get("hello");
+        assertNotNull(value);
+        assertEquals(value, "world");
+        assertEquals("world2", cache.get("hello2"));
+        assertEquals(2, cache.size());
+
+        cache.clear();
+        assertEquals(0, cache.size());
+
+        assertNull(cache.get("hello"));
+    }
+
+    @Test
+    public void testKeys() {
+        net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
+        assertNull(ehCacheManager);
+
+        Cache<String, String> cache = cacheManager.getCache("test");
+
+        ehCacheManager = cacheManager.getCacheManager();
+        assertNotNull(ehCacheManager);
+
+        assertNotNull(cache);
+        cache.put("hello", "world");
+        cache.put("hello2", "world2");
+        String value = cache.get("hello");
+        assertNotNull(value);
+        assertEquals(value, "world");
+        assertEquals("world2", cache.get("hello2"));
+        assertEquals(2, cache.size());
+
+        Set<String> keys = cache.keys();
+        assertEquals(2, keys.size());
+        assertTrue(keys.contains("hello"));
+        assertTrue(keys.contains("hello2"));
+
+        assertEquals("world", cache.remove("hello"));
+        assertEquals(1, cache.size());
+
+        keys = cache.keys();
+        assertEquals(1, keys.size());
+        assertTrue(keys.contains("hello2"));
+
+        assertNull(cache.remove("blah"));
+    }
+
+    @Test
+    public void testValues() {
+        net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
+        assertNull(ehCacheManager);
+
+        Cache<String, String> cache = cacheManager.getCache("test");
+
+        ehCacheManager = cacheManager.getCacheManager();
+        assertNotNull(ehCacheManager);
+
+        assertNotNull(cache);
+        cache.put("hello", "world");
+        cache.put("hello2", "world2");
+        String value = cache.get("hello");
+        assertNotNull(value);
+        assertEquals(value, "world");
+        assertEquals("world2", cache.get("hello2"));
+        assertEquals(2, cache.size());
+
+        Collection<String> values = cache.values();
+        assertEquals(2, values.size());
+        assertTrue(values.contains("world"));
+        assertTrue(values.contains("world2"));
+
+        assertEquals("world", cache.remove("hello"));
+        assertEquals(1, cache.size());
+
+        values = cache.values();
+        assertEquals(1, values.size());
+        assertTrue(values.contains("world2"));
+
+        assertNull(cache.remove("blah"));
     }
 
 }
