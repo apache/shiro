@@ -163,4 +163,42 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         assertNull(resolved);
         verify(request);
     }
+
+    @Test
+    public void testGetChainEndWithUrlSeparator() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
+        FilterChain chain = createNiceMock(FilterChain.class);
+
+        //ensure at least one chain is defined:
+        resolver.getFilterChainManager().addToChain("/resource/book", "authcBasic");
+
+        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
+        expect(request.getContextPath()).andReturn("");
+        expect(request.getRequestURI()).andReturn("/resource/book/");
+        replay(request);
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertNotNull(resolved);
+        verify(request);
+    }
+
+    @Test
+    public void testGetChainEndWithMultiUrlSeparator() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
+        FilterChain chain = createNiceMock(FilterChain.class);
+
+        //ensure at least one chain is defined:
+        resolver.getFilterChainManager().addToChain("/resource/book", "authcBasic");
+
+        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
+        expect(request.getContextPath()).andReturn("");
+        expect(request.getRequestURI()).andReturn("/resource/book//");
+        replay(request);
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertNotNull(resolved);
+        verify(request);
+    }
 }

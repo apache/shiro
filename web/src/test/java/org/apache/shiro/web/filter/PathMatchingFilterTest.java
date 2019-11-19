@@ -121,5 +121,27 @@ public class PathMatchingFilterTest {
         verify(request);
     }
 
+    @Test
+    public void testPathMatchEndWithUrlSeparatorEnabled() {
+        expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
+        expect(request.getRequestURI()).andReturn("/resource/book/").anyTimes();
+        replay(request);
+
+        boolean matchEnabled = filter.pathsMatch("/resource/book", request);
+        assertTrue("PathMatch can match URL end with Separator", matchEnabled);
+        verify(request);
+    }
+
+    @Test
+    public void testPathMatchEndWithMultiUrlSeparatorEnabled() {
+        expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
+        expect(request.getRequestURI()).andReturn("/resource/book//").anyTimes();
+        replay(request);
+
+        boolean matchEnabled = filter.pathsMatch("/resource/book", request);
+        assertTrue("PathMatch can match URL end with multi Separator", matchEnabled);
+        verify(request);
+    }
+
 
 }
