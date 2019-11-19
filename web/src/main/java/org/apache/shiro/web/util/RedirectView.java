@@ -292,16 +292,16 @@ public class RedirectView {
      * @param http10Compatible whether to stay compatible with HTTP 1.0 clients
      * @throws IOException if thrown by response methods
      */
-    @SuppressWarnings({"UnusedDeclaration"})
     protected void sendRedirect(HttpServletRequest request, HttpServletResponse response,
                                 String targetUrl, boolean http10Compatible) throws IOException {
+        String encodedRedirectURL = response.encodeRedirectURL(targetUrl);
         if (http10Compatible) {
             // Always send status code 302.
-            response.sendRedirect(response.encodeRedirectURL(targetUrl));
+            response.sendRedirect(encodedRedirectURL);
         } else {
             // Correct HTTP status code is 303, in particular for POST requests.
             response.setStatus(303);
-            response.setHeader("Location", response.encodeRedirectURL(targetUrl));
+            response.setHeader("Location", encodedRedirectURL);
         }
     }
 

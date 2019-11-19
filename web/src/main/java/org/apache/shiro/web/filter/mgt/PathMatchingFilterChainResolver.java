@@ -21,6 +21,8 @@ package org.apache.shiro.web.filter.mgt;
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
 import org.apache.shiro.web.util.WebUtils;
+import org.owasp.encoder.Encode;
+import org.owasp.encoder.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +107,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
             // If the path does match, then pass on to the subclass implementation for specific checks:
             if (pathMatches(pathPattern, requestURI)) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Matched path pattern [" + pathPattern + "] for requestURI [" + requestURI + "].  " +
+                    log.trace("Matched path pattern [" + pathPattern + "] for requestURI [" + Encode.forHtml(requestURI) + "].  " +
                             "Utilizing corresponding filter chain...");
                 }
                 return filterChainManager.proxy(originalChain, pathPattern);
