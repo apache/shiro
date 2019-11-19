@@ -19,6 +19,7 @@
 package org.apache.shiro.web.servlet;
 
 import org.apache.shiro.util.StringUtils;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -412,10 +413,11 @@ public class SimpleCookie implements Cookie {
             // Validate that the cookie is used at the correct place.
             String path = StringUtils.clean(getPath());
             if (path != null && !pathMatches(path, request.getRequestURI())) {
-                log.warn("Found '{}' cookie at path '{}', but should be only used for '{}'", new Object[] { name, request.getRequestURI(), path});
+                log.warn("Found '{}' cookie at path '{}', but should be only used for '{}'", 
+                		new Object[] { name, Encode.forHtml(request.getRequestURI()), path});
             } else {
                 value = cookie.getValue();
-                log.debug("Found '{}' cookie value [{}]", name, value);
+                log.debug("Found '{}' cookie value [{}]", name, Encode.forHtml(value));
             }
         } else {
             log.trace("No '{}' cookie value", name);

@@ -23,6 +23,7 @@ import org.apache.shiro.util.PatternMatcher;
 import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.servlet.AdviceFilter;
 import org.apache.shiro.web.util.WebUtils;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,7 +121,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      */
     protected boolean pathsMatch(String path, ServletRequest request) {
         String requestURI = getPathWithinApplication(request);
-        log.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, requestURI);
+        log.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, Encode.forHtml(requestURI));
         return pathsMatch(path, requestURI);
     }
 

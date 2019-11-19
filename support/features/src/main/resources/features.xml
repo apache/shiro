@@ -28,6 +28,7 @@
     <feature name="shiro-web" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
         <feature version="[2,5)">war</feature>
+        <bundle>wrap:mvn:org.owasp.encoder/encoder/${owasp.java.encoder.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-web/${project.version}</bundle>
     </feature>
 
