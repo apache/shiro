@@ -94,7 +94,26 @@ public class DefaultPasswordService implements HashingPasswordService {
 
         Hash computed = this.hashService.computeHash(request);
 
-        return saved.equals(computed);
+        return constantEquals(saved.toString(), computed.toString());
+    }
+
+    private boolean constantEquals(String savedHash, String computedHash) {
+
+        int result = 0;
+        boolean equals;
+        byte [] savedHashByteArray = savedHash.getBytes();
+        byte [] computedHashByteArray = computedHash.getBytes();
+
+        if(savedHashByteArray.length != computedHashByteArray.length){
+            return false;
+        } else {
+            for(int index = 0; index < savedHashByteArray.length; index++){
+                result |= savedHashByteArray[index] ^ computedHashByteArray[index];
+            }
+            equals = (result == 0);
+        }
+
+        return equals;
     }
 
     protected void checkHashFormatDurability() {
