@@ -49,6 +49,8 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
 
     private PatternMatcher pathMatcher;
 
+    private static final String DEFAULT_PATH_SEPARATOR = "/";
+
     public PathMatchingFilterChainResolver() {
         this.pathMatcher = new AntPathMatcher();
         this.filterChainManager = new DefaultFilterChainManager();
@@ -100,9 +102,20 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
 
         String requestURI = getPathWithinApplication(request);
 
+        // in spring web, the requestURI "/resource/menus" ---- "resource/menus/" bose can access the resource
+        // but the pathPattern match "/resource/menus" can not match "resource/menus/"
+        // user can use requestURI + "/" to simply bypassed chain filter, to bypassed shiro protect
+        if(requestURI != null && requestURI.endsWith(DEFAULT_PATH_SEPARATOR)) {
+            requestURI = requestURI.substring(0, requestURI.length() - 1);
+        }
+
+
         //the 'chain names' in this implementation are actually path patterns defined by the user.  We just use them
         //as the chain name for the FilterChainManager's requirements
         for (String pathPattern : filterChainManager.getChainNames()) {
+            if (pathPattern != null && pathPattern.endsWith(DEFAULT_PATH_SEPARATOR)) {
+                pathPattern = pathPattern.substring(0, pathPattern.length() - 1);
+            }
 
             // If the path does match, then pass on to the subclass implementation for specific checks:
             if (pathMatches(pathPattern, requestURI)) {
