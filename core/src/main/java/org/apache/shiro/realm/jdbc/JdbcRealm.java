@@ -28,6 +28,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.codec.Base64;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -113,6 +114,8 @@ public class JdbcRealm extends AuthorizingRealm {
     protected boolean permissionsLookupEnabled = false;
     
     protected SaltStyle saltStyle = SaltStyle.NO_SALT;
+
+    protected boolean saltIsBase64Encoded = true;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -201,6 +204,17 @@ public class JdbcRealm extends AuthorizingRealm {
         }
     }
 
+    /**
+     * Makes it possible to switch off base64 encoding of password salt.
+     * The default value is true, ie. expect the salt from a string
+     * value in a database to be base64 encoded.
+     *
+     * @param saltIsBase64Encoded the saltIsBase64Encoded to set
+     */
+    public void setSaltIsBase64Encoded(boolean saltIsBase64Encoded) {
+        this.saltIsBase64Encoded = saltIsBase64Encoded;
+    }
+
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
@@ -247,7 +261,11 @@ public class JdbcRealm extends AuthorizingRealm {
             info = new SimpleAuthenticationInfo(username, password.toCharArray(), getName());
             
             if (salt != null) {
-                info.setCredentialsSalt(ByteSource.Util.bytes(salt));
+            	if (saltStyle == SaltStyle.COLUMN && saltIsBase64Encoded) {
+                    info.setCredentialsSalt(ByteSource.Util.bytes(Base64.decode(salt)));
+            	} else {
+                    info.setCredentialsSalt(ByteSource.Util.bytes(salt));
+            	}
             }
 
         } catch (SQLException e) {

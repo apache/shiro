@@ -151,16 +151,17 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
                 }
             }
         } else {
-            if (this.session == null) {
-
-                boolean existing = getSubject().getSession(false) != null;
-
+            boolean existing = getSubject().getSession(false) != null;
+            
+            if (this.session == null || !existing) {
                 Session shiroSession = getSubject().getSession(create);
                 if (shiroSession != null) {
                     this.session = new ShiroHttpSession(shiroSession, this, this.servletContext);
                     if (!existing) {
                         setAttribute(REFERENCED_SESSION_IS_NEW, Boolean.TRUE);
                     }
+                } else if (this.session != null) {
+                    this.session = null;
                 }
             }
             httpSession = this.session;

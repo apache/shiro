@@ -26,7 +26,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 
-
 public class FirstSuccessfulStrategyTest {
 
     private FirstSuccessfulStrategy strategy;
@@ -52,6 +51,54 @@ public class FirstSuccessfulStrategyTest {
     public void testBeforeAttemptStopAfterFirstSuccess() {
         AuthenticationInfo aggregate = new SimpleAuthenticationInfo();
         strategy.beforeAttempt(null, null, aggregate);
+        AuthenticationInfo authenticationInfo = strategy.beforeAllAttempts(null, null);
+        assertNull(authenticationInfo);
+    }
+
+    @Test
+    public void testMergeWithValidAggregateInfo() {
+        AuthenticationInfo aggregate = new MergableAuthenticationInfo() {
+            @Override
+            public void merge(AuthenticationInfo info) {
+
+            }
+
+            @Override
+            public PrincipalCollection getPrincipals() {
+                return new SimplePrincipalCollection("principals", "realmName");
+            }
+
+            @Override
+            public Object getCredentials() {
+                return null;
+            }
+        };
+        AuthenticationInfo mergeResult = strategy.merge(new SimpleAuthenticationInfo(), aggregate);
+        assertEquals(aggregate, mergeResult);
+    }
+
+    @Test
+    public void testMergeWithInvalidAggregateInfo() {
+        AuthenticationInfo aggregate = new MergableAuthenticationInfo() {
+            @Override
+            public void merge(AuthenticationInfo info) {
+
+            }
+
+            @Override
+            public PrincipalCollection getPrincipals() {
+                return new SimplePrincipalCollection();
+            }
+
+            @Override
+            public Object getCredentials() {
+                return null;
+            }
+        };
+
+        AuthenticationInfo authInfo = new SimpleAuthenticationInfo();
+        AuthenticationInfo mergeResult = strategy.merge(authInfo, aggregate);
+        assertEquals(authInfo, mergeResult);
     }
 
 }

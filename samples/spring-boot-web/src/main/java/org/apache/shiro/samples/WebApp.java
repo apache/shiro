@@ -69,16 +69,6 @@ public class WebApp { //NOPMD
         return "error";
     }
 
-//
-//    @Bean
-//    public ShiroFilterChainDefinition shiroFilterChainDefinition() {
-//        DefaultShiroFilterChainDefinition filterChainDefinition = new DefaultShiroFilterChainDefinition();
-//        filterChainDefinition.addPathDefinition("/assets/**", DefaultFilter.anon.name()); // static web resources
-//        filterChainDefinition.addPathDefinition("/", DefaultFilter.anon.name());  // the welcome page allows guest or logged in users
-//        filterChainDefinition.addPathDefinition("/account-info", DefaultFilter.authc.name()); // the account-info page requires a user
-//        return filterChainDefinition;
-//    }
-
     @Bean
     public Realm realm() {
         TextConfigurationRealm realm = new TextConfigurationRealm();

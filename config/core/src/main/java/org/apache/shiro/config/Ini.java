@@ -561,7 +561,7 @@ public class Ini implements Map<String, Ini.Section> {
         }
 
         private static boolean isCharEscaped(CharSequence s, int index) {
-            return index > 0 && s.charAt(index - 1) == ESCAPE_TOKEN;
+            return index > 0 && s.charAt(index) == ESCAPE_TOKEN;
         }
 
         //Protected to access in a test case - NOT considered part of Shiro's public API
@@ -581,13 +581,13 @@ public class Ini implements Map<String, Ini.Section> {
                 if (buildingKey) {
                     if (isKeyValueSeparatorChar(c) && !isCharEscaped(line, i)) {
                         buildingKey = false;//now start building the value
-                    } else {
+                    } else if (!isCharEscaped(line, i)){
                         keyBuffer.append(c);
                     }
                 } else {
                     if (valueBuffer.length() == 0 && isKeyValueSeparatorChar(c) && !isCharEscaped(line, i)) {
                         //swallow the separator chars before we start building the value
-                    } else {
+                    } else if (!isCharEscaped(line, i)){
                         valueBuffer.append(c);
                     }
                 }

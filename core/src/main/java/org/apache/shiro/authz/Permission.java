@@ -32,7 +32,7 @@ package org.apache.shiro.authz;
  * <em>User</em> or <em>Guest</em> roles, etc.
  * <p/>
  * But if you have a dynamic security model, where roles can be created and deleted at runtime, you can't hard-code
- * role names in your code.  In this environment, roles themselves aren't aren't very useful.  What matters is what
+ * role names in your code.  In this environment, roles themselves aren't very useful.  What matters is what
  * <em>permissions</em> are assigned to these roles.
  * <p/>
  * Under this paradigm, permissions are immutable and reflect an application's raw functionality

@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.authc.credential;
 
+import java.security.MessageDigest;
+
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.HashRequest;
@@ -94,7 +96,15 @@ public class DefaultPasswordService implements HashingPasswordService {
 
         Hash computed = this.hashService.computeHash(request);
 
-        return saved.equals(computed);
+        return constantEquals(saved.toString(), computed.toString());
+    }
+
+    private boolean constantEquals(String savedHash, String computedHash) {
+
+        byte[] savedHashByteArray = savedHash.getBytes();
+        byte[] computedHashByteArray = computedHash.getBytes();
+
+        return MessageDigest.isEqual(savedHashByteArray, computedHashByteArray);
     }
 
     protected void checkHashFormatDurability() {
@@ -161,7 +171,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         Hash computed = this.hashService.computeHash(request);
         String formatted = this.hashFormat.format(computed);
 
-        return saved.equals(formatted);
+        return constantEquals(saved, formatted);
     }
 
     protected HashRequest buildHashRequest(ByteSource plaintext, Hash saved) {

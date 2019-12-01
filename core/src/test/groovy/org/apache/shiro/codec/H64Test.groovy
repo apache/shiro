@@ -19,14 +19,16 @@
 package org.apache.shiro.codec
 
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
+import org.junit.Test
+
+import static org.junit.Assert.*
 
 /**
  * Test cases for the {@link H64} implementation.
  */
-class H64Test extends GroovyTestCase {
+class H64Test {
 
-    void testNothing(){}
-
+    @Test
     public void testDefault() {
         byte[] orig = new SecureRandomNumberGenerator().nextBytes(6).bytes
 

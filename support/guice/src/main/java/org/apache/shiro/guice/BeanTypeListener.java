@@ -43,7 +43,8 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.google.inject.util.Types;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.SuppressPropertiesBeanIntrospector;
 import org.apache.shiro.SecurityUtils;
 
 /**
@@ -63,6 +64,11 @@ class BeanTypeListener implements TypeListener {
     private static final String BEAN_TYPE_MAP_NAME = "__SHIRO_BEAN_TYPES__";
     static final Key<?> MAP_KEY = Key.get(Types.mapOf(TypeLiteral.class, BeanTypeKey.class), Names.named(BEAN_TYPE_MAP_NAME));
 
+    /**
+     * @since 1.4
+     */
+    private final BeanUtilsBean beanUtilsBean;
+
     private static final Set<Class<?>> WRAPPER_TYPES = new HashSet<Class<?>>(Arrays.asList(
         Byte.class,
         Boolean.class,
@@ -74,8 +80,15 @@ class BeanTypeListener implements TypeListener {
         Short.class,
         Void.class));
 
+    public BeanTypeListener() {
+        // SHIRO-619
+        beanUtilsBean = new BeanUtilsBean();
+        beanUtilsBean.getPropertyUtils().addBeanIntrospector(
+                SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
+    }
+
     public <I> void hear(TypeLiteral<I> type, final TypeEncounter<I> encounter) {
-        PropertyDescriptor propertyDescriptors[] = PropertyUtils.getPropertyDescriptors(type.getRawType());
+        PropertyDescriptor propertyDescriptors[] = beanUtilsBean.getPropertyUtils().getPropertyDescriptors(type.getRawType());
         final Map<PropertyDescriptor, Key<?>> propertyDependencies = new HashMap<PropertyDescriptor, Key<?>>(propertyDescriptors.length);
         final Provider<Injector> injectorProvider = encounter.getProvider(Injector.class);
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {

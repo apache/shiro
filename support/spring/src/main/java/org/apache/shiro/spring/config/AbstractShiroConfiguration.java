@@ -27,9 +27,11 @@ import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.authz.permission.PermissionResolver;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.cache.CacheManager;
+import org.apache.shiro.config.Ini;
 import org.apache.shiro.event.EventBus;
 import org.apache.shiro.mgt.*;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
@@ -148,5 +150,10 @@ public class AbstractShiroConfiguration {
         ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
         authenticator.setAuthenticationStrategy(authenticationStrategy());
         return authenticator;
+    }
+
+    protected Realm iniRealmFromLocation(String iniLocation) {
+        Ini ini = Ini.fromResourcePath(iniLocation);
+        return new IniRealm( ini );
     }
 }

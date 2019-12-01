@@ -78,7 +78,7 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
      */
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         Subject subject = getSubject(request, response);
-        return subject.isAuthenticated();
+        return subject.isAuthenticated() && subject.getPrincipal() != null;
     }
 
     /**

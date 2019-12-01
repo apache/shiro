@@ -23,7 +23,8 @@
 	<parent>
 		<groupId>org.apache.shiro.integrationtests</groupId>
 		<artifactId>shiro-integration-tests</artifactId>
-		<version>1.4.0-SNAPSHOT</version>
+		<version>1.5.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>shiro-its-support</artifactId>
@@ -31,9 +32,14 @@
 
 	<dependencies>
 	    <dependency>
-	        <groupId>javax.servlet</groupId>
-	        <artifactId>jstl</artifactId>
-			<scope>compile</scope>
+		<groupId>org.apache.taglibs</groupId>
+		<artifactId>taglibs-standard-spec</artifactId>
+		<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+		<groupId>org.apache.taglibs</groupId>
+		<artifactId>taglibs-standard-impl</artifactId>
+		<scope>compile</scope>
 	    </dependency>
 	    <dependency>
 	        <groupId>javax.servlet</groupId>
@@ -63,6 +69,16 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
             <artifactId>apache-jsp</artifactId>
             <version>${jetty.version}</version>
         </dependency>
@@ -75,6 +91,29 @@
         <dependency>
             <groupId>com.github.mjeanroy</groupId>
             <artifactId>junit-servers-jetty</artifactId>
+            <!-- Exclude Jetty 9.2 artifacts -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-jndi</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-continuation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-webapp</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.websocket</groupId>
+                    <artifactId>websocket-server</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 		<dependency>
 			<groupId>junit</groupId>

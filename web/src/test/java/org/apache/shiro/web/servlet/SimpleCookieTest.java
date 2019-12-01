@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 
 import static org.easymock.EasyMock.*;
 
@@ -59,7 +60,7 @@ public class SimpleCookieTest extends TestCase {
         String path = "/somepath";
 
         String headerValue = this.cookie.buildHeaderValue(name, value, null, null, path,
-                0, SimpleCookie.DEFAULT_VERSION, false, false);
+                0, SimpleCookie.DEFAULT_VERSION, false, false, null);
 
         String expectedStart = new StringBuilder()
                 .append(name).append(SimpleCookie.NAME_VALUE_DELIMITER).append(value)
@@ -89,6 +90,9 @@ public class SimpleCookieTest extends TestCase {
                 .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(Cookie.ROOT_PATH)
                 .append(SimpleCookie.ATTRIBUTE_DELIMITER)
                 .append(SimpleCookie.HTTP_ONLY_ATTRIBUTE_NAME)
+                .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+                .append(SimpleCookie.SAME_SITE_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER)
+                    .append(Cookie.SameSiteOptions.LAX.toString().toLowerCase(Locale.ENGLISH))
                 .toString();
 
         expect(mockRequest.getContextPath()).andReturn(contextPath);

@@ -29,6 +29,7 @@ import org.apache.shiro.web.subject.support.WebDelegatingSubject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import org.apache.shiro.web.subject.WebSubject;
 
 /**
  * A {@code SubjectFactory} implementation that creates {@link WebDelegatingSubject} instances.
@@ -46,7 +47,11 @@ public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
     }
 
     public Subject createSubject(SubjectContext context) {
-        if (!(context instanceof WebSubjectContext)) {
+        //SHIRO-646
+        //Check if the existing subject is NOT a WebSubject. If it isn't, then call super.createSubject instead.
+        //Creating a WebSubject from a non-web Subject will cause the ServletRequest and ServletResponse to be null, which wil fail when creating a session.
+        boolean isNotBasedOnWebSubject = context.getSubject() != null && !(context.getSubject() instanceof WebSubject);
+        if (!(context instanceof WebSubjectContext) || isNotBasedOnWebSubject) {
             return super.createSubject(context);
         }
         WebSubjectContext wsc = (WebSubjectContext) context;

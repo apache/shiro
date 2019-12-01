@@ -40,7 +40,6 @@ import org.apache.shiro.crypto.hash.format.HexFormat;
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
 import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.util.ByteSource;
-import org.apache.shiro.util.JavaEnvironment;
 import org.apache.shiro.util.StringUtils;
 
 import java.io.File;
@@ -382,16 +381,15 @@ public final class Hasher {
                 "\n\n" +
                 "Generating a salt:" +
                 "\n\n" +
-                "Use the -sg/--saltgenerated option if you don't want to specify a salt,\n" +
+                "Use the -gs/--gensalt option if you don't want to specify a salt,\n" +
                 "but want a strong random salt to be generated and used during hashing.\n" +
                 "The generated salt size defaults to 128 bits.  You may specify\n" +
-                "a different size by using the -sgs/--saltgeneratedsize option followed by\n" +
+                "a different size by using the -gss/--gensaltsize option followed by\n" +
                 "a positive integer (size is in bits, not bytes)." +
                 "\n\n" +
-                "Because a salt must be specified if computing the\n" +
-                "hash later, generated salts will be printed, defaulting to base64\n" +
-                "encoding.  If you prefer to use hex encoding, additionally use the\n" +
-                "-sgh/--saltgeneratedhex option." +
+                "Because a salt must be specified if computing the hash later,\n" +
+                "generated salts are only useful with the shiro1 output format;\n" +
+                "the other formats do not include the generated salt." +
                 "\n\n" +
                 "Specifying a private salt:" +
                 "\n\n" +
@@ -444,11 +442,6 @@ public final class Hasher {
     }
 
     private static char[] readPassword(boolean confirm) {
-        if (!JavaEnvironment.isAtLeastVersion16()) {
-            String msg = "Password hashing (prompt without echo) uses the java.io.Console to read passwords " +
-                    "safely.  This is only available on Java 1.6 platforms and later.";
-            throw new IllegalArgumentException(msg);
-        }
         java.io.Console console = System.console();
         if (console == null) {
             throw new IllegalStateException("java.io.Console is not available on the current JVM.  Cannot read passwords.");

@@ -19,6 +19,7 @@
 package org.apache.shiro.web.servlet;
 
 import org.apache.shiro.util.StringUtils;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +68,7 @@ public class SimpleCookie implements Cookie {
     protected static final String COMMENT_ATTRIBUTE_NAME = "Comment";
     protected static final String SECURE_ATTRIBUTE_NAME = "Secure";
     protected static final String HTTP_ONLY_ATTRIBUTE_NAME = "HttpOnly";
+    protected static final String SAME_SITE_ATTRIBUTE_NAME = "SameSite";
 
     private static final transient Logger log = LoggerFactory.getLogger(SimpleCookie.class);
 
@@ -79,11 +81,13 @@ public class SimpleCookie implements Cookie {
     private int version;
     private boolean secure;
     private boolean httpOnly;
+    private SameSiteOptions sameSite;
 
     public SimpleCookie() {
         this.maxAge = DEFAULT_MAX_AGE;
         this.version = DEFAULT_VERSION;
         this.httpOnly = true; //most of the cookies ever used by Shiro should be as secure as possible.
+        this.sameSite = SameSiteOptions.LAX;
     }
 
     public SimpleCookie(String name) {
@@ -101,6 +105,7 @@ public class SimpleCookie implements Cookie {
         this.version = Math.max(DEFAULT_VERSION, cookie.getVersion());
         this.secure = cookie.isSecure();
         this.httpOnly = cookie.isHttpOnly();
+        this.sameSite = cookie.getSameSite();
     }
 
     public String getName() {
@@ -178,6 +183,14 @@ public class SimpleCookie implements Cookie {
         this.httpOnly = httpOnly;
     }
 
+    public SameSiteOptions getSameSite() {
+        return sameSite;
+    }
+
+    public void setSameSite(SameSiteOptions sameSite) {
+        this.sameSite = sameSite;
+    }
+
     /**
      * Returns the Cookie's calculated path setting.  If the {@link javax.servlet.http.Cookie#getPath() path} is {@code null}, then the
      * {@code request}'s {@link javax.servlet.http.HttpServletRequest#getContextPath() context path}
@@ -211,15 +224,16 @@ public class SimpleCookie implements Cookie {
         int version = getVersion();
         boolean secure = isSecure();
         boolean httpOnly = isHttpOnly();
+        SameSiteOptions sameSite = getSameSite();
 
-        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly);
+        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly, sameSite);
     }
 
     private void addCookieHeader(HttpServletResponse response, String name, String value, String comment,
                                  String domain, String path, int maxAge, int version,
-                                 boolean secure, boolean httpOnly) {
+                                 boolean secure, boolean httpOnly, SameSiteOptions sameSite) {
 
-        String headerValue = buildHeaderValue(name, value, comment, domain, path, maxAge, version, secure, httpOnly);
+        String headerValue = buildHeaderValue(name, value, comment, domain, path, maxAge, version, secure, httpOnly, sameSite);
         response.addHeader(COOKIE_HEADER_NAME, headerValue);
 
         if (log.isDebugEnabled()) {
@@ -238,6 +252,13 @@ public class SimpleCookie implements Cookie {
                                       String domain, String path, int maxAge, int version,
                                       boolean secure, boolean httpOnly) {
 
+        return buildHeaderValue(name, value, comment, domain, path, maxAge, version, secure, httpOnly, getSameSite());
+    }
+
+    protected String buildHeaderValue(String name, String value, String comment,
+                                      String domain, String path, int maxAge, int version,
+                                      boolean secure, boolean httpOnly, SameSiteOptions sameSite) {
+
         if (!StringUtils.hasText(name)) {
             throw new IllegalStateException("Cookie name cannot be null/empty.");
         }
@@ -255,6 +276,7 @@ public class SimpleCookie implements Cookie {
         appendVersion(sb, version);
         appendSecure(sb, secure);
         appendHttpOnly(sb, httpOnly);
+        appendSameSite(sb, sameSite);
 
         return sb.toString();
 
@@ -328,6 +350,13 @@ public class SimpleCookie implements Cookie {
         }
     }
 
+    private void appendSameSite(StringBuilder sb, SameSiteOptions sameSite) {
+        if (sameSite != null) {
+            sb.append(ATTRIBUTE_DELIMITER);
+            sb.append(SAME_SITE_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(sameSite.toString().toLowerCase(Locale.ENGLISH));
+        }
+    }
+
     /**
      * Check whether the given {@code cookiePath} matches the {@code requestPath}
      *
@@ -369,8 +398,9 @@ public class SimpleCookie implements Cookie {
         int version = getVersion();
         boolean secure = isSecure();
         boolean httpOnly = false; //no need to add the extra text, plus the value 'deleteMe' is not sensitive at all
+        SameSiteOptions sameSite = null;
 
-        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly);
+        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly, sameSite);
 
         log.trace("Removed '{}' cookie by setting maxAge=0", name);
     }
@@ -383,10 +413,11 @@ public class SimpleCookie implements Cookie {
             // Validate that the cookie is used at the correct place.
             String path = StringUtils.clean(getPath());
             if (path != null && !pathMatches(path, request.getRequestURI())) {
-                log.warn("Found '{}' cookie at path '{}', but should be only used for '{}'", new Object[] { name, request.getRequestURI(), path});
+                log.warn("Found '{}' cookie at path '{}', but should be only used for '{}'", 
+                		new Object[] { name, Encode.forHtml(request.getRequestURI()), path});
             } else {
                 value = cookie.getValue();
-                log.debug("Found '{}' cookie value [{}]", name, value);
+                log.debug("Found '{}' cookie value [{}]", name, Encode.forHtml(value));
             }
         } else {
             log.trace("No '{}' cookie value", name);

@@ -25,6 +25,7 @@ import org.apache.shiro.mgt.DefaultSecurityManager
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.realm.text.TextConfigurationRealm
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor
+import org.apache.shiro.spring.testconfig.RealmTestConfiguration
 import org.apache.shiro.subject.Subject
 import org.junit.Assert
 import org.junit.Test

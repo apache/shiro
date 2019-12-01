@@ -26,6 +26,7 @@ import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.env.EnvironmentLoader;
 import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.AccessControlFilter;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -347,7 +348,7 @@ public class WebUtils {
             return URLDecoder.decode(source, enc);
         } catch (UnsupportedEncodingException ex) {
             if (log.isWarnEnabled()) {
-                log.warn("Could not decode request string [" + source + "] with encoding '" + enc +
+                log.warn("Could not decode request string [" + Encode.forHtml(source) + "] with encoding '" + Encode.forHtml(enc) +
                         "': falling back to platform default encoding; exception message: " + ex.getMessage());
             }
             return URLDecoder.decode(source);

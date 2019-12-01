@@ -181,6 +181,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         context.setAuthenticated(true);
         context.setAuthenticationToken(token);
         context.setAuthenticationInfo(info);
+        context.setSecurityManager(this);
         if (existing != null) {
             context.setSubject(existing);
         }

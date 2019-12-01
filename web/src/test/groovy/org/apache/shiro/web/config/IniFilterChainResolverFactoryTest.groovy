@@ -25,14 +25,18 @@ import org.apache.shiro.config.Ini
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter
 import org.apache.shiro.web.filter.authz.SslFilter
 import org.apache.shiro.web.filter.mgt.FilterChainResolver
+import org.junit.Before
+import org.junit.Test
+
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link IniFilterChainResolverFactory} implementation.
  *
  * @since 1.2
  */
-class IniFilterChainResolverFactoryTest extends GroovyTestCase {
+class IniFilterChainResolverFactoryTest {
 
     private IniFilterChainResolverFactory factory;
 
@@ -43,20 +47,24 @@ class IniFilterChainResolverFactoryTest extends GroovyTestCase {
         return mock
     }
 
+    @Before
     void setUp() {
         this.factory = new IniFilterChainResolverFactory()
     }
 
+    @Test
     void testNewInstance() {
         assertNull factory.filterConfig
         factory.filterConfig = null
         assertNull factory.filterConfig
     }
 
+    @Test
     void testGetInstanceNoIni() {
         assertNotNull factory.getInstance()
     }
 
+    @Test
     void testNewInstanceWithIni() {
         Ini ini = new Ini()
         ini.load("""
@@ -68,16 +76,19 @@ class IniFilterChainResolverFactoryTest extends GroovyTestCase {
         assertNotNull resolver
     }
 
+    @Test
     void testGetFiltersWithNullOrEmptySection() {
         Map<String, Filter> filters = factory.getFilters(null, null);
         assertNull(filters);
     }
 
+    @Test
     void testCreateChainsWithNullUrlsSection() {
         //should do nothing (return immediately, no exceptions):
         factory.createChains(null, null);
     }
 
+    @Test
     void testNewInstanceWithNonFilter() {
         Ini ini = new Ini()
         ini.load("""
@@ -91,6 +102,7 @@ class IniFilterChainResolverFactoryTest extends GroovyTestCase {
         assertNotNull factory.getInstance()
     }
 
+    @Test
     void testNewInstanceWithFilterConfig() {
         Ini ini = new Ini()
         ini.load("""
@@ -111,12 +123,14 @@ class IniFilterChainResolverFactoryTest extends GroovyTestCase {
     }
 
     //asserts SHIRO-306
+    @Test
     void testGetFilters() {
         def extractedFilters = factory.getFilters(null, null)
         assertNull extractedFilters
     }
 
     //asserts SHIRO-306
+    @Test
     void testGetFiltersWithoutSectionWithDefaults() {
         def factory = new IniFilterChainResolverFactory()
 
@@ -130,6 +144,7 @@ class IniFilterChainResolverFactoryTest extends GroovyTestCase {
     }
 
     //asserts SHIRO-306
+    @Test
     void testGetFiltersWithSectionWithoutDefaults() {
         def factory = new IniFilterChainResolverFactory()
 
@@ -143,6 +158,7 @@ class IniFilterChainResolverFactoryTest extends GroovyTestCase {
     }
 
     //asserts SHIRO-306
+    @Test
     void testGetFiltersWithSectionAndDefaults() {
         def factory = new IniFilterChainResolverFactory()
 

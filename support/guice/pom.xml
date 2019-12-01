@@ -17,19 +17,23 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.apache.shiro</groupId>
-        <artifactId>shiro-root</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
+        <artifactId>shiro-support</artifactId>
+        <version>1.5.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-guice</artifactId>
     <name>Apache Shiro :: Support :: Guice</name>
     <packaging>bundle</packaging>
+
+    <properties>
+        <japicmp.skip>true</japicmp.skip>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -50,9 +54,17 @@
             <artifactId>guice-multibindings</artifactId>
         </dependency>
         <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-servlet</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

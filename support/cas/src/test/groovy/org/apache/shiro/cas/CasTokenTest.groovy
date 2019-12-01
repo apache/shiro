@@ -18,6 +18,10 @@
  */
 package org.apache.shiro.cas
 
+import org.junit.Test
+
+import static org.junit.Assert.*
+
 /**
  * Unit tests for the {@link CasToken} implementation.
  *
@@ -26,8 +30,9 @@ package org.apache.shiro.cas
  * @deprecated replaced with Shiro integration in <a href="https://github.com/bujiio/buji-pac4j">buji-pac4j</a>.
  */
 @Deprecated
-class CasTokenTest extends GroovyTestCase {
+class CasTokenTest {
 
+    @Test
     void testPrincipal() {
         CasToken casToken = new CasToken("fakeTicket")
         assertNull casToken.principal
@@ -35,11 +40,13 @@ class CasTokenTest extends GroovyTestCase {
         assertEquals "myUserId", casToken.principal
     }
 
+    @Test
     void testCredentials() {
         CasToken casToken = new CasToken("fakeTicket")
         assertEquals "fakeTicket", casToken.credentials
     }
 
+    @Test
     void testRememberMe() {
         CasToken casToken = new CasToken("fakeTicket")
         assertFalse casToken.rememberMe

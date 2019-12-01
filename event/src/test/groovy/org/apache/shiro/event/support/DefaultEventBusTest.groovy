@@ -18,20 +18,25 @@
  */
 package org.apache.shiro.event.support
 
+import org.junit.Before
+import org.junit.Test
+
+import static org.junit.Assert.*
 import static org.easymock.EasyMock.*
 
 /**
  * @since 1.3
  */
-class DefaultEventBusTest extends GroovyTestCase {
+class DefaultEventBusTest {
 
     DefaultEventBus bus;
 
-    @Override
-    protected void setUp() {
+    @Before
+    void setUp() {
         bus = new DefaultEventBus()
     }
 
+    @Test
     void testSetEventListenerResolver() {
         def resolver = new EventListenerResolver() {
             List<EventListener> getEventListeners(Object instance) {
@@ -42,6 +47,7 @@ class DefaultEventBusTest extends GroovyTestCase {
         assertSame resolver, bus.getEventListenerResolver()
     }
 
+    @Test
     void testSimpleSubscribe() {
         def subscriber = new TestSubscriber();
 
@@ -56,6 +62,7 @@ class DefaultEventBusTest extends GroovyTestCase {
         assertSame event, subscriber.lastEvent
     }
 
+    @Test
     void testPublishNullEvent() {
         def subscriber = new TestSubscriber();
         bus.register(subscriber)
@@ -65,6 +72,7 @@ class DefaultEventBusTest extends GroovyTestCase {
         assertEquals 0, subscriber.count
     }
 
+    @Test
     void testSubscribeNullInstance() {
         def resolver = createStrictMock(EventListenerResolver)  //assert no methods are called on this
         bus.eventListenerResolver = resolver
@@ -76,6 +84,7 @@ class DefaultEventBusTest extends GroovyTestCase {
         verify(resolver)
     }
 
+    @Test
     void testSubscribeWithNullResolvedListeners() {
         def resolver = new EventListenerResolver() {
             List<EventListener> getEventListeners(Object instance) {
@@ -88,6 +97,7 @@ class DefaultEventBusTest extends GroovyTestCase {
         assertEquals 0, bus.registry.size()
     }
 
+    @Test
     void testSubscribeWithoutAnnotations() {
         def subscriber = new NotAnnotatedSubscriber()
         bus.register(subscriber)
@@ -97,10 +107,12 @@ class DefaultEventBusTest extends GroovyTestCase {
         assertEquals 0, bus.registry.size()
     }
 
+    @Test
     void testUnsubscribeNullInstance() {
         bus.unregister(null)
     }
 
+    @Test
     void testUnsubscribe() {
         def subscriber = new TestSubscriber()
         bus.register(subscriber)
@@ -119,6 +131,7 @@ class DefaultEventBusTest extends GroovyTestCase {
         assertEquals 0, bus.registry.size()
     }
 
+    @Test
     void testPolymorphicSubscribeMethodsOnlyOneInvoked() {
         def subscriber = new TestSubscriber()
         bus.register(subscriber)
@@ -133,6 +146,7 @@ class DefaultEventBusTest extends GroovyTestCase {
         assertEquals 1, subscriber.count
     }
 
+    @Test
     void testPolymorphicSubscribeMethodsOnlyOneInvokedWithListenerSubclass() {
         def subscriber = new SubclassTestSubscriber()
         bus.register(subscriber)
@@ -148,6 +162,7 @@ class DefaultEventBusTest extends GroovyTestCase {
         assertEquals 0, subscriber.barCount
     }
 
+    @Test
     void testSubscribeWithErroneousAnnotation() {
         def subscriber = new ErroneouslyAnnotatedSubscriber()
         //noinspection GroovyUnusedCatchParameter
@@ -158,6 +173,7 @@ class DefaultEventBusTest extends GroovyTestCase {
         }
     }
 
+    @Test
     void testContinueThroughListenerExceptions() {
         def ok = new SimpleSubscriber()
         def error = new ExceptionThrowingSubscriber()

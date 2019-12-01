@@ -23,12 +23,17 @@
 	<parent>
 		<groupId>org.apache.shiro.integrationtests</groupId>
 		<artifactId>shiro-integration-tests</artifactId>
-		<version>1.4.0-SNAPSHOT</version>
+		<version>1.5.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>shiro-its-guice3</artifactId>
 	<name>Apache Shiro :: ITs :: Guice 3</name>
 	<packaging>war</packaging>
+
+	<properties>
+		<guice.version>3.0</guice.version>
+	</properties>
 
 	<build>
 	    <plugins>
@@ -41,9 +46,14 @@
 
 	<dependencies>
 	    <dependency>
-	        <groupId>javax.servlet</groupId>
-	        <artifactId>jstl</artifactId>
-			<scope>compile</scope>
+		<groupId>org.apache.taglibs</groupId>
+		<artifactId>taglibs-standard-spec</artifactId>
+		<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.apache.taglibs</groupId>
+		<artifactId>taglibs-standard-impl</artifactId>
+		<scope>compile</scope>
 	    </dependency>
 	    <dependency>
 	        <groupId>javax.servlet</groupId>

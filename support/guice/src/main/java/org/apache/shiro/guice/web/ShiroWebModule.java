@@ -33,6 +33,7 @@ import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.filter.authc.AnonymousFilter;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
+import org.apache.shiro.web.filter.authc.BearerHttpAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.LogoutFilter;
 import org.apache.shiro.web.filter.authc.UserFilter;
@@ -68,6 +69,8 @@ public abstract class ShiroWebModule extends ShiroModule {
     public static final Key<FormAuthenticationFilter> AUTHC = Key.get(FormAuthenticationFilter.class);
     @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<BasicHttpAuthenticationFilter> AUTHC_BASIC = Key.get(BasicHttpAuthenticationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
+    public static final Key<BearerHttpAuthenticationFilter> AUTHC_BEARER = Key.get(BearerHttpAuthenticationFilter.class);
     @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<NoSessionCreationFilter> NO_SESSION_CREATION = Key.get(NoSessionCreationFilter.class);
     @SuppressWarnings({"UnusedDeclaration"})
@@ -141,7 +144,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         Map<Key<? extends Filter>, Map<String, String>> filterToPathToConfig = new HashMap<Key<? extends Filter>, Map<String, String>>();
 
         // At the same time build a map to return with Path -> Key[]
-        Map<String, Key<? extends Filter>[]> resultConfigMap = new HashMap<String, Key<? extends Filter>[]>();
+        Map<String, Key<? extends Filter>[]> resultConfigMap = new LinkedHashMap<String, Key<? extends Filter>[]>();
 
         for (Map.Entry<String, FilterConfig<? extends Filter>[]> filterChain : filterChains.entrySet()) {
 
@@ -158,7 +161,8 @@ public abstract class ShiroWebModule extends ShiroModule {
 
                 // initialize key in filterToPathToConfig, if it doesn't exist
                 if (filterToPathToConfig.get(key) == null) {
-                    filterToPathToConfig.put((key), new HashMap<String, String>());
+                	// Fix for SHIRO-621: REST filter bypassing matched path
+                    filterToPathToConfig.put((key), new LinkedHashMap<String, String>());
                 }
                 // now set the value
                 filterToPathToConfig.get(key).put(path, config);

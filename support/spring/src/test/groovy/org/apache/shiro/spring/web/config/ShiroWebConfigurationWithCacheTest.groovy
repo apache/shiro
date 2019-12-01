@@ -24,6 +24,10 @@ import org.apache.shiro.spring.config.EventBusTestConfiguration
 import org.apache.shiro.spring.config.RealmTestConfiguration
 import org.apache.shiro.spring.config.ShiroAnnotationProcessorConfiguration
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor
+import org.apache.shiro.spring.testconfig.EventBusTestConfiguration
+import org.apache.shiro.spring.testconfig.RealmTestConfiguration
+import org.apache.shiro.spring.web.testconfig.CacheManagerConfiguration
+
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

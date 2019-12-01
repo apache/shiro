@@ -69,11 +69,13 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
 
     public DefaultWebSecurityManager() {
         super();
-        ((DefaultSubjectDAO) this.subjectDAO).setSessionStorageEvaluator(new DefaultWebSessionStorageEvaluator());
+        DefaultWebSessionStorageEvaluator webEvalutator = new DefaultWebSessionStorageEvaluator();  
+        ((DefaultSubjectDAO) this.subjectDAO).setSessionStorageEvaluator(webEvalutator);
         this.sessionMode = HTTP_SESSION_MODE;
         setSubjectFactory(new DefaultWebSubjectFactory());
         setRememberMeManager(new CookieRememberMeManager());
         setSessionManager(new ServletContainerSessionManager());
+        webEvalutator.setSessionManager(getSessionManager());
     }
 
     @SuppressWarnings({"UnusedDeclaration"})

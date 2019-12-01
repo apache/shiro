@@ -26,21 +26,26 @@ import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.FilterConfig
 import javax.servlet.ServletContext
+import org.junit.Before
+import org.junit.Test
 
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link DefaultFilterChainManager} implementation.
  */
-class DefaultFilterChainManagerTest extends GroovyTestCase {
+class DefaultFilterChainManagerTest {
 
     DefaultFilterChainManager manager;
 
+    @Before
     void setUp() {
         this.manager = new DefaultFilterChainManager();
     }
 
     //SHIRO-205
+    @Test
     void testToNameConfigPairNoBrackets() {
         def token = "foo"
 
@@ -53,6 +58,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
     }
 
     //SHIRO-205
+    @Test
     void testToNameConfigPairWithEmptyBrackets() {
         def token = "foo[]"
 
@@ -65,6 +71,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
     }
 
     //SHIRO-205
+    @Test
     void testToNameConfigPairWithPopulatedBrackets() {
         def token = "foo[bar, baz]"
 
@@ -77,6 +84,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
     }
 
     //SHIRO-205 - asserts backwards compatibility before SHIRO-205 was implemented:
+    @Test
     void testToNameConfigPairWithNestedQuotesInBrackets() {
         def token = 'roles["guest, admin"]'
 
@@ -90,6 +98,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
 
     //SHIRO-205 - asserts backwards compatibility before SHIRO-205 was implemented:
     //@since 1.2.2
+    @Test
     void testToNameConfigPairWithIndividualNestedQuotesInBrackets() {
         def token = 'roles["guest", "admin"]'
 
@@ -102,6 +111,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
     }
     
     //SHIRO-205
+    @Test
     void testFilterChainConfigWithNestedCommas() {
         def chain = "a, b[c], d[e, f], g[h, i, j], k"
 
@@ -117,6 +127,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
     }
 
     //SHIRO-205
+    @Test
     void testFilterChainConfigWithNestedQuotedCommas() {
         def chain = "a, b[c], d[e, f], g[h, i, j], k"
 
@@ -131,6 +142,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         assertEquals "k", tokens[4]
     }
 
+    @Test
     void testNewInstanceDefaultFilters() {
         for (DefaultFilter defaultFilter : DefaultFilter.values()) {
             assertNotNull(manager.getFilter(defaultFilter.name()));
@@ -145,6 +157,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         return mock;
     }
 
+    @Test
     void testNewInstanceWithFilterConfig() {
         FilterConfig mock = createNiceMockFilterConfig();
         replay(mock);
@@ -156,6 +169,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         verify(mock);
     }
 
+    @Test
     void testCreateChain() {
         try {
             manager.createChain(null, null);
@@ -200,6 +214,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
      * Helps assert <a href="https://issues.apache.org/jira/browse/SHIRO-429">SHIRO-429</a>
      * @since 1.2.2
      */
+    @Test
     void testCreateChainWithQuotedInstanceConfig() {
 
         manager.createChain("test", 'authc, perms["perm1", "perm2"]');
@@ -228,12 +243,14 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         assertEquals(DefaultFilter.perms.getFilterClass(), filter.getClass());
     }
 
+    @Test
     void testBeanMethods() {
         Map<String, Filter> filters = manager.getFilters();
         assertEquals(filters.size(), DefaultFilter.values().length);
         manager.setFilters(filters);
     }
 
+    @Test
     void testAddFilter() {
         FilterConfig mockFilterConfig = createNiceMockFilterConfig();
         replay(mockFilterConfig);
@@ -245,6 +262,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         verify(mockFilterConfig);
     }
 
+    @Test
     void testAddFilterNoInit() {
         FilterConfig mockFilterConfig = createNiceMockFilterConfig();
         Filter mockFilter = createNiceMock(Filter.class);
@@ -261,6 +279,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         verify mockFilterConfig, mockFilter
     }
 
+    @Test
     void testAddFilterNoFilterConfig() {
         SslFilter filter = new SslFilter();
         manager.addFilter("test", filter);
@@ -268,6 +287,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         assertSame manager.filters['test'], filter
     }
 
+    @Test
     void testAddToChain() {
         FilterConfig mockFilterConfig = createNiceMockFilterConfig();
         replay(mockFilterConfig);
@@ -288,6 +308,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         }
     }
 
+    @Test
     void testAddToChainNotPathProcessor() {
         FilterConfig mockFilterConfig = createNiceMockFilterConfig();
         replay(mockFilterConfig);
@@ -303,6 +324,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         }
     }
 
+    @Test
     void testProxy() {
         FilterChain mock = createNiceMock(FilterChain.class);
         replay(mock);
@@ -311,6 +333,7 @@ class DefaultFilterChainManagerTest extends GroovyTestCase {
         verify(mock);
     }
 
+    @Test
     void testProxyNoChain() {
         FilterChain mock = createNiceMock(FilterChain.class);
         replay(mock);

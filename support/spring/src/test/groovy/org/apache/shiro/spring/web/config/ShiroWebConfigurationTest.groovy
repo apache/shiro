@@ -21,13 +21,17 @@ package org.apache.shiro.spring.web.config
 import org.apache.shiro.event.EventBus
 import org.apache.shiro.event.support.DefaultEventBus
 import org.apache.shiro.mgt.SecurityManager
+import org.apache.shiro.mgt.SessionStorageEvaluator
 import org.apache.shiro.realm.text.TextConfigurationRealm
 import org.apache.shiro.spring.config.EventBusTestConfiguration
 import org.apache.shiro.spring.config.RealmTestConfiguration
 import org.apache.shiro.spring.config.ShiroAnnotationProcessorConfiguration
 import org.apache.shiro.spring.config.ShiroBeanConfiguration
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor
+import org.apache.shiro.spring.testconfig.EventBusTestConfiguration
+import org.apache.shiro.spring.testconfig.RealmTestConfiguration
 import org.apache.shiro.web.mgt.CookieRememberMeManager
+import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator
 import org.apache.shiro.web.mgt.WebSecurityManager
 import org.apache.shiro.web.servlet.Cookie
 
@@ -63,11 +67,16 @@ public class ShiroWebConfigurationTest {
     @Qualifier("sessionCookieTemplate")
     private Cookie sessionCookieTemplate;
 
+    @Autowired
+    private SessionStorageEvaluator sessionStorageEvaluator;
+
     @Test
     public void testMinimalConfiguration() {
 
         // first do a quick check of the injected objects
         assertNotNull securityManager
+        assertNotNull sessionStorageEvaluator
+        assertThat sessionStorageEvaluator, instanceOf(DefaultWebSessionStorageEvaluator)
         assertThat securityManager, instanceOf(WebSecurityManager)
         assertThat securityManager.realms, allOf(hasSize(1), hasItem(instanceOf(TextConfigurationRealm)))
         assertNull securityManager.cacheManager

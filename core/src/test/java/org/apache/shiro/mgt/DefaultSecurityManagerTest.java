@@ -19,6 +19,7 @@
 package org.apache.shiro.mgt;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.Ini;
@@ -27,6 +28,8 @@ import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractValidatingSessionManager;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.support.DelegatingSubject;
+import org.apache.shiro.util.ThreadContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -152,5 +155,32 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         assertNull(subject.getPrincipal());
         assertNull(subject.getPrincipals());
 
+    }
+
+    /**
+     * Test ensures that a {@link Subject#login(AuthenticationToken)} first uses
+     * the {@link SecurityManager} passed to its {@link Subject.Builder}
+     * (if one was) instead of the one found in either the {@link ThreadContext}
+     * or statically in {@link SecurityUtils}, either of which may not exist.
+     * <a href="https://issues.apache.org/jira/browse/SHIRO-457">SHIRO-457</a>
+     */
+    @Test
+    public void testNewSubjectWithoutThreadSecurityManager() {
+        // Ensure no fallback sm exists in thread context or statically
+        SecurityUtils.setSecurityManager(null);
+        try {
+            SecurityUtils.getSecurityManager();
+        } catch (UnavailableSecurityManagerException e) {
+            assertTrue(e.getMessage().startsWith("No SecurityManager accessible"));
+        }
+
+        // Specify sm to use and build subject with
+        DelegatingSubject subject =
+            (DelegatingSubject)(new Subject.Builder(sm)).buildSubject();
+
+        // Login and verify specified sm is used and no error thrown
+        AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
+        subject.login(token);
+        assertEquals(sm, subject.getSecurityManager());
     }
 }

@@ -294,7 +294,7 @@ public class DelegatingSubject implements Subject {
     }
 
     public boolean isAuthenticated() {
-        return authenticated;
+        return authenticated && hasPrincipals();
     }
 
     public boolean isRemembered() {

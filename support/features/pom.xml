@@ -17,13 +17,13 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.apache.shiro</groupId>
-        <artifactId>shiro-root</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
+        <artifactId>shiro-support</artifactId>
+        <version>1.5.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -32,13 +32,26 @@
     <packaging>pom</packaging>
 
     <properties>
-        <aspectj.bundle.version>1.8.9_1</aspectj.bundle.version>
+        <aspectj.bundle.version>1.9.4_1</aspectj.bundle.version>
+        <c3p0-bundle-version>0.9.5.4_1</c3p0-bundle-version>
         <ehcache.bundle.version>2.6.11_1</ehcache.bundle.version>
-        <hazelcast.bundle.version>3.7.2_1</hazelcast.bundle.version>
-        <quartz.bundle.version>1.6.1_1</quartz.bundle.version>
+        <hikaricp-version>2.4.13</hikaricp-version>
+        <quartz.bundle.version>2.3.2_1</quartz.bundle.version>
         <!-- Not a Shiro dependency - used for quartz bundle resolution only (see features.xml): -->
-        <commons.collections.version>3.2.1</commons.collections.version>
+        <commons.collections.version>3.2.2</commons.collections.version>
+        <!-- karaf plugin version -->
+        <karaf.version>4.2.7</karaf.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>framework</artifactId>
+            <version>${karaf.version}</version>
+            <type>kar</type>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <resources>
@@ -54,7 +67,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>3.1.0</version>
                 <configuration>
                     <useDefaultDelimiters>false</useDefaultDelimiters>
                     <delimiters>
@@ -89,6 +102,36 @@
                                     <classifier>features</classifier>
                                 </artifact>
                             </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <version>${karaf.version}</version>
+                <executions>
+                    <execution>
+                        <id>verify</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features</descriptor>
+                                <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features</descriptor>
+                                <descriptor>mvn:org.apache.karaf.features/spring-legacy/${karaf.version}/xml/features</descriptor>
+                                <descriptor>file:${project.build.directory}/classes/features.xml</descriptor>
+                            </descriptors>
+                            <distribution>org.apache.karaf.features:framework</distribution>
+                            <javase>1.8</javase>
+                            <framework>
+                                <feature>framework</feature>
+                            </framework>
+                            <features>
+                                <feature>shiro*</feature>
+                            </features>
                         </configuration>
                     </execution>
                 </executions>

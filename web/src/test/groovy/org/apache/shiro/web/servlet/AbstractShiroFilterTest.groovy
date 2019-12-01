@@ -23,13 +23,17 @@ import javax.servlet.ServletContext
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.UnavailableSecurityManagerException
 import org.apache.shiro.web.mgt.WebSecurityManager
+import org.junit.Test
+
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link AbstractShiroFilter} implementation.
  */
-class AbstractShiroFilterTest extends GroovyTestCase {
+class AbstractShiroFilterTest {
 
+    @Test
     void testInit() {
 
         SecurityUtils.securityManager = null
@@ -57,6 +61,7 @@ class AbstractShiroFilterTest extends GroovyTestCase {
         verify securityManager, filterConfig, servletContext
     }
 
+    @Test
     void testInitWithStaticReference() {
 
         SecurityUtils.securityManager = null

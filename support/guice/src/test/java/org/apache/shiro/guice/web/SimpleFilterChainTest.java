@@ -47,8 +47,8 @@ public class SimpleFilterChainTest {
         ServletRequest request = ctrl.createMock(ServletRequest.class);
         ServletResponse response = ctrl.createMock(ServletResponse.class);
 
-        Capture<FilterChain> fc1 = new Capture<FilterChain>();
-        Capture<FilterChain> fc2 = new Capture<FilterChain>();
+        Capture<FilterChain> fc1 = Capture.newInstance();
+        Capture<FilterChain> fc2 = Capture.newInstance();
         filter1.doFilter(same(request), same(response), and(anyObject(FilterChain.class), capture(fc1)));
         filter2.doFilter(same(request), same(response), and(anyObject(FilterChain.class), capture(fc2)));
         originalChain.doFilter(request, response);

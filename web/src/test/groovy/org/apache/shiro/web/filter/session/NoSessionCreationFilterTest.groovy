@@ -21,15 +21,19 @@ package org.apache.shiro.web.filter.session
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import org.apache.shiro.subject.support.DefaultSubjectContext
+import org.junit.Test
+
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link NoSessionCreationFilter} implementation.
  *
  * @since 1.2
  */
-class NoSessionCreationFilterTest extends GroovyTestCase {
+class NoSessionCreationFilterTest {
 
+    @Test
     void testDefault() {
         NoSessionCreationFilter filter = new NoSessionCreationFilter();
 

@@ -24,13 +24,17 @@ import javax.servlet.http.HttpSession
 import org.apache.shiro.session.mgt.SessionContext
 import org.apache.shiro.session.mgt.SessionKey
 import org.apache.shiro.web.session.HttpServletSession
+import org.junit.Test
+
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link ServletContainerSessionManager} implementation.
  */
-class ServletContainerSessionManagerTest extends GroovyTestCase {
+class ServletContainerSessionManagerTest {
 
+    @Test
     void testStartWithNonWebSessionContext() {
 
         def sessionContext = createStrictMock(SessionContext)
@@ -47,6 +51,7 @@ class ServletContainerSessionManagerTest extends GroovyTestCase {
         verify sessionContext
     }
 
+    @Test
     void testStartWithContextHostValue() {
 
         def host = "host.somecompany.com"
@@ -76,6 +81,7 @@ class ServletContainerSessionManagerTest extends GroovyTestCase {
         verify request, response, httpSession
     }
 
+    @Test
     void testStartWithoutContextHostValue() {
 
         def host = "host.somecompany.com"
@@ -105,6 +111,7 @@ class ServletContainerSessionManagerTest extends GroovyTestCase {
         verify request, response, httpSession
     }
 
+    @Test
     void testGetSessionWithNonWebSessionKey() {
 
         def key = createStrictMock(SessionKey)
@@ -121,6 +128,7 @@ class ServletContainerSessionManagerTest extends GroovyTestCase {
         verify key
     }
 
+    @Test
     void testGetSessionWithExistingRequestSession() {
 
         String host = "www.company.com"
@@ -148,6 +156,7 @@ class ServletContainerSessionManagerTest extends GroovyTestCase {
         verify request, response, httpSession
     }
 
+    @Test
     void testGetSessionWithoutExistingRequestSession() {
 
         def request = createStrictMock(HttpServletRequest)
