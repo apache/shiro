@@ -23,6 +23,7 @@ import java.util.Collection;
 
 import org.apache.shiro.aop.MethodInvocation;
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.util.ClassUtils;
 
 /**
  * An <tt>AnnotationsAuthorizingMethodInterceptor</tt> is a MethodInterceptor that asserts a given method is authorized
@@ -52,12 +53,16 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
      * support role and permission annotations.
      */
     public AnnotationsAuthorizingMethodInterceptor() {
-        methodInterceptors = new ArrayList<AuthorizingAnnotationMethodInterceptor>(5);
+        methodInterceptors = new ArrayList<>(8);
         methodInterceptors.add(new RoleAnnotationMethodInterceptor());
         methodInterceptors.add(new PermissionAnnotationMethodInterceptor());
         methodInterceptors.add(new AuthenticatedAnnotationMethodInterceptor());
         methodInterceptors.add(new UserAnnotationMethodInterceptor());
         methodInterceptors.add(new GuestAnnotationMethodInterceptor());
+
+        if (ClassUtils.isAvailable("javax.annotation.security.PermitAll")) {
+            methodInterceptors.add(new Jsr250MethodInterceptor());
+        }
     }
 
     /**

@@ -58,7 +58,10 @@ public class DefaultAnnotationResolver implements AnnotationResolver {
             throw new IllegalArgumentException(msg);
 
         }
+        // first look for the Annotation on the method
         Annotation annotation = m.getAnnotation(clazz);
+
+        // then look on the class
         if (annotation == null ) {
             Object miThis = mi.getThis();
             //SHIRO-473 - miThis could be null for static methods, just return null
