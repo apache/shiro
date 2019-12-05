@@ -37,6 +37,17 @@ import java.util.Collection;
  */
 public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
+    private boolean stopAfterFirstSuccess;
+
+    public void setStopAfterFirstSuccess (boolean stopAfterFirstSuccess ) {
+
+        this.stopAfterFirstSuccess  = stopAfterFirstSuccess ;
+    }
+
+    public boolean getStopAfterFirstSuccess() {
+        return stopAfterFirstSuccess ;
+    }
+
     /**
      * Returns {@code null} immediately, relying on this class's {@link #merge merge} implementation to return
      * only the first {@code info} object it encounters, ignoring all subsequent ones.
@@ -44,6 +55,22 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
     public AuthenticationInfo beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException {
         return null;
     }
+
+
+    /**
+     * Throws ShortCircuitIterationException if stopAfterFirstSuccess is set and authentication is 
+     * successful with a previously consulted realm. 
+     * Returns the <code>aggregate</code> method argument, without modification
+     * otherwise.
+     */
+    public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {
+        if (getStopAfterFirstSuccess() && aggregate != null && isEmpty(aggregate.getPrincipals())) {
+            throw new ShortCircuitIterationException();
+        }
+        return aggregate;
+    }
+
+    
 
     private static boolean isEmpty(PrincipalCollection pc) {
         return pc == null || pc.isEmpty();
