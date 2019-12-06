@@ -111,8 +111,17 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
         if (log.isDebugEnabled()) {
             log.debug("Executing session validation...");
         }
+        Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
+            log.error("Error while validating the session, the thread will be stopped and session validation disabled", e);
+            this.disableSessionValidation();
+        });
         long startTime = System.currentTimeMillis();
-        this.sessionManager.validateSessions();
+        try {
+            this.sessionManager.validateSessions();
+        } catch (RuntimeException e) {
+            log.error("Error while validating the session", e);
+            //we don't stop the thread
+        }
         long stopTime = System.currentTimeMillis();
         if (log.isDebugEnabled()) {
             log.debug("Session validation completed successfully in " + (stopTime - startTime) + " milliseconds.");
