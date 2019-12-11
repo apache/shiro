@@ -24,6 +24,9 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.servlet.Filter;
+import java.util.Map;
+
 /**
  * @since 1.4.0
  */
@@ -34,6 +37,9 @@ public class AbstractShiroWebFilterConfiguration {
 
     @Autowired
     protected ShiroFilterChainDefinition shiroFilterChainDefinition;
+
+    @Autowired
+    protected Map<String, Filter> filterMap;
 
     @Value("#{ @environment['shiro.loginUrl'] ?: '/login.jsp' }")
     protected String loginUrl;
@@ -53,6 +59,7 @@ public class AbstractShiroWebFilterConfiguration {
 
         filterFactoryBean.setSecurityManager(securityManager);
         filterFactoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinition.getFilterChainMap());
+        filterFactoryBean.setFilters(filterMap);
 
         return filterFactoryBean;
     }
