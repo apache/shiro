@@ -306,7 +306,7 @@ public abstract class JcaCipherService implements CipherService {
         if (generate) {
             ivBytes = generateInitializationVector(false);
             if (ivBytes == null || ivBytes.length == 0) {
-                throw new IllegalStateException("Initialization vector generation is enabled - generated vector" +
+                throw new IllegalStateException("Initialization vector generation is enabled - generated vector " +
                         "cannot be null or empty.");
             }
         }
@@ -503,7 +503,7 @@ public abstract class JcaCipherService implements CipherService {
         if (generate) {
             iv = generateInitializationVector(true);
             if (iv == null || iv.length == 0) {
-                throw new IllegalStateException("Initialization vector generation is enabled - generated vector" +
+                throw new IllegalStateException("Initialization vector generation is enabled - generated vector " +
                         "cannot be null or empty.");
             }
         }
