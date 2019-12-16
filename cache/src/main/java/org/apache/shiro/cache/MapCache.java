@@ -82,10 +82,10 @@ public class MapCache<K, V> implements Cache<K, V> {
 
     public Collection<V> values() {
         Collection<V> values = map.values();
-        if (!map.isEmpty()) {
+        if (!values.isEmpty()) {
             return Collections.unmodifiableCollection(values);
         }
-        return Collections.emptySet();
+        return Collections.emptyList();
     }
 
     public String toString() {
