@@ -22,7 +22,6 @@ package org.apache.shiro.spring.boot.autoconfigure.web.application;
 import org.apache.shiro.event.EventBus;
 import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.event.Subscribe;
-import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.text.TextConfigurationRealm;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
@@ -41,7 +40,7 @@ public class ShiroWebAutoConfigurationTestApplication {
 
     @Bean
     @SuppressWarnings("Duplicates")
-    Realm getTextConfigurationRealm() {
+    TextConfigurationRealm getTextConfigurationRealm() {
 
         TextConfigurationRealm realm = new TextConfigurationRealm();
         realm.setUserDefinitions("joe.coder=password,user\n" +

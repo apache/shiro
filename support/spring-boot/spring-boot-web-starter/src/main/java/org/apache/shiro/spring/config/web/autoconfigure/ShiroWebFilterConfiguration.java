@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Configuration;
 public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "shiroFilterFactoryBean")
     @Override
     protected ShiroFilterFactoryBean shiroFilterFactoryBean() {
         return super.shiroFilterFactoryBean();

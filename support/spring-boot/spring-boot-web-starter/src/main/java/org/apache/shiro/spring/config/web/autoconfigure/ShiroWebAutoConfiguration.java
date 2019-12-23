@@ -51,63 +51,63 @@ import org.springframework.context.annotation.Configuration;
 public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "authenticationStrategy")
     @Override
     protected AuthenticationStrategy authenticationStrategy() {
         return super.authenticationStrategy();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "authenticator")
     @Override
     protected Authenticator authenticator() {
         return super.authenticator();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "authorizer")
     @Override
     protected Authorizer authorizer() {
         return super.authorizer();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "subjectDAO")
     @Override
     protected SubjectDAO subjectDAO() {
         return super.subjectDAO();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "sessionStorageEvaluator")
     @Override
     protected SessionStorageEvaluator sessionStorageEvaluator() {
         return super.sessionStorageEvaluator();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "subjectFactory")
     @Override
     protected SubjectFactory subjectFactory() {
         return super.subjectFactory();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "sessionFactory")
     @Override
     protected SessionFactory sessionFactory() {
         return super.sessionFactory();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "sessionDAO")
     @Override
     protected SessionDAO sessionDAO() {
         return super.sessionDAO();
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "sessionManager")
     @Override
     protected SessionManager sessionManager() {
         return super.sessionManager();
@@ -128,7 +128,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = "rememberMeManager")
     @Override
     protected RememberMeManager rememberMeManager() {
         return super.rememberMeManager();
