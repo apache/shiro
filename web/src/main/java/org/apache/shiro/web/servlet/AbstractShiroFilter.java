@@ -314,7 +314,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
                     try {
                         session.touch();
                     } catch (Throwable t) {
-                        log.error("session.touch() method invocation has failed.  Unable to update" +
+                        log.error("session.touch() method invocation has failed.  Unable to update " +
                                 "the corresponding session's last access time based on the incoming request.", t);
                     }
                 }

@@ -107,7 +107,7 @@ public class ShiroHttpSession implements HttpSession {
 
     public void setMaxInactiveInterval(int i) {
         try {
-            getSession().setTimeout(i * 1000);
+            getSession().setTimeout(i * 1000L);
         } catch (InvalidSessionException e) {
             throw new IllegalStateException(e);
         }
