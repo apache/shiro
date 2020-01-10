@@ -24,7 +24,7 @@ import org.apache.shiro.spring.ShiroEventBusBeanPostProcessor
 import org.junit.Assert
 import org.junit.Test
 
-import static org.easymock.EasyMock.*
+import static org.mockito.Mockito.mock
 
 /**
  * Tests for {@link org.apache.shiro.spring.ShiroEventBusBeanPostProcessor}
@@ -34,16 +34,13 @@ class ShiroEventBusAwareBeanPostProcessorTest {
     @Test
     void testPostConstructNonAware() {
 
-        def eventBus = createStrictMock(EventBus)
-        def bean = createStrictMock(Object)
-
-        replay eventBus, bean
+        def eventBus = mock(EventBus)
+        def bean = mock(Object)
 
         def postProcessor = new ShiroEventBusBeanPostProcessor(eventBus);
         def resultAfter = postProcessor.postProcessAfterInitialization(bean, "bean")
         def resultBefore = postProcessor.postProcessBeforeInitialization(bean, "bean")
 
-        verify eventBus, bean
         Assert.assertSame resultAfter, bean
         Assert.assertSame resultBefore, bean
     }
@@ -51,17 +48,14 @@ class ShiroEventBusAwareBeanPostProcessorTest {
     @Test
     void testPostConstructWithEventBusAware() {
 
-        def eventBus = createStrictMock(EventBus)
-        def bean = createStrictMock(EventBusAware)
+        def eventBus = mock(EventBus)
+        def bean = mock(EventBusAware)
         bean.eventBus = eventBus
-
-        replay eventBus, bean
 
         def postProcessor = new ShiroEventBusBeanPostProcessor(eventBus);
         def resultAfter = postProcessor.postProcessAfterInitialization(bean, "bean")
         def resultBefore = postProcessor.postProcessBeforeInitialization(bean, "bean")
 
-        verify eventBus, bean
         Assert.assertSame resultAfter, bean
         Assert.assertSame resultBefore, bean
     }

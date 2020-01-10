@@ -23,8 +23,8 @@ import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.core.LifecycleService
 import org.junit.Test
 
-import static org.easymock.EasyMock.*
 import static org.junit.Assert.*
+import static org.mockito.Mockito.*
 
 /**
  * Unit tests for {@link HazelcastCacheManager}.
@@ -40,15 +40,11 @@ class HazelcastCacheManagerTest {
         HazelcastInstance hc = mock(HazelcastInstance)
         def manager = new HazelcastCacheManager();
 
-        replay hc
-
         // when
         manager.hazelcastInstance = hc
 
         // then
         assertSame hc, manager.hazelcastInstance
-
-        verify hc
     }
 
     @Test
@@ -69,35 +65,31 @@ class HazelcastCacheManagerTest {
     void testImplicitlyCreated() {
 
         // given
-        HazelcastInstance hazelcastInstance = niceMock(HazelcastInstance)
+        HazelcastInstance hazelcastInstance = mock(HazelcastInstance)
 
-        HazelcastCacheManager manager = createMockBuilder(HazelcastCacheManager)
-                .addMockedMethod("createHazelcastInstance")
-                .niceMock();
-        expect(manager.createHazelcastInstance()).andReturn(hazelcastInstance)
+        HazelcastCacheManager manager = spy(HazelcastCacheManager);
+        when(manager.createHazelcastInstance()).then(args -> hazelcastInstance)
 
         // when
         manager.init()
 
         // then
         assertTrue manager.implicitlyCreated
+        manager.destroy()
     }
 
     @Test
     void testDestroy() {
 
         // given
-        LifecycleService lifecycleService = niceMock(LifecycleService)
+        LifecycleService lifecycleService = mock(LifecycleService)
 
-        HazelcastInstance hazelcastInstance = niceMock(HazelcastInstance)
-        expect(hazelcastInstance.getLifecycleService()).andReturn(lifecycleService)
+        HazelcastInstance hazelcastInstance = spy(HazelcastInstance)
+        when(hazelcastInstance.getLifecycleService()).then(args -> lifecycleService)
 
-        HazelcastCacheManager manager = createMockBuilder(HazelcastCacheManager)
-                .addMockedMethod("createHazelcastInstance")
-                .niceMock();
-        expect(manager.createHazelcastInstance()).andReturn(hazelcastInstance)
+        HazelcastCacheManager manager = spy(HazelcastCacheManager);
+        when(manager.createHazelcastInstance()).then(args -> hazelcastInstance)
 
-        replay lifecycleService, hazelcastInstance, manager
 
         // when
         manager.init()
@@ -106,19 +98,17 @@ class HazelcastCacheManagerTest {
         // then
         assertFalse manager.implicitlyCreated
         assertNull manager.hazelcastInstance
-        verify hazelcastInstance
-        verify manager
+        verify(hazelcastInstance).getLifecycleService()
+        verify(manager).createHazelcastInstance()
     }
 
     @Test
     void testDestroyExplicit() {
 
         // given
-        HazelcastInstance hazelcastInstance = niceMock(HazelcastInstance)
+        HazelcastInstance hazelcastInstance = mock(HazelcastInstance)
         HazelcastCacheManager manager = new HazelcastCacheManager()
         manager.hazelcastInstance = hazelcastInstance
-
-        replay hazelcastInstance
 
         // when
         manager.init()
@@ -134,17 +124,13 @@ class HazelcastCacheManagerTest {
 
         // given
         LifecycleService lifecycleService = mock(LifecycleService)
-        expect(lifecycleService.shutdown()).andThrow(new IllegalStateException())
+        when(lifecycleService.shutdown()).thenThrow(new IllegalStateException())
 
         HazelcastInstance hazelcastInstance = mock(HazelcastInstance)
-        expect(hazelcastInstance.getLifecycleService()).andReturn(lifecycleService)
+        when(hazelcastInstance.getLifecycleService()).then(args -> lifecycleService)
 
-        HazelcastCacheManager manager = createMockBuilder(HazelcastCacheManager)
-                .addMockedMethod("createHazelcastInstance")
-                .niceMock();
-        expect(manager.createHazelcastInstance()).andReturn(hazelcastInstance)
-
-        replay lifecycleService, hazelcastInstance, manager
+        HazelcastCacheManager manager = spy(HazelcastCacheManager);
+        when(manager.createHazelcastInstance()).then(args -> hazelcastInstance)
 
         // when
         manager.init()
@@ -152,9 +138,9 @@ class HazelcastCacheManagerTest {
 
         // then
         assertFalse manager.implicitlyCreated
-        verify lifecycleService
-        verify hazelcastInstance
-        verify manager
+        verify(lifecycleService).shutdown()
+        verify(hazelcastInstance).getLifecycleService()
+        verify(manager).createHazelcastInstance()
     }
 
 }

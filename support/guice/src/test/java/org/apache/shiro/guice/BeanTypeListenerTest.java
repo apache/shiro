@@ -18,24 +18,33 @@
  */
 package org.apache.shiro.guice;
 
-import com.google.inject.*;
+import com.google.inject.ConfigurationException;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.MembersInjector;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.inject.spi.Message;
 import com.google.inject.spi.TypeEncounter;
-import org.apache.shiro.guice.aop.ShiroAopModule;
-import org.apache.shiro.guice.web.ShiroWebModule;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.aop.DefaultAnnotationResolver;
 import org.apache.shiro.crypto.cipher.BlowfishCipherService;
-import org.easymock.Capture;
-import org.easymock.IMocksControl;
+import org.apache.shiro.guice.aop.ShiroAopModule;
+import org.apache.shiro.guice.web.ShiroWebModule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.Map;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test Cases::
@@ -64,29 +73,25 @@ public class BeanTypeListenerTest {
 
     @Test
     public void testPropertySetting() throws Exception {
-        IMocksControl control = createControl();
-        TypeEncounter<SomeInjectableBean> encounter = control.createMock(TypeEncounter.class);
+        TypeEncounter<SomeInjectableBean> encounter = mock(TypeEncounter.class);
 
-        Provider<Injector> injectorProvider = control.createMock(Provider.class);
-        Injector injector = control.createMock(Injector.class);
+        Provider<Injector> injectorProvider = mock(Provider.class);
+        Injector injector = mock(Injector.class);
 
-        expect(encounter.getProvider(Injector.class)).andReturn(injectorProvider);
+        when(encounter.getProvider(Injector.class)).then(args -> injectorProvider);
 
-        expect(injectorProvider.get()).andReturn(injector).anyTimes();
+        when(injectorProvider.get()).then(args -> injector);
 
-        Capture<MembersInjector<SomeInjectableBean>> capture = Capture.newInstance();
-        encounter.register(and(anyObject(MembersInjector.class), capture(capture)));
+        ArgumentCaptor<MembersInjector<SomeInjectableBean>> captor = ArgumentCaptor.forClass(MembersInjector.class);
 
-        SecurityManager securityManager = control.createMock(SecurityManager.class);
+        SecurityManager securityManager = mock(SecurityManager.class);
         String property = "myPropertyValue";
 
-        expect(injector.getInstance(Key.get(SecurityManager.class))).andReturn(securityManager);
-        expect(injector.getInstance(Key.get(String.class, Names.named("shiro.myProperty")))).andReturn(property);
-        expect(injector.getInstance(Key.get(String.class, Names.named("shiro.unavailableProperty"))))
-                .andThrow(new ConfigurationException(Collections.singleton(new Message("Not Available!"))));
-        expect((Map)injector.getInstance(BeanTypeListener.MAP_KEY)).andReturn(Collections.EMPTY_MAP).anyTimes();
-
-        control.replay();
+        when(injector.getInstance(Key.get(SecurityManager.class))).then(args -> securityManager);
+        when(injector.getInstance(Key.get(String.class, Names.named("shiro.myProperty")))).then(args -> property);
+        when(injector.getInstance(Key.get(String.class, Names.named("shiro.unavailableProperty"))))
+                .thenThrow(new ConfigurationException(Collections.singleton(new Message("Not Available!"))));
+        when((Map) injector.getInstance(BeanTypeListener.MAP_KEY)).then(args -> Collections.EMPTY_MAP);
 
         BeanTypeListener underTest = new BeanTypeListener();
 
@@ -94,13 +99,12 @@ public class BeanTypeListenerTest {
 
         SomeInjectableBean bean = new SomeInjectableBean();
 
-        capture.getValue().injectMembers(bean);
+        verify(encounter).register(captor.capture());
+        captor.getValue().injectMembers(bean);
 
         assertSame(securityManager, bean.securityManager);
         assertSame(property, bean.myProperty);
         assertNull(bean.unavailableProperty);
-
-        control.verify();
     }
 
     public static class SomeInjectableBean {

@@ -25,8 +25,8 @@ import org.junit.Test
 import javax.ws.rs.core.Response
 import javax.ws.rs.ext.RuntimeDelegate
 
-import static org.junit.Assert.*
-import static org.easymock.EasyMock.*
+import static org.junit.Assert.assertSame
+import static org.mockito.Mockito.*
 
 /**
  * Tests for {@link ExceptionMapper}.
@@ -43,22 +43,22 @@ class ExceptionMapperTest {
     }
 
     private void doTest(AuthorizationException exception , Response.StatusType expectedStatus) {
-        def runtimeDelegate = strictMock(RuntimeDelegate)
+        def runtimeDelegate = mock(RuntimeDelegate)
 
         RuntimeDelegate.setInstance(runtimeDelegate)
 
-        def responseBuilder = strictMock(Response.ResponseBuilder)
-        def response = strictMock(Response)
+        def responseBuilder = mock(Response.ResponseBuilder)
+        def response = mock(Response)
 
-        expect(runtimeDelegate.createResponseBuilder()).andReturn(responseBuilder).anyTimes()
-        expect(responseBuilder.status((Response.StatusType) expectedStatus)).andReturn(responseBuilder)
-        expect(responseBuilder.build()).andReturn(response)
-
-        replay runtimeDelegate, responseBuilder
+        when(runtimeDelegate.createResponseBuilder()).then(args -> responseBuilder)
+        when(responseBuilder.status((Response.StatusType) expectedStatus)).then(args -> responseBuilder)
+        when(responseBuilder.build()).then(args -> response)
 
         def responseResult = new ExceptionMapper().toResponse(exception)
         assertSame response, responseResult
 
-        verify runtimeDelegate, responseBuilder
+        verify(runtimeDelegate).createResponseBuilder()
+        verify(responseBuilder).status((Response.StatusType) expectedStatus)
+        verify(responseBuilder).build()
     }
 }
