@@ -332,7 +332,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.4</version>
+                    <version>0.8.6</version>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
@@ -1413,12 +1413,6 @@
                     </plugins>
                 </pluginManagement>
             </build>
-        </profile>
-        <profile>
-            <id>jdk16</id>
-            <activation>
-                <jdk>[16,)</jdk>
-            </activation>
         </profile>
         <profile>
             <id>docs</id>
