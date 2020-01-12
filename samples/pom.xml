@@ -40,7 +40,6 @@
         <module>aspectj</module>
         <module>quickstart</module>
         <module>web</module>
-        <module>spring-client</module>
         <module>spring</module>
         <module>spring-mvc</module>
         <module>spring-hibernate</module>

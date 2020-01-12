@@ -52,48 +52,10 @@
                     </webApp>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <artifactItems>
-                        <artifactItem>
-                            <groupId>org.apache.shiro.samples</groupId>
-                            <artifactId>samples-spring-client</artifactId>
-                            <version>${project.version}</version>
-                            <type>zip</type>
-                        </artifactItem>
-                    </artifactItems>
-                    <outputDirectory>${project.build.directory}/extra/WEB-INF/resources</outputDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <webResources>
-                        <resource>
-                            <directory>${project.build.directory}/extra</directory>
-                        </resource>
-                    </webResources>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.shiro.samples</groupId>
-            <artifactId>samples-spring-client</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
