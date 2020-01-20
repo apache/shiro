@@ -24,6 +24,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 
 @Path("say")
 public class HelloResource {
@@ -33,5 +35,13 @@ public class HelloResource {
     @GET
     public String saySomething(@QueryParam("words") @DefaultValue("Hello!") String words) {
         return words;
+    }
+
+    @Produces({"application/json","plain/text"})
+    @GET
+    @Path("async")
+    public void saySomethingAsync(@QueryParam("words") @DefaultValue("Hello!") String words,
+                                    @Suspended AsyncResponse asyncResponse) {
+        asyncResponse.resume(words);
     }
 }

@@ -37,6 +37,16 @@ public class ContainerIntegrationIT extends AbstractContainerIT {
     }
 
     @Test
+    void testNoAuthResourceAsync() {
+
+        get(getBaseUri() + "say/async")
+                .then()
+                .assertThat()
+                .statusCode(is(200)).and()
+                .body(equalTo("Hello!"))
+    }
+
+    @Test
     void testSecuredRequiresAuthentication() {
 
         get(getBaseUri() + "secure/RequiresAuthentication")
