@@ -165,8 +165,8 @@ public class JdbcRealm extends AuthorizingRealm {
     /**
      * Overrides the default query used to retrieve a user's permissions during authorization.  When using the default
      * implementation, this query must take a role name as the single parameter and return a row
-     * per permission with three columns containing the fully qualified name of the permission class, the permission
-     * name, and the permission actions (in that order).  If you require a solution that does not match this query
+     * per permission with a single column, containing the permission.
+     * If you require a solution that does not match this query
      * structure, you can override {@link #doGetAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection)} or just
      * {@link #getPermissions(java.sql.Connection,String,java.util.Collection)}</p>
      * <p/>
