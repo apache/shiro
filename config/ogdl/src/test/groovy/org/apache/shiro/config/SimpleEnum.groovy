@@ -18,19 +18,7 @@
  */
 package org.apache.shiro.config
 
-class SimpleBean {
-
-    String name;
-    String stringProp;
-    int intProp;
-    byte[] byteArrayProp;
-    List<SimpleBean> simpleBeans;
-    List<String> stringList;
-    Map<String,Object> mapProp = new LinkedHashMap<String,Object>();
-    SimpleEnum simpleEnum;
-
-    public SimpleBean(){}
-    public SimpleBean(String name) {
-        this.name = name
-    }
+enum SimpleEnum {
+    FOO,
+    BAR
 }
