@@ -561,6 +561,26 @@ class ReflectionBuilderTest {
         assertDestroyedEvents("listenerTwo", objects, 3); //2 beans defined after it + its own destroyed event
     }
 
+    /**
+     * SHIRO-739
+     */
+    @Test
+    void testEnum() {
+        def ini = new Ini()
+        ini.load '''
+            simpleBean = org.apache.shiro.config.SimpleBean
+            simpleBean.name = testEnum
+            simpleBean.simpleEnum = FOO
+        '''
+
+        ReflectionBuilder builder = new ReflectionBuilder();
+        Map<String, ?> objects = builder.buildObjects(ini.getSections().iterator().next());
+        assertThat(objects, aMapWithSize(greaterThan(0)))
+
+        SimpleBean bean = objects.get("simpleBean")
+        assertThat(bean.name, is("testEnum"))
+        assertThat(bean.simpleEnum, is(SimpleEnum.FOO))
+    }
 
     /**
      * @since 1.4

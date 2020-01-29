@@ -18,7 +18,18 @@
  */
 package org.apache.shiro.config;
 
+import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.beanutils.SuppressPropertiesBeanIntrospector;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
@@ -40,17 +51,6 @@ import org.apache.shiro.util.Nameable;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -123,7 +123,17 @@ public class ReflectionBuilder {
     public ReflectionBuilder(Map<String, ?> defaults) {
 
         // SHIRO-619
-        beanUtilsBean = new BeanUtilsBean();
+        // SHIRO-739
+        beanUtilsBean = new BeanUtilsBean(new ConvertUtilsBean() {
+            @Override
+            public Object convert(String value, Class clazz) {
+                if (clazz.isEnum()){
+                    return Enum.valueOf(clazz, value);
+                }else{
+                    return super.convert(value, clazz);
+                }
+            }
+        });
         beanUtilsBean.getPropertyUtils().addBeanIntrospector(SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
 
         this.interpolator = createInterpolator();
