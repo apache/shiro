@@ -122,6 +122,20 @@ public class PathMatchingFilterTest {
     }
 
     /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-742">SHIRO-742<a/>.
+     */
+    @Test
+    public void testPathMatchEqualUrlSeparatorEnabled() {
+        expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
+        expect(request.getRequestURI()).andReturn("/").anyTimes();
+        replay(request);
+
+        boolean matchEnabled = filter.pathsMatch("/", request);
+        assertTrue("PathMatch can match URL end with Separator", matchEnabled);
+        verify(request);
+    }
+
+    /**
      * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-682">SHIRO-682<a/>.
      */
     @Test

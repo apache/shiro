@@ -123,10 +123,12 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      */
     protected boolean pathsMatch(String path, ServletRequest request) {
         String requestURI = getPathWithinApplication(request);
-        if (requestURI != null && requestURI.endsWith(DEFAULT_PATH_SEPARATOR)) {
+        if (requestURI != null && !DEFAULT_PATH_SEPARATOR.equals(requestURI)
+                && requestURI.endsWith(DEFAULT_PATH_SEPARATOR)) {
             requestURI = requestURI.substring(0, requestURI.length() - 1);
         }
-        if (path != null && path.endsWith(DEFAULT_PATH_SEPARATOR)) {
+        if (path != null && !DEFAULT_PATH_SEPARATOR.equals(path)
+                && path.endsWith(DEFAULT_PATH_SEPARATOR)) {
             path = path.substring(0, path.length() - 1);
         }
         log.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, Encode.forHtml(requestURI));

@@ -187,6 +187,28 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
     }
 
     /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-742">SHIRO-742<a/>.
+     */
+    @Test
+    public void testGetChainEqualUrlSeparator() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
+        FilterChain chain = createNiceMock(FilterChain.class);
+
+        //ensure at least one chain is defined:
+        resolver.getFilterChainManager().addToChain("/", "authcBasic");
+
+        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
+        expect(request.getContextPath()).andReturn("");
+        expect(request.getRequestURI()).andReturn("/");
+        replay(request);
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertNotNull(resolved);
+        verify(request);
+    }
+
+    /**
      * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-682">SHIRO-682<a/>.
      */
     @Test
