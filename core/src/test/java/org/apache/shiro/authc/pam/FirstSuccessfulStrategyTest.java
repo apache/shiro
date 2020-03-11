@@ -98,10 +98,22 @@ public class FirstSuccessfulStrategyTest {
         assertNull(strategy.beforeAttempt(null, null, null));
     }
 
-    @Test (expected=ShortCircuitIterationException.class)
-    public void testBeforeAttemptStopAfterFirstSuccess() {
+    @Test
+    public void testBeforeAttemptEmptyPrincipal() {
         AuthenticationInfo aggregate = new SimpleAuthenticationInfo();
-        strategy.beforeAttempt(null, null, aggregate);
+        assertEquals(strategy.beforeAttempt(null, null, aggregate), aggregate);
     }
 
+    @Test
+    public void testBeforeAttemptEmptyList() {
+        SimplePrincipalCollection principalCollection = new SimplePrincipalCollection();
+        AuthenticationInfo aggregate = new SimpleAuthenticationInfo(principalCollection, null);
+        assertEquals(strategy.beforeAttempt(null, null, aggregate), aggregate);
+    }
+
+    @Test (expected=ShortCircuitIterationException.class)
+    public void testBeforeAttemptStopAfterFirstSuccess() {
+        AuthenticationInfo aggregate = new SimpleAuthenticationInfo("principal", null, "a-realm-name");
+        strategy.beforeAttempt(null, null, aggregate);
+    }
 }

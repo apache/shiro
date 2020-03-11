@@ -64,7 +64,7 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
      * otherwise.
      */
     public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {
-        if (getStopAfterFirstSuccess() && aggregate != null && isEmpty(aggregate.getPrincipals())) {
+        if (getStopAfterFirstSuccess() && aggregate != null && !isEmpty(aggregate.getPrincipals())) {
             throw new ShortCircuitIterationException();
         }
         return aggregate;
