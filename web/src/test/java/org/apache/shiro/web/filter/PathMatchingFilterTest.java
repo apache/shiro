@@ -112,6 +112,8 @@ public class PathMatchingFilterTest {
 
         expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
         expect(request.getRequestURI()).andReturn(ENABLED_PATH).anyTimes();
+        expect(request.getServletPath()).andReturn("").anyTimes();
+        expect(request.getPathInfo()).andReturn(ENABLED_PATH).anyTimes();
         replay(request);
 
         boolean continueFilterChain = filter.preHandle(request, response);
@@ -128,6 +130,8 @@ public class PathMatchingFilterTest {
     public void testPathMatchEqualUrlSeparatorEnabled() {
         expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
         expect(request.getRequestURI()).andReturn("/").anyTimes();
+        expect(request.getServletPath()).andReturn("").anyTimes();
+        expect(request.getPathInfo()).andReturn("/").anyTimes();
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/", request);
@@ -142,6 +146,8 @@ public class PathMatchingFilterTest {
     public void testPathMatchEEnabled() {
         expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
         expect(request.getRequestURI()).andReturn("/resource/book").anyTimes();
+        expect(request.getServletPath()).andReturn("").anyTimes();
+        expect(request.getPathInfo()).andReturn("/resource/book").anyTimes();
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/resource/book", request);
@@ -156,6 +162,8 @@ public class PathMatchingFilterTest {
     public void testPathMatchEndWithUrlSeparatorEnabled() {
         expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
         expect(request.getRequestURI()).andReturn("/resource/book/").anyTimes();
+        expect(request.getServletPath()).andReturn("").anyTimes();
+        expect(request.getPathInfo()).andReturn("/resource/book/").anyTimes();
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/resource/book", request);
@@ -170,6 +178,8 @@ public class PathMatchingFilterTest {
     public void testPathMatchEndWithMultiUrlSeparatorEnabled() {
         expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
         expect(request.getRequestURI()).andReturn("/resource/book//").anyTimes();
+        expect(request.getServletPath()).andReturn("").anyTimes();
+        expect(request.getPathInfo()).andReturn("/resource/book//").anyTimes();
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/resource/book", request);

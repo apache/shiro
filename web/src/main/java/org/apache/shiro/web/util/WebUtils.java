@@ -136,9 +136,18 @@ public class WebUtils {
     public static String getRequestUri(HttpServletRequest request) {
         String uri = (String) request.getAttribute(INCLUDE_REQUEST_URI_ATTRIBUTE);
         if (uri == null) {
-            uri = request.getRequestURI();
+            uri = valueOrEmpty(request.getContextPath()) + "/" +
+                  valueOrEmpty(request.getServletPath()) +
+                  valueOrEmpty(request.getPathInfo());
         }
         return normalize(decodeAndCleanUriString(request, uri));
+    }
+
+    private static String valueOrEmpty(String input) {
+        if (input == null) {
+            return "";
+        }
+        return input;
     }
 
     /**

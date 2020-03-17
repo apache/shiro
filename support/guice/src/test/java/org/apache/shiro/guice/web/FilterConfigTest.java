@@ -87,7 +87,7 @@ public class FilterConfigTest {
 
         expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
         expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn(path);
+        expect(request.getPathInfo()).andReturn(path);
         replay(request);
         return request;
     }

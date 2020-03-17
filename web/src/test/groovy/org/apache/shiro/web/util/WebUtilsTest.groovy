@@ -140,6 +140,26 @@ public class WebUtilsTest {
 
     }
 
+    @Test
+    void testGetRequestUriWithServlet() {
+
+        dotTestGetPathWithinApplicationFromRequest("/", "/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("", "/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("", "servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("/", "servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("//", "servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("//", "//servlet", "//foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("/context-path", "/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("//context-path", "//servlet", "//foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("//context-path", "/servlet", "/../servlet/other", "/servlet/other")
+        dotTestGetPathWithinApplicationFromRequest("//context-path", "/asdf", "/../servlet/other", "/servlet/other")
+        dotTestGetPathWithinApplicationFromRequest("//context-path", "/asdf", ";/../servlet/other", "/asdf")
+        dotTestGetPathWithinApplicationFromRequest("/context%2525path", "/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("/c%6Fntext%20path", "/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("/context path", "/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("", null, null, "/")
+        dotTestGetPathWithinApplicationFromRequest("", "index.jsp", null, "/index.jsp")
+    }
 
     @Test
     void testGetPathWithinApplication() {
@@ -168,6 +188,20 @@ public class WebUtilsTest {
         expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(contextPath)
         expect(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE)).andReturn(requestUri)
         expect(request.getCharacterEncoding()).andReturn("UTF-8").times(2)
+        replay request
+        assertEquals expectedValue, WebUtils.getPathWithinApplication(request)
+        verify request
+    }
+
+    void dotTestGetPathWithinApplicationFromRequest(String contextPath, String servletPath, String pathInfo, String expectedValue) {
+
+        HttpServletRequest request = createMock(HttpServletRequest)
+        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null)
+        expect(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE)).andReturn(null)
+        expect(request.getServletPath()).andReturn(servletPath)
+        expect(request.getContextPath()).andReturn(contextPath).times(2)
+        expect(request.getPathInfo()).andReturn(pathInfo)
+        expect(request.getCharacterEncoding()).andReturn("UTF-8").anyTimes()
         replay request
         assertEquals expectedValue, WebUtils.getPathWithinApplication(request)
         verify request

@@ -99,7 +99,8 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
         expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
         expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/index.html");
+        expect(request.getServletPath()).andReturn("");
+        expect(request.getPathInfo()).andReturn("/index.html");
         replay(request);
 
         FilterChain resolved = resolver.getChain(request, response, chain);
@@ -118,7 +119,8 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
         expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
         expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/./index.html");
+        expect(request.getServletPath()).andReturn("/");
+        expect(request.getPathInfo()).andReturn("./index.html");
         replay(request);
 
         FilterChain resolved = resolver.getChain(request, response, chain);
@@ -137,7 +139,8 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
         expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
         expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/public/../index.html");
+        expect(request.getServletPath()).andReturn("/public/");
+        expect(request.getPathInfo()).andReturn("../index.html");
         replay(request);
 
         FilterChain resolved = resolver.getChain(request, response, chain);
@@ -156,7 +159,8 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
         expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
         expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/");
+        expect(request.getServletPath()).andReturn("/");
+        expect(request.getPathInfo()).andReturn(null);
         replay(request);
 
         FilterChain resolved = resolver.getChain(request, response, chain);
@@ -178,7 +182,8 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
         expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
         expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/resource/book");
+        expect(request.getServletPath()).andReturn("");
+        expect(request.getPathInfo()).andReturn("/resource/book");
         replay(request);
 
         FilterChain resolved = resolver.getChain(request, response, chain);
@@ -200,7 +205,8 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
         expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
         expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/");
+        expect(request.getServletPath()).andReturn("/");
+        expect(request.getPathInfo()).andReturn(null);
         replay(request);
 
         FilterChain resolved = resolver.getChain(request, response, chain);
@@ -222,7 +228,8 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
         expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
         expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/resource/book/");
+        expect(request.getServletPath()).andReturn("");
+        expect(request.getPathInfo()).andReturn("/resource/book");
         replay(request);
 
         FilterChain resolved = resolver.getChain(request, response, chain);
@@ -244,7 +251,8 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
         expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
         expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/resource/book//");
+        expect(request.getServletPath()).andReturn("");
+        expect(request.getPathInfo()).andReturn("/resource/book//");
         replay(request);
 
         FilterChain resolved = resolver.getChain(request, response, chain);
