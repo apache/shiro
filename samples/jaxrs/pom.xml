@@ -77,6 +77,13 @@
         </dependency>
 
         <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>${jaxrs.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <!-- Required for any libraries that expect to call the commons logging APIs -->
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
