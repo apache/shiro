@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.config;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.util.StringUtils;
 import org.slf4j.Logger;
@@ -57,6 +59,24 @@ public class Ini implements Map<String, Ini.Section> {
     public static final String SECTION_SUFFIX = "]";
 
     protected static final char ESCAPE_TOKEN = '\\';
+
+    /**
+     * Pattern to capture key-value-pairs over multiple lines.
+     *
+     * <p>The first capture group lazy-captures ({@code *?}) everything before the first unescaped separator char.<br>
+     * It does include backslashes at the moment, as they were allowed but then stripped in the previous algorithm.<br>
+     * However, the xml configuration does allow backslashes in keys.</p>
+     *
+     * <p>The second separator group is the separator char (any of {@code :}, {@code =} or {@code \s})
+     * which must not be preceeded by an escaping slash.<br>
+     * The group {@code (?<!…)} is a negative lookback.<br></p>
+     *
+     * <p>The third capture group is everything else and hence the value.</p>
+     */
+    private static final Pattern SPLIT_KEY_VALUE =
+            Pattern.compile(
+                    "^([a-z0-9\\\\.]*?)\\s?((?<!\\\\)[:\\s=])+\\s?(.*)$",
+                    Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
     private final Map<String, Section> sections;
 
@@ -556,54 +576,25 @@ public class Ini implements Map<String, Ini.Section> {
             return backslashCount % 2 != 0;
         }
 
-        private static boolean isKeyValueSeparatorChar(char c) {
-            return Character.isWhitespace(c) || c == ':' || c == '=';
-        }
-
-        private static boolean isCharEscaped(CharSequence s, int index) {
-            return index > 0 && s.charAt(index) == ESCAPE_TOKEN;
-        }
-
         //Protected to access in a test case - NOT considered part of Shiro's public API
         protected static String[] splitKeyValue(String keyValueLine) {
             String line = StringUtils.clean(keyValueLine);
             if (line == null) {
                 return null;
             }
-            StringBuilder keyBuffer = new StringBuilder();
-            StringBuilder valueBuffer = new StringBuilder();
 
-            boolean buildingKey = true; //we'll build the value next:
-
-            for (int i = 0; i < line.length(); i++) {
-                char c = line.charAt(i);
-
-                if (buildingKey) {
-                    if (isKeyValueSeparatorChar(c) && !isCharEscaped(line, i)) {
-                        buildingKey = false;//now start building the value
-                    } else if (!isCharEscaped(line, i)){
-                        keyBuffer.append(c);
-                    }
-                } else {
-                    if (valueBuffer.length() == 0 && isKeyValueSeparatorChar(c) && !isCharEscaped(line, i)) {
-                        //swallow the separator chars before we start building the value
-                    } else if (!isCharEscaped(line, i)){
-                        valueBuffer.append(c);
-                    }
-                }
-            }
-
-            String key = StringUtils.clean(keyBuffer.toString());
-            String value = StringUtils.clean(valueBuffer.toString());
-
-            if (key == null || value == null) {
+            final Matcher matcher = SPLIT_KEY_VALUE.matcher(line);
+            if (!matcher.matches() || matcher.groupCount() < 3) {
                 String msg = "Line argument must contain a key and a value.  Only one string token was found.";
                 throw new IllegalArgumentException(msg);
             }
 
+            final String key = matcher.group(1).replaceAll("\\\\", "");
+            final String value = matcher.group(3);
+
             log.trace("Discovered key/value pair: {} = {}", key, value);
 
-            return new String[]{key, value};
+            return new String[] {key, value};
         }
 
         private static Map<String, String> toMapProps(String content) {

@@ -73,6 +73,22 @@ public class IniTest {
     }
 
     @Test
+    public void testBackslash() {
+        String test = "Truth=Beauty\\\\";
+        Ini ini = new Ini();
+        ini.load(test);
+
+        assertNotNull(ini.getSections());
+        assertEquals(1, ini.getSections().size());
+
+        Ini.Section section = ini.getSections().iterator().next();
+        assertEquals(Ini.DEFAULT_SECTION_NAME, section.getName());
+        assertFalse(section.isEmpty());
+        assertEquals(1, section.size());
+        assertEquals("Beauty\\\\", section.get("Truth"));
+    }
+
+    @Test
     public void testSplitKeyValue() {
         String test = "Truth Beauty";
         String[] kv = Ini.Section.splitKeyValue(test);
@@ -119,23 +135,37 @@ public class IniTest {
         assertEquals("Truth", kv[0]);
         assertEquals("Beauty", kv[1]);
 
+        // Escape characters are to be removed from the key.
+        // This is different behaviour compared to the XML config.
         test = "Tru\\th=Beauty";
         kv = Ini.Section.splitKeyValue(test);
         assertEquals("Truth", kv[0]);
         assertEquals("Beauty", kv[1]);
 
-        test = "Truth\\=Beauty";
-        kv = Ini.Section.splitKeyValue(test);
-        assertEquals("Truth", kv[0]);
-        assertEquals("Beauty", kv[1]);
-
+        // Tests if any escapes are removed.
+        // SHIRO-530: This is unexpected, remove this.
         test = "Truth=Beau\\ty";
         kv = Ini.Section.splitKeyValue(test);
         assertEquals("Truth", kv[0]);
         assertEquals("Beauty", kv[1]);
 
+        // Tests if any escapes at the end are removed and read as a continuation char.
+        // If there is no next line, just remove them.
+        // SHIRO-530: This is unexpected, remove this.
         test = "Truth=Beauty\\";
         kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("Beauty", kv[1]);
+    }
+
+    /**
+     * Tests if an escaped separator char will still be used as a separator char.
+     * SHIRO-530: This is unexpected, remove this.
+     */
+    @Test
+    public void testSplitKeyValueEscapedEquals()  {
+        String test = "Truth\\=Beauty";
+        String[] kv = Ini.Section.splitKeyValue(test);
         assertEquals("Truth", kv[0]);
         assertEquals("Beauty", kv[1]);
     }
