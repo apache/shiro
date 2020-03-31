@@ -68,14 +68,14 @@ public class Ini implements Map<String, Ini.Section> {
      * However, the xml configuration does allow backslashes in keys.</p>
      *
      * <p>The second separator group is the separator char (any of {@code :}, {@code =} or {@code \s})
-     * which must not be preceeded by an escaping slash.<br>
+     * which must not be preceeded by an escaping slash, but can be preceeded or followed by whitespace characters.<br>
      * The group {@code (?<!…)} is a negative lookback.<br></p>
      *
      * <p>The third capture group is everything else and hence the value.</p>
      */
     private static final Pattern SPLIT_KEY_VALUE =
             Pattern.compile(
-                    "^([a-z0-9\\\\.]*?)\\s?((?<!\\\\)[:\\s=])+\\s?(.*)$",
+                    "^([a-z0-9\\\\.-]*?)\\s*?((?<!\\\\)[:\\s=])+\\s*?(.*)$",
                     Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
     private final Map<String, Section> sections;

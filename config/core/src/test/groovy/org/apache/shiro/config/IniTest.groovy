@@ -142,27 +142,29 @@ public class IniTest {
         assertEquals("Truth", kv[0]);
         assertEquals("Beauty", kv[1]);
 
-        // Tests if any escapes are removed.
-        // SHIRO-530: This is unexpected, remove this.
+        // SHIRO-530: Keep backslashes in value.
         test = "Truth=Beau\\ty";
         kv = Ini.Section.splitKeyValue(test);
         assertEquals("Truth", kv[0]);
-        assertEquals("Beauty", kv[1]);
+        assertEquals("Beau\\ty", kv[1]);
 
-        // Tests if any escapes at the end are removed and read as a continuation char.
-        // If there is no next line, just remove them.
-        // SHIRO-530: This is unexpected, remove this.
+        // SHIRO-530: Keep backslashes in value.
         test = "Truth=Beauty\\";
         kv = Ini.Section.splitKeyValue(test);
         assertEquals("Truth", kv[0]);
-        assertEquals("Beauty", kv[1]);
+        assertEquals("Beauty\\", kv[1]);
+
+        // SHIRO-530: Keep backslashes in value.
+        test = "Truth= \\ Beauty\\";
+        kv = Ini.Section.splitKeyValue(test);
+        assertEquals("Truth", kv[0]);
+        assertEquals("\\ Beauty\\", kv[1]);
     }
 
     /**
-     * Tests if an escaped separator char will still be used as a separator char.
-     * SHIRO-530: This is unexpected, remove this.
+     * Tests if an escaped separator char will not be recognized as such.
      */
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testSplitKeyValueEscapedEquals()  {
         String test = "Truth\\=Beauty";
         String[] kv = Ini.Section.splitKeyValue(test);
