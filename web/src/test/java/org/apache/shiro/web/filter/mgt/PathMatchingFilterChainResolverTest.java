@@ -97,8 +97,6 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/index.html", "authcBasic");
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
         expect(request.getServletPath()).andReturn("");
         expect(request.getPathInfo()).andReturn("/index.html");
         replay(request);
@@ -117,8 +115,6 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/index.html", "authcBasic");
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
         expect(request.getServletPath()).andReturn("/");
         expect(request.getPathInfo()).andReturn("./index.html");
         replay(request);
@@ -136,9 +132,6 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/index.html", "authcBasic");
-
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
         expect(request.getServletPath()).andReturn("/public/");
         expect(request.getPathInfo()).andReturn("../index.html");
         replay(request);
@@ -157,8 +150,6 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/index.html", "authcBasic");
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
         expect(request.getServletPath()).andReturn("/");
         expect(request.getPathInfo()).andReturn(null);
         replay(request);
@@ -180,8 +171,6 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/resource/book", "authcBasic");
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
         expect(request.getServletPath()).andReturn("");
         expect(request.getPathInfo()).andReturn("/resource/book");
         replay(request);
@@ -203,8 +192,6 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/", "authcBasic");
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
         expect(request.getServletPath()).andReturn("/");
         expect(request.getPathInfo()).andReturn(null);
         replay(request);
@@ -226,8 +213,6 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/resource/book", "authcBasic");
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
         expect(request.getServletPath()).andReturn("");
         expect(request.getPathInfo()).andReturn("/resource/book");
         replay(request);
@@ -249,8 +234,6 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/resource/book", "authcBasic");
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
         expect(request.getServletPath()).andReturn("");
         expect(request.getPathInfo()).andReturn("/resource/book//");
         replay(request);
