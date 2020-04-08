@@ -143,63 +143,85 @@ public class WebUtilsTest {
     @Test
     void testGetRequestUriWithServlet() {
 
-        dotTestGetPathWithinApplicationFromRequest("/", "/servlet", "/foobar", "/servlet/foobar")
-        dotTestGetPathWithinApplicationFromRequest("", "/servlet", "/foobar", "/servlet/foobar")
-        dotTestGetPathWithinApplicationFromRequest("", "servlet", "/foobar", "/servlet/foobar")
-        dotTestGetPathWithinApplicationFromRequest("/", "servlet", "/foobar", "/servlet/foobar")
-        dotTestGetPathWithinApplicationFromRequest("//", "servlet", "/foobar", "/servlet/foobar")
-        dotTestGetPathWithinApplicationFromRequest("//", "//servlet", "//foobar", "/servlet/foobar")
-        dotTestGetPathWithinApplicationFromRequest("/context-path", "/servlet", "/foobar", "/servlet/foobar")
-        dotTestGetPathWithinApplicationFromRequest("//context-path", "//servlet", "//foobar", "/servlet/foobar")
-        dotTestGetPathWithinApplicationFromRequest("//context-path", "/servlet", "/../servlet/other", "/servlet/other")
-        dotTestGetPathWithinApplicationFromRequest("//context-path", "/asdf", "/../servlet/other", "/servlet/other")
-        dotTestGetPathWithinApplicationFromRequest("//context-path", "/asdf", ";/../servlet/other", "/asdf")
-        dotTestGetPathWithinApplicationFromRequest("/context%2525path", "/servlet", "/foobar", "/servlet/foobar")
-        dotTestGetPathWithinApplicationFromRequest("/c%6Fntext%20path", "/servlet", "/foobar", "/servlet/foobar")
-        dotTestGetPathWithinApplicationFromRequest("/context path", "/servlet", "/foobar", "/servlet/foobar")
-        dotTestGetPathWithinApplicationFromRequest("", null, null, "/")
-        dotTestGetPathWithinApplicationFromRequest("", "index.jsp", null, "/index.jsp")
+        dotTestGetPathWithinApplicationFromRequest("/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("//servlet", "//foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("//servlet", "//foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("/servlet", "/../servlet/other", "/servlet/other")
+        dotTestGetPathWithinApplicationFromRequest("/asdf", "/../servlet/other", "/servlet/other")
+        dotTestGetPathWithinApplicationFromRequest("/asdf/foo", ";/../servlet/other", "/asdf/foo")
+        dotTestGetPathWithinApplicationFromRequest("/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest("/servlet", "/foobar", "/servlet/foobar")
+        dotTestGetPathWithinApplicationFromRequest(null, null, "/")
+        dotTestGetPathWithinApplicationFromRequest("index.jsp", null, "/index.jsp")
     }
 
     @Test
     void testGetPathWithinApplication() {
 
-        doTestGetPathWithinApplication("/", "/foobar", "/foobar");
-        doTestGetPathWithinApplication("", "/foobar", "/foobar");
-        doTestGetPathWithinApplication("", "foobar", "/foobar");
-        doTestGetPathWithinApplication("/", "foobar", "/foobar");
-        doTestGetPathWithinApplication("//", "foobar", "/foobar");
-        doTestGetPathWithinApplication("//", "//foobar", "/foobar");
-        doTestGetPathWithinApplication("/context-path", "/context-path/foobar", "/foobar");
-        doTestGetPathWithinApplication("/context-path", "/context-path/foobar/", "/foobar/");
-        doTestGetPathWithinApplication("//context-path", "//context-path/foobar", "/foobar");
-        doTestGetPathWithinApplication("//context-path", "//context-path//foobar", "/foobar");
-        doTestGetPathWithinApplication("//context-path", "//context-path/remove-one/remove-two/../../././/foobar", "/foobar");
-        doTestGetPathWithinApplication("//context-path", "//context-path//../../././/foobar", null);
-        doTestGetPathWithinApplication("/context%2525path", "/context%2525path/foobar", "/foobar");
-        doTestGetPathWithinApplication("/c%6Fntext%20path", "/c%6Fntext%20path/foobar", "/foobar");
-        doTestGetPathWithinApplication("/context path", "/context path/foobar", "/foobar");
-
+        doTestGetPathWithinApplication("/foobar", null, "/foobar");
+        doTestGetPathWithinApplication("/foobar", "", "/foobar");
+        doTestGetPathWithinApplication("", "/", "/");
+        doTestGetPathWithinApplication("", null, "/");
+        doTestGetPathWithinApplication("/foobar", "//", "/foobar/");
+        doTestGetPathWithinApplication("/foobar", "//extra", "/foobar/extra");
+        doTestGetPathWithinApplication("/foobar", "//extra///", "/foobar/extra/");
+        doTestGetPathWithinApplication("/foo bar", "/path info" ,"/foo bar/path info");
     }
 
-    void doTestGetPathWithinApplication(String contextPath, String requestUri, String expectedValue) {
+    @Test
+    void testGetRequestURI() {
+        doTestGetRequestURI("/foobar", "/foobar")
+        doTestGetRequestURI( "/foobar/", "/foobar/")
+        doTestGetRequestURI("",  "/");
+        doTestGetRequestURI("foobar", "/foobar");
+        doTestGetRequestURI("//foobar", "/foobar");
+        doTestGetRequestURI("//foobar///", "/foobar/");
+        doTestGetRequestURI("/context-path/foobar", "/context-path/foobar");
+        doTestGetRequestURI("/context-path/foobar/", "/context-path/foobar/");
+        doTestGetRequestURI("//context-path/foobar", "/context-path/foobar");
+        doTestGetRequestURI("//context-path//foobar", "/context-path/foobar");
+        doTestGetRequestURI("//context-path/remove-one/remove-two/../../././/foobar", "/context-path/foobar");
+        doTestGetRequestURI("//context-path//../../././/foobar", null);
+        doTestGetRequestURI("/context%2525path/foobar", "/context%25path/foobar");
+        doTestGetRequestURI("/c%6Fntext%20path/foobar", "/context path/foobar");
+        doTestGetRequestURI("/context path/foobar", "/context path/foobar");
+    }
+
+    void doTestGetPathWithinApplication(String servletPath, String pathInfo, String expectedValue) {
 
         def request = createMock(HttpServletRequest)
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(contextPath)
-        expect(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE)).andReturn(requestUri)
-        expect(request.getCharacterEncoding()).andReturn("UTF-8").times(2)
+        expect(request.getAttribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE)).andReturn(servletPath)
+        expect(request.getAttribute(WebUtils.INCLUDE_PATH_INFO_ATTRIBUTE)).andReturn(pathInfo)
+        if (pathInfo == null) {
+            expect(request.getPathInfo()).andReturn(null) // path info can be null
+        }
         replay request
         assertEquals expectedValue, WebUtils.getPathWithinApplication(request)
         verify request
     }
 
-    void dotTestGetPathWithinApplicationFromRequest(String contextPath, String servletPath, String pathInfo, String expectedValue) {
+    void doTestGetRequestURI(String rawRequestUri, String expectedValue) {
+
+        def request = createMock(HttpServletRequest)
+        expect(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE)).andReturn(rawRequestUri)
+        expect(request.getCharacterEncoding()).andReturn("UTF-8").times(1)
+        replay request
+        assertEquals expectedValue, WebUtils.getRequestUri(request)
+        verify request
+    }
+
+    void dotTestGetPathWithinApplicationFromRequest(String servletPath, String pathInfo, String expectedValue) {
 
         HttpServletRequest request = createMock(HttpServletRequest)
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null)
-        expect(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE)).andReturn(null)
+        expect(request.getAttribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE)).andReturn(null)
+        expect(request.getAttribute(WebUtils.INCLUDE_PATH_INFO_ATTRIBUTE)).andReturn(null)
         expect(request.getServletPath()).andReturn(servletPath)
-        expect(request.getContextPath()).andReturn(contextPath).times(2)
         expect(request.getPathInfo()).andReturn(pathInfo)
         expect(request.getCharacterEncoding()).andReturn("UTF-8").anyTimes()
         replay request

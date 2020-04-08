@@ -109,16 +109,7 @@ public class WebUtils {
      * @return the path within the web application
      */
     public static String getPathWithinApplication(HttpServletRequest request) {
-        String contextPath = getContextPath(request);
-        String requestUri = getRequestUri(request);
-        if (StringUtils.startsWithIgnoreCase(requestUri, contextPath)) {
-            // Normal case: URI contains context path.
-            String path = requestUri.substring(contextPath.length());
-            return (StringUtils.hasText(path) ? path : "/");
-        } else {
-            // Special case: rather unusual.
-            return requestUri;
-        }
+        return normalize(removeSemicolon(getServletPath(request) + getPathInfo(request)));
     }
 
     /**
@@ -132,15 +123,25 @@ public class WebUtils {
      *
      * @param request current HTTP request
      * @return the request URI
+     * @deprecated use getPathWithinApplication() to get the path minus the context path, or call HttpServletRequest.getRequestURI() directly from your code.
      */
+    @Deprecated
     public static String getRequestUri(HttpServletRequest request) {
         String uri = (String) request.getAttribute(INCLUDE_REQUEST_URI_ATTRIBUTE);
         if (uri == null) {
-            uri = valueOrEmpty(request.getContextPath()) + "/" +
-                  valueOrEmpty(request.getServletPath()) +
-                  valueOrEmpty(request.getPathInfo());
+            uri = request.getRequestURI();
         }
         return normalize(decodeAndCleanUriString(request, uri));
+    }
+
+    private static String getServletPath(HttpServletRequest request) {
+        String servletPath = (String) request.getAttribute(INCLUDE_SERVLET_PATH_ATTRIBUTE);
+        return servletPath != null ? servletPath : valueOrEmpty(request.getServletPath());
+    }
+
+    private static String getPathInfo(HttpServletRequest request) {
+        String pathInfo = (String) request.getAttribute(INCLUDE_PATH_INFO_ATTRIBUTE);
+        return pathInfo != null ? pathInfo : valueOrEmpty(request.getPathInfo());
     }
 
     private static String valueOrEmpty(String input) {
@@ -240,6 +241,10 @@ public class WebUtils {
      */
     private static String decodeAndCleanUriString(HttpServletRequest request, String uri) {
         uri = decodeRequestString(request, uri);
+        return removeSemicolon(uri);
+    }
+
+    private static String removeSemicolon(String uri) {
         int semicolonIndex = uri.indexOf(';');
         return (semicolonIndex != -1 ? uri.substring(0, semicolonIndex) : uri);
     }

@@ -77,8 +77,8 @@ public class SimpleFilterChainResolverTest {
         ServletResponse response = ctrl.createMock(HttpServletResponse.class);
         FilterChain originalChain = ctrl.createMock(FilterChain.class);
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn("/context");
-        expect(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE)).andReturn("/mychain");
+        expect(request.getAttribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE)).andReturn("/mychain");
+        expect(request.getAttribute(WebUtils.INCLUDE_PATH_INFO_ATTRIBUTE)).andReturn("");
 
         expect(request.getCharacterEncoding()).andStubReturn(null);
 
@@ -108,8 +108,8 @@ public class SimpleFilterChainResolverTest {
 
         ctrl.reset();
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn("/context");
-        expect(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE)).andReturn("/nochain");
+        expect(request.getAttribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE)).andReturn("/nochain");
+        expect(request.getAttribute(WebUtils.INCLUDE_PATH_INFO_ATTRIBUTE)).andReturn("");
 
         expect(request.getCharacterEncoding()).andStubReturn(null);
 
