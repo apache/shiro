@@ -32,8 +32,9 @@ import java.io.ByteArrayOutputStream;
  * <p/>
  * <b>NOTE:</b> The JavaBeans XMLEncoder/XMLDecoder only successfully encode/decode objects when they are
  * JavaBeans compatible!
- * 
+ *
  * @since 0.9
+ * @deprecated This class should not be used directly because of unsecure XMLEncoder/XMLDecoder usage.
  */
 public class XmlSerializer implements Serializer {
 
