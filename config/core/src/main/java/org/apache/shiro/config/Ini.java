@@ -587,7 +587,7 @@ public class Ini implements Map<String, Ini.Section> {
                 } else {
                     if (valueBuffer.length() == 0 && isKeyValueSeparatorChar(c) && !isCharEscaped(line, i)) {
                         //swallow the separator chars before we start building the value
-                    } else if (!isCharEscaped(line, i)){
+                    } else {
                         valueBuffer.append(c);
                     }
                 }
