@@ -105,7 +105,7 @@
         <spring-boot.version>2.2.6.RELEASE</spring-boot.version>
         <guice.version>4.2.2</guice.version>
         <jaxrs.api.version>2.0.1</jaxrs.api.version>
-        <htmlunit.version>2.36.0</htmlunit.version>
+        <htmlunit.version>2.39.0</htmlunit.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>4.0.2</easymock.version>
