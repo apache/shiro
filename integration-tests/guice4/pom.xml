@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>org.apache.shiro.integrationtests</groupId>
 		<artifactId>shiro-integration-tests</artifactId>
-		<version>1.5.3-SNAPSHOT</version>
+		<version>1.5.3</version>
         <relativePath>../pom.xml</relativePath>
 	</parent>
 
