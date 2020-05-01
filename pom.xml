@@ -242,6 +242,12 @@
             <organizationUrl>https://www.yupiik.com/</organizationUrl>
             <timezone>+4</timezone>
         </developer>
+        <developer>
+            <id>bmarwell</id>
+            <name>Benjamin Marwell</name>
+            <email>bmarwell@apache.org</email>
+            <timezone>Europe/Berlin</timezone>
+        </developer>
     </developers>
 
     <build>
