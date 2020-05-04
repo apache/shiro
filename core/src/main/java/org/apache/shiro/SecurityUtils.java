@@ -34,7 +34,7 @@ public abstract class SecurityUtils {
      * ONLY used as a 'backup' in VM Singleton environments (that is, standalone environments), since the
      * ThreadContext should always be the primary source for Subject instances when possible.
      */
-    private static SecurityManager securityManager;
+    private static volatile SecurityManager securityManager;
 
     /**
      * Returns the currently accessible {@code Subject} available to the calling code depending on
