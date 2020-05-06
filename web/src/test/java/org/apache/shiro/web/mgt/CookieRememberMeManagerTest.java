@@ -35,6 +35,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.UUID;
+
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
@@ -243,5 +245,31 @@ public class CookieRememberMeManagerTest {
         verify(mockRequest);
         verify(mockResponse);
         verify(cookie);
+    }
+
+    @Test
+    public void shouldIgnoreInvalidCookieValues() {
+        // given
+        HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
+        WebSubjectContext context = new DefaultWebSubjectContext();
+        context.setServletRequest(mockRequest);
+        context.setServletResponse(mockResponse);
+
+        CookieRememberMeManager mgr = new CookieRememberMeManager();
+        Cookie[] cookies = new Cookie[]{
+                new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, UUID.randomUUID().toString() + "%%ldapRealm")
+        };
+
+        expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
+        expect(mockRequest.getContextPath()).andReturn(null);
+        expect(mockRequest.getCookies()).andReturn(cookies);
+        replay(mockRequest);
+
+        // when
+        final byte[] rememberedSerializedIdentity = mgr.getRememberedSerializedIdentity(context);
+
+        // then
+        assertNull("should ignore invalid cookie values", rememberedSerializedIdentity);
     }
 }

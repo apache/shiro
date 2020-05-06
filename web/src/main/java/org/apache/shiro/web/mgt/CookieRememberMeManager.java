@@ -212,9 +212,21 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
             if (log.isTraceEnabled()) {
                 log.trace("Acquired Base64 encoded identity [" + base64 + "]");
             }
-            byte[] decoded = Base64.decode(base64);
+            byte[] decoded;
+            try {
+                decoded = Base64.decode(base64);
+            } catch (RuntimeException rtEx) {
+                /*
+                 * https://issues.apache.org/jira/browse/SHIRO-766:
+                 * If the base64 string cannot be decoded, just assume there is no valid cookie value.
+                 * */
+                getCookie().removeFrom(request, response);
+                log.warn("Unable to decode existing base64 encoded entity: [" + base64 + "].", rtEx);
+                return null;
+            }
+
             if (log.isTraceEnabled()) {
-                log.trace("Base64 decoded byte array length: " + (decoded != null ? decoded.length : 0) + " bytes.");
+                log.trace("Base64 decoded byte array length: " + decoded.length + " bytes.");
             }
             return decoded;
         } else {
