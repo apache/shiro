@@ -38,6 +38,7 @@ import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.LogoutFilter;
 import org.apache.shiro.web.filter.authc.UserFilter;
 import org.apache.shiro.web.filter.authz.HttpMethodPermissionFilter;
+import org.apache.shiro.web.filter.authz.IpFilter;
 import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
 import org.apache.shiro.web.filter.authz.PortFilter;
 import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
@@ -85,6 +86,8 @@ public abstract class ShiroWebModule extends ShiroModule {
     public static final Key<RolesAuthorizationFilter> ROLES = Key.get(RolesAuthorizationFilter.class);
     @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<SslFilter> SSL = Key.get(SslFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
+    public static final Key<IpFilter> IP = Key.get(IpFilter.class);
     @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<UserFilter> USER = Key.get(UserFilter.class);
 
