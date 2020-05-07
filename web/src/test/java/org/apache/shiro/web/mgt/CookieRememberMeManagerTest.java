@@ -213,7 +213,7 @@ public class CookieRememberMeManagerTest {
         CookieRememberMeManager mgr = new CookieRememberMeManager();
         try {
             mgr.getRememberedPrincipals(context);
-        } catch (CryptoException expected) {
+        } catch (IllegalArgumentException expected) {
             return;
         }
         fail("CryptoException was expected to be thrown");
