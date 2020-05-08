@@ -211,12 +211,8 @@ public class CookieRememberMeManagerTest {
         replay(mockRequest);
 
         CookieRememberMeManager mgr = new CookieRememberMeManager();
-        try {
-            mgr.getRememberedPrincipals(context);
-        } catch (IllegalArgumentException expected) {
-            return;
-        }
-        fail("CryptoException was expected to be thrown");
+        final PrincipalCollection rememberedPrincipals = mgr.getRememberedPrincipals(context);
+        assertNull("rememberedPrincipals should be null on invalid cookies.", rememberedPrincipals);
     }
 
     @Test
