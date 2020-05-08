@@ -27,7 +27,7 @@ install:
 - 'true'
 
 script:
-- "mvn -e -Pci,docs install apache-rat:check -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+- "mvn -e -Pdocs install apache-rat:check -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
 
 after_success:
 - bash <(curl -s https://codecov.io/bash) -f test-coverage/target/site/jacoco-aggregate/jacoco.xml
