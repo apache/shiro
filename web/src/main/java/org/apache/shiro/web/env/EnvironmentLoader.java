@@ -202,8 +202,7 @@ public class EnvironmentLoader {
 
         WebEnvironment webEnvironment = null;
         // try to load WebEnvironment as a service
-        ServiceLoader<WebEnvironment> serviceLoader = ServiceLoader.load(WebEnvironment.class);
-        Iterator<WebEnvironment> iterator = serviceLoader.iterator();
+        Iterator<WebEnvironment> iterator = doLoadWebEnvironmentsFromServiceLoader();
 
         // Use the first one
         if (iterator.hasNext()) {
@@ -221,6 +220,12 @@ public class EnvironmentLoader {
                     "servlet init parameter '"+ ENVIRONMENT_CLASS_PARAM +"'. Found: " + allWebEnvironments);
         }
         return webEnvironment;
+    }
+
+    protected Iterator<WebEnvironment> doLoadWebEnvironmentsFromServiceLoader() {
+        ServiceLoader<WebEnvironment> serviceLoader = ServiceLoader.load(WebEnvironment.class);
+
+        return serviceLoader.iterator();
     }
 
     /**
