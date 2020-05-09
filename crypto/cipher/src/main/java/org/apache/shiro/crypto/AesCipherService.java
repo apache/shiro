@@ -95,6 +95,7 @@ public class AesCipherService extends DefaultBlockCipherService {
         setMode(OperationMode.GCM);
         setStreamingMode(OperationMode.GCM);
         setPaddingScheme(PaddingScheme.NONE);
+        setStreamingPaddingScheme(PaddingScheme.NONE);
     }
 
     @Override
