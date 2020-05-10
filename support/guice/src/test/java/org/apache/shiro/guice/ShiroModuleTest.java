@@ -31,23 +31,19 @@ import org.apache.shiro.env.Environment;
 import org.apache.shiro.event.EventBus;
 import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.event.Subscribe;
-import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.Destroyable;
+import org.apache.shiro.lang.util.Destroyable;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.Map;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
 
 public class ShiroModuleTest {
 

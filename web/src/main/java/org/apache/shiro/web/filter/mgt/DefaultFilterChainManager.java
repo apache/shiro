@@ -20,8 +20,8 @@ package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.Nameable;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.Nameable;
+import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.web.filter.PathConfigProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

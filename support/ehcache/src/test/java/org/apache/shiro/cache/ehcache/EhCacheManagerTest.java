@@ -19,7 +19,7 @@
 package org.apache.shiro.cache.ehcache;
 
 import org.apache.shiro.cache.Cache;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.LifecycleUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

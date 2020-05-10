@@ -43,8 +43,8 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionManager;
-import org.apache.shiro.util.ClassUtils;
-import org.apache.shiro.util.Destroyable;
+import org.apache.shiro.lang.util.ClassUtils;
+import org.apache.shiro.lang.util.Destroyable;
 
 import com.google.inject.Key;
 import com.google.inject.PrivateModule;
@@ -182,7 +182,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
     }
 
     /**
-     * Destroys all beans created within this module that implement {@link org.apache.shiro.util.Destroyable}.  Should be called when this
+     * Destroys all beans created within this module that implement {@link org.apache.shiro.lang.util.Destroyable}.  Should be called when this
      * module will no longer be used.
      *
      * @throws Exception

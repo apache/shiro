@@ -23,6 +23,7 @@ import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.cache.Cache
 import org.apache.shiro.cache.MapCache
 import org.apache.shiro.crypto.hash.Sha256Hash
+import org.apache.shiro.ini.IniSecurityManagerFactory
 import org.apache.shiro.mgt.DefaultSecurityManager
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.realm.Realm

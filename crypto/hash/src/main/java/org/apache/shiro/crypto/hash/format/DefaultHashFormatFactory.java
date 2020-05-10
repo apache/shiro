@@ -18,9 +18,9 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
-import org.apache.shiro.util.ClassUtils;
-import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.util.UnknownClassException;
+import org.apache.shiro.lang.util.ClassUtils;
+import org.apache.shiro.lang.util.StringUtils;
+import org.apache.shiro.lang.util.UnknownClassException;
 
 import java.util.HashMap;
 import java.util.HashSet;

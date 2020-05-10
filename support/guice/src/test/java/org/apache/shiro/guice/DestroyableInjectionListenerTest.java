@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.guice;
 
-import org.apache.shiro.util.Destroyable;
+import org.apache.shiro.lang.util.Destroyable;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.*;

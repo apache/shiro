@@ -54,9 +54,11 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.config.ogdl</Bundle-SymbolicName>
-                        <Export-Package>org.apache.shiro.config*;version=${project.version}</Export-Package>
+                        <Export-Package>org.apache.shiro.config.ogdl.*;version=${project.version}</Export-Package>
                         <Import-Package>
-                            org.apache.shiro*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.lang*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.config*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.event*;version="${shiro.osgi.importRange}",
                             *
                         </Import-Package>
                     </instructions>

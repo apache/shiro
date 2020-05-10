@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.util;
 
+import org.apache.shiro.lang.util.Factory;
+
 /**
  * TODO - Class JavaDoc
  *

@@ -20,7 +20,6 @@ package org.apache.shiro.web.filter;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
-import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.servlet.AdviceFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.owasp.encoder.Encode;
@@ -33,7 +32,7 @@ import javax.servlet.ServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.apache.shiro.util.StringUtils.split;
+import static org.apache.shiro.lang.util.StringUtils.split;
 
 /**
  * <p>Base class for Filters that will process only specified paths and allow all others to pass through.</p>

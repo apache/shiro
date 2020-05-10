@@ -66,7 +66,7 @@
                         <Bundle-SymbolicName>org.apache.shiro.ehcache</Bundle-SymbolicName>
                         <Export-Package>org.apache.shiro.cache.ehcache*;version=${project.version}</Export-Package>
                         <Import-Package>
-                            org.apache.shiro*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.cache*;version="${shiro.osgi.importRange}",
                             net.sf.ehcache*;version="[2.5, 3)",
                             *
                         </Import-Package>

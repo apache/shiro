@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.env;
 
-import org.apache.shiro.ShiroException;
+import org.apache.shiro.lang.ShiroException;
 
 /**
  * Exception thrown for errors related to {@link Environment} instances or configuration.

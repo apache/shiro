@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.authz.permission;
 
-import org.apache.shiro.ShiroException;
+import org.apache.shiro.lang.ShiroException;
 
 
 /**

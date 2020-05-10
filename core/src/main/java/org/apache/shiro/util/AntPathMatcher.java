@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.util;
 
+import org.apache.shiro.lang.util.StringUtils;
+
 /**
  * <p>PathMatcher implementation for Ant-style path patterns.
  * Examples are provided below.</p>

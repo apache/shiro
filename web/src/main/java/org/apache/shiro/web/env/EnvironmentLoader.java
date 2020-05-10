@@ -20,10 +20,10 @@ package org.apache.shiro.web.env;
 
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.ResourceConfigurable;
-import org.apache.shiro.util.ClassUtils;
-import org.apache.shiro.util.LifecycleUtils;
-import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.util.UnknownClassException;
+import org.apache.shiro.lang.util.ClassUtils;
+import org.apache.shiro.lang.util.LifecycleUtils;
+import org.apache.shiro.lang.util.StringUtils;
+import org.apache.shiro.lang.util.UnknownClassException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

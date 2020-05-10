@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.web.filter.mgt;
 
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.web.servlet.ProxiedFilterChain;
 
 import javax.servlet.Filter;

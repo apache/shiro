@@ -19,8 +19,7 @@
 package org.apache.shiro.env;
 
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.ini.IniSecurityManagerFactory;
 
 /**
  * Basic usage:<p>

@@ -18,15 +18,11 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import org.apache.shiro.config.ConfigurationException;
-import org.apache.shiro.util.StringUtils;
-import org.apache.shiro.web.util.WebUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

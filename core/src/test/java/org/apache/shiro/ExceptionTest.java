@@ -19,7 +19,7 @@
 package org.apache.shiro;
 
 import junit.framework.TestCase;
-import org.apache.shiro.util.ClassUtils;
+import org.apache.shiro.lang.util.ClassUtils;
 import org.junit.Test;
 
 

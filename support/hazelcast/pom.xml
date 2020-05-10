@@ -70,7 +70,7 @@
                         <Bundle-SymbolicName>org.apache.shiro.hazelcast</Bundle-SymbolicName>
                         <Export-Package>org.apache.shiro.hazelcast*;version=${project.version}</Export-Package>
                         <Import-Package>
-                            org.apache.shiro*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.cache*;version="${shiro.osgi.importRange}",
                             com.hazelcast*;version="${hazelcast.osgi.importRange}",
                             *
                         </Import-Package>

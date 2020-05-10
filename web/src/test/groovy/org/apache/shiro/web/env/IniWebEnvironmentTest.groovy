@@ -18,9 +18,9 @@
  */
 package org.apache.shiro.web.env
 
-import org.apache.shiro.config.CompositeBean
+import org.apache.shiro.config.ogdl.CompositeBean
 import org.apache.shiro.config.Ini
-import org.apache.shiro.config.SimpleBean
+import org.apache.shiro.config.ogdl.SimpleBean
 import org.apache.shiro.web.filter.mgt.DefaultFilter
 import org.junit.Test
 
@@ -42,7 +42,7 @@ class IniWebEnvironmentTest {
         def ini = new Ini()
         ini.load("""
         [main]
-        compositeBean = org.apache.shiro.config.CompositeBean
+        compositeBean = org.apache.shiro.config.ogdl.CompositeBean
         """)
         
         def env = new IniWebEnvironment(ini:  ini)
@@ -65,7 +65,7 @@ class IniWebEnvironmentTest {
         def ini = new Ini()
         ini.load("""
         [main]
-        compositeBean = org.apache.shiro.config.CompositeBean
+        compositeBean = org.apache.shiro.config.ogdl.CompositeBean
         compositeBean.simpleBean = \$simpleBean
         """)
 
@@ -73,7 +73,7 @@ class IniWebEnvironmentTest {
             @Override
             protected Ini getFrameworkIni() {
                 def frameworkIni = new Ini()
-                frameworkIni.setSectionProperty("main", "simpleBean", "org.apache.shiro.config.SimpleBean")
+                frameworkIni.setSectionProperty("main", "simpleBean", "org.apache.shiro.config.ogdl.SimpleBean")
                 return frameworkIni;
             }
         }

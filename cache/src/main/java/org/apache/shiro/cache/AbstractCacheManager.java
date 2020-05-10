@@ -18,9 +18,9 @@
  */
 package org.apache.shiro.cache;
 
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.LifecycleUtils;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.LifecycleUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;

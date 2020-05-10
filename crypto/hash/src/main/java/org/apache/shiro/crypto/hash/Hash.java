@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.crypto.hash;
 
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * A Cryptographic {@code Hash} represents a one-way conversion algorithm that transforms an input source to an

@@ -20,7 +20,6 @@ package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.web.WebTest;
-import org.apache.shiro.web.util.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
 

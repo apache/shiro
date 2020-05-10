@@ -21,7 +21,6 @@ package org.apache.shiro.web.filter.authc;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.servlet.AdviceFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
@@ -32,8 +31,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.Locale;
-
-import static org.apache.shiro.web.filter.mgt.DefaultFilter.logout;
 
 /**
  * Simple Filter that, upon receiving a request, will immediately log-out the currently executing

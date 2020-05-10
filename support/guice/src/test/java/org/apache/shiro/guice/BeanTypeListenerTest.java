@@ -26,7 +26,7 @@ import org.apache.shiro.guice.aop.ShiroAopModule;
 import org.apache.shiro.guice.web.ShiroWebModule;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.aop.DefaultAnnotationResolver;
-import org.apache.shiro.crypto.BlowfishCipherService;
+import org.apache.shiro.crypto.cipher.BlowfishCipherService;
 import org.easymock.Capture;
 import org.easymock.IMocksControl;
 import org.junit.Test;
