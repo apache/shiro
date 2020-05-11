@@ -17,17 +17,77 @@
 
 language: java
 
-jdk:
-- openjdk8
-#- openjdk11
-# Running into a problem with junit-servers-jetty with Java 11
+env:
+  global:
+    - JABBA_HOME=$HOME/.jabba
+    # RI binaries are the Oracle reference implementation
+    - DEFAULT_JDK=adopt@1.8.0-252
 
-# skip the Travis-CI install phase because Maven handles that directly
+cache:
+  directories:
+    - "$HOME/.m2"
+    - "$HOME/.jabba"
+
+jobs:
+  include:
+    # JDK 8 builds (LTS)
+    - os: linux
+      env:
+        - TRAVIS_JDK=$DEFAULT_JDK
+    - os: linux
+      env:
+        - TRAVIS_JDK=adopt-openj9@1.8.0-252
+    - os: linux
+      env:
+        - TRAVIS_JDK=amazon-corretto@1.8.252-09.1
+    - os: linux
+      env:
+        - TRAVIS_JDK=liberica@1.8.252-9
+    - os: linux
+      env:
+        - TRAVIS_JDK=zulu@1.8.252
+    # JDK 11 builds (LTS)
+    - os: linux
+      env:
+        - TRAVIS_JDK=adopt@1.11.0-6
+    - os: linux
+      env:
+        - TRAVIS_JDK=adopt-openj9@1.11.0-6
+    - os: linux
+      env:
+        - TRAVIS_JDK=amazon-corretto@1.11.0-6.10.1
+    - os: linux
+      env:
+        - TRAVIS_JDK=zulu@1.11.0-6
+    # JDK 14 builds (latest)
+    - os: linux
+      env:
+        - TRAVIS_JDK=adopt@1.14.0-0
+    - os: linux
+      env:
+        - TRAVIS_JDK=adopt-openj9@1.14.0-0
+    - os: linux
+      env:
+        - TRAVIS_JDK=openjdk@1.14.0
+
+before_cache:
+  - rm -rf "$HOME/.m2/repository/org/apache/shiro"
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && . $JABBA_HOME/jabba.sh; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash && . $JABBA_HOME/jabba.sh; fi
+
 install:
-- 'true'
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then $JABBA_HOME/bin/jabba install $TRAVIS_JDK; jabba use $TRAVIS_JDK; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then $JABBA_HOME/bin/jabba install $TRAVIS_JDK; jabba use $TRAVIS_JDK; fi
+  - java -version
 
 script:
 - "mvn -e -Pdocs install apache-rat:check -B -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
 
 after_success:
-- bash <(curl -s https://codecov.io/bash) -f test-coverage/target/site/jacoco-aggregate/jacoco.xml
+  # do a coverage analyses for each PR or branch, but only once for each build matrix.
+  - |
+    if [ "$TRAVIS_JDK" == "$DEFAULT_JDK" ]; then
+      bash <(curl -s https://codecov.io/bash) -f test-coverage/target/site/jacoco-aggregate/jacoco.xml
+    fi
