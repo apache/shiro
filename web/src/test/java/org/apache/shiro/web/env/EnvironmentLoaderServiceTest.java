@@ -32,7 +32,7 @@ import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.*;
 
 /**
- * Tests for {@link EnvironmentLoader} that depend on PowerMock the stub out a ServiceLoader.
+ * Tests for {@link EnvironmentLoader} which will use a ServiceLoader.
  */
 public class EnvironmentLoaderServiceTest {
 
