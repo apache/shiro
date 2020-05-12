@@ -112,7 +112,7 @@
         <easymock.version>4.0.2</easymock.version>
         <gmaven.version>1.8.0</gmaven.version>
         <groovy.version>3.0.3</groovy.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>5.6.2</junit.version>
         <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
         <hibernate.version>5.4.3.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
@@ -661,9 +661,20 @@
              are test dependencies.  Actual compile or runtime dependencies should be
              explicitly declared in a child module, referencing the dependency defined
              in this file's <dependencyManagement> section. -->
+        <!-- ... -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -829,10 +840,24 @@
 
             <!-- 3rd party dependencies -->
 
+            <!-- ... -->
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <!-- used for the 'hashpass' command line tool: -->
