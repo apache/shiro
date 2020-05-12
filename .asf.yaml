@@ -14,6 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+github:
+  description: "Apache Shiro"
+  homepage: https://shiro.apache.org/
+  features:
+    wiki: false
+    issues: false
+    projects: false
+  enabled_merge_buttons:
+    squash:  false
+    merge:   true
+    rebase:  false
 
 notifications:
   pullrequests: commits@shiro.apache.org
+  commits: commits@shiro.apache.org
+  jira_options: link label worklog
