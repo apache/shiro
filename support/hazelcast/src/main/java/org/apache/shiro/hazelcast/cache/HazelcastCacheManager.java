@@ -242,4 +242,5 @@ public class HazelcastCacheManager implements CacheManager, Initializable, Destr
     public void setConfig(Config config) {
         this.config = config;
     }
+
 }
