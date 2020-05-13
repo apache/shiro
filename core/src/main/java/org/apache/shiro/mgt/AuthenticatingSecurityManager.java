@@ -23,7 +23,7 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.LifecycleUtils;
 
 
 /**

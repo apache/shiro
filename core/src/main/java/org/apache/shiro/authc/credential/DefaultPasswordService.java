@@ -25,7 +25,7 @@ import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.crypto.hash.HashService;
 import org.apache.shiro.crypto.hash.format.*;
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

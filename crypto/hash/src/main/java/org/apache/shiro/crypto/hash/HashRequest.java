@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.crypto.hash;
 
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * A {@code HashRequest} is composed of data that will be used by a {@link HashService} to compute a hash (aka

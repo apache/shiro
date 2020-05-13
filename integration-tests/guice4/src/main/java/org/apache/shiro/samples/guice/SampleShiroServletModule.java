@@ -21,7 +21,7 @@ package org.apache.shiro.samples.guice;
 import com.google.inject.Provides;
 import com.google.inject.binder.AnnotatedBindingBuilder;
 import com.google.inject.name.Names;
-import org.apache.shiro.codec.Base64;
+import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.guice.web.ShiroWebModule;

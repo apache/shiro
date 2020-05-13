@@ -20,12 +20,11 @@ package org.apache.shiro.authz.permission;
 
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 

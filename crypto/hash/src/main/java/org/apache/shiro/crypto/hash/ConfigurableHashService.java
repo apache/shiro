@@ -19,7 +19,7 @@
 package org.apache.shiro.crypto.hash;
 
 import org.apache.shiro.crypto.RandomNumberGenerator;
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * A {@code HashService} that allows configuration of its strategy via JavaBeans-compatible setter methods.

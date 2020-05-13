@@ -28,7 +28,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.ldap.UnsupportedAuthenticationMechanismException;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

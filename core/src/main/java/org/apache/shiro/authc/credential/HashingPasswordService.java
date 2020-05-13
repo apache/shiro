@@ -19,7 +19,7 @@
 package org.apache.shiro.authc.credential;
 
 import org.apache.shiro.crypto.hash.Hash;
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * A {@code HashingPasswordService} is a {@link PasswordService} that performs password encryption and comparisons

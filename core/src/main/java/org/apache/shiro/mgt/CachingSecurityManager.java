@@ -23,8 +23,8 @@ import org.apache.shiro.cache.CacheManagerAware;
 import org.apache.shiro.event.EventBus;
 import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.event.support.DefaultEventBus;
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.LifecycleUtils;
 
 
 /**

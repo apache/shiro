@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.config;
 
-import org.apache.shiro.ShiroException;
+import org.apache.shiro.lang.ShiroException;
 
 
 /**

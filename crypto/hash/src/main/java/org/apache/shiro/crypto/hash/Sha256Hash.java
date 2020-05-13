@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.crypto.hash;
 
-import org.apache.shiro.codec.Base64;
-import org.apache.shiro.codec.Hex;
+import org.apache.shiro.lang.codec.Base64;
+import org.apache.shiro.lang.codec.Hex;
 
 /**
  * Generates an SHA-256 Hash from a given input <tt>source</tt> with an optional <tt>salt</tt> and hash iterations.

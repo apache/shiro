@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.shiro.jndi.JndiLocator;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.RealmFactory;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 
 /**

@@ -22,10 +22,10 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.InjectionListener;
-import org.apache.shiro.util.Destroyable;
+import org.apache.shiro.lang.util.Destroyable;
 
 /**
- * Injection listener that assists with honoring the {@link org.apache.shiro.util.Destroyable} interface.
+ * Injection listener that assists with honoring the {@link org.apache.shiro.lang.util.Destroyable} interface.
  *
  * @param <I>
  */

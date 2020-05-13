@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.cache;
 
-import org.apache.shiro.util.SoftHashMap;
+import org.apache.shiro.lang.util.SoftHashMap;
 
 /**
  * Simple memory-only based {@link CacheManager CacheManager} implementation usable in production

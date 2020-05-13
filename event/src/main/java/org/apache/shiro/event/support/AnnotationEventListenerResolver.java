@@ -19,7 +19,7 @@
 package org.apache.shiro.event.support;
 
 import org.apache.shiro.event.Subscribe;
-import org.apache.shiro.util.ClassUtils;
+import org.apache.shiro.lang.util.ClassUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

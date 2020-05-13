@@ -20,9 +20,9 @@ package org.apache.shiro.guice;
 
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.TypeEncounter;
-import org.apache.shiro.ShiroException;
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.Initializable;
+import org.apache.shiro.lang.ShiroException;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.Initializable;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.*;

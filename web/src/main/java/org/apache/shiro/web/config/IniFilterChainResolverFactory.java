@@ -19,11 +19,11 @@
 package org.apache.shiro.web.config;
 
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.config.IniFactorySupport;
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.config.ReflectionBuilder;
+import org.apache.shiro.ini.IniFactorySupport;
+import org.apache.shiro.ini.IniSecurityManagerFactory;
+import org.apache.shiro.config.ogdl.ReflectionBuilder;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.Factory;
+import org.apache.shiro.lang.util.Factory;
 import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;

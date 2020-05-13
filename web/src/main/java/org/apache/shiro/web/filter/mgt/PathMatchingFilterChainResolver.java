@@ -22,7 +22,6 @@ import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
 import org.apache.shiro.web.util.WebUtils;
 import org.owasp.encoder.Encode;
-import org.owasp.encoder.Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +32,7 @@ import javax.servlet.ServletResponse;
 
 /**
  * A {@code FilterChainResolver} that resolves {@link FilterChain}s based on url path
- * matching, as determined by a configurable {@link #setPathMatcher(org.apache.shiro.util.PatternMatcher) PathMatcher}.
+ * matching, as determined by a configurable {@link #setPathMatcher(org.apache.shiro.lang.util.PatternMatcher) PathMatcher}.
  * <p/>
  * This implementation functions by consulting a {@link org.apache.shiro.web.filter.mgt.FilterChainManager} for all configured filter chains (keyed
  * by configured path pattern).  If an incoming Request path matches one of the configured path patterns (via
@@ -64,7 +63,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
     /**
      * Returns the {@code PatternMatcher} used when determining if an incoming request's path
      * matches a configured filter chain.  Unless overridden, the
-     * default implementation is an {@link org.apache.shiro.util.AntPathMatcher AntPathMatcher}.
+     * default implementation is an {@link org.apache.shiro.lang.util.AntPathMatcher AntPathMatcher}.
      *
      * @return the {@code PatternMatcher} used when determining if an incoming request's path
      *         matches a configured filter chain.
@@ -76,7 +75,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
     /**
      * Sets the {@code PatternMatcher} used when determining if an incoming request's path
      * matches a configured filter chain.  Unless overridden, the
-     * default implementation is an {@link org.apache.shiro.util.AntPathMatcher AntPathMatcher}.
+     * default implementation is an {@link org.apache.shiro.lang.util.AntPathMatcher AntPathMatcher}.
      *
      * @param pathMatcher the {@code PatternMatcher} used when determining if an incoming request's path
      *                    matches a configured filter chain.
@@ -137,7 +136,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      * matches a configured filter chain path (the {@code pattern} argument), {@code false} otherwise.
      * <p/>
      * Simply delegates to
-     * <b><code>{@link #getPathMatcher() getPathMatcher()}.{@link org.apache.shiro.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>.
+     * <b><code>{@link #getPathMatcher() getPathMatcher()}.{@link org.apache.shiro.lang.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>.
      * Subclass implementors should think carefully before overriding this method, as typically a custom
      * {@code PathMatcher} should be configured for custom path matching behavior instead.  Favor OO composition
      * rather than inheritance to limit your exposure to Shiro implementation details which may change over time.

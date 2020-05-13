@@ -20,6 +20,7 @@ package org.apache.shiro.util;
 
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.permission.PermissionResolver;
+import org.apache.shiro.lang.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collection;

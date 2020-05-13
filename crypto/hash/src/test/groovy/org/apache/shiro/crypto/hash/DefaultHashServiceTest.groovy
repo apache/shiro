@@ -20,7 +20,7 @@ package org.apache.shiro.crypto.hash
 
 import org.apache.shiro.crypto.RandomNumberGenerator
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
-import org.apache.shiro.util.ByteSource
+import org.apache.shiro.lang.util.ByteSource
 import org.junit.Test
 
 import static org.easymock.EasyMock.*

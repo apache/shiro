@@ -19,8 +19,8 @@
 package org.apache.shiro.env;
 
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.LifecycleUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

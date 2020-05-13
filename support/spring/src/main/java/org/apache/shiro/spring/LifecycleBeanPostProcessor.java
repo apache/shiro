@@ -26,14 +26,14 @@ import org.springframework.core.PriorityOrdered;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.Initializable;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.Initializable;
 
 
 /**
  * <p>Bean post processor for Spring that automatically calls the <tt>init()</tt> and/or
- * <tt>destroy()</tt> methods on Shiro objects that implement the {@link org.apache.shiro.util.Initializable}
- * or {@link org.apache.shiro.util.Destroyable} interfaces, respectfully.  This post processor makes it easier
+ * <tt>destroy()</tt> methods on Shiro objects that implement the {@link org.apache.shiro.lang.util.Initializable}
+ * or {@link org.apache.shiro.lang.util.Destroyable} interfaces, respectfully.  This post processor makes it easier
  * to configure Shiro beans in Spring, since the user never has to worry about whether or not if they
  * have to specify init-method and destroy-method bean attributes.</p>
  *
@@ -72,7 +72,7 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
     }
 
     /**
-     * Calls the <tt>init()</tt> methods on the bean if it implements {@link org.apache.shiro.util.Initializable}
+     * Calls the <tt>init()</tt> methods on the bean if it implements {@link org.apache.shiro.lang.util.Initializable}
      *
      * @param object the object being initialized.
      * @param name   the name of the bean being initialized.
@@ -105,7 +105,7 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
 
 
     /**
-     * Calls the <tt>destroy()</tt> methods on the bean if it implements {@link org.apache.shiro.util.Destroyable}
+     * Calls the <tt>destroy()</tt> methods on the bean if it implements {@link org.apache.shiro.lang.util.Destroyable}
      *
      * @param object the object being initialized.
      * @param name   the name of the bean being initialized.

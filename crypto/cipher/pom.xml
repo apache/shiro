@@ -40,9 +40,10 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.crypto.cipher</Bundle-SymbolicName>
-                        <Export-Package>org.apache.shiro.crypto.*;version=${project.version}</Export-Package>
+                        <Export-Package>org.apache.shiro.crypto.cipher.*;version=${project.version}</Export-Package>
                         <Import-Package>
-                            org.apache.shiro.crypto**;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.crypto*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.lang*;version="${shiro.osgi.importRange}",
                             *
                         </Import-Package>
                     </instructions>

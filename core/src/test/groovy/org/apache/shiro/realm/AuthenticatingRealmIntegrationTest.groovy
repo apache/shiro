@@ -21,7 +21,7 @@ package org.apache.shiro.realm
 import org.apache.shiro.authc.AuthenticationToken
 import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.config.Ini
-import org.apache.shiro.config.IniSecurityManagerFactory
+import org.apache.shiro.ini.IniSecurityManagerFactory
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.subject.Subject
 import org.junit.Test

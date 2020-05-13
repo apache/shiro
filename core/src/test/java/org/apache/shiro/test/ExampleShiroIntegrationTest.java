@@ -18,10 +18,10 @@
  */
 package org.apache.shiro.test;
 
-import org.apache.shiro.config.IniSecurityManagerFactory;
+import org.apache.shiro.ini.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.Factory;
+import org.apache.shiro.lang.util.Factory;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -20,7 +20,7 @@ package org.apache.shiro.samples.spring.realm;
 
 import org.apache.shiro.authc.*;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.util.JdbcUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

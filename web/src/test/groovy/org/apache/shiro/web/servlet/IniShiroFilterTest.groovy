@@ -21,7 +21,7 @@ package org.apache.shiro.web.servlet
 import javax.servlet.FilterConfig
 import javax.servlet.ServletContext
 import javax.servlet.ServletException
-import org.apache.shiro.io.ResourceUtils
+import org.apache.shiro.lang.io.ResourceUtils
 import org.junit.Test
 
 import static org.easymock.EasyMock.*

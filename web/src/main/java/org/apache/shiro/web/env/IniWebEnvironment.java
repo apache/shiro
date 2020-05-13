@@ -20,9 +20,13 @@ package org.apache.shiro.web.env;
 
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.config.IniFactorySupport;
-import org.apache.shiro.io.ResourceUtils;
-import org.apache.shiro.util.*;
+import org.apache.shiro.ini.IniFactorySupport;
+import org.apache.shiro.lang.io.ResourceUtils;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.Factory;
+import org.apache.shiro.lang.util.Initializable;
+import org.apache.shiro.lang.util.StringUtils;
+import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
@@ -317,7 +321,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
     /**
      * Converts the specified file path to an {@link Ini} instance.
      * <p/>
-     * If the path does not have a resource prefix as defined by {@link org.apache.shiro.io.ResourceUtils#hasResourcePrefix(String)}, the
+     * If the path does not have a resource prefix as defined by {@link org.apache.shiro.lang.io.ResourceUtils#hasResourcePrefix(String)}, the
      * path is expected to be resolvable by the {@code ServletContext} via
      * {@link javax.servlet.ServletContext#getResourceAsStream(String)}.
      *

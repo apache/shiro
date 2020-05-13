@@ -22,21 +22,20 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
-import org.apache.shiro.codec.Base64;
-import org.apache.shiro.crypto.AesCipherService;
-import org.apache.shiro.crypto.CipherService;
-import org.apache.shiro.io.DefaultSerializer;
-import org.apache.shiro.io.Serializer;
+import org.apache.shiro.crypto.cipher.AesCipherService;
+import org.apache.shiro.crypto.cipher.CipherService;
+import org.apache.shiro.lang.io.DefaultSerializer;
+import org.apache.shiro.lang.io.Serializer;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of the {@code RememberMeManager} interface that handles
- * {@link #setSerializer(org.apache.shiro.io.Serializer) serialization} and
+ * {@link #setSerializer(org.apache.shiro.lang.io.Serializer) serialization} and
  * {@link #setCipherService encryption} of the remembered user identity.
  * <p/>
  * The remembered identity storage location and details are left to subclasses.
@@ -56,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * However, if you do feel this constitutes sensitive information, it is recommended that you provide your own
  * {@code key} via the {@link #setCipherKey setCipherKey} method to a key known only to your application,
  * guaranteeing that no third party can decrypt your data.  You can generate your own key by calling the
- * {@code CipherService}'s {@link org.apache.shiro.crypto.AesCipherService#generateNewKey() generateNewKey} method
+ * {@code CipherService}'s {@link AesCipherService#generateNewKey() generateNewKey} method
  * and using that result as the {@link #setCipherKey cipherKey} configuration attribute.
  *
  * @since 0.9
@@ -104,7 +103,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * persistent remember me storage.
      * <p/>
      * Unless overridden by the {@link #setSerializer} method, the default instance is a
-     * {@link org.apache.shiro.io.DefaultSerializer}.
+     * {@link org.apache.shiro.lang.io.DefaultSerializer}.
      *
      * @return the {@code Serializer} used to serialize and deserialize {@link PrincipalCollection} instances for
      *         persistent remember me storage.

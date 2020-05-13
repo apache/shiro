@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.web.filter.mgt;
 
-import org.apache.shiro.util.ClassUtils;
+import org.apache.shiro.lang.util.ClassUtils;
 import org.apache.shiro.web.filter.authc.*;
 import org.apache.shiro.web.filter.authz.*;
 import org.apache.shiro.web.filter.session.NoSessionCreationFilter;

@@ -24,7 +24,7 @@ import org.apache.shiro.authz.SimpleRole;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.SimpleAccountRealm;
 import org.apache.shiro.util.PermissionUtils;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 import java.text.ParseException;
 import java.util.Collection;

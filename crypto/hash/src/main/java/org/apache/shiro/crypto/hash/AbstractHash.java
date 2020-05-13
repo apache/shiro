@@ -18,10 +18,10 @@
  */
 package org.apache.shiro.crypto.hash;
 
-import org.apache.shiro.codec.Base64;
-import org.apache.shiro.codec.CodecException;
-import org.apache.shiro.codec.CodecSupport;
-import org.apache.shiro.codec.Hex;
+import org.apache.shiro.lang.codec.Base64;
+import org.apache.shiro.lang.codec.CodecException;
+import org.apache.shiro.lang.codec.CodecSupport;
+import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.crypto.UnknownAlgorithmException;
 
 import java.io.Serializable;
@@ -114,7 +114,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      * By default, this class only supports Object method arguments of
      * type {@code byte[]}, {@code char[]}, {@link String}, {@link java.io.File File}, or
      * {@link java.io.InputStream InputStream}.  If either argument is anything other than these
-     * types a {@link org.apache.shiro.codec.CodecException CodecException} will be thrown.
+     * types a {@link org.apache.shiro.lang.codec.CodecException CodecException} will be thrown.
      * <p/>
      * If you want to be able to hash other object types, or use other salt types, you need to override the
      * {@link #toBytes(Object) toBytes(Object)} method to support those specific types.  Your other option is to

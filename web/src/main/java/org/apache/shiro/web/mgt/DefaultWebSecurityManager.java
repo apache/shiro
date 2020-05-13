@@ -28,7 +28,7 @@ import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.LifecycleUtils;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.mgt.*;
 import org.apache.shiro.web.subject.WebSubject;

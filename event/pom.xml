@@ -42,7 +42,7 @@
                         <Bundle-SymbolicName>org.apache.shiro.event</Bundle-SymbolicName>
                         <Export-Package>org.apache.shiro.event*;version=${project.version}</Export-Package>
                         <Import-Package>
-                            org.apache.shiro*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.lang*;version="${shiro.osgi.importRange}",
                             *
                         </Import-Package>
                     </instructions>

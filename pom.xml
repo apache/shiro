@@ -72,7 +72,7 @@
         <jacoco.skip>true</jacoco.skip>
 
         <!-- non-dependency-based properties: -->
-        <shiro.osgi.importRange>[1.2, 2)</shiro.osgi.importRange>
+        <shiro.osgi.importRange>[2, 3)</shiro.osgi.importRange>
 
         <!-- Compile 3rd party dependencies: -->
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
@@ -81,9 +81,11 @@
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
         <commons.cli.version>1.4</commons.cli.version>
         <commons.codec.version>1.14</commons.codec.version>
+        <commons.collection.version>3.2.2</commons.collection.version>
         <commons.configuration2.version>2.7</commons.configuration2.version>
         <commons.lang3.version>3.9</commons.lang3.version>
         <commons.logging.version>1.2</commons.logging.version>
+        <commons.text.version>1.8</commons.text.version>
         <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
              modules' OSGi metadata: -->
         <ehcache.version>2.6.11</ehcache.version>

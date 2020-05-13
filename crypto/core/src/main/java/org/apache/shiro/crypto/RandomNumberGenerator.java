@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.crypto;
 
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * A component that can generate random number/byte values as needed.  Useful in cryptography or security scenarios
@@ -33,8 +33,8 @@ import org.apache.shiro.util.ByteSource;
  * <li>Default per-instance behavior can be customized on implementations, typically via JavaBeans mutators.</li>
  * <li>Perhaps most important for Shiro end-users, tt can more easily be used as a source of cryptographic seed data,
  * and the data returned is already in a more convenient {@link ByteSource ByteSource} format in case that data needs
- * to be {@link org.apache.shiro.util.ByteSource#toHex() hex} or
- * {@link org.apache.shiro.util.ByteSource#toBase64() base64}-encoded.</li>
+ * to be {@link org.apache.shiro.lang.util.ByteSource#toHex() hex} or
+ * {@link org.apache.shiro.lang.util.ByteSource#toBase64() base64}-encoded.</li>
  * </ul>
  * For example, consider the following example generating password salts for new user accounts:
  * <pre>

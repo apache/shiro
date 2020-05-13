@@ -21,9 +21,9 @@ package org.apache.shiro.cache.ehcache;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.io.ResourceUtils;
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.Initializable;
+import org.apache.shiro.lang.io.ResourceUtils;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +96,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     /**
      * Returns the resource location of the config file used to initialize a new
      * EhCache CacheManager instance.  The string can be any resource path supported by the
-     * {@link org.apache.shiro.io.ResourceUtils#getInputStreamForPath(String)} call.
+     * {@link org.apache.shiro.lang.io.ResourceUtils#getInputStreamForPath(String)} call.
      * <p/>
      * This property is ignored if the CacheManager instance is injected directly - that is, it is only used to
      * lazily create a CacheManager if one is not already provided.
@@ -111,7 +111,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     /**
      * Sets the resource location of the config file used to initialize the wrapped
      * EhCache CacheManager instance.  The string can be any resource path supported by the
-     * {@link org.apache.shiro.io.ResourceUtils#getInputStreamForPath(String)} call.
+     * {@link org.apache.shiro.lang.io.ResourceUtils#getInputStreamForPath(String)} call.
      * <p/>
      * This property is ignored if the CacheManager instance is injected directly - that is, it is only used to
      * lazily create a CacheManager if one is not already provided.

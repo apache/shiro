@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.crypto.hash;
 
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * Simple implementation of {@link HashRequest} that can be used when interacting with a {@link HashService}.

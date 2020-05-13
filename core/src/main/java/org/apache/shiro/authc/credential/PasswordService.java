@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.authc.credential;
 
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * A {@code PasswordService} supports common use cases when using passwords as a credentials mechanism.

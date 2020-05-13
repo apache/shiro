@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.testing.web;
 
-import org.apache.shiro.codec.Base64;
+import org.apache.shiro.lang.codec.Base64;
 
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.github.mjeanroy.junit.servers.jetty.EmbeddedJetty;

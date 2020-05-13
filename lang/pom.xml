@@ -62,10 +62,9 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.lang</Bundle-SymbolicName>
-                        <Export-Package>org.apache.shiro.*;version=${project.version}</Export-Package>
+                        <Export-Package>org.apache.shiro.lang.*;version=${project.version}</Export-Package>
                         <!-- javax.servlet.jsp* marked as optional per SHIRO-390: -->
                         <Import-Package>
-                            org.apache.shiro*;version="${shiro.osgi.importRange}",
                             javax.servlet.jsp*;resolution:=optional,
                             *
                         </Import-Package>

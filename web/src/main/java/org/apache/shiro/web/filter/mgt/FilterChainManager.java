@@ -107,7 +107,7 @@ public interface FilterChainManager {
      * <h3>Conventional Use</h3>
      * Because the {@code FilterChainManager} interface does not impose any restrictions on filter chain names,
      * (it expects only Strings), a convenient convention is to make the chain name an actual URL path expression
-     * (such as an {@link org.apache.shiro.util.AntPathMatcher Ant path expression}).  For example:
+     * (such as an {@link org.apache.shiro.lang.util.AntPathMatcher Ant path expression}).  For example:
      * <p/>
      * <code>createChain(<b><em>path_expression</em></b>, <em>path_specific_filter_chain_definition</em>);</code>
      * This convention can be used by a {@link FilterChainResolver} to inspect request URL paths
@@ -160,7 +160,7 @@ public interface FilterChainManager {
      * @param chainDefinition the string-formatted chain definition used to construct an actual
      *                        {@link NamedFilterList} chain instance.
      * @see FilterChainResolver
-     * @see org.apache.shiro.util.AntPathMatcher AntPathMatcher
+     * @see org.apache.shiro.lang.util.AntPathMatcher AntPathMatcher
      */
     void createChain(String chainName, String chainDefinition);
 

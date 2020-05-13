@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.jndi;
 
-import org.apache.shiro.util.Factory;
+import org.apache.shiro.lang.util.Factory;
 
 import javax.naming.NamingException;
 

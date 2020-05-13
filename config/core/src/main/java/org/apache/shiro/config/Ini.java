@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.config;
 
-import org.apache.shiro.io.ResourceUtils;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.io.ResourceUtils;
+import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

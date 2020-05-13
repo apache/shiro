@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.web.servlet;
 
-import org.apache.shiro.util.Nameable;
+import org.apache.shiro.lang.util.Nameable;
 
 import javax.servlet.FilterConfig;
 

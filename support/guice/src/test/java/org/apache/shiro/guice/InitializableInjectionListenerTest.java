@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.guice;
 
-import org.apache.shiro.util.Initializable;
+import org.apache.shiro.lang.util.Initializable;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.*;

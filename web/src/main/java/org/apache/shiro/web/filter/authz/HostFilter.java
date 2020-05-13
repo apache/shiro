@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

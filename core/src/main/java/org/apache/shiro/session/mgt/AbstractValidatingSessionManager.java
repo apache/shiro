@@ -23,8 +23,8 @@ import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.LifecycleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

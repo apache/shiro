@@ -29,7 +29,7 @@ import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.util.Initializable;
+import org.apache.shiro.lang.util.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

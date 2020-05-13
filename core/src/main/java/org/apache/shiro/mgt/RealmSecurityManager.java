@@ -23,7 +23,7 @@ import org.apache.shiro.cache.CacheManagerAware;
 import org.apache.shiro.event.EventBus;
 import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.LifecycleUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
