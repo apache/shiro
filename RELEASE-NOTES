@@ -21,6 +21,402 @@ combined with Jira's auto-generated release notes during a release for the
 total set.
 
 ###########################################################
+# 1.5.3
+###########################################################
+
+Bug
+
+    [SHIRO-530] - INI parser does not properly handled backslashes at end of values
+    [SHIRO-751] - SimplePrincipalMap and SimplePrincipalCollection throw different exceptions for the same problem
+    [SHIRO-753] - Regression in URI parsing in Shiro 1.5.2
+
+Dependency upgrade
+
+    [SHIRO-754] - Upgrade to Apache Commons Codec 1.14
+    [SHIRO-755] - Upgrade to Hazelcast 3.12.6
+    [SHIRO-756] - Upgrade to Spring 5.2.5.RELEASE and Spring boot 2.2.6.RELEASE
+    [SHIRO-757] - Upgrade to Htmlunit 2.39.0
+    [SHIRO-758] - Upgrade to Jetty 9.4.27.v20200227
+    [SHIRO-759] - Upgrade to Karaf 4.2.8
+
+
+###########################################################
+# 1.5.2
+###########################################################
+
+Bug
+
+    [SHIRO-747] - FirstSuccessfulStrategy doesn't properly short circuit
+    [SHIRO-749] - shiro-all jar is missing cache package
+
+Improvement
+
+    [SHIRO-748] - Update Commons Configuration to 2.7
+
+
+###########################################################
+# 1.5.1
+###########################################################
+
+Bug
+
+    [SHIRO-736] - DefaultCipherInstance is an alias which is not available in every JVM or JCA Provider
+    [SHIRO-739] - Bean reflection property failed with Enum values
+    [SHIRO-741] - Matching of / (root) is broken
+    [SHIRO-742] - fix throw exception when request uri is /
+
+Dependency upgrade
+
+    [SHIRO-738] - Upgrade to Spring 5.2.3.RELEASE and Spring boot 2.2.4.RELEASE
+
+
+###########################################################
+# 1.5.0
+###########################################################
+
+Notes: this release require a JRE 8 minimum.
+
+Bug
+
+    [SHIRO-458] - Possible leaked timing information from DefaultPasswordService
+    [SHIRO-469] - Wrong description of JdbcRealm#setPermissionsQuery
+    [SHIRO-552] - JdbcRealm in SaltStyle.COLUMN assumes that password column is Base64 but salt column is utf8 bytes
+    [SHIRO-661] - Add check for the principal of subject whether is null
+    [SHIRO-682] - fix the potential threat when use "uri = uri + '/' " to bypassed shiro protect
+    [SHIRO-684] - INI parser keeps escape characters in keys and values
+    [SHIRO-685] - Potential NullPointerException if PermissionResolver return null/empty string
+    [SHIRO-687] - Additional Servlet Filters are not available to ShiroFilterFactorBean (unless using XML based beans)
+
+New Feature
+
+    [SHIRO-694] - Adds BearerToken support
+    [SHIRO-722] - Add SameSite option to cookies
+
+Improvement
+
+    [SHIRO-668] - Catch unexpected errors which can lead to oom
+    [SHIRO-669] - Included a boolean flag in FirstSuccessfulStrategy to break after first successful authentication
+    [SHIRO-670] - ByteSource Serializable
+    [SHIRO-681] - Upgrade to compiler Java 8
+    [SHIRO-693] - Update plugins
+    [SHIRO-700] - Minor spring updates
+    [SHIRO-706] - Switch to Guice4 by default in the build
+    [SHIRO-709] - Fix Shiro Spring feature
+    [SHIRO-710] - Update Commons Lang3 + remove older Commons Lang
+    [SHIRO-711] - Deprecate JavaEnvironment
+    [SHIRO-712] - Add BasicIniEnvironment
+    [SHIRO-715] - Remove old JSTL jars
+    [SHIRO-720] - Update Commons BeanUtils
+    [SHIRO-724] - Update Jetty, Spring, Spring Boot, Htmlunit dependencies
+    [SHIRO-726] - Add dynamic import package
+    [SHIRO-728] - Update Spring Boot to 2.1.10
+    [SHIRO-729] - Update Quartz
+    [SHIRO-730] - Updates the default Cipher mode to GCM in AesCipherService
+    [SHIRO-731] - Use OWasp Java Encoder to escape user supplied content to the logs
+
+Test
+
+    [SHIRO-697] - Reduce shiro test logging level to INFO
+
+Task
+
+    [SHIRO-690] - Validate JDK11 compatibility
+    [SHIRO-692] - Upgrade and enforce min buid maven version to 3.5.0
+    [SHIRO-698] - Improve build with maven profile
+    [SHIRO-734] - Remove Spring-client sample
+    [SHIRO-735] - Shiro does not support servlet-3.1 void method(@Suspended AsyncResponse)
+
+Dependency upgrade
+
+    [SHIRO-688] - Upgrade to commons-cli 1.4
+    [SHIRO-689] - Upgrade to commons-codec 1.12
+    [SHIRO-691] - Upgrade to maven-jar-plugin 3.1.1
+    [SHIRO-695] - Update Hazelcast
+    [SHIRO-696] - Update Jetty
+    [SHIRO-699] - Fix maven warning for exec-maven-plugin and upgrade to 1.6.0
+    [SHIRO-701] - Update logback
+    [SHIRO-702] - Upgrade to jacoco-maven-plugin 0.8.4
+    [SHIRO-703] - Update HSQL
+    [SHIRO-704] - Update Spring, Spring Boot, Hibernate
+    [SHIRO-705] - Update Easymock + Powermock
+    [SHIRO-707] - Misc dependency updates
+    [SHIRO-716] - Upgrade to commons-codec 1.13
+    [SHIRO-717] - Upgrade to maven-pmd-plugin 3.12.0
+    [SHIRO-718] - Upgrade to xmlsec 2.1.4
+    [SHIRO-719] - Upgrade to Karaf 4.2.6
+
+Request
+
+    [SHIRO-723] - Provide Minor Shiro Release that includes CVE-2019-10086 Fix
+
+
+###########################################################
+# 1.4.2
+###########################################################
+
+Bug
+
+    [SHIRO-721] - RememberMe Padding Oracle Vulnerability
+
+Improvement
+
+    [SHIRO-730] - Updates the default Cipher mode to GCM in AesCipherService
+
+
+###########################################################
+# 1.4.1
+###########################################################
+
+Bug
+
+    [SHIRO-457] - Login without static VM security manager cause exception in debug
+    [SHIRO-563] - shiro-aspectj karaf feature can't be installed
+    [SHIRO-624] - OSGI: commons configuration import should be optional
+    [SHIRO-626] - Bundle symbolic name conflict
+    [SHIRO-637] - Refresh cached session in HTTP request after user logs out
+    [SHIRO-650] - Shiro JAX-RS is not an OSGi bundle
+    [SHIRO-653] - Spring-boot registers shiro filter only on REQUEST dispatcher
+    [SHIRO-655] - shiro-core has an undesirable runtime OSGi dependency to spring-beans
+    [SHIRO-658] - Problems building shiro on openjdk-8 on current debian stable (9.6 "stretch")
+    [SHIRO-660] - Bug in FirstSuccessfulStrategy
+    [SHIRO-680] - Duplicate Bundle-SymbolicName for Different Shiro Modules
+
+New Feature
+
+    [SHIRO-638] - Update osgi bundle manifest to support Spring 4.x
+
+Improvement
+
+    [SHIRO-560] - Shiro-web feature can't be installed in karaf 4.0.4
+    [SHIRO-652] - Upgrade Shiro Feature to Karaf 4.x
+    [SHIRO-664] - Upgrade to Apache pom parent 21
+    [SHIRO-665] - Upgrade to maven-bundle-plugin 4.1.0
+    [SHIRO-667] - Upgrade to Spring 4.3.22-RELEASE
+    [SHIRO-672] - Upgrade to jacoco-maven-plugin 0.8.3
+    [SHIRO-673] - Upgrade to maven-compiler-plugin 3.8.0
+    [SHIRO-674] - Upgrade to maven-dependency-plugin to 3.1.1
+    [SHIRO-675] - Upgrade to maven-surefire-plugins 3.0.0-M3
+    [SHIRO-676] - Upgrade to maven-jar-plugin 3.1.0
+    [SHIRO-677] - Upgrade to versions-maven-plugin 2.7
+    [SHIRO-683] - Upgrade to spring-boot 1.5.19.RELEASE
+
+Task
+
+    [SHIRO-662] - Constant Name Change in AuthenticationRealm
+    [SHIRO-663] - Clean up pom parent relative path
+
+Dependency upgrade
+
+    [SHIRO-659] - Upgrade to OWASP dependency-check-maven plugin 4.0.0
+
+
+###########################################################
+# 1.4.0
+###########################################################
+
+Bug
+
+    [SHIRO-559] - shiro-guice violates the JEE specification
+    [SHIRO-579] - Permission filter is validating last matched path
+    [SHIRO-603] - Endless recursion in ShiroSecurityContext.getUserPrincipal()
+    [SHIRO-605] - ShiroWebModule creates out of order filter chain.
+    [SHIRO-607] - AuthorizationAttributeSourceAdvisor ignores type-annotations
+    [SHIRO-608] - Use a ServiceLoader to discover WebEnvironments
+    [SHIRO-611] - Spring web module does not load correct SessionStorageEvaluator
+
+Improvement
+
+    [SHIRO-596] - shiro-tools-hasher needs private salt option
+    [SHIRO-618] - Spring Boot Web Starter- Autoconfiguration for Realm and ShiroFilterChainDefinition
+
+
+###########################################################
+# 1.4.0-RC2
+###########################################################
+
+Bug
+
+    [SHIRO-493] - shiro-guice not working with the guice 4.x
+    [SHIRO-576] - Commons-beanutils dependency is not security compliant
+    [SHIRO-586] - Can't Search For Groups In Active Directory Without A System User
+    [SHIRO-587] - Can't Access Groups If userPrincipalName Doesn't Exist
+    [SHIRO-591] - Basic Auth Filter permissive mode does NOT work
+    [SHIRO-592] - ModularRealmAuthenticator causes log spam when one realm throws exception
+    [SHIRO-593] - Allow for IniWebEnvironment subclasses to specify defaults objects to ReflectionBuilder
+    [SHIRO-594] - Update Hazelcast version to latest supported version (3.7.2)
+    [SHIRO-595] - Allow for POST only logout requests
+    [SHIRO-612] - Need to upgrade BeanUtils to avoid vulnerability
+
+New Feature
+
+    [SHIRO-501] - Add ability to set system properties in shiro.ini
+    [SHIRO-589] - Add Servlet 3.x fragment
+    [SHIRO-590] - Add Spring Boot support / starters
+
+Improvement
+
+    [SHIRO-296] - Typo fixes
+    [SHIRO-301] - Call permissionResolver directly in AuthorizingRealm
+    [SHIRO-392] - Shiro Extension for JAX-RS
+    [SHIRO-599] - Fix file encoding warnings during maven build and reporting
+
+
+###########################################################
+# 1.3.2
+###########################################################
+
+Bug
+
+    [SHIRO-584] - URL Path matching issue with WebUtils.getPathWithinApplication
+
+
+###########################################################
+# 1.3.1
+###########################################################
+
+Bug
+
+    [SHIRO-577] - Regression - Unable to set custom SessionValidationScheduler
+    [SHIRO-581] - Improve log message when remember me cipher has changed
+
+
+###########################################################
+# 1.3.0
+###########################################################
+
+Bug
+
+    [SHIRO-373] - Complete CAS remember-me support
+    [SHIRO-397] - SingleArgumentMethodEventListenerTest fails
+    [SHIRO-421] - Unable to set long timeouts on HttpServletSession
+    [SHIRO-435] - SecurityManager is not a singleton in ShiroWebModule
+    [SHIRO-473] - DefaultAnnotationResolver.getAnnotation throws NullPointerException
+    [SHIRO-480] - setTarget method in DomainPermission does not set targets
+    [SHIRO-483] - passwordsMatch() returns false with right plain password-encrypted password in JVM with default locale tr_TR
+    [SHIRO-502] - OSGi import of com.google.inject in shiro-guice has incorrect version range
+    [SHIRO-513] - Misleading error message when using custom WebEnvironment
+    [SHIRO-515] - ExecutorServiceSessionValidationScheduler leaks resources due to improper synchronization
+    [SHIRO-547] - Use MessageDigest#isEqual() instead of Arrays#equals() for comparing digests
+    [SHIRO-568] - hash iterations is calculated wrongly in SimpleHash
+    [SHIRO-570] - SimpleCookie should check the path of the cookie
+
+New Feature
+
+    [SHIRO-200] - Add ability to configure basic authentication for specific HTTP methods
+    [SHIRO-395] - Add an Event Bus for event publishing and low-coupling for custom components/plugins.
+    [SHIRO-412] - Hazelcast-based caching and session clustering
+    [SHIRO-436] - Add EnvironmentLoader finalizeEnvironment method
+
+Improvement
+
+    [SHIRO-278] - Rename JndiLdapRealm to DefaultLdapRealm
+    [SHIRO-300] - WildcardPermission: change visibility of field 'parts' to protected
+    [SHIRO-361] - HttpServletResponse.encodeURL: only append JSESSIONID when necessary
+    [SHIRO-428] - AuthorizingRealm "no cache" logging should be at DEBUG level, not INFO, OR is should log only once
+    [SHIRO-437] - WildcardPermission: conformed toString
+    [SHIRO-514] - ExecutorServiceSessionValidationScheduler should create threads with a configurable name
+    [SHIRO-564] - WildcardPermission case-insensitive makes parts collections twice
+    [SHIRO-566] - CollectionUtils should use Collections wrappers of arrays if possible
+
+Task
+
+    [SHIRO-208] - Correct JDK 1.5 / 1.6 incompatibilities
+    [SHIRO-320] - Add an example for using Guice integration.
+    [SHIRO-571] - Mark shiro-cas deprecated (replaced with buji-pac4j)
+
+
+###########################################################
+# 1.2.6
+###########################################################
+
+Bug
+
+    [SHIRO-545] - JavaEnvironment version getter
+    [SHIRO-567] - shiro-root-1.2.5.pom uses invalid encoding, fails to parse with Gradle 2.14
+
+
+###########################################################
+# 1.2.5
+###########################################################
+
+Bug
+
+    [SHIRO-443] - SessionValidationScheduler created multiple times, enabling it is not thread safe
+    [SHIRO-462] - Authentication exceptions are swallowed
+    [SHIRO-467] - Authentication exception gets swallowed
+    [SHIRO-550] - Randomize default remember me cipher
+
+Improvement
+
+    [SHIRO-504] - Java 8 support
+    [SHIRO-516] - Explicitly specify the version of aspectjtools to avoid build warning
+    [SHIRO-562] - WildcardPermission calls String.trim() twice in setParts()
+
+
+###########################################################
+# 1.2.4
+###########################################################
+
+Bug
+
+    [SHIRO-517] - Caused by: java.lang.NoClassDefFoundError: Lcom/google/inject/internal/util/$ImmutableList;
+    [SHIRO-518] - Shiro-CAS: Security Problem in cas-client-core versions older than 3.3.2
+    [SHIRO-556] - https://shiro.apache.org/realm.html appears to link to the javadoc under static/current/apidocs not static/latest
+
+Improvement
+
+    [SHIRO-332] - Change access level of method 'isPermitted' in org.apache.shiro.realm.AuthorizingRealm (line 461) from private to protected
+    [SHIRO-496] - Update shiro.guice dependency
+    [SHIRO-498] - ThreadLocal should not be created when not necessary
+
+
+###########################################################
+# 1.2.2
+###########################################################
+
+Bug:
+
+    [SHIRO-316] - Annotations in samples-aspectj Project Does not Work
+    [SHIRO-351] - Shiro Native Session implementation cannot extract JSESSIONID From URL if JSESSIONID is URL parameter (not HTTP parameter)
+    [SHIRO-379] - SimpleAccoutRealm concurrency access to roles and users
+    [SHIRO-380] - runAs feature (still) doesn't work
+    [SHIRO-387] - EnvironmentLoader destroys wrong environment
+    [SHIRO-388] - Stackoverflow org.apache.shiro.session.SessionListener.onStop()
+    [SHIRO-389] - Fix OSGI Exports for shiro-ehcache
+    [SHIRO-390] - OSGi Import for JSP (javax.servlet.jsp) should be declared optional
+    [SHIRO-394] - PropertiesRealm reloading not working when loading from file
+    [SHIRO-399] - Memory leak for invalid sessions
+    [SHIRO-403] - Trunk will not build under JDK 1.7 due to webstart plugin
+    [SHIRO-413] - init() method is not called on class that implements org.apache.shiro.util.Initializable
+    [SHIRO-415] - isLoginAttempt method in BasicHttpAuthenticationFilter class fails if used in any locale other than English
+    [SHIRO-418] - Javadoc typo in JdbcRealm.SaltStyle
+    [SHIRO-423] - INI ReflectionBuilder should not wrap reference values
+    [SHIRO-429] - perms filter parsing is too sensitive to a trailing space
+    [SHIRO-431] - please use git ignore
+    [SHIRO-447] - Broken Javadoc links
+
+
+###########################################################
+# 1.2.1
+###########################################################
+
+Bug:
+
+    [SHIRO-341] - ReflectionBuilder has invalid log message format
+    [SHIRO-342] - Running the example as described at http://shiro.apache.org/10-minute-tutorial.html fails
+    [SHIRO-344] - runAs feature doesn't work
+    [SHIRO-350] - Creating a subject should not create a session
+    [SHIRO-353] - DefaultSecurityManager has invalid SLF4J log instruction
+    [SHIRO-354] - Authentication cache
+    [SHIRO-358] - Source Tarball doesn't Build
+    [SHIRO-363] - PasswordMatcher should support character arrays
+    [SHIRO-368] - DomainPermission(string, string) constructor sets targets to the same value as actions
+    [SHIRO-375] - Basic authentication issue when using COLON character
+    [SHIRO-376] - shiro-cas feature should not depend on shiro-cas
+    [SHIRO-377] - PropertiesRealm unable to reload Properties
+
+
+###########################################################
 # 1.2.0
 ###########################################################
 
