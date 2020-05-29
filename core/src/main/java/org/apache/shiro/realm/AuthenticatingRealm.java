@@ -198,7 +198,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
     }
 
     /**
-     * Sets the CrendialsMatcher used during an authentication attempt to verify submitted credentials with those
+     * Sets the CredentialsMatcher used during an authentication attempt to verify submitted credentials with those
      * stored in the system.  The implementation of this matcher can be switched via configuration to
      * support any number of schemes, including plain text comparisons, hashing comparisons, and others.
      * <p/>
