@@ -259,20 +259,13 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         Ini ini = getIni();
 
         if (!CollectionUtils.isEmpty(ini)) {
-            //only create a resolver if the 'filters' or 'urls' sections are defined:
-            Ini.Section urls = ini.getSection(IniFilterChainResolverFactory.URLS);
-            Ini.Section filters = ini.getSection(IniFilterChainResolverFactory.FILTERS);
-            if (!CollectionUtils.isEmpty(urls) || !CollectionUtils.isEmpty(filters)) {
-                //either the urls section or the filters section was defined.  Go ahead and create the resolver:
-
-                Factory<FilterChainResolver> factory = (Factory<FilterChainResolver>) this.objects.get(FILTER_CHAIN_RESOLVER_NAME);
-                if (factory instanceof IniFactorySupport) {
-                    IniFactorySupport iniFactory = (IniFactorySupport) factory;
-                    iniFactory.setIni(ini);
-                    iniFactory.setDefaults(this.objects);
-                }
-                resolver = factory.getInstance();
+            Factory<FilterChainResolver> factory = (Factory<FilterChainResolver>) this.objects.get(FILTER_CHAIN_RESOLVER_NAME);
+            if (factory instanceof IniFactorySupport) {
+                IniFactorySupport iniFactory = (IniFactorySupport) factory;
+                iniFactory.setIni(ini);
+                iniFactory.setDefaults(this.objects);
             }
+            resolver = factory.getInstance();
         }
 
         return resolver;
