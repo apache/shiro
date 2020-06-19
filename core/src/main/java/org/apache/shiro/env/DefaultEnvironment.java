@@ -146,7 +146,7 @@ public class DefaultEnvironment implements NamedObjectEnvironment, Destroyable {
             return null;
         }
         if (!requiredType.isInstance(o)) {
-            String msg = "Object named '" + name + "' is not of required type [" + requiredType.getName() + "].";
+            String msg = "Object named '" + name + "' (of type [" + o.getClass().getName() + "]) is not of required type [" + requiredType.getName() + "].";
             throw new RequiredTypeException(msg);
         }
         return (T)o;
