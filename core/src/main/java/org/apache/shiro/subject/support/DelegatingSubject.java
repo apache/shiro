@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -514,5 +515,17 @@ public class DelegatingSubject implements Subject {
         }
 
         return popped;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", "DelegatingSubject{", "}")
+            .add("principals=" + principals)
+            .add("authenticated=" + authenticated)
+            .add("host='******")
+            .add("session='******'")
+            .add("sessionCreationEnabled=" + sessionCreationEnabled)
+            .add("securityManager=" + securityManager)
+            .toString();
     }
 }

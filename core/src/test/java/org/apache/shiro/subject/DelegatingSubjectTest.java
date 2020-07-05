@@ -216,4 +216,25 @@ public class DelegatingSubjectTest {
 
         LifecycleUtils.destroy(sm);
     }
+
+    @Test
+    public void testToString() {
+        // given
+        String username = "jsmith";
+
+        DefaultSecurityManager securityManager = new DefaultSecurityManager();
+        PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
+        final String hostname = "localhost";
+        final DelegatingSubject sourceSubject = new DelegatingSubject(identity, true, hostname, null, securityManager);
+
+        // when
+        final String subjectToString = sourceSubject.toString();
+
+        // then
+        final Session session = sourceSubject.getSession(true);
+        String sesionId = (String) session.getId();
+        assertFalse("toString must not leak sessionId", subjectToString.contains(sesionId));
+        assertFalse("toString must not leak host", subjectToString.contains(hostname));
+    }
+
 }
