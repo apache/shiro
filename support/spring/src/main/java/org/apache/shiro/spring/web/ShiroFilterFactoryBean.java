@@ -25,8 +25,10 @@ import org.apache.shiro.util.Nameable;
 import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
 import org.apache.shiro.web.filter.AccessControlFilter;
+import org.apache.shiro.web.filter.InvalidRequestFilter;
 import org.apache.shiro.web.filter.authc.AuthenticationFilter;
 import org.apache.shiro.web.filter.authz.AuthorizationFilter;
+import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
@@ -41,7 +43,9 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 import javax.servlet.Filter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -121,6 +125,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
     private Map<String, Filter> filters;
 
+    private List<String> globalFilters;
+
     private Map<String, String> filterChainDefinitionMap; //urlPathExpression_to_comma-delimited-filter-chain-definition
 
     private String loginUrl;
@@ -131,6 +137,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
     public ShiroFilterFactoryBean() {
         this.filters = new LinkedHashMap<String, Filter>();
+        this.globalFilters = new ArrayList<>();
+        this.globalFilters.add(DefaultFilter.invalidRequest.name());
         this.filterChainDefinitionMap = new LinkedHashMap<String, String>(); //order matters!
     }
 
@@ -332,6 +340,14 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     }
 
     /**
+     * Sets the list of filters that will be executed against every request.  Defaults to the {@link InvalidRequestFilter} which will block known invalid request attacks.
+     * @param globalFilters the list of filters to execute before specific path filters.
+     */
+    public void setGlobalFilters(List<String> globalFilters) {
+        this.globalFilters = globalFilters;
+    }
+
+    /**
      * Lazily creates and returns a {@link AbstractShiroFilter} concrete instance via the
      * {@link #createInstance} method.
      *
@@ -388,6 +404,9 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
             }
         }
 
+        // set the global filters
+        manager.setGlobalFilters(this.globalFilters);
+
         //build up the chains:
         Map<String, String> chains = getFilterChainDefinitionMap();
         if (!CollectionUtils.isEmpty(chains)) {
@@ -397,6 +416,9 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
                 manager.createChain(url, chainDefinition);
             }
         }
+
+        // create the default chain, to match anything the path matching would have missed
+        manager.createDefaultChain("/**"); // TODO this assumes ANT path matching, which might be OK here
 
         return manager;
     }
@@ -533,6 +555,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
                 throw new IllegalArgumentException("WebSecurityManager property cannot be null.");
             }
             setSecurityManager(webSecurityManager);
+
             if (resolver != null) {
                 setFilterChainResolver(resolver);
             }

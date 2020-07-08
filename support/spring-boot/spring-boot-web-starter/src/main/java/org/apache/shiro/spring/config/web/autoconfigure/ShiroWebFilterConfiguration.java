@@ -28,6 +28,8 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 /**
  * @since 1.4.0
  */
@@ -52,5 +54,11 @@ public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfigura
         filterRegistrationBean.setOrder(1);
 
         return filterRegistrationBean;
+    }
+
+    @Bean(name = "globalFilters")
+    @ConditionalOnMissingBean
+    protected List<String> globalFilters() {
+        return super.globalFilters();
     }
 }

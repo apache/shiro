@@ -18,13 +18,10 @@
  */
 package org.apache.shiro.spring.web.config;
 
-import org.apache.shiro.config.Ini;
 import org.apache.shiro.mgt.RememberMeManager;
 import org.apache.shiro.mgt.SessionStorageEvaluator;
 import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.mgt.SubjectFactory;
-import org.apache.shiro.realm.Realm;
-import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.config.AbstractShiroConfiguration;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;

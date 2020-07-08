@@ -19,6 +19,7 @@
 package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.ClassUtils;
+import org.apache.shiro.web.filter.InvalidRequestFilter;
 import org.apache.shiro.web.filter.authc.*;
 import org.apache.shiro.web.filter.authz.*;
 import org.apache.shiro.web.filter.session.NoSessionCreationFilter;
@@ -48,7 +49,8 @@ public enum DefaultFilter {
     rest(HttpMethodPermissionFilter.class),
     roles(RolesAuthorizationFilter.class),
     ssl(SslFilter.class),
-    user(UserFilter.class);
+    user(UserFilter.class),
+    invalidRequest(InvalidRequestFilter.class);
 
     private final Class<? extends Filter> filterClass;
 

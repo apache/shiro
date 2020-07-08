@@ -16,28 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.spring.web.config;
+package org.apache.shiro.web.env;
 
-import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.io.IOException;
 
-import java.util.List;
+public class FilterStub implements Filter {
 
-/**
- * @since 1.4.0
- */
-@Configuration
-public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfiguration {
-
-    @Bean
     @Override
-    protected ShiroFilterFactoryBean shiroFilterFactoryBean() {
-        return super.shiroFilterFactoryBean();
+    public void init(FilterConfig filterConfig) throws ServletException {
+
     }
 
-    @Bean(name = "globalFilters")
-    protected List<String> globalFilters() {
-        return super.globalFilters();
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+    }
+
+    @Override
+    public void destroy() {
+
     }
 }

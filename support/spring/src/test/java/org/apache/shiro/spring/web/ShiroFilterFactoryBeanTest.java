@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.spring.web;
 
+import org.apache.shiro.web.filter.InvalidRequestFilter;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.NamedFilterList;
@@ -55,11 +56,12 @@ public class ShiroFilterFactoryBeanTest {
         DefaultFilterChainManager fcManager = (DefaultFilterChainManager) resolver.getFilterChainManager();
         NamedFilterList chain = fcManager.getChain("/test");
         assertNotNull(chain);
-        assertEquals(chain.size(), 2);
+        assertEquals(chain.size(), 3);
         Filter[] filters = new Filter[chain.size()];
         filters = chain.toArray(filters);
-        assertTrue(filters[0] instanceof DummyFilter);
-        assertTrue(filters[1] instanceof FormAuthenticationFilter);
+        assertTrue(filters[0] instanceof InvalidRequestFilter); // global filter
+        assertTrue(filters[1] instanceof DummyFilter);
+        assertTrue(filters[2] instanceof FormAuthenticationFilter);
     }
 
     /**

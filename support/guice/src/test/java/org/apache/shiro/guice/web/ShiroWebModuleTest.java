@@ -24,6 +24,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.binder.AnnotatedBindingBuilder;
+import com.google.inject.name.Names;
 import org.apache.shiro.guice.ShiroModuleTest;
 import org.apache.shiro.env.Environment;
 import org.apache.shiro.mgt.SecurityManager;
@@ -31,6 +32,7 @@ import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.web.env.EnvironmentLoader;
 import org.apache.shiro.web.env.WebEnvironment;
+import org.apache.shiro.web.filter.InvalidRequestFilter;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
@@ -55,7 +57,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
@@ -212,11 +216,15 @@ public class ShiroWebModuleTest {
         FilterChain filterChain = simpleFilterChainResolver.getChain(request, null, null);
         assertThat(filterChain, instanceOf(SimpleFilterChain.class));
         Filter nextFilter = getNextFilter((SimpleFilterChain) filterChain);
+        assertThat(nextFilter, instanceOf(InvalidRequestFilter.class));
+        nextFilter = getNextFilter((SimpleFilterChain) filterChain);
         assertThat(nextFilter, instanceOf(FormAuthenticationFilter.class));
 
         // test the /test_custom_filter resource
         filterChain = simpleFilterChainResolver.getChain(request, null, null);
         assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        nextFilter = getNextFilter((SimpleFilterChain) filterChain);
+        assertThat(nextFilter, instanceOf(InvalidRequestFilter.class));
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
         assertThat(nextFilter, instanceOf(CustomFilter.class));
 
@@ -224,17 +232,22 @@ public class ShiroWebModuleTest {
         filterChain = simpleFilterChainResolver.getChain(request, null, null);
         assertThat(filterChain, instanceOf(SimpleFilterChain.class));
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
+        assertThat(nextFilter, instanceOf(InvalidRequestFilter.class));
+        nextFilter = getNextFilter((SimpleFilterChain) filterChain);
         assertThat(nextFilter, instanceOf(BasicHttpAuthenticationFilter.class));
 
         // test the /test_perms resource
         filterChain = simpleFilterChainResolver.getChain(request, null, null);
         assertThat(filterChain, instanceOf(SimpleFilterChain.class));
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
+        assertThat(nextFilter, instanceOf(InvalidRequestFilter.class));
+        nextFilter = getNextFilter((SimpleFilterChain) filterChain);
         assertThat(nextFilter, instanceOf(PermissionsAuthorizationFilter.class));
 
         // test the /multiple_configs resource
         filterChain = simpleFilterChainResolver.getChain(request, null, null);
         assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(InvalidRequestFilter.class));
         assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(FormAuthenticationFilter.class));
         assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(RolesAuthorizationFilter.class));
         assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(PermissionsAuthorizationFilter.class));
@@ -308,6 +321,146 @@ public class ShiroWebModuleTest {
         assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(FormAuthenticationFilter.class));
         assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(RolesAuthorizationFilter.class));
         assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(PermissionsAuthorizationFilter.class));
+
+        verify(servletContext, request);
+    }
+
+    @Test
+    public void testDefaultPath() {
+
+        final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
+        ServletContext servletContext = createMock(ServletContext.class);
+        HttpServletRequest request = createMock(HttpServletRequest.class);
+
+        servletContext.setAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY), EasyMock.anyObject());
+        expect(request.getAttribute("javax.servlet.include.context_path")).andReturn("").anyTimes();
+        expect(request.getCharacterEncoding()).andReturn("UTF-8").anyTimes();
+        expect(request.getAttribute("javax.servlet.include.path_info")).andReturn(null).anyTimes();
+        expect(request.getPathInfo()).andReturn(null).anyTimes();
+        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/test/foobar");
+        replay(servletContext, request);
+
+        Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
+            @Override
+            protected void configureShiroWeb() {
+                bindRealm().to(ShiroModuleTest.MockRealm.class);
+                expose(FilterChainResolver.class);
+                // no paths configured
+            }
+
+            @Provides
+            public ShiroModuleTest.MockRealm createRealm() {
+                return mockRealm;
+            }
+        });
+
+        FilterChainResolver resolver = injector.getInstance(FilterChainResolver.class);
+        assertThat(resolver, instanceOf(SimpleFilterChainResolver.class));
+        SimpleFilterChainResolver simpleFilterChainResolver = (SimpleFilterChainResolver) resolver;
+
+        // test the /test_authc resource
+        FilterChain filterChain = simpleFilterChainResolver.getChain(request, null, null);
+        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+
+        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(InvalidRequestFilter.class));
+        assertThat(getNextFilter((SimpleFilterChain) filterChain), nullValue());
+
+        verify(servletContext, request);
+    }
+
+    @Test
+    public void testDisableGlobalFilters() {
+
+        final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
+        ServletContext servletContext = createMock(ServletContext.class);
+        HttpServletRequest request = createMock(HttpServletRequest.class);
+
+        servletContext.setAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY), EasyMock.anyObject());
+        expect(request.getAttribute("javax.servlet.include.context_path")).andReturn("").anyTimes();
+        expect(request.getCharacterEncoding()).andReturn("UTF-8").anyTimes();
+        expect(request.getAttribute("javax.servlet.include.path_info")).andReturn(null).anyTimes();
+        expect(request.getPathInfo()).andReturn(null).anyTimes();
+        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/test/foobar");
+        replay(servletContext, request);
+
+        Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
+            @Override
+            protected void configureShiroWeb() {
+                bindRealm().to(ShiroModuleTest.MockRealm.class);
+                expose(FilterChainResolver.class);
+                this.addFilterChain("/**", filterConfig(AUTHC));
+            }
+
+            @Override
+            public List<FilterConfig<? extends Filter>> globalFilters() {
+                return Collections.emptyList();
+            }
+
+            @Provides
+            public ShiroModuleTest.MockRealm createRealm() {
+                return mockRealm;
+            }
+        });
+
+        FilterChainResolver resolver = injector.getInstance(FilterChainResolver.class);
+        assertThat(resolver, instanceOf(SimpleFilterChainResolver.class));
+        SimpleFilterChainResolver simpleFilterChainResolver = (SimpleFilterChainResolver) resolver;
+
+        // test the /test_authc resource
+        FilterChain filterChain = simpleFilterChainResolver.getChain(request, null, null);
+        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+
+        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(FormAuthenticationFilter.class));
+        assertThat(getNextFilter((SimpleFilterChain) filterChain), nullValue());
+
+        verify(servletContext, request);
+    }
+
+    @Test
+    public void testChangeInvalidFilterConfig() {
+
+        final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
+        ServletContext servletContext = createMock(ServletContext.class);
+        HttpServletRequest request = createMock(HttpServletRequest.class);
+
+        servletContext.setAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY), EasyMock.anyObject());
+        expect(request.getAttribute("javax.servlet.include.context_path")).andReturn("").anyTimes();
+        expect(request.getCharacterEncoding()).andReturn("UTF-8").anyTimes();
+        expect(request.getAttribute("javax.servlet.include.path_info")).andReturn(null).anyTimes();
+        expect(request.getPathInfo()).andReturn(null).anyTimes();
+        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/test/foobar");
+        replay(servletContext, request);
+
+        Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
+            @Override
+            protected void configureShiroWeb() {
+
+                bindConstant().annotatedWith(Names.named("shiro.blockBackslash")).to(false);
+
+                bindRealm().to(ShiroModuleTest.MockRealm.class);
+                expose(FilterChainResolver.class);
+                this.addFilterChain("/**", filterConfig(AUTHC));
+            }
+
+            @Provides
+            public ShiroModuleTest.MockRealm createRealm() {
+                return mockRealm;
+            }
+        });
+
+        FilterChainResolver resolver = injector.getInstance(FilterChainResolver.class);
+        assertThat(resolver, instanceOf(SimpleFilterChainResolver.class));
+        SimpleFilterChainResolver simpleFilterChainResolver = (SimpleFilterChainResolver) resolver;
+
+        // test the /test_authc resource
+        FilterChain filterChain = simpleFilterChainResolver.getChain(request, null, null);
+        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+
+        Filter invalidRequestFilter = getNextFilter((SimpleFilterChain) filterChain);
+        assertThat(invalidRequestFilter, instanceOf(InvalidRequestFilter.class));
+        assertFalse("Expected 'blockBackslash' to be false", ((InvalidRequestFilter) invalidRequestFilter).isBlockBackslash());
+        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(FormAuthenticationFilter.class));
+        assertThat(getNextFilter((SimpleFilterChain) filterChain), nullValue());
 
         verify(servletContext, request);
     }

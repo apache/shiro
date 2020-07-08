@@ -55,7 +55,9 @@ public class ShiroWebAutoConfigurationTestApplication {
 
     @Bean
     ShiroFilterChainDefinition shiroFilterChainDefinition() {
-        return new DefaultShiroFilterChainDefinition();
+        DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
+        chainDefinition.addPathDefinition("/login.html", "authc");
+        return chainDefinition;
     }
 
     @Bean

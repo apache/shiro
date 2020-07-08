@@ -30,8 +30,10 @@ import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,17 +54,21 @@ public class DefaultFilterChainManager implements FilterChainManager {
 
     private Map<String, Filter> filters; //pool of filters available for creating chains
 
+    private List<String> globalFilterNames; // list of filters to prepend to every chain
+
     private Map<String, NamedFilterList> filterChains; //key: chain name, value: chain
 
     public DefaultFilterChainManager() {
         this.filters = new LinkedHashMap<String, Filter>();
         this.filterChains = new LinkedHashMap<String, NamedFilterList>();
+        this.globalFilterNames = new ArrayList<>();
         addDefaultFilters(false);
     }
 
     public DefaultFilterChainManager(FilterConfig filterConfig) {
         this.filters = new LinkedHashMap<String, Filter>();
         this.filterChains = new LinkedHashMap<String, NamedFilterList>();
+        this.globalFilterNames = new ArrayList<>();
         setFilterConfig(filterConfig);
         addDefaultFilters(true);
     }
@@ -115,6 +121,15 @@ public class DefaultFilterChainManager implements FilterChainManager {
         addFilter(name, filter, init, true);
     }
 
+    public void createDefaultChain(String chainName) {
+        // only create the defaultChain if we don't have a chain with this name already
+        // (the global filters will already be in that chain)
+        if (!getChainNames().contains(chainName) && !CollectionUtils.isEmpty(globalFilterNames)) {
+            // add each of global filters
+            globalFilterNames.stream().forEach(filterName -> addToChain(chainName, filterName));
+        }
+    }
+
     public void createChain(String chainName, String chainDefinition) {
         if (!StringUtils.hasText(chainName)) {
             throw new NullPointerException("chainName cannot be null or empty.");
@@ -124,7 +139,12 @@ public class DefaultFilterChainManager implements FilterChainManager {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Creating chain [" + chainName + "] from String definition [" + chainDefinition + "]");
+            log.debug("Creating chain [" + chainName + "] with global filters " + globalFilterNames + " and from String definition [" + chainDefinition + "]");
+        }
+
+        // first add each of global filters
+        if (!CollectionUtils.isEmpty(globalFilterNames)) {
+            globalFilterNames.stream().forEach(filterName -> addToChain(chainName, filterName));
         }
 
         //parse the value by tokenizing it to get the resulting filter-specific config entries
@@ -271,6 +291,21 @@ public class DefaultFilterChainManager implements FilterChainManager {
 
         NamedFilterList chain = ensureChain(chainName);
         chain.add(filter);
+    }
+
+    public void setGlobalFilters(List<String> globalFilterNames) throws ConfigurationException {
+        // validate each filter name
+        if (!CollectionUtils.isEmpty(globalFilterNames)) {
+            for (String filterName : globalFilterNames) {
+                Filter filter = filters.get(filterName);
+                if (filter == null) {
+                    throw new ConfigurationException("There is no filter with name '" + filterName +
+                                                     "' to apply to the global filters in the pool of available Filters.  Ensure a " +
+                                                     "filter with that name/path has first been registered with the addFilter method(s).");
+                }
+                this.globalFilterNames.add(filterName);
+            }
+        }
     }
 
     protected void applyChainConfig(String chainName, Filter filter, String chainSpecificFilterConfig) {

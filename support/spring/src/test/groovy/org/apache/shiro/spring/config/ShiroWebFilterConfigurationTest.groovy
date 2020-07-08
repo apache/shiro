@@ -24,6 +24,7 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition
 import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration
+import org.apache.shiro.web.filter.InvalidRequestFilter
 import org.apache.shiro.web.filter.mgt.FilterChainManager
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -66,7 +67,7 @@ class ShiroWebFilterConfigurationTest extends AbstractJUnit4SpringContextTests {
         // create the filter chain manager
         FilterChainManager filterChainManager = shiroFilterFactoryBean.createFilterChainManager()
         // lookup the chain by name
-        assertThat filterChainManager.getChain("/test-me"), contains(instanceOf(ExpectedTestFilter))
+        assertThat filterChainManager.getChain("/test-me"), contains(instanceOf(InvalidRequestFilter), instanceOf(ExpectedTestFilter))
     }
 
     @Configuration

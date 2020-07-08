@@ -21,6 +21,7 @@ package org.apache.shiro.web.filter.mgt
 import org.apache.shiro.config.ConfigurationException
 import org.apache.shiro.web.filter.authz.SslFilter
 import org.apache.shiro.web.servlet.ShiroFilter
+import org.hamcrest.Matchers
 
 import javax.servlet.Filter
 import javax.servlet.FilterChain
@@ -31,6 +32,7 @@ import org.junit.Test
 
 import static org.easymock.EasyMock.*
 import static org.junit.Assert.*
+import static org.hamcrest.MatcherAssert.assertThat
 
 /**
  * Unit tests for the {@link DefaultFilterChainManager} implementation.
@@ -208,6 +210,56 @@ class DefaultFilterChainManagerTest {
         filter = chain.get(2);
         assertNotNull(filter);
         assertEquals(DefaultFilter.perms.getFilterClass(), filter.getClass());
+    }
+
+    @Test
+    void testWithGlobalFilters() {
+        DefaultFilterChainManager manager = new DefaultFilterChainManager()
+        manager.setGlobalFilters(["invalidRequest", "port"])
+        assertThat(manager.filterChains, Matchers.anEmptyMap())
+
+        // add a chain
+        manager.createChain("test", "authc, roles[manager], perms[\"user:read,write:12345\"")
+
+        assertThat(manager.getChain("test"), Matchers.contains(
+                Matchers.instanceOf(DefaultFilter.invalidRequest.getFilterClass()),
+                Matchers.instanceOf(DefaultFilter.port.getFilterClass()),
+                Matchers.instanceOf(DefaultFilter.authc.getFilterClass()),
+                Matchers.instanceOf(DefaultFilter.roles.getFilterClass()),
+                Matchers.instanceOf(DefaultFilter.perms.getFilterClass())
+        ))
+
+        // the  "default" chain doesn't exist until it is created
+        assertThat(manager.getChain("/**"), Matchers.nullValue())
+        // create it
+        manager.createDefaultChain("/**")
+        // verify it
+        assertThat(manager.getChain("/**"), Matchers.contains(
+                Matchers.instanceOf(DefaultFilter.invalidRequest.getFilterClass()),
+                Matchers.instanceOf(DefaultFilter.port.getFilterClass())
+        ))
+    }
+
+    @Test
+    void addDefaultChainWithSameName() {
+
+        DefaultFilterChainManager manager = new DefaultFilterChainManager()
+        manager.setGlobalFilters(["invalidRequest", "port"])
+
+        // create a chain
+        manager.createChain("test", "authc")
+
+        // create the default chain with the same name
+        manager.createDefaultChain("test")
+
+        // since the "default" chain was created with the same name as an existing chain, we could end up adding the
+        // global filters to the chain twice, test to verify it is only once
+        assertThat(manager.getChain("test"), Matchers.contains(
+                Matchers.instanceOf(DefaultFilter.invalidRequest.getFilterClass()),
+                Matchers.instanceOf(DefaultFilter.port.getFilterClass()),
+                Matchers.instanceOf(DefaultFilter.authc.getFilterClass())
+        ))
+
     }
 
     /**

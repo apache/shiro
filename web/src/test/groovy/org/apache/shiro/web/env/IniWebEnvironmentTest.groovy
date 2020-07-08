@@ -22,8 +22,11 @@ import org.apache.shiro.config.CompositeBean
 import org.apache.shiro.config.Ini
 import org.apache.shiro.config.SimpleBean
 import org.apache.shiro.web.filter.mgt.DefaultFilter
+import org.apache.shiro.web.filter.mgt.FilterChainManager
+import org.hamcrest.Matchers
 import org.junit.Test
 
+import static org.hamcrest.MatcherAssert.assertThat
 import static org.junit.Assert.*
 
 /**
@@ -93,5 +96,71 @@ class IniWebEnvironmentTest {
         assertNotNull simpleBean
 
         assertSame(compositeBean.simpleBean, simpleBean)
+    }
+
+    @Test
+    void testDisableGlobalFilters() {
+        Ini ini = new Ini()
+        ini.load("""
+        [main]
+        filterChainResolver.globalFilters = null
+
+        [urls]
+        /index.html = anon
+        """)
+
+        def env = new IniWebEnvironment(ini:  ini)
+        env.init()
+        assertThat env.getFilterChainResolver().filterChainManager.globalFilterNames, Matchers.empty()
+    }
+
+    @Test
+    void testDefaultGlobalFilters() {
+        Ini ini = new Ini()
+        ini.load("""
+        [main]
+
+        [urls]
+        /index.html = anon
+        """)
+
+        def env = new IniWebEnvironment(ini:  ini)
+        env.init()
+        def resolver =  env.getFilterChainResolver()
+        FilterChainManager manager = resolver.filterChainManager
+        assertThat manager.globalFilterNames, Matchers.contains(DefaultFilter.invalidRequest.name())
+
+        assertThat manager.getChain("/index.html"), Matchers.contains(
+                Matchers.instanceOf(DefaultFilter.invalidRequest.filterClass),
+                Matchers.instanceOf(DefaultFilter.anon.filterClass))
+    }
+
+    @Test
+    void testCustomGlobalFilters() {
+        Ini ini = new Ini()
+        ini.load("""
+        [main]
+        stub = org.apache.shiro.web.env.FilterStub
+        filterChainResolver.globalFilters = port,invalidRequest,stub
+
+        [urls]
+        /index.html = authc
+        """)
+
+        def env = new IniWebEnvironment(ini:  ini)
+        env.init()
+        def resolver =  env.getFilterChainResolver()
+        FilterChainManager manager = resolver.filterChainManager
+        assertThat manager.globalFilterNames, Matchers.contains(
+                DefaultFilter.port.name(),
+                DefaultFilter.invalidRequest.name(),
+                "stub"
+        )
+
+        assertThat manager.getChain("/index.html"), Matchers.contains(
+                Matchers.instanceOf(DefaultFilter.port.filterClass),
+                Matchers.instanceOf(DefaultFilter.invalidRequest.filterClass),
+                Matchers.instanceOf(FilterStub),
+                Matchers.instanceOf(DefaultFilter.authc.filterClass))
     }
 }
