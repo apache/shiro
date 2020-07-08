@@ -18,13 +18,15 @@
  */
 package org.apache.shiro.spring.web.config;
 
-
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.Filter;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,6 +52,10 @@ public class AbstractShiroWebFilterConfiguration {
     @Value("#{ @environment['shiro.unauthorizedUrl'] ?: null }")
     protected String unauthorizedUrl;
 
+    protected List<String> globalFilters() {
+        return Collections.singletonList(DefaultFilter.invalidRequest.name());
+    }
+
     protected ShiroFilterFactoryBean shiroFilterFactoryBean() {
         ShiroFilterFactoryBean filterFactoryBean = new ShiroFilterFactoryBean();
 
@@ -58,6 +64,7 @@ public class AbstractShiroWebFilterConfiguration {
         filterFactoryBean.setUnauthorizedUrl(unauthorizedUrl);
 
         filterFactoryBean.setSecurityManager(securityManager);
+        filterFactoryBean.setGlobalFilters(globalFilters());
         filterFactoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinition.getFilterChainMap());
 
         if (filterMap != null) {

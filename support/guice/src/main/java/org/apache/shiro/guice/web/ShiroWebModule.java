@@ -30,6 +30,7 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.web.env.WebEnvironment;
+import org.apache.shiro.web.filter.InvalidRequestFilter;
 import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.filter.authc.AnonymousFilter;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
@@ -90,7 +91,8 @@ public abstract class ShiroWebModule extends ShiroModule {
     public static final Key<IpFilter> IP = Key.get(IpFilter.class);
     @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<UserFilter> USER = Key.get(UserFilter.class);
-
+    @SuppressWarnings({"UnusedDeclaration"})
+    public static final Key<InvalidRequestFilter> INVALID_REQUEST = Key.get(InvalidRequestFilter.class);
 
     static final String NAME = "SHIRO";
 
@@ -127,6 +129,10 @@ public abstract class ShiroWebModule extends ShiroModule {
         };
     }
 
+    public List<FilterConfig<? extends Filter>> globalFilters() {
+        return Collections.singletonList(filterConfig(INVALID_REQUEST));
+    }
+
     @Override
     protected final void configureShiro() {
         bindBeanType(TypeLiteral.get(ServletContext.class), Key.get(ServletContext.class, Names.named(NAME)));
@@ -137,6 +143,12 @@ public abstract class ShiroWebModule extends ShiroModule {
         expose(GuiceShiroFilter.class);
 
         this.configureShiroWeb();
+
+        // add default matching route if not already set
+        if (!filterChains.containsKey("/**")) {
+            // no config, this will add only the global filters
+            this.addFilterChain("/**", new FilterConfig[0]);
+        }
 
         bind(FilterChainResolver.class).toProvider(new FilterChainResolverProvider(setupFilterChainConfigs()));
     }
@@ -156,8 +168,15 @@ public abstract class ShiroWebModule extends ShiroModule {
             // collect the keys used for this path
             List<Key<? extends Filter>> keysForPath = new ArrayList<Key<? extends Filter>>();
 
-            for (int i = 0; i < filterChain.getValue().length; i++) {
-                FilterConfig<? extends Filter> filterConfig = filterChain.getValue()[i];
+            List<FilterConfig<? extends Filter>> globalFilters = this.globalFilters();
+            FilterConfig<? extends Filter>[] pathFilters = filterChain.getValue();
+
+            // merge the global filters and the path specific filters
+            List<FilterConfig<? extends Filter>> filterConfigs = new ArrayList<>(globalFilters.size() + pathFilters.length);
+            filterConfigs.addAll(globalFilters);
+            filterConfigs.addAll(Arrays.asList(pathFilters));
+
+            for (FilterConfig<? extends Filter> filterConfig : filterConfigs) {
 
                 Key<? extends Filter> key = filterConfig.getKey();
                 String config = filterConfig.getConfigValue();

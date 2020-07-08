@@ -22,6 +22,7 @@ import org.apache.shiro.config.ConfigurationException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -165,6 +166,14 @@ public interface FilterChainManager {
     void createChain(String chainName, String chainDefinition);
 
     /**
+     * Creates a chain that should match any non-matched request paths, typically {@code /**} assuming an {@link AntPathMatcher} I used.
+     * @param chainName The name of the chain to create, likely {@code /**}.
+     * @since 1.6
+     * @see org.apache.shiro.lang.util.AntPathMatcher AntPathMatcher
+     */
+    void createDefaultChain(String chainName);
+
+    /**
      * Adds (appends) a filter to the filter chain identified by the given {@code chainName}.  If there is no chain
      * with the given name, a new one is created and the filter will be the first in the chain.
      *
@@ -195,4 +204,17 @@ public interface FilterChainManager {
      *                                  interface).
      */
     void addToChain(String chainName, String filterName, String chainSpecificFilterConfig) throws ConfigurationException;
+
+    /**
+     * Configures the set of named filters that will match all paths.  These filters will match BEFORE explicitly
+     * configured filter chains i.e. by calling {@link #createChain(String, String)}, {@link #addToChain(String, String)}, etc.
+     * <br>
+     * <strong>Filters configured in this list wll apply to ALL requests.</strong>
+     *
+     * @param globalFilterNames         the list of filter names to match ALL paths.
+     * @throws ConfigurationException   if one of the filter names is invalid and cannot be loaded from the set of
+     *                                  configured filters {@link #getFilters()}}.
+     * @since 1.6
+     */
+    void setGlobalFilters(List<String> globalFilterNames) throws ConfigurationException;
 }

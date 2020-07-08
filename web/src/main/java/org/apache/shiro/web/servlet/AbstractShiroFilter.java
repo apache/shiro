@@ -404,6 +404,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * @since 1.0
      */
     protected FilterChain getExecutionChain(ServletRequest request, ServletResponse response, FilterChain origChain) {
+
         FilterChain chain = origChain;
 
         FilterChainResolver resolver = getFilterChainResolver();
