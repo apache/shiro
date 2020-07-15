@@ -287,10 +287,15 @@ public class ReflectionBuilder {
             }
 
             processor.execute();
-        }
 
-        //SHIRO-413: init method must be called for constructed objects that are Initializable
-        LifecycleUtils.init(objects.values());
+            //SHIRO-778: onInit method on AuthenticatingRealm is called twice
+            objects.keySet().stream()
+                    .filter(key -> !kvPairs.containsKey(key))
+                    .forEach(key -> LifecycleUtils.init(objects.get(key)));
+        } else {
+            //SHIRO-413: init method must be called for constructed objects that are Initializable
+            LifecycleUtils.init(objects.values());
+        }
 
         return objects;
     }

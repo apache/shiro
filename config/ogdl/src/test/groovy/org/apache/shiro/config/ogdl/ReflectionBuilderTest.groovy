@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.config.ogdl
 
+import org.apache.shiro.config.ogdl.beans.InitCountBean
 import org.apache.shiro.lang.codec.Base64
 import org.apache.shiro.lang.codec.CodecSupport
 import org.apache.shiro.lang.codec.Hex
@@ -25,6 +26,8 @@ import org.apache.shiro.config.ConfigurationException
 import org.apache.shiro.config.Ini
 import org.apache.shiro.config.ogdl.event.BeanEvent
 import org.junit.Test
+
+import java.util.concurrent.ConcurrentHashMap
 
 import static org.junit.Assert.*
 import static org.hamcrest.Matchers.*
@@ -638,6 +641,37 @@ class ReflectionBuilderTest {
         assertThat beanOne.stringList, allOf(hasItem(System.getProperty("os.name")), hasItem(System.getProperty("os.arch")), hasSize(2))
 
         assertNotNull(beanMap.get("two"))
+    }
+
+    @Test
+    void testNotMultipleInitialization() {
+        // given
+        Map<String, String> defs = new ConcurrentHashMap<>()
+        defs.put("initcountbean", InitCountBean.getCanonicalName())
+        ReflectionBuilder builder = new ReflectionBuilder()
+
+        // when
+        builder.buildObjects(defs)
+
+        // then
+        assertEquals(1, InitCountBean.getInitCount())
+        InitCountBean.resetCount()
+    }
+
+    @Test
+    void testNotMultipleInitializationWithNullFirst() {
+        // given
+        Map<String, String> defs = new ConcurrentHashMap<>()
+        defs.put("initcountbean", InitCountBean.getCanonicalName())
+        ReflectionBuilder builder = new ReflectionBuilder()
+
+        // when
+        builder.buildObjects(null)
+        builder.buildObjects(defs)
+
+        // then
+        assertEquals(1, InitCountBean.getInitCount())
+        InitCountBean.resetCount()
     }
 
     void assertInstantiatedEvents(String name, Map<String, ?> objects, int expected) {
