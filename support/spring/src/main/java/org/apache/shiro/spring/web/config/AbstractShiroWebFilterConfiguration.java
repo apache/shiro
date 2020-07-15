@@ -38,7 +38,7 @@ public class AbstractShiroWebFilterConfiguration {
     @Autowired
     protected ShiroFilterChainDefinition shiroFilterChainDefinition;
 
-    @Autowired
+    @Autowired(required = false)
     protected Map<String, Filter> filterMap;
 
     @Value("#{ @environment['shiro.loginUrl'] ?: '/login.jsp' }")
@@ -59,7 +59,10 @@ public class AbstractShiroWebFilterConfiguration {
 
         filterFactoryBean.setSecurityManager(securityManager);
         filterFactoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinition.getFilterChainMap());
-        filterFactoryBean.setFilters(filterMap);
+
+        if (filterMap != null) {
+            filterFactoryBean.setFilters(filterMap);
+        }
 
         return filterFactoryBean;
     }
