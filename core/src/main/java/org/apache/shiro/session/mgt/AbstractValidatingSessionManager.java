@@ -213,7 +213,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
             log.debug("No sessionValidationScheduler set.  Attempting to create default instance.");
         }
         scheduler = new ExecutorServiceSessionValidationScheduler(this);
-        scheduler.setInterval(getSessionValidationInterval());
+        scheduler.setSessionValidationInterval(getSessionValidationInterval());
         if (log.isTraceEnabled()) {
             log.trace("Created default SessionValidationScheduler instance of type [" + scheduler.getClass().getName() + "].");
         }

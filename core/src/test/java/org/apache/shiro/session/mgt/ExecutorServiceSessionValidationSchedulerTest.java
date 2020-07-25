@@ -36,7 +36,7 @@ public class ExecutorServiceSessionValidationSchedulerTest {
         executorServiceSessionValidationScheduler = new ExecutorServiceSessionValidationScheduler();
         executorServiceSessionValidationScheduler.setSessionManager(defaultSessionManager);
         executorServiceSessionValidationScheduler.setThreadNamePrefix("test-");
-        executorServiceSessionValidationScheduler.setInterval(1000L);
+        executorServiceSessionValidationScheduler.setSessionValidationInterval(1000L);
         executorServiceSessionValidationScheduler.enableSessionValidation();
     }
 
@@ -81,7 +81,7 @@ public class ExecutorServiceSessionValidationSchedulerTest {
         executorServiceSessionValidationScheduler = new ExecutorServiceSessionValidationScheduler();
         executorServiceSessionValidationScheduler.setSessionManager(defaultSessionManager);
         executorServiceSessionValidationScheduler.setThreadNamePrefix("test-");
-        executorServiceSessionValidationScheduler.setInterval(1000L);
+        executorServiceSessionValidationScheduler.setSessionValidationInterval(1000L);
         executorServiceSessionValidationScheduler.enableSessionValidation();
         defaultSessionManager.create(session);
         Thread.sleep(2000L);
