@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * SessionValidationScheduler implementation that uses a
  * {@link ScheduledExecutorService} to call {@link ValidatingSessionManager#validateSessions()} every
- * <em>{@link #getInterval interval}</em> milliseconds.
+ * <em>{@link #getSessionValidationInterval sessionValidationInterval}</em> milliseconds.
  *
  * @since 0.9
  */
@@ -44,7 +44,7 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
 
     ValidatingSessionManager sessionManager;
     private ScheduledExecutorService service;
-    private long interval = DefaultSessionManager.DEFAULT_SESSION_VALIDATION_INTERVAL;
+    private long sessionValidationInterval = DefaultSessionManager.DEFAULT_SESSION_VALIDATION_INTERVAL;
     private boolean enabled = false;
     private String threadNamePrefix = "SessionValidationThread-";
 
@@ -64,12 +64,12 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
         this.sessionManager = sessionManager;
     }
 
-    public long getInterval() {
-        return interval;
+    public long getSessionValidationInterval() {
+        return sessionValidationInterval;
     }
 
-    public void setInterval(long interval) {
-        this.interval = interval;
+    public void setSessionValidationInterval(long sessionValidationInterval) {
+        this.sessionValidationInterval = sessionValidationInterval;
     }
 
     public boolean isEnabled() {
@@ -91,7 +91,7 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
     //TODO Implement an integration test to test for jvm exit as part of the standalone example
     // (so we don't have to change the unit test execution model for the core module)
     public void enableSessionValidation() {
-        if (this.interval > 0l) {
+        if (this.sessionValidationInterval > 0l) {
             this.service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {  
 	            private final AtomicInteger count = new AtomicInteger(1);
 
@@ -102,7 +102,8 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
 	                return thread;  
 	            }  
             });                  
-            this.service.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
+            this.service.scheduleAtFixedRate(this, sessionValidationInterval,
+                sessionValidationInterval, TimeUnit.MILLISECONDS);
         }
         this.enabled = true;
     }
