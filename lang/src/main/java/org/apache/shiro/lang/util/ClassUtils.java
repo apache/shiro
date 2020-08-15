@@ -26,6 +26,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -43,6 +44,25 @@ public class ClassUtils {
      * Private internal log instance.
      */
     private static final Logger log = LoggerFactory.getLogger(ClassUtils.class);
+
+
+    /**
+     * SHIRO-767: add a map to mapping primitive data type
+     */
+    private static final HashMap<String, Class<?>> primClasses
+            = new HashMap<>(8, 1.0F);
+    static {
+        primClasses.put("boolean", boolean.class);
+        primClasses.put("byte", byte.class);
+        primClasses.put("char", char.class);
+        primClasses.put("short", short.class);
+        primClasses.put("int", int.class);
+        primClasses.put("long", long.class);
+        primClasses.put("float", float.class);
+        primClasses.put("double", double.class);
+        primClasses.put("void", void.class);
+    }
+
 
     /**
      * @since 1.0
@@ -144,6 +164,11 @@ public class ClassUtils {
                         "Trying the system/application ClassLoader...");
             }
             clazz = SYSTEM_CL_ACCESSOR.loadClass(fqcn);
+        }
+
+        if (clazz == null) {
+            //SHIRO-767: support for getting primitive data type,such as int,double...
+            clazz = primClasses.get(fqcn);
         }
 
         if (clazz == null) {
@@ -252,7 +277,8 @@ public class ClassUtils {
             ClassLoader cl = getClassLoader();
             if (cl != null) {
                 try {
-                    clazz = cl.loadClass(fqcn);
+                    //SHIRO-767: Use Class.forName instead of cl.loadClass(), as byte arrays would fail otherwise.
+                    clazz = Class.forName(fqcn, false, cl);
                 } catch (ClassNotFoundException e) {
                     if (log.isTraceEnabled()) {
                         log.trace("Unable to load clazz named [" + fqcn + "] from class loader [" + cl + "]");
