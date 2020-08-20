@@ -66,7 +66,7 @@
 
     <properties>
 
-        <shiro.previousVersion>1.4.1</shiro.previousVersion>
+        <shiro.previousVersion>1.6.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <jacoco.skip>true</jacoco.skip>
@@ -1495,18 +1495,20 @@
             </properties>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>com.github.siom79.japicmp</groupId>
-                        <artifactId>japicmp-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>japicmp</id>
-                                <goals>
-                                    <goal>cmp</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
+                    <!-- TODO: re-enable after first 2.0 release -->
+                    <!-- it's a 2.0 release breaking changes are expected -->
+<!--                    <plugin>-->
+<!--                        <groupId>com.github.siom79.japicmp</groupId>-->
+<!--                        <artifactId>japicmp-maven-plugin</artifactId>-->
+<!--                        <executions>-->
+<!--                            <execution>-->
+<!--                                <id>japicmp</id>-->
+<!--                                <goals>-->
+<!--                                    <goal>cmp</goal>-->
+<!--                                </goals>-->
+<!--                            </execution>-->
+<!--                        </executions>-->
+<!--                    </plugin>-->
                 </plugins>
             </build>
         </profile>
