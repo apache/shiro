@@ -18,15 +18,17 @@
  */
 package org.apache.shiro.lang.util;
 
-import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.shiro.util.ClassUtils;
+import org.apache.shiro.util.UnknownClassException;
+import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 
-class ClassUtilsTest {
+public class ClassUtilsTest {
 
     @Test
-    void testGetPrimitiveClasses() throws UnknownClassException {
+    public void testGetPrimitiveClasses() throws UnknownClassException {
 
         assertEquals(ClassUtils.forName("boolean"), boolean.class);
         assertEquals(ClassUtils.forName("byte"), byte.class);
@@ -51,7 +53,7 @@ class ClassUtilsTest {
     }
 
     @Test
-    void testGetPrimitiveArrays() throws UnknownClassException {
+    public void testGetPrimitiveArrays() throws UnknownClassException {
 
         assertEquals(ClassUtils.forName("[Z"), boolean[].class);
         assertEquals(ClassUtils.forName("[B"), byte[].class);
@@ -74,7 +76,7 @@ class ClassUtilsTest {
     }
 
     @Test
-    void testGetClass() {
+    public void testGetClass() {
         assertEquals(ClassUtils.forName("java.lang.String"), String.class);
         assertEquals(ClassUtils.forName("[Ljava.lang.String;"), String[].class);
         assertEquals(ClassUtils.forName(String.class.getName()), String.class);
