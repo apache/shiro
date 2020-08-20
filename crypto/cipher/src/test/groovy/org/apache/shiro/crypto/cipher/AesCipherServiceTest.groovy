@@ -19,15 +19,16 @@
 package org.apache.shiro.crypto.cipher
 
 
+import org.apache.shiro.lang.codec.CodecSupport
+import org.apache.shiro.lang.util.ByteSource
+import org.apache.shiro.lang.util.Destroyable
+import org.apache.shiro.util.ByteUtils
 import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.junit.Test
 
 import java.security.Security
 
-import static org.junit.Assert.*;
-
-import org.apache.shiro.lang.codec.CodecSupport
-import org.apache.shiro.lang.util.ByteSource
-import org.junit.Test
+import static org.junit.Assert.assertTrue
 
 /**
  * Test class for the AesCipherService class.
@@ -52,9 +53,57 @@ class AesCipherServiceTest {
     }
 
     @Test
+    void testBlockOperations_ByteSource() {
+        AesCipherService aes = new AesCipherService();
+
+        byte[] key = aes.generateNewKey().getEncoded();
+
+        for (String plain : PLAINTEXTS) {
+            byte[] plaintext = CodecSupport.toBytes(plain);
+            ByteSource ciphertext = aes.encrypt(plaintext, key);
+            ByteSourceBroker broker = aes.decrypt(ciphertext.getBytes(), key);
+            broker.useBytes(new ByteSourceUser() {
+                @Override
+                void use(byte[] bytes) {
+                    assertTrue(Arrays.equals(plaintext, bytes));
+                }
+            });
+            if (broker instanceof Destroyable) {
+                ((Destroyable) broker).destroy();
+            }
+        }
+    }
+
+    @Test
     void testStreamingOperations() {
         AesCipherService cipher = new AesCipherService()
         assertStreaming(cipher)
+    }
+
+    @Test
+    void testStreamingOperations_ByteSource() {
+
+        AesCipherService cipher = new AesCipherService();
+        byte[] key = cipher.generateNewKey().getEncoded();
+
+        for (String plain : PLAINTEXTS) {
+            byte[] plaintext = CodecSupport.toBytes(plain);
+            InputStream plainIn = new ByteArrayInputStream(plaintext);
+            ByteArrayOutputStream cipherOut = new ByteArrayOutputStream();
+            cipher.encrypt(plainIn, cipherOut, key);
+
+            byte[] ciphertext = cipherOut.toByteArray();
+            InputStream cipherIn = new ByteArrayInputStream(ciphertext);
+            ByteArrayOutputStream plainOut = new ByteArrayOutputStream();
+            cipher.decrypt(cipherIn, plainOut, key);
+
+            byte[] decrypted = plainOut.toByteArray();
+            try {
+                assertTrue(Arrays.equals(plaintext, decrypted));
+            } finally {
+                ByteUtils.wipe(decrypted);
+            }
+        }
     }
 
     @Test
@@ -155,8 +204,8 @@ class AesCipherServiceTest {
         for (String plain : PLAINTEXTS) {
             byte[] plaintext = CodecSupport.toBytes(plain)
             ByteSource ciphertext = cipher.encrypt(plaintext, key)
-            ByteSource decrypted = cipher.decrypt(ciphertext.getBytes(), key)
-            assertTrue(Arrays.equals(plaintext, decrypted.getBytes()))
+            ByteSourceBroker decrypted = cipher.decrypt(ciphertext.getBytes(), key)
+            assertTrue(Arrays.equals(plaintext, decrypted.getClonedBytes()))
         }
     }
 

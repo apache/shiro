@@ -18,8 +18,10 @@
  */
 package org.apache.shiro.crypto.cipher
 
+
 import org.apache.shiro.lang.codec.CodecSupport
 import org.apache.shiro.lang.util.ByteSource
+import org.apache.shiro.util.ByteUtils
 import org.junit.Test
 
 import static org.junit.Assert.assertTrue
@@ -45,8 +47,13 @@ public class BlowfishCipherServiceTest {
         for (String plain : PLAINTEXTS) {
             byte[] plaintext = CodecSupport.toBytes(plain);
             ByteSource ciphertext = blowfish.encrypt(plaintext, key);
-            ByteSource decrypted = blowfish.decrypt(ciphertext.getBytes(), key);
-            assertTrue(Arrays.equals(plaintext, decrypted.getBytes()));
+            ByteSourceBroker broker = blowfish.decrypt(ciphertext.getBytes(), key);
+            byte[] decrypted = broker.getClonedBytes()
+            try {
+                assertTrue(Arrays.equals(plaintext, decrypted));
+            } finally {
+                ByteUtils.wipe(decrypted);
+            }
         }
     }
 
@@ -68,7 +75,11 @@ public class BlowfishCipherServiceTest {
             cipher.decrypt(cipherIn, plainOut, key);
 
             byte[] decrypted = plainOut.toByteArray();
-            assertTrue(Arrays.equals(plaintext, decrypted));
+            try {
+                assertTrue(Arrays.equals(plaintext, decrypted));
+            } finally {
+                ByteUtils.wipe(decrypted);
+            }
         }
 
     }

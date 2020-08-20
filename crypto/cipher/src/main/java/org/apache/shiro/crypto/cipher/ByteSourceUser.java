@@ -16,23 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.crypto.cipher
 
-import org.apache.shiro.crypto.CryptoException
-import org.junit.Test
+package org.apache.shiro.crypto.cipher;
 
-public class JcaCipherServiceTest {
-
-    @Test(expected = CryptoException.class)
-    public void testDecrypt() {
-        JcaCipherService cipherService = new JcaCipherService("AES"){};
-        String ciphertext = "iv_helloword";
-        String key = "somekey";
-        def broker = cipherService.decrypt(ciphertext.getBytes(), key.getBytes());
-        // throws exception.
-        broker.useBytes { byte[] bytes ->
-            // noop
-        };
-    }
-
+/**
+ * {@link ByteSourceBroker#useBytes(ByteSourceUser)} method requires ByteSourceUser argument,
+ * and developers should implement how we use the byte arrays in our code-base.
+ * <br/>
+ * The byte array "bytes" could be a decrypted password in plaintext format, or other
+ * sensitive information that needs to be erased at end of use.
+ */
+public interface ByteSourceUser {
+    void use(byte[] bytes);
 }

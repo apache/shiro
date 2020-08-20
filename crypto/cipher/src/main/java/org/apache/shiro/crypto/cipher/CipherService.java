@@ -96,7 +96,7 @@ public interface CipherService {
      * @return a byte source representing the original form of the specified encrypted data.
      * @throws CryptoException if there is an error during decryption
      */
-    ByteSource decrypt(byte[] encrypted, byte[] decryptionKey) throws CryptoException;
+    ByteSourceBroker decrypt(byte[] encrypted, byte[] decryptionKey) throws CryptoException;
 
     /**
      * Receives encrypted data from the given {@code InputStream}, decrypts it, and sends the resulting decrypted data
