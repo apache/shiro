@@ -18,24 +18,17 @@
  */
 package org.apache.shiro.spring.web.config
 
-import org.apache.shiro.event.EventBus
-import org.apache.shiro.event.support.DefaultEventBus
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.mgt.SessionStorageEvaluator
 import org.apache.shiro.realm.text.TextConfigurationRealm
-import org.apache.shiro.spring.config.EventBusTestConfiguration
-import org.apache.shiro.spring.config.RealmTestConfiguration
-import org.apache.shiro.spring.config.ShiroAnnotationProcessorConfiguration
-import org.apache.shiro.spring.config.ShiroBeanConfiguration
-import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor
 import org.apache.shiro.spring.testconfig.EventBusTestConfiguration
 import org.apache.shiro.spring.testconfig.RealmTestConfiguration
-import org.apache.shiro.web.mgt.CookieRememberMeManager
 import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator
 import org.apache.shiro.web.mgt.WebSecurityManager
 import org.apache.shiro.web.servlet.Cookie
-
 import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.function.Executable
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -103,6 +96,13 @@ public class ShiroWebConfigurationTest {
     }
 
     @Test
+    void testSameSiteOptionExpression() {
+        ExpressionParser parser = new SpelExpressionParser();
+        Executable expressionParser = () -> parser.parseExpression("T(org.apache.shiro.web.servlet.Cookie.SameSiteOptions).LAX")
+        Assertions.assertDoesNotThrow expressionParser;
+    }
+
+    @Test
     public void rememberMeCookie() {
         assertEquals "rememberMe", rememberMeCookie.name
     }
@@ -111,5 +111,11 @@ public class ShiroWebConfigurationTest {
     public void sessionCookie() {
         assertSame "JSESSIONID", sessionCookieTemplate.name
 
+    }
+
+    @Test
+    void sameSiteOption() {
+        assertSame Cookie.SameSiteOptions.LAX, rememberMeCookie.sameSite
+        assertSame Cookie.SameSiteOptions.LAX, sessionCookieTemplate.sameSite
     }
 }
