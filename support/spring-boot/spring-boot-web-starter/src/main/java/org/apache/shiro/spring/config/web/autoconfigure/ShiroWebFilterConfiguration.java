@@ -37,6 +37,9 @@ import java.util.List;
 @ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
 public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfiguration {
 
+    public static final String REGISTRATION_BEAN_NAME = "filterShiroFilterRegistrationBean";
+    public static final String FILTER_NAME = "shiroFilter";
+
     @Bean
     @ConditionalOnMissingBean
     @Override
@@ -44,13 +47,14 @@ public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfigura
         return super.shiroFilterFactoryBean();
     }
 
-    @Bean(name = "filterShiroFilterRegistrationBean")
-    @ConditionalOnMissingBean
-    protected FilterRegistrationBean filterShiroFilterRegistrationBean() throws Exception {
+    @Bean(name = REGISTRATION_BEAN_NAME)
+    @ConditionalOnMissingBean(name = REGISTRATION_BEAN_NAME)
+    protected FilterRegistrationBean<AbstractShiroFilter> filterShiroFilterRegistrationBean() throws Exception {
 
-        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
+        FilterRegistrationBean<AbstractShiroFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR);
         filterRegistrationBean.setFilter((AbstractShiroFilter) shiroFilterFactoryBean().getObject());
+        filterRegistrationBean.setName(FILTER_NAME);
         filterRegistrationBean.setOrder(1);
 
         return filterRegistrationBean;
