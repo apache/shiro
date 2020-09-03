@@ -19,10 +19,12 @@
 
 package org.apache.shiro.web.filter;
 
+import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -48,16 +50,24 @@ public class InvalidRequestFilter extends AccessControlFilter {
 
     private boolean blockSemicolon = true;
 
-    private boolean blockBackslash = true;
+    private boolean blockBackslash = !Boolean.getBoolean(WebUtils.ALLOW_BACKSLASH);
 
     private boolean blockNonAscii = true;
 
     @Override
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
-        String uri = WebUtils.toHttp(request).getRequestURI();
-        return !containsSemicolon(uri)
-            && !containsBackslash(uri)
-            && !containsNonAsciiCharacters(uri);
+    protected boolean isAccessAllowed(ServletRequest req, ServletResponse response, Object mappedValue) throws Exception {
+        HttpServletRequest request = WebUtils.toHttp(req);
+        // check the original and decoded values
+        return isValid(request.getRequestURI())      // user request string (not decoded)
+                && isValid(request.getServletPath()) // decoded servlet part
+                && isValid(request.getPathInfo());   // decoded path info (may be null)
+    }
+
+    private boolean isValid(String uri) {
+        return !StringUtils.hasText(uri)
+               || ( !containsSemicolon(uri)
+                 && !containsBackslash(uri)
+                 && !containsNonAsciiCharacters(uri));
     }
 
     @Override

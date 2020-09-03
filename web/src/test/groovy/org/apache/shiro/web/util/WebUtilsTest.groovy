@@ -18,12 +18,15 @@
  */
 package org.apache.shiro.web.util
 
+import org.apache.shiro.web.RestoreSystemProperties
+import org.hamcrest.CoreMatchers
 import org.junit.Test
 
 import javax.servlet.http.HttpServletRequest
 
 import static org.easymock.EasyMock.*
 import static org.junit.Assert.*
+import static org.hamcrest.CoreMatchers.*
 
 /**
  * Tests for {@link WebUtils}.
@@ -191,6 +194,55 @@ public class WebUtilsTest {
         doTestGetRequestURI("/context%2525path/foobar", "/context%25path/foobar");
         doTestGetRequestURI("/c%6Fntext%20path/foobar", "/context path/foobar");
         doTestGetRequestURI("/context path/foobar", "/context path/foobar");
+    }
+
+    @Test
+    void testNormalize() {
+        doNormalizeTest"/foobar", "/foobar"
+        doNormalizeTest "/foobar/", "/foobar/"
+        doNormalizeTest"", "/"
+        doNormalizeTest"foobar", "/foobar"
+        doNormalizeTest"//foobar", "/foobar"
+        doNormalizeTest"//foobar///", "/foobar/"
+        doNormalizeTest"/context-path/foobar", "/context-path/foobar"
+        doNormalizeTest"/context-path/foobar/", "/context-path/foobar/"
+        doNormalizeTest"//context-path/foobar", "/context-path/foobar"
+        doNormalizeTest"//context-path//foobar" ,"/context-path/foobar"
+        doNormalizeTest"//context-path/remove-one/remove-two/../../././/foobar", "/context-path/foobar"
+        doNormalizeTest"//context-path//../../././/foobar", null
+        doNormalizeTest"/context path/foobar", "/context path/foobar"
+
+        doNormalizeTest"/context path/\\foobar", "/context path/\\foobar"
+        doNormalizeTest"//context-path\\..\\../.\\.\\foobar", "/context-path\\..\\../.\\.\\foobar"
+        doNormalizeTest"//context-path\\..\\..\\.\\.\\foobar", "/context-path\\..\\..\\.\\.\\foobar"
+        doNormalizeTest"\\context-path\\..\\foobar", "/\\context-path\\..\\foobar"
+    }
+
+    @Test
+    void testNormalize_allowBackslashes() {
+        RestoreSystemProperties.withProperties(["org.apache.shiro.web.ALLOW_BACKSLASH": "true"]) {
+            doNormalizeTest"/foobar", "/foobar"
+            doNormalizeTest "/foobar/", "/foobar/"
+            doNormalizeTest"", "/"
+            doNormalizeTest"foobar", "/foobar"
+            doNormalizeTest"//foobar", "/foobar"
+            doNormalizeTest"//foobar///", "/foobar/"
+            doNormalizeTest"/context-path/foobar", "/context-path/foobar"
+            doNormalizeTest"/context-path/foobar/", "/context-path/foobar/"
+            doNormalizeTest"//context-path/foobar", "/context-path/foobar"
+            doNormalizeTest"//context-path//foobar" ,"/context-path/foobar"
+            doNormalizeTest"//context-path/remove-one/remove-two/../../././/foobar", "/context-path/foobar"
+            doNormalizeTest"//context-path//../../././/foobar", null
+            doNormalizeTest"/context path/foobar", "/context path/foobar"
+            doNormalizeTest"/context path/\\foobar", "/context path/foobar"
+            doNormalizeTest"//context-path\\..\\..\\.\\.\\foobar", null
+            doNormalizeTest"\\context-path\\..\\foobar", "/foobar"
+
+        }
+    }
+
+    void doNormalizeTest(String path, String expected) {
+        assertThat WebUtils.normalize(path), equalTo(expected)
     }
 
     void doTestGetPathWithinApplication(String servletPath, String pathInfo, String expectedValue) {
