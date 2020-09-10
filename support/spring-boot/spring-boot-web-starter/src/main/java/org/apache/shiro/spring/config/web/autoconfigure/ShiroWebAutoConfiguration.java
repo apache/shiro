@@ -33,9 +33,11 @@ import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.boot.autoconfigure.ShiroAutoConfiguration;
+import org.apache.shiro.spring.web.ShiroUrlPathHelper;
 import org.apache.shiro.spring.web.config.AbstractShiroWebConfiguration;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.servlet.Cookie;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -47,6 +49,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @AutoConfigureBefore(ShiroAutoConfiguration.class)
+@AutoConfigureAfter(ShiroWebMvcAutoConfiguration.class)
 @ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
 public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
 
@@ -146,5 +149,12 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     @Override
     protected ShiroFilterChainDefinition shiroFilterChainDefinition() {
         return super.shiroFilterChainDefinition();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @Override
+    protected ShiroUrlPathHelper shiroUrlPathHelper() {
+        return super.shiroUrlPathHelper();
     }
 }

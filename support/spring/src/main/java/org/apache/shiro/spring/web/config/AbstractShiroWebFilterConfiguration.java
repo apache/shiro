@@ -40,7 +40,7 @@ public class AbstractShiroWebFilterConfiguration {
     @Autowired
     protected ShiroFilterChainDefinition shiroFilterChainDefinition;
 
-    @Autowired
+    @Autowired(required = false)
     protected Map<String, Filter> filterMap;
 
     @Value("#{ @environment['shiro.loginUrl'] ?: '/login.jsp' }")

@@ -30,6 +30,7 @@ import org.apache.shiro.spring.config.ShiroBeanConfiguration;
 import org.apache.shiro.spring.remoting.SecureRemoteInvocationExecutor;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
+import org.apache.shiro.spring.web.config.ShiroRequestMappingConfig;
 import org.apache.shiro.spring.web.config.ShiroWebConfiguration;
 import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -53,7 +54,8 @@ import static org.apache.shiro.web.filter.mgt.DefaultFilter.anon;
         ShiroWebConfiguration.class,
         ShiroWebFilterConfiguration.class,
         JspViewsConfig.class,
-        RemotingServletConfig.class})
+        RemotingServletConfig.class,
+        ShiroRequestMappingConfig.class})
 @ComponentScan("org.apache.shiro.samples.spring")
 public class ApplicationConfig {
 
