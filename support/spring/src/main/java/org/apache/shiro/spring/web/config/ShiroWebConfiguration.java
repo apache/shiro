@@ -26,6 +26,7 @@ import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.spring.web.ShiroUrlPathHelper;
 import org.apache.shiro.web.servlet.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -121,5 +122,11 @@ public class ShiroWebConfiguration extends AbstractShiroWebConfiguration {
     @Override
     protected ShiroFilterChainDefinition shiroFilterChainDefinition() {
         return super.shiroFilterChainDefinition();
+    }
+
+    @Bean
+    @Override
+    protected ShiroUrlPathHelper shiroUrlPathHelper() {
+        return super.shiroUrlPathHelper();
     }
 }
