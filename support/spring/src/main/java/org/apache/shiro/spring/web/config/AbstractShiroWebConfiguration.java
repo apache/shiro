@@ -43,7 +43,7 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
     @Value("#{ @environment['shiro.sessionManager.sessionIdCookieEnabled'] ?: true }")
     protected boolean sessionIdCookieEnabled;
 
-    @Value("#{ @environment['shiro.sessionManager.sessionIdUrlRewritingEnabled'] ?: true }")
+    @Value("#{ @environment['shiro.sessionManager.sessionIdUrlRewritingEnabled'] ?: false }")
     protected boolean sessionIdUrlRewritingEnabled;
 
     @Value("#{ @environment['shiro.userNativeSessionManager'] ?: false }")
