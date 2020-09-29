@@ -127,7 +127,7 @@ public class DefaultWebSessionManagerTest {
                 ShiroHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
-        request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.TRUE);
+        request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.FALSE);
 
         replay(cookie);
         replay(request);
@@ -147,6 +147,7 @@ public class DefaultWebSessionManagerTest {
         Cookie cookie = createMock(Cookie.class);
         mgr.setSessionIdCookie(cookie);
         mgr.setSessionIdCookieEnabled(false);
+        mgr.setSessionIdUrlRewritingEnabled(true)
 
         //we should not have any reads from the cookie fields - if we do, this test case will fail.
 
@@ -182,6 +183,7 @@ public class DefaultWebSessionManagerTest {
         Cookie cookie = createMock(Cookie.class);
         mgr.setSessionIdCookie(cookie);
         mgr.setSessionIdCookieEnabled(false);
+        mgr.setSessionIdUrlRewritingEnabled(true)
 
         //we should not have any reads from the cookie fields - if we do, this test case will fail.
 
@@ -218,6 +220,7 @@ public class DefaultWebSessionManagerTest {
     public void testGetSessionIdFromRequestUriPathSegmentParam() {
 
         mgr.setSessionIdCookieEnabled(false);
+        mgr.setSessionIdUrlRewritingEnabled(true)
 
         HttpServletRequest request = createMock(HttpServletRequest.class);
         HttpServletResponse response = createMock(HttpServletResponse.class);

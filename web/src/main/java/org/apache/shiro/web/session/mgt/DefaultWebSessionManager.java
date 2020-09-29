@@ -58,7 +58,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         cookie.setHttpOnly(true); //more secure, protects against XSS attacks
         this.sessionIdCookie = cookie;
         this.sessionIdCookieEnabled = true;
-        this.sessionIdUrlRewritingEnabled = true;
+        this.sessionIdUrlRewritingEnabled = false;
     }
 
     public Cookie getSessionIdCookie() {
