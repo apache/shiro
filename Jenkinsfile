@@ -88,15 +88,6 @@ pipeline {
             }
         }
 
-        stage('Code Quality') {
-            steps {
-                echo 'Checking Code Quality on SonarCloud'
-                withCredentials([string(credentialsId: 'sonarcloud-key-apache-shiro', variable: 'SONAR_TOKEN')]) {
-                    sh 'mvn sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=apache -Dsonar.projectKey=apache_shiro -Dsonar.branch.name=${BRANCH_NAME} -Dsonar.login=${SONAR_TOKEN}'
-                }
-            }
-        }
-
         stage('Generate doc') {
             when {
                 expression {
