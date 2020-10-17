@@ -66,6 +66,9 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
     @Value("#{ @environment['shiro.sessionManager.cookie.secure'] ?: false }")
     protected boolean sessionIdCookieSecure;
 
+    @Value("#{ @environment['shiro.sessionManager.cookie.sameSite'] ?: T(org.apache.shiro.web.servlet.Cookie.SameSiteOptions).LAX  }")
+    protected Cookie.SameSiteOptions sessionIdCookieSameSite;
+
 
     // RememberMe Cookie info
 
@@ -83,6 +86,9 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
 
     @Value("#{ @environment['shiro.rememberMeManager.cookie.secure'] ?: false }")
     protected boolean rememberMeCookieSecure;
+
+    @Value("#{ @environment['shiro.rememberMeManager.cookie.sameSite'] ?: T(org.apache.shiro.web.servlet.Cookie.SameSiteOptions).LAX }")
+    protected Cookie.SameSiteOptions rememberMeSameSite;
 
 
     protected SessionManager nativeSessionManager() {
@@ -104,7 +110,8 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
                 sessionIdCookieMaxAge,
                 sessionIdCookiePath,
                 sessionIdCookieDomain,
-                sessionIdCookieSecure);
+                sessionIdCookieSecure,
+                sessionIdCookieSameSite);
     }
 
     protected Cookie rememberMeCookieTemplate() {
@@ -113,16 +120,22 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
                 rememberMeCookieMaxAge,
                 rememberMeCookiePath,
                 rememberMeCookieDomain,
-                rememberMeCookieSecure);
+                rememberMeCookieSecure,
+                rememberMeSameSite);
     }
 
     protected Cookie buildCookie(String name, int maxAge, String path, String domain, boolean secure) {
+        return buildCookie(name, maxAge, path, domain, secure, Cookie.SameSiteOptions.LAX);
+    }
+
+    protected Cookie buildCookie(String name, int maxAge, String path, String domain, boolean secure, Cookie.SameSiteOptions sameSiteOption) {
         Cookie cookie = new SimpleCookie(name);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
         cookie.setPath(path);
         cookie.setDomain(domain);
         cookie.setSecure(secure);
+        cookie.setSameSite(sameSiteOption);
 
         return cookie;
     }
@@ -135,6 +148,7 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
         return new ServletContainerSessionManager();
     }
 
+    @Override
     protected RememberMeManager rememberMeManager() {
         CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
         cookieRememberMeManager.setCookie(rememberMeCookieTemplate());
@@ -151,6 +165,7 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
         return new DefaultWebSessionStorageEvaluator();
     }
 
+    @Override
     protected SessionsSecurityManager createSecurityManager() {
 
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
