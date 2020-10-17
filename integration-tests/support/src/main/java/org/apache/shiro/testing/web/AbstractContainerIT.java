@@ -24,8 +24,15 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.github.mjeanroy.junit.servers.jetty.EmbeddedJetty;
 import com.github.mjeanroy.junit.servers.jetty.EmbeddedJettyConfiguration;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
+import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.resource.FileResource;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.FragmentConfiguration;
 import org.eclipse.jetty.webapp.JettyWebXmlConfiguration;
@@ -39,7 +46,13 @@ import org.junit.BeforeClass;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.ServerSocket;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 import static com.github.mjeanroy.junit.servers.commons.Strings.isNotBlank;
 import static org.eclipse.jetty.util.resource.Resource.newResource;
@@ -50,7 +63,12 @@ public abstract class AbstractContainerIT {
 
     protected static EmbeddedJetty jetty;
 
+    protected static int tlsPort;
+
     protected final WebClient webClient = new WebClient();
+
+    protected static final File TEST_KEYSTORE_PATH = setupKeyStore();
+    protected static final String TEST_KEYSTORE_PASSWORD = "password";
 
     @BeforeClass
     public static void startContainer() throws Exception {
@@ -98,6 +116,7 @@ public abstract class AbstractContainerIT {
 
                 Server server = getDelegate();
 
+                // web app
                 ctx.setParentLoaderPriority(true);
                 ctx.setWar(webapp);
                 ctx.setServer(server);
@@ -109,6 +128,26 @@ public abstract class AbstractContainerIT {
             }
         };
 
+        Server server = jetty.getDelegate();
+
+        // TLS
+        tlsPort = getFreePort();
+
+        final SslContextFactory sslContextFactory = new SslContextFactory.Server();
+        sslContextFactory.setKeyStorePath(TEST_KEYSTORE_PATH.getAbsolutePath());
+        sslContextFactory.setKeyStorePassword(TEST_KEYSTORE_PASSWORD);
+        sslContextFactory.setKeyManagerPassword(TEST_KEYSTORE_PASSWORD);
+
+        HttpConfiguration https = new HttpConfiguration();
+        https.addCustomizer(new SecureRequestCustomizer());
+
+        final ServerConnector httpsConnector = new ServerConnector(
+                server,
+                new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
+                new HttpConnectionFactory(https));
+        httpsConnector.setPort(tlsPort);
+        server.addConnector(httpsConnector);
+
         jetty.start();
 
         assertTrue(jetty.isStarted());
@@ -116,6 +155,10 @@ public abstract class AbstractContainerIT {
 
     protected static String getBaseUri() {
         return "http://localhost:" + jetty.getPort() + "/";
+    }
+
+    protected static String getTlsBaseUri() {
+        return "https://localhost:" + tlsPort + "/";
     }
 
     protected static String getWarDir() {
@@ -148,6 +191,32 @@ public abstract class AbstractContainerIT {
     public static void stopContainer() {
         if (jetty != null) {
             jetty.stop();
+        }
+    }
+
+    private static int getFreePort() {
+        try (ServerSocket socket = new ServerSocket(0)) {
+            return socket.getLocalPort();
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to allocate free port", e);
+        }
+    }
+
+    // Dealing with a keystore is NOT fun, it's easier to script one with the keytool
+    // see src/main/resources/createKeyStore.sh for more info
+    private static File setupKeyStore() {
+        try {
+            Path outKeyStoreFile = File.createTempFile("test-keystore", "jks").toPath();
+            URL keyStoreResource = Thread.currentThread().getContextClassLoader().getResource("test-keystore.jks");
+            Files.copy(keyStoreResource.openStream(), outKeyStoreFile, StandardCopyOption.REPLACE_EXISTING);
+            File keyStoreFile = outKeyStoreFile.toFile();
+
+            // clients will pick up the ssl keystore this way, so just set SSL properties
+            System.setProperty("javax.net.ssl.trustStore", keyStoreFile.getAbsolutePath());
+            System.setProperty("javax.net.ssl.trustStorePassword", TEST_KEYSTORE_PASSWORD);
+            return keyStoreFile;
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to create test keystore", e);
         }
     }
 }

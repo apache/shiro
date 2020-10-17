@@ -292,6 +292,7 @@
                             <exclude>**/*.json</exclude>
                             <exclude>**/spring.factories</exclude>
                             <exclude>**/spring.provides</exclude>
+                            <exclude>**/*.iml</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
@@ -1299,6 +1300,7 @@
                         <exclude>**/*.json</exclude>
                         <exclude>**/spring.factories</exclude>
                         <exclude>**/spring.provides</exclude>
+                        <exclude>**/*.iml</exclude>
                     </excludes>
                 </configuration>
             </plugin>
