@@ -108,10 +108,12 @@ public class SimpleCookie implements Cookie {
         this.sameSite = cookie.getSameSite();
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("Name cannot be null/empty.");
@@ -119,76 +121,98 @@ public class SimpleCookie implements Cookie {
         this.name = name;
     }
 
+    @Override
     public String getValue() {
         return value;
     }
 
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
 
+    @Override
     public String getComment() {
         return comment;
     }
 
+    @Override
     public void setComment(String comment) {
         this.comment = comment;
     }
 
+    @Override
     public String getDomain() {
         return domain;
     }
 
+    @Override
     public void setDomain(String domain) {
         this.domain = domain;
     }
 
+    @Override
     public String getPath() {
         return path;
     }
 
+    @Override
     public void setPath(String path) {
         this.path = path;
     }
 
+    @Override
     public int getMaxAge() {
         return maxAge;
     }
 
+    @Override
     public void setMaxAge(int maxAge) {
         this.maxAge = Math.max(DEFAULT_MAX_AGE, maxAge);
     }
 
+    @Override
     public int getVersion() {
         return version;
     }
 
+    @Override
     public void setVersion(int version) {
         this.version = Math.max(DEFAULT_VERSION, version);
     }
 
+    @Override
     public boolean isSecure() {
         return secure;
     }
 
+    @Override
     public void setSecure(boolean secure) {
         this.secure = secure;
     }
 
+    @Override
     public boolean isHttpOnly() {
         return httpOnly;
     }
 
+    @Override
     public void setHttpOnly(boolean httpOnly) {
         this.httpOnly = httpOnly;
     }
 
+    @Override
     public SameSiteOptions getSameSite() {
         return sameSite;
     }
 
+    @Override
     public void setSameSite(SameSiteOptions sameSite) {
         this.sameSite = sameSite;
+        if (this.sameSite == SameSiteOptions.NONE) {
+            // do not allow invalid cookies. Only secure cookies are allowed if SameSite is set to NONE.
+            setSecure(true);
+        }
     }
 
     /**
@@ -213,6 +237,7 @@ public class SimpleCookie implements Cookie {
         return path;
     }
 
+    @Override
     public void saveTo(HttpServletRequest request, HttpServletResponse response) {
 
         String name = getName();
@@ -388,6 +413,7 @@ public class SimpleCookie implements Cookie {
         return fmt.format(date);
     }
 
+    @Override
     public void removeFrom(HttpServletRequest request, HttpServletResponse response) {
         String name = getName();
         String value = DELETED_COOKIE_VALUE;
@@ -405,6 +431,7 @@ public class SimpleCookie implements Cookie {
         log.trace("Removed '{}' cookie by setting maxAge=0", name);
     }
 
+    @Override
     public String readValue(HttpServletRequest request, HttpServletResponse ignored) {
         String name = getName();
         String value = null;

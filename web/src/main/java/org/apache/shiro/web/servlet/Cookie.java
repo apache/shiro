@@ -35,7 +35,7 @@ public interface Cookie {
      * The value of deleted cookie (with the maxAge 0).
      */
     public static final String DELETED_COOKIE_VALUE = "deleteMe";
-    
+
 
     /**
      * The number of seconds in one year (= 60 * 60 * 24 * 365).
@@ -47,9 +47,28 @@ public interface Cookie {
      */
     public static final String ROOT_PATH = "/";
 
+    /**
+     * The SameSite attribute of the Set-Cookie HTTP response header allows you to declare if your cookie should be restricted to a first-party or same-site context.
+     */
     public enum SameSiteOptions {
+        /**
+         * Cookies will be sent in all contexts, i.e sending cross-origin is allowed.
+         *
+         * <p>None used to be the default value, but recent browser versions made Lax the default value
+         * to have reasonably robust defense against some classes of cross-site request forgery (CSRF) attacks.</p>
+         *
+         * <p>None requires the Secure attribute in latest browser versions. See below for more information.</p>
+         */
         NONE,
+        /**
+         * Cookies are allowed to be sent with top-level navigations and will be sent along with GET requests
+         * initiated by third party website. This is the default value in modern browsers as of 2020.
+         */
         LAX,
+        /**
+         * Cookies will only be sent in a first-party context
+         * and not be sent along with requests initiated by third party websites.
+         */
         STRICT,
     }
 
