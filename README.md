@@ -2,7 +2,6 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.apache.shiro/shiro-core.svg)]()
 [![Build Status](https://ci-builds.apache.org/job/Shiro/job/Shiro-jdk8/job/master/badge/icon)](https://ci-builds.apache.org/job/Shiro/job/Shiro-jdk8/job/master/)
-[![Jenkins tests](https://img.shields.io/jenkins/tests/https/builds.apache.org/view/S-Z/view/Shiro/job/Shiro-master.svg?compact_message)](https://builds.apache.org/view/S-Z/view/Shiro/job/Shiro-master/test_results_analyzer/)
 
 Apache Shiro
 ============
