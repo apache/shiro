@@ -47,6 +47,7 @@ public class DefaultSerializer<T> implements Serializer<T> {
             ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(o);
             oos.close();
+            baos.flush();
             return baos.toByteArray();
         } catch (IOException e) {
             String msg = "Unable to serialize object [" + o + "].  " +
