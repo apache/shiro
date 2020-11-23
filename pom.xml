@@ -108,7 +108,7 @@
         <htmlunit.version>2.39.0</htmlunit.version>
 
         <!-- Test 3rd-party dependencies: -->
-        <easymock.version>4.0.2</easymock.version>
+        <easymock.version>4.1</easymock.version>
         <gmaven.version>1.8.0</gmaven.version>
         <groovy.version>2.5.8</groovy.version>
         <junit.version>4.12</junit.version>
@@ -284,6 +284,8 @@
                     <configuration>
                     		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                         <excludes>
+                            <exclude>/**/src/it/projects/*/build.log</exclude>
+                            <exclude>/**/src/it/projects/*/target/**</exclude>
                             <exclude>**/.externalToolBuilders/*</exclude>
                             <exclude>**/infinitest.filters</exclude>
                             <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
@@ -433,7 +435,6 @@
                 <version>3.0.0-M3</version>
                 <configuration>
                     <printSummary>true</printSummary>
-                    <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
             <plugin>
@@ -1274,6 +1275,8 @@
                 <configuration>
                 		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                     <excludes>
+                        <exclude>/**/src/it/projects/*/build.log</exclude>
+                        <exclude>/**/src/it/projects/*/target/**</exclude>
                         <exclude>**/.externalToolBuilders/*</exclude>
                         <exclude>**/infinitest.filters</exclude>
                         <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
@@ -1488,6 +1491,72 @@
                                 <id>japicmp</id>
                                 <goals>
                                     <goal>cmp</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>run-its</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>mrm-maven-plugin</artifactId>
+                        <version>1.1.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>start</goal>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <propertyName>mrm.repository.url</propertyName>
+                            <repositories>
+                                <mockRepo>
+                                    <source>src/it/mrm/repository</source>
+                                </mockRepo>
+                                <proxyRepo/>
+                            </repositories>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <configuration>
+                            <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                            <environmentVariables>
+                                <!--
+                                  ! Prevent reading the .mavenrc or maven_pre.bat on Windows
+                                  ! in integration tests.
+                                -->
+                                <MAVEN_SKIP_RC>1</MAVEN_SKIP_RC>
+                            </environmentVariables>
+                            <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                            <projectsDirectory>src/it/projects</projectsDirectory>
+                            <pomIncludes>
+                                <pomInclude>*/pom.xml</pomInclude>
+                            </pomIncludes>
+                            <settingsFile>src/it/mrm/settings.xml</settingsFile>
+                            <filterProperties>
+                                <mrm.repository.url>${mrm.repository.url}</mrm.repository.url>
+                            </filterProperties>
+                            <goals>
+                                <goal>clean</goal>
+                                <goal>package</goal>
+                            </goals>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
                                 </goals>
                             </execution>
                         </executions>

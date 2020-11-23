@@ -40,3 +40,5 @@ target/
 release.properties
 pom.xml.*
 -
+/**/src/it/projects/*/build.log
+/**/src/it/projects/*/target
