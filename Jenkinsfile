@@ -79,7 +79,7 @@ pipeline {
         stage('Tests') {
             steps {
                 echo 'Running tests'
-                sh 'mvn test'
+                sh 'mvn verify -Prun-its'
             }
             post {
                 always {
