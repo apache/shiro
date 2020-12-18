@@ -100,32 +100,34 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
             return null;
         }
 
-        String requestURI = getPathWithinApplication(request);
-
-        // in spring web, the requestURI "/resource/menus" ---- "resource/menus/" bose can access the resource
-        // but the pathPattern match "/resource/menus" can not match "resource/menus/"
-        // user can use requestURI + "/" to simply bypassed chain filter, to bypassed shiro protect
-        if(requestURI != null && !DEFAULT_PATH_SEPARATOR.equals(requestURI)
-                && requestURI.endsWith(DEFAULT_PATH_SEPARATOR)) {
-            requestURI = requestURI.substring(0, requestURI.length() - 1);
-        }
-
+        final String requestURI = getPathWithinApplication(request);
+        final String requestURINoTrailingSlash = removeTrailingSlash(requestURI);
 
         //the 'chain names' in this implementation are actually path patterns defined by the user.  We just use them
         //as the chain name for the FilterChainManager's requirements
         for (String pathPattern : filterChainManager.getChainNames()) {
-            if (pathPattern != null && !DEFAULT_PATH_SEPARATOR.equals(pathPattern)
-                    && pathPattern.endsWith(DEFAULT_PATH_SEPARATOR)) {
-                pathPattern = pathPattern.substring(0, pathPattern.length() - 1);
-            }
-
             // If the path does match, then pass on to the subclass implementation for specific checks:
             if (pathMatches(pathPattern, requestURI)) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Matched path pattern [" + pathPattern + "] for requestURI [" + Encode.forHtml(requestURI) + "].  " +
-                            "Utilizing corresponding filter chain...");
+                    log.trace("Matched path pattern [{}] for requestURI [{}].  " +
+                            "Utilizing corresponding filter chain...", pathPattern, Encode.forHtml(requestURI));
                 }
                 return filterChainManager.proxy(originalChain, pathPattern);
+            } else {
+
+                // in spring web, the requestURI "/resource/menus" ---- "resource/menus/" bose can access the resource
+                // but the pathPattern match "/resource/menus" can not match "resource/menus/"
+                // user can use requestURI + "/" to simply bypassed chain filter, to bypassed shiro protect
+
+                pathPattern = removeTrailingSlash(pathPattern);
+
+                if (pathMatches(pathPattern, requestURINoTrailingSlash)) {
+                    if (log.isTraceEnabled()) {
+                        log.trace("Matched path pattern [{}] for requestURI [{}].  " +
+                                  "Utilizing corresponding filter chain...", pathPattern, Encode.forHtml(requestURINoTrailingSlash));
+                    }
+                    return filterChainManager.proxy(originalChain, requestURINoTrailingSlash);
+                }
             }
         }
 
@@ -162,5 +164,13 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      */
     protected String getPathWithinApplication(ServletRequest request) {
         return WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
+    }
+
+    private static String removeTrailingSlash(String path) {
+        if(path != null && !DEFAULT_PATH_SEPARATOR.equals(path)
+           && path.endsWith(DEFAULT_PATH_SEPARATOR)) {
+            return path.substring(0, path.length() - 1);
+        }
+        return path;
     }
 }

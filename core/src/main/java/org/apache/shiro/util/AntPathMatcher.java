@@ -77,8 +77,15 @@ public class AntPathMatcher implements PatternMatcher {
         this.pathSeparator = (pathSeparator != null ? pathSeparator : DEFAULT_PATH_SEPARATOR);
     }
 
-
+    /**
+     * Checks if {@code path} is a pattern (i.e. contains a '*', or '?'). For example the {@code /foo/**} would return {@code true}, while {@code /bar/} would return {@code false}.
+     * @param path the string to check
+     * @return this method returns {@code true} if {@code path} contains a '*' or '?', otherwise, {@code false}
+     */
     public boolean isPattern(String path) {
+        if (path == null) {
+            return false;
+        }
         return (path.indexOf('*') != -1 || path.indexOf('?') != -1);
     }
 
@@ -106,12 +113,12 @@ public class AntPathMatcher implements PatternMatcher {
      *         <code>false</code> if it didn't
      */
     protected boolean doMatch(String pattern, String path, boolean fullMatch) {
-        if (path.startsWith(this.pathSeparator) != pattern.startsWith(this.pathSeparator)) {
+        if (path == null || path.startsWith(this.pathSeparator) != pattern.startsWith(this.pathSeparator)) {
             return false;
         }
 
-        String[] pattDirs = StringUtils.tokenizeToStringArray(pattern, this.pathSeparator);
-        String[] pathDirs = StringUtils.tokenizeToStringArray(path, this.pathSeparator);
+        String[] pattDirs = StringUtils.tokenizeToStringArray(pattern, this.pathSeparator, false, true);
+        String[] pathDirs = StringUtils.tokenizeToStringArray(path, this.pathSeparator, false, true);
 
         int pattIdxStart = 0;
         int pattIdxEnd = pattDirs.length - 1;
@@ -393,33 +400,26 @@ public class AntPathMatcher implements PatternMatcher {
      * and '<code>path</code>', but does <strong>not</strong> enforce this.
      */
     public String extractPathWithinPattern(String pattern, String path) {
-        String[] patternParts = StringUtils.tokenizeToStringArray(pattern, this.pathSeparator);
-        String[] pathParts = StringUtils.tokenizeToStringArray(path, this.pathSeparator);
+        String[] patternParts = StringUtils.tokenizeToStringArray(pattern, this.pathSeparator, false, true);
+        String[] pathParts = StringUtils.tokenizeToStringArray(path, this.pathSeparator, false, true);
+        StringBuilder builder = new StringBuilder();
+        boolean pathStarted = false;
 
-        StringBuilder buffer = new StringBuilder();
-
-        // Add any path parts that have a wildcarded pattern part.
-        int puts = 0;
-        for (int i = 0; i < patternParts.length; i++) {
-            String patternPart = patternParts[i];
-            if ((patternPart.indexOf('*') > -1 || patternPart.indexOf('?') > -1) && pathParts.length >= i + 1) {
-                if (puts > 0 || (i == 0 && !pattern.startsWith(this.pathSeparator))) {
-                    buffer.append(this.pathSeparator);
+        for (int segment = 0; segment < patternParts.length; segment++) {
+            String patternPart = patternParts[segment];
+            if (patternPart.indexOf('*') > -1 || patternPart.indexOf('?') > -1) {
+                for (; segment < pathParts.length; segment++) {
+                    if (pathStarted || (segment == 0 && !pattern.startsWith(this.pathSeparator))) {
+                        builder.append(this.pathSeparator);
+                    }
+                    builder.append(pathParts[segment]);
+                    pathStarted = true;
                 }
-                buffer.append(pathParts[i]);
-                puts++;
             }
         }
 
-        // Append any trailing path parts.
-        for (int i = patternParts.length; i < pathParts.length; i++) {
-            if (puts > 0 || i > 0) {
-                buffer.append(this.pathSeparator);
-            }
-            buffer.append(pathParts[i]);
-        }
-
-        return buffer.toString();
+        return builder.toString();
     }
+
 
 }

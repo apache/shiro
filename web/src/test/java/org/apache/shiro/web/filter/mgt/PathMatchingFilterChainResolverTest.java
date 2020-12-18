@@ -21,6 +21,7 @@ package org.apache.shiro.web.filter.mgt;
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.web.WebTest;
 import org.apache.shiro.web.util.WebUtils;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.easymock.EasyMock.*;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.*;
 
 /**
@@ -240,6 +242,25 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
         FilterChain resolved = resolver.getChain(request, response, chain);
         assertNotNull(resolved);
+        verify(request);
+    }
+
+    @Test
+    public void testMultipleChainsPathEndsWithSlash() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
+        FilterChain chain = createNiceMock(FilterChain.class);
+
+        //Define the filter chain
+        resolver.getFilterChainManager().addToChain("/login", "authc");
+        resolver.getFilterChainManager().addToChain("/resource/*", "authcBasic");
+
+        expect(request.getServletPath()).andReturn("");
+        expect(request.getPathInfo()).andReturn("/resource/");
+        replay(request);
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertThat(resolved, notNullValue());
         verify(request);
     }
 }
