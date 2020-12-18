@@ -30,6 +30,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -235,5 +237,22 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         FilterChain resolved = resolver.getChain(request, response, chain);
         assertNotNull(resolved);
         verify(request).getServletPath();
+    }
+
+    @Test
+    public void testMultipleChainsPathEndsWithSlash() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        //Define the filter chain
+        resolver.getFilterChainManager().addToChain("/login", "authc");
+        resolver.getFilterChainManager().addToChain("/resource/*", "authcBasic");
+
+        when(request.getServletPath()).thenReturn("");
+        when(request.getPathInfo()).thenReturn("/resource/");
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertThat(resolved, notNullValue());
     }
 }
