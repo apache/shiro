@@ -205,25 +205,6 @@ public class DefaultLdapContextFactory implements LdapContextFactory {
         return getLdapContext(systemUsername, systemPassword);
     }
 
-    /**
-     * Deprecated - use {@link #getLdapContext(Object, Object)} instead.  This will be removed before Apache Shiro 2.0.
-     *
-     * @param username the username to use when creating the connection.
-     * @param password the password to use when creating the connection.
-     * @return a {@code LdapContext} bound using the given username and password.
-     * @throws javax.naming.NamingException if there is an error creating the context.
-     * @deprecated the {@link #getLdapContext(Object, Object)} method should be used in all cases to ensure more than
-     *             String principals and credentials can be used.  Shiro no longer calls this method - it will be
-     *             removed before the 2.0 release.
-     */
-    @Deprecated
-    public LdapContext getLdapContext(String username, String password) throws NamingException {
-        if (username != null && principalSuffix != null) {
-            username += principalSuffix;
-        }
-        return getLdapContext((Object) username, password);
-    }
-
     public LdapContext getLdapContext(Object principal, Object credentials) throws NamingException {
         if (url == null) {
             throw new IllegalStateException("An LDAP URL must be specified of the form ldap://<hostname>:<port>");

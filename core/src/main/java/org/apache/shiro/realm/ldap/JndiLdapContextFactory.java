@@ -399,23 +399,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      * @throws NamingException if there is a problem connecting to the LDAP directory
      */
     public LdapContext getSystemLdapContext() throws NamingException {
-        return getLdapContext((Object)getSystemUsername(), getSystemPassword());
-    }
-
-    /**
-     * Deprecated - use {@link #getLdapContext(Object, Object)} instead.  This will be removed before Apache Shiro 2.0.
-     *
-     * @param username the username to use when creating the connection.
-     * @param password the password to use when creating the connection.
-     * @return a {@code LdapContext} bound using the given username and password.
-     * @throws javax.naming.NamingException if there is an error creating the context.
-     * @deprecated the {@link #getLdapContext(Object, Object)} method should be used in all cases to ensure more than
-     *             String principals and credentials can be used.  Shiro no longer calls this method - it will be
-     *             removed before the 2.0 release.
-     */
-    @Deprecated
-    public LdapContext getLdapContext(String username, String password) throws NamingException {
-        return getLdapContext((Object) username, password);
+        return getLdapContext(getSystemUsername(), getSystemPassword());
     }
 
     /**

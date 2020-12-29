@@ -40,20 +40,6 @@ public interface LdapContextFactory {
     LdapContext getSystemLdapContext() throws NamingException;
 
     /**
-     * Creates (or retrieves from a pool) a {@code LdapContext} connection bound using the username and password
-     * specified.
-     *
-     * @param username the username to use when creating the connection.
-     * @param password the password to use when creating the connection.
-     * @return a {@code LdapContext} bound using the given username and password.
-     * @throws javax.naming.NamingException if there is an error creating the context.
-     * @deprecated the {@link #getLdapContext(Object, Object)} method should be used in all cases to ensure more than
-     * String principals and credentials can be used.
-     */
-    @Deprecated
-    LdapContext getLdapContext(String username, String password) throws NamingException;
-
-    /**
      * Creates (or retrieves from a pool) an {@code LdapContext} connection bound using the specified principal and
      * credentials.  The format of the principal and credentials are whatever is supported by the underlying
      * LDAP {@link javax.naming.spi.InitialContextFactory InitialContextFactory} implementation.  The default Sun

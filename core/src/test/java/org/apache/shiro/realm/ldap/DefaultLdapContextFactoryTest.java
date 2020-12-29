@@ -61,12 +61,12 @@ public class DefaultLdapContextFactoryTest
         //garbage URL to test that the context is being created, but fails:
         String brokenHost = UUID.randomUUID().toString();
         factory.setUrl("ldap://" + brokenHost + ":389");
-        factory.getLdapContext((Object) "foo", "bar");
+        factory.getLdapContext("foo", "bar");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testGetLdapContextWithoutUrl() throws NamingException {
-        factory.getLdapContext((Object) "foo", "bar");
+        factory.getLdapContext("foo", "bar");
     }
 
 
@@ -76,25 +76,25 @@ public class DefaultLdapContextFactoryTest
     @Test(expected = AuthenticationException.class)
     public void testEmptyStringCredentials() throws NamingException {
         factory.setUrl("ldap://localhost:389");
-        factory.getLdapContext((Object)"jcoder", "");
+        factory.getLdapContext("jcoder", "");
     }
 
     @Test(expected = AuthenticationException.class)
     public void testEmptyCharArrayCredentials() throws NamingException {
         factory.setUrl("ldap://localhost:389");
-        factory.getLdapContext((Object)"jcoder", new char[0]);
+        factory.getLdapContext("jcoder", new char[0]);
     }
 
     @Test(expected = AuthenticationException.class)
     public void testEmptyByteArrayCredentials() throws NamingException {
         factory.setUrl("ldap://localhost:389");
-        factory.getLdapContext((Object)"jcoder", new byte[0]);
+        factory.getLdapContext("jcoder", new byte[0]);
     }
 
     @Test(expected = AuthenticationException.class)
     public void testEmptyNullCredentials() throws NamingException {
         factory.setUrl("ldap://localhost:389");
-        factory.getLdapContext((Object)"jcoder", null);
+        factory.getLdapContext("jcoder", null);
     }
 
 
