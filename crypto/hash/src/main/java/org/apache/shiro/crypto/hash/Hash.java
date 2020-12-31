@@ -28,9 +28,6 @@ import org.apache.shiro.lang.util.ByteSource;
  * The bytes returned by the parent interface's {@link #getBytes() getBytes()} are the hashed value of the
  * original input source, also known as the 'checksum' or 'digest'.
  *
- * @see Md2Hash
- * @see Md5Hash
- * @see Sha1Hash
  * @see Sha256Hash
  * @see Sha384Hash
  * @see Sha512Hash
@@ -64,4 +61,13 @@ public interface Hash extends ByteSource {
      */
     int getIterations();
 
+    /**
+     * Tests if a given passwords matches with this instance.
+     *
+     * <p>Usually implementations will re-create {@code this} but with the given plaintext bytes as secret.</p>
+     *
+     * @param plaintextBytes the plaintext bytes from a user.
+     * @return {@code true} if the given plaintext generates an equal hash with the same parameters as from this hash.
+     */
+    boolean matchesPassword(ByteSource plaintextBytes);
 }

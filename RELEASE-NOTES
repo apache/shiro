@@ -17,8 +17,26 @@
 
 This is not an official release notes document.  It exists for Shiro developers
 to jot down their notes while working in the source code.  These notes will be
-combined with Jira's auto-generated release notes during a release for the
+combined with Jira’s auto-generated release notes during a release for the
 total set.
+
+###########################################################
+# 2.0.0
+###########################################################
+
+Improvement
+
+    [SHIRO-290] Implement bcrypt and argon2 KDF algorithms
+
+Backwards Incompatible Changes
+--------------------------------
+
+* Changed default DefaultPasswordService.java algorithm to "Argon2id".
+* PasswordService.encryptPassword(Object plaintext) will now throw a NullPointerException on null parameter.
+  It was never specified how this method would behave.
+* Made salt non-nullable.
+* Removed methods in PasswordMatcher.
+
 
 ###########################################################
 # 1.7.1

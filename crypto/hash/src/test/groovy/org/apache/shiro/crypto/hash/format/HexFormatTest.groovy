@@ -19,9 +19,11 @@
 package org.apache.shiro.crypto.hash.format
 
 import org.apache.shiro.crypto.hash.Hash
-import org.apache.shiro.crypto.hash.Sha1Hash
-import org.junit.Test
-import static org.junit.Assert.*
+import org.apache.shiro.crypto.hash.Sha512Hash
+import org.junit.jupiter.api.Test
+
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertThrows
 
 /**
  * Unit tests for the {@link HexFormat} implementation.
@@ -32,7 +34,7 @@ class HexFormatTest {
 
     @Test
     void testFormat() {
-        Hash hash = new Sha1Hash("hello");
+        Hash hash = new Sha512Hash("hello");
         HexFormat format = new HexFormat()
         String hex = format.format(hash)
         assertEquals hex, hash.toHex()
@@ -41,7 +43,7 @@ class HexFormatTest {
     @Test
     void testFormatWithNullArgument() {
         HexFormat format = new HexFormat()
-        assertNull format.format(null)
+        assertThrows NullPointerException, { format.format(null) }
     }
 
 }

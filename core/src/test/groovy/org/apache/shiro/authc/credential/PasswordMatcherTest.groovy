@@ -20,8 +20,12 @@ package org.apache.shiro.authc.credential
 
 import org.apache.shiro.authc.AuthenticationInfo
 import org.apache.shiro.authc.AuthenticationToken
+import org.apache.shiro.authc.SimpleAuthenticationInfo
+import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.crypto.hash.Sha256Hash
+import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat
 import org.junit.Test
+import org.junit.jupiter.api.DisplayName
 
 import static org.easymock.EasyMock.*
 import static org.junit.Assert.*
@@ -87,11 +91,7 @@ class PasswordMatcherTest {
         matcher.passwordService = service
         assertSame service, matcher.passwordService
 
-        try {
-            assertTrue matcher.doCredentialsMatch(token, info)
-            fail "matcher should fail since PasswordService is not a HashingPasswordService"
-        } catch (IllegalStateException expected) {
-        }
+        assertTrue matcher.doCredentialsMatch(token, info)
 
         verify token, info, service
     }
@@ -107,8 +107,6 @@ class PasswordMatcherTest {
 
         expect(token.credentials).andReturn submittedPassword
         expect(info.credentials).andReturn savedPassword
-
-        expect(service.passwordsMatch(submittedPassword, savedPassword)).andReturn true
 
         replay token, info, service
 
@@ -175,7 +173,44 @@ class PasswordMatcherTest {
         }
 
         verify token, info, service
+    }
 
+    @Test
+    @DisplayName("test whether shiro2 bcrypt password can be parsed and matched.")
+    void testBCryptPassword() {
+        // given
+        def matcher = new PasswordMatcher();
+        def bcryptPw = '$shiro2$2y$10$7rOjsAf2U/AKKqpMpCIn6etuOXyQ86tp2Tn9xv6FyXl2T0QYc3.G.'
+        def bcryptHash = new Shiro2CryptFormat().parse(bcryptPw);
+        def plaintext = 'secret#shiro,password;Jo8opech'
+        def principal = "user"
+        def usernamePasswordToken = new UsernamePasswordToken(principal, plaintext)
+        def authenticationInfo = new SimpleAuthenticationInfo(principal, bcryptHash, "inirealm")
+
+        // when
+        def match = matcher.doCredentialsMatch(usernamePasswordToken, authenticationInfo)
+
+        // then
+        assertTrue match
+    }
+
+    @Test
+    @DisplayName("test whether shiro2 argon2 password can be parsed and matched.")
+    void testArgon2Password() {
+        // given
+        def matcher = new PasswordMatcher();
+        def bcryptPw = '$shiro2$argon2id$v=19$m=4096,t=3,p=4$MTIzNDU2Nzg5MDEyMzQ1Ng$bjcHqfb0LPHyS13eVaNcBga9LF12I3k34H5ULt2gyoI'
+        def bcryptHash = new Shiro2CryptFormat().parse(bcryptPw);
+        def plaintext = 'secret#shiro,password;Jo8opech'
+        def principal = "user"
+        def usernamePasswordToken = new UsernamePasswordToken(principal, plaintext)
+        def authenticationInfo = new SimpleAuthenticationInfo(principal, bcryptHash, "inirealm")
+
+        // when
+        def match = matcher.doCredentialsMatch(usernamePasswordToken, authenticationInfo)
+
+        // then
+        assertTrue match
     }
 
 }

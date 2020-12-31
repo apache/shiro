@@ -21,6 +21,7 @@ package org.apache.shiro.crypto.hash.format
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
 import org.apache.shiro.crypto.hash.SimpleHash
 import org.junit.Test
+
 import static org.junit.Assert.*
 
 /**
@@ -65,7 +66,7 @@ class Shiro1CryptFormatTest {
         def rng = new SecureRandomNumberGenerator()
         def source = rng.nextBytes()
 
-        def hash = new SimpleHash(alg, source, null, iterations)
+        def hash = new SimpleHash(alg, source, iterations)
 
         String formatted = format.format(hash);
 
@@ -120,7 +121,7 @@ class Shiro1CryptFormatTest {
         def rng = new SecureRandomNumberGenerator()
         def source = rng.nextBytes()
 
-        def hash = new SimpleHash(alg, source, null, iterations)
+        def hash = new SimpleHash(alg, source, iterations)
 
         String formatted = Shiro1CryptFormat.MCF_PREFIX +
                 alg + delim +
@@ -133,7 +134,7 @@ class Shiro1CryptFormatTest {
         assertEquals hash, parsedHash
         assertEquals hash.algorithmName, parsedHash.algorithmName
         assertEquals hash.iterations, parsedHash.iterations
-        assertNull hash.salt
+        assertTrue hash.salt.isEmpty()
         assertTrue Arrays.equals(hash.bytes, parsedHash.bytes)
     }
 
