@@ -111,13 +111,14 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
         this.searchPackages = searchPackages;
     }
 
-    public HashFormat getInstance(String in) {
+    @Override
+    public HashFormat<?> getInstance(String in) {
         if (in == null) {
             return null;
         }
 
-        HashFormat hashFormat = null;
-        Class clazz = null;
+        HashFormat<?> hashFormat = null;
+        Class<?> clazz = null;
 
         //NOTE: this code block occurs BEFORE calling getHashFormatClass(in) on purpose as a performance
         //optimization.  If the input arg is an MCF-formatted string, there will be many unnecessary ClassLoader
@@ -128,7 +129,7 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
             String test = in.substring(ModularCryptFormat.TOKEN_DELIMITER.length());
             String[] tokens = test.split("\\" + ModularCryptFormat.TOKEN_DELIMITER);
             //the MCF ID is always the first token in the delimited string:
-            String possibleMcfId = (tokens != null && tokens.length > 0) ? tokens[0] : null;
+            String possibleMcfId = tokens.length > 0 ? tokens[0] : null;
             if (possibleMcfId != null) {
                 //found a possible MCF ID - test it using our heuristics to see if we can find a corresponding class:
                 clazz = getHashFormatClass(possibleMcfId);

@@ -31,7 +31,7 @@ import org.apache.shiro.crypto.hash.Hash;
  *
  * @since 1.2
  */
-public interface ParsableHashFormat extends HashFormat {
+public interface ParsableHashFormat<T extends Hash> extends HashFormat<T> {
 
     /**
      * Parses the specified formatted string and returns the corresponding Hash instance.

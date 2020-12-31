@@ -20,7 +20,10 @@ package org.apache.shiro.authc.credential
 
 import org.apache.shiro.authc.AuthenticationInfo
 import org.apache.shiro.authc.AuthenticationToken
+import org.apache.shiro.authc.SimpleAuthenticationInfo
+import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.crypto.hash.Sha256Hash
+import org.apache.shiro.crypto.hash.format.UnixCryptFormat
 import org.junit.Test
 
 import static org.easymock.EasyMock.*
@@ -175,7 +178,23 @@ class PasswordMatcherTest {
         }
 
         verify token, info, service
+    }
 
+    @Test
+    void testBCryptPassword() {
+        // given
+        def matcher = new PasswordMatcher();
+        def bcryptPw = '$unixcrypt$2y$10$7rOjsAf2U/AKKqpMpCIn6etuOXyQ86tp2Tn9xv6FyXl2T0QYc3.G.'
+        def bcryptHash = new UnixCryptFormat().parse(bcryptPw);
+        def plaintext = 'secret#shiro,password;Jo8opech'
+        def principal = "user"
+        def usernamePasswordToken = new UsernamePasswordToken(principal, plaintext)
+        def authenticationInfo = new SimpleAuthenticationInfo(principal, bcryptHash, "inirealm")
+
+        // when
+        def match = matcher.doCredentialsMatch(usernamePasswordToken, authenticationInfo)
+
+        assertTrue match
     }
 
 }

@@ -33,7 +33,7 @@ import org.apache.shiro.crypto.hash.Hash;
  *
  * @since 1.2
  */
-public interface HashFormat {
+public interface HashFormat<T extends Hash> {
 
     /**
      * Returns a formatted string representing the specified Hash instance.
@@ -41,5 +41,5 @@ public interface HashFormat {
      * @param hash the hash instance to format into a String.
      * @return a formatted string representing the specified Hash instance.
      */
-    String format(Hash hash);
+    String format(T hash);
 }

@@ -18,9 +18,9 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
-import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.StringUtils;
 
@@ -85,7 +85,7 @@ import org.apache.shiro.lang.util.StringUtils;
  *
  * @since 1.2
  */
-public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat {
+public class Shiro1CryptFormat implements ModularCryptFormat<SimpleHash>, ParsableHashFormat<SimpleHash> {
 
     public static final String ID = "shiro1";
     public static final String MCF_PREFIX = TOKEN_DELIMITER + ID + TOKEN_DELIMITER;
@@ -93,19 +93,21 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
     public Shiro1CryptFormat() {
     }
 
+    @Override
     public String getId() {
         return ID;
     }
 
-    public String format(Hash hash) {
+    @Override
+    public String format(final SimpleHash hash) {
         if (hash == null) {
             return null;
         }
 
-        String algorithmName = hash.getAlgorithmName();
-        ByteSource salt = hash.getSalt();
-        int iterations = hash.getIterations();
-        StringBuilder sb = new StringBuilder(MCF_PREFIX).append(algorithmName).append(TOKEN_DELIMITER).append(iterations).append(TOKEN_DELIMITER);
+        final String algorithmName = hash.getAlgorithmName();
+        final ByteSource salt = hash.getSalt();
+        final int iterations = hash.getIterations();
+        final StringBuilder sb = new StringBuilder(MCF_PREFIX).append(algorithmName).append(TOKEN_DELIMITER).append(iterations).append(TOKEN_DELIMITER);
 
         if (salt != null) {
             sb.append(salt.toBase64());
@@ -117,44 +119,45 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         return sb.toString();
     }
 
-    public Hash parse(String formatted) {
+    @Override
+    public Hash parse(final String formatted) {
         if (formatted == null) {
             return null;
         }
         if (!formatted.startsWith(MCF_PREFIX)) {
             //TODO create a HashFormatException class
-            String msg = "The argument is not a valid '" + ID + "' formatted hash.";
+            final String msg = "The argument is not a valid '" + ID + "' formatted hash.";
             throw new IllegalArgumentException(msg);
         }
 
-        String suffix = formatted.substring(MCF_PREFIX.length());
-        String[] parts = suffix.split("\\$");
+        final String suffix = formatted.substring(MCF_PREFIX.length());
+        final String[] parts = suffix.split("\\$");
 
         //last part is always the digest/checksum, Base64-encoded:
-        int i = parts.length-1;
-        String digestBase64 = parts[i--];
+        int i = parts.length - 1;
+        final String digestBase64 = parts[i--];
         //second-to-last part is always the salt, Base64-encoded:
-        String saltBase64 = parts[i--];
-        String iterationsString = parts[i--];
-        String algorithmName = parts[i];
+        final String saltBase64 = parts[i--];
+        final String iterationsString = parts[i--];
+        final String algorithmName = parts[i];
 
-        byte[] digest = Base64.decode(digestBase64);
+        final byte[] digest = Base64.decode(digestBase64);
         ByteSource salt = null;
 
         if (StringUtils.hasLength(saltBase64)) {
-            byte[] saltBytes = Base64.decode(saltBase64);
+            final byte[] saltBytes = Base64.decode(saltBase64);
             salt = ByteSource.Util.bytes(saltBytes);
         }
 
-        int iterations;
+        final int iterations;
         try {
             iterations = Integer.parseInt(iterationsString);
-        } catch (NumberFormatException e) {
-            String msg = "Unable to parse formatted hash string: " + formatted;
+        } catch (final NumberFormatException e) {
+            final String msg = "Unable to parse formatted hash string: " + formatted;
             throw new IllegalArgumentException(msg, e);
         }
 
-        SimpleHash hash = new SimpleHash(algorithmName);
+        final SimpleHash hash = new SimpleHash(algorithmName);
         hash.setBytes(digest);
         if (salt != null) {
             hash.setSalt(salt);

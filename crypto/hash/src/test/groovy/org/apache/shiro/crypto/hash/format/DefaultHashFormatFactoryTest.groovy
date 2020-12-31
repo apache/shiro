@@ -20,6 +20,7 @@ package org.apache.shiro.crypto.hash.format
 
 import org.apache.shiro.crypto.hash.Sha1Hash
 import org.junit.Test
+
 import static org.junit.Assert.*
 
 /**
@@ -80,6 +81,18 @@ class DefaultHashFormatFactoryTest {
 
         assertNotNull instance
         assertTrue instance instanceof Shiro1CryptFormat
+    }
+
+    @Test
+    void testGetInstanceWithBcrypt() {
+        // given
+        def factory = new DefaultHashFormatFactory()
+
+        // when
+        def instance = factory.getInstance('$unixcrypt$')
+
+        // then
+        assertTrue instance instanceof UnixCryptFormat
     }
 
     @Test

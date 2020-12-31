@@ -18,16 +18,20 @@
  */
 package org.apache.shiro.authc.credential;
 
-import java.security.MessageDigest;
-
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.crypto.hash.HashService;
-import org.apache.shiro.crypto.hash.format.*;
+import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
+import org.apache.shiro.crypto.hash.format.HashFormat;
+import org.apache.shiro.crypto.hash.format.HashFormatFactory;
+import org.apache.shiro.crypto.hash.format.ParsableHashFormat;
+import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
 import org.apache.shiro.lang.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.security.MessageDigest;
 
 /**
  * Default implementation of the {@link PasswordService} interface that relies on an internal
@@ -66,12 +70,14 @@ public class DefaultPasswordService implements HashingPasswordService {
         this.hashFormatFactory = new DefaultHashFormatFactory();
     }
 
+    @Override
     public String encryptPassword(Object plaintext) {
         Hash hash = hashPassword(plaintext);
         checkHashFormatDurability();
         return this.hashFormat.format(hash);
     }
 
+    @Override
     public Hash hashPassword(Object plaintext) {
         ByteSource plaintextBytes = createByteSource(plaintext);
         if (plaintextBytes == null || plaintextBytes.isEmpty()) {
@@ -81,6 +87,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         return hashService.computeHash(request);
     }
 
+    @Override
     public boolean passwordsMatch(Object plaintext, Hash saved) {
         ByteSource plaintextBytes = createByteSource(plaintext);
 
@@ -94,7 +101,8 @@ public class DefaultPasswordService implements HashingPasswordService {
 
         HashRequest request = buildHashRequest(plaintextBytes, saved);
 
-        Hash computed = this.hashService.computeHash(request);
+        // TODO: hashrequest for (b)crypt
+        final Hash computed = this.hashService.computeHash(request);
 
         return constantEquals(saved.toString(), computed.toString());
     }
@@ -133,6 +141,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         return ByteSource.Util.bytes(o);
     }
 
+    @Override
     public boolean passwordsMatch(Object submittedPlaintext, String saved) {
         ByteSource plaintextBytes = createByteSource(submittedPlaintext);
 
@@ -153,7 +162,7 @@ public class DefaultPasswordService implements HashingPasswordService {
 
         if (discoveredFormat != null && discoveredFormat instanceof ParsableHashFormat) {
 
-            ParsableHashFormat parsableHashFormat = (ParsableHashFormat)discoveredFormat;
+            ParsableHashFormat parsableHashFormat = (ParsableHashFormat) discoveredFormat;
             Hash savedHash = parsableHashFormat.parse(saved);
 
             return passwordsMatch(submittedPlaintext, savedHash);

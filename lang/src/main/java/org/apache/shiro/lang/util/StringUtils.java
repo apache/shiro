@@ -322,6 +322,18 @@ public class StringUtils {
         return split;
     }
 
+    /**
+     * Splits a string using the {@link #DEFAULT_DELIMITER_CHAR} (which is {@value #DEFAULT_DELIMITER_CHAR}).
+     * This method also recognizes quoting using the {@link #DEFAULT_QUOTE_CHAR}
+     * (which is {@value #DEFAULT_QUOTE_CHAR}), but does not retain them.
+     * 
+     * <p>This is equivalent of calling {@link #split(String, char, char, char, boolean, boolean)} with
+     * {@code line, DEFAULT_DELIMITER_CHAR, DEFAULT_QUOTE_CHAR, DEFAULT_QUOTE_CHAR, false, true}.</p>
+     * 
+     * @param line the line to split using the {@link #DEFAULT_DELIMITER_CHAR}.
+     * @return the split line, split tokens do not contain quotes and are trimmed.
+     * @see #split(String, char, char, char, boolean, boolean)
+     */
     public static String[] split(String line) {
         return split(line, DEFAULT_DELIMITER_CHAR);
     }
