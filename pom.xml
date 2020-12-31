@@ -111,6 +111,7 @@
         <guice.version>4.2.2</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
         <htmlunit.version>2.39.0</htmlunit.version>
+        <bouncycastle.version>1.68</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>4.0.2</easymock.version>
@@ -751,6 +752,16 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.shiro.crypto</groupId>
+                <artifactId>shiro-hashes-argon2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro.crypto</groupId>
+                <artifactId>shiro-hashes-bcrypt</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-crypto-cipher</artifactId>
                 <version>${project.version}</version>
@@ -1222,6 +1233,12 @@
                 <groupId>com.github.mjeanroy</groupId>
                 <artifactId>junit-servers-jetty</artifactId>
                 <version>${junit.server.jetty.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

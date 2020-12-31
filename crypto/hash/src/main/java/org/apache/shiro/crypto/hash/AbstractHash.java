@@ -18,11 +18,11 @@
  */
 package org.apache.shiro.crypto.hash;
 
+import org.apache.shiro.crypto.UnknownAlgorithmException;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.CodecException;
 import org.apache.shiro.lang.codec.CodecSupport;
 import org.apache.shiro.lang.codec.Hex;
-import org.apache.shiro.crypto.UnknownAlgorithmException;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
@@ -46,6 +46,7 @@ import java.util.Arrays;
 @Deprecated
 public abstract class AbstractHash extends CodecSupport implements Hash, Serializable {
 
+    private static final long serialVersionUID = -4723044219611288405L;
     /**
      * The hashed data
      */
@@ -142,8 +143,10 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @return the {@link MessageDigest MessageDigest} algorithm name to use when performing the hash.
      */
+    @Override
     public abstract String getAlgorithmName();
 
+    @Override
     public byte[] getBytes() {
         return this.bytes;
     }
@@ -233,6 +236,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @return a hex-encoded string of the underlying {@link #getBytes byte array}.
      */
+    @Override
     public String toHex() {
         if (this.hexEncoded == null) {
             this.hexEncoded = Hex.encodeToString(getBytes());
@@ -249,6 +253,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @return a Base64-encoded string of the underlying {@link #getBytes byte array}.
      */
+    @Override
     public String toBase64() {
         if (this.base64Encoded == null) {
             //cache result in case this method is called multiple times.
@@ -262,6 +267,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @return the {@link #toHex() toHex()} value.
      */
+    @Override
     public String toString() {
         return toHex();
     }
@@ -274,6 +280,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      * @return {@code true} if the specified object is a Hash and its {@link #getBytes byte array} is identical to
      *         this Hash's byte array, {@code false} otherwise.
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof Hash) {
             Hash other = (Hash) o;
@@ -287,6 +294,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @return toHex().hashCode()
      */
+    @Override
     public int hashCode() {
         if (this.bytes == null || this.bytes.length == 0) {
             return 0;
@@ -294,68 +302,4 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
         return Arrays.hashCode(this.bytes);
     }
 
-    private static void printMainUsage(Class<? extends AbstractHash> clazz, String type) {
-        System.out.println("Prints an " + type + " hash value.");
-        System.out.println("Usage: java " + clazz.getName() + " [-base64] [-salt <saltValue>] [-times <N>] <valueToHash>");
-        System.out.println("Options:");
-        System.out.println("\t-base64\t\tPrints the hash value as a base64 String instead of the default hex.");
-        System.out.println("\t-salt\t\tSalts the hash with the specified <saltValue>");
-        System.out.println("\t-times\t\tHashes the input <N> number of times");
-    }
-
-    private static boolean isReserved(String arg) {
-        return "-base64".equals(arg) || "-times".equals(arg) || "-salt".equals(arg);
-    }
-
-    static int doMain(Class<? extends AbstractHash> clazz, String[] args) {
-        String simple = clazz.getSimpleName();
-        int index = simple.indexOf("Hash");
-        String type = simple.substring(0, index).toUpperCase();
-
-        if (args == null || args.length < 1 || args.length > 7) {
-            printMainUsage(clazz, type);
-            return -1;
-        }
-        boolean hex = true;
-        String salt = null;
-        int times = 1;
-        String text = args[args.length - 1];
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.equals("-base64")) {
-                hex = false;
-            } else if (arg.equals("-salt")) {
-                if ((i + 1) >= (args.length - 1)) {
-                    String msg = "Salt argument must be followed by a salt value.  The final argument is " +
-                            "reserved for the value to hash.";
-                    System.out.println(msg);
-                    printMainUsage(clazz, type);
-                    return -1;
-                }
-                salt = args[i + 1];
-            } else if (arg.equals("-times")) {
-                if ((i + 1) >= (args.length - 1)) {
-                    String msg = "Times argument must be followed by an integer value.  The final argument is " +
-                            "reserved for the value to hash";
-                    System.out.println(msg);
-                    printMainUsage(clazz, type);
-                    return -1;
-                }
-                try {
-                    times = Integer.valueOf(args[i + 1]);
-                } catch (NumberFormatException e) {
-                    String msg = "Times argument must be followed by an integer value.";
-                    System.out.println(msg);
-                    printMainUsage(clazz, type);
-                    return -1;
-                }
-            }
-        }
-
-        Hash hash = new Md2Hash(text, salt, times);
-        String hashed = hex ? hash.toHex() : hash.toBase64();
-        System.out.print(hex ? "Hex: " : "Base64: ");
-        System.out.println(hashed);
-        return 0;
-    }
 }

@@ -18,9 +18,10 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
-import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.crypto.hash.SimpleHashProvider;
+import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.StringUtils;
 
@@ -93,11 +94,13 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
     public Shiro1CryptFormat() {
     }
 
+    @Override
     public String getId() {
         return ID;
     }
 
-    public String format(Hash hash) {
+    @Override
+    public String format(final Hash hash) {
         if (hash == null) {
             return null;
         }
@@ -117,7 +120,8 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         return sb.toString();
     }
 
-    public Hash parse(String formatted) {
+    @Override
+    public Hash parse(final String formatted) {
         if (formatted == null) {
             return null;
         }
@@ -130,13 +134,17 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         String suffix = formatted.substring(MCF_PREFIX.length());
         String[] parts = suffix.split("\\$");
 
+        final String algorithmName = parts[0];
+        if (!new SimpleHashProvider().getImplementedAlgorithms().contains(algorithmName)) {
+            throw new UnsupportedOperationException("Algorithm " + algorithmName + " is not supported in shiro1 format.");
+        }
+
         //last part is always the digest/checksum, Base64-encoded:
-        int i = parts.length-1;
+        int i = parts.length - 1;
         String digestBase64 = parts[i--];
         //second-to-last part is always the salt, Base64-encoded:
         String saltBase64 = parts[i--];
         String iterationsString = parts[i--];
-        String algorithmName = parts[i];
 
         byte[] digest = Base64.decode(digestBase64);
         ByteSource salt = null;

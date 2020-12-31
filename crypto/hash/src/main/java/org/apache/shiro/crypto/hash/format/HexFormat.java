@@ -26,16 +26,20 @@ import org.apache.shiro.crypto.hash.Hash;
  * command-line hashing.
  *
  * @since 1.2
+ * @deprecated will throw exceptions in 2.1.0, to be removed in 2.2.0
  */
+@Deprecated
 public class HexFormat implements HashFormat {
 
     /**
-     * Returns {@code hash != null ? hash.toHex() : null}.
+     * Returns {@code hash.toHex()}.
      *
      * @param hash the hash instance to format into a String.
-     * @return {@code hash != null ? hash.toHex() : null}.
+     * @return {@code hash.toHex()}.
+     * @throws NullPointerException if given parameter hash is {@code null}.
      */
-    public String format(Hash hash) {
-        return hash != null ? hash.toHex() : null;
+    @Override
+    public String format(final Hash hash) {
+        return hash.toHex();
     }
 }

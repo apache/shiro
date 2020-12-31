@@ -20,7 +20,13 @@ package org.apache.shiro.lang.codec;
 
 import org.apache.shiro.lang.util.ByteSource;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Base abstract class that provides useful encoding and decoding operations, especially for character data.
@@ -188,28 +194,28 @@ public abstract class CodecSupport {
      * If the argument is anything other than these types, it is passed to the
      * {@link #objectToBytes(Object) objectToBytes} method which must be overridden by subclasses.
      *
-     * @param o the Object to convert into a byte array
+     * @param object the Object to convert into a byte array
      * @return a byte array representation of the Object argument.
      */
-    protected byte[] toBytes(Object o) {
-        if (o == null) {
+    protected byte[] toBytes(Object object) {
+        if (object == null) {
             String msg = "Argument for byte conversion cannot be null.";
             throw new IllegalArgumentException(msg);
         }
-        if (o instanceof byte[]) {
-            return (byte[]) o;
-        } else if (o instanceof ByteSource) {
-            return ((ByteSource) o).getBytes();
-        } else if (o instanceof char[]) {
-            return toBytes((char[]) o);
-        } else if (o instanceof String) {
-            return toBytes((String) o);
-        } else if (o instanceof File) {
-            return toBytes((File) o);
-        } else if (o instanceof InputStream) {
-            return toBytes((InputStream) o);
+        if (object instanceof byte[]) {
+            return (byte[]) object;
+        } else if (object instanceof ByteSource) {
+            return ((ByteSource) object).getBytes();
+        } else if (object instanceof char[]) {
+            return toBytes((char[]) object);
+        } else if (object instanceof String) {
+            return toBytes((String) object);
+        } else if (object instanceof File) {
+            return toBytes((File) object);
+        } else if (object instanceof InputStream) {
+            return toBytes((InputStream) object);
         } else {
-            return objectToBytes(o);
+            return objectToBytes(object);
         }
     }
 
