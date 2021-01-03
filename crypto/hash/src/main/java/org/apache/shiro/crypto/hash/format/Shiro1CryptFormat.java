@@ -18,11 +18,18 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
+import org.apache.shiro.crypto.hash.BCryptHash;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.lang.codec.Base64;
+import org.apache.shiro.lang.codec.OpenBSDBase64;
 import org.apache.shiro.lang.util.ByteSource;
+import org.apache.shiro.lang.util.SimpleByteSource;
 import org.apache.shiro.lang.util.StringUtils;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * The {@code Shiro1CryptFormat} is a fully reversible
@@ -85,10 +92,11 @@ import org.apache.shiro.lang.util.StringUtils;
  *
  * @since 1.2
  */
-public class Shiro1CryptFormat implements ModularCryptFormat<SimpleHash>, ParsableHashFormat<SimpleHash> {
+public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat {
 
     public static final String ID = "shiro1";
     public static final String MCF_PREFIX = TOKEN_DELIMITER + ID + TOKEN_DELIMITER;
+    private static final List<String> ALGORITHMS_BCRYPT = Arrays.asList("2", "2a", "2b", "2y");
 
     public Shiro1CryptFormat() {
     }
@@ -99,7 +107,7 @@ public class Shiro1CryptFormat implements ModularCryptFormat<SimpleHash>, Parsab
     }
 
     @Override
-    public String format(final SimpleHash hash) {
+    public String format(final Hash hash) {
         if (hash == null) {
             return null;
         }
@@ -141,13 +149,13 @@ public class Shiro1CryptFormat implements ModularCryptFormat<SimpleHash>, Parsab
         final String iterationsString = parts[i--];
         final String algorithmName = parts[i];
 
-        final byte[] digest = Base64.decode(digestBase64);
-        ByteSource salt = null;
-
-        if (StringUtils.hasLength(saltBase64)) {
-            final byte[] saltBytes = Base64.decode(saltBase64);
-            salt = ByteSource.Util.bytes(saltBytes);
+        final byte[] digest;
+        if (ALGORITHMS_BCRYPT.contains(algorithmName)) {
+            digest = new OpenBSDBase64.Default().decode(digestBase64.getBytes(StandardCharsets.ISO_8859_1));
+        } else {
+            digest = Base64.decode(digestBase64);
         }
+        ByteSource salt = parseSalt(saltBase64, algorithmName);
 
         final int iterations;
         try {
@@ -157,13 +165,38 @@ public class Shiro1CryptFormat implements ModularCryptFormat<SimpleHash>, Parsab
             throw new IllegalArgumentException(msg, e);
         }
 
-        final SimpleHash hash = new SimpleHash(algorithmName);
-        hash.setBytes(digest);
-        if (salt != null) {
-            hash.setSalt(salt);
-        }
-        hash.setIterations(iterations);
+        switch (algorithmName) {
+            case "2":
+            case "2a":
+            case "2b":
+            case "2y":
+                return new BCryptHash(algorithmName, digest, salt, iterations);
+            default:
+                final SimpleHash hash = new SimpleHash(algorithmName);
+                hash.setBytes(digest);
+                hash.setSalt(salt);
+                hash.setIterations(iterations);
 
-        return hash;
+                return hash;
+        }
+    }
+
+    private ByteSource parseSalt(String base64, String algorithmName) {
+        if (!StringUtils.hasLength(base64)) {
+            return SimpleByteSource.empty();
+        }
+
+        switch (algorithmName) {
+            case "2":
+            case "2a":
+            case "2b":
+            case "2y":
+                byte[] saltBytesBcrypt = new OpenBSDBase64.Default().decode(base64.getBytes(StandardCharsets.ISO_8859_1));
+                return new SimpleByteSource(saltBytesBcrypt);
+            default:
+                final byte[] saltBytes = Base64.decode(base64);
+                return new SimpleByteSource(saltBytes);
+
+        }
     }
 }

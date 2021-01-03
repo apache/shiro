@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
-import org.apache.shiro.crypto.hash.Hash;
-
 /**
  * A {@code HashFormat} that supports
  * <a href="http://packages.python.org/passlib/modular_crypt_format.html">Modular Crypt Format</a> token rules.
@@ -28,7 +26,7 @@ import org.apache.shiro.crypto.hash.Hash;
  * @see <a href="http://www.tummy.com/journals/entries/jafo_20110117_054918">MCF Journal Entry</a>
  * @since 1.2
  */
-public interface ModularCryptFormat<T extends Hash> extends HashFormat<T> {
+public interface ModularCryptFormat extends HashFormat {
 
     public static final String TOKEN_DELIMITER = "$";
 

@@ -18,7 +18,9 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
-import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.crypto.hash.Hash;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * {@code HashFormat} that outputs <em>only</em> the hash's digest bytes in Base64 format.  It does not print out
@@ -27,7 +29,7 @@ import org.apache.shiro.crypto.hash.SimpleHash;
  *
  * @since 1.2
  */
-public class Base64Format implements HashFormat<SimpleHash> {
+public class Base64Format implements HashFormat {
 
     /**
      * Returns {@code hash != null ? hash.toBase64() : null}.
@@ -36,7 +38,7 @@ public class Base64Format implements HashFormat<SimpleHash> {
      * @return {@code hash != null ? hash.toBase64() : null}.
      */
     @Override
-    public String format(final SimpleHash hash) {
-        return hash != null ? hash.toBase64() : null;
+    public String format(final Hash hash) {
+        return requireNonNull(hash).toBase64();
     }
 }

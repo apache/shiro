@@ -18,11 +18,11 @@
  */
 package org.apache.shiro.crypto.hash;
 
+import org.apache.shiro.crypto.UnknownAlgorithmException;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.CodecException;
 import org.apache.shiro.lang.codec.CodecSupport;
 import org.apache.shiro.lang.codec.Hex;
-import org.apache.shiro.crypto.UnknownAlgorithmException;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
@@ -46,6 +46,7 @@ import java.util.Arrays;
 @Deprecated
 public abstract class AbstractHash extends CodecSupport implements Hash, Serializable {
 
+    private static final long serialVersionUID = -4723044219611288405L;
     /**
      * The hashed data
      */
@@ -142,8 +143,10 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @return the {@link MessageDigest MessageDigest} algorithm name to use when performing the hash.
      */
+    @Override
     public abstract String getAlgorithmName();
 
+    @Override
     public byte[] getBytes() {
         return this.bytes;
     }
@@ -233,6 +236,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @return a hex-encoded string of the underlying {@link #getBytes byte array}.
      */
+    @Override
     public String toHex() {
         if (this.hexEncoded == null) {
             this.hexEncoded = Hex.encodeToString(getBytes());
@@ -249,6 +253,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @return a Base64-encoded string of the underlying {@link #getBytes byte array}.
      */
+    @Override
     public String toBase64() {
         if (this.base64Encoded == null) {
             //cache result in case this method is called multiple times.
@@ -262,6 +267,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @return the {@link #toHex() toHex()} value.
      */
+    @Override
     public String toString() {
         return toHex();
     }
@@ -274,6 +280,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      * @return {@code true} if the specified object is a Hash and its {@link #getBytes byte array} is identical to
      *         this Hash's byte array, {@code false} otherwise.
      */
+    @Override
     public boolean equals(Object o) {
         if (o instanceof Hash) {
             Hash other = (Hash) o;
@@ -287,6 +294,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @return toHex().hashCode()
      */
+    @Override
     public int hashCode() {
         if (this.bytes == null || this.bytes.length == 0) {
             return 0;
@@ -307,6 +315,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
         return "-base64".equals(arg) || "-times".equals(arg) || "-salt".equals(arg);
     }
 
+    @Deprecated
     static int doMain(Class<? extends AbstractHash> clazz, String[] args) {
         String simple = clazz.getSimpleName();
         int index = simple.indexOf("Hash");

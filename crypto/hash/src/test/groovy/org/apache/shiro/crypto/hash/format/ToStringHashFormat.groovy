@@ -18,17 +18,16 @@
  */
 package org.apache.shiro.crypto.hash.format
 
-
-import org.apache.shiro.crypto.hash.SimpleHash
+import org.apache.shiro.crypto.hash.Hash
 
 /**
  * Simple {@code HashFormat} for testing that merely returns {@code hash.toString()}.
  *
  * @since 1.2
  */
-class ToStringHashFormat implements HashFormat<SimpleHash> {
+class ToStringHashFormat implements HashFormat {
 
-    String format(SimpleHash hash) {
+    String format(Hash hash) {
         return hash.toString()
     }
 }

@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
-import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.crypto.hash.Hash;
 
 /**
  * {@code HashFormat} that outputs <em>only</em> The hash's digest bytes in hex format.  It does not print out
@@ -27,7 +27,7 @@ import org.apache.shiro.crypto.hash.SimpleHash;
  *
  * @since 1.2
  */
-public class HexFormat implements HashFormat<SimpleHash> {
+public class HexFormat implements HashFormat {
 
     /**
      * Returns {@code hash != null ? hash.toHex() : null}.
@@ -36,7 +36,7 @@ public class HexFormat implements HashFormat<SimpleHash> {
      * @return {@code hash != null ? hash.toHex() : null}.
      */
     @Override
-    public String format(final SimpleHash hash) {
+    public String format(final Hash hash) {
         return hash != null ? hash.toHex() : null;
     }
 }

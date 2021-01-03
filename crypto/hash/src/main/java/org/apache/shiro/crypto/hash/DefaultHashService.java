@@ -21,6 +21,7 @@ package org.apache.shiro.crypto.hash;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.lang.util.ByteSource;
+import org.apache.shiro.lang.util.SimpleByteSource;
 
 /**
  * Default implementation of the {@link HashService} interface, supporting a customizable hash algorithm name,
@@ -81,7 +82,7 @@ public class DefaultHashService implements ConfigurableHashService {
     /**
      * The 'private' part of the hash salt.
      */
-    private ByteSource privateSalt;
+    private ByteSource privateSalt = SimpleByteSource.empty();
 
     /**
      * The number of hash iterations to perform when computing hashes.
@@ -147,6 +148,7 @@ public class DefaultHashService implements ConfigurableHashService {
      * @return the response containing the result of the hash computation, as well as any hash salt used that should be
      *         exposed to the caller.
      */
+    @Override
     public Hash computeHash(HashRequest request) {
         if (request == null || request.getSource() == null || request.getSource().isEmpty()) {
             return null;
@@ -254,7 +256,7 @@ public class DefaultHashService implements ConfigurableHashService {
         int length = privateSaltLength + extraBytesLength;
 
         if (length <= 0) {
-            return null;
+            return SimpleByteSource.empty();
         }
 
         byte[] combined = new byte[length];
@@ -272,6 +274,7 @@ public class DefaultHashService implements ConfigurableHashService {
         return ByteSource.Util.bytes(combined);
     }
 
+    @Override
     public void setHashAlgorithmName(String name) {
         this.algorithmName = name;
     }
@@ -280,6 +283,7 @@ public class DefaultHashService implements ConfigurableHashService {
         return this.algorithmName;
     }
 
+    @Override
     public void setPrivateSalt(ByteSource privateSalt) {
         this.privateSalt = privateSalt;
     }
@@ -288,6 +292,7 @@ public class DefaultHashService implements ConfigurableHashService {
         return this.privateSalt;
     }
 
+    @Override
     public void setHashIterations(int count) {
         this.iterations = count;
     }
@@ -296,6 +301,7 @@ public class DefaultHashService implements ConfigurableHashService {
         return this.iterations;
     }
 
+    @Override
     public void setRandomNumberGenerator(RandomNumberGenerator rng) {
         this.rng = rng;
     }

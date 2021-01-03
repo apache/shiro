@@ -130,14 +130,21 @@ public class SimpleByteSource implements ByteSource {
                 o instanceof ByteSource || o instanceof File || o instanceof InputStream;
     }
 
-    public byte[] getBytes() {
-        return this.bytes;
+    public static ByteSource empty() {
+        return new SimpleByteSource(new byte[]{});
     }
 
+    @Override
+    public byte[] getBytes() {
+        return Arrays.copyOf(this.bytes, this.bytes.length);
+    }
+
+    @Override
     public boolean isEmpty() {
         return this.bytes == null || this.bytes.length == 0;
     }
 
+    @Override
     public String toHex() {
         if ( this.cachedHex == null ) {
             this.cachedHex = Hex.encodeToString(getBytes());
@@ -145,6 +152,7 @@ public class SimpleByteSource implements ByteSource {
         return this.cachedHex;
     }
 
+    @Override
     public String toBase64() {
         if ( this.cachedBase64 == null ) {
             this.cachedBase64 = Base64.encodeToString(getBytes());
@@ -152,10 +160,12 @@ public class SimpleByteSource implements ByteSource {
         return this.cachedBase64;
     }
 
+    @Override
     public String toString() {
         return toBase64();
     }
 
+    @Override
     public int hashCode() {
         if (this.bytes == null || this.bytes.length == 0) {
             return 0;
@@ -163,6 +173,7 @@ public class SimpleByteSource implements ByteSource {
         return Arrays.hashCode(this.bytes);
     }
 
+    @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;

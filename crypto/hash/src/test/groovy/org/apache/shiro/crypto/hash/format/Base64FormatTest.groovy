@@ -21,7 +21,9 @@ package org.apache.shiro.crypto.hash.format
 import org.apache.shiro.crypto.hash.Hash
 import org.apache.shiro.crypto.hash.Sha1Hash
 import org.junit.Test
-import static org.junit.Assert.*
+
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertThrows
 
 /**
  * Unit tests for the {@link Base64Format} implementation.
@@ -41,7 +43,7 @@ class Base64FormatTest {
     @Test
     void testFormatWithNullArgument() {
         Base64Format format = new Base64Format()
-        assertNull format.format(null)
+        assertThrows NullPointerException.class, { format.format(null) }
     }
 
 }

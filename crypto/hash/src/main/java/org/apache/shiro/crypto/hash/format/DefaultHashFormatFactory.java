@@ -112,12 +112,12 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
     }
 
     @Override
-    public HashFormat<?> getInstance(String in) {
+    public HashFormat getInstance(String in) {
         if (in == null) {
             return null;
         }
 
-        HashFormat<?> hashFormat = null;
+        HashFormat hashFormat = null;
         Class<?> clazz = null;
 
         //NOTE: this code block occurs BEFORE calling getHashFormatClass(in) on purpose as a performance

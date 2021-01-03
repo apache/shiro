@@ -19,6 +19,7 @@
 package org.apache.shiro.crypto.hash;
 
 import org.apache.shiro.lang.util.ByteSource;
+import org.apache.shiro.lang.util.SimpleByteSource;
 
 /**
  * A {@code HashRequest} is composed of data that will be used by a {@link HashService} to compute a hash (aka
@@ -85,7 +86,7 @@ public interface HashRequest {
     public static class Builder {
 
         private ByteSource source;
-        private ByteSource salt;
+        private ByteSource salt = SimpleByteSource.empty();
         private int iterations;
         private String algorithmName;
 

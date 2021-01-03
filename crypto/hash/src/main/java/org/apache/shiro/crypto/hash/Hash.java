@@ -64,4 +64,5 @@ public interface Hash extends ByteSource {
      */
     int getIterations();
 
+    boolean matchesPassword(ByteSource plaintextBytes);
 }

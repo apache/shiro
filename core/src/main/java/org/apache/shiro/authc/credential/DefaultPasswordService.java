@@ -39,8 +39,7 @@ import java.security.MessageDigest;
  * <h2>Hashing Passwords</h2>
  *
  * <h2>Comparing Passwords</h2>
- * All hashing operations are performed by the internal {@link #getHashService() hashService}.  After the hash
- * is computed, it is formatted into a String value via the internal {@link #getHashFormat() hashFormat}.
+ * All hashing operations are performed by the internal {@link #getHashService() hashService}.
  *
  * @since 1.2
  */
@@ -99,12 +98,7 @@ public class DefaultPasswordService implements HashingPasswordService {
             }
         }
 
-        HashRequest request = buildHashRequest(plaintextBytes, saved);
-
-        // TODO: hashrequest for (b)crypt
-        final Hash computed = this.hashService.computeHash(request);
-
-        return constantEquals(saved.toString(), computed.toString());
+        return saved.matchesPassword(plaintextBytes);
     }
 
     private boolean constantEquals(String savedHash, String computedHash) {
@@ -160,7 +154,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         //configuration changes.
         HashFormat discoveredFormat = this.hashFormatFactory.getInstance(saved);
 
-        if (discoveredFormat != null && discoveredFormat instanceof ParsableHashFormat) {
+        if (discoveredFormat instanceof ParsableHashFormat) {
 
             ParsableHashFormat parsableHashFormat = (ParsableHashFormat) discoveredFormat;
             Hash savedHash = parsableHashFormat.parse(saved);
@@ -181,16 +175,6 @@ public class DefaultPasswordService implements HashingPasswordService {
         String formatted = this.hashFormat.format(computed);
 
         return constantEquals(saved, formatted);
-    }
-
-    protected HashRequest buildHashRequest(ByteSource plaintext, Hash saved) {
-        //keep everything from the saved hash except for the source:
-        return new HashRequest.Builder().setSource(plaintext)
-                //now use the existing saved data:
-                .setAlgorithmName(saved.getAlgorithmName())
-                .setSalt(saved.getSalt())
-                .setIterations(saved.getIterations())
-                .build();
     }
 
     public HashService getHashService() {

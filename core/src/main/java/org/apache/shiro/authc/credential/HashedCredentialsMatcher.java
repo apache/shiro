@@ -21,12 +21,15 @@ package org.apache.shiro.authc.credential;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SaltedAuthenticationInfo;
-import org.apache.shiro.lang.codec.Base64;
-import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.crypto.hash.AbstractHash;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.lang.codec.Base64;
+import org.apache.shiro.lang.codec.Hex;
+import org.apache.shiro.lang.util.SimpleByteSource;
 import org.apache.shiro.lang.util.StringUtils;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A {@code HashedCredentialMatcher} provides support for hashing of supplied {@code AuthenticationToken} credentials
@@ -341,6 +344,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * @param info the AuthenticationInfo from which to retrieve the credentials which assumed to be in already-hashed form.
      * @return a {@link Hash Hash} instance representing the given AuthenticationInfo's stored credentials.
      */
+    @Override
     protected Object getCredentials(AuthenticationInfo info) {
         Object credentials = info.getCredentials();
 
@@ -400,14 +404,14 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * @since 1.1
      */
     protected Object hashProvidedCredentials(AuthenticationToken token, AuthenticationInfo info) {
-        Object salt = null;
+        final Object salt;
         if (info instanceof SaltedAuthenticationInfo) {
             salt = ((SaltedAuthenticationInfo) info).getCredentialsSalt();
-        } else {
+        } else if (isHashSalted()) {
             //retain 1.0 backwards compatibility:
-            if (isHashSalted()) {
-                salt = getSalt(token);
-            }
+            salt = getSalt(token);
+        } else {
+            salt = SimpleByteSource.empty();
         }
         return hashProvidedCredentials(token.getCredentials(), salt, getHashIterations());
     }
@@ -442,7 +446,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      */
     protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
         String hashAlgorithmName = assertHashAlgorithmName();
-        return new SimpleHash(hashAlgorithmName, credentials, salt, hashIterations);
+        return new SimpleHash(hashAlgorithmName, credentials, requireNonNull(salt, "salt cannot be null."), hashIterations);
     }
 
     /**

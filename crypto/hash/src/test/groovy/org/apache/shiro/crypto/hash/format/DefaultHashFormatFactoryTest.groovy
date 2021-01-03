@@ -84,18 +84,6 @@ class DefaultHashFormatFactoryTest {
     }
 
     @Test
-    void testGetInstanceWithBcrypt() {
-        // given
-        def factory = new DefaultHashFormatFactory()
-
-        // when
-        def instance = factory.getInstance('$unixcrypt$')
-
-        // then
-        assertTrue instance instanceof UnixCryptFormat
-    }
-
-    @Test
     void testAbsentFQCN() {
         def factory = new DefaultHashFormatFactory()
         def instance = factory.getInstance("com.foo.bar.some.random.MyHashFormat")

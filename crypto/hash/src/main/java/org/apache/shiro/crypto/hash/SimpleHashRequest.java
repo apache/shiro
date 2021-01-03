@@ -20,6 +20,8 @@ package org.apache.shiro.crypto.hash;
 
 import org.apache.shiro.lang.util.ByteSource;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Simple implementation of {@link HashRequest} that can be used when interacting with a {@link HashService}.
  *
@@ -47,27 +49,28 @@ public class SimpleHashRequest implements HashRequest {
      * @throws NullPointerException if {@code source} is null or empty.
      */
     public SimpleHashRequest(String algorithmName, ByteSource source, ByteSource salt, int iterations) {
-        if (source == null) {
-            throw new NullPointerException("source argument cannot be null");
-        }
-        this.source = source;
+        this.source = requireNonNull(source);
         this.salt = salt;
         this.algorithmName = algorithmName;
         this.iterations = Math.max(0, iterations);
     }
 
+    @Override
     public ByteSource getSource() {
         return this.source;
     }
 
+    @Override
     public ByteSource getSalt() {
         return this.salt;
     }
 
+    @Override
     public int getIterations() {
         return iterations;
     }
 
+    @Override
     public String getAlgorithmName() {
         return algorithmName;
     }

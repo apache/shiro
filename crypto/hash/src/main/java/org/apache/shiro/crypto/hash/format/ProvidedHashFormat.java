@@ -40,16 +40,11 @@ public enum ProvidedHashFormat {
     /**
      * Value representing the {@link Shiro1CryptFormat} implementation.
      */
-    SHIRO1(Shiro1CryptFormat.class),
-
-    /**
-     * Unix Crypt format {@link UnixCryptFormat} as they are used in {@code /etc/shadow} files.
-     */
-    UNIXCRYPT(UnixCryptFormat.class);
+    SHIRO1(Shiro1CryptFormat.class);
 
     private final Class<? extends HashFormat> clazz;
 
-    private ProvidedHashFormat(final Class<? extends HashFormat> clazz) {
+    ProvidedHashFormat(final Class<? extends HashFormat> clazz) {
         this.clazz = clazz;
     }
 

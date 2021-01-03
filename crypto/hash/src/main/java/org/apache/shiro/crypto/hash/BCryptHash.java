@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.StringJoiner;
+import java.util.regex.Pattern;
 
 public class BCryptHash extends AbstractCryptHash {
 
@@ -39,21 +40,23 @@ public class BCryptHash extends AbstractCryptHash {
 
     private static final int SALT_LENGTH = 16;
 
+    private static final Pattern DELIMITER = Pattern.compile("\\$");
+
     private final String version;
-    private final byte[] salt;
+    private final ByteSource salt;
     private final byte[] hashedData;
     private final int cost;
 
 
-    public BCryptHash(final byte[] salt, final byte[] hashedData, final int cost) {
-        this(ALGORITHM_NAME, salt, hashedData, cost);
+    public BCryptHash(final byte[] hashedData, final ByteSource salt, final int cost) {
+        this(ALGORITHM_NAME, hashedData, salt, cost);
     }
 
-    public BCryptHash(final String version, final byte[] salt, final byte[] hashedData, final int cost) {
+    public BCryptHash(final String version, final byte[] hashedData, final ByteSource salt, final int cost) {
         super();
         this.version = version;
+        this.hashedData = Arrays.copyOf(hashedData, hashedData.length);
         this.salt = salt;
-        this.hashedData = hashedData;
         this.cost = cost;
     }
 
@@ -65,14 +68,26 @@ public class BCryptHash extends AbstractCryptHash {
     public static BCryptHash generate(final char[] source, final byte[] initialSalt, final int cost) {
         final String cryptString = OpenBSDBCrypt.generate(ALGORITHM_NAME, source, initialSalt, cost);
 
-        final String dataSection = cryptString.substring(cryptString.lastIndexOf('$') + 1);
+        return fromCryptString(cryptString);
+    }
+
+    private static BCryptHash fromCryptString(String cryptString) {
+        String[] parts = DELIMITER.split(cryptString.substring(1), -1);
+
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Expected string containing three '$' but got: '" + Arrays.toString(parts) + "'.");
+        }
+
+        final String algorithmName = parts[0];
+        final int cost = Integer.parseInt(parts[1], 10);
+        final String dataSection = parts[2];
         final OpenBSDBase64.Default bcryptBase64 = new OpenBSDBase64.Default();
         final String saltBase64 = dataSection.substring(0, 22);
         final String bytesBase64 = dataSection.substring(22);
         final byte[] salt = bcryptBase64.decode(saltBase64.getBytes(StandardCharsets.ISO_8859_1));
         final byte[] hashedData = bcryptBase64.decode(bytesBase64.getBytes(StandardCharsets.ISO_8859_1));
 
-        return new BCryptHash(ALGORITHM_NAME, salt, hashedData, cost);
+        return new BCryptHash(algorithmName, hashedData, new SimpleByteSource(salt), cost);
     }
 
     protected static byte[] createSalt() {
@@ -91,7 +106,7 @@ public class BCryptHash extends AbstractCryptHash {
 
     @Override
     public ByteSource getSalt() {
-        return new SimpleByteSource(Arrays.copyOf(this.salt, SALT_LENGTH));
+        return this.salt;
     }
 
     /**
@@ -102,6 +117,13 @@ public class BCryptHash extends AbstractCryptHash {
     @Override
     public int getIterations() {
         return this.getCost();
+    }
+
+    @Override
+    public boolean matchesPassword(ByteSource plaintextBytes) {
+        final String cryptString = OpenBSDBCrypt.generate(ALGORITHM_NAME, plaintextBytes.getBytes(), this.salt.getBytes(), cost);
+
+        return this.equals(fromCryptString(cryptString));
     }
 
     public int getRealIterations() {
@@ -127,7 +149,7 @@ public class BCryptHash extends AbstractCryptHash {
         return new StringJoiner(", ", BCryptHash.class.getSimpleName() + "[", "]")
                 .add("super=" + super.toString())
                 .add("version='" + this.version + "'")
-                .add("salt=" + Arrays.toString(this.salt))
+                .add("salt=" + Arrays.toString(this.salt.getBytes()))
                 .add("hashedData=" + Arrays.toString(this.hashedData))
                 .add("cost=" + this.cost)
                 .toString();

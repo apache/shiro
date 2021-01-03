@@ -21,6 +21,7 @@ package org.apache.shiro.authc.credential;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.crypto.hash.Hash;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * A {@link CredentialsMatcher} that employs best-practices comparisons for hashed text passwords.
@@ -39,6 +40,7 @@ public class PasswordMatcher implements CredentialsMatcher {
         this.passwordService = new DefaultPasswordService();
     }
 
+    @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
 
         PasswordService service = ensurePasswordService();
@@ -49,8 +51,7 @@ public class PasswordMatcher implements CredentialsMatcher {
 
         if (storedCredentials instanceof Hash) {
             Hash hashedPassword = (Hash)storedCredentials;
-            HashingPasswordService hashingService = assertHashingPasswordService(service);
-            return hashingService.passwordsMatch(submittedPassword, hashedPassword);
+            return hashedPassword.matchesPassword(ByteSource.Util.bytes(submittedPassword));
         }
         //otherwise they are a String (asserted in the 'assertStoredCredentialsType' method call above):
         String formatted = (String)storedCredentials;
