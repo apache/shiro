@@ -26,6 +26,7 @@ import org.apache.shiro.crypto.hash.Sha256Hash
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat
 import org.junit.Test
 
+import static java.lang.Math.pow
 import static org.easymock.EasyMock.*
 import static org.junit.Assert.*
 
@@ -178,7 +179,8 @@ class PasswordMatcherTest {
     void testBCryptPassword() {
         // given
         def matcher = new PasswordMatcher();
-        def bcryptPw = '$shiro1$2y$10$7rOjsAf2U/AKKqpMpCIn6e$tuOXyQ86tp2Tn9xv6FyXl2T0QYc3.G.'
+        def iterations = (int) pow(2, 10)
+        def bcryptPw = '$shiro1$2y$' + iterations + '$7rOjsAf2U/AKKqpMpCIn6e$tuOXyQ86tp2Tn9xv6FyXl2T0QYc3.G.'
         def bcryptHash = new Shiro1CryptFormat().parse(bcryptPw);
         def plaintext = 'secret#shiro,password;Jo8opech'
         def principal = "user"

@@ -22,14 +22,23 @@ package org.apache.shiro.crypto.hash;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.CodecSupport;
 import org.apache.shiro.lang.codec.Hex;
+import org.apache.shiro.lang.util.ByteSource;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.Locale;
+import java.util.StringJoiner;
+
+import static java.util.Objects.requireNonNull;
 
 public abstract class AbstractCryptHash extends CodecSupport implements Hash, Serializable {
 
     private static final long serialVersionUID = 2483214646921027859L;
+    private final String version;
+    private final byte[] hashedData;
+    private final ByteSource salt;
+    private final int iterations;
     /**
      * Cached value of the {@link #toHex() toHex()} call so multiple calls won't incur repeated overhead.
      */
@@ -39,17 +48,84 @@ public abstract class AbstractCryptHash extends CodecSupport implements Hash, Se
      */
     private String base64Encoded;
 
+    public AbstractCryptHash(final String version, final byte[] hashedData, final ByteSource salt, final int cost) {
+        this.version = version;
+        this.hashedData = Arrays.copyOf(hashedData, hashedData.length);
+        this.salt = requireNonNull(salt);
+        this.iterations = cost;
+        checkValid();
+    }
+
+    protected final void checkValid() {
+        checkValidAlgorithm();
+
+        checkValidSalt();
+
+        checkValidIterations();
+    }
+
+    protected abstract void checkValidAlgorithm();
+
+    private void checkValidSalt() {
+        int length = salt.getBytes().length;
+        if (length != getSaltLength()) {
+            String message = String.format(
+                    Locale.ENGLISH,
+                    "Salt length is expected to be [%d] bytes, but was [%d] bytes.",
+                    getSaltLength(),
+                    length
+            );
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    protected abstract void checkValidIterations();
+
     /**
      * Implemented by subclasses, this specifies the {@link MessageDigest MessageDigest} algorithm name
      * to use when performing the hash.
+     *
+     * <p>When multiple algorithm names are acceptable, then this method should return the primary algorithm name.</p>
+     *
+     * <p>Example: Bcrypt hashed can be identified by {@code 2y} and {@code 2a}. The method will return {@code 2y}
+     * for newly generated hashes by default, unless otherwise overridden.</p>
      *
      * @return the {@link MessageDigest MessageDigest} algorithm name to use when performing the hash.
      */
     @Override
     public abstract String getAlgorithmName();
 
+    /**
+     * The length in number of bytes of the salt which is needed for this algorithm.
+     *
+     * @return the expected length of the salt (in bytes).
+     */
     public abstract int getSaltLength();
 
+    @Override
+    public ByteSource getSalt() {
+        return this.salt;
+    }
+
+    /**
+     * <strong>Warning!</strong> The returned value is actually the cost, not the iterations.
+     *
+     * @return the cost.
+     */
+    @Override
+    public int getIterations() {
+        return this.iterations;
+    }
+
+    @Override
+    public byte[] getBytes() {
+        return Arrays.copyOf(this.hashedData, this.hashedData.length);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 
     /**
      * Returns a hex-encoded string of the underlying {@link #getBytes byte array}.
@@ -83,16 +159,6 @@ public abstract class AbstractCryptHash extends CodecSupport implements Hash, Se
     }
 
     /**
-     * Simple implementation that merely returns {@link #toHex() toHex()}.
-     *
-     * @return the {@link #toHex() toHex()} value.
-     */
-    @Override
-    public String toString() {
-        return this.toHex();
-    }
-
-    /**
      * Returns {@code true} if the specified object is a Hash and its {@link #getBytes byte array} is identical to
      * this Hash's byte array, {@code false} otherwise.
      *
@@ -120,5 +186,23 @@ public abstract class AbstractCryptHash extends CodecSupport implements Hash, Se
             return 0;
         }
         return Arrays.hashCode(this.getBytes());
+    }
+
+    /**
+     * Simple implementation that merely returns {@link #toHex() toHex()}.
+     *
+     * @return the {@link #toHex() toHex()} value.
+     */
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", AbstractCryptHash.class.getSimpleName() + "[", "]")
+                .add("super=" + super.toString())
+                .add("version='" + version + "'")
+                .add("hashedData=" + Arrays.toString(hashedData))
+                .add("salt=" + salt)
+                .add("iterations=" + iterations)
+                .add("hexEncoded='" + hexEncoded + "'")
+                .add("base64Encoded='" + base64Encoded + "'")
+                .toString();
     }
 }

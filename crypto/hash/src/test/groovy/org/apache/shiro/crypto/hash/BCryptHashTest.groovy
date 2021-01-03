@@ -17,43 +17,46 @@
  * under the License.
  */
 
-package org.apache.shiro.crypto.hash;
+package org.apache.shiro.crypto.hash
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test
 
-import java.security.SecureRandom;
+import java.security.SecureRandom
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static java.lang.Math.pow
+import static org.junit.jupiter.api.Assertions.assertArrayEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
 
-public class BCryptHashTest {
+class BCryptHashTest {
 
     private static final String TEST_PASSWORD = "secret#shiro,password;Jo8opech";
 
     @Test
-    public void testCreateHashGenerateSaltIterations() {
+    void testCreateHashGenerateSaltIterations() {
         // given
-        final char[] testPasswordChars = TEST_PASSWORD.toCharArray();
+        final def testPasswordChars = TEST_PASSWORD.toCharArray();
 
         // when
-        final BCryptHash bCryptHash = BCryptHash.generate(testPasswordChars);
+        final def bCryptHash = BCryptHash.generate testPasswordChars;
 
         // then
-        assertEquals(BCryptHash.DEFAULT_ITERATIONS, bCryptHash.getIterations());
+        assertEquals BCryptHash.DEFAULT_COST, bCryptHash.cost;
     }
 
     @Test
-    public void testCreateHashGivenSalt() {
+    void testCreateHashGivenSalt() {
         // given
-        final char[] testPasswordChars = TEST_PASSWORD.toCharArray();
-        final byte[] salt = new SecureRandom().generateSeed(16);
+        final def testPasswordChars = TEST_PASSWORD.toCharArray();
+        final def salt = new SecureRandom().generateSeed 16;
+        final def cost = 6
 
         // when
-        final BCryptHash bCryptHash = BCryptHash.generate(testPasswordChars, salt, 6);
+        final def bCryptHash = BCryptHash.generate(testPasswordChars, salt, cost);
 
         // then
-        assertEquals(6, bCryptHash.getIterations());
-        assertArrayEquals(salt, bCryptHash.getSalt().getBytes());
+        assertEquals cost, bCryptHash.cost;
+        assertEquals pow(2, cost) as int, bCryptHash.iterations;
+        assertArrayEquals salt, bCryptHash.salt.bytes;
     }
 
 }

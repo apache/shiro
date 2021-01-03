@@ -28,8 +28,6 @@ import org.apache.shiro.lang.util.SimpleByteSource;
 import org.apache.shiro.lang.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The {@code Shiro1CryptFormat} is a fully reversible
@@ -96,7 +94,6 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
 
     public static final String ID = "shiro1";
     public static final String MCF_PREFIX = TOKEN_DELIMITER + ID + TOKEN_DELIMITER;
-    private static final List<String> ALGORITHMS_BCRYPT = Arrays.asList("2", "2a", "2b", "2y");
 
     public Shiro1CryptFormat() {
     }
@@ -150,7 +147,7 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         final String algorithmName = parts[i];
 
         final byte[] digest;
-        if (ALGORITHMS_BCRYPT.contains(algorithmName)) {
+        if (BCryptHash.getAlgorithmsBcrypt().contains(algorithmName)) {
             digest = new OpenBSDBase64.Default().decode(digestBase64.getBytes(StandardCharsets.ISO_8859_1));
         } else {
             digest = Base64.decode(digestBase64);
@@ -170,6 +167,7 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
             case "2a":
             case "2b":
             case "2y":
+                // bcrypt
                 return new BCryptHash(algorithmName, digest, salt, iterations);
             default:
                 final SimpleHash hash = new SimpleHash(algorithmName);

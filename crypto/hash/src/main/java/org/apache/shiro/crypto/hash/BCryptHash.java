@@ -27,14 +27,18 @@ import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
+
+import static java.util.Collections.unmodifiableList;
 
 public class BCryptHash extends AbstractCryptHash {
 
     private static final long serialVersionUID = 6957869292324606101L;
 
-    protected static final int DEFAULT_ITERATIONS = 10;
+    protected static final int DEFAULT_COST = 10;
 
     private static final String ALGORITHM_NAME = "2y";
 
@@ -42,26 +46,66 @@ public class BCryptHash extends AbstractCryptHash {
 
     private static final Pattern DELIMITER = Pattern.compile("\\$");
 
-    private final String version;
-    private final ByteSource salt;
-    private final byte[] hashedData;
-    private final int cost;
+    private static final List<String> ALGORITHMS_BCRYPT = Arrays.asList("2", "2a", "2b", "2y");
 
-
-    public BCryptHash(final byte[] hashedData, final ByteSource salt, final int cost) {
-        this(ALGORITHM_NAME, hashedData, salt, cost);
+    public BCryptHash(final byte[] hashedData, final ByteSource salt, final int iterations) {
+        this(ALGORITHM_NAME, hashedData, salt, iterations);
     }
 
-    public BCryptHash(final String version, final byte[] hashedData, final ByteSource salt, final int cost) {
-        super();
-        this.version = version;
-        this.hashedData = Arrays.copyOf(hashedData, hashedData.length);
-        this.salt = salt;
-        this.cost = cost;
+    public BCryptHash(final String version, final byte[] hashedData, final ByteSource salt, final int iterations) {
+        super(version, hashedData, salt, iterations);
+    }
+
+    @Override
+    protected final void checkValidAlgorithm() {
+        if (!ALGORITHMS_BCRYPT.contains(getAlgorithmName())) {
+            final String message = String.format(
+                    Locale.ENGLISH,
+                    "Given algorithm name [%s] not valid for bcrypt. " +
+                            "Valid algorithms: [%s].",
+                    getAlgorithmName(),
+                    ALGORITHMS_BCRYPT
+            );
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    @Override
+    protected final void checkValidIterations() {
+        double costDbl = Math.log10(this.getIterations()) / Math.log10(2);
+        if ((costDbl != Math.floor(costDbl)) || Double.isInfinite(costDbl)) {
+            throw new IllegalArgumentException("Iterations are not a power of 2. Found: [" + this.getIterations() + "].");
+        }
+
+        int cost = (int) costDbl;
+        if (cost < 4 || cost > 31) {
+            final String message = String.format(
+                    Locale.ENGLISH,
+                    "Expected bcrypt cost >= 4 and <=30, but was [%d].",
+                    cost
+            );
+            throw new IllegalArgumentException(message);
+        }
+
+        double iterations = Math.pow(2, cost);
+        if (iterations != getIterations()) {
+            throw new IllegalArgumentException("Iterations are not a power of 2!");
+        }
+    }
+
+    public int getCost() {
+        double cost = Math.log10(this.getIterations()) / Math.log10(2);
+
+        return (int) cost;
+    }
+
+
+    public static List<String> getAlgorithmsBcrypt() {
+        return unmodifiableList(ALGORITHMS_BCRYPT);
     }
 
     public static BCryptHash generate(final char[] source) {
-        return generate(source, createSalt(), DEFAULT_ITERATIONS);
+        return generate(source, createSalt(), DEFAULT_COST);
     }
 
 
@@ -80,6 +124,8 @@ public class BCryptHash extends AbstractCryptHash {
 
         final String algorithmName = parts[0];
         final int cost = Integer.parseInt(parts[1], 10);
+        final int iterations = (int) Math.pow(2, cost);
+
         final String dataSection = parts[2];
         final OpenBSDBase64.Default bcryptBase64 = new OpenBSDBase64.Default();
         final String saltBase64 = dataSection.substring(0, 22);
@@ -87,7 +133,7 @@ public class BCryptHash extends AbstractCryptHash {
         final byte[] salt = bcryptBase64.decode(saltBase64.getBytes(StandardCharsets.ISO_8859_1));
         final byte[] hashedData = bcryptBase64.decode(bytesBase64.getBytes(StandardCharsets.ISO_8859_1));
 
-        return new BCryptHash(algorithmName, hashedData, new SimpleByteSource(salt), cost);
+        return new BCryptHash(algorithmName, hashedData, new SimpleByteSource(salt), iterations);
     }
 
     protected static byte[] createSalt() {
@@ -105,53 +151,16 @@ public class BCryptHash extends AbstractCryptHash {
     }
 
     @Override
-    public ByteSource getSalt() {
-        return this.salt;
-    }
-
-    /**
-     * <strong>Warning!</strong> The returned value is actually the cost, not the iterations.
-     *
-     * @return the cost.
-     */
-    @Override
-    public int getIterations() {
-        return this.getCost();
-    }
-
-    @Override
     public boolean matchesPassword(ByteSource plaintextBytes) {
-        final String cryptString = OpenBSDBCrypt.generate(ALGORITHM_NAME, plaintextBytes.getBytes(), this.salt.getBytes(), cost);
+        final String cryptString = OpenBSDBCrypt.generate(ALGORITHM_NAME, plaintextBytes.getBytes(), this.getSalt().getBytes(), this.getCost());
 
         return this.equals(fromCryptString(cryptString));
-    }
-
-    public int getRealIterations() {
-        return (int) Math.pow(2, this.getCost());
-    }
-
-    public int getCost() {
-        return this.cost;
-    }
-
-    @Override
-    public byte[] getBytes() {
-        return Arrays.copyOf(this.hashedData, this.hashedData.length);
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", BCryptHash.class.getSimpleName() + "[", "]")
                 .add("super=" + super.toString())
-                .add("version='" + this.version + "'")
-                .add("salt=" + Arrays.toString(this.salt.getBytes()))
-                .add("hashedData=" + Arrays.toString(this.hashedData))
-                .add("cost=" + this.cost)
                 .toString();
     }
 }
