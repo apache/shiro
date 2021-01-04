@@ -72,9 +72,13 @@ public class BCryptHash extends AbstractCryptHash {
 
     @Override
     protected final void checkValidIterations() {
-        double costDbl = Math.log10(this.getIterations()) / Math.log10(2);
+        checkValidIterations(this.getIterations());
+    }
+
+    protected static void checkValidIterations(int iterations) {
+        double costDbl = Math.log10(iterations) / Math.log10(2);
         if ((costDbl != Math.floor(costDbl)) || Double.isInfinite(costDbl)) {
-            throw new IllegalArgumentException("Iterations are not a power of 2. Found: [" + this.getIterations() + "].");
+            throw new IllegalArgumentException("Iterations are not a power of 2. Found: [" + iterations + "].");
         }
 
         int cost = (int) costDbl;
@@ -87,14 +91,19 @@ public class BCryptHash extends AbstractCryptHash {
             throw new IllegalArgumentException(message);
         }
 
-        double iterations = Math.pow(2, cost);
-        if (iterations != getIterations()) {
+        double iterationCount = Math.pow(2, cost);
+        if (iterations != iterationCount) {
             throw new IllegalArgumentException("Iterations are not a power of 2!");
         }
     }
 
     public int getCost() {
-        double cost = Math.log10(this.getIterations()) / Math.log10(2);
+        return getCostFromIterations(this.getIterations());
+    }
+
+    public static int getCostFromIterations(final int iterations) {
+        checkValidIterations(iterations);
+        double cost = Math.log10(iterations) / Math.log10(2);
 
         return (int) cost;
     }
@@ -104,13 +113,17 @@ public class BCryptHash extends AbstractCryptHash {
         return unmodifiableList(ALGORITHMS_BCRYPT);
     }
 
-    public static BCryptHash generate(final char[] source) {
+    public static BCryptHash generate(final ByteSource source) {
         return generate(source, createSalt(), DEFAULT_COST);
     }
 
 
-    public static BCryptHash generate(final char[] source, final byte[] initialSalt, final int cost) {
-        final String cryptString = OpenBSDBCrypt.generate(ALGORITHM_NAME, source, initialSalt, cost);
+    public static BCryptHash generate(final ByteSource source, final ByteSource initialSalt, final int cost) {
+        return generate(ALGORITHM_NAME, source, initialSalt, cost);
+    }
+
+    public static BCryptHash generate(String algorithmName, ByteSource source, ByteSource salt, int cost) {
+        final String cryptString = OpenBSDBCrypt.generate(algorithmName, source.getBytes(), salt.getBytes(), cost);
 
         return fromCryptString(cryptString);
     }
@@ -136,13 +149,8 @@ public class BCryptHash extends AbstractCryptHash {
         return new BCryptHash(algorithmName, hashedData, new SimpleByteSource(salt), iterations);
     }
 
-    protected static byte[] createSalt() {
-        return new SecureRandom().generateSeed(SALT_LENGTH);
-    }
-
-    @Override
-    public String getAlgorithmName() {
-        return ALGORITHM_NAME;
+    protected static ByteSource createSalt() {
+        return new SimpleByteSource(new SecureRandom().generateSeed(SALT_LENGTH));
     }
 
     @Override
@@ -152,7 +160,7 @@ public class BCryptHash extends AbstractCryptHash {
 
     @Override
     public boolean matchesPassword(ByteSource plaintextBytes) {
-        final String cryptString = OpenBSDBCrypt.generate(ALGORITHM_NAME, plaintextBytes.getBytes(), this.getSalt().getBytes(), this.getCost());
+        final String cryptString = OpenBSDBCrypt.generate(this.getAlgorithmName(), plaintextBytes.getBytes(), this.getSalt().getBytes(), this.getCost());
 
         return this.equals(fromCryptString(cryptString));
     }

@@ -20,13 +20,11 @@ package org.apache.shiro.tools.hasher;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
-import org.apache.shiro.lang.codec.Base64;
-import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.UnknownAlgorithmException;
 import org.apache.shiro.crypto.hash.DefaultHashService;
@@ -38,12 +36,16 @@ import org.apache.shiro.crypto.hash.format.HashFormat;
 import org.apache.shiro.crypto.hash.format.HashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HexFormat;
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
+import org.apache.shiro.lang.codec.Base64;
+import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.lang.io.ResourceUtils;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.StringUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 
 /**
@@ -66,7 +68,7 @@ public final class Hasher {
     private static final int DEFAULT_NUM_ITERATIONS = 1;
     private static final int DEFAULT_PASSWORD_NUM_ITERATIONS = DefaultPasswordService.DEFAULT_HASH_ITERATIONS;
 
-    private static final Option ALGORITHM = new Option("a", "algorithm", true, "hash algorithm name.  Defaults to SHA-256 when password hashing, MD5 otherwise.");
+    private static final Option ALGORITHM = new Option("a", "algorithm", true, "hash algorithm name.  Defaults to Argon2 when password hashing, SHA-512 otherwise.");
     private static final Option DEBUG = new Option("d", "debug", false, "show additional error (stack trace) information.");
     private static final Option FORMAT = new Option("f", "format", true, "hash output format.  Defaults to 'shiro1' when password hashing, 'hex' otherwise.  See below for more information.");
     private static final Option HELP = new Option("help", "help", false, "show this help message.");
@@ -441,12 +443,20 @@ public final class Hasher {
         System.exit(exitCode);
     }
 
-    private static char[] readPassword(boolean confirm) {
+    private static char[] readPassword(boolean confirm) throws IOException {
         java.io.Console console = System.console();
-        if (console == null) {
-            throw new IllegalStateException("java.io.Console is not available on the current JVM.  Cannot read passwords.");
+        char[] first;
+        if (console != null) {
+            first = console.readPassword("%s", "Password to hash: ");
+            //throw new IllegalStateException("java.io.Console is not available on the current JVM.  Cannot read passwords.");
+        } else if (System.in != null) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            String readLine = br.readLine();
+            first = readLine.toCharArray();
+        } else {
+            throw new IllegalStateException("java.io.Console and java.lang.System.in are not available on the current JVM. Cannot read passwords.");
         }
-        char[] first = console.readPassword("%s", "Password to hash: ");
+
         if (first == null || first.length == 0) {
             throw new IllegalArgumentException("No password specified.");
         }

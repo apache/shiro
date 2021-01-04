@@ -93,7 +93,9 @@ public abstract class AbstractCryptHash extends CodecSupport implements Hash, Se
      * @return the {@link MessageDigest MessageDigest} algorithm name to use when performing the hash.
      */
     @Override
-    public abstract String getAlgorithmName();
+    public String getAlgorithmName() {
+        return this.version;
+    }
 
     /**
      * The length in number of bytes of the salt which is needed for this algorithm.

@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
+import org.apache.shiro.crypto.hash.Argon2Hash;
 import org.apache.shiro.crypto.hash.BCryptHash;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
@@ -28,6 +29,7 @@ import org.apache.shiro.lang.util.SimpleByteSource;
 import org.apache.shiro.lang.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 /**
  * The {@code Shiro1CryptFormat} is a fully reversible
@@ -68,7 +70,8 @@ import java.nio.charset.StandardCharsets;
  *     <tr>
  *         <td>3</td>
  *         <td>{@code iterationCount}</td>
- *         <td>The number of hash iterations performed.</td>
+ *         <td>The number of hash iterations performed. In case of argon2, this is a comma separated list,
+ *         containing the number of iterations, the memory in kiB and the parallelism count.</td>
  *         <td>true (1 <= N <= Integer.MAX_VALUE)</td>
  *     </tr>
  *     <tr>
@@ -111,8 +114,9 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
 
         final String algorithmName = hash.getAlgorithmName();
         final ByteSource salt = hash.getSalt();
-        final int iterations = hash.getIterations();
-        final StringBuilder sb = new StringBuilder(MCF_PREFIX).append(algorithmName).append(TOKEN_DELIMITER).append(iterations).append(TOKEN_DELIMITER);
+        String iterationParameter = formatIterationParameter(hash);
+
+        final StringBuilder sb = new StringBuilder(MCF_PREFIX).append(algorithmName).append(TOKEN_DELIMITER).append(iterationParameter).append(TOKEN_DELIMITER);
 
         if (salt != null) {
             sb.append(salt.toBase64());
@@ -122,6 +126,22 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         sb.append(hash.toBase64());
 
         return sb.toString();
+    }
+
+    private String formatIterationParameter(Hash hash) {
+        if (hash instanceof Argon2Hash) {
+            Argon2Hash argon2Hash = (Argon2Hash) hash;
+
+            return String.format(
+                    Locale.ENGLISH,
+                    "%d,%d,%d",
+                    hash.getIterations(),
+                    argon2Hash.getMemoryKiB(),
+                    argon2Hash.getParallelism()
+            );
+        }
+
+        return "" + hash.getIterations();
     }
 
     @Override
@@ -154,13 +174,8 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         }
         ByteSource salt = parseSalt(saltBase64, algorithmName);
 
-        final int iterations;
-        try {
-            iterations = Integer.parseInt(iterationsString);
-        } catch (final NumberFormatException e) {
-            final String msg = "Unable to parse formatted hash string: " + formatted;
-            throw new IllegalArgumentException(msg, e);
-        }
+        String[] iterationsParameter = iterationsString.split(",");
+        final int iterations = parseIterations(formatted, iterationsParameter);
 
         switch (algorithmName) {
             case "2":
@@ -169,6 +184,15 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
             case "2y":
                 // bcrypt
                 return new BCryptHash(algorithmName, digest, salt, iterations);
+            case "argon2":
+            case "argon2d":
+            case "argon2i":
+            case "argon2id":
+                // argon2
+                // also needsmemory and parallelism
+                int memoryKiB = parseMemory(formatted, iterationsParameter);
+                int paralellism = parseParallelism(formatted, iterationsParameter);
+                return new Argon2Hash(algorithmName, digest, salt, iterations, memoryKiB, paralellism);
             default:
                 final SimpleHash hash = new SimpleHash(algorithmName);
                 hash.setBytes(digest);
@@ -176,6 +200,33 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
                 hash.setIterations(iterations);
 
                 return hash;
+        }
+    }
+
+    private int parseParallelism(String formatted, String[] iterationsParameter) {
+        try {
+            return Integer.parseInt(iterationsParameter[2]);
+        } catch (final NumberFormatException | IndexOutOfBoundsException e) {
+            final String msg = "Unable to parse formatted hash string: " + formatted;
+            throw new IllegalArgumentException(msg, e);
+        }
+    }
+
+    private int parseMemory(String formatted, String[] iterationsParameter) {
+        try {
+            return Integer.parseInt(iterationsParameter[1]);
+        } catch (final NumberFormatException | IndexOutOfBoundsException e) {
+            final String msg = "Unable to parse formatted hash string: " + formatted;
+            throw new IllegalArgumentException(msg, e);
+        }
+    }
+
+    private int parseIterations(String formatted, String[] iterationsParameter) {
+        try {
+            return Integer.parseInt(iterationsParameter[0]);
+        } catch (final NumberFormatException e) {
+            final String msg = "Unable to parse formatted hash string: " + formatted;
+            throw new IllegalArgumentException(msg, e);
         }
     }
 

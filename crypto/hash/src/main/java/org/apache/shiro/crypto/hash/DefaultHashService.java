@@ -23,6 +23,8 @@ import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
 
+import java.util.Optional;
+
 /**
  * Default implementation of the {@link HashService} interface, supporting a customizable hash algorithm name,
  * secure-random salt generation, multiple hash iterations and an optional internal
@@ -162,6 +164,34 @@ public class DefaultHashService implements ConfigurableHashService {
         ByteSource privateSalt = getPrivateSalt();
         ByteSource salt = combine(privateSalt, publicSalt);
 
+        switch (algorithmName) {
+            case "2":
+            case "2a":
+            case "2b":
+            case "2y":
+                // bcrypt
+                ByteSource bcryptSalt = Optional.ofNullable(publicSalt).orElseGet(() -> BCryptHash.createSalt());
+                return createBcryptHash(algorithmName, source, bcryptSalt, iterations);
+            case "argon2":
+            case "argon2d":
+            case "argon2i":
+            case "argon2id":
+                ByteSource argon2Salt = Optional.ofNullable(publicSalt).orElseGet(() -> Argon2Hash.createSalt());
+                return createArgon2Hash(algorithmName, source, iterations, argon2Salt);
+            default:
+                return createSimpleHash(algorithmName, source, iterations, publicSalt, salt);
+        }
+    }
+
+    private BCryptHash createBcryptHash(String algorithmName, ByteSource source, ByteSource salt, int iterations) {
+        return BCryptHash.generate(algorithmName, source, salt, iterations);
+    }
+
+    private Argon2Hash createArgon2Hash(String algorithmName, ByteSource source, int iterations, ByteSource salt) {
+        return Argon2Hash.generate(algorithmName, source, salt, iterations);
+    }
+
+    private SimpleHash createSimpleHash(String algorithmName, ByteSource source, int iterations, ByteSource publicSalt, ByteSource salt) {
         Hash computed = new SimpleHash(algorithmName, source, salt, iterations);
 
         SimpleHash result = new SimpleHash(algorithmName);

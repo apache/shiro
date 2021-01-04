@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.authc.credential;
 
+import org.apache.shiro.crypto.hash.Argon2Hash;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.HashRequest;
@@ -45,8 +46,8 @@ import java.security.MessageDigest;
  */
 public class DefaultPasswordService implements HashingPasswordService {
 
-    public static final String DEFAULT_HASH_ALGORITHM = "SHA-256";
-    public static final int DEFAULT_HASH_ITERATIONS = 500000; //500,000
+    public static final String DEFAULT_HASH_ALGORITHM = "argon2id";
+    public static final int DEFAULT_HASH_ITERATIONS = Argon2Hash.DEFAULT_ITERATIONS;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultPasswordService.class);
 
