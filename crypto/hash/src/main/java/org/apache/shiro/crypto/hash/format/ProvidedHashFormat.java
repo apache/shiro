@@ -40,7 +40,12 @@ public enum ProvidedHashFormat {
     /**
      * Value representing the {@link Shiro1CryptFormat} implementation.
      */
-    SHIRO1(Shiro1CryptFormat.class);
+    SHIRO1(Shiro1CryptFormat.class),
+
+    /**
+     * Value representing the {@link Shiro2CryptFormat} implementation.
+     */
+    SHIRO2(Shiro2CryptFormat.class);
 
     private final Class<? extends HashFormat> clazz;
 

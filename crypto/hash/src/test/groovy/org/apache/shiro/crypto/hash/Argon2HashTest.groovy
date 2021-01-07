@@ -20,25 +20,69 @@
 package org.apache.shiro.crypto.hash
 
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat
+import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat
 import org.apache.shiro.lang.util.SimpleByteSource
+import org.bouncycastle.crypto.params.Argon2Parameters
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 
-import static org.junit.jupiter.api.Assertions.assertTrue
+import static org.junit.jupiter.api.Assertions.*
 
 class Argon2HashTest {
+
+    private static final TEST_PASSWORD = "secret#shiro,password;Jo8opech";
+    private static final TEST_PASSWORD_BS = new SimpleByteSource(TEST_PASSWORD)
 
     @Test
     void testArgon2Hash() {
         // given
-        def shiro1Format = '$shiro1$argon2id$2,131072,4$7858qTJTreh61AzFV2XMOw==$lLzl2VNNbyFcuJo0Hp7JQpguKCDoQwxo91AWobcHzeo='
+        def shiro2Format = '$shiro2$argon2id$v=19$m=4096,t=3,p=4$MTIzNDU2Nzg5MDEyMzQ1Ng$bjcHqfb0LPHyS13eVaNcBga9LF12I3k34H5ULt2gyoI'
         def expectedPassword = new SimpleByteSource('secret#shiro,password;Jo8opech')
 
         // when
-        def hash = new Shiro1CryptFormat().parse shiro1Format;
+        def hash = new Shiro2CryptFormat().parse(shiro2Format) as Argon2Hash;
+        System.out.println("Hash: " + hash)
         def matchesPassword = hash.matchesPassword expectedPassword;
 
         // then
+        assertEquals Argon2Parameters.ARGON2_VERSION_13, hash.argonVersion
+        assertEquals 3, hash.iterations
+        assertEquals 4096, hash.memoryKiB
+        assertEquals 4, hash.parallelism
         assertTrue matchesPassword
+    }
+
+    @Test
+    void testArgon2HashShiro1Format() {
+        // given
+        def shiro1Format = '$shiro1$argon2id$v=19$t=2,m=131072,p=4$7858qTJTreh61AzFV2XMOw==$lLzl2VNNbyFcuJo0Hp7JQpguKCDoQwxo91AWobcHzeo='
+
+        // when
+        def thrownException = assertThrows(
+                UnsupportedOperationException,
+                { new Shiro1CryptFormat().parse shiro1Format } as Executable
+        )
+
+        // then
+        assertTrue thrownException.getMessage().contains("shiro1")
+    }
+
+    @Test
+    void testFromStringMatchesPw() {
+        // when
+        def argon2String = '$argon2id$v=19$m=4096,t=3,p=4$MTIzNDU2Nzg5MDEyMzQ1Ng$bjcHqfb0LPHyS13eVaNcBga9LF12I3k34H5ULt2gyoI'
+        // for testing recreated salt and data parts, as the parameter order could change.
+        def saltDataPart = argon2String.substring(30)
+
+        // when
+        def argon2Hash = Argon2Hash.fromString argon2String
+        def recreatedSaltDataPart = argon2Hash.formatToCryptString().substring(30)
+
+        // then
+        assertTrue argon2Hash.matchesPassword(TEST_PASSWORD_BS)
+        // we can only test the salt + data parts, as
+        // the parameter order could change.
+        assertEquals saltDataPart, recreatedSaltDataPart
     }
 
 }

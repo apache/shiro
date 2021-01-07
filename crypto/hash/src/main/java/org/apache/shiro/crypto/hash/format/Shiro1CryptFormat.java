@@ -164,7 +164,24 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         //second-to-last part is always the salt, Base64-encoded:
         final String saltBase64 = parts[i--];
         final String iterationsString = parts[i--];
-        final String algorithmName = parts[i];
+        final String algorithmName = parts[0];
+
+        switch (algorithmName) {
+            case "2":
+            case "2a":
+            case "2b":
+            case "2y":
+                // bcrypt
+                throw new UnsupportedOperationException("bcrypt is not supported in shiro1 format.");
+            case "argon2":
+            case "argon2d":
+            case "argon2i":
+            case "argon2id":
+                // argon2
+                throw new UnsupportedOperationException("argon2 is not supported in shiro1 format.");
+            default:
+                // continue parsing
+        }
 
         final byte[] digest;
         if (BCryptHash.getAlgorithmsBcrypt().contains(algorithmName)) {
@@ -174,60 +191,20 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         }
         ByteSource salt = parseSalt(saltBase64, algorithmName);
 
-        String[] iterationsParameter = iterationsString.split(",");
-        final int iterations = parseIterations(formatted, iterationsParameter);
-
-        switch (algorithmName) {
-            case "2":
-            case "2a":
-            case "2b":
-            case "2y":
-                // bcrypt
-                return new BCryptHash(algorithmName, digest, salt, iterations);
-            case "argon2":
-            case "argon2d":
-            case "argon2i":
-            case "argon2id":
-                // argon2
-                // also needsmemory and parallelism
-                int memoryKiB = parseMemory(formatted, iterationsParameter);
-                int paralellism = parseParallelism(formatted, iterationsParameter);
-                return new Argon2Hash(algorithmName, digest, salt, iterations, memoryKiB, paralellism);
-            default:
-                final SimpleHash hash = new SimpleHash(algorithmName);
-                hash.setBytes(digest);
-                hash.setSalt(salt);
-                hash.setIterations(iterations);
-
-                return hash;
-        }
-    }
-
-    private int parseParallelism(String formatted, String[] iterationsParameter) {
+        final int iterations;
         try {
-            return Integer.parseInt(iterationsParameter[2]);
-        } catch (final NumberFormatException | IndexOutOfBoundsException e) {
-            final String msg = "Unable to parse formatted hash string: " + formatted;
-            throw new IllegalArgumentException(msg, e);
-        }
-    }
-
-    private int parseMemory(String formatted, String[] iterationsParameter) {
-        try {
-            return Integer.parseInt(iterationsParameter[1]);
-        } catch (final NumberFormatException | IndexOutOfBoundsException e) {
-            final String msg = "Unable to parse formatted hash string: " + formatted;
-            throw new IllegalArgumentException(msg, e);
-        }
-    }
-
-    private int parseIterations(String formatted, String[] iterationsParameter) {
-        try {
-            return Integer.parseInt(iterationsParameter[0]);
+            iterations = Integer.parseInt(iterationsString);
         } catch (final NumberFormatException e) {
             final String msg = "Unable to parse formatted hash string: " + formatted;
             throw new IllegalArgumentException(msg, e);
         }
+
+        final SimpleHash hash = new SimpleHash(algorithmName);
+        hash.setBytes(digest);
+        hash.setSalt(salt);
+        hash.setIterations(iterations);
+
+        return hash;
     }
 
     private ByteSource parseSalt(String base64, String algorithmName) {

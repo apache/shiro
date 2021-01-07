@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringJoiner;
-import java.util.regex.Pattern;
 
 import static java.util.Collections.unmodifiableList;
 
@@ -44,16 +43,17 @@ public class BCryptHash extends AbstractCryptHash {
 
     private static final int SALT_LENGTH = 16;
 
-    private static final Pattern DELIMITER = Pattern.compile("\\$");
-
     private static final List<String> ALGORITHMS_BCRYPT = Arrays.asList("2", "2a", "2b", "2y");
 
-    public BCryptHash(final byte[] hashedData, final ByteSource salt, final int iterations) {
-        this(ALGORITHM_NAME, hashedData, salt, iterations);
-    }
+    private final int cost;
 
-    public BCryptHash(final String version, final byte[] hashedData, final ByteSource salt, final int iterations) {
-        super(version, hashedData, salt, iterations);
+    private final int iterations;
+
+    public BCryptHash(final String version, final byte[] hashedData, final ByteSource salt, final int cost) {
+        super(version, hashedData, salt);
+        this.cost = cost;
+        this.iterations = (int) Math.pow(2, cost);
+        checkValidCost();
     }
 
     @Override
@@ -70,18 +70,7 @@ public class BCryptHash extends AbstractCryptHash {
         }
     }
 
-    @Override
-    protected final void checkValidIterations() {
-        checkValidIterations(this.getIterations());
-    }
-
-    protected static void checkValidIterations(int iterations) {
-        double costDbl = Math.log10(iterations) / Math.log10(2);
-        if ((costDbl != Math.floor(costDbl)) || Double.isInfinite(costDbl)) {
-            throw new IllegalArgumentException("Iterations are not a power of 2. Found: [" + iterations + "].");
-        }
-
-        int cost = (int) costDbl;
+    protected final void checkValidCost() {
         if (cost < 4 || cost > 31) {
             final String message = String.format(
                     Locale.ENGLISH,
@@ -90,27 +79,40 @@ public class BCryptHash extends AbstractCryptHash {
             );
             throw new IllegalArgumentException(message);
         }
-
-        double iterationCount = Math.pow(2, cost);
-        if (iterations != iterationCount) {
-            throw new IllegalArgumentException("Iterations are not a power of 2!");
-        }
     }
 
     public int getCost() {
-        return getCostFromIterations(this.getIterations());
+        return this.cost;
     }
-
-    public static int getCostFromIterations(final int iterations) {
-        checkValidIterations(iterations);
-        double cost = Math.log10(iterations) / Math.log10(2);
-
-        return (int) cost;
-    }
-
 
     public static List<String> getAlgorithmsBcrypt() {
         return unmodifiableList(ALGORITHMS_BCRYPT);
+    }
+
+    public static BCryptHash fromString(String input) {
+        // the input string should look like this:
+        // $2y$cost$salt{22}hash
+        if (!input.startsWith("$")) {
+            throw new UnsupportedOperationException("Unsupported input: " + input);
+        }
+
+        final String[] parts = DELIMITER.split(input.substring(1));
+
+        if (parts.length != 3) {
+            throw new IllegalArgumentException("Expected string containing three '$' but got: '" + Arrays.toString(parts) + "'.");
+        }
+        final String algorithmName = parts[0].trim();
+        final int cost = Integer.parseInt(parts[1].trim(), 10);
+
+        final String dataSection = parts[2];
+        final OpenBSDBase64.Default bcryptBase64 = new OpenBSDBase64.Default();
+
+        final String saltBase64 = dataSection.substring(0, 22);
+        final String bytesBase64 = dataSection.substring(22);
+        final byte[] salt = bcryptBase64.decode(saltBase64.getBytes(StandardCharsets.ISO_8859_1));
+        final byte[] hashedData = bcryptBase64.decode(bytesBase64.getBytes(StandardCharsets.ISO_8859_1));
+
+        return new BCryptHash(algorithmName, hashedData, new SimpleByteSource(salt), cost);
     }
 
     public static BCryptHash generate(final ByteSource source) {
@@ -125,28 +127,7 @@ public class BCryptHash extends AbstractCryptHash {
     public static BCryptHash generate(String algorithmName, ByteSource source, ByteSource salt, int cost) {
         final String cryptString = OpenBSDBCrypt.generate(algorithmName, source.getBytes(), salt.getBytes(), cost);
 
-        return fromCryptString(cryptString);
-    }
-
-    private static BCryptHash fromCryptString(String cryptString) {
-        String[] parts = DELIMITER.split(cryptString.substring(1), -1);
-
-        if (parts.length != 3) {
-            throw new IllegalArgumentException("Expected string containing three '$' but got: '" + Arrays.toString(parts) + "'.");
-        }
-
-        final String algorithmName = parts[0];
-        final int cost = Integer.parseInt(parts[1], 10);
-        final int iterations = (int) Math.pow(2, cost);
-
-        final String dataSection = parts[2];
-        final OpenBSDBase64.Default bcryptBase64 = new OpenBSDBase64.Default();
-        final String saltBase64 = dataSection.substring(0, 22);
-        final String bytesBase64 = dataSection.substring(22);
-        final byte[] salt = bcryptBase64.decode(saltBase64.getBytes(StandardCharsets.ISO_8859_1));
-        final byte[] hashedData = bcryptBase64.decode(bytesBase64.getBytes(StandardCharsets.ISO_8859_1));
-
-        return new BCryptHash(algorithmName, hashedData, new SimpleByteSource(salt), iterations);
+        return fromString(cryptString);
     }
 
     protected static ByteSource createSalt() {
@@ -159,16 +140,36 @@ public class BCryptHash extends AbstractCryptHash {
     }
 
     @Override
+    public String formatToCryptString() {
+        OpenBSDBase64.Default bsdBase64 = new OpenBSDBase64.Default();
+        String saltBase64 = new String(bsdBase64.encode(this.getSalt().getBytes()), StandardCharsets.ISO_8859_1);
+        String dataBase64 = new String(bsdBase64.encode(this.getBytes()), StandardCharsets.ISO_8859_1);
+
+        return new StringJoiner("$", "$", "")
+                .add(this.getAlgorithmName())
+                .add("" + this.cost)
+                .add(saltBase64 + dataBase64)
+                .toString();
+    }
+
+    @Override
+    public int getIterations() {
+        return this.iterations;
+    }
+
+    @Override
     public boolean matchesPassword(ByteSource plaintextBytes) {
         final String cryptString = OpenBSDBCrypt.generate(this.getAlgorithmName(), plaintextBytes.getBytes(), this.getSalt().getBytes(), this.getCost());
+        BCryptHash other = fromString(cryptString);
 
-        return this.equals(fromCryptString(cryptString));
+        return this.equals(other);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", BCryptHash.class.getSimpleName() + "[", "]")
                 .add("super=" + super.toString())
+                .add("cost=" + this.cost)
                 .toString();
     }
 }

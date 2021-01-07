@@ -20,7 +20,6 @@
 package org.apache.shiro.crypto.hash;
 
 import org.apache.shiro.lang.codec.Base64;
-import org.apache.shiro.lang.codec.CodecSupport;
 import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.lang.util.ByteSource;
 
@@ -29,16 +28,20 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.StringJoiner;
+import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
-public abstract class AbstractCryptHash extends CodecSupport implements Hash, Serializable {
+public abstract class AbstractCryptHash implements Hash, Serializable {
 
     private static final long serialVersionUID = 2483214646921027859L;
-    private final String version;
+
+    protected static final Pattern DELIMITER = Pattern.compile("\\$");
+
+    private final String algorithmName;
     private final byte[] hashedData;
     private final ByteSource salt;
-    private final int iterations;
+
     /**
      * Cached value of the {@link #toHex() toHex()} call so multiple calls won't incur repeated overhead.
      */
@@ -48,11 +51,10 @@ public abstract class AbstractCryptHash extends CodecSupport implements Hash, Se
      */
     private String base64Encoded;
 
-    public AbstractCryptHash(final String version, final byte[] hashedData, final ByteSource salt, final int cost) {
-        this.version = version;
+    public AbstractCryptHash(final String algorithmName, final byte[] hashedData, final ByteSource salt) {
+        this.algorithmName = algorithmName;
         this.hashedData = Arrays.copyOf(hashedData, hashedData.length);
         this.salt = requireNonNull(salt);
-        this.iterations = cost;
         checkValid();
     }
 
@@ -60,8 +62,6 @@ public abstract class AbstractCryptHash extends CodecSupport implements Hash, Se
         checkValidAlgorithm();
 
         checkValidSalt();
-
-        checkValidIterations();
     }
 
     protected abstract void checkValidAlgorithm();
@@ -79,10 +79,8 @@ public abstract class AbstractCryptHash extends CodecSupport implements Hash, Se
         }
     }
 
-    protected abstract void checkValidIterations();
-
     /**
-     * Implemented by subclasses, this specifies the {@link MessageDigest MessageDigest} algorithm name
+     * Implemented by subclasses, this specifies the KDF algorithm name
      * to use when performing the hash.
      *
      * <p>When multiple algorithm names are acceptable, then this method should return the primary algorithm name.</p>
@@ -90,11 +88,11 @@ public abstract class AbstractCryptHash extends CodecSupport implements Hash, Se
      * <p>Example: Bcrypt hashed can be identified by {@code 2y} and {@code 2a}. The method will return {@code 2y}
      * for newly generated hashes by default, unless otherwise overridden.</p>
      *
-     * @return the {@link MessageDigest MessageDigest} algorithm name to use when performing the hash.
+     * @return the KDF algorithm name to use when performing the hash.
      */
     @Override
     public String getAlgorithmName() {
-        return this.version;
+        return this.algorithmName;
     }
 
     /**
@@ -107,16 +105,6 @@ public abstract class AbstractCryptHash extends CodecSupport implements Hash, Se
     @Override
     public ByteSource getSalt() {
         return this.salt;
-    }
-
-    /**
-     * <strong>Warning!</strong> The returned value is actually the cost, not the iterations.
-     *
-     * @return the cost.
-     */
-    @Override
-    public int getIterations() {
-        return this.iterations;
     }
 
     @Override
@@ -161,6 +149,14 @@ public abstract class AbstractCryptHash extends CodecSupport implements Hash, Se
     }
 
     /**
+     * This method <strong>MUST</strong> return a single-lined string which would also be recognizable by
+     * a posix {@code /etc/passwd} file.
+     *
+     * @return a formatted string, e.g. {@code $2y$10$7rOjsAf2U/AKKqpMpCIn6e$tuOXyQ86tp2Tn9xv6FyXl2T0QYc3.G.} for bcrypt.
+     */
+    public abstract String formatToCryptString();
+
+    /**
      * Returns {@code true} if the specified object is a Hash and its {@link #getBytes byte array} is identical to
      * this Hash's byte array, {@code false} otherwise.
      *
@@ -199,10 +195,9 @@ public abstract class AbstractCryptHash extends CodecSupport implements Hash, Se
     public String toString() {
         return new StringJoiner(", ", AbstractCryptHash.class.getSimpleName() + "[", "]")
                 .add("super=" + super.toString())
-                .add("version='" + version + "'")
+                .add("algorithmName='" + algorithmName + "'")
                 .add("hashedData=" + Arrays.toString(hashedData))
                 .add("salt=" + salt)
-                .add("iterations=" + iterations)
                 .add("hexEncoded='" + hexEncoded + "'")
                 .add("base64Encoded='" + base64Encoded + "'")
                 .toString();

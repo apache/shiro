@@ -23,10 +23,11 @@ import org.apache.shiro.crypto.hash.*
 import org.apache.shiro.crypto.hash.format.HashFormatFactory
 import org.apache.shiro.crypto.hash.format.HexFormat
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link DefaultPasswordService} implementation.
@@ -38,7 +39,8 @@ class DefaultPasswordServiceTest {
     @Test
     void testEncryptPasswordWithNullArgument() {
         def service = new DefaultPasswordService()
-        assertNull service.encryptPassword(null)
+
+        assertThrows(NullPointerException, { service.encryptPassword(null) } as Executable)
     }
 
     @Test

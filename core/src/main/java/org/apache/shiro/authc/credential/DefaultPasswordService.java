@@ -27,12 +27,14 @@ import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HashFormat;
 import org.apache.shiro.crypto.hash.format.HashFormatFactory;
 import org.apache.shiro.crypto.hash.format.ParsableHashFormat;
-import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
+import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat;
 import org.apache.shiro.lang.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Default implementation of the {@link PasswordService} interface that relies on an internal
@@ -66,13 +68,13 @@ public class DefaultPasswordService implements HashingPasswordService {
         hashService.setGeneratePublicSalt(true); //always want generated salts for user passwords to be most secure
         this.hashService = hashService;
 
-        this.hashFormat = new Shiro1CryptFormat();
+        this.hashFormat = new Shiro2CryptFormat();
         this.hashFormatFactory = new DefaultHashFormatFactory();
     }
 
     @Override
     public String encryptPassword(Object plaintext) {
-        Hash hash = hashPassword(plaintext);
+        Hash hash = hashPassword(requireNonNull(plaintext));
         checkHashFormatDurability();
         return this.hashFormat.format(hash);
     }

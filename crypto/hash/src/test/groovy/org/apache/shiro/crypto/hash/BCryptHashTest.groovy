@@ -19,13 +19,16 @@
 
 package org.apache.shiro.crypto.hash
 
+import org.apache.shiro.lang.codec.OpenBSDBase64
+import org.apache.shiro.lang.util.SimpleByteSource
 import org.junit.jupiter.api.Test
 
+import java.nio.charset.StandardCharsets
 import java.security.SecureRandom
 
 import static java.lang.Math.pow
-import static org.junit.jupiter.api.Assertions.assertArrayEquals
 import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 class BCryptHashTest {
 
@@ -34,7 +37,7 @@ class BCryptHashTest {
     @Test
     void testCreateHashGenerateSaltIterations() {
         // given
-        final def testPasswordChars = TEST_PASSWORD.toCharArray();
+        final def testPasswordChars = new SimpleByteSource(TEST_PASSWORD)
 
         // when
         final def bCryptHash = BCryptHash.generate testPasswordChars;
@@ -46,8 +49,8 @@ class BCryptHashTest {
     @Test
     void testCreateHashGivenSalt() {
         // given
-        final def testPasswordChars = TEST_PASSWORD.toCharArray();
-        final def salt = new SecureRandom().generateSeed 16;
+        final def testPasswordChars = new SimpleByteSource(TEST_PASSWORD);
+        final def salt = new SimpleByteSource(new SecureRandom().generateSeed(16))
         final def cost = 6
 
         // when
@@ -56,7 +59,38 @@ class BCryptHashTest {
         // then
         assertEquals cost, bCryptHash.cost;
         assertEquals pow(2, cost) as int, bCryptHash.iterations;
-        assertArrayEquals salt, bCryptHash.salt.bytes;
+        assertEquals salt, bCryptHash.salt;
+    }
+
+    @Test
+    void toBase64EqualsInput() {
+        // given
+        def salt = '7rOjsAf2U/AKKqpMpCIn6e'
+        def saltBytes = new SimpleByteSource(new OpenBSDBase64.Default().decode(salt.getBytes(StandardCharsets.ISO_8859_1)))
+        def testPwBytes = new SimpleByteSource(TEST_PASSWORD)
+        def expectedHashString = '$2y$10$' + salt + 'tuOXyQ86tp2Tn9xv6FyXl2T0QYc3.G.'
+
+
+        // when
+        def bCryptHash = BCryptHash.generate("2y", testPwBytes, saltBytes, 10)
+
+        // then
+        assertEquals expectedHashString, bCryptHash.formatToCryptString()
+    }
+
+    @Test
+    void testMatchesPassword() {
+        // given
+        def expectedHashString = '$2y$10$7rOjsAf2U/AKKqpMpCIn6etuOXyQ86tp2Tn9xv6FyXl2T0QYc3.G.'
+        def bCryptHash = BCryptHash.fromString(expectedHashString)
+        def testPwBytes = new SimpleByteSource(TEST_PASSWORD)
+
+        // when
+        def matchesPassword = bCryptHash.matchesPassword testPwBytes
+
+
+        // then
+        assertTrue matchesPassword
     }
 
 }
