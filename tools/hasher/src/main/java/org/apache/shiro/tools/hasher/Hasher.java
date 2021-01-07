@@ -35,12 +35,14 @@ import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HashFormat;
 import org.apache.shiro.crypto.hash.format.HashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HexFormat;
-import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
+import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.lang.io.ResourceUtils;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -61,6 +63,8 @@ import java.util.Arrays;
  */
 public final class Hasher {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Hasher.class);
+
     private static final String HEX_PREFIX = "0x";
     private static final String DEFAULT_ALGORITHM_NAME = "MD5";
     private static final String DEFAULT_PASSWORD_ALGORITHM_NAME = DefaultPasswordService.DEFAULT_HASH_ALGORITHM;
@@ -70,7 +74,7 @@ public final class Hasher {
 
     private static final Option ALGORITHM = new Option("a", "algorithm", true, "hash algorithm name.  Defaults to Argon2 when password hashing, SHA-512 otherwise.");
     private static final Option DEBUG = new Option("d", "debug", false, "show additional error (stack trace) information.");
-    private static final Option FORMAT = new Option("f", "format", true, "hash output format.  Defaults to 'shiro1' when password hashing, 'hex' otherwise.  See below for more information.");
+    private static final Option FORMAT = new Option("f", "format", true, "hash output format. Defaults to 'shiro2' when password hashing, 'hex' otherwise.  See below for more information.");
     private static final Option HELP = new Option("help", "help", false, "show this help message.");
     private static final Option ITERATIONS = new Option("i", "iterations", true, "number of hash iterations.  Defaults to " + DEFAULT_PASSWORD_NUM_ITERATIONS + " when password hashing, 1 otherwise.");
     private static final Option PASSWORD = new Option("p", "password", false, "hash a password (disable typing echo)");
@@ -233,10 +237,10 @@ public final class Hasher {
             Hash hash = hashService.computeHash(hashRequest);
 
             if (formatString == null) {
-                //Output format was not specified.  Default to 'shiro1' when password hashing, and 'hex' for
+                //Output format was not specified.  Default to 'shiro2' when password hashing, and 'hex' for
                 //everything else:
                 if (password) {
-                    formatString = Shiro1CryptFormat.class.getName();
+                    formatString = Shiro2CryptFormat.class.getName();
                 } else {
                     formatString = HexFormat.class.getName();
                 }
@@ -250,7 +254,7 @@ public final class Hasher {
 
             String output = format.format(hash);
 
-            System.out.println(output);
+            LOG.info(output);
 
         } catch (IllegalArgumentException iae) {
             exit(iae, debug);
@@ -341,16 +345,16 @@ public final class Hasher {
 
     private static void printException(Exception e, boolean debug) {
         if (e != null) {
-            System.out.println();
+            LOG.info("");
             if (debug) {
-                System.out.println("Error: ");
+                LOG.info("Error: ");
                 e.printStackTrace(System.out);
-                System.out.println(e.getMessage());
+                LOG.info(e.getMessage());
 
             } else {
-                System.out.println("Error: " + e.getMessage());
-                System.out.println();
-                System.out.println("Specify -d or --debug for more information.");
+                LOG.info("Error: " + e.getMessage());
+                LOG.info("");
+                LOG.info("Specify -d or --debug for more information.");
             }
         }
     }
@@ -390,7 +394,7 @@ public final class Hasher {
                 "a positive integer (size is in bits, not bytes)." +
                 "\n\n" +
                 "Because a salt must be specified if computing the hash later,\n" +
-                "generated salts are only useful with the shiro1 output format;\n" +
+                "generated salts are only useful with the shiro1/shiro2 output format;\n" +
                 "the other formats do not include the generated salt." +
                 "\n\n" +
                 "Specifying a private salt:" +
@@ -426,16 +430,16 @@ public final class Hasher {
                 "by the " + DefaultHashFormatFactory.class.getName() + "\n" +
                 "JavaDoc) or 2) the fully qualified " + HashFormat.class.getName() + "\n" +
                 "implementation class name to instantiate and use for formatting.\n\n" +
-                "The default output format is 'shiro1' which is a Modular Crypt Format (MCF)\n" +
+                "The default output format is 'shiro2' which is a Modular Crypt Format (MCF)\n" +
                 "that shows all relevant information as a dollar-sign ($) delimited string.\n" +
                 "This format is ideal for use in Shiro's text-based user configuration (e.g.\n" +
                 "shiro.ini or a properties file).";
 
         printException(e, debug);
 
-        System.out.println();
+        LOG.info("");
         help.printHelp(command, header, options, null);
-        System.out.println(footer);
+        LOG.info(footer);
     }
 
     private static void printHelpAndExit(Options options, Exception e, boolean debug, int exitCode) {

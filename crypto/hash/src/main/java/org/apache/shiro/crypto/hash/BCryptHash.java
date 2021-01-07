@@ -71,6 +71,10 @@ public class BCryptHash extends AbstractCryptHash {
     }
 
     protected final void checkValidCost() {
+        checkValidCost(this.cost);
+    }
+
+    private static void checkValidCost(final int cost) {
         if (cost < 4 || cost > 31) {
             final String message = String.format(
                     Locale.ENGLISH,
@@ -125,6 +129,7 @@ public class BCryptHash extends AbstractCryptHash {
     }
 
     public static BCryptHash generate(String algorithmName, ByteSource source, ByteSource salt, int cost) {
+        checkValidCost(cost);
         final String cryptString = OpenBSDBCrypt.generate(algorithmName, source.getBytes(), salt.getBytes(), cost);
 
         return fromString(cryptString);

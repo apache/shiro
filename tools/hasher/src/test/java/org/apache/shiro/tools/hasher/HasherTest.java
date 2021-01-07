@@ -19,12 +19,21 @@
 
 package org.apache.shiro.tools.hasher;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HasherTest {
 
@@ -32,8 +41,14 @@ public class HasherTest {
 
     private ByteArrayInputStream testIn;
 
+    private final Logger hasherToolLogger = (Logger) LoggerFactory.getLogger("ROOT");
+    private final ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
+
     @BeforeEach
     public void setUpOutput() {
+        hasherToolLogger.detachAndStopAllAppenders();
+        hasherToolLogger.addAppender(listAppender);
+        listAppender.start();
     }
 
     private void provideInput(String data) {
@@ -42,15 +57,42 @@ public class HasherTest {
     }
 
     @AfterEach
-    public void restoreSystemInputOutput() {
+    public void restoreSystemInputOutput() throws IOException {
         System.setIn(systemIn);
+        testIn.close();
+        listAppender.stop();
     }
 
 
     @Test
     public void testArgon2Hash() {
+        // given
         String[] args = {"--debug", "--password", "--pnoconfirm"};
         provideInput("secret#shiro,password;Jo8opech");
+
+        // when
         Hasher.main(args);
+        List<ILoggingEvent> loggingEvents = listAppender.list;
+
+        // when
+        assertEquals(1, loggingEvents.size());
+        ILoggingEvent iLoggingEvent = loggingEvents.get(0);
+        assertTrue(iLoggingEvent.getMessage().contains("$shiro2$argon2id$v=19"));
+    }
+
+    @Test
+    public void testBCryptHash() {
+        // given
+        String[] args = {"--debug", "--password", "--pnoconfirm", "--algorithm", "2y"};
+        provideInput("secret#shiro,password;Jo8opech");
+
+        // when
+        Hasher.main(args);
+        List<ILoggingEvent> loggingEvents = listAppender.list;
+
+        // when
+        assertEquals(1, loggingEvents.size());
+        ILoggingEvent iLoggingEvent = loggingEvents.get(0);
+        assertTrue(iLoggingEvent.getMessage().contains("$shiro2$2y$10$"));
     }
 }

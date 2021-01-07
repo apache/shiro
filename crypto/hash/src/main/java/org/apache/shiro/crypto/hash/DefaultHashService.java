@@ -158,7 +158,7 @@ public class DefaultHashService implements ConfigurableHashService {
 
         String algorithmName = getAlgorithmName(request);
         ByteSource source = request.getSource();
-        int iterations = getIterations(request);
+        final int iterations = getIterations(request);
 
         ByteSource publicSalt = getPublicSalt(request);
         ByteSource privateSalt = getPrivateSalt();
@@ -170,8 +170,15 @@ public class DefaultHashService implements ConfigurableHashService {
             case "2b":
             case "2y":
                 // bcrypt
+                final int cost;
+                final int iterationsLog2 = (int) (Math.log10(iterations) / Math.log10(2));
+                if (iterationsLog2 < 4 || iterationsLog2 > 30) {
+                    cost = 10;
+                } else {
+                    cost = iterationsLog2;
+                }
                 ByteSource bcryptSalt = Optional.ofNullable(publicSalt).orElseGet(() -> BCryptHash.createSalt());
-                return createBcryptHash(algorithmName, source, bcryptSalt, iterations);
+                return createBcryptHash(algorithmName, source, bcryptSalt, cost);
             case "argon2":
             case "argon2d":
             case "argon2i":
@@ -183,8 +190,8 @@ public class DefaultHashService implements ConfigurableHashService {
         }
     }
 
-    private BCryptHash createBcryptHash(String algorithmName, ByteSource source, ByteSource salt, int iterations) {
-        return BCryptHash.generate(algorithmName, source, salt, iterations);
+    private BCryptHash createBcryptHash(String algorithmName, ByteSource source, ByteSource salt, int cost) {
+        return BCryptHash.generate(algorithmName, source, salt, cost);
     }
 
     private Argon2Hash createArgon2Hash(String algorithmName, ByteSource source, int iterations, ByteSource salt) {
