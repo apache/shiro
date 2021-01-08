@@ -18,12 +18,10 @@
  */
 package org.apache.shiro.crypto.hash
 
-import org.apache.shiro.crypto.RandomNumberGenerator
-import org.apache.shiro.crypto.SecureRandomNumberGenerator
+
 import org.apache.shiro.lang.util.ByteSource
 import org.junit.Test
 
-import static org.easymock.EasyMock.*
 import static org.junit.Assert.*
 
 /**
@@ -35,54 +33,27 @@ class DefaultHashServiceTest {
 
     @Test
     void testNullRequest() {
-        assertNull createService().computeHash(null)
+        assertNull createSha256Service().computeHash(null)
     }
 
     @Test
     void testDifferentAlgorithmName() {
-        def service = new DefaultHashService(hashAlgorithmName: 'MD5')
+        // given
+        def newAlgorithm = 'SHA-512'
+        def service = new DefaultHashService(defaultAlgorithmName: newAlgorithm)
+
+        // when
         def hash = hash(service, "test")
-        assertEquals 'MD5', hash.algorithmName
-    }
 
-    @Test
-    void testDifferentIterations() {
-        def service = new DefaultHashService(hashIterations: 2)
-        def hash = hash(service, "test")
-        assertEquals 2, hash.iterations
-    }
-
-    @Test
-    void testDifferentRandomNumberGenerator() {
-
-        def ByteSource randomBytes = new SecureRandomNumberGenerator().nextBytes()
-        def rng = createMock(RandomNumberGenerator)
-        expect(rng.nextBytes()).andReturn randomBytes
-
-        replay rng
-
-        def service = new DefaultHashService(randomNumberGenerator: rng, generatePublicSalt: true)
-        hash(service, "test")
-
-        verify rng
-    }
-
-    /**
-     * If 'generatePublicSalt' is true, 2 hashes of the same input source should be different.
-     */
-    @Test
-    void testWithRandomlyGeneratedSalt() {
-        def service = new DefaultHashService(generatePublicSalt: true)
-        def first = hash(service, "password")
-        def second = hash(service, "password")
-        assertFalse first == second
+        // then
+        assertEquals newAlgorithm, hash.algorithmName
     }
 
     @Test
     void testRequestWithEmptySource() {
         def source = ByteSource.Util.bytes((byte[])null)
         def request = new HashRequest.Builder().setSource(source).build()
-        def service = createService()
+        def service = createSha256Service()
         assertNull service.computeHash(request)
     }
 
@@ -92,7 +63,7 @@ class DefaultHashServiceTest {
      */
     @Test
     void testOnlyRandomSaltHash() {
-        HashService service = createService();
+        HashService service = createSha256Service();
         Hash first = hash(service, "password");
         Hash second = hash(service, "password2", first.salt);
         assertFalse first == second
@@ -104,7 +75,7 @@ class DefaultHashServiceTest {
      */
     @Test
     void testBothSaltsRandomness() {
-        HashService service = createServiceWithPrivateSalt();
+        HashService service = createSha256Service();
         Hash first = hash(service, "password");
         Hash second = hash(service, "password");
         assertFalse first == second
@@ -117,7 +88,7 @@ class DefaultHashServiceTest {
      */
     @Test
     void testBothSaltsReturn() {
-        HashService service = createServiceWithPrivateSalt();
+        HashService service = createSha256Service();
         Hash first = hash(service, "password");
         Hash second = hash(service, "password", first.salt);
         assertEquals first, second
@@ -129,21 +100,9 @@ class DefaultHashServiceTest {
      */
     @Test
     void testBothSaltsHash() {
-        HashService service = createServiceWithPrivateSalt();
+        HashService service = createSha256Service();
         Hash first = hash(service, "password");
         Hash second = hash(service, "password2", first.salt);
-        assertFalse first == second
-    }
-
-    /**
-     * Hash result is different if the base salt is added.
-     */
-    @Test
-    public void testPrivateSaltChangesResult() {
-        HashService saltedService = createServiceWithPrivateSalt();
-        HashService service = createService();
-        Hash first = hashPredictable(saltedService, "password");
-        Hash second = hashPredictable(service, "password");
         assertFalse first == second
     }
 
@@ -155,19 +114,8 @@ class DefaultHashServiceTest {
         return hashService.computeHash(new HashRequest.Builder().setSource(source).setSalt(salt).build());
     }
 
-    private Hash hashPredictable(HashService hashService, def source) {
-        byte[] salt = new byte[20];
-        Arrays.fill(salt, (byte) 2);
-        return hashService.computeHash(new HashRequest.Builder().setSource(source).setSalt(salt).build());
+    private static DefaultHashService createSha256Service() {
+        return new DefaultHashService(defaultAlgorithmName: 'SHA-256');
     }
 
-    private DefaultHashService createService() {
-        return new DefaultHashService();
-    }
-
-    private DefaultHashService createServiceWithPrivateSalt() {
-        DefaultHashService defaultHashService = new DefaultHashService();
-        defaultHashService.setPrivateSalt(new SecureRandomNumberGenerator().nextBytes());
-        return defaultHashService;
-    }
 }

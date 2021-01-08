@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.shiro.crypto.hash
+package org.apache.shiro.crypto.support.hashes.argon2
 
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat
 import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat

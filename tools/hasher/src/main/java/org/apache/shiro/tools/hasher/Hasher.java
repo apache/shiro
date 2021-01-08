@@ -34,7 +34,6 @@ import org.apache.shiro.crypto.hash.SimpleHashRequest;
 import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HashFormat;
 import org.apache.shiro.crypto.hash.format.HashFormatFactory;
-import org.apache.shiro.crypto.hash.format.HexFormat;
 import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.Hex;

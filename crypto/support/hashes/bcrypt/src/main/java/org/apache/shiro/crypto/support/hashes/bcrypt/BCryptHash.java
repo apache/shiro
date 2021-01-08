@@ -17,9 +17,9 @@
  * under the License.
  */
 
-package org.apache.shiro.crypto.hash;
+package org.apache.shiro.crypto.support.hashes.bcrypt;
 
-import org.apache.shiro.lang.codec.OpenBSDBase64;
+import org.apache.shiro.crypto.hash.AbstractCryptHash;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
 import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
@@ -27,23 +27,24 @@ import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import java.util.StringJoiner;
 
-import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 
 public class BCryptHash extends AbstractCryptHash {
 
     private static final long serialVersionUID = 6957869292324606101L;
 
-    protected static final int DEFAULT_COST = 10;
+    public static final String DEFAULT_ALGORITHM_NAME = "2y";
 
-    private static final String ALGORITHM_NAME = "2y";
+    public static final int DEFAULT_COST = 10;
 
-    private static final int SALT_LENGTH = 16;
+    public static final int SALT_LENGTH = 16;
 
-    private static final List<String> ALGORITHMS_BCRYPT = Arrays.asList("2", "2a", "2b", "2y");
+    private static final Set<String> ALGORITHMS_BCRYPT = new HashSet<>(Arrays.asList("2", "2a", "2b", "2y"));
 
     private final int cost;
 
@@ -74,7 +75,7 @@ public class BCryptHash extends AbstractCryptHash {
         checkValidCost(this.cost);
     }
 
-    private static void checkValidCost(final int cost) {
+    public static int checkValidCost(final int cost) {
         if (cost < 4 || cost > 31) {
             final String message = String.format(
                     Locale.ENGLISH,
@@ -83,14 +84,16 @@ public class BCryptHash extends AbstractCryptHash {
             );
             throw new IllegalArgumentException(message);
         }
+
+        return cost;
     }
 
     public int getCost() {
         return this.cost;
     }
 
-    public static List<String> getAlgorithmsBcrypt() {
-        return unmodifiableList(ALGORITHMS_BCRYPT);
+    public static Set<String> getAlgorithmsBcrypt() {
+        return unmodifiableSet(ALGORITHMS_BCRYPT);
     }
 
     public static BCryptHash fromString(String input) {
@@ -100,7 +103,7 @@ public class BCryptHash extends AbstractCryptHash {
             throw new UnsupportedOperationException("Unsupported input: " + input);
         }
 
-        final String[] parts = DELIMITER.split(input.substring(1));
+        final String[] parts = AbstractCryptHash.DELIMITER.split(input.substring(1));
 
         if (parts.length != 3) {
             throw new IllegalArgumentException("Expected string containing three '$' but got: '" + Arrays.toString(parts) + "'.");
@@ -125,7 +128,7 @@ public class BCryptHash extends AbstractCryptHash {
 
 
     public static BCryptHash generate(final ByteSource source, final ByteSource initialSalt, final int cost) {
-        return generate(ALGORITHM_NAME, source, initialSalt, cost);
+        return generate(DEFAULT_ALGORITHM_NAME, source, initialSalt, cost);
     }
 
     public static BCryptHash generate(String algorithmName, ByteSource source, ByteSource salt, int cost) {

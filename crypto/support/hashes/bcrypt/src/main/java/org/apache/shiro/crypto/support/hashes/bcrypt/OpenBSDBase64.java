@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.shiro.lang.codec;
+package org.apache.shiro.crypto.support.hashes.bcrypt;
 
 
 /**

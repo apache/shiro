@@ -20,6 +20,8 @@ package org.apache.shiro.crypto.hash.format;
 
 import org.apache.shiro.crypto.hash.AbstractCryptHash;
 import org.apache.shiro.crypto.hash.Hash;
+import org.apache.shiro.crypto.hash.HashProvider;
+import org.apache.shiro.crypto.hash.HashSpi;
 import org.apache.shiro.crypto.hash.SimpleHash;
 
 import static java.util.Objects.requireNonNull;
@@ -127,7 +129,7 @@ public class Shiro2CryptFormat implements ModularCryptFormat, ParsableHashFormat
         final String[] parts = suffix.split("\\$");
         final String algorithmName = parts[0];
 
-        ProvidedKdfHashes kdfHash = ProvidedKdfHashes.getByAlgorithmName(algorithmName)
+        HashSpi<? extends Hash> kdfHash = HashProvider.getByAlgorithmName(algorithmName)
                 .orElseThrow(() -> new UnsupportedOperationException("Algorithm " + algorithmName + " is not implemented."));
         return kdfHash.fromString("$" + suffix);
     }

@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package org.apache.shiro.crypto.hash
+package org.apache.shiro.crypto.support.hashes.bcrypt
 
-import org.apache.shiro.lang.codec.OpenBSDBase64
 import org.apache.shiro.lang.util.SimpleByteSource
 import org.junit.jupiter.api.Test
 

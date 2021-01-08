@@ -439,10 +439,11 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * implementation/algorithm used is based on the {@link #getHashAlgorithmName() hashAlgorithmName} property.
      *
      * @param credentials    the submitted authentication token's credentials to hash
-     * @param salt           the value to salt the hash, or {@code null} if a salt will not be used.
+     * @param salt           the value to salt the hash. Cannot be {@code null}, but an empty ByteSource.
      * @param hashIterations the number of times to hash the credentials.  At least one hash will always occur though,
      *                       even if this argument is 0 or negative.
      * @return the hashed value of the provided credentials, according to the specified salt and hash iterations.
+     * @throws NullPointerException if salt is {@code null}.
      */
     protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
         String hashAlgorithmName = assertHashAlgorithmName();

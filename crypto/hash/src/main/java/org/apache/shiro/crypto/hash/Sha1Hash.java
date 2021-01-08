@@ -30,12 +30,15 @@ import org.apache.shiro.lang.codec.Hex;
  * techniques and how the overloaded constructors function.
  *
  * @since 0.9
+ * @deprecated since 2.0.0, will throw exceptions in 2.1.0 and to be removed in 2.2.0.
  */
+@Deprecated
 public class Sha1Hash extends SimpleHash {
 
     //TODO - complete JavaDoc
 
     public static final String ALGORITHM_NAME = "SHA-1";
+    private static final long serialVersionUID = 3437720230699638519L;
 
     public Sha1Hash() {
         super(ALGORITHM_NAME);

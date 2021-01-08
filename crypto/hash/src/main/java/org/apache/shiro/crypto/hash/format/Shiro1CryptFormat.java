@@ -18,18 +18,12 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
-import org.apache.shiro.crypto.hash.Argon2Hash;
-import org.apache.shiro.crypto.hash.BCryptHash;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.crypto.hash.SimpleHashProvider;
 import org.apache.shiro.lang.codec.Base64;
-import org.apache.shiro.lang.codec.OpenBSDBase64;
 import org.apache.shiro.lang.util.ByteSource;
-import org.apache.shiro.lang.util.SimpleByteSource;
 import org.apache.shiro.lang.util.StringUtils;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 /**
  * The {@code Shiro1CryptFormat} is a fully reversible
@@ -70,8 +64,7 @@ import java.util.Locale;
  *     <tr>
  *         <td>3</td>
  *         <td>{@code iterationCount}</td>
- *         <td>The number of hash iterations performed. In case of argon2, this is a comma separated list,
- *         containing the number of iterations, the memory in kiB and the parallelism count.</td>
+ *         <td>The number of hash iterations performed.</td>
  *         <td>true (1 <= N <= Integer.MAX_VALUE)</td>
  *     </tr>
  *     <tr>
@@ -112,11 +105,10 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
             return null;
         }
 
-        final String algorithmName = hash.getAlgorithmName();
-        final ByteSource salt = hash.getSalt();
-        String iterationParameter = formatIterationParameter(hash);
-
-        final StringBuilder sb = new StringBuilder(MCF_PREFIX).append(algorithmName).append(TOKEN_DELIMITER).append(iterationParameter).append(TOKEN_DELIMITER);
+        String algorithmName = hash.getAlgorithmName();
+        ByteSource salt = hash.getSalt();
+        int iterations = hash.getIterations();
+        StringBuilder sb = new StringBuilder(MCF_PREFIX).append(algorithmName).append(TOKEN_DELIMITER).append(iterations).append(TOKEN_DELIMITER);
 
         if (salt != null) {
             sb.append(salt.toBase64());
@@ -128,22 +120,6 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         return sb.toString();
     }
 
-    private String formatIterationParameter(Hash hash) {
-        if (hash instanceof Argon2Hash) {
-            Argon2Hash argon2Hash = (Argon2Hash) hash;
-
-            return String.format(
-                    Locale.ENGLISH,
-                    "%d,%d,%d",
-                    hash.getIterations(),
-                    argon2Hash.getMemoryKiB(),
-                    argon2Hash.getParallelism()
-            );
-        }
-
-        return "" + hash.getIterations();
-    }
-
     @Override
     public Hash parse(final String formatted) {
         if (formatted == null) {
@@ -151,78 +127,48 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         }
         if (!formatted.startsWith(MCF_PREFIX)) {
             //TODO create a HashFormatException class
-            final String msg = "The argument is not a valid '" + ID + "' formatted hash.";
+            String msg = "The argument is not a valid '" + ID + "' formatted hash.";
             throw new IllegalArgumentException(msg);
         }
 
-        final String suffix = formatted.substring(MCF_PREFIX.length());
-        final String[] parts = suffix.split("\\$");
+        String suffix = formatted.substring(MCF_PREFIX.length());
+        String[] parts = suffix.split("\\$");
+
+        final String algorithmName = parts[0];
+        if (!new SimpleHashProvider().getImplementedAlgorithms().contains(algorithmName)) {
+            throw new UnsupportedOperationException("Algorithm " + algorithmName + " is not supported in shiro1 format.");
+        }
 
         //last part is always the digest/checksum, Base64-encoded:
         int i = parts.length - 1;
-        final String digestBase64 = parts[i--];
+        String digestBase64 = parts[i--];
         //second-to-last part is always the salt, Base64-encoded:
-        final String saltBase64 = parts[i--];
-        final String iterationsString = parts[i--];
-        final String algorithmName = parts[0];
+        String saltBase64 = parts[i--];
+        String iterationsString = parts[i--];
 
-        switch (algorithmName) {
-            case "2":
-            case "2a":
-            case "2b":
-            case "2y":
-                // bcrypt
-                throw new UnsupportedOperationException("bcrypt is not supported in shiro1 format.");
-            case "argon2":
-            case "argon2d":
-            case "argon2i":
-            case "argon2id":
-                // argon2
-                throw new UnsupportedOperationException("argon2 is not supported in shiro1 format.");
-            default:
-                // continue parsing
+        byte[] digest = Base64.decode(digestBase64);
+        ByteSource salt = null;
+
+        if (StringUtils.hasLength(saltBase64)) {
+            byte[] saltBytes = Base64.decode(saltBase64);
+            salt = ByteSource.Util.bytes(saltBytes);
         }
 
-        final byte[] digest;
-        if (BCryptHash.getAlgorithmsBcrypt().contains(algorithmName)) {
-            digest = new OpenBSDBase64.Default().decode(digestBase64.getBytes(StandardCharsets.ISO_8859_1));
-        } else {
-            digest = Base64.decode(digestBase64);
-        }
-        ByteSource salt = parseSalt(saltBase64, algorithmName);
-
-        final int iterations;
+        int iterations;
         try {
             iterations = Integer.parseInt(iterationsString);
-        } catch (final NumberFormatException e) {
-            final String msg = "Unable to parse formatted hash string: " + formatted;
+        } catch (NumberFormatException e) {
+            String msg = "Unable to parse formatted hash string: " + formatted;
             throw new IllegalArgumentException(msg, e);
         }
 
-        final SimpleHash hash = new SimpleHash(algorithmName);
+        SimpleHash hash = new SimpleHash(algorithmName);
         hash.setBytes(digest);
-        hash.setSalt(salt);
+        if (salt != null) {
+            hash.setSalt(salt);
+        }
         hash.setIterations(iterations);
 
         return hash;
-    }
-
-    private ByteSource parseSalt(String base64, String algorithmName) {
-        if (!StringUtils.hasLength(base64)) {
-            return SimpleByteSource.empty();
-        }
-
-        switch (algorithmName) {
-            case "2":
-            case "2a":
-            case "2b":
-            case "2y":
-                byte[] saltBytesBcrypt = new OpenBSDBase64.Default().decode(base64.getBytes(StandardCharsets.ISO_8859_1));
-                return new SimpleByteSource(saltBytesBcrypt);
-            default:
-                final byte[] saltBytes = Base64.decode(base64);
-                return new SimpleByteSource(saltBytes);
-
-        }
     }
 }

@@ -25,8 +25,8 @@ import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.crypto.hash.Sha256Hash
 import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat
 import org.junit.Test
+import org.junit.jupiter.api.DisplayName
 
-import static java.lang.Math.pow
 import static org.easymock.EasyMock.*
 import static org.junit.Assert.*
 
@@ -176,6 +176,7 @@ class PasswordMatcherTest {
     }
 
     @Test
+    @DisplayName("test whether shiro2 bcrypt password can be parsed and matched.")
     void testBCryptPassword() {
         // given
         def matcher = new PasswordMatcher();
@@ -194,10 +195,10 @@ class PasswordMatcherTest {
     }
 
     @Test
+    @DisplayName("test whether shiro2 argon2 password can be parsed and matched.")
     void testArgon2Password() {
         // given
         def matcher = new PasswordMatcher();
-        def iterations = (int) pow(2, 10)
         def bcryptPw = '$shiro2$argon2id$v=19$m=4096,t=3,p=4$MTIzNDU2Nzg5MDEyMzQ1Ng$bjcHqfb0LPHyS13eVaNcBga9LF12I3k34H5ULt2gyoI'
         def bcryptHash = new Shiro2CryptFormat().parse(bcryptPw);
         def plaintext = 'secret#shiro,password;Jo8opech'

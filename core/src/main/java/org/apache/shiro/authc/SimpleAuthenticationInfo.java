@@ -26,6 +26,7 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -267,7 +268,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
         SimpleAuthenticationInfo that = (SimpleAuthenticationInfo) o;
 
         //noinspection RedundantIfStatement
-        if (principals != null ? !principals.equals(that.principals) : that.principals != null) {
+        if (!Objects.equals(principals, that.principals)) {
             return false;
         }
 

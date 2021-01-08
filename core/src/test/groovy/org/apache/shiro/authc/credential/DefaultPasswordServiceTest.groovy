@@ -23,6 +23,7 @@ import org.apache.shiro.crypto.hash.*
 import org.apache.shiro.crypto.hash.format.HashFormatFactory
 import org.apache.shiro.crypto.hash.format.HexFormat
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 
@@ -37,42 +38,42 @@ import static org.junit.jupiter.api.Assertions.*
 class DefaultPasswordServiceTest {
 
     @Test
+    @DisplayName("throws NPE if plaintext is null")
     void testEncryptPasswordWithNullArgument() {
-        def service = new DefaultPasswordService()
+        def service = createSha256Service()
 
         assertThrows(NullPointerException, { service.encryptPassword(null) } as Executable)
     }
 
     @Test
     void testHashPasswordWithNullArgument() {
-        def service = new DefaultPasswordService()
+        def service = createSha256Service()
         assertNull service.hashPassword(null)
     }
 
     @Test
     void testEncryptPasswordDefault() {
-        def service = new DefaultPasswordService()
+        def service = createSha256Service()
         def encrypted = service.encryptPassword("12345")
         assertTrue service.passwordsMatch("12345", encrypted)
     }
 
     @Test
     void testEncryptPasswordWithInvalidMatch() {
-        def service = new DefaultPasswordService()
+        def service = createSha256Service()
         def encrypted = service.encryptPassword("ABCDEF")
         assertFalse service.passwordsMatch("ABC", encrypted)
     }
 
     @Test
     void testBackwardsCompatibility() {
-        def service = new DefaultPasswordService()
+        def service = createSha256Service()
         def encrypted = service.encryptPassword("12345")
         def submitted = "12345"
         assertTrue service.passwordsMatch(submitted, encrypted);
 
         //change some settings:
-        service.hashService.hashAlgorithmName = "MD5"
-        service.hashService.hashIterations = 250000
+        service.hashService.defaultAlgorithmName = "MD5"
 
         def encrypted2 = service.encryptPassword(submitted)
 
@@ -83,7 +84,7 @@ class DefaultPasswordServiceTest {
 
     @Test
     void testHashFormatWarned() {
-        def service = new DefaultPasswordService()
+        def service = createSha256Service()
         service.hashFormat = new HexFormat()
         assertTrue service.hashFormat instanceof HexFormat
         service.encryptPassword("test")
@@ -92,7 +93,7 @@ class DefaultPasswordServiceTest {
 
     @Test
     void testPasswordsMatchWithNullOrEmpty() {
-        def service = new DefaultPasswordService()
+        def service = createSha256Service()
         assertTrue service.passwordsMatch(null, (String) null)
         assertTrue service.passwordsMatch(null, (Hash) null)
         assertTrue service.passwordsMatch("", (String) null)
@@ -143,19 +144,6 @@ class DefaultPasswordServiceTest {
     }
 
     @Test
-    void testStringComparisonWhenNotUsingAParsableHashFormat() {
-
-        def service = new DefaultPasswordService()
-        service.hashFormat = new HexFormat()
-        //can't use random salts when using HexFormat:
-        service.hashService.generatePublicSalt = false
-
-        def formatted = service.encryptPassword("12345")
-
-        assertTrue service.passwordsMatch("12345", formatted)
-    }
-
-    @Test
     void testTurkishLocal() {
 
         Locale locale = Locale.getDefault();
@@ -164,7 +152,7 @@ class DefaultPasswordServiceTest {
         Locale.setDefault(new Locale("tr", "TR"));
 
         try {
-            PasswordService passwordService = new DefaultPasswordService();
+            PasswordService passwordService = createSha256Service()
             String password = "333";
             String enc = passwordService.encryptPassword(password);
             assertTrue(passwordService.passwordsMatch(password, enc));
@@ -172,5 +160,10 @@ class DefaultPasswordServiceTest {
         finally {
             Locale.setDefault(locale);
         }
+    }
+
+    private static DefaultPasswordService createSha256Service() {
+        def hashService = new DefaultHashService(defaultAlgorithmName: 'SHA-256')
+        new DefaultPasswordService(hashService: hashService)
     }
 }

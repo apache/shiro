@@ -21,6 +21,12 @@ package org.apache.shiro.crypto.hash;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Objects.requireNonNull;
+
 /**
  * A {@code HashRequest} is composed of data that will be used by a {@link HashService} to compute a hash (aka
  * 'digest').  While you can instantiate a concrete {@code HashRequest} class directly, most will find using the
@@ -50,19 +56,7 @@ public interface HashRequest {
      * @return a salt to be used by the {@link HashService} during hash computation, or {@code null} if no salt is
      *         provided as part of the request.
      */
-    ByteSource getSalt();
-
-    /**
-     * Returns the number of requested hash iterations to be performed when computing the final {@code Hash} result.
-     * A non-positive (0 or less) indicates that the {@code HashService}'s default iteration configuration should
-     * be used.  A positive value overrides the {@code HashService}'s configuration for a single request.
-     * <p/>
-     * Note that a {@code HashService} is free to ignore this number if it determines the number is not sufficient
-     * to meet a desired level of security.
-     *
-     * @return the number of requested hash iterations to be performed when computing the final {@code Hash} result.
-     */
-    int getIterations();
+    Optional<ByteSource> getSalt();
 
     /**
      * Returns the name of the hash algorithm the {@code HashService} should use when computing the {@link Hash}, or
@@ -73,9 +67,26 @@ public interface HashRequest {
      * sufficient to meet a desired level of security.
      *
      * @return the name of the hash algorithm the {@code HashService} should use when computing the {@link Hash}, or
-     *         {@code null} if the default algorithm configuration of the {@code HashService} should be used.
+     * {@code null} if the default algorithm configuration of the {@code HashService} should be used.
      */
-    String getAlgorithmName();
+    Optional<String> getAlgorithmName();
+
+    /**
+     * Returns various parameters for the requested hash.
+     *
+     * <p>If the map is empty for a specific parameter, the implementation must select the default.</p>
+     *
+     * <p>Implementations should provide a nested {@code .Parameters} class with {@code public static final String}s
+     * for convenience.</p>
+     *
+     * <p>Example parameters the number of requested hash iterations (does not apply to bcrypt),
+     * memory and cpu constrains, etc.
+     * Please find their specific names in the implementation’s nested {@code .Parameters} class.</p>
+     *
+     * @return the parameters for the requested hash to be used when computing the final {@code Hash} result.
+     * @throws NullPointerException if any of the values is {@code null}.
+     */
+    Map<String, Object> getParameters();
 
     /**
      * A Builder class representing the Builder design pattern for constructing {@link HashRequest} instances.
@@ -87,14 +98,13 @@ public interface HashRequest {
 
         private ByteSource source;
         private ByteSource salt = SimpleByteSource.empty();
-        private int iterations;
+        private Map<String, Object> parameters = new ConcurrentHashMap<>();
         private String algorithmName;
 
         /**
          * Default no-arg constructor.
          */
         public Builder() {
-            this.iterations = 0;
         }
 
         /**
@@ -171,24 +181,14 @@ public interface HashRequest {
             return this;
         }
 
-        /**
-         * Sets the number of requested hash iterations to be performed when computing the final {@code Hash} result.
-         * Not calling this method or setting a non-positive value (0 or less) indicates that the {@code HashService}'s
-         * default iteration configuration should be used.  A positive value overrides the {@code HashService}'s
-         * configuration for a single request.
-         * <p/>
-         * Note that a {@code HashService} is free to ignore this number if it determines the number is not sufficient
-         * to meet a desired level of security. You can always check the result
-         * {@code Hash} {@link Hash#getIterations() getIterations()} method to see what the actual
-         * number of iterations was, which may or may not match this request salt.
-         *
-         * @param iterations the number of requested hash iterations to be performed when computing the final
-         *                   {@code Hash} result.
-         * @return this {@code Builder} instance for method chaining.
-         * @see HashRequest#getIterations()
-         */
-        public Builder setIterations(int iterations) {
-            this.iterations = iterations;
+        public Builder addParameter(String parameterName, Object parameterValue) {
+            this.parameters.put(parameterName, requireNonNull(parameterValue));
+            return this;
+        }
+
+        public Builder withParameters(Map<String, Object> parameters) {
+            this.parameters.clear();
+            this.parameters.putAll(requireNonNull(parameters));
             return this;
         }
 
@@ -220,7 +220,7 @@ public interface HashRequest {
          * @return a {@link HashRequest} instance reflecting the specified configuration.
          */
         public HashRequest build() {
-            return new SimpleHashRequest(this.algorithmName, this.source, this.salt, this.iterations);
+            return new SimpleHashRequest(this.algorithmName, this.source, this.salt, this.parameters);
         }
     }
 }

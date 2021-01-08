@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.authc.credential;
 
-import org.apache.shiro.crypto.hash.Argon2Hash;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.HashRequest;
@@ -49,7 +48,6 @@ import static java.util.Objects.requireNonNull;
 public class DefaultPasswordService implements HashingPasswordService {
 
     public static final String DEFAULT_HASH_ALGORITHM = "argon2id";
-    public static final int DEFAULT_HASH_ITERATIONS = Argon2Hash.DEFAULT_ITERATIONS;
 
     private static final Logger log = LoggerFactory.getLogger(DefaultPasswordService.class);
 
@@ -63,9 +61,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         this.hashFormatWarned = false;
 
         DefaultHashService hashService = new DefaultHashService();
-        hashService.setHashAlgorithmName(DEFAULT_HASH_ALGORITHM);
-        hashService.setHashIterations(DEFAULT_HASH_ITERATIONS);
-        hashService.setGeneratePublicSalt(true); //always want generated salts for user passwords to be most secure
+        hashService.setDefaultAlgorithmName(DEFAULT_HASH_ALGORITHM);
         this.hashService = hashService;
 
         this.hashFormat = new Shiro2CryptFormat();

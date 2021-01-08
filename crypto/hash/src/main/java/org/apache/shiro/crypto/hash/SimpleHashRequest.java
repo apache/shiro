@@ -20,6 +20,11 @@ package org.apache.shiro.crypto.hash;
 
 import org.apache.shiro.lang.util.ByteSource;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Collections.unmodifiableMap;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -31,28 +36,26 @@ public class SimpleHashRequest implements HashRequest {
 
     private final ByteSource source; //cannot be null - this is the source to hash.
     private final ByteSource salt; //null = no salt specified
-    private final int iterations; //0 = not specified by the requestor; let the HashService decide.
     private final String algorithmName; //null = let the HashService decide.
+    private final Map<String, Object> parameters = new ConcurrentHashMap<>();
 
     /**
      * Creates a new SimpleHashRequest instance.
      *
      * @param algorithmName the name of the hash algorithm to use.  This is often null as the
-     * {@link HashService} implementation is usually configured with an appropriate algorithm name, but this
-     * can be non-null if the hash service's algorithm should be overridden with a specific one for the duration
-     * of the request.
-     *
-     * @param source the source to be hashed
-     * @param salt any public salt which should be used when computing the hash
-     * @param iterations the number of hash iterations to execute.  Zero (0) indicates no iterations were specified
-     * for the request, at which point the number of iterations is decided by the {@code HashService}
-     * @throws NullPointerException if {@code source} is null or empty.
+     *                      {@link HashService} implementation is usually configured with an appropriate algorithm name, but this
+     *                      can be non-null if the hash service's algorithm should be overridden with a specific one for the duration
+     *                      of the request.
+     * @param source        the source to be hashed
+     * @param salt          any public salt which should be used when computing the hash
+     * @param parameters    e.g. the number of hash iterations to execute or other parameters.
+     * @throws NullPointerException if {@code source} is null or empty or {@code parameters} is {@code null}.
      */
-    public SimpleHashRequest(String algorithmName, ByteSource source, ByteSource salt, int iterations) {
+    public SimpleHashRequest(String algorithmName, ByteSource source, ByteSource salt, Map<String, Object> parameters) {
         this.source = requireNonNull(source);
         this.salt = salt;
         this.algorithmName = algorithmName;
-        this.iterations = Math.max(0, iterations);
+        this.parameters.putAll(requireNonNull(parameters));
     }
 
     @Override
@@ -61,17 +64,18 @@ public class SimpleHashRequest implements HashRequest {
     }
 
     @Override
-    public ByteSource getSalt() {
-        return this.salt;
+    public Optional<ByteSource> getSalt() {
+        return Optional.ofNullable(this.salt);
+    }
+
+
+    @Override
+    public Optional<String> getAlgorithmName() {
+        return Optional.ofNullable(algorithmName);
     }
 
     @Override
-    public int getIterations() {
-        return iterations;
-    }
-
-    @Override
-    public String getAlgorithmName() {
-        return algorithmName;
+    public Map<String, Object> getParameters() {
+        return unmodifiableMap(this.parameters);
     }
 }

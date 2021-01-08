@@ -30,10 +30,13 @@ import org.apache.shiro.lang.codec.Hex;
  * techniques and how the overloaded constructors function.
  *
  * @since 0.9
+ * @deprecated and will throw exceptions since 2.0.0, to be removed in 2.1.0.
  */
+@Deprecated
 public class Md2Hash extends SimpleHash {
 
     public static final String ALGORITHM_NAME = "MD2";
+    private static final long serialVersionUID = 3432560796303546217L;
 
     public Md2Hash() {
         super(ALGORITHM_NAME);

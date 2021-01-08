@@ -29,12 +29,15 @@ import org.apache.shiro.lang.codec.Hex;
  * techniques and how the overloaded constructors function.
  *
  * @since 0.9
+ * @deprecated since 2.0.0, will throw exceptions in 2.1.0 and to be removed in 2.2.0.
  */
+@Deprecated
 public class Md5Hash extends SimpleHash {
 
     //TODO - complete JavaDoc
 
     public static final String ALGORITHM_NAME = "MD5";
+    private static final long serialVersionUID = -1297357676456275955L;
 
     public Md5Hash() {
         super(ALGORITHM_NAME);

@@ -17,8 +17,9 @@
  * under the License.
  */
 
-package org.apache.shiro.crypto.hash;
+package org.apache.shiro.crypto.support.hashes.argon2;
 
+import org.apache.shiro.crypto.hash.AbstractCryptHash;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
@@ -28,13 +29,14 @@ import org.bouncycastle.crypto.params.Argon2Parameters;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64.Encoder;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
-import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -52,21 +54,22 @@ import static java.util.Objects.requireNonNull;
 public class Argon2Hash extends AbstractCryptHash {
     private static final long serialVersionUID = 2647354947284558921L;
 
-    private static final Pattern DELIMITER_COMMA = Pattern.compile(",");
+    public static final String DEFAULT_ALGORITHM_NAME = "argon2id";
 
-    private static final String ALGORITHM_NAME = "argon2id";
-
-    private static final int DEFAULT_VERSION = Argon2Parameters.ARGON2_VERSION_13;
+    public static final int DEFAULT_ALGORITHM_VERSION = Argon2Parameters.ARGON2_VERSION_13;
 
     public static final int DEFAULT_ITERATIONS = 3;
 
-    private static final List<String> ALGORITHMS_ARGON2 = Arrays.asList("argon2id", "argon2i", "argon2d");
+    public static final int DEFAULT_MEMORY_KIB = 4096;
 
-    private static final int DEFAULT_MEMORY_POW_2 = 4096;
+    private static final Set<String> ALGORITHMS_ARGON2 = new HashSet<>(Arrays.asList("argon2id", "argon2i", "argon2d"));
 
-    private static final int DEFAULT_PARALLELISM = 4;
+    private static final Pattern DELIMITER_COMMA = Pattern.compile(",");
 
-    private static final int DEFAULT_OUTPUT_LENGTH = 32;
+
+    public static final int DEFAULT_PARALLELISM = 4;
+
+    public static final int DEFAULT_OUTPUT_LENGTH = 32;
 
 
     /**
@@ -92,8 +95,8 @@ public class Argon2Hash extends AbstractCryptHash {
         checkValidIterations();
     }
 
-    public static List<String> getAlgorithmsArgon2() {
-        return unmodifiableList(ALGORITHMS_ARGON2);
+    public static Set<String> getAlgorithmsArgon2() {
+        return unmodifiableSet(ALGORITHMS_ARGON2);
     }
 
     public static ByteSource createSalt() {
@@ -107,7 +110,7 @@ public class Argon2Hash extends AbstractCryptHash {
             throw new UnsupportedOperationException("Unsupported input: " + input);
         }
 
-        final String[] parts = DELIMITER.split(input.substring(1));
+        final String[] parts = AbstractCryptHash.DELIMITER.split(input.substring(1));
         final String algorithmName = parts[0].trim();
 
         if (!ALGORITHMS_ARGON2.contains(algorithmName)) {
@@ -164,11 +167,11 @@ public class Argon2Hash extends AbstractCryptHash {
     }
 
     public static Argon2Hash generate(final ByteSource source, final ByteSource salt, final int iterations) {
-        return generate(ALGORITHM_NAME, source, requireNonNull(salt, "salt"), iterations);
+        return generate(DEFAULT_ALGORITHM_NAME, source, requireNonNull(salt, "salt"), iterations);
     }
 
     public static Argon2Hash generate(String algorithmName, ByteSource source, ByteSource salt, int iterations) {
-        return generate(algorithmName, DEFAULT_VERSION, source, salt, iterations, DEFAULT_MEMORY_POW_2, DEFAULT_PARALLELISM, DEFAULT_OUTPUT_LENGTH);
+        return generate(algorithmName, DEFAULT_ALGORITHM_VERSION, source, salt, iterations, DEFAULT_MEMORY_KIB, DEFAULT_PARALLELISM, DEFAULT_OUTPUT_LENGTH);
     }
 
     public static Argon2Hash generate(
