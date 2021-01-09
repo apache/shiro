@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.toSet;
 /**
  * @since 2.0.0
  */
-public class SimpleHashProvider implements HashSpi<SimpleHash> {
+public class SimpleHashProvider implements HashSpi {
 
     private static final Set<String> IMPLEMENTED_ALGORITHMS = Arrays.stream(new String[]{
             Sha256Hash.ALGORITHM_NAME,
@@ -44,11 +44,6 @@ public class SimpleHashProvider implements HashSpi<SimpleHash> {
             Sha512Hash.ALGORITHM_NAME
     })
             .collect(toSet());
-
-    @Override
-    public Class<SimpleHash> getImplementationClass() {
-        return SimpleHash.class;
-    }
 
     @Override
     public Set<String> getImplementedAlgorithms() {
@@ -67,11 +62,11 @@ public class SimpleHashProvider implements HashSpi<SimpleHash> {
     }
 
     @Override
-    public HashFactory<SimpleHash> newHashFactory(Random random) {
+    public HashFactory newHashFactory(Random random) {
         return new SimpleHashFactory(random);
     }
 
-    static class SimpleHashFactory implements HashSpi.HashFactory<SimpleHash> {
+    static class SimpleHashFactory implements HashSpi.HashFactory {
 
         private final Random random;
 

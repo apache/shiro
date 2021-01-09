@@ -45,9 +45,9 @@ public final class HashProvider {
      * @return an instance of {@link HashProvider} if found, otherwise {@link Optional#empty()}.
      * @throws NullPointerException if the given parameter algorithmName is {@code null}.
      */
-    public static Optional<HashSpi<? extends Hash>> getByAlgorithmName(String algorithmName) {
+    public static Optional<HashSpi> getByAlgorithmName(String algorithmName) {
         requireNonNull(algorithmName, "algorithmName in HashProvider.getByAlgorithmName");
-        ServiceLoader<HashSpi<? extends Hash>> hashSpis = load();
+        ServiceLoader<HashSpi> hashSpis = load();
 
         return StreamSupport.stream(hashSpis.spliterator(), false)
                 .filter(hashSpi -> hashSpi.getImplementedAlgorithms().contains(algorithmName))
@@ -55,8 +55,8 @@ public final class HashProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private static ServiceLoader<HashSpi<? extends Hash>> load() {
-        return (ServiceLoader<HashSpi<? extends Hash>>) (Object) ServiceLoader.load(HashSpi.class);
+    private static ServiceLoader<HashSpi> load() {
+        return ServiceLoader.load(HashSpi.class);
     }
 
 }

@@ -34,7 +34,7 @@ package org.apache.shiro.crypto.support.hashes.bcrypt;
  *
  * @since 2.0.0
  */
-public interface OpenBSDBase64 {
+interface OpenBSDBase64 {
 
 
     /**

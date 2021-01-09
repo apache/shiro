@@ -26,7 +26,7 @@ import java.util.Random;
 /**
  * Default implementation of the {@link HashService} interface, supporting a customizable hash algorithm name.
  * <h2>Hash Algorithm</h2>
- * You may specify a hash algorithm via the {@link #setHashAlgorithmName(String)} property.  Any algorithm name
+ * You may specify a hash algorithm via the {@link #setDefaultAlgorithmName(String)} property. Any algorithm name
  * understood by the JDK
  * {@link java.security.MessageDigest#getInstance(String) MessageDigest.getInstance(String algorithmName)} method
  * will work, or any Hash algorithm implemented by any loadable {@link HashSpi}. The default is {@code argon2}.
@@ -88,9 +88,9 @@ public class DefaultHashService implements ConfigurableHashService {
 
         String algorithmName = getAlgorithmName(request);
 
-        Optional<HashSpi<? extends Hash>> kdfHash = HashProvider.getByAlgorithmName(algorithmName);
+        Optional<HashSpi> kdfHash = HashProvider.getByAlgorithmName(algorithmName);
         if (kdfHash.isPresent()) {
-            HashSpi<?> hashSpi = kdfHash.orElseThrow(NoSuchElementException::new);
+            HashSpi hashSpi = kdfHash.orElseThrow(NoSuchElementException::new);
 
             return hashSpi.newHashFactory(random).generate(request);
         }

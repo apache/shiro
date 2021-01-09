@@ -53,7 +53,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @since 2.0.0
  */
-public class Argon2Hash extends AbstractCryptHash {
+class Argon2Hash extends AbstractCryptHash {
     private static final long serialVersionUID = 2647354947284558921L;
 
     public static final String DEFAULT_ALGORITHM_NAME = "argon2id";
@@ -101,8 +101,12 @@ public class Argon2Hash extends AbstractCryptHash {
         return unmodifiableSet(ALGORITHMS_ARGON2);
     }
 
-    public static ByteSource createSalt() {
-        return new SimpleByteSource(new SecureRandom().generateSeed(SALT_LENGTH));
+    protected static ByteSource createSalt() {
+        return createSalt(new SecureRandom());
+    }
+
+    public static ByteSource createSalt(SecureRandom random) {
+        return new SimpleByteSource(random.generateSeed(SALT_LENGTH));
     }
 
     public static Argon2Hash fromString(String input) {

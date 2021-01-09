@@ -38,14 +38,9 @@ import java.util.Set;
 /**
  * @since 2.0.0
  */
-public class BCryptProvider implements HashSpi<BCryptHash> {
+public class BCryptProvider implements HashSpi {
 
     private static final Logger LOG = LoggerFactory.getLogger(BCryptProvider.class);
-
-    @Override
-    public Class<BCryptHash> getImplementationClass() {
-        return BCryptHash.class;
-    }
 
     @Override
     public Set<String> getImplementedAlgorithms() {
@@ -58,11 +53,11 @@ public class BCryptProvider implements HashSpi<BCryptHash> {
     }
 
     @Override
-    public HashFactory<BCryptHash> newHashFactory(Random random) {
+    public HashFactory newHashFactory(Random random) {
         return new BCryptHashFactory(random);
     }
 
-    static class BCryptHashFactory implements HashSpi.HashFactory<BCryptHash> {
+    static class BCryptHashFactory implements HashSpi.HashFactory {
 
         private final SecureRandom random;
 
@@ -122,21 +117,21 @@ public class BCryptProvider implements HashSpi<BCryptHash> {
                     .map(obj -> (String) obj);
 
             if (!optSaltBase64.isPresent()) {
-                return BCryptHash.createSalt();
+                return BCryptHash.createSalt(random);
             }
 
             final String saltBase64 = optSaltBase64.orElseThrow(NoSuchElementException::new);
             final byte[] saltBytes = Base64.getDecoder().decode(saltBase64);
 
             if (saltBytes.length != BCryptHash.SALT_LENGTH) {
-                return BCryptHash.createSalt();
+                return BCryptHash.createSalt(random);
             }
 
             return new SimpleByteSource(saltBytes);
         }
     }
 
-    static final class Parameters {
+    public static final class Parameters {
         public static final String DEFAULT_ALGORITHM_NAME = BCryptHash.DEFAULT_ALGORITHM_NAME;
 
         public static final String PARAMETER_SALT = "BCrypt.salt";

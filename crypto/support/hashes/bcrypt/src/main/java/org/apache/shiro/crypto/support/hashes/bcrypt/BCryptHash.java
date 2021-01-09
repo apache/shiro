@@ -37,7 +37,7 @@ import static java.util.Collections.unmodifiableSet;
 /**
  * @since 2.0.0
  */
-public class BCryptHash extends AbstractCryptHash {
+class BCryptHash extends AbstractCryptHash {
 
     private static final long serialVersionUID = 6957869292324606101L;
 
@@ -142,7 +142,11 @@ public class BCryptHash extends AbstractCryptHash {
     }
 
     protected static ByteSource createSalt() {
-        return new SimpleByteSource(new SecureRandom().generateSeed(SALT_LENGTH));
+        return createSalt(new SecureRandom());
+    }
+
+    protected static ByteSource createSalt(SecureRandom random) {
+        return new SimpleByteSource(random.generateSeed(SALT_LENGTH));
     }
 
     @Override

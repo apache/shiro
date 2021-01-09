@@ -34,16 +34,19 @@ import java.util.Random;
 import java.util.Set;
 
 /**
+ * A HashProvider for the Argon2 hash algorithm.
+ *
+ * <p>This class is intended to be used by the {@code HashProvider} class from Shiro. However,
+ * this class can also be used to created instances of the Argon2 hash manually.</p>
+ *
+ * <p>Furthermore, there is a nested {@link Parameters} class which provides names for the
+ * keys used in the parameters map of the {@link HashRequest} class.</p>
+ *
  * @since 2.0.0
  */
-public class Argon2HashProvider implements HashSpi<Argon2Hash> {
+public class Argon2HashProvider implements HashSpi {
 
     private static final Logger LOG = LoggerFactory.getLogger(Argon2HashProvider.class);
-
-    @Override
-    public Class<Argon2Hash> getImplementationClass() {
-        return Argon2Hash.class;
-    }
 
     @Override
     public Set<String> getImplementedAlgorithms() {
@@ -56,11 +59,11 @@ public class Argon2HashProvider implements HashSpi<Argon2Hash> {
     }
 
     @Override
-    public HashFactory<Argon2Hash> newHashFactory(Random random) {
+    public HashFactory newHashFactory(Random random) {
         return new Argon2HashFactory(random);
     }
 
-    static class Argon2HashFactory implements HashSpi.HashFactory<Argon2Hash> {
+    static class Argon2HashFactory implements HashSpi.HashFactory {
 
         private final SecureRandom random;
 
@@ -117,7 +120,7 @@ public class Argon2HashProvider implements HashSpi<Argon2Hash> {
                     .map(saltParm -> Base64.getDecoder().decode((String) saltParm))
                     .map(SimpleByteSource::new)
                     .flatMap(this::lengthValidOrEmpty)
-                    .orElseGet(Argon2Hash::createSalt);
+                    .orElseGet(() -> Argon2Hash.createSalt(random));
         }
 
         private Optional<ByteSource> lengthValidOrEmpty(ByteSource bytes) {
@@ -143,6 +146,15 @@ public class Argon2HashProvider implements HashSpi<Argon2Hash> {
         }
     }
 
+    /**
+     * Parameters for the {@link Argon2Hash} class.
+     *
+     * <p>This class contains public constants only. The constants starting with {@code PARAMETER_} are
+     * the parameter names recognized by the
+     * {@link org.apache.shiro.crypto.hash.HashSpi.HashFactory#generate(HashRequest)} method.</p>
+     *
+     * <p>The constants starting with {@code DEFAULT_} are their respective default values.</p>
+     */
     public static final class Parameters {
 
         public static final String DEFAULT_ALGORITHM_NAME = Argon2Hash.DEFAULT_ALGORITHM_NAME;
@@ -152,12 +164,40 @@ public class Argon2HashProvider implements HashSpi<Argon2Hash> {
         public static final int DEFAULT_PARALLELISM = Argon2Hash.DEFAULT_PARALLELISM;
         public static final int DEFAULT_OUTPUT_LENGTH = Argon2Hash.DEFAULT_OUTPUT_LENGTH;
 
+        /**
+         * Parameter for modifying the internal algorithm used by Argon2.
+         *
+         * <p>Valid values are {@code argon2i} (optimized to resist side-channel attacks),
+         * {@code argon2d} (maximizes resistance to GPU cracking attacks)
+         * and {@code argon2id} (a hybrid version).</p>
+         *
+         * <p>The default value is {@value DEFAULT_ALGORITHM_NAME} when this parameter is not specified.</p>
+         */
         public static final String PARAMETER_ALGORITHM_NAME = "Argon2.algorithmName";
         public static final String PARAMETER_ALGORITHM_VERSION = "Argon2.version";
+
+        /**
+         * The salt to use.
+         *
+         * <p>The value for this parameter accepts a Base64-encoded 16byte (128bit) salt.</p>
+         *
+         * <p>As for any KDF, do not use a static salt value for multiple passwords.</p>
+         *
+         * <p>The default value is a new random 128bit-salt, if this parameter is not specified.</p>
+         */
         public static final String PARAMETER_SALT = "Argon2.salt";
+
         public static final String PARAMETER_ITERATIONS = "Argon2.iterations";
         public static final String PARAMETER_MEMORY_KIB = "Argon2.memoryKib";
         public static final String PARAMETER_PARALLELISM = "Argon2.parallelism";
+
+        /**
+         * The output length of the resulting data section.
+         *
+         * <p>Argon2 allows to modify the length of the generated output.</p>
+         *
+         * <p>The default value is {@value DEFAULT_OUTPUT_LENGTH} when this parameter is not specified.</p>
+         */
         public static final String PARAMETER_OUTPUT_LENGTH = "Argon2.outputLength";
 
         private Parameters() {
