@@ -20,20 +20,14 @@ package org.apache.shiro.spring.web.config
 
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.realm.text.TextConfigurationRealm
-import org.apache.shiro.spring.config.EventBusTestConfiguration
-import org.apache.shiro.spring.config.RealmTestConfiguration
-import org.apache.shiro.spring.config.ShiroAnnotationProcessorConfiguration
-import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor
 import org.apache.shiro.spring.testconfig.EventBusTestConfiguration
 import org.apache.shiro.spring.testconfig.RealmTestConfiguration
 import org.apache.shiro.spring.web.testconfig.CacheManagerConfiguration
-
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import static org.hamcrest.MatcherAssert.assertThat
