@@ -112,11 +112,4 @@ public class DefaultHashService implements ConfigurableHashService {
         return this.defaultAlgorithmName;
     }
 
-    public Random getRandom() {
-        return random;
-    }
-
-    public void setRandom(Random random) {
-        this.random = random;
-    }
 }

@@ -33,6 +33,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * @since 2.0.0
+ */
 public class Argon2HashProvider implements HashSpi<Argon2Hash> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Argon2HashProvider.class);
@@ -140,7 +143,7 @@ public class Argon2HashProvider implements HashSpi<Argon2Hash> {
         }
     }
 
-    static final class Parameters {
+    public static final class Parameters {
 
         public static final String DEFAULT_ALGORITHM_NAME = Argon2Hash.DEFAULT_ALGORITHM_NAME;
         public static final int DEFAULT_ALGORITHM_VERSION = Argon2Hash.DEFAULT_ALGORITHM_VERSION;

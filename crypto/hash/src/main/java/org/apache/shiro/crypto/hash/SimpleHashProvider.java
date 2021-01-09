@@ -33,12 +33,12 @@ import java.util.Set;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
 
+/**
+ * @since 2.0.0
+ */
 public class SimpleHashProvider implements HashSpi<SimpleHash> {
 
     private static final Set<String> IMPLEMENTED_ALGORITHMS = Arrays.stream(new String[]{
-            Md2Hash.ALGORITHM_NAME,
-            Md5Hash.ALGORITHM_NAME,
-            Sha1Hash.ALGORITHM_NAME,
             Sha256Hash.ALGORITHM_NAME,
             Sha384Hash.ALGORITHM_NAME,
             Sha512Hash.ALGORITHM_NAME

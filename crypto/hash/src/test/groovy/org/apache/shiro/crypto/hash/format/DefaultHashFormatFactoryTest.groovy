@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.crypto.hash.format
 
-import org.apache.shiro.crypto.hash.Sha1Hash
+import org.apache.shiro.crypto.hash.Sha512Hash
 import org.junit.Test
 
 import static org.junit.Assert.*
@@ -73,7 +73,7 @@ class DefaultHashFormatFactoryTest {
     @Test
     void testGetInstanceWithMcfFormattedString() {
         Shiro1CryptFormat format = new Shiro1CryptFormat()
-        def formatted = format.format(new Sha1Hash("test"))
+        def formatted = format.format(new Sha512Hash("test"))
 
         def factory = new DefaultHashFormatFactory()
 
@@ -102,7 +102,7 @@ class DefaultHashFormatFactoryTest {
     void testMcfFormattedArgument() {
         def factory = new DefaultHashFormatFactory()
 
-        def hash = new Sha1Hash("test")
+        def hash = new Sha512Hash("test")
         def formatted = new Shiro1CryptFormat().format(hash)
 
         def instance = factory.getInstance(formatted)

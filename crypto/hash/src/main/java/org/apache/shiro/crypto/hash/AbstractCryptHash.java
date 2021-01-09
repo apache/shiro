@@ -32,6 +32,9 @@ import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * @since 2.0.0
+ */
 public abstract class AbstractCryptHash implements Hash, Serializable {
 
     private static final long serialVersionUID = 2483214646921027859L;

@@ -34,6 +34,9 @@ import java.util.StringJoiner;
 
 import static java.util.Collections.unmodifiableSet;
 
+/**
+ * @since 2.0.0
+ */
 public class BCryptHash extends AbstractCryptHash {
 
     private static final long serialVersionUID = 6957869292324606101L;

@@ -35,6 +35,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * @since 2.0.0
+ */
 public class HasherTest {
 
     private final InputStream systemIn = System.in;

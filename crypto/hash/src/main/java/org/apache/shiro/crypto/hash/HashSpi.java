@@ -22,6 +22,9 @@ package org.apache.shiro.crypto.hash;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * @since 2.0.0
+ */
 public interface HashSpi<T extends Hash> {
 
     Class<T> getImplementationClass();

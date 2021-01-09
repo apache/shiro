@@ -35,6 +35,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * @since 2.0.0
+ */
 public class BCryptProvider implements HashSpi<BCryptHash> {
 
     private static final Logger LOG = LoggerFactory.getLogger(BCryptProvider.class);

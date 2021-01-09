@@ -29,6 +29,8 @@ import static java.util.Objects.requireNonNull;
  * Hashes used by the Shiro2CryptFormat class.
  *
  * <p>Instead of maintaining them as an {@code Enum}, ServiceLoaders would provide a pluggable alternative.</p>
+ *
+ * @since 2.0.0
  */
 public final class HashProvider {
 

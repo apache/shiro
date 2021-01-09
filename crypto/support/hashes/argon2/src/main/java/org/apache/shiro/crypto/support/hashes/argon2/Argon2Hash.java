@@ -50,6 +50,8 @@ import static java.util.Objects.requireNonNull;
  * The RFC suggests to use 1 GiB of memory for frontend and 4 GiB for backend authentication.</p>
  *
  * <p>Example crypt string is: {@code $argon2i$v=19$m=16384,t=100,p=2$M3ByeyZKLjFRREJqQi87WQ$5kRCtDjL6RoIWGq9bL27DkFNunucg1hW280PmP0XDtY}.</p>
+ *
+ * @since 2.0.0
  */
 public class Argon2Hash extends AbstractCryptHash {
     private static final long serialVersionUID = 2647354947284558921L;

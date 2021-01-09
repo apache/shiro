@@ -26,11 +26,11 @@ package org.apache.shiro.crypto.hash;
 public interface ConfigurableHashService extends HashService {
 
     /**
-     * Sets the name of the {@link java.security.MessageDigest MessageDigest} algorithm that will be used to compute
-     * hashes.
+     * Sets the name of the key derivation function algorithm that will be used to compute
+     * secure hashes for passwords.
      *
-     * @param name the name of the {@link java.security.MessageDigest MessageDigest} algorithm that will be used to
-     *             compute hashes.
+     * @param name the name of the key derivation function algorithm that will be used to
+     *             compute secure hashes for passwords.
      */
     void setDefaultAlgorithmName(String name);
 

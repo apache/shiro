@@ -29,6 +29,9 @@ import static java.lang.Math.pow
 import static org.junit.jupiter.api.Assertions.assertEquals
 import static org.junit.jupiter.api.Assertions.assertTrue
 
+/**
+ * @since 2.0.0
+ */
 class BCryptHashTest {
 
     private static final String TEST_PASSWORD = "secret#shiro,password;Jo8opech";

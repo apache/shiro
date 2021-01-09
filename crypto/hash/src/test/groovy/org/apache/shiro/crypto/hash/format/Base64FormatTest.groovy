@@ -19,7 +19,7 @@
 package org.apache.shiro.crypto.hash.format
 
 import org.apache.shiro.crypto.hash.Hash
-import org.apache.shiro.crypto.hash.Sha1Hash
+import org.apache.shiro.crypto.hash.Sha512Hash
 import org.junit.Test
 
 import static org.junit.Assert.assertEquals
@@ -34,7 +34,7 @@ class Base64FormatTest {
 
     @Test
     void testFormat() {
-        Hash hash = new Sha1Hash("hello");
+        Hash hash = new Sha512Hash("hello");
         Base64Format format = new Base64Format()
         String base64 = format.format(hash)
         assertEquals base64, hash.toBase64()

@@ -30,12 +30,14 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>support</artifactId>
+    <groupId>org.apache.shiro.crypto</groupId>
+    <artifactId>shiro-crypto-support</artifactId>
     <name>Apache Shiro :: Cryptography :: Support</name>
     <packaging>pom</packaging>
 
     <modules>
-        <module>hashes</module>
+        <module>hashes/argon2</module>
+        <module>hashes/bcrypt</module>
     </modules>
 
 

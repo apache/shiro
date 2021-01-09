@@ -70,7 +70,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @see ModularCryptFormat
  * @see ParsableHashFormat
- * @since 1.2
+ * @since 2.0.0
  */
 public class Shiro2CryptFormat implements ModularCryptFormat, ParsableHashFormat {
 

@@ -52,10 +52,7 @@ import static java.util.Objects.requireNonNull;
  * and multiple hash iterations.  Please read this excellent
  * <a href="http://www.owasp.org/index.php/Hashing_Java" _target="blank">Hashing Java article</a> to learn about
  * salting and multiple iterations and why you might want to use them. (Note of sections 5
- * &quot;Why add salt?&quot; and 6 "Hardening against the attacker's attack").   We should also note here that all of
- * Shiro's Hash implementations (for example, {@link org.apache.shiro.crypto.hash.Md5Hash Md5Hash},
- * {@link org.apache.shiro.crypto.hash.Sha1Hash Sha1Hash}, etc) support salting and multiple hash iterations via
- * overloaded constructors.
+ * &quot;Why add salt?&quot; and 6 "Hardening against the attacker's attack").</p>
  * <h4>Real World Case Study</h4>
  * In April 2010, some public Atlassian Jira and Confluence
  * installations (Apache Software Foundation, Codehaus, etc) were the target of account attacks and user accounts
@@ -115,8 +112,8 @@ import static java.util.Objects.requireNonNull;
  * two, if your application mandates high security, use the SHA-256 (or higher) hashing algorithms and their
  * supporting {@code CredentialsMatcher} implementations.
  *
- * @see org.apache.shiro.crypto.hash.Md5Hash
- * @see org.apache.shiro.crypto.hash.Sha1Hash
+ * @see org.apache.shiro.crypto.hash.Sha256Hash
+ * @see org.apache.shiro.crypto.hash.Sha384Hash
  * @see org.apache.shiro.crypto.hash.Sha256Hash
  * @since 0.9
  */

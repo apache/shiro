@@ -73,7 +73,7 @@ class DefaultPasswordServiceTest {
         assertTrue service.passwordsMatch(submitted, encrypted);
 
         //change some settings:
-        service.hashService.defaultAlgorithmName = "MD5"
+        service.hashService.defaultAlgorithmName = "SHA-512"
 
         def encrypted2 = service.encryptPassword(submitted)
 
@@ -99,7 +99,7 @@ class DefaultPasswordServiceTest {
         assertTrue service.passwordsMatch("", (String) null)
         assertTrue service.passwordsMatch(null, "")
         assertFalse service.passwordsMatch(null, "12345")
-        assertFalse service.passwordsMatch(null, new Sha1Hash("test"))
+        assertFalse service.passwordsMatch(null, new Sha384Hash("test"))
     }
 
     @Test

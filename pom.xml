@@ -752,13 +752,13 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-crypto-support-hashes-argon2</artifactId>
+                <groupId>org.apache.shiro.crypto</groupId>
+                <artifactId>shiro-hashes-argon2</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-crypto-support-hashes-bcrypt</artifactId>
+                <groupId>org.apache.shiro.crypto</groupId>
+                <artifactId>shiro-hashes-bcrypt</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -31,6 +31,8 @@ package org.apache.shiro.crypto.support.hashes.bcrypt;
  * mostly-alphanumeric set of characters, plus . and /. Its 64-character set is "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
  * Padding is not used.
  * </blockquote>
+ *
+ * @since 2.0.0
  */
 public interface OpenBSDBase64 {
 

@@ -28,9 +28,6 @@ import org.apache.shiro.lang.util.ByteSource;
  * The bytes returned by the parent interface's {@link #getBytes() getBytes()} are the hashed value of the
  * original input source, also known as the 'checksum' or 'digest'.
  *
- * @see Md2Hash
- * @see Md5Hash
- * @see Sha1Hash
  * @see Sha256Hash
  * @see Sha384Hash
  * @see Sha512Hash
