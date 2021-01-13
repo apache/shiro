@@ -70,6 +70,10 @@
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <jacoco.skip>true</jacoco.skip>
+        <!--suppress CheckTagEmptyBody -->
+        <surefire.argLine></surefire.argLine>
+        <!--suppress CheckTagEmptyBody -->
+        <failsafe.argLine></failsafe.argLine>
 
         <!-- non-dependency-based properties: -->
         <shiro.osgi.importRange>[2, 3)</shiro.osgi.importRange>
@@ -110,6 +114,7 @@
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>4.0.2</easymock.version>
+        <mockito.version>3.7.0</mockito.version>
         <gmaven.version>1.12.0</gmaven.version>
         <groovy.version>3.0.7</groovy.version>
         <junit.version>5.6.2</junit.version>
@@ -433,6 +438,7 @@
                 <configuration>
                     <printSummary>true</printSummary>
                     <useSystemClassLoader>false</useSystemClassLoader>
+                    <argLine>${surefire.argLine}</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -450,6 +456,7 @@
                         <exclude>**/*ManualIT.java</exclude>
                         <exclude>**/*ManualIT.groovy</exclude>
                     </excludes>
+                    <argLine>${failsafe.argLine}</argLine>
                 </configuration>
                 <executions>
                     <execution>
@@ -688,6 +695,12 @@
             <groupId>org.easymock</groupId>
             <artifactId>easymock</artifactId>
             <version>${easymock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Writing tests in groovy is fast!: -->
@@ -1230,6 +1243,7 @@
                         <link>https://docs.spring.io/spring/docs/2.5.x/javadoc-api/</link>
                         <link>https://junit.org/junit4/javadoc/4.12/</link>
                         <link>http://easymock.org/api/easymock/2.4</link>
+                        <link>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}/org/mockito/Mockito.html</link>
                         <link>https://www.quartz-scheduler.org/api/1.8.6/</link>
                     </links>
                     <!-- Don't include the sample apps - they're not part of Shiro's API: -->
@@ -1399,6 +1413,12 @@
                     </plugins>
                 </pluginManagement>
             </build>
+        </profile>
+        <profile>
+            <id>jdk16</id>
+            <activation>
+                <jdk>[16,)</jdk>
+            </activation>
         </profile>
         <profile>
             <id>docs</id>

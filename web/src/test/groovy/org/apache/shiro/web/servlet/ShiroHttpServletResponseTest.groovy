@@ -24,8 +24,8 @@ import javax.servlet.ServletContext
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 
-import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.Assert.assertEquals
+import static org.mockito.Mockito.*
 
 /**
  * Unit tests for {@link ShiroHttpServletResponse}.
@@ -37,69 +37,70 @@ class ShiroHttpServletResponseTest {
     @Test
     void testEncodeURLNoSessionId() {
 
-        def servletContext = createStrictMock(ServletContext)
-        def httpServletResponse = createStrictMock(HttpServletResponse)
+        def servletContext = mock(ServletContext)
+        def httpServletResponse = mock(HttpServletResponse)
         def shiroHttpServletRequest = setupRequestMock()
-        expect(shiroHttpServletRequest.getSession(false)).andReturn(null)
-        expect(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).andReturn(true)
-        replay shiroHttpServletRequest, servletContext, httpServletResponse
+        when(shiroHttpServletRequest.getSession(false)).then(args -> null)
+        when(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).then(args -> true)
 
         def shiroHttpServletResponse = new ShiroHttpServletResponse(httpServletResponse, servletContext, shiroHttpServletRequest)
 
         assertEquals "/foobar", shiroHttpServletResponse.encodeURL("/foobar")
-        verify shiroHttpServletRequest, servletContext, httpServletResponse
+        verify(shiroHttpServletRequest).getSession(false)
+        verify(shiroHttpServletRequest).getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)
     }
 
     @Test
     void testEncodeURLSessionIdInURL() {
 
-        def servletContext = createStrictMock(ServletContext)
-        def httpServletResponse = createStrictMock(HttpServletResponse)
-        def session = createMock(HttpSession)
+        def servletContext = mock(ServletContext)
+        def httpServletResponse = mock(HttpServletResponse)
+        def session = mock(HttpSession)
         def shiroHttpServletRequest = setupRequestMock()
-        expect(session.getId()).andReturn(URL_SESSION_ID).anyTimes()
-        expect(shiroHttpServletRequest.getSession(false)).andReturn(session)
-        expect(shiroHttpServletRequest.getSession()).andReturn(session)
-        expect(shiroHttpServletRequest.isRequestedSessionIdFromCookie()).andReturn(false)
-        expect(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).andReturn(true)
-        replay shiroHttpServletRequest, servletContext, httpServletResponse, session
+        when(session.getId()).then(args -> URL_SESSION_ID)
+        when(shiroHttpServletRequest.getSession(false)).then(args -> session)
+        when(shiroHttpServletRequest.getSession()).then(args -> session)
+        when(shiroHttpServletRequest.isRequestedSessionIdFromCookie()).then(args -> false)
+        when(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).then(args -> true)
 
         def shiroHttpServletResponse = new ShiroHttpServletResponse(httpServletResponse, servletContext, shiroHttpServletRequest)
 
         assertEquals "/foobar;JSESSIONID=" + URL_SESSION_ID, shiroHttpServletResponse.encodeURL("/foobar")
-        verify shiroHttpServletRequest, servletContext, httpServletResponse, session
+        verify(shiroHttpServletRequest).getSession(false)
+        verify(shiroHttpServletRequest).getSession()
+        verify(shiroHttpServletRequest).isRequestedSessionIdFromCookie()
+        verify(shiroHttpServletRequest).getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)
+        verify(session, times(2)).getId()
     }
 
     @Test
     void testEncodeURLSessionIdInCookie() {
 
-        def servletContext = createStrictMock(ServletContext)
-        def httpServletResponse = createStrictMock(HttpServletResponse)
-        def session = createMock(HttpSession)
+        def servletContext = mock(ServletContext)
+        def httpServletResponse = mock(HttpServletResponse)
+        def session = mock(HttpSession)
         def shiroHttpServletRequest = setupRequestMock()
-        expect(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).andReturn(false)
-        replay shiroHttpServletRequest, servletContext, httpServletResponse, session
+        when(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).then(args -> false)
 
         def shiroHttpServletResponse = new ShiroHttpServletResponse(httpServletResponse, servletContext, shiroHttpServletRequest)
 
         assertEquals "/foobar", shiroHttpServletResponse.encodeURL("/foobar")
-        verify shiroHttpServletRequest, servletContext, httpServletResponse, session
+        verify(shiroHttpServletRequest).getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)
     }
 
     @Test
     void testEncodeURLSessionIdInWhenRewriteDisabled() {
 
-        def servletContext = createStrictMock(ServletContext)
-        def httpServletResponse = createStrictMock(HttpServletResponse)
-        def session = createMock(HttpSession)
+        def servletContext = mock(ServletContext)
+        def httpServletResponse = mock(HttpServletResponse)
+        def session = mock(HttpSession)
         def shiroHttpServletRequest = setupRequestMock()
-        expect(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).andReturn(false)
-        replay shiroHttpServletRequest, servletContext, httpServletResponse, session
+        when(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).then(args -> false)
 
         def shiroHttpServletResponse = new ShiroHttpServletResponse(httpServletResponse, servletContext, shiroHttpServletRequest)
 
         assertEquals "/foobar", shiroHttpServletResponse.encodeURL("/foobar")
-        verify shiroHttpServletRequest, servletContext, httpServletResponse, session
+        verify(shiroHttpServletRequest).getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)
     }
 
     /**
@@ -109,21 +110,24 @@ class ShiroHttpServletResponseTest {
     @Test
     void testEncodeURLSessionIdInWhenRewriteInvalid() {
 
-        def servletContext = createStrictMock(ServletContext)
-        def httpServletResponse = createStrictMock(HttpServletResponse)
-        def session = createMock(HttpSession)
+        def servletContext = mock(ServletContext)
+        def httpServletResponse = mock(HttpServletResponse)
+        def session = mock(HttpSession)
         def shiroHttpServletRequest = setupRequestMock()
-        expect(session.getId()).andReturn(URL_SESSION_ID).anyTimes()
-        expect(shiroHttpServletRequest.getSession(false)).andReturn(session)
-        expect(shiroHttpServletRequest.getSession()).andReturn(session)
-        expect(shiroHttpServletRequest.isRequestedSessionIdFromCookie()).andReturn(false)
-        expect(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).andReturn("something-else")
-        replay shiroHttpServletRequest, servletContext, httpServletResponse, session
+        when(session.getId()).then(args -> URL_SESSION_ID)
+        when(shiroHttpServletRequest.getSession(false)).then(args -> session)
+        when(shiroHttpServletRequest.getSession()).then(args -> session)
+        when(shiroHttpServletRequest.isRequestedSessionIdFromCookie()).then(args -> false)
+        when(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).then(args -> "something-else")
 
         def shiroHttpServletResponse = new ShiroHttpServletResponse(httpServletResponse, servletContext, shiroHttpServletRequest)
 
         assertEquals "/foobar;JSESSIONID=" + URL_SESSION_ID, shiroHttpServletResponse.encodeURL("/foobar")
-        verify shiroHttpServletRequest, servletContext, httpServletResponse, session
+        verify(shiroHttpServletRequest).getSession(false)
+        verify(shiroHttpServletRequest).getSession()
+        verify(shiroHttpServletRequest).isRequestedSessionIdFromCookie()
+        verify(shiroHttpServletRequest).getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)
+        verify(session, times(2)).getId()
     }
 
     /**
@@ -133,32 +137,34 @@ class ShiroHttpServletResponseTest {
     @Test
     void testEncodeURLSessionIdInWhenRewriteInvalidAndNull() {
 
-        def servletContext = createStrictMock(ServletContext)
-        def httpServletResponse = createStrictMock(HttpServletResponse)
-        def session = createMock(HttpSession)
+        def servletContext = mock(ServletContext)
+        def httpServletResponse = mock(HttpServletResponse)
+        def session = mock(HttpSession)
         def shiroHttpServletRequest = setupRequestMock()
-        expect(session.getId()).andReturn(URL_SESSION_ID).anyTimes()
-        expect(shiroHttpServletRequest.getSession(false)).andReturn(session)
-        expect(shiroHttpServletRequest.getSession()).andReturn(session)
-        expect(shiroHttpServletRequest.isRequestedSessionIdFromCookie()).andReturn(false)
-        expect(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).andReturn(null)
-        replay shiroHttpServletRequest, servletContext, httpServletResponse, session
+        when(session.getId()).then(args -> URL_SESSION_ID)
+        when(shiroHttpServletRequest.getSession(false)).then(args -> session)
+        when(shiroHttpServletRequest.getSession()).then(args -> session)
+        when(shiroHttpServletRequest.isRequestedSessionIdFromCookie()).then(args -> false)
+        when(shiroHttpServletRequest.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)).then(args -> null)
 
         def shiroHttpServletResponse = new ShiroHttpServletResponse(httpServletResponse, servletContext, shiroHttpServletRequest)
 
         assertEquals "/foobar;JSESSIONID=" + URL_SESSION_ID, shiroHttpServletResponse.encodeURL("/foobar")
-        verify shiroHttpServletRequest, servletContext, httpServletResponse, session
+        verify(shiroHttpServletRequest).getSession(false)
+        verify(shiroHttpServletRequest).getSession()
+        verify(shiroHttpServletRequest).isRequestedSessionIdFromCookie()
+        verify(shiroHttpServletRequest).getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)
+        verify(session, times(2)).getId()
     }
 
 
     private static ShiroHttpServletRequest setupRequestMock() {
-        def shiroHttpServletRequest = createMock(ShiroHttpServletRequest)
+        def shiroHttpServletRequest = mock(ShiroHttpServletRequest)
 
-        expect(shiroHttpServletRequest.getScheme()).andReturn("http").anyTimes()
-        expect(shiroHttpServletRequest.getServerName()).andReturn("localhost").anyTimes()
-        expect(shiroHttpServletRequest.getServerPort()).andReturn(8080).anyTimes()
-        expect(shiroHttpServletRequest.getContextPath()).andReturn("/").anyTimes()
-
+        when(shiroHttpServletRequest.getScheme()).then(args -> "http")
+        when(shiroHttpServletRequest.getServerName()).then(args -> "localhost")
+        when(shiroHttpServletRequest.getServerPort()).then(args -> 8080)
+        when(shiroHttpServletRequest.getContextPath()).then(args -> "/")
 
         return shiroHttpServletRequest
     }

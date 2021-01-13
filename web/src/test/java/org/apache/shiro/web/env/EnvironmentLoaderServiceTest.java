@@ -28,8 +28,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.easymock.EasyMock.expect;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.stringContainsInOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link EnvironmentLoader} which will use a ServiceLoader.
@@ -62,27 +68,21 @@ public class EnvironmentLoaderServiceTest {
 
         List<WebEnvironment> environmentList = Arrays.asList(new WebEnvironmentStub(), new WebEnvironmentStub());
 
-        ServletContext servletContext = EasyMock.mock(ServletContext.class);
-        expect(servletContext.getInitParameter(EnvironmentLoader.ENVIRONMENT_CLASS_PARAM)).andReturn(null);
+        ServletContext servletContext = mock(ServletContext.class);
+        when(servletContext.getInitParameter(EnvironmentLoader.ENVIRONMENT_CLASS_PARAM)).then(args -> null);
 
-        EasyMock.replay(servletContext);
-
-        final EnvironmentLoader environmentLoader = EasyMock.createMockBuilder(EnvironmentLoader.class)
-                .addMockedMethod("doLoadWebEnvironmentsFromServiceLoader")
-                .createMock();
-        EasyMock.expect(environmentLoader.doLoadWebEnvironmentsFromServiceLoader()).andReturn(environmentList.iterator());
-        EasyMock.replay(environmentLoader);
+        final EnvironmentLoader environmentLoader = spy(EnvironmentLoader.class);
+        when(environmentLoader.doLoadWebEnvironmentsFromServiceLoader()).then(args -> environmentList.iterator());
 
         try {
             environmentLoader.createEnvironment(servletContext);
             Assert.fail("Expected ConfigurationException to be thrown");
-        }
-        catch (ConfigurationException e) {
+        } catch (ConfigurationException e) {
             assertThat(e.getMessage(), stringContainsInOrder("zero or exactly one", "shiroEnvironmentClass"));
         }
 
-        EasyMock.verify(servletContext);
-        EasyMock.verify(environmentLoader);
+        verify(servletContext).getInitParameter(EnvironmentLoader.ENVIRONMENT_CLASS_PARAM);
+        verify(environmentLoader).doLoadWebEnvironmentsFromServiceLoader();
     }
 
     @Test()
