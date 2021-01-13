@@ -36,7 +36,7 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * @since 2.0.0
+ * @since 2.0
  */
 public class BCryptProvider implements HashSpi {
 

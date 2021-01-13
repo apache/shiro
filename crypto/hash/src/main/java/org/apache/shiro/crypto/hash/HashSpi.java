@@ -30,7 +30,7 @@ import java.util.Set;
  *
  * <p>Modern kdf-based hash implementations can extend the {@link AbstractCryptHash} class.</p>
  *
- * @since 2.0.0
+ * @since 2.0
  */
 public interface HashSpi {
 
@@ -70,6 +70,18 @@ public interface HashSpi {
 
     interface HashFactory {
 
+        /**
+         * Generates a hash from the given hash request.
+         *
+         * <p>If the hash requests’ optional parameters are not set, the {@link HashFactory} implementation
+         * should use default parameters where applicable.</p>
+         * <p>If the hash requests’ salt is missing or empty, the implementation should create a salt
+         * with a default size.</p>
+         * @param hashRequest the request to build a Hash from.
+         * @return a generated Hash according to the specs.
+         * @throws IllegalArgumentException if any of the parameters is outside of valid boundaries (algorithm-specific)
+         * or if the given algorithm is not applicable for this {@link HashFactory}.
+         */
         Hash generate(HashRequest hashRequest);
     }
 }

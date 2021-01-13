@@ -24,16 +24,26 @@ import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.lang.util.ByteSource;
 
 import java.io.Serializable;
-import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * @since 2.0.0
+ * Abstract class for hashes following the posix crypt(3) format.
+ *
+ * <p>These implementations must contain a salt, a salt length, can format themselves to a valid String
+ * suitable for the {@code /etc/shadow} file.</p>
+ *
+ * <p>It also defines the hex and base64 output by wrapping the output of {@link #formatToCryptString()}.</p>
+ *
+ * <p>Implementation notice: Implementations should provide a static {@code fromString()} method.</p>
+ *
+ * @since 2.0
  */
 public abstract class AbstractCryptHash implements Hash, Serializable {
 
@@ -54,6 +64,16 @@ public abstract class AbstractCryptHash implements Hash, Serializable {
      */
     private String base64Encoded;
 
+    /**
+     * Constructs an {@link AbstractCryptHash} using the algorithm name, hashed data and salt parameters.
+     *
+     * <p>Other required parameters must be stored by the implementation.</p>
+     *
+     * @param algorithmName internal algorithm name, e.g. {@code 2y} for bcrypt and {@code argon2id} for argon2.
+     * @param hashedData the hashed data as a byte array. Does not include the salt or other parameters.
+     * @param salt the salt which was used when generating the hash.
+     * @throws IllegalArgumentException if the salt is not the same size as {@link #getSaltLength()}.
+     */
     public AbstractCryptHash(final String algorithmName, final byte[] hashedData, final ByteSource salt) {
         this.algorithmName = algorithmName;
         this.hashedData = Arrays.copyOf(hashedData, hashedData.length);
@@ -67,9 +87,26 @@ public abstract class AbstractCryptHash implements Hash, Serializable {
         checkValidSalt();
     }
 
+    /**
+     * Algorithm-specific checks of the algorithm’s parameters.
+     *
+     * <p>While the salt length will be checked by default, other checks will be useful.
+     * Examples are: Argon2 checking for the memory and parallelism parameters, bcrypt checking
+     * for the cost parameters being in a valid range.</p>
+     *
+     * @throws IllegalArgumentException if any of the parameters are invalid.
+     */
     protected abstract void checkValidAlgorithm();
 
-    private void checkValidSalt() {
+    /**
+     * Default check method for a valid salt. Can be overridden, because multiple salt lengths could be valid.
+     *
+     * By default, this method checks if the number of bytes in the salt
+     * are equal to the int returned by {@link #getSaltLength()}.
+     *
+     * @throws IllegalArgumentException if the salt length does not match the returned value of {@link #getSaltLength()}.
+     */
+    protected void checkValidSalt() {
         int length = salt.getBytes().length;
         if (length != getSaltLength()) {
             String message = String.format(
@@ -110,6 +147,13 @@ public abstract class AbstractCryptHash implements Hash, Serializable {
         return this.salt;
     }
 
+    /**
+     * Returns only the hashed data. Those are of no value on their own. If you need to serialize
+     * the hash, please refer to {@link #formatToCryptString()}.
+     *
+     * @return A copy of the hashed data as bytes.
+     * @see #formatToCryptString()
+     */
     @Override
     public byte[] getBytes() {
         return Arrays.copyOf(this.hashedData, this.hashedData.length);
@@ -121,32 +165,32 @@ public abstract class AbstractCryptHash implements Hash, Serializable {
     }
 
     /**
-     * Returns a hex-encoded string of the underlying {@link #getBytes byte array}.
+     * Returns a hex-encoded string of the underlying {@link #formatToCryptString()} formatted output}.
      * <p/>
      * This implementation caches the resulting hex string so multiple calls to this method remain efficient.
      *
-     * @return a hex-encoded string of the underlying {@link #getBytes byte array}.
+     * @return a hex-encoded string of the underlying {@link #formatToCryptString()} formatted output}.
      */
     @Override
     public String toHex() {
         if (this.hexEncoded == null) {
-            this.hexEncoded = Hex.encodeToString(this.getBytes());
+            this.hexEncoded = Hex.encodeToString(this.formatToCryptString().getBytes(StandardCharsets.UTF_8));
         }
         return this.hexEncoded;
     }
 
     /**
-     * Returns a Base64-encoded string of the underlying {@link #getBytes byte array}.
+     * Returns a Base64-encoded string of the underlying {@link #formatToCryptString()} formatted output}.
      * <p/>
      * This implementation caches the resulting Base64 string so multiple calls to this method remain efficient.
      *
-     * @return a Base64-encoded string of the underlying {@link #getBytes byte array}.
+     * @return a Base64-encoded string of the underlying {@link #formatToCryptString()} formatted output}.
      */
     @Override
     public String toBase64() {
         if (this.base64Encoded == null) {
             //cache result in case this method is called multiple times.
-            this.base64Encoded = Base64.encodeToString(this.getBytes());
+            this.base64Encoded = Base64.encodeToString(this.formatToCryptString().getBytes(StandardCharsets.UTF_8));
         }
         return this.base64Encoded;
     }
@@ -160,33 +204,34 @@ public abstract class AbstractCryptHash implements Hash, Serializable {
     public abstract String formatToCryptString();
 
     /**
-     * Returns {@code true} if the specified object is a Hash and its {@link #getBytes byte array} is identical to
-     * this Hash's byte array, {@code false} otherwise.
+     * Returns {@code true} if the specified object is an AbstractCryptHash and its
+     * {@link #formatToCryptString()} formatted output} is identical to
+     * this AbstractCryptHash's formatted output, {@code false} otherwise.
      *
-     * @param other the object (Hash) to check for equality.
-     * @return {@code true} if the specified object is a Hash and its {@link #getBytes byte array} is identical to
-     * this Hash's byte array, {@code false} otherwise.
+     * @param other the object (AbstractCryptHash) to check for equality.
+     * @return {@code true} if the specified object is a AbstractCryptHash
+     * and its {@link #formatToCryptString()} formatted output} is identical to
+     * this AbstractCryptHash's formatted output, {@code false} otherwise.
      */
     @Override
     public boolean equals(final Object other) {
-        if (other instanceof Hash) {
-            final Hash that = (Hash) other;
-            return MessageDigest.isEqual(this.getBytes(), that.getBytes());
+        if (other instanceof AbstractCryptHash) {
+            final AbstractCryptHash that = (AbstractCryptHash) other;
+            return this.formatToCryptString().equals(that.formatToCryptString());
         }
         return false;
     }
 
     /**
-     * Simply returns toHex().hashCode();
+     * Hashes the formatted crypt string.
      *
-     * @return toHex().hashCode()
+     * <p>Implementations should not override this method, as different algorithms produce different output formats
+     * and require different parameters.</p>
+     * @return a hashcode from the {@link #formatToCryptString() formatted output}.
      */
     @Override
     public int hashCode() {
-        if (this.getBytes() == null || this.getBytes().length == 0) {
-            return 0;
-        }
-        return Arrays.hashCode(this.getBytes());
+        return Objects.hash(this.formatToCryptString());
     }
 
     /**

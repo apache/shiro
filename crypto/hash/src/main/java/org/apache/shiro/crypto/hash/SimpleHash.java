@@ -25,6 +25,8 @@ import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
 import org.apache.shiro.lang.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -47,6 +49,8 @@ public class SimpleHash extends AbstractHash {
 
     private static final int DEFAULT_ITERATIONS = 1;
     private static final long serialVersionUID = -6689895264902387303L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleHash.class);
 
     /**
      * The {@link java.security.MessageDigest MessageDigest} algorithm name to use when performing the hash.
@@ -272,7 +276,14 @@ public class SimpleHash extends AbstractHash {
 
     @Override
     public boolean matchesPassword(ByteSource plaintextBytes) {
-        return this.equals(new SimpleHash(this.getAlgorithmName(), plaintextBytes, this.getSalt(), this.getIterations()));
+        try {
+            SimpleHash otherHash = new SimpleHash(this.getAlgorithmName(), plaintextBytes, this.getSalt(), this.getIterations());
+            return this.equals(otherHash);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            // cannot recreate hash. Do not log password.
+            LOG.warn("Cannot recreate a hash using the same parameters.", illegalArgumentException);
+            return false;
+        }
     }
 
     @Override

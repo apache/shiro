@@ -25,6 +25,8 @@ import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -51,10 +53,12 @@ import static java.util.Objects.requireNonNull;
  *
  * <p>Example crypt string is: {@code $argon2i$v=19$m=16384,t=100,p=2$M3ByeyZKLjFRREJqQi87WQ$5kRCtDjL6RoIWGq9bL27DkFNunucg1hW280PmP0XDtY}.</p>
  *
- * @since 2.0.0
+ * @since 2.0
  */
 class Argon2Hash extends AbstractCryptHash {
     private static final long serialVersionUID = 2647354947284558921L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(Argon2Hash.class);
 
     public static final String DEFAULT_ALGORITHM_NAME = "argon2id";
 
@@ -204,7 +208,7 @@ class Argon2Hash extends AbstractCryptHash {
                 type = Argon2Parameters.ARGON2_id;
                 break;
             default:
-                throw new UnsupportedOperationException("Unknown argon2 algorithm: " + algorithmName);
+                throw new IllegalArgumentException("Unknown argon2 algorithm: " + algorithmName);
         }
 
         final Argon2Parameters parameters = new Argon2Parameters.Builder(type)
@@ -257,8 +261,15 @@ class Argon2Hash extends AbstractCryptHash {
 
     @Override
     public boolean matchesPassword(ByteSource plaintextBytes) {
-        Argon2Hash compare = generate(this.getAlgorithmName(), this.argonVersion, plaintextBytes, this.getSalt(), this.getIterations(), this.memoryKiB, this.parallelism, this.getBytes().length);
-        return this.equals(compare);
+        try {
+            Argon2Hash compare = generate(this.getAlgorithmName(), this.argonVersion, plaintextBytes, this.getSalt(), this.getIterations(), this.memoryKiB, this.parallelism, this.getBytes().length);
+
+            return this.equals(compare);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            // cannot recreate hash. Do not log password.
+            LOG.warn("Cannot recreate a hash using the same parameters.", illegalArgumentException);
+            return false;
+        }
     }
 
     @Override

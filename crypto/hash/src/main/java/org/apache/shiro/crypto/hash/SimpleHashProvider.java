@@ -34,7 +34,9 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * @since 2.0.0
+ * Creates a hash provider for salt (+pepper) and Hash-based KDFs, i.e. where the algorithm name
+ * is a SHA algorithm or similar.
+ * @since 2.0
  */
 public class SimpleHashProvider implements HashSpi {
 
@@ -87,6 +89,36 @@ public class SimpleHashProvider implements HashSpi {
             return createSimpleHash(algorithmName, source, iterations, publicSalt, salt);
         }
 
+        /**
+         * Returns the public salt that should be used to compute a hash based on the specified request.
+         * <p/>
+         * This implementation functions as follows:
+         * <ol>
+         *   <li>If the request salt is not null and non-empty, this will be used, return it.</li>
+         *   <li>If the request salt is null or empty:
+         *     <ol><li>create a new 16-byte salt.</li></ol>
+         *   </li>
+         * </ol>
+         *
+         * @param request request the request to process
+         * @return the public salt that should be used to compute a hash based on the specified request or
+         * {@code null} if no public salt should be used.
+         */
+        protected ByteSource getPublicSalt(HashRequest request) {
+            Optional<ByteSource> publicSalt = request.getSalt();
+
+            if (publicSalt.isPresent() && !publicSalt.orElseThrow(NoSuchElementException::new).isEmpty()) {
+                //a public salt was explicitly requested to be used - go ahead and use it:
+                return publicSalt.orElseThrow(NoSuchElementException::new);
+            }
+
+            // generate salt if absent from the request.
+            byte[] ps = new byte[16];
+            random.nextBytes(ps);
+
+            return new SimpleByteSource(ps);
+        }
+
         private ByteSource getSecretSalt(HashRequest request) {
             Optional<Object> secretSalt = Optional.ofNullable(request.getParameters().get(Parameters.PARAMETER_SECRET_SALT));
 
@@ -123,38 +155,6 @@ public class SimpleHashProvider implements HashSpi {
             }
 
             return iterations;
-        }
-
-        /**
-         * Returns the public salt that should be used to compute a hash based on the specified request or
-         * {@code null} if no public salt should be used.
-         * <p/>
-         * This implementation functions as follows:
-         * <ol>
-         * <li>If the request salt is not null and non-empty, this will be used, return it.</li>
-         * <li>If the request salt is null or empty:
-         * <ol>
-         * </ol>
-         * </li>
-         * </ol>
-         *
-         * @param request request the request to process
-         * @return the public salt that should be used to compute a hash based on the specified request or
-         * {@code null} if no public salt should be used.
-         */
-        protected ByteSource getPublicSalt(HashRequest request) {
-            Optional<ByteSource> publicSalt = request.getSalt();
-
-            if (publicSalt.isPresent() && !publicSalt.orElseThrow(NoSuchElementException::new).isEmpty()) {
-                //a public salt was explicitly requested to be used - go ahead and use it:
-                return publicSalt.orElseThrow(NoSuchElementException::new);
-            }
-
-            // generate salt if absent from the request.
-            byte[] ps = new byte[16];
-            random.nextBytes(ps);
-
-            return new SimpleByteSource(ps);
         }
 
         /**

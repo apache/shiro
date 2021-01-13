@@ -61,5 +61,13 @@ public interface Hash extends ByteSource {
      */
     int getIterations();
 
+    /**
+     * Tests if a given passwords matches with this instance.
+     *
+     * <p>Usually implementations will re-create {@code this} but with the given plaintext bytes as secret.</p>
+     *
+     * @param plaintextBytes the plaintext bytes from a user.
+     * @return {@code true} if the given plaintext generates an equal hash with the same parameters as from this hash.
+     */
     boolean matchesPassword(ByteSource plaintextBytes);
 }

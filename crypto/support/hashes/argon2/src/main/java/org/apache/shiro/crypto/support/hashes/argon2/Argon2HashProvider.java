@@ -42,7 +42,7 @@ import java.util.Set;
  * <p>Furthermore, there is a nested {@link Parameters} class which provides names for the
  * keys used in the parameters map of the {@link HashRequest} class.</p>
  *
- * @since 2.0.0
+ * @since 2.0
  */
 public class Argon2HashProvider implements HashSpi {
 

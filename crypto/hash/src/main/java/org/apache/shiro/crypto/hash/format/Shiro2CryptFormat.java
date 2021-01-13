@@ -70,11 +70,17 @@ import static java.util.Objects.requireNonNull;
  *
  * @see ModularCryptFormat
  * @see ParsableHashFormat
- * @since 2.0.0
+ * @since 2.0
  */
 public class Shiro2CryptFormat implements ModularCryptFormat, ParsableHashFormat {
 
+    /**
+     * Identifier for the shiro2 crypt format.
+     */
     public static final String ID = "shiro2";
+    /**
+     * Enclosed identifier of the shiro2 crypt format.
+     */
     public static final String MCF_PREFIX = TOKEN_DELIMITER + ID + TOKEN_DELIMITER;
 
     public Shiro2CryptFormat() {

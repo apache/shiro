@@ -43,7 +43,7 @@ import java.util.Random;
  */
 public class DefaultHashService implements ConfigurableHashService {
 
-    private Random random;
+    private final Random random;
 
     /**
      * The MessageDigest name of the hash algorithm to use for computing hashes.

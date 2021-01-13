@@ -23,6 +23,8 @@ import org.apache.shiro.crypto.hash.AbstractCryptHash;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
 import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -35,11 +37,13 @@ import java.util.StringJoiner;
 import static java.util.Collections.unmodifiableSet;
 
 /**
- * @since 2.0.0
+ * @since 2.0
  */
 class BCryptHash extends AbstractCryptHash {
 
     private static final long serialVersionUID = 6957869292324606101L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractCryptHash.class);
 
     public static final String DEFAULT_ALGORITHM_NAME = "2y";
 
@@ -103,7 +107,7 @@ class BCryptHash extends AbstractCryptHash {
         // the input string should look like this:
         // $2y$cost$salt{22}hash
         if (!input.startsWith("$")) {
-            throw new UnsupportedOperationException("Unsupported input: " + input);
+            throw new IllegalArgumentException("Unsupported input: " + input);
         }
 
         final String[] parts = AbstractCryptHash.DELIMITER.split(input.substring(1));
@@ -174,10 +178,16 @@ class BCryptHash extends AbstractCryptHash {
 
     @Override
     public boolean matchesPassword(ByteSource plaintextBytes) {
-        final String cryptString = OpenBSDBCrypt.generate(this.getAlgorithmName(), plaintextBytes.getBytes(), this.getSalt().getBytes(), this.getCost());
-        BCryptHash other = fromString(cryptString);
+        try {
+            final String cryptString = OpenBSDBCrypt.generate(this.getAlgorithmName(), plaintextBytes.getBytes(), this.getSalt().getBytes(), this.getCost());
+            BCryptHash other = fromString(cryptString);
 
-        return this.equals(other);
+            return this.equals(other);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            // cannot recreate hash. Do not log password.
+            LOG.warn("Cannot recreate a hash using the same parameters.", illegalArgumentException);
+            return false;
+        }
     }
 
     @Override

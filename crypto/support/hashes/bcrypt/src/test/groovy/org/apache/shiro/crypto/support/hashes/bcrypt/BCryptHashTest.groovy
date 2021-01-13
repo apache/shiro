@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals
 import static org.junit.jupiter.api.Assertions.assertTrue
 
 /**
- * @since 2.0.0
+ * @since 2.0
  */
 class BCryptHashTest {
 

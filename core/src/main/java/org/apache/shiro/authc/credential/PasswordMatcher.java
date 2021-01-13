@@ -58,17 +58,6 @@ public class PasswordMatcher implements CredentialsMatcher {
         return service.passwordsMatch(submittedPassword, formatted);
     }
 
-    private HashingPasswordService assertHashingPasswordService(PasswordService service) {
-        if (service instanceof HashingPasswordService) {
-            return (HashingPasswordService) service;
-        }
-        String msg = "AuthenticationInfo's stored credentials are a Hash instance, but the " +
-                "configured passwordService is not a " +
-                HashingPasswordService.class.getName() + " instance.  This is required to perform Hash " +
-                "object password comparisons.";
-        throw new IllegalStateException(msg);
-    }
-
     private PasswordService ensurePasswordService() {
         PasswordService service = getPasswordService();
         if (service == null) {

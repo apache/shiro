@@ -30,7 +30,7 @@ import static java.util.Objects.requireNonNull;
  *
  * <p>Instead of maintaining them as an {@code Enum}, ServiceLoaders would provide a pluggable alternative.</p>
  *
- * @since 2.0.0
+ * @since 2.0
  */
 public final class HashProvider {
 

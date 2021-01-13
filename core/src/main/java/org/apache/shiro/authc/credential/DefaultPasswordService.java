@@ -57,6 +57,14 @@ public class DefaultPasswordService implements HashingPasswordService {
 
     private volatile boolean hashFormatWarned; //used to avoid excessive log noise
 
+    /**
+     * Constructs a new PasswordService with a default hash service and the default
+     * algorithm name {@value #DEFAULT_HASH_ALGORITHM}, a default hash format (shiro2) and
+     * a default hashformat factory.
+     *
+     * <p>The default algorithm can change between minor versions and does not introduce
+     * API incompatibility by design.</p>
+     */
     public DefaultPasswordService() {
         this.hashFormatWarned = false;
 
