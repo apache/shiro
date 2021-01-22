@@ -82,9 +82,10 @@ public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
      * </ol>
      *
      * @param request  incoming ServletRequest
-     * @param response outgoing ServletResponse
+     * @param response outgoing ServletResponse (never used)
      * @return the AuthenticationToken used to execute the login attempt
      */
+    @Override
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) {
         String authorizationHeader = getAuthzHeader(request);
         if (authorizationHeader == null || authorizationHeader.length() == 0) {
@@ -125,6 +126,7 @@ public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
      * @param encoded the Base64-encoded username:password value found after the scheme in the header
      * @return the username (index 0)/password (index 1) pair obtained from the encoded header data.
      */
+    @Override
     protected String[] getPrincipalsAndCredentials(String scheme, String encoded) {
         String decoded = Base64.decodeToString(encoded);
         return decoded.split(":", 2);

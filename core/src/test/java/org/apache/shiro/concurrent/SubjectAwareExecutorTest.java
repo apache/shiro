@@ -21,10 +21,13 @@ package org.apache.shiro.concurrent;
 import org.apache.shiro.subject.support.SubjectRunnable;
 import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.util.concurrent.Executor;
 
-import static org.easymock.EasyMock.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Test cases for the {@link SubjectAwareExecutor} implementation.
@@ -35,21 +38,17 @@ public class SubjectAwareExecutorTest extends SecurityManagerTestSupport {
 
     @Test
     public void testExecute() {
-        Executor targetMockExecutor = createNiceMock(Executor.class);
-        //* ensure the target Executor receives a SubjectRunnable instance that retains the subject identity:
-        //(this is what verifies the test is valid):
-        targetMockExecutor.execute(isA(SubjectRunnable.class));
-        replay(targetMockExecutor);
-
+        Executor targetMockExecutor = mock(Executor.class);
         final SubjectAwareExecutor executor = new SubjectAwareExecutor(targetMockExecutor);
 
-        Runnable work = new Runnable() {
-            public void run() {
-                System.out.println("Hello World");
-            }
-        };
+        Runnable work = () -> System.out.println("Hello World");
         executor.execute(work);
 
-        verify(targetMockExecutor);
+        //* ensure the target Executor receives a SubjectRunnable instance that retains the subject identity:
+        //(this is what verifies the test is valid):
+        ArgumentCaptor<SubjectRunnable> subjectRunnableArgumentCaptor = ArgumentCaptor.forClass(SubjectRunnable.class);
+        verify(targetMockExecutor).execute(subjectRunnableArgumentCaptor.capture());
+        SubjectRunnable subjectRunnable = subjectRunnableArgumentCaptor.getValue();
+        assertNotNull(subjectRunnable);
     }
 }
