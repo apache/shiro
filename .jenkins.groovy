@@ -103,9 +103,11 @@ pipeline {
 
                     stage('Deploy') {
                         when {
-                            expression {
-                                env.BRANCH_NAME ==~ /(1.6.x|1.7.x|master|main)/
-                                MATRIX_JDK == 'jdk_11_latest'
+                            allOf {
+                                expression { env.BRANCH_NAME ==~ /(1.6.x|1.7.x|master|main)/ }
+                                expression { MATRIX_JDK == 'jdk_11_latest' }
+                                // is not a PR (GitHub) / MergeRequest (GitLab) / Change (Gerrit)?
+                                not { changeRequest() }
                             }
                         }
                         steps {
