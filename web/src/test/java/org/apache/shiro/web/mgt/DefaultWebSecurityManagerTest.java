@@ -42,8 +42,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @since 0.9
@@ -62,6 +70,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         sm.setRealm(new IniRealm(ini));
     }
 
+    @Override
     @After
     public void tearDown() {
         sm.destroy();
@@ -75,17 +84,15 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 	@Test
 	public void checkSessionManagerDeterminesContainerSessionMode() {
 		sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
-		WebSessionManager sessionManager = createMock(WebSessionManager.class);
+		WebSessionManager sessionManager = mock(WebSessionManager.class);
 
-		expect(sessionManager.isServletContainerSessions()).andReturn(true).anyTimes();
-
-		replay(sessionManager);
+		when(sessionManager.isServletContainerSessions()).thenReturn(true);
 
 		sm.setSessionManager(sessionManager);
 
 		assertTrue("The set SessionManager is not being used to determine isHttpSessionMode.", sm.isHttpSessionMode());
 
-		verify(sessionManager);
+		verify(sessionManager).isServletContainerSessions();
 	}
 
     @Test
@@ -103,13 +110,12 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
     @Test
     public void testLogin() {
-        HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
 
-        expect(mockRequest.getCookies()).andReturn(null);
-        expect(mockRequest.getContextPath()).andReturn("/");
+        when(mockRequest.getCookies()).thenReturn(null);
+        when(mockRequest.getContextPath()).thenReturn("/");
 
-        replay(mockRequest);
 
         Subject subject = newSubject(mockRequest, mockResponse);
 
@@ -119,7 +125,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
         assertTrue(subject.isAuthenticated());
         assertNotNull(subject.getPrincipal());
-        assertTrue(subject.getPrincipal().equals("lonestarr"));
+        assertEquals("lonestarr", subject.getPrincipal());
     }
 
     @Test
@@ -128,13 +134,11 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         long globalTimeout = 100;
         ((AbstractSessionManager) sm.getSessionManager()).setGlobalSessionTimeout(globalTimeout);
 
-        HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
 
-        expect(mockRequest.getCookies()).andReturn(null);
-        expect(mockRequest.getContextPath()).andReturn("/");
-
-        replay(mockRequest);
+        when(mockRequest.getCookies()).thenReturn(null);
+        when(mockRequest.getContextPath()).thenReturn("/");
 
         Subject subject = newSubject(mockRequest, mockResponse);
 
@@ -154,22 +158,16 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     public void testGetSubjectByRequestResponsePair() {
         shiroSessionModeInit();
 
-        HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
 
-        expect(mockRequest.getCookies()).andReturn(null);
-
-        replay(mockRequest);
-        replay(mockResponse);
+        when(mockRequest.getCookies()).thenReturn(null);
 
         Subject subject = newSubject(mockRequest, mockResponse);
 
-        verify(mockRequest);
-        verify(mockResponse);
-
         assertNotNull(subject);
         assertTrue(subject.getPrincipals() == null || subject.getPrincipals().isEmpty());
-        assertTrue(subject.getSession(false) == null);
+        assertNull(subject.getSession(false));
         assertFalse(subject.isAuthenticated());
     }
 
@@ -178,11 +176,8 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
         shiroSessionModeInit();
 
-        HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
-
-        replay(mockRequest);
-        replay(mockResponse);
+        HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = mock(HttpServletResponse.class);
 
         Subject subject = newSubject(mockRequest, mockResponse);
 
@@ -191,27 +186,18 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
         assertNotNull(sessionId);
 
-        verify(mockRequest);
-        verify(mockResponse);
-
-        mockRequest = createNiceMock(HttpServletRequest.class);
-        mockResponse = createNiceMock(HttpServletResponse.class);
+        mockRequest = mock(HttpServletRequest.class);
+        mockResponse = mock(HttpServletResponse.class);
         //now simulate the cookie going with the request and the Subject should be acquired based on that:
         Cookie[] cookies = new Cookie[]{new Cookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME, sessionId.toString())};
-        expect(mockRequest.getCookies()).andReturn(cookies).anyTimes();
-        expect(mockRequest.getParameter(isA(String.class))).andReturn(null).anyTimes();
-
-        replay(mockRequest);
-        replay(mockResponse);
+        when(mockRequest.getCookies()).thenReturn(cookies);
+        when(mockRequest.getParameter(any(String.class))).thenReturn(null);
 
         subject = newSubject(mockRequest, mockResponse);
 
         session = subject.getSession(false);
         assertNotNull(session);
         assertEquals(sessionId, session.getId());
-
-        verify(mockRequest);
-        verify(mockResponse);
     }
 
     /**

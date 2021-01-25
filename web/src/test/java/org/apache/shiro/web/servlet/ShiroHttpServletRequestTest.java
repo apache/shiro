@@ -18,54 +18,64 @@
  */
 package org.apache.shiro.web.servlet;
 
-import static org.easymock.EasyMock.*;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestCase;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class ShiroHttpServletRequestTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-	private ShiroHttpServletRequest request;
-	
-	private HttpServletRequest mockRequest;
-    private ServletContext mockContext;
-    private Subject mockSubject;
-	
-    @Before
+public class ShiroHttpServletRequestTest {
+
+    private ShiroHttpServletRequest request;
+
+    private HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+    private ServletContext mockContext = mock(ServletContext.class);
+    private Subject mockSubject = mock(Subject.class);
+
+    @BeforeEach
     public void setUp() throws Exception {
-    	this.mockRequest = createMock(HttpServletRequest.class);
-    	this.mockContext = createMock(ServletContext.class);
-    	this.mockSubject = createMock(Subject.class);
-    	
-    	ThreadContext.bind(this.mockSubject);
-    	this.request = new ShiroHttpServletRequest(mockRequest, mockContext, false);
+        ThreadContext.bind(this.mockSubject);
+        this.request = new ShiroHttpServletRequest(mockRequest, mockContext, false);
     }
     
     /**
      * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-637">SHIRO-637<a/>.
      */
     @Test
-    public void testRegetSession() throws Exception {
-        Session session1 = createMock(Session.class);
-        Session session2 = createMock(Session.class);
-    	
+    public void testRegetSession() {
+        Session session1 = mock(Session.class);
+        Session session2 = mock(Session.class);
+        AtomicInteger counter = new AtomicInteger();
+        AtomicInteger counterFalse = new AtomicInteger();
+
         mockSubject.logout();
-        expect(mockSubject.getSession(true))
-           .andReturn(session1).times(1)
-           .andReturn(session2).times(1);
-        expect(mockSubject.getSession(false))
-            .andReturn(session1).times(2)
-            .andReturn(null).times(3);
-        replay(mockSubject);
-        
+        when(mockSubject.getSession(true)).then(args -> {
+            if (counter.getAndIncrement() == 1) {
+                return session1;
+            }
+
+            return session2;
+        });
+        when(mockSubject.getSession(false)).then(args -> {
+           if (counterFalse.getAndIncrement() < 2) {
+               return session1;
+           }
+
+           return null;
+        });
+
         assertNotNull(request.getSession(true));
         assertNotNull(request.getSession(false));
         
@@ -73,6 +83,7 @@ public class ShiroHttpServletRequestTest extends TestCase {
         
         assertNull(request.getSession(false));
         assertNotNull(request.getSession(true));
-        verify(mockSubject);
+        verify(mockSubject, times(2)).getSession(true);
+        verify(mockSubject, atLeast(3)).getSession(false);
     }
 }
