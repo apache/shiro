@@ -20,7 +20,8 @@ package org.apache.shiro.concurrent;
 
 import org.apache.shiro.subject.support.SubjectRunnable;
 import org.apache.shiro.test.SecurityManagerTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.concurrent.ExecutionException;
@@ -29,7 +30,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,10 +51,10 @@ public class SubjectAwareExecutorServiceTest extends SecurityManagerTestSupport 
 
         executor.submit(testRunnable);
         SubjectRunnable subjectRunnable = captor.getValue();
-        assertNotNull(subjectRunnable);
+        Assertions.assertNotNull(subjectRunnable);
     }
 
-    private class DummyFuture<V> implements Future<V> {
+    private static class DummyFuture<V> implements Future<V> {
 
         @Override
         public boolean cancel(boolean b) {

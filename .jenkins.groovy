@@ -70,7 +70,7 @@ pipeline {
                     stage('Cleanup') {
                         steps {
                             echo 'Cleaning up the workspace'
-                            deleteDir()
+                            cleanWs()
                         }
                     }
 
@@ -158,7 +158,7 @@ Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BRANC
                     success {
                         // Cleanup the build directory if the build was successful
                         // (in this cae we probably don't have to do any post-build analysis)
-                        deleteDir()
+                        cleanWs()
                         script {
                             if ((env.BRANCH_NAME == "1.6.x" || env.BRANCH_NAME == "1.7.x" || env.BRANCH_NAME == "master" || env.BRANCH_NAME == "main")
                                     && (currentBuild.previousBuild != null) && (currentBuild.previousBuild.result != 'SUCCESS')) {

@@ -434,11 +434,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0-M5</version>
                 <configuration>
-                    <printSummary>true</printSummary>
-                    <useSystemClassLoader>false</useSystemClassLoader>
                     <argLine>${surefire.argLine}</argLine>
+                    <shutdown>kill</shutdown>
+                    <enableProcessChecker>native</enableProcessChecker>
+                    <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
             <plugin>

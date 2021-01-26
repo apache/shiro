@@ -20,7 +20,7 @@ package org.apache.shiro.concurrent;
 
 import org.apache.shiro.subject.support.SubjectRunnable;
 import org.apache.shiro.test.SecurityManagerTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.concurrent.Executor;
