@@ -18,21 +18,17 @@
  */
 package org.apache.shiro.web.filter.authc
 
-import org.apache.shiro.authc.BearerToken
 import org.apache.shiro.authc.AuthenticationToken
+import org.apache.shiro.authc.BearerToken
 import org.apache.shiro.test.SecurityManagerTestSupport
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-import static org.easymock.EasyMock.createMock
-import static org.easymock.EasyMock.expect
-import static org.easymock.EasyMock.replay
-import static org.easymock.EasyMock.verify
-
+import static org.easymock.EasyMock.*
 import static org.hamcrest.MatcherAssert.assertThat
 
 /**

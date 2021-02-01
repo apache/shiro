@@ -20,14 +20,14 @@ package org.apache.shiro.test;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.config.Ini;
+import org.apache.shiro.lang.util.LifecycleUtils;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.lang.util.LifecycleUtils;
 import org.apache.shiro.util.ThreadContext;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Utility methods for use by Shiro test case subclasses.  You can use these methods as examples for your own
@@ -64,12 +64,12 @@ public class SecurityManagerTestSupport {
         return SecurityUtils.getSubject();
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         createAndBindTestSubject();
     }
 
-    @After
+    @AfterEach
     public void teardown() {
         ThreadContext.remove();
     }

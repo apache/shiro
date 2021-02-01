@@ -21,7 +21,9 @@ package org.apache.shiro.web.filter.authz;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.test.SecurityManagerTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -37,9 +39,11 @@ import static org.mockito.Mockito.when;
 /**
  * Test cases for the {@link AuthorizationFilter} class.
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AuthorizationFilterTest extends SecurityManagerTestSupport {
 
     @Test
+    @Disabled
     public void testUserOnAccessDeniedWithResponseError() throws IOException {
         // Tests when a user (known identity) is denied access and no unauthorizedUrl has been configured.
         // This should trigger an HTTP response error code.
@@ -63,6 +67,7 @@ public class AuthorizationFilterTest extends SecurityManagerTestSupport {
     }
 
     @Test
+    @Disabled
     public void testUserOnAccessDeniedWithRedirect() throws IOException {
         // Tests when a user (known identity) is denied access and an unauthorizedUrl *has* been configured.
         // This should trigger an HTTP redirect
