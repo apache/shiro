@@ -64,7 +64,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     protected Map<String, Object> appliedPaths = new LinkedHashMap<String, Object>();
 
     /**
-     * Splits any comma-delmited values that might be found in the <code>config</code> argument and sets the resulting
+     * Splits any comma-delimited values that might be found in the <code>config</code> argument and sets the resulting
      * <code>String[]</code> array on the <code>appliedPaths</code> internal Map.
      * <p/>
      * That is:

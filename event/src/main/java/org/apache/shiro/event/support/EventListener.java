@@ -27,7 +27,7 @@ package org.apache.shiro.event.support;
  * {@link org.apache.shiro.event.Subscribe Subscribe} annotation on methods they wish to receive events.
  * <p/>
  * This interface therefore mainly represents a 'middle man' between the event bus and the actual subscribing
- * component.  As such, event bus implementors (or framework/infrastructural implementors) or those that wish to
+ * component.  As such, event bus implementers (or framework/infrastructural implementers) or those that wish to
  * customize listener/dispatch functionality might find this concept useful.
  * <p/>
  * It is a concept almost always used in conjunction with a {@link EventListenerResolver} implementation.

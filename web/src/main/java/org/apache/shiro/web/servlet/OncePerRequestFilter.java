@@ -37,7 +37,7 @@ import java.io.IOException;
  * is based on the configured name of the concrete filter instance.
  * <h3>Controlling filter execution</h3>
  * 1.2 introduced the {@link #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method and
- * {@link #isEnabled()} property to allow explicit controll over whether the filter executes (or allows passthrough)
+ * {@link #isEnabled()} property to allow explicit control over whether the filter executes (or allows passthrough)
  * for any given request.
  * <p/>
  * <b>NOTE</b> This class was initially borrowed from the Spring framework but has continued modifications.

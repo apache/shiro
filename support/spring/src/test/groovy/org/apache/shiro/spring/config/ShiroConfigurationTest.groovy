@@ -60,9 +60,9 @@ public class ShiroConfigurationTest extends AbstractJUnit4SpringContextTests {
         assertSame(((DefaultSecurityManager)securityManager).getEventBus(), eventBus)
 
         def defaultSecurityManager = (DefaultSecurityManager) securityManager
-        def authorizor = (ModularRealmAuthorizer) defaultSecurityManager.getAuthorizer();
-        assertNull authorizor.rolePermissionResolver
-        assertNull authorizor.permissionResolver
+        def authorizer = (ModularRealmAuthorizer) defaultSecurityManager.getAuthorizer();
+        assertNull authorizer.rolePermissionResolver
+        assertNull authorizer.permissionResolver
 
         // now lets do a couple quick permission tests to make sure everything has been initialized correctly.
         Subject joeCoder = new Subject.Builder(securityManager).buildSubject()

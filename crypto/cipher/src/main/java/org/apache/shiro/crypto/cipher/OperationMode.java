@@ -78,7 +78,7 @@ public enum OperationMode {
     CTR,
 
     /**
-     * <a href="http://en.wikipedia.org/wiki/EAX_mode">EAX Mode</a><b>*</b>.  This is a patent-free but less-effecient
+     * <a href="http://en.wikipedia.org/wiki/EAX_mode">EAX Mode</a><b>*</b>.  This is a patent-free but less-efficient
      * alternative to {@link #OCB OCB} and has capabilities beyond what {@link #CCM CCM} can provide.
      * <p/>
      * <b>*THIS IS A NON-STANDARD MODE</b>. It is not guaranteed to be supported across JDK installations.  You must

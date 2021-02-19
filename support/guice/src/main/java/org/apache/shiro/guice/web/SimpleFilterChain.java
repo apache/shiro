@@ -47,7 +47,7 @@ class SimpleFilterChain implements FilterChain {
 
     /**
      * Exposed for testing, not part of public API.
-     * @return an Iterater of filters.
+     * @return an Iterator of filters.
      */
     Iterator<? extends Filter> getFilters() {
         return chain;

@@ -206,7 +206,7 @@ public class JdbcRealm extends AuthorizingRealm {
 
     /**
      * Makes it possible to switch off base64 encoding of password salt.
-     * The default value is true, ie. expect the salt from a string
+     * The default value is true, i.e. expect the salt from a string
      * value in a database to be base64 encoded.
      *
      * @param saltIsBase64Encoded the saltIsBase64Encoded to set

@@ -96,7 +96,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
     ============================================*/
     /**
      * The LdapContextFactory instance used to acquire {@link javax.naming.ldap.LdapContext LdapContext}'s at runtime
-     * to acquire connections to the LDAP directory to perform authentication attempts and authorizatino queries.
+     * to acquire connections to the LDAP directory to perform authentication attempts and authorization queries.
      */
     private LdapContextFactory contextFactory;
 

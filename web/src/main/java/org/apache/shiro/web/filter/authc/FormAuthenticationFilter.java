@@ -47,7 +47,7 @@ import javax.servlet.http.HttpServletRequest;
  * <p>If the login attempt fails, the resulting <code>AuthenticationException</code> fully qualified class name will
  * be set as a request attribute under the {@link #setFailureKeyAttribute(String) failureKeyAttribute} key.  This
  * FQCN can be used as an i18n key or lookup mechanism to explain to the user why their login attempt failed
- * (e.g. no account, incorrect password, etc).
+ * (e.g. no account, incorrect password, etc.).
  * <p/>
  * <p>If you would prefer to handle the authentication validation and login in your own code, consider using the
  * {@link PassThruAuthenticationFilter} instead, which allows requests to the

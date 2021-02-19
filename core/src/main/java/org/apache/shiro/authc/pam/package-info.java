@@ -26,7 +26,7 @@
  * one or more Realm instances.
  * <p/>
  * How the <code>ModularRealmAuthenticator</code> actually coordinates this behavior is configurable based on your
- * application's needs using an injectible
+ * application's needs using an injectable
  * {@link AuthenticationStrategy}.
  */
 package org.apache.shiro.authc.pam;

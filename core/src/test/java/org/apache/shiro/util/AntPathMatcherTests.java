@@ -215,7 +215,7 @@ public class AntPathMatcherTests {
     }
 
     @Test
-    public void uniqueDeliminator() {
+    public void uniqueDelimiter() {
         pathMatcher.setPathSeparator(".");
 
         // test exact matching

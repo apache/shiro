@@ -99,7 +99,7 @@ public abstract class AuthenticatingFilter extends AuthenticationFilter {
      * current <code>request</code>, <code>false</code> otherwise.
      * <p/>
      * This implementation always returns <code>false</code> and is provided as a template hook to subclasses that
-     * support <code>rememberMe</code> logins and wish to determine <code>rememberMe</code> in a custom mannner
+     * support <code>rememberMe</code> logins and wish to determine <code>rememberMe</code> in a custom manner
      * based on the current <code>request</code>.
      *
      * @param request the incoming ServletRequest

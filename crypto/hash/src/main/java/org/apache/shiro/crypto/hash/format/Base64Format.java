@@ -24,7 +24,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * {@code HashFormat} that outputs <em>only</em> the hash's digest bytes in Base64 format.  It does not print out
- * anything else (salt, iterations, etc).  This implementation is mostly provided as a convenience for
+ * anything else (salt, iterations, etc.).  This implementation is mostly provided as a convenience for
  * command-line hashing.
  *
  * @since 1.2

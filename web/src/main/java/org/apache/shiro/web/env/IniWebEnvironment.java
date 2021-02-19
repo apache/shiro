@@ -324,7 +324,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      */
     private Ini convertPathToIni(String path, boolean required) {
 
-        //TODO - this logic is ugly - it'd be ideal if we had a Resource API to polymorphically encaspulate this behavior
+        //TODO - this logic is ugly - it'd be ideal if we had a Resource API to polymorphically encapsulate this behavior
 
         Ini ini = null;
 
@@ -360,7 +360,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         return ini;
     }
 
-    //TODO - this logic is ugly - it'd be ideal if we had a Resource API to polymorphically encaspulate this behavior
+    //TODO - this logic is ugly - it'd be ideal if we had a Resource API to polymorphically encapsulate this behavior
     private InputStream getServletContextResourceStream(String path) {
         InputStream is = null;
 

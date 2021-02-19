@@ -114,7 +114,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
                 return filterChainManager.proxy(originalChain, pathPattern);
             } else {
 
-                // in spring web, the requestURI "/resource/menus" ---- "resource/menus/" bose can access the resource
+                // in spring web, the requestURI "/resource/menus" ---- "resource/menus/" both can access the resource
                 // but the pathPattern match "/resource/menus" can not match "resource/menus/"
                 // user can use requestURI + "/" to simply bypassed chain filter, to bypassed shiro protect
 
@@ -139,7 +139,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      * <p/>
      * Simply delegates to
      * <b><code>{@link #getPathMatcher() getPathMatcher()}.{@link org.apache.shiro.lang.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>.
-     * Subclass implementors should think carefully before overriding this method, as typically a custom
+     * Subclass implementers should think carefully before overriding this method, as typically a custom
      * {@code PathMatcher} should be configured for custom path matching behavior instead.  Favor OO composition
      * rather than inheritance to limit your exposure to Shiro implementation details which may change over time.
      *
@@ -159,7 +159,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      * and can be overridden by subclasses for custom request-to-application-path resolution behavior.
      *
      * @param request the incoming {@code ServletRequest}
-     * @return the request's path within the appliation.
+     * @return the request's path within the application.
      */
     protected String getPathWithinApplication(ServletRequest request) {
         return WebUtils.getPathWithinApplication(WebUtils.toHttp(request));

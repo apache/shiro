@@ -295,7 +295,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      *
      * @param url       URL to be encoded with the session id
      * @param sessionId Session id to be included in the encoded URL
-     * @return the url with the session identifer properly encoded.
+     * @return the url with the session identifier properly encoded.
      */
     protected String toEncoded(String url, String sessionId) {
 

@@ -60,7 +60,7 @@ public class DefaultPasswordService implements HashingPasswordService {
     /**
      * Constructs a new PasswordService with a default hash service and the default
      * algorithm name {@value #DEFAULT_HASH_ALGORITHM}, a default hash format (shiro2) and
-     * a default hashformat factory.
+     * a default hash format factory.
      *
      * <p>The default algorithm can change between minor versions and does not introduce
      * API incompatibility by design.</p>

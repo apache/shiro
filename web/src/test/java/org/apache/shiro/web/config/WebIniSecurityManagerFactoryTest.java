@@ -45,7 +45,7 @@ public class WebIniSecurityManagerFactoryTest {
     @Test
     public void testDefaultFiltersPresent() {
         Ini ini = new Ini();
-        //just a normal configuration line in the MAIN section for any of the default filtes should work
+        //just a normal configuration line in the MAIN section for any of the default filters should work
         //out of the box.  So, create the main section and just config one of them:
         Ini.Section section = ini.addSection(IniSecurityManagerFactory.MAIN_SECTION_NAME);
         section.put("authc.loginUrl", "/login.jsp");

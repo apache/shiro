@@ -35,7 +35,7 @@ import java.util.Map;
  * <p>Typically used to validate method arguments rather than configuration
  * properties, to check for cases that are usually programmer errors rather than
  * configuration errors. In contrast to config initialization code, there is
- * usally no point in falling back to defaults in such methods.
+ * usually no point in falling back to defaults in such methods.
  *
  * <p>This class is similar to JUnit's assertion library. If an argument value is
  * deemed invalid, an {@link IllegalArgumentException} is thrown (typically).

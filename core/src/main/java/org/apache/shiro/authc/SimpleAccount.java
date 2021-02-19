@@ -206,7 +206,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
     ============================================*/
 
     /**
-     * Returns the principals, aka the identifying attributes (username, user id, first name, last name, etc) of this
+     * Returns the principals, aka the identifying attributes (username, user id, first name, last name, etc.) of this
      * Account.
      *
      * @return all the principals, aka the identifying attributes, of this Account.
@@ -216,7 +216,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
     }
 
     /**
-     * Sets the principals, aka the identifying attributes (username, user id, first name, last name, etc) of this
+     * Sets the principals, aka the identifying attributes (username, user id, first name, last name, etc.) of this
      * Account.
      *
      * @param principals all the principals, aka the identifying attributes, of this Account.
@@ -249,10 +249,10 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
     }
 
     /**
-     * Returns the salt used to hash this Account's credentials (eg for password hashing), or {@code null} if no salt
+     * Returns the salt used to hash this Account's credentials (e.g. for password hashing), or {@code null} if no salt
      * was used or credentials were not hashed at all.
      *
-     * @return the salt used to hash this Account's credentials (eg for password hashing), or {@code null} if no salt
+     * @return the salt used to hash this Account's credentials (e.g. for password hashing), or {@code null} if no salt
      *         was used or credentials were not hashed at all.
      * @since 1.1
      */
@@ -261,10 +261,10 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
     }
 
     /**
-     * Sets the salt to use to hash this Account's credentials (eg for password hashing), or {@code null} if no salt
+     * Sets the salt to use to hash this Account's credentials (e.g. for password hashing), or {@code null} if no salt
      * is used or credentials are not hashed at all.
      *
-     * @param salt the salt to use to hash this Account's credentials (eg for password hashing), or {@code null} if no
+     * @param salt the salt to use to hash this Account's credentials (e.g. for password hashing), or {@code null} if no
      *             salt is used or credentials are not hashed at all.
      * @since 1.1
      */
@@ -360,7 +360,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
     }
 
     /**
-     * Sets all object-based permissions assigned directly to this Account (not any of its realms).
+     * Set al. object-based permissions assigned directly to this Account (not any of its realms).
      *
      * @param permissions the object-based permissions to assign directly to this Account.
      */

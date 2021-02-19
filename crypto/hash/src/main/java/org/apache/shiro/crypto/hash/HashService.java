@@ -40,7 +40,7 @@ package org.apache.shiro.crypto.hash;
  * save(hash);
  * </pre>
  * In this example, often only the input source will change during runtime, while the hashing strategy (how salts
- * are generated or acquired, how many hash iterations will be performed, etc) usually remain consistent.  A HashService
+ * are generated or acquired, how many hash iterations will be performed, etc.) usually remain consistent.  A HashService
  * internalizes this logic so the above becomes simply this:
  * <pre>
  * HashRequest request = new HashRequest.Builder().source(source).build();

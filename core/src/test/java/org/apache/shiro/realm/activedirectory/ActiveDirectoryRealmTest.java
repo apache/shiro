@@ -47,7 +47,7 @@ import static org.junit.Assert.assertTrue;
  * Simple test case for ActiveDirectoryRealm.
  * <p/>
  * todo:  While the original incarnation of this test case does not actually test the
- * heart of ActiveDirectoryRealm (no meaningful implemenation of queryForLdapAccount, etc) it obviously should.
+ * heart of ActiveDirectoryRealm (no meaningful implementation of queryForLdapAccount, etc.) it obviously should.
  * This version was intended to mimic my current usage scenario in an effort to debug upgrade issues which were not related
  * to LDAP connectivity.
  *

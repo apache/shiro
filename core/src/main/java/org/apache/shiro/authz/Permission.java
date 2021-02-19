@@ -36,7 +36,7 @@ package org.apache.shiro.authz;
  * <em>permissions</em> are assigned to these roles.
  * <p/>
  * Under this paradigm, permissions are immutable and reflect an application's raw functionality
- * (opening files, accessing a web URL, creating users, etc).  This is what allows a system's security policy
+ * (opening files, accessing a web URL, creating users, etc.).  This is what allows a system's security policy
  * to be dynamic: because Permissions represent raw functionality and only change when the application's
  * source code changes, they are immutable at runtime - they represent 'what' the system can do.  Roles, users, and
  * groups are the 'who' of the application.  Determining 'who' can do 'what' then becomes a simple exercise of
@@ -46,7 +46,7 @@ package org.apache.shiro.authz;
  * Permissions) and then associate users with roles (i.e. a user 'has a' collection of roles) so that by transitive
  * association, the user 'has' the permissions in their roles.  There are numerous variations on this theme
  * (permissions assigned directly to users, or assigned to groups, and users added to groups and these groups in turn
- * have roles, etc, etc).  When employing a permission-based security model instead of a role-based one, users, roles,
+ * have roles, etc., etc.).  When employing a permission-based security model instead of a role-based one, users, roles,
  * and groups can all be created, configured and/or deleted at runtime.  This enables  an extremely powerful security
  * model.
  * <p/>

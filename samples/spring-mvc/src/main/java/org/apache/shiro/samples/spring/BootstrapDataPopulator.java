@@ -73,7 +73,7 @@ public class BootstrapDataPopulator implements InitializingBean {
         jdbcTemplate.execute(CREATE_TABLES);
 
         //password is 'user1' SHA hashed and base64 encoded:
-        //The first argument to the hash constructor is the actual value to be hased.  The 2nd is the
+        //The first argument to the hash constructor is the actual value to be hashed.  The 2nd is the
         //salt.  In this simple demo scenario, the username and the password are the same, but to clarify the
         //distinction, you would see this in practice:
         //new Sha256Hash( <password>, <cryptographically strong randomly generated salt> (not the username!) )

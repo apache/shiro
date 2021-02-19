@@ -45,7 +45,7 @@ public class DefaultFiltersTest {
                     }
                 }
                 if(!found) {
-                    fail("Guice ShiroWebModule containts a default filter that Shiro proper does not. (" + filterType.getName() + ")");
+                    fail("Guice ShiroWebModule contains a default filter that Shiro proper does not. (" + filterType.getName() + ")");
                 }
             }
         }

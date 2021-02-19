@@ -25,7 +25,7 @@ import org.junit.Test;
 public class HttpMethodPermissionFilterTest {
 
     @Test
-    public void testPermisisonMapping() {
+    public void testPermissionMapping() {
         // Testing the isAccessAllowed would be easier, but would need to mock out the servlet request
 
         HttpMethodPermissionFilter filter = new HttpMethodPermissionFilter();

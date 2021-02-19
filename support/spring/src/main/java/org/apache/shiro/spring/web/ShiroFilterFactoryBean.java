@@ -99,7 +99,7 @@ import java.util.Map;
  * and each of these 3 classes has configurable properties that are application-specific.
  * <p/>
  * A dilemma arises where, if you want to for example set the application's 'loginUrl' for any Filter, you don't want
- * to have to manually specify that value for <em>each</em> filter instance definied.
+ * to have to manually specify that value for <em>each</em> filter instance defined.
  * <p/>
  * To prevent configuration duplication, this implementation provides the following properties to allow you
  * to set relevant values in only one place:
@@ -178,7 +178,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     /**
      * Sets the application's login URL to be assigned to all acquired Filters that subclass
      * {@link AccessControlFilter}.  This is a convenience mechanism: for all configured {@link #setFilters filters},
-     * as well for any default ones ({@code authc}, {@code user}, etc), this value will be passed on to each Filter
+     * as well for any default ones ({@code authc}, {@code user}, etc.), this value will be passed on to each Filter
      * via the {@link AccessControlFilter#setLoginUrl(String)} method<b>*</b>.  This eliminates the need to
      * configure the 'loginUrl' property manually on each filter instance, and instead that can be configured once
      * via this attribute.
@@ -210,7 +210,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     /**
      * Sets the application's after-login success URL to be assigned to all acquired Filters that subclass
      * {@link AuthenticationFilter}.  This is a convenience mechanism: for all configured {@link #setFilters filters},
-     * as well for any default ones ({@code authc}, {@code user}, etc), this value will be passed on to each Filter
+     * as well for any default ones ({@code authc}, {@code user}, etc.), this value will be passed on to each Filter
      * via the {@link AuthenticationFilter#setSuccessUrl(String)} method<b>*</b>.  This eliminates the need to
      * configure the 'successUrl' property manually on each filter instance, and instead that can be configured once
      * via this attribute.
@@ -242,7 +242,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     /**
      * Sets the application's 'unauthorized' URL to be assigned to all acquired Filters that subclass
      * {@link AuthorizationFilter}.  This is a convenience mechanism: for all configured {@link #setFilters filters},
-     * as well for any default ones ({@code roles}, {@code perms}, etc), this value will be passed on to each Filter
+     * as well for any default ones ({@code roles}, {@code perms}, etc.), this value will be passed on to each Filter
      * via the {@link AuthorizationFilter#setUnauthorizedUrl(String)} method<b>*</b>.  This eliminates the need to
      * configure the 'unauthorizedUrl' property manually on each filter instance, and instead that can be configured once
      * via this attribute.

@@ -31,7 +31,7 @@ import java.util.Collection;
  * {@link #create}, {@link #readSession(java.io.Serializable)}, {@link #update(org.apache.shiro.session.Session)},
  * and {@link #delete(org.apache.shiro.session.Session)}.
  * <p/>
- * The remaining {@link #getActiveSessions()} method exists as a support mechanism to pre-emptively orphaned sessions,
+ * The remaining {@link #getActiveSessions()} method exists as a support mechanism to preemptively orphaned sessions,
  * typically by {@link org.apache.shiro.session.mgt.ValidatingSessionManager ValidatingSessionManager}s), and should
  * be as efficient as possible, especially if there are thousands of active sessions.  Large scale/high performance
  * implementations will often return a subset of the total active sessions and perform validation a little more
@@ -43,7 +43,7 @@ public interface SessionDAO {
 
     /**
      * Inserts a new Session record into the underling EIS (e.g. Relational database, file system, persistent cache,
-     * etc, depending on the DAO implementation).
+     * etc., depending on the DAO implementation).
      * <p/>
      * After this method is invoked, the {@link org.apache.shiro.session.Session#getId()}
      * method executed on the argument must return a valid session identifier.  That is, the following should

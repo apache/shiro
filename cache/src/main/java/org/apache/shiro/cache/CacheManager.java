@@ -24,7 +24,7 @@ package org.apache.shiro.cache;
  * <p>Shiro doesn't implement a full Cache mechanism itself, since that is outside the core competency of a
  * Security framework.  Instead, this interface provides an abstraction (wrapper) API on top of an underlying
  * cache framework's main Manager component (e.g. JCache, Ehcache, JCS, OSCache, JBossCache, TerraCotta, Coherence,
- * GigaSpaces, etc, etc), allowing a Shiro user to configure any cache mechanism they choose.
+ * GigaSpaces, etc., etc.), allowing a Shiro user to configure any cache mechanism they choose.
  *
  * @since 0.9
  */

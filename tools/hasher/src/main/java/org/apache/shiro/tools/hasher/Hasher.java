@@ -54,7 +54,7 @@ import java.util.Arrays;
 import static java.util.Collections.emptyMap;
 
 /**
- * Commandline line utility to hash data such as strings, passwords, resources (files, urls, etc).
+ * Commandline line utility to hash data such as strings, passwords, resources (files, urls, etc.).
  * <p/>
  * Usage:
  * <pre>
@@ -174,7 +174,7 @@ public final class Hasher {
                 generateSalt = true;
                 generatedSaltSize = getRequiredPositiveInt(line, SALT_GEN_SIZE);
                 if (generatedSaltSize % 8 != 0) {
-                    throw new IllegalArgumentException("Generated salt size must be a multiple of 8 (e.g. 128, 192, 256, 512, etc).");
+                    throw new IllegalArgumentException("Generated salt size must be a multiple of 8 (e.g. 128, 192, 256, 512, etc.).");
                 }
             }
             if (line.hasOption(PRIVATE_SALT.getOpt())) {

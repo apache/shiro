@@ -261,7 +261,7 @@ public class ShiroWebModuleTest {
     @Test
     public void testAddFilterChainGuice3Only() {
 
-        Assume.assumeTrue("This test only runs agains Guice 3.x", ShiroWebModule.isGuiceVersion3());
+        Assume.assumeTrue("This test only runs against Guice 3.x", ShiroWebModule.isGuiceVersion3());
 
         final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
         ServletContext servletContext = createMock(ServletContext.class);

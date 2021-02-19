@@ -28,7 +28,7 @@
        will provide another Spring file in addition to this one that will
        turn on a different way of enabling Spring AOP.  (i.e. one will use
        a DefaultAutoProxyCreator, another will use the <aop:config/> mechanism,
-       etc). -->
+       etc.). -->
 
     <bean id="iniRealm" class="org.apache.shiro.realm.text.IniRealm">
         <property name="userDefinitions">

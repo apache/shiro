@@ -93,7 +93,7 @@ import static java.util.Objects.requireNonNull;
  * If this is not possible for some reason, this class will retain 1.0 backwards-compatible behavior of obtaining
  * the salt via the now-deprecated {@link #getSalt(AuthenticationToken) getSalt(AuthenticationToken)} method.  This
  * method will only be invoked if a {@code Realm} <em>does not</em> return
- * {@link SaltedAuthenticationInfo SaltedAutenticationInfo} instances and {@link #isHashSalted() hashSalted} is
+ * {@link SaltedAuthenticationInfo SaltedAuthenticationInfo} instances and {@link #isHashSalted() hashSalted} is
  * {@code true}.
  * But please note that the {@link #isHashSalted() hashSalted} property and the
  * {@link #getSalt(AuthenticationToken) getSalt(AuthenticationToken)} methods will be removed before the Shiro 2.0

@@ -125,7 +125,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      * <p/>
      * This implementation expects the <tt>principal</tt> argument to be a String username.
      * <p/>
-     * Subclasses can override this method to determine authorization data (roles, permissions, etc) in a more
+     * Subclasses can override this method to determine authorization data (roles, permissions, etc.) in a more
      * complex way.  Note that this default implementation does not support permissions, only roles.
      *
      * @param principals         the principal of the Subject whose account is being retrieved.
@@ -159,8 +159,8 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         Set<String> roleNames;
         roleNames = new LinkedHashSet<String>();
 
-        SearchControls searchCtls = new SearchControls();
-        searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        SearchControls searchControls = new SearchControls();
+        searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         String userPrincipalName = username;
         if (principalSuffix != null) {
@@ -169,7 +169,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
         Object[] searchArguments = new Object[]{userPrincipalName};
 
-        NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchArguments, searchCtls);
+        NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchArguments, searchControls);
 
         while (answer.hasMoreElements()) {
             SearchResult sr = (SearchResult) answer.next();

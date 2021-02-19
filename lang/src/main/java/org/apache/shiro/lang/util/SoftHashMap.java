@@ -87,7 +87,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
      * Creates a new SoftHashMap with the specified retention size.
      * <p/>
      * The retention size (n) is the total number of most recent entries in the map that will be strongly referenced
-     * (ie 'retained') to prevent them from being eagerly garbage collected.  That is, the point of a SoftHashMap is to
+     * (i.e.'retained') to prevent them from being eagerly garbage collected.  That is, the point of a SoftHashMap is to
      * allow the garbage collector to remove as many entries from this map as it desires, but there will always be (n)
      * elements retained after a GC due to the strong references.
      * <p/>
@@ -124,7 +124,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
      * Creates a {@code SoftHashMap} backed by the specified {@code source}, with the specified retention size.
      * <p/>
      * The retention size (n) is the total number of most recent entries in the map that will be strongly referenced
-     * (ie 'retained') to prevent them from being eagerly garbage collected.  That is, the point of a SoftHashMap is to
+     * (i.e.'retained') to prevent them from being eagerly garbage collected.  That is, the point of a SoftHashMap is to
      * allow the garbage collector to remove as many entries from this map as it desires, but there will always be (n)
      * elements retained after a GC due to the strong references.
      * <p/>
