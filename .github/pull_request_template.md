@@ -9,6 +9,7 @@ Following this checklist to help us incorporate your contribution quickly and ea
        is to use the JIRA issue title in the pull request title and in the first line of the commit message.
  - [ ] Write a pull request description that is detailed enough to understand what the pull request does, how, and why.
  - [ ] Run `mvn clean install apache-rat:check` to make sure basic checks pass. A more thorough check will be performed on your pull request automatically.
+ - [ ] By default the project packages the tests in an artifact. To activate them,run `mvn clean test -Prun-its`.
  - [ ] If you have a group of commits related to the same change, please squash your commits into one and force push your branch using `git rebase -i`. 
  
 Trivial changes like typos do not require a JIRA issue (javadoc, comments...). 
