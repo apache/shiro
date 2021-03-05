@@ -192,9 +192,6 @@
             <organization>Stormpath</organization>
             <organizationUrl>https://www.stormpath.com</organizationUrl>
             <timezone>-8</timezone>
-            <roles>
-                <role>PMC Chair</role>
-            </roles>
         </developer>
         <developer>
             <id>kaosko</id>
@@ -226,6 +223,9 @@
             <organization>Stormpath</organization>
             <organizationUrl>https://stormpath.com/</organizationUrl>
             <timezone>-5</timezone>
+            <roles>
+                <role>PMC Chair</role>
+            </roles>
         </developer>
         <developer>
             <id>jbunting</id>
