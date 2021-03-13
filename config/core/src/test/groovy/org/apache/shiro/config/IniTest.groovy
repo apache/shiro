@@ -159,6 +159,11 @@ public class IniTest {
         kv = Ini.Section.splitKeyValue(test);
         assertEquals("Truth", kv[0]);
         assertEquals("\\ Beauty\\", kv[1]);
+
+        test = "cn\\=TheSpecial_GroupName,ou\\=groups,dc\\=example,dc\\=com = *:*"
+        kv = Ini.Section.splitKeyValue(test)
+        assertEquals("cn=TheSpecial_GroupName,ou=groups,dc=example,dc=com", kv[0])
+        assertEquals("*:*", kv[1])
     }
 
     /**
