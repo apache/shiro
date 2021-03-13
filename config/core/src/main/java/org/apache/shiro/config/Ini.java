@@ -579,7 +579,7 @@ public class Ini implements Map<String, Ini.Section> {
                 char c = line.charAt(i);
 
                 if (buildingKey) {
-                    if (isKeyValueSeparatorChar(c) && !isCharEscaped(line, i)) {
+                    if (isKeyValueSeparatorChar(c) && !isCharEscaped(line, i) && !isCharEscaped(line, i-1)) {
                         buildingKey = false;//now start building the value
                     } else if (!isCharEscaped(line, i)){
                         keyBuffer.append(c);
