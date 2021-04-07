@@ -22,12 +22,11 @@ import org.apache.shiro.crypto.hash.AbstractCryptHash;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.HashProvider;
 import org.apache.shiro.crypto.hash.HashSpi;
-import org.apache.shiro.crypto.hash.SimpleHash;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * The {@code Shiro1CryptFormat} is a fully reversible
+ * The {@code Shiro2CryptFormat} is a fully reversible
  * <a href="http://packages.python.org/passlib/modular_crypt_format.html">Modular Crypt Format</a> (MCF). It is based
  * on the posix format for storing KDF-hashed passwords in {@code /etc/shadow} files on linux and unix-alike systems.
  * <h2>Format</h2>
@@ -104,11 +103,6 @@ public class Shiro2CryptFormat implements ModularCryptFormat, ParsableHashFormat
     public String format(final Hash hash) {
         requireNonNull(hash, "hash in Shiro2CryptFormat.format(Hash hash)");
 
-        // backwards compatibility until Shiro 2.1.0.
-        if (hash instanceof SimpleHash) {
-            return new Shiro1CryptFormat().format(hash);
-        }
-
         if (!(hash instanceof AbstractCryptHash)) {
             throw new UnsupportedOperationException("Shiro2CryptFormat can only format classes extending AbstractCryptHash.");
         }
@@ -121,7 +115,7 @@ public class Shiro2CryptFormat implements ModularCryptFormat, ParsableHashFormat
     public Hash parse(final String formatted) {
         requireNonNull(formatted, "formatted in Shiro2CryptFormat.parse(String formatted)");
 
-        // backwards compatibility until Shiro 2.1.0.
+        // backwards compatibility
         if (formatted.startsWith(Shiro1CryptFormat.MCF_PREFIX)) {
             return new Shiro1CryptFormat().parse(formatted);
         }
