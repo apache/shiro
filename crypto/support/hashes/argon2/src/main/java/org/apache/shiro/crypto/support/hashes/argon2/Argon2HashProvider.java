@@ -99,9 +99,9 @@ public class Argon2HashProvider implements HashSpi {
                     .flatMap(algoV -> intOrEmpty(algoV, Parameters.PARAMETER_PARALLELISM))
                     .orElse(Parameters.DEFAULT_PARALLELISM);
 
-            final int outputLength = Optional.ofNullable(hashRequest.getParameters().get(Parameters.PARAMETER_OUTPUT_LENGTH))
-                    .flatMap(algoV -> intOrEmpty(algoV, Parameters.PARAMETER_OUTPUT_LENGTH))
-                    .orElse(Parameters.DEFAULT_OUTPUT_LENGTH);
+            final int outputLengthBits = Optional.ofNullable(hashRequest.getParameters().get(Parameters.PARAMETER_OUTPUT_LENGTH_BITS))
+                    .flatMap(algoV -> intOrEmpty(algoV, Parameters.PARAMETER_OUTPUT_LENGTH_BITS))
+                    .orElse(Parameters.DEFAULT_OUTPUT_LENGTH_BITS);
 
             return Argon2Hash.generate(
                     algorithmName,
@@ -111,7 +111,7 @@ public class Argon2HashProvider implements HashSpi {
                     iterations,
                     memoryKib,
                     parallelism,
-                    outputLength
+                    outputLengthBits
             );
         }
 
@@ -162,7 +162,7 @@ public class Argon2HashProvider implements HashSpi {
         public static final int DEFAULT_ITERATIONS = Argon2Hash.DEFAULT_ITERATIONS;
         public static final int DEFAULT_MEMORY_KIB = Argon2Hash.DEFAULT_MEMORY_KIB;
         public static final int DEFAULT_PARALLELISM = Argon2Hash.DEFAULT_PARALLELISM;
-        public static final int DEFAULT_OUTPUT_LENGTH = Argon2Hash.DEFAULT_OUTPUT_LENGTH;
+        public static final int DEFAULT_OUTPUT_LENGTH_BITS = Argon2Hash.DEFAULT_OUTPUT_LENGTH_BITS;
 
         /**
          * Parameter for modifying the internal algorithm used by Argon2.
@@ -192,13 +192,13 @@ public class Argon2HashProvider implements HashSpi {
         public static final String PARAMETER_PARALLELISM = "Argon2.parallelism";
 
         /**
-         * The output length of the resulting data section.
+         * The output length (in bits) of the resulting data section.
          *
          * <p>Argon2 allows to modify the length of the generated output.</p>
          *
-         * <p>The default value is {@value DEFAULT_OUTPUT_LENGTH} when this parameter is not specified.</p>
+         * <p>The default value is {@value DEFAULT_OUTPUT_LENGTH_BITS} when this parameter is not specified.</p>
          */
-        public static final String PARAMETER_OUTPUT_LENGTH = "Argon2.outputLength";
+        public static final String PARAMETER_OUTPUT_LENGTH_BITS = "Argon2.outputLength";
 
         private Parameters() {
             // utility class
