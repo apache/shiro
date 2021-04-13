@@ -1,1 +1,1 @@
-provides: shiro
+provides: shiro,shiro-web
