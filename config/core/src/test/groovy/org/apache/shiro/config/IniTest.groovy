@@ -166,17 +166,6 @@ public class IniTest {
         assertEquals("*:*", kv[1])
     }
 
-    /**
-     * Tests if an escaped separator char will not be recognized as such.
-     */
-    @Test
-    public void testSplitKeyValueEscapedEquals()  {
-        String test = "Truth\\=Beauty";
-        String[] kv = Ini.Section.splitKeyValue(test);
-        assertEquals("Truth", kv[0]);
-        assertEquals("Beauty", kv[1]);
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void testSplitKeyValueNoValue() {
         String test = "  Truth  ";
