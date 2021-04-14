@@ -21,6 +21,58 @@ combined with Jira's auto-generated release notes during a release for the
 total set.
 
 ###########################################################
+# 1.7.1
+###########################################################
+
+Bug
+
+    [SHIRO-797] - Shiro 1.7.0 is lower than using springboot version 2.0.7 dependency error
+
+
+###########################################################
+# 1.7.0
+###########################################################
+
+Bug
+
+    [SHIRO-767] - org.apache.shiro.util.ClassUtil cannot load the array of Primitive DataType when use undertown as web container
+    [SHIRO-792] - ShiroWebFilterConfiguration seems to conflict with other FilterRegistrationBean
+
+New Feature
+
+    [SHIRO-789] - Also add cookie SameSite option to Spring
+
+Improvement
+
+    [SHIRO-740] - SslFilter with HTTP Strict Transport Security (HSTS)
+    [SHIRO-794] - Add system property to enable backslash path normalization
+    [SHIRO-795] - Disable session path rewriting by default
+
+Task
+
+    [SHIRO-793] - deleteMe cookie should use the defined "sameSite"
+
+
+###########################################################
+# 1.6.0
+###########################################################
+
+Bug
+
+    [SHIRO-610] - Incorrect filterchainResolver in 1.4.0-RC2
+    [SHIRO-762] - SecurityUtils.securityManager should be volatile
+    [SHIRO-766] - ArrayIndexOutOfBoundsException in Base64#decode
+
+New Feature
+
+    [SHIRO-788] - Add support for Global Filters
+
+Wish
+
+    [SHIRO-780] - NOTICE files of shiro components don't match NOTICE in source code repository
+
+
+###########################################################
 # 1.5.3
 ###########################################################
 
