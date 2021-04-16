@@ -83,7 +83,7 @@ public class HttpServletSession implements Session {
 
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
         try {
-            int timeout = Long.valueOf(maxIdleTimeInMillis / 1000).intValue();
+            int timeout = (int) (maxIdleTimeInMillis / 1000);
             httpSession.setMaxInactiveInterval(timeout);
         } catch (Exception e) {
             throw new InvalidSessionException(e);
