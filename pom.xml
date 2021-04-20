@@ -44,7 +44,7 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/shiro.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/shiro.git</developerConnection>
         <url>https://github.com/apache/shiro/tree/${project.scm.tag}</url>
-        <tag>master</tag>
+        <tag>main</tag>
     </scm>
     <issueManagement>
         <system>Jira</system>
