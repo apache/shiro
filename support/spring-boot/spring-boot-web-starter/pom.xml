@@ -31,6 +31,12 @@
 
     <artifactId>shiro-spring-boot-web-starter</artifactId>
     <name>Apache Shiro :: Support :: Spring Boot Web</name>
+    <description>Deprecated, these classes were moved to shiro-spring-boot-starter</description>
+
+    <properties>
+        <!-- japicmp config was moved into the combine 'shiro-spring-boot-starter' module -->
+        <japicmp.skip>true</japicmp.skip>
+    </properties>
 
     <dependencies>
 

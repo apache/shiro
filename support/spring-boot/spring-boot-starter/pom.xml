@@ -86,4 +86,31 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.siom79.japicmp</groupId>
+                <artifactId>japicmp-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>single-boot-jar</id>
+                        <goals>
+                            <goal>cmp</goal>
+                        </goals>
+                        <configuration>
+                            <oldVersion>
+                                <dependency>
+                                    <!-- This project was moved into another jar -->
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>shiro-spring-boot-web-starter</artifactId>
+                                    <version>${shiro.previousVersion}</version>
+                                    <type>jar</type>
+                                </dependency>
+                            </oldVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
