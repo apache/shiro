@@ -80,7 +80,7 @@ pipeline {
         stage('Tests') {
             steps {
                 echo 'Running tests'
-                sh 'mvn verify -Prun-its'
+                sh 'mvn verify -Prun-its ${MVN_LOCAL_REPO_OPT} -Dinvoker.streamLogsOnFailures=true'
             }
             post {
                 always {
