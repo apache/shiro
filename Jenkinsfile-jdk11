@@ -72,7 +72,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building'
-                sh 'mvn -U -B -e clean install -DskipTests apache-rat:check'
+                sh 'mvn -U -B -e apache-rat:check'
+                sh 'mvn -U -B -e ${MVN_LOCAL_REPO_OPT} clean install -DskipTests'
             }
         }
 
