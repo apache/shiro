@@ -69,17 +69,24 @@ pipeline {
             }
         }
 
+        stage('Apache Release Audit Tool') {
+            steps {
+                echo 'Rat'
+                sh 'mvn -U -B -e apache-rat:check'
+            }
+        }
+
         stage('Build') {
             steps {
                 echo 'Building'
-                sh 'mvn -U -B -e clean install -DskipTests apache-rat:check'
+                sh 'mvn -U -B -e ${MVN_LOCAL_REPO_OPT} clean install -DskipTests'
             }
         }
 
         stage('Tests') {
             steps {
                 echo 'Running tests'
-                sh 'mvn verify -Prun-its'
+                sh 'mvn verify -Prun-its ${MVN_LOCAL_REPO_OPT} -Dinvoker.streamLogsOnFailures=true'
             }
             post {
                 always {
@@ -92,7 +99,7 @@ pipeline {
         stage('Generate doc') {
             when {
                 expression {
-                    env.BRANCH_NAME ==~ /(1.6.x|1.7.x|master)/
+                    env.BRANCH_NAME ==~ /(1.7.x|1.8.x|main)/
                 }
             }
             steps {
@@ -104,7 +111,7 @@ pipeline {
         stage('Deploy') {
             when {
                 expression {
-                    env.BRANCH_NAME ==~ /(1.6.x|1.7.x|master)/
+                    env.BRANCH_NAME ==~ /(1.7.x|1.8.x|main)/
                 }
             }
             steps {
@@ -119,7 +126,7 @@ pipeline {
         // If this build failed, send an email to the list.
         failure {
             script {
-                if(env.BRANCH_NAME == "1.6.x" || env.BRANCH_NAME == "1.7.x" || env.BRANCH_NAME == "master") {
+                if(env.BRANCH_NAME == "1.7.x" || env.BRANCH_NAME == "1.8.x" || env.BRANCH_NAME == "main") {
                     emailext(
                             subject: "[BUILD-FAILURE]: Job '${env.JOB_NAME} [${env.BRANCH_NAME}] [${env.BUILD_NUMBER}]'",
                             body: """
@@ -136,7 +143,7 @@ Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BRANC
         // If this build didn't fail, but there were failing tests, send an email to the list.
         unstable {
             script {
-                if(env.BRANCH_NAME == "1.6.x" || env.BRANCH_NAME == "1.7.x" || env.BRANCH_NAME == "master") {
+                if(env.BRANCH_NAME == "1.7.x" || env.BRANCH_NAME == "1.8.x" || env.BRANCH_NAME == "main") {
                     emailext(
                             subject: "[BUILD-UNSTABLE]: Job '${env.JOB_NAME} [${env.BRANCH_NAME}] [${env.BUILD_NUMBER}]'",
                             body: """
@@ -156,7 +163,7 @@ Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BRANC
             // (in this cae we probably don't have to do any post-build analysis)
             deleteDir()
             script {
-                if ((env.BRANCH_NAME == "1.6.x" || env.BRANCH_NAME == "1.7.x" || env.BRANCH_NAME == "master") && (currentBuild.previousBuild != null) && (currentBuild.previousBuild.result != 'SUCCESS')) {
+                if ((env.BRANCH_NAME == "1.7.x" || env.BRANCH_NAME == "1.8.x" || env.BRANCH_NAME == "main") && (currentBuild.previousBuild != null) && (currentBuild.previousBuild.result != 'SUCCESS')) {
                     emailext (
                             subject: "[BUILD-STABLE]: Job '${env.JOB_NAME} [${env.BRANCH_NAME}] [${env.BUILD_NUMBER}]'",
                             body: """
