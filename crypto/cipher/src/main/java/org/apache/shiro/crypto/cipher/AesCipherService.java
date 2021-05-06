@@ -89,6 +89,9 @@ public class AesCipherService extends DefaultBlockCipherService {
      * <b>**</b>Since {@code GCM} is a stream cipher, padding is implemented in the operation mode and an external padding scheme
      * cannot be used in conjunction with {@code GCM}. In fact, {@code AES/GCM/PKCS5Padding} is just an alias in most JVM for
      * {@code AES/GCM/NoPadding}.
+     * <p/>
+     * <b>NOTE:</b> As of Java 14, setting a streaming padding for the above example will throw a NoSuchAlgorithmException
+     * @see <a href="https://www.oracle.com/java/technologies/javase/14-relnote-issues.html#JDK-8180392">JDK-8180392</a>
      */
     public AesCipherService() {
         super(ALGORITHM_NAME);
