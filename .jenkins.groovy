@@ -93,7 +93,7 @@ pipeline {
                     stage('Build') {
                         steps {
                             echo 'Building'
-                            sh 'mvn --update-snapshots --batch-mode --errors clean verify -Pdocs -Dmaven.test.failure.ignore=true'
+                            sh 'mvn --batch-mode --errors clean verify -Pdocs -Dmaven.test.failure.ignore=true'
                         }
                         post {
                             always {
