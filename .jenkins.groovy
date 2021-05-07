@@ -17,6 +17,8 @@
  * under the License.
  */
 
+def deployableBranch = env.BRANCH_NAME ==~ /(1.7.x|1.8.x|main)/
+
 pipeline {
 
     agent none
@@ -104,7 +106,7 @@ pipeline {
                     stage('Deploy') {
                         when {
                             allOf {
-                                expression { env.BRANCH_NAME ==~ /(1.6.x|1.7.x|main)/ }
+                                expression { deployableBranch }
                                 expression { MATRIX_JDK == 'jdk_11_latest' }
                                 // is not a PR (GitHub) / MergeRequest (GitLab) / Change (Gerrit)?
                                 not { changeRequest() }
@@ -123,7 +125,7 @@ pipeline {
                     // If this build failed, send an email to the list.
                     failure {
                         script {
-                            if (env.BRANCH_NAME == "1.6.x" || env.BRANCH_NAME == "1.7.x" || env.BRANCH_NAME == "main") {
+                            if (deployableBranch) {
                                 emailext(
                                         subject: "[BUILD-FAILURE]: Job '${env.JOB_NAME} [${env.BRANCH_NAME}] [${env.BUILD_NUMBER}]'",
                                         body: """
@@ -140,7 +142,7 @@ Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BRANC
                     // If this build didn't fail, but there were failing tests, send an email to the list.
                     unstable {
                         script {
-                            if (env.BRANCH_NAME == "1.6.x" || env.BRANCH_NAME == "1.7.x" || env.BRANCH_NAME == "main") {
+                            if (deployableBranch) {
                                 emailext(
                                         subject: "[BUILD-UNSTABLE]: Job '${env.JOB_NAME} [${env.BRANCH_NAME}] [${env.BUILD_NUMBER}]'",
                                         body: """
@@ -160,7 +162,7 @@ Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BRANC
                         // (in this cae we probably don't have to do any post-build analysis)
                         cleanWs()
                         script {
-                            if ((env.BRANCH_NAME == "1.6.x" || env.BRANCH_NAME == "1.7.x" || env.BRANCH_NAME == "main")
+                            if (deployableBranch
                                     && (currentBuild.previousBuild != null) && (currentBuild.previousBuild.result != 'SUCCESS')) {
                                 emailext(
                                         subject: "[BUILD-STABLE]: Job '${env.JOB_NAME} [${env.BRANCH_NAME}] [${env.BUILD_NUMBER}]'",
