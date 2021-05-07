@@ -36,9 +36,9 @@ pipeline {
                     axis {
                         // https://cwiki.apache.org/confluence/display/INFRA/JDK+Installation+Matrix
                         name 'MATRIX_JDK'
-                        values 'jdk_1.8_latest', 'adopt_hs_8_latest', 'adopt_j9_8_latest',
-                                'jdk_11_latest', 'adopt_hs_11_latest', 'adopt_j9_11_latest',
-                                'jdk_15_latest', 'adopt_hs_15_latest', 'adopt_j9_15_latest'
+                        values 'jdk_1.8_latest',
+                                'jdk_11_latest',
+                                'jdk_14_latest'
                     }
                     // Additional axess, like OS and maven version can be configured here.
                 }
