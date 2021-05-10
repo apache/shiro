@@ -38,7 +38,7 @@ pipeline {
                         name 'MATRIX_JDK'
                         values 'jdk_1.8_latest',
                                 'jdk_11_latest',
-                                'jdk_14_latest'
+                                'jdk_16_latest'
                     }
                     // Additional axess, like OS and maven version can be configured here.
                 }
