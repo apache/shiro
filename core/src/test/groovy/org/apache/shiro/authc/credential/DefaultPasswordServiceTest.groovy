@@ -19,7 +19,10 @@
 package org.apache.shiro.authc.credential
 
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
-import org.apache.shiro.crypto.hash.*
+import org.apache.shiro.crypto.hash.DefaultHashService
+import org.apache.shiro.crypto.hash.Hash
+import org.apache.shiro.crypto.hash.Sha384Hash
+import org.apache.shiro.crypto.hash.Sha512Hash
 import org.apache.shiro.crypto.hash.format.HashFormatFactory
 import org.apache.shiro.crypto.hash.format.HexFormat
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat
@@ -52,37 +55,6 @@ class DefaultPasswordServiceTest {
     }
 
     @Test
-    void testEncryptPasswordDefault() {
-        def service = createSha256Service()
-        def encrypted = service.encryptPassword("12345")
-        assertTrue service.passwordsMatch("12345", encrypted)
-    }
-
-    @Test
-    void testEncryptPasswordWithInvalidMatch() {
-        def service = createSha256Service()
-        def encrypted = service.encryptPassword("ABCDEF")
-        assertFalse service.passwordsMatch("ABC", encrypted)
-    }
-
-    @Test
-    void testBackwardsCompatibility() {
-        def service = createSha256Service()
-        def encrypted = service.encryptPassword("12345")
-        def submitted = "12345"
-        assertTrue service.passwordsMatch(submitted, encrypted);
-
-        //change some settings:
-        service.hashService.defaultAlgorithmName = "SHA-512"
-
-        def encrypted2 = service.encryptPassword(submitted)
-
-        assertFalse encrypted == encrypted2
-
-        assertTrue service.passwordsMatch(submitted, encrypted2)
-    }
-
-    @Test
     void testHashFormatWarned() {
         def service = createSha256Service()
         service.hashFormat = new HexFormat()
@@ -100,26 +72,6 @@ class DefaultPasswordServiceTest {
         assertTrue service.passwordsMatch(null, "")
         assertFalse service.passwordsMatch(null, "12345")
         assertFalse service.passwordsMatch(null, new Sha384Hash("test"))
-    }
-
-    @Test
-    void testCustomHashService() {
-        def hashService = createMock(HashService)
-
-        def hash = new Sha256Hash("test", new SecureRandomNumberGenerator().nextBytes(), 100);
-
-        expect(hashService.computeHash(isA(HashRequest))).andReturn hash
-
-        replay hashService
-
-        def service = new DefaultPasswordService()
-        service.hashService = hashService
-
-        def returnedHash = service.encryptPassword("test")
-
-        assertEquals new Shiro1CryptFormat().format(hash), returnedHash
-
-        verify hashService
     }
 
     @Test
@@ -141,25 +93,6 @@ class DefaultPasswordServiceTest {
         assertTrue service.passwordsMatch("test", saved)
 
         verify factory
-    }
-
-    @Test
-    void testTurkishLocal() {
-
-        Locale locale = Locale.getDefault();
-
-        // tr_TR
-        Locale.setDefault(new Locale("tr", "TR"));
-
-        try {
-            PasswordService passwordService = createSha256Service()
-            String password = "333";
-            String enc = passwordService.encryptPassword(password);
-            assertTrue(passwordService.passwordsMatch(password, enc));
-        }
-        finally {
-            Locale.setDefault(locale);
-        }
     }
 
     private static DefaultPasswordService createSha256Service() {
