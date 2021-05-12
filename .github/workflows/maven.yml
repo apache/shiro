@@ -25,7 +25,20 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest, macOS-latest ]
-        java: [ 8, 11, 15, 16-ea ]
+        java:
+          - version: 8
+            dist: adopt
+          - version: 8
+            dist: zulu
+          - version: 11
+            dist: adopt
+          - version: 11
+            dist: zulu
+          - version: 16
+            dist: adopt
+          - version: 16
+            dist: zulu
+
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
@@ -44,9 +57,10 @@ jobs:
             maven-${{ matrix.os }}-
 
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: ${{ matrix.java }}
+          distribution: ${{ matrix.java.dist }}
+          java-version: ${{ matrix.java.version }}
 
       - name: License Check
         run: mvn apache-rat:check "-Drat.consoleOutput"
