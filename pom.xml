@@ -414,6 +414,13 @@
                         <complianceLevel>${jdk.version}</complianceLevel>
                         <showWeaveInfo>true</showWeaveInfo>
                     </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.aspectj</groupId>
+                            <artifactId>aspectjtools</artifactId>
+                            <version>1.9.7.M3</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>
