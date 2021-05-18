@@ -40,7 +40,7 @@ import org.apache.commons.configuration2.interpol.SystemPropertiesLookup;
  *     </tr>
  *     <tr>
  *         <td>env</td>
- *         <td>${EDITOR}</td>
+ *         <td>${EDITOR} (resolved from environment variables)</td>
  *         <td>vi</td>
  *     </tr>
  *     <tr>
