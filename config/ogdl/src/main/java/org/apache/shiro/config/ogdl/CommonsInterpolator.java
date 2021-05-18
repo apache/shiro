@@ -35,12 +35,12 @@ import org.apache.commons.configuration2.interpol.SystemPropertiesLookup;
  *     </tr>
  *     <tr>
  *         <td>sys</td>
- *         <td>${sys:os.name}</td>
+ *         <td>${os.name}</td>
  *         <td>mac os x</td>
  *     </tr>
  *     <tr>
  *         <td>env</td>
- *         <td>${env:EDITOR}</td>
+ *         <td>${EDITOR}</td>
  *         <td>vi</td>
  *     </tr>
  *     <tr>
