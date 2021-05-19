@@ -19,6 +19,7 @@
 package org.apache.shiro.crypto.hash.format
 
 import org.junit.Test
+
 import static org.junit.Assert.*
 
 /**
@@ -31,7 +32,7 @@ class ProvidedHashFormatTest {
     @Test
     void testDefaults() {
         def set = ProvidedHashFormat.values() as Set
-        assertEquals 3, set.size()
+        assertEquals 4, set.size()
         assertTrue set.contains(ProvidedHashFormat.HEX)
         assertTrue set.contains(ProvidedHashFormat.BASE64)
         assertTrue set.contains(ProvidedHashFormat.SHIRO1)

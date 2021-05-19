@@ -36,6 +36,7 @@
         <module>core</module>
         <module>hash</module>
         <module>cipher</module>
+        <module>support</module>
     </modules>
 
 </project>

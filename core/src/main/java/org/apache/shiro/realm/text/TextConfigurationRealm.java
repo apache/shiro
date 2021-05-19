@@ -184,6 +184,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
 
             String[] passwordAndRolesArray = StringUtils.split(value);
 
+            // the first token is expected to be the password.
             String password = passwordAndRolesArray[0];
 
             SimpleAccount account = getUser(username);
