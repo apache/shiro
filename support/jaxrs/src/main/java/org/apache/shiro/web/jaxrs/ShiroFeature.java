@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.web.jaxrs;
 
+import org.apache.shiro.authz.UnauthenticatedException;
+
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
@@ -25,7 +27,7 @@ import javax.ws.rs.ext.Provider;
 
 
 /**
- * Shiro JAX-RS feature which includes {@link ExceptionMapper}, {@link SubjectPrincipalRequestFilter}, and
+ * Shiro JAX-RS feature which includes {@link UnauthorizedExceptionExceptionMapper}, {@link SubjectPrincipalRequestFilter}, and
  * {@link ShiroAnnotationFilterFeature}.
  *
  * Typically a JAX-RS {@link Application} class will include this Feature class in the
@@ -52,7 +54,8 @@ public class ShiroFeature implements Feature {
     @Override
     public boolean configure(FeatureContext context) {
 
-        context.register(ExceptionMapper.class);
+        context.register(UnauthorizedExceptionExceptionMapper.class);
+        context.register(UnauthenticatedException.class);
         context.register(SubjectPrincipalRequestFilter.class);
         context.register(ShiroAnnotationFilterFeature.class);
 
