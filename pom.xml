@@ -870,6 +870,36 @@
                 <artifactId>shiro-its-support</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.shiro.integrationtests</groupId>
+                <artifactId>shiro-its-meecrowave-support</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
+                <artifactId>shiro-its-jaxrs</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
+                <artifactId>shiro-its-jaxrs-app</artifactId>
+                <version>${project.version}</version>
+                <type>war</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
+                <artifactId>shiro-its-jaxrs-app</artifactId>
+                <version>${project.version}</version>
+                <classifier>classes</classifier>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
+                <artifactId>shiro-its-jaxrs-tests</artifactId>
+                <version>${project.version}</version>
+                <type>jar</type>
+            </dependency>
 
             <!-- 3rd party dependencies -->
 
