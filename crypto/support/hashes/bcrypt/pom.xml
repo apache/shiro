@@ -31,7 +31,7 @@
     </parent>
 
     <artifactId>shiro-hashes-bcrypt</artifactId>
-    <name>Apache Shiro :: Cryptography :: Support :: Hashes :: BCrypt</name>
+    <name>Apache Shiro :: Cryptography :: Support :: BCrypt</name>
 
     <packaging>bundle</packaging>
 

@@ -31,7 +31,7 @@
     </parent>
 
     <artifactId>shiro-hashes-argon2</artifactId>
-    <name>Apache Shiro :: Cryptography :: Support :: Hashes :: Argon2</name>
+    <name>Apache Shiro :: Cryptography :: Support :: Argon2</name>
 
     <packaging>bundle</packaging>
 
