@@ -19,30 +19,29 @@
 package org.apache.shiro.web.jaxrs;
 
 
-import org.apache.shiro.authz.AuthorizationException;
-import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.UnauthenticatedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.ext.ExceptionMapper;
 
 /**
- * JAX-RS exception mapper used to map Shiro {@link AuthorizationExceptions} to HTTP status codes.
- * {@link UnauthorizedException} will be mapped to 403, all others 401.
+ * JAX-RS exception mapper used to map Shiro {@link UnauthenticatedException} to HTTP status codes.
+ * {@link UnauthenticatedException} will be mapped to 403.
  * @since 1.4
  */
-public class ExceptionMapper implements javax.ws.rs.ext.ExceptionMapper<AuthorizationException> {
+public class UnauthenticatedExceptionExceptionMapper implements ExceptionMapper<UnauthenticatedException> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UnauthenticatedExceptionExceptionMapper.class);
 
     @Override
-    public Response toResponse(AuthorizationException exception) {
-
-        Status status;
-
-        if (exception instanceof UnauthorizedException) {
-            status = Status.FORBIDDEN;
-        } else {
-            status = Status.UNAUTHORIZED;
+    public Response toResponse(UnauthenticatedException exception) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("unauthenticated.", exception);
         }
 
-        return Response.status(status).build();
+        return Response.status(Status.FORBIDDEN).build();
     }
 }
