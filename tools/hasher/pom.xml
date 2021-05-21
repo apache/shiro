@@ -73,25 +73,20 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/assembly/cli.assembly.xml</descriptor>
-                    </descriptors>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.apache.shiro.tools.hasher.Hasher</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.1.12.RELEASE</version>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>repackage</goal>
                         </goals>
+                        <configuration>
+                            <mainClass>org.apache.shiro.tools.hasher.Hasher</mainClass>
+                            <classifier>cli</classifier>
+                            <attach>true</attach>
+                            <layout>JAR</layout>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
