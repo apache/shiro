@@ -11,6 +11,42 @@
       "type": "java.lang.Boolean",
       "description": "A boolean flag that can disable all Shiro Spring Boot starters.  This is mostly useful during testing or debugging, or if you want to compare behavior when Shiro is enabled or disabled.",
       "defaultValue": true
+    },
+    {
+      "name": "shiro.web.enabled",
+      "type": "java.lang.Boolean",
+      "description": "A boolean flag that can disable all Shiro Spring Boot starters.  This is mostly useful during testing or debugging, or if you want to compare behavior when Shiro is enabled or disabled.",
+      "defaultValue": true
+    },
+    {
+      "name": "shiro.loginUrl",
+      "type": "java.lang.String",
+      "description": "The application's login URL to be assigned to all acquired Filters that subclass AccessControlFilter or 'null' if no value should be assigned globally.",
+      "defaultValue": "/login.jsp"
+    },
+    {
+      "name": "shiro.successUrl",
+      "type": "java.lang.String",
+      "description": "The application's after-login success URL to be assigned to all acquired Filters that subclass AuthenticationFilter or null if no value should be assigned globally.",
+      "defaultValue": "/"
+    },
+    {
+      "name": "shiro.unauthorizedUrl",
+      "type": "java.lang.String",
+      "description": "The application's 'unauthorized' URL to apply to as a convenience to all discovered AuthorizationFilter instances.",
+      "defaultValue": null
+    },
+    {
+      "name": "shiro.sessionManager.sessionIdCookieEnabled",
+      "type": "java.lang.String",
+      "description": "Enable or disable session tracking via a cookie.",
+      "defaultValue": true
+    },
+    {
+      "name": "shiro.sessionManager.sessionIdUrlRewritingEnabled",
+      "type": "java.lang.String",
+      "description": "Enable or disable session tracking via a URL parameter.  If your site requires cookies, it is recommended you disable this.",
+      "defaultValue": true
     }
   ]
 }

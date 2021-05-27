@@ -31,6 +31,12 @@
 
     <artifactId>shiro-spring-boot-web-starter</artifactId>
     <name>Apache Shiro :: Support :: Spring Boot Web</name>
+    <description>Deprecated, these classes were moved to shiro-spring-boot-starter</description>
+
+    <properties>
+        <!-- japicmp config was moved into the combine 'shiro-spring-boot-starter' module -->
+        <japicmp.skip>true</japicmp.skip>
+    </properties>
 
     <dependencies>
 
@@ -60,29 +66,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
