@@ -48,7 +48,6 @@
         <module>guice</module>
         <module>quickstart-guice</module>
         <module>servlet-plugin</module>
-        <module>jaxrs</module>
     </modules>
 
     <reporting>
