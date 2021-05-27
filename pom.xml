@@ -400,9 +400,9 @@
                     <version>3.0.0-M2</version>
                 </plugin>
                 <plugin>
-                    <groupId>com.nickwongdev</groupId>
+                    <groupId>dev.aspectj</groupId>
                     <artifactId>aspectj-maven-plugin</artifactId>
-                    <version>1.12.6</version>
+                    <version>1.13.M2</version>
                     <!-- Using a fork, until such time that the aspect-maven-plugin updates to support JDK 11 - https://github.com/mojohaus/aspectj-maven-plugin/pull/45
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>aspectj-maven-plugin</artifactId>
