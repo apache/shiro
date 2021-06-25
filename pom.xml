@@ -81,7 +81,7 @@
         <!-- Compile 3rd party dependencies: -->
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
-        <aspectj.version>1.9.4</aspectj.version>
+        <aspectj.version>1.9.7.M3</aspectj.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
         <commons.cli.version>1.4</commons.cli.version>
         <commons.codec.version>1.14</commons.codec.version>
@@ -402,7 +402,7 @@
                 <plugin>
                     <groupId>dev.aspectj</groupId>
                     <artifactId>aspectj-maven-plugin</artifactId>
-                    <version>1.13.M2</version>
+                    <version>1.13.M3</version>
                     <!-- Using a fork, until such time that the aspect-maven-plugin updates to support JDK 11 - https://github.com/mojohaus/aspectj-maven-plugin/pull/45
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>aspectj-maven-plugin</artifactId>
@@ -414,6 +414,22 @@
                         <complianceLevel>${jdk.version}</complianceLevel>
                         <showWeaveInfo>true</showWeaveInfo>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <id>aspectj-compile</id>
+                            <goals>
+                                <goal>compile</goal>
+                                <goal>test-compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.aspectj</groupId>
+                            <artifactId>aspectjtools</artifactId>
+                            <version>${aspectj.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>
