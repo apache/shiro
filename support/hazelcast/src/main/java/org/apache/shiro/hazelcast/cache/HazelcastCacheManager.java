@@ -31,6 +31,9 @@ import org.apache.shiro.lang.util.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.util.Map;
 
 /**
@@ -75,6 +78,25 @@ import java.util.Map;
  */
 public class HazelcastCacheManager implements CacheManager, Initializable, Destroyable {
 
+    private static final Class<?> IMAP_CLASS;
+
+    private static final MethodType GET_MAP_METHOD_TYPE;
+
+    static {
+        Class<?> klazz;
+        try {
+            klazz = HazelcastCacheManager.class.getClassLoader().loadClass( "com.hazelcast.core.IMap" );
+        } catch ( ClassNotFoundException e1 ) {
+            try {
+                klazz = HazelcastCacheManager.class.getClassLoader().loadClass( "com.hazelcast.map.IMap" );
+            } catch ( ClassNotFoundException e2 ) {
+                throw new IllegalStateException("Could not find Hazelcast v3 or v4 on classpath");
+            }
+        }
+        IMAP_CLASS = klazz;
+        GET_MAP_METHOD_TYPE = MethodType.methodType( IMAP_CLASS, String.class );
+    }
+
     public static final Logger log = LoggerFactory.getLogger(HazelcastCacheManager.class);
 
     private boolean implicitlyCreated = false;
@@ -95,9 +117,16 @@ public class HazelcastCacheManager implements CacheManager, Initializable, Destr
      * @see #ensureHazelcastInstance()
      *
      */
+    @SuppressWarnings("unchecked")
     public <K, V> Cache<K, V> getCache(String name) throws CacheException {
-        Map<K, V> map = ensureHazelcastInstance().getMap(name); //returned map is a ConcurrentMap
-        return new MapCache<K, V>(name, map);
+        try {
+            MethodHandle getMapHandle = MethodHandles
+                    .lookup().bind(ensureHazelcastInstance(), "getMap", GET_MAP_METHOD_TYPE);
+            Map<K, V> map = (Map) getMapHandle.invoke(name); //returned map is a ConcurrentMap
+            return new MapCache<>(name, map);
+        } catch (Throwable e) {
+            throw new CacheException("Unable to get IMap", e);
+        }
     }
 
     /**
