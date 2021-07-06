@@ -126,7 +126,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
                         log.trace("Matched path pattern [{}] for requestURI [{}].  " +
                                   "Utilizing corresponding filter chain...", pathPattern, Encode.forHtml(requestURINoTrailingSlash));
                     }
-                    return filterChainManager.proxy(originalChain, requestURINoTrailingSlash);
+                    return filterChainManager.proxy(originalChain, pathPattern);
                 }
             }
         }
