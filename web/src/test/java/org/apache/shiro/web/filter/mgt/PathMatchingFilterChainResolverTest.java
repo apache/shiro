@@ -20,8 +20,6 @@ package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.web.WebTest;
-import org.apache.shiro.web.util.WebUtils;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -261,6 +259,48 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
         FilterChain resolved = resolver.getChain(request, response, chain);
         assertThat(resolved, notNullValue());
+        verify(request);
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-825">SHIRO-825<a/>.
+     */
+    @Test
+    public void testGetChainWhenPathEndsWithSlash() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
+        FilterChain chain = createNiceMock(FilterChain.class);
+
+        //ensure at least one chain is defined:
+        resolver.getFilterChainManager().addToChain("/resource/*/book", "authcBasic");
+
+        expect(request.getServletPath()).andReturn("");
+        expect(request.getPathInfo()).andReturn("/resource/123/book/");
+        replay(request);
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertNotNull(resolved);
+        verify(request);
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-825">SHIRO-825<a/>.
+     */
+    @Test
+    public void testGetChainWhenPathDoesNotEndWithSlash() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
+        FilterChain chain = createNiceMock(FilterChain.class);
+
+        //ensure at least one chain is defined:
+        resolver.getFilterChainManager().addToChain("/resource/*/book", "authcBasic");
+
+        expect(request.getServletPath()).andReturn("");
+        expect(request.getPathInfo()).andReturn("/resource/123/book");
+        replay(request);
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertNotNull(resolved);
         verify(request);
     }
 }
