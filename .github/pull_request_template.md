@@ -1,3 +1,8 @@
+<!--
+For Security Vulnerabilities, please email: security@shiro.apache.org
+For more details on how to report a vulnerablity see: https://www.apache.org/security/
+-->
+
 Following this checklist to help us incorporate your contribution quickly and easily:
 
  - [ ] Make sure there is a [JIRA issue](https://issues.apache.org/jira/browse/SHIRO) filed 
