@@ -39,9 +39,9 @@ public class ClassResolvingObjectInputStream extends ObjectInputStream {
     }
 
     /**
-     * Resolves an {@link ObjectStreamClass} by delegating to Shiro's 
+     * Resolves an {@link ObjectStreamClass} by delegating to Shiro's
      * {@link ClassUtils#forName(String)} utility method, which is known to work in all ClassLoader environments.
-     * 
+     *
      * @param osc the ObjectStreamClass to resolve the class name.
      * @return the discovered class
      * @throws IOException never - declaration retained for subclass consistency
@@ -50,7 +50,16 @@ public class ClassResolvingObjectInputStream extends ObjectInputStream {
     @Override
     protected Class<?> resolveClass(ObjectStreamClass osc) throws IOException, ClassNotFoundException {
         try {
-            return ClassUtils.forName(osc.getName());
+            String s = osc.getName();
+            if(
+                    s.contains("org.apache.commons.collections")||
+                    s.contains("java.util.PriorityQueue")||
+                    s.contains("xsltc.trax.TemplatesImpl")
+            ) {
+                throw new ClassNotFoundException("Unable to load Dangerous ObjectStreamClass [" + osc + "]");
+            }else {
+                return ClassUtils.forName(s);
+            }
         } catch (UnknownClassException e) {
             throw new ClassNotFoundException("Unable to load ObjectStreamClass [" + osc + "]: ", e);
         }
