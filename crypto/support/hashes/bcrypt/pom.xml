@@ -58,6 +58,8 @@
                             com.google.inject*;version="1.3",
                             *
                         </Import-Package>
+                        <_removeheaders>Bnd-LastModified</_removeheaders>
+                        <_reproducible>true</_reproducible>
                     </instructions>
                 </configuration>
             </plugin>

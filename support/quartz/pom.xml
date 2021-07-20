@@ -70,6 +70,8 @@
                             org.quartz*;version="[1.7.2, 3)",
                             *
                         </Import-Package>
+                        <_removeheaders>Bnd-LastModified</_removeheaders>
+                        <_reproducible>true</_reproducible>
                     </instructions>
                 </configuration>
             </plugin>

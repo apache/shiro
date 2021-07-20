@@ -104,6 +104,8 @@
                             org.springframework*;version="[4.0.0, 6.0.0)",
                             *
                         </Import-Package>
+                        <_removeheaders>Bnd-LastModified</_removeheaders>
+                        <_reproducible>true</_reproducible>
                     </instructions>
                 </configuration>
             </plugin>

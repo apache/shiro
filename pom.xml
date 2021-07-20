@@ -551,18 +551,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.2.0</version>
                 <configuration>
                     <archive>
                         <manifest>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
-                        <manifestEntries>
-                            <!--suppress MavenModelInspection -->
-                            <SCM-Revision>${buildNumber}</SCM-Revision>
-                            <SCM-url>${project.scm.url}</SCM-url>
-                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
