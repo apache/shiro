@@ -45,6 +45,8 @@
                             org.apache.shiro.lang*;version="${shiro.osgi.importRange}",
                             *
                         </Import-Package>
+                        <_removeheaders>Bnd-LastModified</_removeheaders>
+                        <_reproducible>true</_reproducible>
                     </instructions>
                 </configuration>
             </plugin>
