@@ -82,6 +82,8 @@
                         <DynamicImport-Package>
                             org.apache.shiro.*
                         </DynamicImport-Package>
+                        <_removeheaders>Bnd-LastModified</_removeheaders>
+                        <_reproducible>true</_reproducible>
                     </instructions>
                 </configuration>
             </plugin>

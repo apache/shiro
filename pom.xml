@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>23</version>
+        <version>24</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -69,6 +69,7 @@
         <shiro.previousVersion>1.7.1</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
+        <project.build.outputTimestamp>2021-07-16T23:08:15Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
         <!--suppress CheckTagEmptyBody -->
         <surefire.argLine></surefire.argLine>
@@ -550,18 +551,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.2.0</version>
                 <configuration>
                     <archive>
                         <manifest>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
-                        <manifestEntries>
-                            <!--suppress MavenModelInspection -->
-                            <SCM-Revision>${buildNumber}</SCM-Revision>
-                            <SCM-url>${project.scm.url}</SCM-url>
-                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
