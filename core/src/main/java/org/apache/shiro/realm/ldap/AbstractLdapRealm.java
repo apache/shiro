@@ -40,9 +40,9 @@ import javax.naming.NamingException;
  * {@link #queryForAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken ,LdapContextFactory)} and
  * {@link #queryForAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection ,LdapContextFactory)} abstract methods.</p>
  *
- * <p>By default, this implementation will create an instance of {@link DefaultLdapContextFactory} to use for
+ * <p>By default, this implementation will create an instance of {@link JndiLdapContextFactory} to use for
  * creating LDAP connections using the principalSuffix, searchBase, url, systemUsername, and systemPassword properties
- * specified on the realm.  The remaining settings use the defaults of {@link DefaultLdapContextFactory}, which are usually
+ * specified on the realm.  The remaining settings use the defaults of {@link JndiLdapContextFactory}, which are usually
  * sufficient.  If more customized connections are needed, you should inject a custom {@link LdapContextFactory}, which
  * will cause these properties specified on the realm to be ignored.</p>
  *
@@ -95,19 +95,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
      * Used when initializing the default {@link LdapContextFactory}.  This property is ignored if a custom
      * <tt>LdapContextFactory</tt> is specified.
      *
-     * @param principalSuffix the suffix.
-     * @see DefaultLdapContextFactory#setPrincipalSuffix(String)
-     */
-    public void setPrincipalSuffix(String principalSuffix) {
-        this.principalSuffix = principalSuffix;
-    }
-
-    /**
-     * Used when initializing the default {@link LdapContextFactory}.  This property is ignored if a custom
-     * <tt>LdapContextFactory</tt> is specified.
-     *
      * @param searchBase the search base.
-     * @see DefaultLdapContextFactory#setSearchBase(String)
      */
     public void setSearchBase(String searchBase) {
         this.searchBase = searchBase;
@@ -118,7 +106,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
      * <tt>LdapContextFactory</tt> is specified.
      *
      * @param url the LDAP url.
-     * @see DefaultLdapContextFactory#setUrl(String)
+     * @see JndiLdapContextFactory#setUrl(String)
      */
     public void setUrl(String url) {
         this.url = url;
@@ -129,7 +117,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
      * <tt>LdapContextFactory</tt> is specified.
      *
      * @param systemUsername the username to use when logging into the LDAP server for authorization.
-     * @see DefaultLdapContextFactory#setSystemUsername(String)
+     * @see JndiLdapContextFactory#setSystemUsername(String)
      */
     public void setSystemUsername(String systemUsername) {
         this.systemUsername = systemUsername;
@@ -141,7 +129,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
      * <tt>LdapContextFactory</tt> is specified.
      *
      * @param systemPassword the password to use when logging into the LDAP server for authorization.
-     * @see DefaultLdapContextFactory#setSystemPassword(String)
+     * @see JndiLdapContextFactory#setSystemPassword(String)
      */
     public void setSystemPassword(String systemPassword) {
         this.systemPassword = systemPassword;
@@ -151,7 +139,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     /**
      * Configures the {@link LdapContextFactory} implementation that is used to create LDAP connections for
      * authentication and authorization.  If this is set, the {@link LdapContextFactory} provided will be used.
-     * Otherwise, a {@link DefaultLdapContextFactory} instance will be created based on the properties specified
+     * Otherwise, a {@link JndiLdapContextFactory} instance will be created based on the properties specified
      * in this realm.
      *
      * @param ldapContextFactory the factory to use - if not specified, a default factory will be created automatically.
@@ -181,9 +169,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
                 log.debug("No LdapContextFactory specified - creating a default instance.");
             }
 
-            DefaultLdapContextFactory defaultFactory = new DefaultLdapContextFactory();
-            defaultFactory.setPrincipalSuffix(this.principalSuffix);
-            defaultFactory.setSearchBase(this.searchBase);
+            JndiLdapContextFactory defaultFactory = new JndiLdapContextFactory();
             defaultFactory.setUrl(this.url);
             defaultFactory.setSystemUsername(this.systemUsername);
             defaultFactory.setSystemPassword(this.systemPassword);
