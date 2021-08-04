@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 
 /**
- * Extends the annotations authorizing method interceptor class hierarchie to adapt
- * an aspectj {@link JoinPoint} into a {@link MethodInvocation} amd to perform the
+ * Extends the annotations authorizing method interceptor class hierarchy to adapt
+ * an aspectj {@link JoinPoint} into a {@link MethodInvocation} and to perform the
  * authorization of method invocations.
  *
  * @since 1.0
@@ -44,7 +44,7 @@ public class AspectjAnnotationsAuthorizingMethodInterceptor extends AnnotationsA
      * Performs the method interception of the before advice at the specified joint point.
      *
      * @param aJoinPoint The joint point to intercept.
-     * @throws Throwable If an error occurs berforming the method invocation.
+     * @throws Throwable If an error occurs performing the method invocation.
      */
     protected void performBeforeInterception(JoinPoint aJoinPoint) throws Throwable {
         if (log.isTraceEnabled()) log.trace("#### Invoking a method decorated with a Shiro annotation" +

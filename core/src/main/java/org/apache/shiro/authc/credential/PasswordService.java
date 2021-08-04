@@ -106,7 +106,7 @@ public interface PasswordService {
      * </pre>
      *
      * @param plaintextPassword the raw password as 'byte-backed' object (String, character array, {@link ByteSource},
-     *                          etc) usually acquired from your application's 'new user' or 'password reset' workflow.
+     *                          etc.) usually acquired from your application's 'new user' or 'password reset' workflow.
      * @return the encrypted password, formatted for storage.
      * @throws IllegalArgumentException if the argument cannot be easily converted to bytes as defined by
      *                                  {@link ByteSource.Util#isCompatible(Object)}.

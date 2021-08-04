@@ -46,7 +46,7 @@ import java.util.Collection;
 
 /**
  * Default {@link WebSecurityManager WebSecurityManager} implementation used in web-based applications or any
- * application that requires HTTP connectivity (SOAP, http remoting, etc).
+ * application that requires HTTP connectivity (SOAP, http remoting, etc.).
  *
  * @since 0.2
  */
@@ -69,13 +69,13 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
 
     public DefaultWebSecurityManager() {
         super();
-        DefaultWebSessionStorageEvaluator webEvalutator = new DefaultWebSessionStorageEvaluator();  
-        ((DefaultSubjectDAO) this.subjectDAO).setSessionStorageEvaluator(webEvalutator);
+        DefaultWebSessionStorageEvaluator webEvaluator = new DefaultWebSessionStorageEvaluator();  
+        ((DefaultSubjectDAO) this.subjectDAO).setSessionStorageEvaluator(webEvaluator);
         this.sessionMode = HTTP_SESSION_MODE;
         setSubjectFactory(new DefaultWebSubjectFactory());
         setRememberMeManager(new CookieRememberMeManager());
         setSessionManager(new ServletContainerSessionManager());
-        webEvalutator.setSessionManager(getSessionManager());
+        webEvaluator.setSessionManager(getSessionManager());
     }
 
     @SuppressWarnings({"UnusedDeclaration"})

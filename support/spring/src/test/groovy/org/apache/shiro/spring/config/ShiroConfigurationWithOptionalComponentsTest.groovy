@@ -59,9 +59,9 @@ public class ShiroConfigurationWithOptionalComponentsTest extends AbstractJUnit4
         assertNotNull securityManager.cacheManager
 
         def defaultSecurityManager = (DefaultSecurityManager) securityManager
-        def authorizor = (ModularRealmAuthorizer) defaultSecurityManager.getAuthorizer();
-        assertNotNull authorizor.rolePermissionResolver
-        assertNotNull authorizor.permissionResolver
+        def authorizer = (ModularRealmAuthorizer) defaultSecurityManager.getAuthorizer();
+        assertNotNull authorizer.rolePermissionResolver
+        assertNotNull authorizer.permissionResolver
 
         // now lets do a couple quick permission tests to make sure everything has been initialized correctly.
         Subject joeCoder = new Subject.Builder(securityManager).buildSubject()

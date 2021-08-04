@@ -52,7 +52,7 @@ public interface LdapContextFactory {
      * {@code X.509} certificate.
      *
      * @param principal   the principal to use when acquiring a connection to the LDAP directory
-     * @param credentials the credentials (password, X.509 certificate, etc) to use when acquiring a connection to the
+     * @param credentials the credentials (password, X.509 certificate, etc.) to use when acquiring a connection to the
      *                    LDAP directory
      * @return the acquired {@code LdapContext} connection bound using the specified principal and credentials.
      * @throws NamingException if unable to acquire a connection.

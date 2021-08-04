@@ -23,7 +23,7 @@ import org.apache.shiro.event.Subscribe
 /**
  * @since 1.3
  */
-class InvalidMethodModiferSubscriber {
+class InvalidMethodModifierSubscriber {
 
     @Subscribe
     protected void onEvent(Object event) {

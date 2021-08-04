@@ -53,7 +53,7 @@ Bug
 
 Bug
 
-    [SHIRO-767] - org.apache.shiro.util.ClassUtil cannot load the array of Primitive DataType when use undertown as web container
+    [SHIRO-767] - org.apache.shiro.util.ClassUtil cannot load the array of Primitive DataType when use undertow as web container
     [SHIRO-792] - ShiroWebFilterConfiguration seems to conflict with other FilterRegistrationBean
 
 New Feature
@@ -191,7 +191,7 @@ Test
 Task
 
     [SHIRO-690] - Validate JDK11 compatibility
-    [SHIRO-692] - Upgrade and enforce min buid maven version to 3.5.0
+    [SHIRO-692] - Upgrade and enforce min build maven version to 3.5.0
     [SHIRO-698] - Improve build with maven profile
     [SHIRO-734] - Remove Spring-client sample
     [SHIRO-735] - Shiro does not support servlet-3.1 void method(@Suspended AsyncResponse)
@@ -448,7 +448,7 @@ Bug:
 
     [SHIRO-316] - Annotations in samples-aspectj Project Does not Work
     [SHIRO-351] - Shiro Native Session implementation cannot extract JSESSIONID From URL if JSESSIONID is URL parameter (not HTTP parameter)
-    [SHIRO-379] - SimpleAccoutRealm concurrency access to roles and users
+    [SHIRO-379] - SimpleAccountRealm concurrency access to roles and users
     [SHIRO-380] - runAs feature (still) doesn't work
     [SHIRO-387] - EnvironmentLoader destroys wrong environment
     [SHIRO-388] - Stackoverflow org.apache.shiro.session.SessionListener.onStop()

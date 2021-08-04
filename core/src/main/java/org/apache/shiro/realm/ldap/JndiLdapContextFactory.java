@@ -421,7 +421,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
 
     /**
      * This implementation returns an LdapContext based on the configured JNDI/LDAP environment configuration.
-     * The environnmet (Map) used at runtime is created by merging the default/configured
+     * The environment (Map) used at runtime is created by merging the default/configured
      * {@link #getEnvironment() environment template} with some runtime values as necessary (e.g. a principal and
      * credential available at runtime only).
      * <p/>
@@ -429,7 +429,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      * {@link #createLdapContext(java.util.Hashtable) created} and returned.
      *
      * @param principal   the principal to use when acquiring a connection to the LDAP directory
-     * @param credentials the credentials (password, X.509 certificate, etc) to use when acquiring a connection to the
+     * @param credentials the credentials (password, X.509 certificate, etc.) to use when acquiring a connection to the
      *                    LDAP directory
      * @return the acquired {@code LdapContext} connection bound using the specified principal and credentials.
      * @throws NamingException

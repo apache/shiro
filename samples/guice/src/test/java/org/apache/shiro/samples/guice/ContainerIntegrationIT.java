@@ -54,7 +54,7 @@ public class ContainerIntegrationIT extends AbstractContainerIT {
         form.<HtmlInput>getInputByName("username").setValueAttribute("root");
         form.<HtmlInput>getInputByName("password").setValueAttribute("secret");
         page = form.<HtmlInput>getInputByName("submit").click();
-        // This'll throw an expection if not logged in
+        // This'll throw an exception if not logged in
         page.getAnchorByHref("/logout");
     }
 

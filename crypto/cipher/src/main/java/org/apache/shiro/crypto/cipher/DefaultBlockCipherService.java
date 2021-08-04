@@ -95,7 +95,7 @@ import org.apache.shiro.lang.util.StringUtils;
  * <p/>
  * You may set a padding scheme via the {@link #setPaddingScheme(PaddingScheme) paddingScheme} attribute, which
  * accepts a type-safe {@link PaddingScheme PaddingScheme} enum instance.  Like the {@link OperationMode} enum,
- * this enum offers type safety to help avoid typos and guarantees that the mode will be recongized by the underlying
+ * this enum offers type safety to help avoid typos and guarantees that the mode will be recognized by the underlying
  * JCA provider.
  * <p/>
  * <b>*</b>If no padding scheme is specified, this class defaults to the {@link PaddingScheme#PKCS5} scheme, specifically

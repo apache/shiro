@@ -40,7 +40,7 @@ import java.util.concurrent.Callable;
 
 /**
  * Abstract base class that provides all standard Shiro request filtering behavior and expects
- * subclasses to implement configuration-specific logic (INI, XML, .properties, etc).
+ * subclasses to implement configuration-specific logic (INI, XML, .properties, etc.).
  * <p/>
  * Subclasses should perform configuration and construction logic in an overridden
  * {@link #init()} method implementation.  That implementation should make available any constructed

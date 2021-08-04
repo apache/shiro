@@ -317,7 +317,7 @@ public abstract class ShiroWebModule extends ShiroModule {
 
     /**
      * Builds a FilterConfig from a Filer and configuration String
-     * @param typeLiteral The TyleLiteral of the filter key to be used.
+     * @param typeLiteral The TypeLiteral of the filter key to be used.
      * @param configValue the configuration used.
      * @param <T> A Servlet Filter class.
      * @return A FilterConfig used to map a String path to this configuration.

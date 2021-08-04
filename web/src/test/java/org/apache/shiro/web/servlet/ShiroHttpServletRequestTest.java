@@ -54,7 +54,7 @@ public class ShiroHttpServletRequestTest {
      * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-637">SHIRO-637<a/>.
      */
     @Test
-    public void testRegetSession() {
+    public void testReGetSession() {
         Session session1 = mock(Session.class);
         Session session2 = mock(Session.class);
         AtomicInteger counter = new AtomicInteger();

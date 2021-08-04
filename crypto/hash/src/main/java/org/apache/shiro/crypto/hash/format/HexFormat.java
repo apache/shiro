@@ -22,7 +22,7 @@ import org.apache.shiro.crypto.hash.Hash;
 
 /**
  * {@code HashFormat} that outputs <em>only</em> The hash's digest bytes in hex format.  It does not print out
- * anything else (salt, iterations, etc).  This implementation is mostly provided as a convenience for
+ * anything else (salt, iterations, etc.).  This implementation is mostly provided as a convenience for
  * command-line hashing.
  *
  * @since 1.2

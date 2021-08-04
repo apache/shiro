@@ -216,7 +216,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * <p/>
      * <p>The default value is <tt>{@link org.apache.shiro.authc.UsernamePasswordToken UsernamePasswordToken.class}</tt>, since
      * about 90% of realms use username/password authentication, regardless of their protocol (e.g. over jdbc, ldap,
-     * kerberos, http, etc).
+     * kerberos, http, etc.).
      * <p/>
      * <p>If subclasses haven't already overridden the {@link Realm#supports Realm.supports(AuthenticationToken)} method,
      * they must {@link #setAuthenticationTokenClass(Class) set a new class} if they won't support
@@ -695,7 +695,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
     }
 
     /**
-     * Retrieves authentication data from an implementation-specific datasource (RDBMS, LDAP, etc) for the given
+     * Retrieves authentication data from an implementation-specific datasource (RDBMS, LDAP, etc.) for the given
      * authentication token.
      * <p/>
      * For most datasources, this means just 'pulling' authentication data for an associated subject/user and nothing

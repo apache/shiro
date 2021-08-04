@@ -232,8 +232,8 @@ public class DelegatingSubjectTest {
 
         // then
         final Session session = sourceSubject.getSession(true);
-        String sesionId = (String) session.getId();
-        assertFalse("toString must not leak sessionId", subjectToString.contains(sesionId));
+        String sessionId = (String) session.getId();
+        assertFalse("toString must not leak sessionId", subjectToString.contains(sessionId));
         assertFalse("toString must not leak host", subjectToString.contains(hostname));
     }
 

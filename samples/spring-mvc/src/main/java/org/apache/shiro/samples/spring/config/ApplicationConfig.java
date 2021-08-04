@@ -74,7 +74,7 @@ public class ApplicationConfig {
 
 
     /**
-     * Used by the SecurityManager to access security data (users, roles, etc).
+     * Used by the SecurityManager to access security data (users, roles, etc.).
      * Many other realm implementations can be used too (PropertiesRealm,
      * LdapRealm, etc.
      * @param dataSource
@@ -109,7 +109,7 @@ public class ApplicationConfig {
         EhCacheManager ehCacheManager = new EhCacheManager();
 
         // Set a net.sf.ehcache.CacheManager instance here if you already have one.
-        // If not, a new one will be creaed with a default config:
+        // If not, a new one will be created with a default config:
         // ehCacheManager.setCacheManager(...);
 
         // If you don't have a pre-built net.sf.ehcache.CacheManager instance to inject, but you want

@@ -83,7 +83,7 @@ public class ModularRealmAuthorizerTest
         assertTrue( ((AuthorizingRealm) mockRealm).getRolePermissionResolver() == rolePermissionResolver );
         
         
-        // TODO: no way to unset them, not sure if that is a valid use case, but this is conistent with the PermissionResolver logic
+        // TODO: no way to unset them, not sure if that is a valid use case, but this is consistent with the PermissionResolver logic
 //        // now just to be sure, unset them
 //        modRealmAuthz.setRolePermissionResolver( null );
 //        for ( Realm realm : realms )

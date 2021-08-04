@@ -53,7 +53,7 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
      * @param methodArgs the <code>MethodInvocation</code> method arguments.
      * @param namePath the Annotation 'name' value, which is a string-based permission definition.
      * @return the String permission representation.
-     * @throws Exception if there is an error infering the target.
+     * @throws Exception if there is an error inferring the target.
      *
     protected String inferTargetFromPath(Object[] methodArgs, String namePath) throws Exception {
         int propertyStartIndex = -1;

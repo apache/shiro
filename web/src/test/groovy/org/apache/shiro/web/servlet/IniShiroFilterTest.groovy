@@ -89,7 +89,7 @@ class IniShiroFilterTest {
         IniShiroFilter filter = new IniShiroFilter()
         try {
             filter.init(filterConfig)
-            fail "Filter init should have failed due to specified nonexisting resource path."
+            fail "Filter init should have failed due to specified nonexistent resource path."
         } catch (ServletException expected) {
         }
 

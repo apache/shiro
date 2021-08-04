@@ -17,7 +17,7 @@
  * under the License.
  */
 /**
- * Shiro-specific implementations of the Servlet API (Servlet Filters, et al).
+ * Shiro-specific implementations of the Servlet API (Servlet Filters, et al.).
  *
  * @see ShiroFilter
  */

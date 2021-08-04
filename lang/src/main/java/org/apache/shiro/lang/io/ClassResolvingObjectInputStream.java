@@ -27,7 +27,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 
 /**
- * Enables correct ClassLoader lookup in various environments (e.g. JEE Servers, etc).
+ * Enables correct ClassLoader lookup in various environments (e.g. JEE Servers, etc.).
  *
  * @since 1.2
  * @see <a href="https://issues.apache.org/jira/browse/SHIRO-334">SHIRO-334</a>

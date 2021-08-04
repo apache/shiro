@@ -33,7 +33,7 @@ import java.util.*;
 /**
  * Wrapper class that uses a Shiro {@link Session Session} under the hood for all session operations instead of the
  * Servlet Container's session mechanism.  This is required in heterogeneous client environments where the Session
- * is used on both the business tier as well as in multiple client technologies (web, swing, flash, etc) since
+ * is used on both the business tier as well as in multiple client technologies (web, swing, flash, etc.) since
  * Servlet container sessions alone cannot support this feature.
  *
  * @since 0.2

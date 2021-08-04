@@ -71,7 +71,7 @@ import java.io.OutputStream;
  * contrast, JDK {@code Cipher} instances can support encrypting/decrypting data in chunks over time (because it
  * retains state), but this often introduces API clutter and confusion for most application developers.</li>
  * <li><b>Type Safe</b> - There are {@code CipherService} implementations for different Cipher algorithms
- * ({@code AesCipherService}, {@code BlowfishCipherService}, etc).  There is only one JDK {@code Cipher} class to
+ * ({@code AesCipherService}, {@code BlowfishCipherService}, etc.).  There is only one JDK {@code Cipher} class to
  * represent all cipher algorithms/instances.
  * <li><b>Simple Construction</b> - Because {@code CipherService} instances are type-safe, instantiating and using
  * one is often as simple as calling the default constructor, for example, <code>new AesCipherService();</code>.  The
@@ -113,12 +113,12 @@ public interface CipherService {
      *     if (in != null) {
      *         try {
      *             in.close();
-     *         } catch (IOException ioe1) { ... log, trigger event, etc }
+     *         } catch (IOException ioe1) { ... log, trigger event, etc. }
      *     }
      *     if (out != null) {
      *         try {
      *             out.close();
-     *         } catch (IOException ioe2) { ... log, trigger event, etc }
+     *         } catch (IOException ioe2) { ... log, trigger event, etc. }
      *     }
      * }
      * </pre>
@@ -156,12 +156,12 @@ public interface CipherService {
      *     if (in != null) {
      *         try {
      *             in.close();
-     *         } catch (IOException ioe1) { ... log, trigger event, etc }
+     *         } catch (IOException ioe1) { ... log, trigger event, etc. }
      *     }
      *     if (out != null) {
      *         try {
      *             out.close();
-     *         } catch (IOException ioe2) { ... log, trigger event, etc }
+     *         } catch (IOException ioe2) { ... log, trigger event, etc. }
      *     }
      * }
      * </pre>

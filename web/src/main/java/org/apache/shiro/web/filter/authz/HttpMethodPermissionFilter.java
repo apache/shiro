@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A filter that translates an HTTP Request's Method (eg GET, POST, etc)
+ * A filter that translates an HTTP Request's Method (e.g. GET, POST, etc.)
  * into an corresponding action (verb) and uses that verb to construct a permission that will be checked to determine
  * access.
  * <p/>
@@ -40,7 +40,7 @@ import java.util.Map;
  * <p/>
  * This filter functions as follows:
  * <ol>
- * <li>The incoming HTTP request's Method (GET, POST, PUT, DELETE, etc) is discovered.</li>
+ * <li>The incoming HTTP request's Method (GET, POST, PUT, DELETE, etc.) is discovered.</li>
  * <li>The Method is translated into a more 'application friendly' verb, such as 'create', edit', 'delete', etc.</li>
  * <li>The verb is appended to any configured permissions for the
  * {@link org.apache.shiro.web.filter.PathMatchingFilter currently matching path}.</li>
@@ -87,7 +87,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
      */
     private final Map<String, String> httpMethodActions = new HashMap<String, String>();
 
-    //Actions representing HTTP Method values (GET -> read, POST -> create, etc)
+    //Actions representing HTTP Method values (GET -> read, POST -> create, etc.)
     private static final String CREATE_ACTION = "create";
     private static final String READ_ACTION = "read";
     private static final String UPDATE_ACTION = "update";
@@ -156,7 +156,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
 
     /**
      * Determines the corresponding application action that will be performed on the filtered resource based on the
-     * specified HTTP method (GET, POST, etc).
+     * specified HTTP method (GET, POST, etc.).
      *
      * @param method to be translated into the verb.
      * @return The string equivalent verb of the method.

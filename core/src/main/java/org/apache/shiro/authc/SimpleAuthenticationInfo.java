@@ -135,7 +135,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
     /**
      * Sets the identifying principal(s) represented by this instance.
      *
-     * @param principals the indentifying attributes of the corresponding Realm account.
+     * @param principals the identifying attributes of the corresponding Realm account.
      */
     public void setPrincipals(PrincipalCollection principals) {
         this.principals = principals;

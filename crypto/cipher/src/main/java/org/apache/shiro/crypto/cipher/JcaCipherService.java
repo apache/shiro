@@ -136,7 +136,7 @@ public abstract class JcaCipherService implements CipherService {
 
     /**
      * Returns the cipher algorithm name that will be used for all encryption, decryption, and key operations (for
-     * example, 'AES', 'Blowfish', 'RSA', 'DSA', 'TripleDES', etc).
+     * example, 'AES', 'Blowfish', 'RSA', 'DSA', 'TripleDES', etc.).
      *
      * @return the cipher algorithm name that will be used for all encryption, decryption, and key operations
      */
@@ -399,7 +399,7 @@ public abstract class JcaCipherService implements CipherService {
     /**
      * Returns a new {@link javax.crypto.Cipher Cipher} instance to use for encryption/decryption operations.  The
      * Cipher's {@code transformationString} for the {@code Cipher}.{@link javax.crypto.Cipher#getInstance getInstance}
-     * call is obtaind via the {@link #getTransformationString(boolean) getTransformationString} method.
+     * call is obtained via the {@link #getTransformationString(boolean) getTransformationString} method.
      *
      * @param streaming {@code true} if the cipher instance will be used as a stream cipher, {@code false} if it will be
      *                  used as a block cipher.
@@ -454,7 +454,7 @@ public abstract class JcaCipherService implements CipherService {
      * Calls the {@link javax.crypto.Cipher#doFinal(byte[]) doFinal(bytes)} method, propagating any exception that
      * might arise in an {@link CryptoException}
      *
-     * @param cipher the JDK Cipher to finalize (perform the actual cryption)
+     * @param cipher the JDK Cipher to finalize (perform the actual encryption)
      * @param bytes  the bytes to crypt
      * @return the resulting crypted byte array.
      * @throws CryptoException if there is an illegal block size or bad padding

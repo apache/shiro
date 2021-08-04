@@ -58,7 +58,7 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
      * <p/>
      * The order of the collection determines the order that the Realms will be returned to the SecurityManager.
      * <p/>
-     * If you find it easier to specify these names as a comma-delmited string, you may use the
+     * If you find it easier to specify these names as a comma-delimited string, you may use the
      * {@link #setJndiNames(String)} method instead.
      *
      * @param jndiNames the JNDI names that will be used to look up Realm(s) from JNDI.

@@ -33,7 +33,7 @@ import java.util.Enumeration;
 /**
  * {@link Session Session} implementation that is backed entirely by a standard servlet container
  * {@link HttpSession HttpSession} instance.  It does not interact with any of Shiro's session-related components
- * {@code SessionManager}, {@code SecurityManager}, etc, and instead satisfies all method implementations by interacting
+ * {@code SessionManager}, {@code SecurityManager}, etc., and instead satisfies all method implementations by interacting
  * with a servlet container provided {@link HttpSession HttpSession} instance.
  *
  * @since 1.0

@@ -64,7 +64,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
     protected static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
 
     /**
-     * The name that is displayed during the challenge process of authentication, defauls to <code>application</code>
+     * The name that is displayed during the challenge process of authentication, defaults to <code>application</code>
      * and can be overridden by the {@link #setApplicationName(String) setApplicationName} method.
      */
     private String applicationName = "application";
@@ -265,7 +265,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      * <p/>
      * This implementation merely casts the request to an <code>HttpServletRequest</code> and returns the header:
      * <p/>
-     * <code>HttpServletRequest httpRequest = {@link WebUtils#toHttp(ServletRequest) toHttp(reaquest)};<br/>
+     * <code>HttpServletRequest httpRequest = {@link WebUtils#toHttp(ServletRequest) toHttp(request)};<br/>
      * return httpRequest.getHeader({@link #AUTHORIZATION_HEADER AUTHORIZATION_HEADER});</code>
      *
      * @param request the incoming <code>ServletRequest</code>
@@ -287,7 +287,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      * return authzHeader.toLowerCase().startsWith(authzScheme);</code>
      *
      * @param authzHeader the 'Authorization' header value (guaranteed to be non-null if the
-     *                    {@link #isLoginAttempt(ServletRequest, ServletResponse)} method is not overriden).
+     *                    {@link #isLoginAttempt(ServletRequest, ServletResponse)} method is not overridden).
      * @return <code>true</code> if the authzHeader value matches that configured as defined by
      *         the {@link #getAuthzScheme() authzScheme}.
      */
@@ -384,7 +384,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
     }
 
     /**
-     * Returns a String[] containing credential parts parsed fom the "Authorization" header.
+     * Returns a String[] containing credential parts parsed from the "Authorization" header.
      *
      * @param scheme  the {@link #getAuthcScheme() authcScheme} found in the request
      *                {@link #getAuthzHeader(ServletRequest) authzHeader}.  It is ignored by this implementation,

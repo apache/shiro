@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * A {@code Hash} implementation that allows any {@link java.security.MessageDigest MessageDigest} algorithm name to
  * be used.  This class is a less type-safe variant than the other {@code AbstractHash} subclasses
- * (e.g. {@link Sha512Hash}, etc), but it does allow for any algorithm name to be specified in case the other subclass
+ * (e.g. {@link Sha512Hash}, etc.), but it does allow for any algorithm name to be specified in case the other subclass
  * implementations do not represent an algorithm that you may want to use.
  * <p/>
  * As of Shiro 1.1, this class effectively replaces the (now-deprecated) {@link AbstractHash} class.  It subclasses

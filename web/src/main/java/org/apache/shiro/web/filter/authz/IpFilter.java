@@ -101,7 +101,7 @@ public class IpFilter extends AuthorizationFilter {
 
     /**
      * Returns the remote host for a given HTTP request. By default uses the
-     * remote method ServletRequest.getRemoteAddr(). May be overriden by
+     * remote method ServletRequest.getRemoteAddr(). May be overridden by
      * subclasses to obtain address information from specific headers (e.g. XFF
      * or Forwarded) in situations with reverse proxies.
      */

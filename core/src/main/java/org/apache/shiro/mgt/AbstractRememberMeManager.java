@@ -416,7 +416,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @param bytes          the bytes to decrypt if necessary and then deserialize.
      * @param subjectContext the contextual data, usually provided by a {@link Subject.Builder} implementation, that
      *                       is being used to construct a {@link Subject} instance.
-     * @return the de-serialized and possibly decrypted principals
+     * @return the deserialized and possibly decrypted principals
      */
     protected PrincipalCollection convertBytesToPrincipals(byte[] bytes, SubjectContext subjectContext) {
         if (getCipherService() != null) {
@@ -501,11 +501,11 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     }
 
     /**
-     * De-serializes the given byte array by using the {@link #getSerializer() serializer}'s
+     * Deserializes the given byte array by using the {@link #getSerializer() serializer}'s
      * {@link Serializer#deserialize deserialize} method.
      *
      * @param serializedIdentity the previously serialized {@code PrincipalCollection} as a byte array
-     * @return the de-serialized (reconstituted) {@code PrincipalCollection}
+     * @return the deserialized (reconstituted) {@code PrincipalCollection}
      */
     protected PrincipalCollection deserialize(byte[] serializedIdentity) {
         return getSerializer().deserialize(serializedIdentity);
@@ -513,7 +513,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
 
     /**
      * Reacts to a failed login by immediately {@link #forgetIdentity(org.apache.shiro.subject.Subject) forgetting} any
-     * previously remembered identity.  This is an additional security feature to prevent any remenant identity data
+     * previously remembered identity.  This is an additional security feature to prevent any remnant identity data
      * from being retained in case the authentication attempt is not being executed by the expected user.
      *
      * @param subject the subject which executed the failed login attempt

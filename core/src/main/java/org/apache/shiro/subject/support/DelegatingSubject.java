@@ -55,7 +55,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * architecture.  It instead asks the underlying {@code SecurityManager} every time to perform
  * the authorization check.
  * <p/>
- * A common misconception in using this implementation is that an EIS resource (RDBMS, etc) would
+ * A common misconception in using this implementation is that an EIS resource (RDBMS, etc.) would
  * be &quot;hit&quot; every time a method is called.  This is not necessarily the case and is
  * up to the implementation of the underlying {@code SecurityManager} instance.  If caching of authorization
  * data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered

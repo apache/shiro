@@ -35,7 +35,7 @@ public class TextConfigurationRealmTest {
     private void setRoles() {
         StringBuilder roleDefinitions = new StringBuilder()
                 .append("role1 = role1_permission1\n")
-                .append("role2 = role2_persission1, role2_permission2\n");
+                .append("role2 = role2_permission1, role2_permission2\n");
         realm.setRoleDefinitions(roleDefinitions.toString());
     }
 

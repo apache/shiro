@@ -46,7 +46,7 @@ import java.io.Serializable;
  * preferences.
  * <p/>
  * <p><b>Please note:</b>  Since Shiro sometimes logs authentication operations, please ensure your AuthenticationInfo's
- * <code>toString()</code> implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to
+ * <code>toString()</code> implementation does <em>not</em> print out account credentials (password, etc.), as these might be viewable to
  * someone reading your logs.  This is good practice anyway, and account credentials should rarely (if ever) be printed
  * out for any reason.  If you're using Shiro's default implementations of this interface, they only ever print the
  * account {@link #getPrincipals() principals}, so you do not need to do anything additional.</p>
@@ -59,7 +59,7 @@ public interface AuthenticationInfo extends Serializable {
 
     /**
      * Returns all principals associated with the corresponding Subject.  Each principal is an identifying piece of
-     * information useful to the application such as a username, or user id, a given name, etc - anything useful
+     * information useful to the application such as a username, or user id, a given name, etc. - anything useful
      * to the application to identify the current <code>Subject</code>.
      * <p/>
      * The returned PrincipalCollection should <em>not</em> contain any credentials used to verify principals, such

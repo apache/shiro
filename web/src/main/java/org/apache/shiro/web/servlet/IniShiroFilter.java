@@ -342,7 +342,7 @@ public class IniShiroFilter extends AbstractShiroFilter {
             ini = getServletContextIniResource(path);
             if (ini == null) {
                 String msg = "There is no servlet context resource corresponding to configPath '" + path + "'  If " +
-                        "the resource is located elsewhere (not immediately resolveable in the servlet context), " +
+                        "the resource is located elsewhere (not immediately resolvable in the servlet context), " +
                         "specify an appropriate classpath:, url:, or file: resource prefix accordingly.";
                 throw new ConfigurationException(msg);
             }

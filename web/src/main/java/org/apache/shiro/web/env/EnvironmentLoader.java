@@ -40,7 +40,7 @@ import java.util.ServiceLoader;
  * {@code ServletContext} at application startup.
  * <p/>
  * In Shiro 1.1 and earlier, the Shiro ServletFilter was responsible for creating the {@code WebSecurityManager} and
- * any additional objects (security filters, etc).  However, any component not filtered by the Shiro Filter (such
+ * any additional objects (security filters, etc.).  However, any component not filtered by the Shiro Filter (such
  * as other context listeners) was not able to easily acquire the these objects to perform security operations.
  * <p/>
  * Due to this, in Shiro 1.2 and later, this {@code EnvironmentLoader} (or more likely, the

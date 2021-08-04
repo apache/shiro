@@ -210,7 +210,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
             try {
                 aggregate = strategy.beforeAttempt(realm, token, aggregate);
             } catch (ShortCircuitIterationException shortCircuitSignal) {
-                // Break from continuing with subsequnet realms on receiving 
+                // Break from continuing with subsequent realms on receiving 
                 // short circuit signal from strategy
                 break;
             }

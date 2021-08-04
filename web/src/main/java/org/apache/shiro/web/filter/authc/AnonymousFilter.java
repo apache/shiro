@@ -24,7 +24,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * Filter that allows access to a path immeidately without performing security checks of any kind.
+ * Filter that allows access to a path immediately without performing security checks of any kind.
  * <p/>
  * This filter is useful primarily in exclusionary policies, where you have defined a url pattern
  * to require a certain security level, but maybe only subset of urls in that pattern should allow any access.

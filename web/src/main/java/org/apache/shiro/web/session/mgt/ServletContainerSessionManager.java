@@ -44,7 +44,7 @@ import javax.servlet.http.HttpSession;
  * protocol.
  * <p/>
  * Therefore, if you need {@code Session} support for heterogeneous clients (e.g. web browsers,
- * RMI clients, etc), use the {@link DefaultWebSessionManager DefaultWebSessionManager}
+ * RMI clients, etc.), use the {@link DefaultWebSessionManager DefaultWebSessionManager}
  * instead.  The {@code DefaultWebSessionManager} supports both traditional web-based access as well as non web-based
  * clients.
  *

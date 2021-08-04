@@ -247,7 +247,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * {@code AuthenticationException} if there is a problem during
      * authentication instead of returning {@code null}.  A {@code null} return value indicates
      * a configuration or programming error, since {@code AuthenticationException}s should
-     * indicate any expected problem (such as an unknown account or username, or invalid password, etc).
+     * indicate any expected problem (such as an unknown account or username, or invalid password, etc.).
      *
      * @param token the authentication token encapsulating the user's login information.
      * @return an {@code AuthenticationInfo} object encapsulating the user's account information

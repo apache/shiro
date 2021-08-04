@@ -197,6 +197,6 @@ class IniFilterChainResolverFactoryTest {
         def invalidRequestFilter = resolver.filterChainManager.getChain("/index.html").get(0) // this will be the invalidRequest filter
 
         assertThat(invalidRequestFilter, Matchers.instanceOf(InvalidRequestFilter))
-        assertThat("blockSemicolon should be faluse", invalidRequestFilter.blockBackslash)
+        assertThat("blockSemicolon should be false", invalidRequestFilter.blockBackslash)
     }
 }

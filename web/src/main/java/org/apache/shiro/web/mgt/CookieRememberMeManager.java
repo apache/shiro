@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
  * Remembers a Subject's identity by saving the Subject's {@link Subject#getPrincipals() principals} to a {@link Cookie}
  * for later retrieval.
  * <p/>
- * Cookie attributes (path, domain, maxAge, etc) may be set on this class's default
+ * Cookie attributes (path, domain, maxAge, etc.) may be set on this class's default
  * {@link #getCookie() cookie} attribute, which acts as a template to use to set all properties of outgoing cookies
  * created by this implementation.
  * <p/>

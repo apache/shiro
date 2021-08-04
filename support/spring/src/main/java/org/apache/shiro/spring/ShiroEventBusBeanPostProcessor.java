@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Spring {@link BeanPostProcessor} that detects, {@link EventBusAware} and classes containing {@link Subscribe @Subscribe} methods.
  * Any classes implementing EventBusAware will have the setEventBus() method called with the <code>eventBus</code>. Any
- * classes discovered with methods that are annotated with @Subscribe will be automaticly registered with the EventBus.
+ * classes discovered with methods that are annotated with @Subscribe will be automatically registered with the EventBus.
  *
  * <p><strong>NOTE:</strong> in a Spring environment implementing EventBusAware is not necessary, as you can just inject the EventBus with
  * {@link org.springframework.beans.factory.annotation.Autowire @Autowire}.</p>

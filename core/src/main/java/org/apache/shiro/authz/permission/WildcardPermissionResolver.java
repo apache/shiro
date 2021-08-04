@@ -31,7 +31,7 @@ public class WildcardPermissionResolver implements PermissionResolver {
     boolean caseSensitive;
     
     /**
-     * Constructor to specify case sensitivity for the resolved premissions.
+     * Constructor to specify case sensitivity for the resolved permissions.
      * @param caseSensitive true if permissions should be case sensitive.
      */
     public WildcardPermissionResolver(boolean caseSensitive) {
