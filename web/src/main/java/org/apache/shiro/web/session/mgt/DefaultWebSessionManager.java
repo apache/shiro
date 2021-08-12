@@ -130,11 +130,15 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             //try the URI path segment parameters first:
             id = getUriPathSegmentParamValue(request, ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
 
-            if (id == null) {
+            if (id == null && request instanceof HttpServletRequest) {
                 //not a URI path segment parameter, try the query parameters:
                 String name = getSessionIdName();
-                id = request.getParameter(name);
-                if (id == null) {
+                HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
+                String queryString = httpServletRequest.getQueryString();
+                if (queryString != null && queryString.contains(name)) {
+                    id = request.getParameter(name);
+                }
+                if (id == null && queryString != null && queryString.contains(name.toLowerCase())) {
                     //try lowercase:
                     id = request.getParameter(name.toLowerCase());
                 }
