@@ -66,7 +66,7 @@
 
     <properties>
 
-        <shiro.previousVersion>1.4.1</shiro.previousVersion>
+        <shiro.previousVersion>1.7.1</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <jacoco.skip>true</jacoco.skip>
