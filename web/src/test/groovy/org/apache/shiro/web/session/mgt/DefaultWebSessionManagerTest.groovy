@@ -158,6 +158,7 @@ public class DefaultWebSessionManagerTest {
 
         expect(cookie.getName()).andReturn(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
         expect(request.getRequestURI()).andReturn("/foo/bar?JSESSIONID=$id" as String)
+        expect(request.getQueryString()).andReturn("JSESSIONID=$id" as String)
         expect(request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME)).andReturn(id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                 ShiroHttpServletRequest.URL_SESSION_ID_SOURCE);
@@ -193,8 +194,8 @@ public class DefaultWebSessionManagerTest {
         String id = "12345";
 
         expect(cookie.getName()).andReturn(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
-        expect(request.getRequestURI()).andReturn("/foo/bar?JSESSIONID=$id" as String)
-        expect(request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME)).andReturn(null);
+        expect(request.getRequestURI()).andReturn("/foo/bar?jsessionid=$id" as String)
+        expect(request.getQueryString()).andReturn("jsessionid=$id" as String)
         expect(request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME.toLowerCase())).andReturn(id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                 ShiroHttpServletRequest.URL_SESSION_ID_SOURCE);
