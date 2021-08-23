@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>1.8.0</version>
+        <version>1.8.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
