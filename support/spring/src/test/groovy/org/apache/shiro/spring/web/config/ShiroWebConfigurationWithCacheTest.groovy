@@ -20,8 +20,8 @@ package org.apache.shiro.spring.web.config
 
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.realm.text.TextConfigurationRealm
-import org.apache.shiro.spring.config.EventBusTestConfiguration
-import org.apache.shiro.spring.config.RealmTestConfiguration
+import org.apache.shiro.spring.testconfig.EventBusTestConfiguration
+import org.apache.shiro.spring.testconfig.RealmTestConfiguration
 import org.apache.shiro.spring.config.ShiroAnnotationProcessorConfiguration
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor
 import org.apache.shiro.spring.testconfig.EventBusTestConfiguration

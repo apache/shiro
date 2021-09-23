@@ -20,11 +20,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- pick up Apache distributionManagement for releasing (snapshots, releases, etc): -->
+    <!-- pick up Apache distributionManagement for releasing (snapshots, releases, etc.): -->
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>21</version>
+        <version>24</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -44,7 +44,7 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/shiro.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/shiro.git</developerConnection>
         <url>https://github.com/apache/shiro/tree/${project.scm.tag}</url>
-        <tag>master</tag>
+        <tag>main</tag>
     </scm>
     <issueManagement>
         <system>Jira</system>
@@ -69,6 +69,7 @@
         <shiro.previousVersion>1.7.1</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
+        <project.build.outputTimestamp>2021-07-16T23:08:15Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
 
         <!-- non-dependency-based properties: -->
@@ -77,7 +78,7 @@
         <!-- Compile 3rd party dependencies: -->
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
-        <aspectj.version>1.9.4</aspectj.version>
+        <aspectj.version>1.9.7.M3</aspectj.version>
         <cas.client.core.version>3.2.2</cas.client.core.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
         <commons.cli.version>1.4</commons.cli.version>
@@ -110,7 +111,7 @@
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>4.1</easymock.version>
         <gmaven.version>1.8.0</gmaven.version>
-        <groovy.version>2.5.14</groovy.version>
+        <groovy.version>3.0.9</groovy.version>
         <junit.version>4.12</junit.version>
         <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
         <hibernate.version>5.4.3.Final</hibernate.version>
@@ -125,10 +126,6 @@
         <root.dir>${session.executionRootDirectory}</root.dir>
 
     </properties>
-
-    <prerequisites>
-        <maven>3.5.0</maven>
-    </prerequisites>
 
     <modules>
         <module>lang</module>
@@ -266,12 +263,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>4.2.0</version>
+                    <version>5.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -336,7 +333,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.4</version>
+                    <version>0.8.7</version>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
@@ -438,7 +435,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0-M5</version>
                 <configuration>
                     <printSummary>true</printSummary>
                 </configuration>
@@ -533,7 +530,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.2.0</version>
                 <configuration>
                     <archive>
                         <manifest>

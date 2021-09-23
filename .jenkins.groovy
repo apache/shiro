@@ -36,11 +36,11 @@ pipeline {
                     axis {
                         // https://cwiki.apache.org/confluence/display/INFRA/JDK+Installation+Matrix
                         name 'MATRIX_JDK'
-                        values 'jdk_1.8_latest',
-                                'jdk_11_latest',
-                                'jdk_14_latest'
+                        values 'jdk_1.8_latest', 'adopt_hs_8_latest', 'adopt_j9_8_latest',
+                                'jdk_11_latest', 'adopt_hs_11_latest', 'adopt_j9_11_latest',
+                                'jdk_16_latest', 'adopt_hs_16_latest', 'adopt_j9_16_latest'
                     }
-                    // Additional axess, like OS and maven version can be configured here.
+                    // Additional axes, like OS and maven version can be configured here.
                 }
 
                 agent {
@@ -93,7 +93,7 @@ pipeline {
                     stage('Build') {
                         steps {
                             echo 'Building'
-                            sh 'mvn --batch-mode --errors clean verify -Pdocs -Dmaven.test.failure.ignore=true'
+                            sh 'mvn clean verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs -Dmaven.test.failure.ignore=true'
                         }
                         post {
                             always {
@@ -159,7 +159,7 @@ Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BRANC
                     // Send an email, if the last build was not successful and this one is.
                     success {
                         // Cleanup the build directory if the build was successful
-                        // (in this cae we probably don't have to do any post-build analysis)
+                        // (in this case we probably don't have to do any post-build analysis)
                         cleanWs()
                         script {
                             if (deployableBranch
