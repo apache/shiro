@@ -125,5 +125,16 @@
 				<failsafe.argLine>--illegal-access=permit</failsafe.argLine>
 			</properties>
 		</profile>
+		<profile>
+			<id>jdk17</id>
+			<activation>
+				<jdk>[17,)</jdk>
+			</activation>
+			<properties>
+				<!-- needed by guice until it is compatible with jdk17+. -->
+				<surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</surefire.argLine>
+				<failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</failsafe.argLine>
+			</properties>
+		</profile>
 	</profiles>
 </project>
