@@ -42,7 +42,7 @@ jobs:
         run: mvn apache-rat:check "-Drat.consoleOutput"
 
       - name: Build with Maven
-        run: mvn verify --errors --batch-mode --no-transfer-progress -Pdocs
+        run: mvn verify --errors --batch-mode --no-transfer-progress '-Pdocs,ci,run-its'
 
   build-all:
     needs: build
@@ -113,4 +113,4 @@ jobs:
           distribution: ${{ matrix.java.dist }}
 
       - name: Build with Maven
-        run: mvn verify --errors --batch-mode --no-transfer-progress -Pdocs
+        run: mvn verify --errors --batch-mode --no-transfer-progress '-Pdocs,run-its,ci'

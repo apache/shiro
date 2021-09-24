@@ -142,7 +142,6 @@
         <module>support</module>
         <module>tools</module>
         <module>samples</module>
-        <module>integration-tests</module>
         <module>test-coverage</module>
     </modules>
 
@@ -1562,6 +1561,12 @@
 <!--                    </plugin>-->
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>run-its</id>
+            <modules>
+                <module>integration-tests</module>
+            </modules>
         </profile>
     </profiles>
 </project>
