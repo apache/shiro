@@ -1,0 +1,116 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+name: Maven CI
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2.1.0
+        with:
+          java-version: 8
+          distribution: adopt-hotspot
+
+      - name: License Check
+        run: mvn apache-rat:check "-Drat.consoleOutput"
+
+      - name: Build with Maven
+        run: mvn verify --errors --batch-mode --no-transfer-progress -Pdocs
+
+  build-all:
+    needs: build
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        java:
+          #  8
+          - version: 8
+            dist: adopt-hotspot
+          - version: 8
+            dist: adopt-openj9
+          - version: 8
+            dist: zulu
+          # 11
+          - version: 11
+            dist: adopt-hotspot
+          - version: 11
+            dist: adopt-openj9
+          - version: 11
+            dist: zulu
+          # 16
+          - version: 16
+            dist: adopt-hotspot
+          - version: 16
+            dist: adopt-openj9
+          - version: 16
+            dist: zulu
+        exclude:
+          # was already built
+          - os: ubuntu-latest
+            java:
+              version: 8
+              dist: adopt-hotspot
+          # exclude some builds, because MacOs builds have fewer resources available.
+          # excludes java 16 on macOS.
+          - os: macOS-latest
+            java:
+              version: 16
+          # exclude adopt-hotspot on MacOS. zulu (also hotspot) and OpenJ9 are sufficient.
+          - os: macOS-latest
+            java:
+              dist: adopt-hotspot
+      fail-fast: false
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up cache for ~./m2/repository
+        uses: actions/cache@v2.1.6
+        with:
+          path: |
+            ~/.m2/repository
+            !~/.m2/repository/org/apache/shiro
+          key: maven-${{ matrix.os }}-java${{ matrix.java }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ matrix.os }}-java${{ matrix.java }}-
+            maven-${{ matrix.os }}-
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2.1.0
+        with:
+          java-version: ${{ matrix.java.version }}
+          distribution: ${{ matrix.java.dist }}
+
+      - name: Build with Maven
+        run: mvn verify --errors --batch-mode --no-transfer-progress -Pdocs
