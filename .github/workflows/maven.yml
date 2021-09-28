@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up JDK
-        uses: actions/setup-java@v2.1.0
+        uses: actions/setup-java@v2
         with:
           java-version: 8
           distribution: adopt-hotspot
@@ -65,12 +65,12 @@ jobs:
             dist: adopt-openj9
           - version: 11
             dist: zulu
-          # 16
-          - version: 16
+          # 14
+          - version: 14
             dist: adopt-hotspot
-          - version: 16
+          - version: 14
             dist: adopt-openj9
-          - version: 16
+          - version: 14
             dist: zulu
         exclude:
           # was already built
@@ -107,7 +107,7 @@ jobs:
             maven-${{ matrix.os }}-
 
       - name: Set up JDK
-        uses: actions/setup-java@v2.1.0
+        uses: actions/setup-java@v2
         with:
           java-version: ${{ matrix.java.version }}
           distribution: ${{ matrix.java.dist }}
