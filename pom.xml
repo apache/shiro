@@ -77,7 +77,7 @@
         <!-- Compile 3rd party dependencies: -->
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
-        <aspectj.version>1.9.4</aspectj.version>
+        <aspectj.version>1.9.7</aspectj.version>
         <cas.client.core.version>3.2.2</cas.client.core.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
         <commons.cli.version>1.4</commons.cli.version>
@@ -403,14 +403,9 @@
                     <version>3.0.0-M2</version>
                 </plugin>
                 <plugin>
-                    <groupId>com.nickwongdev</groupId>
-                    <artifactId>aspectj-maven-plugin</artifactId>
-                    <version>1.12.6</version>
-                    <!-- Using a fork, until such time that the aspect-maven-plugin updates to support JDK 11 - https://github.com/mojohaus/aspectj-maven-plugin/pull/45
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>aspectj-maven-plugin</artifactId>
-                    <version>1.11</version>
-                    -->
+                    <version>1.14.0</version>
                     <configuration>
                         <source>${jdk.version}</source>
                         <target>${jdk.version}</target>
