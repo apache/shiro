@@ -1487,6 +1487,31 @@
                     <url>scm:svn:https://svn.apache.org/repos/asf/shiro/site/publish/static/${project.version}</url>
                 </site>
             </distributionManagement>
+            <build>
+                <plugins>
+                    <!-- calculate checksums of source release for Apache dist area -->
+                    <plugin>
+                        <groupId>net.nicoulaj.maven.plugins</groupId>
+                        <artifactId>checksum-maven-plugin</artifactId>
+                        <version>1.11</version>
+                        <executions>
+                            <execution>
+                                <id>source-release-checksum</id>
+                                <goals>
+                                    <goal>artifacts</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <algorithms>
+                                <algorithm>SHA-512</algorithm>
+                                <algorithm>SHA3-512</algorithm>
+                            </algorithms>
+                            <csvSummary>false</csvSummary>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <!--  NOTE: this plugin config will return false positives, usage will require
