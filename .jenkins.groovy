@@ -17,7 +17,7 @@
  * under the License.
  */
 
-def deployableBranch = env.BRANCH_NAME ==~ /(1.7.x|1.8.x|main)/
+def deployableBranch = env.BRANCH_NAME ==~ /(1.7.x|1.8.x|1.9.x|main)/
 
 pipeline {
 
@@ -38,7 +38,7 @@ pipeline {
                         name 'MATRIX_JDK'
                         values 'jdk_1.8_latest', 'adopt_hs_8_latest', 'adopt_j9_8_latest',
                                 'jdk_11_latest', 'adopt_hs_11_latest', 'adopt_j9_11_latest',
-                                'jdk_16_latest', 'adopt_hs_16_latest', 'adopt_j9_16_latest'
+                                'jdk_17_latest', 'adopt_hs_16_latest', 'adopt_j9_16_latest'
                     }
                     // Additional axes, like OS and maven version can be configured here.
                 }
