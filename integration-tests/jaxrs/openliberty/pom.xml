@@ -133,5 +133,17 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>jdk17</id>
+            <activation>
+                <jdk>[16,)</jdk>
+            </activation>
+            <properties>
+                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED</surefire.argLine>
+                <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED</failsafe.argLine>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
