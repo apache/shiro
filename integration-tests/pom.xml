@@ -36,13 +36,27 @@
 
     <properties>
         <japicmp.skip>true</japicmp.skip>
+        <dependency.meecrowave.version>1.2.11</dependency.meecrowave.version>
     </properties>
 
     <modules>
         <module>support</module>
         <module>guice3</module>
         <module>guice4</module>
+        <module>meecrowave-support</module>
+        <module>jaxrs</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.meecrowave</groupId>
+                <artifactId>meecrowave-core</artifactId>
+                <version>${dependency.meecrowave.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <reporting>
         <plugins>
