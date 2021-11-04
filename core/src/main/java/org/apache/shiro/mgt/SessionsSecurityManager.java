@@ -150,7 +150,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
 
     public Session start(SessionContext context) throws AuthorizationException {
         if (sessionManager == null) {
-            throw new IllegalStateException("Session manager is destroyed");
+            throw new IllegalStateException("Session manager is not available or has been destroyed");
         }
         return this.sessionManager.start(context);
     }
