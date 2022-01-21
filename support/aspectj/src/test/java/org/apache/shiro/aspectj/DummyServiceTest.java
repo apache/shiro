@@ -18,10 +18,6 @@
  */
 package org.apache.shiro.aspectj;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -41,10 +37,6 @@ public class DummyServiceTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        Logger log = Logger.getLogger(AspectjAnnotationsAuthorizingMethodInterceptor.class);
-        log.addAppender(new ConsoleAppender(new SimpleLayout(), ConsoleAppender.SYSTEM_OUT));
-        log.setLevel(Level.TRACE);
-
         Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiroDummyServiceTest.ini");
         SecurityManager securityManager = factory.getInstance();
         SecurityUtils.setSecurityManager(securityManager);

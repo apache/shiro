@@ -24,6 +24,7 @@ import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.core.IMap
 import com.hazelcast.core.LifecycleService
 import org.apache.shiro.cache.MapCache
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.powermock.core.classloader.annotations.PrepareForTest
@@ -42,6 +43,11 @@ import static org.powermock.api.easymock.PowerMock.*
 @RunWith(PowerMockRunner)
 @PrepareForTest(Hazelcast)
 class HazelcastCacheManagerTest {
+
+    @BeforeClass
+    static void setUpLogging() {
+        System.setProperty("hazelcast.logging.type", "log4j2")
+    }
 
     @Test
     void testGetSetHazelcastInstance() {

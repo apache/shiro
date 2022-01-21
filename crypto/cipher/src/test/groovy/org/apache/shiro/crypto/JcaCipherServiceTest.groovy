@@ -20,14 +20,18 @@ package org.apache.shiro.crypto
 
 import org.junit.Test;
 
-public class JcaCipherServiceTest {
+class JcaCipherServiceTest {
 
     @Test(expected = CryptoException.class)
-    public void testDecrypt() {
+    void testDecrypt() {
         JcaCipherService cipherService = new JcaCipherService("AES"){};
         String ciphertext = "iv_helloword";
         String key = "somekey";
-        cipherService.decrypt(ciphertext.getBytes(), key.getBytes());
+        def broker = cipherService.decrypt(ciphertext.getBytes(), key.getBytes());
+        // throws exception.
+        broker.useBytes { byte[] bytes ->
+            // noop
+        }
     }
 
 }
