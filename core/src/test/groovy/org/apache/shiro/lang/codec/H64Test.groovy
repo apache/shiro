@@ -20,22 +20,26 @@ package org.apache.shiro.lang.codec
 
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
 import org.junit.Test
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-import static org.junit.Assert.*
+import static org.junit.Assert.assertNotNull
 
 /**
  * Test cases for the {@link H64} implementation.
  */
 class H64Test {
 
+    private static Logger LOG = LoggerFactory.getLogger(H64Test.class);
+
     @Test
     public void testDefault() {
         byte[] orig = new SecureRandomNumberGenerator().nextBytes(6).bytes
 
-        System.out.println("bytes: $orig");
+        LOG.trace("bytes: $orig");;
 
         String encoded = H64.encodeToString(orig)
-        System.out.println("encoded: $encoded");
+        LOG.trace("encoded: $encoded");
 
         assertNotNull orig
     }
