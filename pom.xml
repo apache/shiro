@@ -400,7 +400,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M2</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -815,6 +815,7 @@
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-core</artifactId>
                 <version>${project.version}</version>
+                <classifier>tests</classifier>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
@@ -822,6 +823,7 @@
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-config-ogdl</artifactId>
                 <version>${project.version}</version>
+                <classifier>tests</classifier>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>

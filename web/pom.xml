@@ -61,12 +61,14 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-config-ogdl</artifactId>
+            <classifier>tests</classifier>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
+            <classifier>tests</classifier>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
