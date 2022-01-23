@@ -23,6 +23,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
 
+<<<<<<< HEAD:samples/jaxrs/src/main/webapp/WEB-INF/web.cxf.xml
     <servlet>
         <servlet-name>CXFServlet</servlet-name>
         <display-name>CXF Servlet</display-name>
@@ -37,5 +38,12 @@
         <servlet-name>CXFServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+=======
+    <parent>
+        <groupId>org.apache.shiro</groupId>
+        <artifactId>shiro-crypto</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+>>>>>>> c7f359b7... [SHIRO-848] - Relative Path in pom.xml is not needed:crypto/support/pom.xml
 
 </web-app>
