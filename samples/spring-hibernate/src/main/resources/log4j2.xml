@@ -55,6 +55,9 @@
         <Logger name="org.eclipse.jetty" level="warn" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
+        <Logger name="org.eclipse.jetty.annotations.AnnotationParser" level="error" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Logger name="org.apache.shiro.cache.ehcache.EhCache" level="warn" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
