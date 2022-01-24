@@ -58,7 +58,7 @@
     <!-- Currently the test fails with JDK11, so exclude it -->
     <profiles>
         <profile>
-            <id>jdk19-plus</id>
+            <id>jdk9-plus</id>
             <activation>
                 <jdk>[9,)</jdk>
             </activation>
