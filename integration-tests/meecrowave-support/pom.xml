@@ -27,7 +27,6 @@
         <artifactId>shiro-integration-tests</artifactId>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <version>2.0.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>shiro-its-meecrowave-support</artifactId>
