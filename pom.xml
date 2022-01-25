@@ -269,16 +269,6 @@
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>3.0.0-M5</version>
                     <configuration>
-                        <includes>
-                            <include>**/*IT.java</include>
-                            <include>**/*IT.groovy</include>
-                            <include>**/*ITCase.java</include>
-                            <include>**/*ITCase.groovy</include>
-                        </includes>
-                        <excludes>
-                            <exclude>**/*ManualIT.java</exclude>
-                            <exclude>**/*ManualIT.groovy</exclude>
-                        </excludes>
                         <argLine>${failsafe.argLine}</argLine>
                     </configuration>
                 </plugin>
