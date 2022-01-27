@@ -37,15 +37,17 @@
     </Console>
   </Appenders>
   <Loggers>
-    <Root level="info">
-      <AppenderRef ref="stdout" />
-      <AppenderRef ref="stderr" />
-    </Root>
     <Logger
       name="com.zaxxer.hikari.HikariDataSource"
       level="WARN"
       additivity="false"
     />
+    <Logger
+      name="com.hazelcast"
+      level="error"
+      additivity="false"
+    />
+
     <Logger
       name="org.apache.webbeans.corespi.scanner.AbstractMetaDataDiscovery"
       level="ERROR"
@@ -54,9 +56,15 @@
 
     <Logger name="org.apache.shiro"
             level="info"
+            additivity="false"
             />
     <Logger name="org.apache.shiro.testing.meecrowave.jaxrs"
             level="info"
+            additivity="false"
     />
+    <Root level="warn">
+      <AppenderRef ref="stdout" />
+      <AppenderRef ref="stderr" />
+    </Root>
   </Loggers>
 </Configuration>

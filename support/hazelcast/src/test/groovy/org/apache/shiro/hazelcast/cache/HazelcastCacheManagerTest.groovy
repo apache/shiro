@@ -21,6 +21,7 @@ package org.apache.shiro.hazelcast.cache
 import com.hazelcast.config.Config
 import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.core.LifecycleService
+import org.junit.BeforeClass
 import org.junit.Test
 
 import static org.junit.Assert.*
@@ -32,6 +33,11 @@ import static org.mockito.Mockito.*
  * @since 1.3
  */
 class HazelcastCacheManagerTest {
+
+    @BeforeClass
+    static void setUpLogging() {
+        System.setProperty("hazelcast.logging.type", "log4j2")
+    }
 
     @Test
     void testGetSetHazelcastInstance() {

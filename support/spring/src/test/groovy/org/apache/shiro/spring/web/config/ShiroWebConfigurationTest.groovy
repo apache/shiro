@@ -30,6 +30,8 @@ import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.function.Executable
 import org.junit.runner.RunWith
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.expression.Expression
@@ -48,6 +50,8 @@ import static org.junit.Assert.*
 @ContextConfiguration(classes = [EventBusTestConfiguration, RealmTestConfiguration, ShiroWebConfiguration])
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ShiroWebConfigurationTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ShiroWebConfigurationTest.class)
 
     @Autowired
     private SecurityManager securityManager
@@ -92,7 +96,7 @@ public class ShiroWebConfigurationTest {
 
         String message = (String) exp.getValue();
 
-        println(message);
+        LOG.trace message
     }
 
     @Test

@@ -19,11 +19,16 @@
 package org.apache.shiro.subject;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @since 1.3
  */
 public class SimplePrincipalCollectionTest {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SimplePrincipalCollectionTest.class);
+
     @Test
     public void multiplePrincipalsTest()
     {
@@ -35,7 +40,6 @@ public class SimplePrincipalCollectionTest {
         PrincipalCollection underTest = principalCollection;
 
 //        underTest.
-
-        System.out.println(principalCollection);
+        LOG.trace("{}", principalCollection);
     }
 }

@@ -19,20 +19,29 @@
 package org.apache.shiro.crypto.cipher
 
 import org.apache.shiro.crypto.CryptoException
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-public class JcaCipherServiceTest {
+import static org.junit.jupiter.api.Assertions.assertThrows
 
-    @Test(expected = CryptoException.class)
-    public void testDecrypt() {
-        JcaCipherService cipherService = new JcaCipherService("AES"){};
-        String ciphertext = "iv_helloword";
-        String key = "somekey";
-        def broker = cipherService.decrypt(ciphertext.getBytes(), key.getBytes());
+class JcaCipherServiceTest {
+
+    @Test
+    void testDecrypt() {
+        JcaCipherService cipherService = new JcaCipherService("AES") {}
+        String ciphertext = "iv_helloword"
+        String key = "somekey"
+        def broker = cipherService.decrypt(ciphertext.getBytes(), key.getBytes())
+
         // throws exception.
-        broker.useBytes { byte[] bytes ->
-            // noop
-        };
+        assertThrows(
+                CryptoException.class,
+                {
+                    broker.useBytes { byte[] bytes ->
+                        // noop
+                    }
+                }
+        )
+
     }
 
 }
