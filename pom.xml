@@ -258,8 +258,6 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.3.1</version>
                     <configuration>
-                        <source>${jdk.version}</source>
-                        <attach>true</attach>
                         <excludePackageNames>org.apache.shiro.samples.*</excludePackageNames>
                     </configuration>
                 </plugin>
@@ -405,9 +403,9 @@
                     <artifactId>aspectj-maven-plugin</artifactId>
                     <version>1.14.0</version>
                     <configuration>
-                        <source>${jdk.version}</source>
-                        <target>${jdk.version}</target>
-                        <complianceLevel>${jdk.version}</complianceLevel>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                        <complianceLevel>${maven.compiler.target}</complianceLevel>
                         <showWeaveInfo>true</showWeaveInfo>
                     </configuration>
                     <executions>
@@ -438,11 +436,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1294,10 +1287,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.0</version>
                 <configuration>
-                    <source>${jdk.version}</source>
-                    <encoding>${project.build.sourceEncoding}</encoding>
                     <linksource>true</linksource>
                     <links>
                         <link>https://docs.oracle.com/javase/6/docs/api/</link>
@@ -1353,10 +1343,6 @@
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.12.0</version>
-                <configuration>
-                    <sourceEncoding>utf-8</sourceEncoding>
-                    <targetJdk>${jdk.version}</targetJdk>
-                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
