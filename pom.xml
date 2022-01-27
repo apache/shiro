@@ -457,28 +457,7 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M3</version>
-                <configuration>
-                    <printSummary>true</printSummary>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M3</version>
-                <configuration>
-                    <includes>
-                        <include>**/*IT.java</include>
-                        <include>**/*IT.groovy</include>
-                        <include>**/*ITCase.java</include>
-                        <include>**/*ITCase.groovy</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*ManualIT.java</exclude>
-                        <exclude>**/*ManualIT.groovy</exclude>
-                    </excludes>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
