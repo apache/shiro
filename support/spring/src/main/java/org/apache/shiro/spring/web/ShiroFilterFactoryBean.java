@@ -117,7 +117,7 @@ import java.util.Map;
  * @see org.springframework.web.filter.DelegatingFilterProxy DelegatingFilterProxy
  * @since 1.0
  */
-public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
+public class ShiroFilterFactoryBean implements FactoryBean<AbstractShiroFilter>, BeanPostProcessor {
 
     private static transient final Logger log = LoggerFactory.getLogger(ShiroFilterFactoryBean.class);
 
@@ -354,7 +354,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * @return the application's Shiro Filter instance used to filter incoming web requests.
      * @throws Exception if there is a problem creating the {@code Filter} instance.
      */
-    public Object getObject() throws Exception {
+    public AbstractShiroFilter getObject() throws Exception {
         if (instance == null) {
             instance = createInstance();
         }
@@ -366,8 +366,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      *
      * @return <code>{@link org.apache.shiro.web.servlet.AbstractShiroFilter}.class</code>
      */
-    public Class getObjectType() {
-        return SpringShiroFilter.class;
+    public Class<?> getObjectType() {
+        return AbstractShiroFilter.class;
     }
 
     /**
