@@ -99,7 +99,7 @@
              modules' OSGi metadata: -->
         <quartz.version>2.3.2</quartz.version>
         <slf4j.version>1.7.26</slf4j.version>
-        <logback.version>1.2.3</logback.version>
+        <logback.version>1.2.10</logback.version>
         <log4j.version>2.17.1</log4j.version>
         <spring.version>5.2.8.RELEASE</spring.version>
         <spring-boot.version>2.3.2.RELEASE</spring-boot.version>
