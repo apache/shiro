@@ -36,6 +36,8 @@
     <properties>
         <japicmp.skip>true</japicmp.skip>
         <dependency.meecrowave.version>1.2.11</dependency.meecrowave.version>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <nexus.deploy.skip>true</nexus.deploy.skip>
     </properties>
 
     <modules>

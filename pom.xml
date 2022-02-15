@@ -75,6 +75,7 @@
         <surefire.argLine></surefire.argLine>
         <!--suppress CheckTagEmptyBody -->
         <failsafe.argLine></failsafe.argLine>
+        <nexus.deploy.skip>false</nexus.deploy.skip>
 
         <!-- non-dependency-based properties: -->
         <shiro.osgi.importRange>[2, 3)</shiro.osgi.importRange>
@@ -628,6 +629,7 @@
                 <configuration>
                     <nexusUrl>https://repository.apache.org</nexusUrl>
                     <serverId>apache.releases.https</serverId>
+                    <skipNexusStagingDeployMojo>${nexus.deploy.skip}</skipNexusStagingDeployMojo>
                 </configuration>
             </plugin>
             <plugin>
