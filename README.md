@@ -1,7 +1,7 @@
 [<img src="http://shiro.apache.org/assets/images/apache-shiro-logo.png" align="right" />](http://shiro.apache.org)
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.apache.shiro/shiro-core.svg)]()
-[![Build Status](https://ci-builds.apache.org/job/Shiro/job/Shiro-jdk8/job/master/badge/icon)](https://ci-builds.apache.org/job/Shiro/job/Shiro-jdk8/job/master/)
+[![Build Status](https://ci-builds.apache.org/buildStatus/icon?job=Shiro%2FShiro-all%2Fmain)](https://ci-builds.apache.org/job/Shiro/job/Shiro-all/job/main/)
 
 Apache Shiro
 ============
