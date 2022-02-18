@@ -70,6 +70,7 @@
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <jacoco.skip>true</jacoco.skip>
+        <nexus.deploy.skip>false</nexus.deploy.skip>
 
         <!-- non-dependency-based properties: -->
         <shiro.osgi.importRange>[1.2, 2)</shiro.osgi.importRange>
@@ -619,6 +620,7 @@
                 <configuration>
                     <nexusUrl>https://repository.apache.org</nexusUrl>
                     <serverId>apache.releases.https</serverId>
+                    <skipNexusStagingDeployMojo>${nexus.deploy.skip}</skipNexusStagingDeployMojo>
                 </configuration>
             </plugin>
             <plugin>

@@ -35,6 +35,8 @@
 
     <properties>
         <japicmp.skip>true</japicmp.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <nexus.deploy.skip>true</nexus.deploy.skip>
     </properties>
 
     <modules>
