@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.crypto;
 
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 
 import java.security.SecureRandom;
 

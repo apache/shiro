@@ -19,6 +19,6 @@
 /**
  * This package primarily exists as a root classpath distinction, but it does contain two core classes widely used
  * by applications, {@link org.apache.shiro.SecurityUtils SecurityUtils} and
- * {@link org.apache.shiro.ShiroException ShiroException}.
+ * {@link org.apache.shiro.lang.ShiroException ShiroException}.
  */
 package org.apache.shiro;

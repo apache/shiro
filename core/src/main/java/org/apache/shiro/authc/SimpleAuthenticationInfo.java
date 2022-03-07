@@ -18,13 +18,15 @@
  */
 package org.apache.shiro.authc;
 
+import org.apache.shiro.lang.util.ByteSource;
+import org.apache.shiro.lang.util.SimpleByteSource;
 import org.apache.shiro.subject.MutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
-import org.apache.shiro.util.ByteSource;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -37,6 +39,7 @@ import java.util.Set;
  */
 public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, SaltedAuthenticationInfo {
 
+    private static final long serialVersionUID = 5390456512469696779L;
     /**
      * The principals identifying the account associated with this AuthenticationInfo instance.
      */
@@ -51,7 +54,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      *
      * @since 1.1
      */
-    protected ByteSource credentialsSalt;
+    protected ByteSource credentialsSalt = SimpleByteSource.empty();
 
     /**
      * Default no-argument constructor.
@@ -124,6 +127,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
     }
 
 
+    @Override
     public PrincipalCollection getPrincipals() {
         return principals;
     }
@@ -131,12 +135,13 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
     /**
      * Sets the identifying principal(s) represented by this instance.
      *
-     * @param principals the indentifying attributes of the corresponding Realm account.
+     * @param principals the identifying attributes of the corresponding Realm account.
      */
     public void setPrincipals(PrincipalCollection principals) {
         this.principals = principals;
     }
 
+    @Override
     public Object getCredentials() {
         return credentials;
     }
@@ -163,6 +168,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      *         hashed at all.
      * @since 1.1
      */
+    @Override
     public ByteSource getCredentialsSalt() {
         return credentialsSalt;
     }
@@ -189,6 +195,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      *
      * @param info the <code>AuthenticationInfo</code> to add into this instance.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void merge(AuthenticationInfo info) {
         if (info == null || info.getPrincipals() == null || info.getPrincipals().isEmpty()) {
@@ -249,14 +256,21 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      * @return <code>true</code> if the Object argument is an <code>instanceof SimpleAuthenticationInfo</code> and
      *         its {@link #getPrincipals() principals} are equal to this instance's principals, <code>false</code> otherwise.
      */
+    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SimpleAuthenticationInfo)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SimpleAuthenticationInfo)) {
+            return false;
+        }
 
         SimpleAuthenticationInfo that = (SimpleAuthenticationInfo) o;
 
         //noinspection RedundantIfStatement
-        if (principals != null ? !principals.equals(that.principals) : that.principals != null) return false;
+        if (!Objects.equals(principals, that.principals)) {
+            return false;
+        }
 
         return true;
     }
@@ -266,6 +280,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      *
      * @return the hashcode of the internal {@link #getPrincipals() principals} instance.
      */
+    @Override
     public int hashCode() {
         return (principals != null ? principals.hashCode() : 0);
     }
@@ -275,6 +290,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      *
      * @return <code>{@link #getPrincipals() principals}.toString()</code>
      */
+    @Override
     public String toString() {
         return principals.toString();
     }

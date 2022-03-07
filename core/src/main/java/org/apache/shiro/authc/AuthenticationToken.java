@@ -34,7 +34,7 @@ import java.io.Serializable;
  * <p/>
  * <p>Because applications represent user data and credentials in different ways, implementations
  * of this interface are application-specific.  You are free to acquire a user's principals and
- * credentials however you wish (e.g. web form, Swing form, fingerprint identification, etc) and
+ * credentials however you wish (e.g. web form, Swing form, fingerprint identification, etc.) and
  * then submit them to the Shiro framework in the form of an implementation of this
  * interface.
  * <p/>
@@ -43,7 +43,7 @@ import java.io.Serializable;
  * {@link UsernamePasswordToken UsernamePasswordToken} class, as it is probably sufficient for your needs.
  * <p/>
  * <p>RememberMe services are enabled for a token if they implement a sub-interface of this one, called
- * {@link RememberMeAuthenticationToken RememberMeAuthenticationToken}.  Implement that interfac if you need
+ * {@link RememberMeAuthenticationToken RememberMeAuthenticationToken}.  Implement that interface if you need
  * RememberMe services (the <tt>UsernamePasswordToken</tt> already implements this interface).
  * <p/>
  * <p>If you are familiar with JAAS, an <tt>AuthenticationToken</tt> replaces the concept of a
@@ -68,7 +68,7 @@ public interface AuthenticationToken extends Serializable {
      * sufficient for your use.
      * <p/>
      * <p>Ultimately, the object returned is application specific and can represent
-     * any account identity (user id, X.509 certificate, etc).
+     * any account identity (user id, X.509 certificate, etc.).
      *
      * @return the account identity submitted during the authentication process.
      * @see UsernamePasswordToken

@@ -19,7 +19,7 @@
 package org.apache.shiro.web.config;
 
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.config.IniSecurityManagerFactory;
+import org.apache.shiro.ini.IniSecurityManagerFactory;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.junit.Test;
@@ -27,8 +27,8 @@ import org.junit.Test;
 import javax.servlet.Filter;
 import java.util.Map;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TODO - Class JavaDoc
@@ -45,7 +45,7 @@ public class WebIniSecurityManagerFactoryTest {
     @Test
     public void testDefaultFiltersPresent() {
         Ini ini = new Ini();
-        //just a normal configuration line in the MAIN section for any of the default filtes should work
+        //just a normal configuration line in the MAIN section for any of the default filters should work
         //out of the box.  So, create the main section and just config one of them:
         Ini.Section section = ini.addSection(IniSecurityManagerFactory.MAIN_SECTION_NAME);
         section.put("authc.loginUrl", "/login.jsp");

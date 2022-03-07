@@ -50,7 +50,7 @@ import org.apache.shiro.web.util.WebUtils;
  *     &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
  * &lt;/filter-mapping&gt;
  * </pre>
- * Configuration options (configuration file paths, etc) are specified as part of the
+ * Configuration options (configuration file paths, etc.) are specified as part of the
  * {@code EnvironmentLoaderListener} configuration.  See the
  * {@link org.apache.shiro.web.env.EnvironmentLoader EnvironmentLoader} JavaDoc for configuration options.
  *

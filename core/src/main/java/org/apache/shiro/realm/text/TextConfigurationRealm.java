@@ -24,7 +24,7 @@ import org.apache.shiro.authz.SimpleRole;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.realm.SimpleAccountRealm;
 import org.apache.shiro.util.PermissionUtils;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -109,7 +109,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
      * <p/>
      * <p>where <em>permissionDefinition</em> is an arbitrary String, but must people will want to use
      * Strings that conform to the {@link org.apache.shiro.authz.permission.WildcardPermission WildcardPermission}
-     * format for ease of use and flexibility.  Note that if an individual <em>permissionDefnition</em> needs to
+     * format for ease of use and flexibility.  Note that if an individual <em>permissionDefinition</em> needs to
      * be internally comma-delimited (e.g. <code>printer:5thFloor:print,info</code>), you will need to surround that
      * definition with double quotes (&quot;) to avoid parsing errors (e.g.
      * <code>&quot;printer:5thFloor:print,info&quot;</code>).
@@ -148,8 +148,9 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         if (roleDefs == null || roleDefs.isEmpty()) {
             return;
         }
-        for (String rolename : roleDefs.keySet()) {
-            String value = roleDefs.get(rolename);
+        for (Map.Entry<String,String> entry : roleDefs.entrySet()) {
+            String rolename = entry.getKey();
+            String value = entry.getValue();
 
             SimpleRole role = getRole(rolename);
             if (role == null) {
@@ -177,12 +178,13 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         if (userDefs == null || userDefs.isEmpty()) {
             return;
         }
-        for (String username : userDefs.keySet()) {
-
-            String value = userDefs.get(username);
+        for (Map.Entry<String,String> entry : userDefs.entrySet()) {
+            String username = entry.getKey();
+            String value = entry.getValue();
 
             String[] passwordAndRolesArray = StringUtils.split(value);
 
+            // the first token is expected to be the password.
             String password = passwordAndRolesArray[0];
 
             SimpleAccount account = getUser(username);
@@ -210,9 +212,10 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
 
     protected static Set<String> toLines(String s) {
         LinkedHashSet<String> set = new LinkedHashSet<String>();
-        Scanner scanner = new Scanner(s);
-        while (scanner.hasNextLine()) {
-            set.add(scanner.nextLine());
+        try (Scanner scanner = new Scanner(s)) {
+            while (scanner.hasNextLine()) {
+                set.add(scanner.nextLine());
+            }
         }
         return set;
     }

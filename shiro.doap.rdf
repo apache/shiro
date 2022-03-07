@@ -83,6 +83,56 @@
                 <revision>1.2.3</revision>
             </Version>
         </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 1.2.4</name>
+                <created>2015-07-28</created>
+                <revision>1.2.4</revision>
+            </Version>
+        </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 1.2.5</name>
+                <created>2016-05-24</created>
+                <revision>1.2.5</revision>
+            </Version>
+        </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 1.2.6</name>
+                <created>2016-06-28</created>
+                <revision>1.2.6</revision>
+            </Version>
+        </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 1.3.0</name>
+                <created>2016-07-25</created>
+                <revision>1.3.0</revision>
+            </Version>
+        </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 1.3.1</name>
+                <created>2016-08-29</created>
+                <revision>1.3.1</revision>
+            </Version>
+        </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 1.3.2</name>
+                <created>2016-09-12</created>
+                <revision>1.3.2</revision>
+            </Version>
+        </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 1.4.0-RC2</name>
+                <created>2016-11-14</created>
+                <revision>1.4.0-RC2</revision>
+            </Version>
+        </release>
+
         <repository>
           <GitRepository>
             <location rdf:resource="https://git.apache.org/shiro.git"/>

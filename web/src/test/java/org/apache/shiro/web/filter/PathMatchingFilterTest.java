@@ -112,12 +112,78 @@ public class PathMatchingFilterTest {
 
         expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
         expect(request.getRequestURI()).andReturn(ENABLED_PATH).anyTimes();
+        expect(request.getServletPath()).andReturn("").anyTimes();
+        expect(request.getPathInfo()).andReturn(ENABLED_PATH).anyTimes();
         replay(request);
 
         boolean continueFilterChain = filter.preHandle(request, response);
 
         assertFalse("FilterChain should NOT continue.", continueFilterChain);
 
+        verify(request);
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-742">SHIRO-742<a/>.
+     */
+    @Test
+    public void testPathMatchEqualUrlSeparatorEnabled() {
+        expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
+        expect(request.getRequestURI()).andReturn("/").anyTimes();
+        expect(request.getServletPath()).andReturn("").anyTimes();
+        expect(request.getPathInfo()).andReturn("/").anyTimes();
+        replay(request);
+
+        boolean matchEnabled = filter.pathsMatch("/", request);
+        assertTrue("PathMatch can match URL end with Separator", matchEnabled);
+        verify(request);
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-682">SHIRO-682<a/>.
+     */
+    @Test
+    public void testPathMatchEEnabled() {
+        expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
+        expect(request.getRequestURI()).andReturn("/resource/book").anyTimes();
+        expect(request.getServletPath()).andReturn("").anyTimes();
+        expect(request.getPathInfo()).andReturn("/resource/book").anyTimes();
+        replay(request);
+
+        boolean matchEnabled = filter.pathsMatch("/resource/book", request);
+        assertTrue("PathMatch can match URL end with Separator", matchEnabled);
+        verify(request);
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-682">SHIRO-682<a/>.
+     */
+    @Test
+    public void testPathMatchEndWithUrlSeparatorEnabled() {
+        expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
+        expect(request.getRequestURI()).andReturn("/resource/book/").anyTimes();
+        expect(request.getServletPath()).andReturn("").anyTimes();
+        expect(request.getPathInfo()).andReturn("/resource/book/").anyTimes();
+        replay(request);
+
+        boolean matchEnabled = filter.pathsMatch("/resource/book", request);
+        assertTrue("PathMatch can match URL end with Separator", matchEnabled);
+        verify(request);
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-682">SHIRO-682<a/>.
+     */
+    @Test
+    public void testPathMatchEndWithMultiUrlSeparatorEnabled() {
+        expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
+        expect(request.getRequestURI()).andReturn("/resource/book//").anyTimes();
+        expect(request.getServletPath()).andReturn("").anyTimes();
+        expect(request.getPathInfo()).andReturn("/resource/book//").anyTimes();
+        replay(request);
+
+        boolean matchEnabled = filter.pathsMatch("/resource/book", request);
+        assertTrue("PathMatch can match URL end with multi Separator", matchEnabled);
         verify(request);
     }
 

@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.realm.ldap;
 
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,14 +49,14 @@ import java.util.Map;
  * For example, consider the following two identical configurations:
  * <pre>
  * [main]
- * ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
+ * ldapRealm = org.apache.shiro.realm.ldap.DefaultLdapRealm
  * ldapRealm.contextFactory.url = ldap://localhost:389
  * ldapRealm.contextFactory.authenticationMechanism = DIGEST-MD5
  * </pre>
  * and
  * <pre>
  * [main]
- * ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
+ * ldapRealm = org.apache.shiro.realm.ldap.DefaultLdapRealm
  * ldapRealm.contextFactory.environment[java.naming.provider.url] = ldap://localhost:389
  * ldapRealm.contextFactory.environment[java.naming.security.authentication] = DIGEST-MD5
  * </pre>
@@ -68,7 +68,7 @@ import java.util.Map;
  * For example:
  * <pre>
  * [main]
- * ldapRealm = org.apache.shiro.realm.ldap.JndiLdapRealm
+ * ldapRealm = org.apache.shiro.realm.ldap.DefaultLdapRealm
  * ldapRealm.contextFactory.url = ldap://localhost:389
  * ldapRealm.contextFactory.authenticationMechanism = DIGEST-MD5
  * ldapRealm.contextFactory.environment[some.other.obscure.jndi.key] = some value
@@ -399,23 +399,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      * @throws NamingException if there is a problem connecting to the LDAP directory
      */
     public LdapContext getSystemLdapContext() throws NamingException {
-        return getLdapContext((Object)getSystemUsername(), getSystemPassword());
-    }
-
-    /**
-     * Deprecated - use {@link #getLdapContext(Object, Object)} instead.  This will be removed before Apache Shiro 2.0.
-     *
-     * @param username the username to use when creating the connection.
-     * @param password the password to use when creating the connection.
-     * @return a {@code LdapContext} bound using the given username and password.
-     * @throws javax.naming.NamingException if there is an error creating the context.
-     * @deprecated the {@link #getLdapContext(Object, Object)} method should be used in all cases to ensure more than
-     *             String principals and credentials can be used.  Shiro no longer calls this method - it will be
-     *             removed before the 2.0 release.
-     */
-    @Deprecated
-    public LdapContext getLdapContext(String username, String password) throws NamingException {
-        return getLdapContext((Object) username, password);
+        return getLdapContext(getSystemUsername(), getSystemPassword());
     }
 
     /**
@@ -437,7 +421,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
 
     /**
      * This implementation returns an LdapContext based on the configured JNDI/LDAP environment configuration.
-     * The environnmet (Map) used at runtime is created by merging the default/configured
+     * The environment (Map) used at runtime is created by merging the default/configured
      * {@link #getEnvironment() environment template} with some runtime values as necessary (e.g. a principal and
      * credential available at runtime only).
      * <p/>
@@ -445,7 +429,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      * {@link #createLdapContext(java.util.Hashtable) created} and returned.
      *
      * @param principal   the principal to use when acquiring a connection to the LDAP directory
-     * @param credentials the credentials (password, X.509 certificate, etc) to use when acquiring a connection to the
+     * @param credentials the credentials (password, X.509 certificate, etc.) to use when acquiring a connection to the
      *                    LDAP directory
      * @return the acquired {@code LdapContext} connection bound using the specified principal and credentials.
      * @throws NamingException

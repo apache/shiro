@@ -23,7 +23,7 @@ import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.CacheManagerAware;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.Nameable;
+import org.apache.shiro.lang.util.Nameable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

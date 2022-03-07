@@ -42,7 +42,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
     protected Set<String> stringPermissions;
 
     /**
-     * Collection of all object-based permissions associaed with the account.
+     * Collection of all object-based permissions associated with the account.
      */
     protected Set<Permission> objectPermissions;
 

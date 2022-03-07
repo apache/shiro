@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.dao;
 
-import org.apache.shiro.ShiroException;
+import org.apache.shiro.lang.ShiroException;
 
 /**
  * Generic exception representing a problem when attempting to access data.

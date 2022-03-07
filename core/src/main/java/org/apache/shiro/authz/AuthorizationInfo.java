@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 /**
- * <code>AuthorizationInfo</code> represents a single Subject's stored authorization data (roles, permissions, etc)
+ * <code>AuthorizationInfo</code> represents a single Subject's stored authorization data (roles, permissions, etc.)
  * used during authorization (access control) checks only.
  * <p/>
  * Roles are represented as a <code>Collection</code> of Strings
@@ -38,9 +38,9 @@ import java.util.Collection;
  * Both permission collections together represent the total aggregate collection of permissions.  You may use one
  * or both depending on your preference and needs.
  * <p/>
- * Because the act of authorization (access control) is orthoganal to authentication (log-in), this interface is
+ * Because the act of authorization (access control) is orthogonal to authentication (log-in), this interface is
  * intended to represent only the account data needed by Shiro during an access control check
- * (role, permission, etc).  Shiro also has a parallel
+ * (role, permission, etc.).  Shiro also has a parallel
  * {@link org.apache.shiro.authc.AuthenticationInfo AuthenticationInfo} interface for use during the authentication
  * process that represents identity data such as principals and credentials.
  * <p/>

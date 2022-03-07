@@ -34,32 +34,30 @@ public class ShiroSessionScopeTest {
     public void testScope() throws Exception {
         Subject subject = createMock(Subject.class);
         try {
+            ThreadContext.bind(subject);
+
             final Key<SomeClass> key = Key.get(SomeClass.class);
             Provider<SomeClass> mockProvider = createMock(Provider.class);
             Session session = createMock(Session.class);
 
-            SomeClass retuned = new SomeClass();
-
-            expect(subject.getPrincipal()).andReturn("testUser").anyTimes();
+            SomeClass returned = new SomeClass();
 
             expect(subject.getSession()).andReturn(session);
             expect(session.getAttribute(key)).andReturn(null);
-            expect(mockProvider.get()).andReturn(retuned);
+            expect(mockProvider.get()).andReturn(returned);
 
             expect(subject.getSession()).andReturn(session);
-            expect(session.getAttribute(key)).andReturn(retuned);
+            expect(session.getAttribute(key)).andReturn(returned);
 
 
             replay(subject, mockProvider, session);
 
-            ThreadContext.bind(subject);
-
             ShiroSessionScope underTest = new ShiroSessionScope();
 
             // first time the session doesn't contain it, we expect the provider to be invoked
-            assertSame(retuned, underTest.scope(key, mockProvider).get());
+            assertSame(returned, underTest.scope(key, mockProvider).get());
             // second time the session does contain it, we expect the provider to not be invoked
-            assertSame(retuned, underTest.scope(key, mockProvider).get());
+            assertSame(returned, underTest.scope(key, mockProvider).get());
 
             verify(subject, mockProvider, session);
         } finally {

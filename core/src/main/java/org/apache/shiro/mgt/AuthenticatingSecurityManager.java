@@ -23,7 +23,7 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.LifecycleUtils;
 
 
 /**
@@ -33,7 +33,7 @@ import org.apache.shiro.util.LifecycleUtils;
  * interface, but in reality, those methods are merely passthrough calls to the underlying 'real'
  * <tt>Authenticator</tt> instance.
  *
- * <p>All other <tt>SecurityManager</tt> (authorization, session, etc) methods are left to be implemented by subclasses.
+ * <p>All other <tt>SecurityManager</tt> (authorization, session, etc.) methods are left to be implemented by subclasses.
  *
  * <p>In keeping with the other classes in this hierarchy and Shiro's desire to minimize configuration whenever
  * possible, suitable default instances for all dependencies are created upon instantiation.

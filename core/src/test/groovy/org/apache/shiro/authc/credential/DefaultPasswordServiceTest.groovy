@@ -19,14 +19,19 @@
 package org.apache.shiro.authc.credential
 
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
-import org.apache.shiro.crypto.hash.*
+import org.apache.shiro.crypto.hash.DefaultHashService
+import org.apache.shiro.crypto.hash.Hash
+import org.apache.shiro.crypto.hash.Sha384Hash
+import org.apache.shiro.crypto.hash.Sha512Hash
 import org.apache.shiro.crypto.hash.format.HashFormatFactory
 import org.apache.shiro.crypto.hash.format.HexFormat
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat
-import org.junit.Test
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link DefaultPasswordService} implementation.
@@ -36,52 +41,22 @@ import static org.junit.Assert.*
 class DefaultPasswordServiceTest {
 
     @Test
+    @DisplayName("throws NPE if plaintext is null")
     void testEncryptPasswordWithNullArgument() {
-        def service = new DefaultPasswordService()
-        assertNull service.encryptPassword(null)
+        def service = createSha256Service()
+
+        assertThrows(NullPointerException, { service.encryptPassword(null) } as Executable)
     }
 
     @Test
     void testHashPasswordWithNullArgument() {
-        def service = new DefaultPasswordService()
+        def service = createSha256Service()
         assertNull service.hashPassword(null)
     }
 
     @Test
-    void testEncryptPasswordDefault() {
-        def service = new DefaultPasswordService()
-        def encrypted = service.encryptPassword("12345")
-        assertTrue service.passwordsMatch("12345", encrypted)
-    }
-
-    @Test
-    void testEncryptPasswordWithInvalidMatch() {
-        def service = new DefaultPasswordService()
-        def encrypted = service.encryptPassword("ABCDEF")
-        assertFalse service.passwordsMatch("ABC", encrypted)
-    }
-
-    @Test
-    void testBackwardsCompatibility() {
-        def service = new DefaultPasswordService()
-        def encrypted = service.encryptPassword("12345")
-        def submitted = "12345"
-        assertTrue service.passwordsMatch(submitted, encrypted);
-
-        //change some settings:
-        service.hashService.hashAlgorithmName = "MD5"
-        service.hashService.hashIterations = 250000
-
-        def encrypted2 = service.encryptPassword(submitted)
-
-        assertFalse encrypted == encrypted2
-
-        assertTrue service.passwordsMatch(submitted, encrypted2)
-    }
-
-    @Test
     void testHashFormatWarned() {
-        def service = new DefaultPasswordService()
+        def service = createSha256Service()
         service.hashFormat = new HexFormat()
         assertTrue service.hashFormat instanceof HexFormat
         service.encryptPassword("test")
@@ -90,33 +65,13 @@ class DefaultPasswordServiceTest {
 
     @Test
     void testPasswordsMatchWithNullOrEmpty() {
-        def service = new DefaultPasswordService()
+        def service = createSha256Service()
         assertTrue service.passwordsMatch(null, (String) null)
         assertTrue service.passwordsMatch(null, (Hash) null)
         assertTrue service.passwordsMatch("", (String) null)
         assertTrue service.passwordsMatch(null, "")
         assertFalse service.passwordsMatch(null, "12345")
-        assertFalse service.passwordsMatch(null, new Sha1Hash("test"))
-    }
-
-    @Test
-    void testCustomHashService() {
-        def hashService = createMock(HashService)
-
-        def hash = new Sha256Hash("test", new SecureRandomNumberGenerator().nextBytes(), 100);
-
-        expect(hashService.computeHash(isA(HashRequest))).andReturn hash
-
-        replay hashService
-
-        def service = new DefaultPasswordService()
-        service.hashService = hashService
-
-        def returnedHash = service.encryptPassword("test")
-
-        assertEquals new Shiro1CryptFormat().format(hash), returnedHash
-
-        verify hashService
+        assertFalse service.passwordsMatch(null, new Sha384Hash("test"))
     }
 
     @Test
@@ -140,17 +95,8 @@ class DefaultPasswordServiceTest {
         verify factory
     }
 
-    @Test
-    void testStringComparisonWhenNotUsingAParsableHashFormat() {
-
-        def service = new DefaultPasswordService()
-        service.hashFormat = new HexFormat()
-        //can't use random salts when using HexFormat:
-        service.hashService.generatePublicSalt = false
-
-        def formatted = service.encryptPassword("12345")
-
-        assertTrue service.passwordsMatch("12345", formatted)
+    private static DefaultPasswordService createSha256Service() {
+        def hashService = new DefaultHashService(defaultAlgorithmName: 'SHA-256')
+        new DefaultPasswordService(hashService: hashService)
     }
-
 }

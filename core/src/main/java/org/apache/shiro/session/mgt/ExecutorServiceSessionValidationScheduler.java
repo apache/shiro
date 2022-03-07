@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * SessionValidationScheduler implementation that uses a
  * {@link ScheduledExecutorService} to call {@link ValidatingSessionManager#validateSessions()} every
- * <em>{@link #getInterval interval}</em> milliseconds.
+ * <em>{@link #getSessionValidationInterval sessionValidationInterval}</em> milliseconds.
  *
  * @since 0.9
  */
@@ -43,8 +44,9 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
 
     ValidatingSessionManager sessionManager;
     private ScheduledExecutorService service;
-    private long interval = DefaultSessionManager.DEFAULT_SESSION_VALIDATION_INTERVAL;
+    private long sessionValidationInterval = DefaultSessionManager.DEFAULT_SESSION_VALIDATION_INTERVAL;
     private boolean enabled = false;
+    private String threadNamePrefix = "SessionValidationThread-";
 
     public ExecutorServiceSessionValidationScheduler() {
         super();
@@ -62,16 +64,24 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
         this.sessionManager = sessionManager;
     }
 
-    public long getInterval() {
-        return interval;
+    public long getSessionValidationInterval() {
+        return sessionValidationInterval;
     }
 
-    public void setInterval(long interval) {
-        this.interval = interval;
+    public void setSessionValidationInterval(long sessionValidationInterval) {
+        this.sessionValidationInterval = sessionValidationInterval;
     }
 
     public boolean isEnabled() {
         return this.enabled;
+    }
+
+    public void setThreadNamePrefix(String threadNamePrefix) {
+        this.threadNamePrefix = threadNamePrefix;
+    }
+
+    public String getThreadNamePrefix() {
+        return this.threadNamePrefix;
     }
 
     /**
@@ -81,25 +91,38 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
     //TODO Implement an integration test to test for jvm exit as part of the standalone example
     // (so we don't have to change the unit test execution model for the core module)
     public void enableSessionValidation() {
-        if (this.interval > 0l) {
+        if (this.sessionValidationInterval > 0l) {
             this.service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {  
-	        public Thread newThread(Runnable r) {  
-	            Thread thread = new Thread(r);  
-	            thread.setDaemon(true);  
-	            return thread;  
-                }  
+	            private final AtomicInteger count = new AtomicInteger(1);
+
+	            public Thread newThread(Runnable r) {  
+	                Thread thread = new Thread(r);  
+	                thread.setDaemon(true);  
+	                thread.setName(threadNamePrefix + count.getAndIncrement());
+	                return thread;  
+	            }  
             });                  
-            this.service.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
-            this.enabled = true;
+            this.service.scheduleAtFixedRate(this, sessionValidationInterval,
+                sessionValidationInterval, TimeUnit.MILLISECONDS);
         }
+        this.enabled = true;
     }
 
     public void run() {
         if (log.isDebugEnabled()) {
             log.debug("Executing session validation...");
         }
+        Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
+            log.error("Error while validating the session, the thread will be stopped and session validation disabled", e);
+            this.disableSessionValidation();
+        });
         long startTime = System.currentTimeMillis();
-        this.sessionManager.validateSessions();
+        try {
+            this.sessionManager.validateSessions();
+        } catch (RuntimeException e) {
+            log.error("Error while validating the session", e);
+            //we don't stop the thread
+        }
         long stopTime = System.currentTimeMillis();
         if (log.isDebugEnabled()) {
             log.debug("Session validation completed successfully in " + (stopTime - startTime) + " milliseconds.");
@@ -107,7 +130,9 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
     }
 
     public void disableSessionValidation() {
-        this.service.shutdownNow();
+        if (this.service != null) {
+            this.service.shutdownNow();
+        }
         this.enabled = false;
     }
 }

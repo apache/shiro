@@ -115,7 +115,7 @@
     <name>notAuthenticated</name>
     <tag-class>org.apache.shiro.web.tags.NotAuthenticatedTag</tag-class>
     <body-content>JSP</body-content>
-    <description>Displays body content only if the current user has NOT succesfully authenticated
+    <description>Displays body content only if the current user has NOT successfully authenticated
       _during their current session_. It is logically opposite to the 'authenticated' tag.
     </description>
   </tag>

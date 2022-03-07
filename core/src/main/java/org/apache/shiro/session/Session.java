@@ -24,7 +24,7 @@ import java.util.Date;
 
 /**
  * A {@code Session} is a stateful data context associated with a single Subject (user, daemon process,
- * etc) who interacts with a software system over a period of time.
+ * etc.) who interacts with a software system over a period of time.
  * <p/>
  * A {@code Session} is intended to be managed by the business tier and accessible via other
  * tiers without being tied to any given client technology.  This is a <em>great</em> benefit to Java
@@ -116,7 +116,7 @@ public interface Session {
      * automatically as a result of an incoming web request or remote procedure call/method invocation.
      * <p/>
      * However, this method is particularly useful when supporting rich-client applications such as
-     * Java Web Start appp, Java or Flash applets, etc.  Although rare, it is possible in a rich-client
+     * Java Web Start app, Java or Flash applets, etc.  Although rare, it is possible in a rich-client
      * environment that a user continuously interacts with the client-side application without a
      * server-side method call ever being invoked.  If this happens over a long enough period of
      * time, the user's server-side session could time-out.  Again, such cases are rare since most
@@ -149,7 +149,7 @@ public interface Session {
      * It is common for a {@code Subject} implementation to retain authentication state in the
      * {@code Session}.  If the session
      * is explicitly stopped by application code by calling this method directly, it could clear out any
-     * authentication state that might exist, thereby effectively &quot;unauthenticating&quot; the {@code Subject}.
+     * authentication state that might exist, thereby effectively removing the &quot;authenticated&quot; state of the {@code Subject}.
      * <p/>
      * As such, you might consider {@link org.apache.shiro.subject.Subject#logout logging-out} the 'owning'
      * {@code Subject} instead of manually calling this method, as a log out is expected to stop the
@@ -183,7 +183,7 @@ public interface Session {
     Object getAttribute(Object key) throws InvalidSessionException;
 
     /**
-     * Binds the specified {@code value} to this session, uniquely identified by the specifed
+     * Binds the specified {@code value} to this session, uniquely identified by the specified
      * {@code key} name.  If there is already an object bound under the {@code key} name, that
      * existing object will be replaced by the new {@code value}.
      * <p/>

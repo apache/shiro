@@ -44,4 +44,13 @@ class SimpleFilterChain implements FilterChain {
             originalChain.doFilter(request, response);
         }
     }
+
+    /**
+     * Exposed for testing, not part of public API.
+     * @return an Iterator of filters.
+     */
+    Iterator<? extends Filter> getFilters() {
+        return chain;
+    }
+
 }

@@ -18,11 +18,11 @@
  */
 package org.apache.shiro.web;
 
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @since 1.0
@@ -30,9 +30,9 @@ import javax.servlet.ServletContext;
 public abstract class WebTest {
 
     protected FilterConfig createNiceMockFilterConfig() {
-        FilterConfig mock = createNiceMock(FilterConfig.class);
-        ServletContext mockServletContext = createNiceMock(ServletContext.class);
-        expect(mock.getServletContext()).andReturn(mockServletContext);
+        FilterConfig mock = mock(FilterConfig.class);
+        ServletContext mockServletContext = mock(ServletContext.class);
+        when(mock.getServletContext()).thenReturn(mockServletContext);
         return mock;
     }
 

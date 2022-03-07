@@ -28,7 +28,7 @@ import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.session.mgt.SessionManager;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.LifecycleUtils;
 
 
 /**
@@ -149,6 +149,9 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     }
 
     public Session start(SessionContext context) throws AuthorizationException {
+        if (sessionManager == null) {
+            throw new IllegalStateException("Session manager is not available or has been destroyed");
+        }
         return this.sessionManager.start(context);
     }
 

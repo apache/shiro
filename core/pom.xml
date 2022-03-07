@@ -17,19 +17,18 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>2.alpha.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-core</artifactId>
     <name>Apache Shiro :: Core</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <build>
         <plugins>
@@ -45,21 +44,48 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- <plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.core</Bundle-SymbolicName>
-                        <Export-Package>org.apache.shiro*;version=${project.version}</Export-Package>
+                        <Export-Package>
+                            org.apache.shiro;version=${project.version},
+                            org.apache.shiro.aop;version=${project.version},
+                            org.apache.shiro.authc*;version=${project.version},
+                            org.apache.shiro.authz*;version=${project.version},
+                            org.apache.shiro.concurrent;version=${project.version},
+                            org.apache.shiro.dao;version=${project.version},
+                            org.apache.shiro.env;version=${project.version},
+                            org.apache.shiro.ini;version=${project.version},
+                            org.apache.shiro.jndi;version=${project.version},
+                            org.apache.shiro.ldap;version=${project.version},
+                            org.apache.shiro.mgt;version=${project.version},
+                            org.apache.shiro.realm*;version=${project.version},
+                            org.apache.shiro.session*;version=${project.version},
+                            org.apache.shiro.subject*;version=${project.version},
+                            org.apache.shiro.util;version=${project.version},
+                        </Export-Package>
                         <Import-Package>
-                            org.apache.shiro*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.lang*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.cache*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.config*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.crypto*;version="${shiro.osgi.importRange}",
+                            org.apache.shiro.event*;version="${shiro.osgi.importRange}",
+                            org.apache.commons.beanutils*;resolution:=optional,
+                            org.apache.commons.configuration2*;resolution:=optional,
                             *
                         </Import-Package>
+                        <DynamicImport-Package>
+                            org.apache.shiro.*
+                        </DynamicImport-Package>
+                        <_removeheaders>Bnd-LastModified</_removeheaders>
+                        <_reproducible>true</_reproducible>
                     </instructions>
                 </configuration>
-            </plugin> -->
+            </plugin>
         </plugins>
     </build>
 
@@ -77,6 +103,16 @@
             <artifactId>shiro-crypto-hash</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.shiro.crypto</groupId>
+            <artifactId>shiro-hashes-argon2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro.crypto</groupId>
+            <artifactId>shiro-hashes-bcrypt</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-crypto-cipher</artifactId>
         </dependency>
@@ -92,10 +128,6 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-event</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
 
         <!-- Test dependencies -->
         <dependency>
@@ -103,16 +135,25 @@
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+
         <!-- JDBC Realm tests: -->
         <dependency>
-            <groupId>hsqldb</groupId>
+            <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>

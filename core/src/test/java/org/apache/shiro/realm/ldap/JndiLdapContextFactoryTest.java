@@ -30,8 +30,10 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.UUID;
 
-import static junit.framework.Assert.*;
 import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests for the {@link JndiLdapContextFactory} class.
@@ -64,7 +66,7 @@ public class JndiLdapContextFactoryTest {
         //garbage URL to test that the context is being created, but fails:
         String brokenHost = UUID.randomUUID().toString();
         factory.setUrl("ldap://" + brokenHost + ":389");
-        factory.getLdapContext((Object) "foo", "bar");
+        factory.getLdapContext("foo", "bar");
     }
 
     @Test
@@ -103,7 +105,7 @@ public class JndiLdapContextFactoryTest {
 
     @Test(expected = IllegalStateException.class)
     public void testGetLdapContextWithoutUrl() throws NamingException {
-        factory.getLdapContext((Object) "foo", "bar");
+        factory.getLdapContext("foo", "bar");
     }
 
     @Test
@@ -121,7 +123,7 @@ public class JndiLdapContextFactoryTest {
         };
 
         factory.setUrl("ldap://localhost:389");
-        factory.getLdapContext((Object) "foo", "bar");
+        factory.getLdapContext("foo", "bar");
     }
 
     @SuppressWarnings({"deprecation"})
@@ -187,25 +189,25 @@ public class JndiLdapContextFactoryTest {
     @Test(expected = AuthenticationException.class)
     public void testEmptyStringCredentials() throws NamingException {
         factory.setUrl("ldap://localhost:389");
-        factory.getLdapContext((Object)"jcoder", "");
+        factory.getLdapContext("jcoder", "");
     }
 
     @Test(expected = AuthenticationException.class)
     public void testEmptyCharArrayCredentials() throws NamingException {
         factory.setUrl("ldap://localhost:389");
-        factory.getLdapContext((Object)"jcoder", new char[0]);
+        factory.getLdapContext("jcoder", new char[0]);
     }
 
     @Test(expected = AuthenticationException.class)
     public void testEmptyByteArrayCredentials() throws NamingException {
         factory.setUrl("ldap://localhost:389");
-        factory.getLdapContext((Object)"jcoder", new byte[0]);
+        factory.getLdapContext("jcoder", new byte[0]);
     }
 
     @Test(expected = AuthenticationException.class)
     public void testEmptyNullCredentials() throws NamingException {
         factory.setUrl("ldap://localhost:389");
-        factory.getLdapContext((Object)"jcoder", null);
+        factory.getLdapContext("jcoder", null);
     }
 
 

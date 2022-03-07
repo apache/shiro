@@ -45,7 +45,8 @@ public class FilterConfigTest {
                 bindRealm().to(ShiroModuleTest.MockRealm.class);
 
                 addFilterChain("/index.html", AUTHC_BASIC);
-                addFilterChain("/index2.html", config(PERMS, "permission"));
+//                addFilterChain("/index2.html", config(PERMS, "permission"));
+                addFilterChain("/index2.html", filterConfig(PERMS, "permission"));
             }
 
             @Provides
@@ -84,9 +85,8 @@ public class FilterConfigTest {
     private HttpServletRequest createMockRequest(String path) {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn(path);
+        expect(request.getServletPath()).andReturn("");
+        expect(request.getPathInfo()).andReturn(path);
         replay(request);
         return request;
     }

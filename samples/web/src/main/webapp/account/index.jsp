@@ -30,7 +30,7 @@
 
 <p><a href="<c:url value="/home.jsp"/>">Return to the home page.</a></p>
 
-<p><a href="<c:url value="/logout"/>">Log out.</a></p>
-
+<p><a href="<c:url value="/logout"/>" onclick="document.getElementById('logout_form').submit();return false;">Log out.</a></p>
+<form id="logout_form" action="<c:url value="/logout"/>" method="post"></form>
 </body>
 </html>

@@ -23,22 +23,26 @@ import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.subject.Subject
 import org.apache.shiro.subject.support.DefaultSubjectContext
 import org.apache.shiro.subject.support.DelegatingSubject
+import org.junit.Test
 
 import static org.easymock.EasyMock.*
+import static org.junit.Assert.*
 
 /**
  * Unit tests for the {@link DefaultSubjectDAO} implementation.
  *
  * @since 1.2
  */
-class DefaultSubjectDAOTest extends GroovyTestCase {
+class DefaultSubjectDAOTest {
 
+    @Test
     void testIsSessionStorageEnabledDefault() {
         def dao = new DefaultSubjectDAO()
         assertTrue dao.sessionStorageEvaluator instanceof DefaultSessionStorageEvaluator
         assertTrue dao.isSessionStorageEnabled(null)
     }
 
+    @Test
     void testIsSessionStorageEnabledDefaultSubject() {
         def dao = new DefaultSubjectDAO()
 
@@ -53,6 +57,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         verify subject
     }
 
+    @Test
     void testCustomSessionStorageEvaluator() {
         def dao = new DefaultSubjectDAO()
         def subject = createMock(Subject)
@@ -68,6 +73,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         verify subject, evaluator
     }
 
+    @Test
     void testDeleteWithoutSession() {
         def dao = new DefaultSubjectDAO()
         def subject = createStrictMock(Subject)
@@ -81,6 +87,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
         verify subject
     }
 
+    @Test
     void testDeleteWithSession() {
         def dao = new DefaultSubjectDAO()
         def subject = createStrictMock(Subject)
@@ -100,6 +107,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
     /**
      * Ensures that when save is called and session storage is disabled, that the subject is never asked for its session.
      */
+    @Test
     void testSaveWhenSessionStorageIsDisabled() {
         def dao = new DefaultSubjectDAO()
         def subject = createStrictMock(Subject)
@@ -122,6 +130,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
      * Tests the case when the save method is called but the Subject does not yet have any associated
      * principals or authentication state or even a session.  In this case, the session should never be created.
      */
+    @Test
     void testSaveWithoutSessionOrPrincipalsOrAuthentication() {
         def dao = new DefaultSubjectDAO()
         def subject = createStrictMock(Subject)
@@ -146,6 +155,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
     /**
      * SHIRO-380
      */
+    @Test
     void testMergePrincipalsWithDelegatingSubject() {
 
         def sessionId = "sessionId"
@@ -173,6 +183,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
      * Tests the case when the Subject has principals but no session yet.  In this case, a session will be created
      * and the session will be set with the principals.
      */
+    @Test
     void testMergePrincipalsWithSubjectPrincipalsButWithoutSession() {
         def dao = new DefaultSubjectDAO()
         def subject = createStrictMock(Subject)
@@ -198,6 +209,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
      * principals and neither does the session.  In this case, the session will be accessed
      * but never updated.
      */
+    @Test
     void testMergePrincipalsWithoutSubjectPrincipalsOrSessionPrincipals() {
 
         def dao = new DefaultSubjectDAO()
@@ -222,6 +234,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
      * principals but the session does.  In this case, the session will be accessed and the session-principals will
      * be removed (to match the Subject's state).
      */
+    @Test
     void testMergePrincipalsWithoutSubjectPrincipalsButWithSessionPrincipals() {
 
         def dao = new DefaultSubjectDAO()
@@ -274,6 +287,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
      * different principals.  In this case, the session will be accessed and the session will be set with the
      * Subject's principals.
      */
+    @Test
     void testMergePrincipalsWithSubjectPrincipalsButWithDifferentSessionPrincipals() {
         def sessionPrincipals = createStrictMock(PrincipalCollection)
 
@@ -317,6 +331,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
      * Tests the case when the Subject is authenticated but doesn't yet have a session.  In this case, a
      * session will be created and the session will be set with the authentication state.
      */
+    @Test
     void testMergeAuthcWithSubjectAuthcButWithoutSession() {
         def dao = new DefaultSubjectDAO()
         def subject = createStrictMock(Subject)
@@ -339,6 +354,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
      * and the session doesn't have an attribute reflecting this.  In this case, the session will be accessed
      * but never updated.
      */
+    @Test
     void testMergeAuthcWithoutSubjectAuthcOrSessionAuthc() {
 
         def dao = new DefaultSubjectDAO()
@@ -362,6 +378,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
      * has authentication state.  In this case, the session will be accessed and the session authc state will
      * be removed to match the Subject's state.
      */
+    @Test
     void testMergeAuthcWithoutSubjectAuthcButWithSessionAuthc() {
 
         def dao = new DefaultSubjectDAO()
@@ -386,6 +403,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
      * yet reflect that authentication state.  In this case, the session will be accessed and the session will be set
      * with the Subject's authentication state.
      */
+    @Test
     void testMergeAuthcWithSubjectAuthcButWithoutSessionAuthc() {
         testMergeAuthcWithSubjectAuthcButWithSessionAuthc(null)
     }
@@ -395,6 +413,7 @@ class DefaultSubjectDAOTest extends GroovyTestCase {
      * different state.  In this case, the session will be accessed and the session will be set with the
      * Subject's authentication state.
      */
+    @Test
     void testMergeAuthcWithSubjectAuthcButWithDifferentSessionAuthc() {
         testMergeAuthcWithSubjectAuthcButWithSessionAuthc(Boolean.FALSE)
     }

@@ -172,7 +172,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * authentication behavior.</li>
      * <li>If an {@code AuthenticationException} is thrown during {@code doAuthenticate},
      * {@link #notifyFailure(AuthenticationToken, AuthenticationException) notify} any registered
-     * {@link AuthenticationListener AuthenticationListener}s of the exception and then propogate the exception
+     * {@link AuthenticationListener AuthenticationListener}s of the exception and then propagate the exception
      * for the caller to handle.</li>
      * <li>If no exception is thrown (indicating a successful login),
      * {@link #notifySuccess(AuthenticationToken, AuthenticationInfo) notify} any registered
@@ -188,7 +188,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     public final AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
 
         if (token == null) {
-            throw new IllegalArgumentException("Method argumet (authentication token) cannot be null.");
+            throw new IllegalArgumentException("Method argument (authentication token) cannot be null.");
         }
 
         log.trace("Authentication attempt received for token [{}]", token);
@@ -212,6 +212,8 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
                 String msg = "Authentication failed for token submission [" + token + "].  Possible unexpected " +
                         "error? (Typical or expected login exceptions should extend from AuthenticationException).";
                 ae = new AuthenticationException(msg, t);
+                if (log.isWarnEnabled())
+                    log.warn(msg, t);
             }
             try {
                 notifyFailure(token, ae);
@@ -245,7 +247,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * {@code AuthenticationException} if there is a problem during
      * authentication instead of returning {@code null}.  A {@code null} return value indicates
      * a configuration or programming error, since {@code AuthenticationException}s should
-     * indicate any expected problem (such as an unknown account or username, or invalid password, etc).
+     * indicate any expected problem (such as an unknown account or username, or invalid password, etc.).
      *
      * @param token the authentication token encapsulating the user's login information.
      * @return an {@code AuthenticationInfo} object encapsulating the user's account information

@@ -18,8 +18,23 @@
  */
 package org.apache.shiro.guice;
 
-import com.google.common.primitives.Primitives;
-import com.google.inject.*;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.inject.Binder;
+import com.google.inject.ConfigurationException;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.MembersInjector;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.MapBinder;
@@ -27,15 +42,10 @@ import com.google.inject.name.Names;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.google.inject.util.Types;
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.shiro.SecurityUtils;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.beanutils.SuppressPropertiesBeanIntrospector;
+import org.apache.shiro.SecurityUtils;
 
 /**
  * TypeListener that injects setter methods on Shiro objects.
@@ -54,8 +64,31 @@ class BeanTypeListener implements TypeListener {
     private static final String BEAN_TYPE_MAP_NAME = "__SHIRO_BEAN_TYPES__";
     static final Key<?> MAP_KEY = Key.get(Types.mapOf(TypeLiteral.class, BeanTypeKey.class), Names.named(BEAN_TYPE_MAP_NAME));
 
+    /**
+     * @since 1.4
+     */
+    private final BeanUtilsBean beanUtilsBean;
+
+    private static final Set<Class<?>> WRAPPER_TYPES = new HashSet<Class<?>>(Arrays.asList(
+        Byte.class,
+        Boolean.class,
+        Character.class,
+        Double.class,
+        Float.class,
+        Integer.class,
+        Long.class,
+        Short.class,
+        Void.class));
+
+    public BeanTypeListener() {
+        // SHIRO-619
+        beanUtilsBean = new BeanUtilsBean();
+        beanUtilsBean.getPropertyUtils().addBeanIntrospector(
+                SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
+    }
+
     public <I> void hear(TypeLiteral<I> type, final TypeEncounter<I> encounter) {
-        PropertyDescriptor propertyDescriptors[] = PropertyUtils.getPropertyDescriptors(type.getRawType());
+        PropertyDescriptor propertyDescriptors[] = beanUtilsBean.getPropertyUtils().getPropertyDescriptors(type.getRawType());
         final Map<PropertyDescriptor, Key<?>> propertyDependencies = new HashMap<PropertyDescriptor, Key<?>>(propertyDescriptors.length);
         final Provider<Injector> injectorProvider = encounter.getProvider(Injector.class);
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -112,7 +145,7 @@ class BeanTypeListener implements TypeListener {
     private static boolean requiresName(Type propertyType) {
         if (propertyType instanceof Class) {
             Class<?> aClass = (Class<?>) propertyType;
-            return aClass.isPrimitive() || aClass.isEnum() || Primitives.isWrapperType(aClass) || CharSequence.class.isAssignableFrom(aClass);
+            return aClass.isPrimitive() || aClass.isEnum() || WRAPPER_TYPES.contains(aClass) || CharSequence.class.isAssignableFrom(aClass);
         } else {
             return false;
         }

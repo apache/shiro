@@ -19,7 +19,7 @@
 package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.util.MapContext;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Map;

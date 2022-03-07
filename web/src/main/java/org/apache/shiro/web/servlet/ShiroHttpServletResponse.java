@@ -136,6 +136,10 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      */
     protected boolean isEncodeable(final String location) {
 
+        // First check if URL rewriting is disabled globally
+        if (Boolean.FALSE.equals(request.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)))
+            return (false);
+
         if (location == null)
             return (false);
 
@@ -291,7 +295,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      *
      * @param url       URL to be encoded with the session id
      * @param sessionId Session id to be included in the encoded URL
-     * @return the url with the session identifer properly encoded.
+     * @return the url with the session identifier properly encoded.
      */
     protected String toEncoded(String url, String sessionId) {
 

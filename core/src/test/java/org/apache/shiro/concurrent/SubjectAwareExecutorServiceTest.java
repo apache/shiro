@@ -20,11 +20,18 @@ package org.apache.shiro.concurrent;
 
 import org.apache.shiro.subject.support.SubjectRunnable;
 import org.apache.shiro.test.SecurityManagerTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import static org.easymock.EasyMock.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test cases for the {@link SubjectAwareExecutorService} implementation.
@@ -34,40 +41,42 @@ public class SubjectAwareExecutorServiceTest extends SecurityManagerTestSupport 
     @SuppressWarnings({"unchecked"})
     @Test
     public void testSubmitRunnable() {
-        ExecutorService mockExecutorService = createNiceMock(ExecutorService.class);
-        expect(mockExecutorService.submit(isA(SubjectRunnable.class))).andReturn(new DummyFuture());
-        replay(mockExecutorService);
+        ExecutorService mockExecutorService = mock(ExecutorService.class);
+        ArgumentCaptor<SubjectRunnable> captor = ArgumentCaptor.forClass(SubjectRunnable.class);
+        when(mockExecutorService.submit(captor.capture())).thenReturn(new DummyFuture<>());
 
         final SubjectAwareExecutorService executor = new SubjectAwareExecutorService(mockExecutorService);
 
-        Runnable testRunnable = new Runnable() {
-            public void run() {
-                System.out.println("Hello World");
-            }
-        };
+        Runnable testRunnable = () -> System.out.println("Hello World");
 
         executor.submit(testRunnable);
-        verify(mockExecutorService);
+        SubjectRunnable subjectRunnable = captor.getValue();
+        Assertions.assertNotNull(subjectRunnable);
     }
 
-    private class DummyFuture<V> implements Future<V> {
+    private static class DummyFuture<V> implements Future<V> {
 
+        @Override
         public boolean cancel(boolean b) {
             return false;
         }
 
+        @Override
         public boolean isCancelled() {
             return false;
         }
 
+        @Override
         public boolean isDone() {
             return true;
         }
 
+        @Override
         public V get() throws InterruptedException, ExecutionException {
             return null;
         }
 
+        @Override
         public V get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException {
             return null;
         }

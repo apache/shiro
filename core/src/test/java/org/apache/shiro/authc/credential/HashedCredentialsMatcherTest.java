@@ -23,10 +23,10 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
-import org.apache.shiro.crypto.hash.Sha1Hash;
+import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
-import org.apache.shiro.util.ByteSource;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -43,11 +43,11 @@ public class HashedCredentialsMatcherTest {
     @Test
     public void testSaltedAuthenticationInfo() {
         //use SHA-1 hashing in this test:
-        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha1Hash.ALGORITHM_NAME);
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
 
         //simulate a user account with a SHA-1 hashed and salted password:
         ByteSource salt = new SecureRandomNumberGenerator().nextBytes();
-        Object hashedPassword = new Sha1Hash("password", salt);
+        Object hashedPassword = new Sha512Hash("password", salt);
         SimpleAuthenticationInfo account = new SimpleAuthenticationInfo("username", hashedPassword, salt, "realmName");
 
         //simulate a username/password (plaintext) token created in response to a login attempt:
@@ -63,17 +63,21 @@ public class HashedCredentialsMatcherTest {
      */
     @Test
     public void testBackwardsCompatibleUnsaltedAuthenticationInfo() {
-        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha1Hash.ALGORITHM_NAME);
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
 
         //simulate an account with SHA-1 hashed password (no salt)
         final String username = "username";
         final String password = "password";
-        final Object hashedPassword = new Sha1Hash(password).getBytes();
+        final Object hashedPassword = new Sha512Hash(password).getBytes();
         AuthenticationInfo account = new AuthenticationInfo() {
+            private static final long serialVersionUID = -3613684957517438801L;
+
+            @Override
             public PrincipalCollection getPrincipals() {
                 return new SimplePrincipalCollection(username, "realmName");
             }
 
+            @Override
             public Object getCredentials() {
                 return hashedPassword;
             }
@@ -92,7 +96,7 @@ public class HashedCredentialsMatcherTest {
      */
     @Test
     public void testBackwardsCompatibleSaltedAuthenticationInfo() {
-        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha1Hash.ALGORITHM_NAME);
+        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
         //enable this for Shiro 1.0 backwards compatibility:
         matcher.setHashSalted(true);
 
@@ -100,12 +104,16 @@ public class HashedCredentialsMatcherTest {
         //(BAD IDEA, but backwards-compatible):
         final String username = "username";
         final String password = "password";
-        final Object hashedPassword = new Sha1Hash(password, username).getBytes();
+        final Object hashedPassword = new Sha512Hash(password, username).getBytes();
         AuthenticationInfo account = new AuthenticationInfo() {
+            private static final long serialVersionUID = -6942549615727484358L;
+
+            @Override
             public PrincipalCollection getPrincipals() {
                 return new SimplePrincipalCollection(username, "realmName");
             }
 
+            @Override
             public Object getCredentials() {
                 return hashedPassword;
             }

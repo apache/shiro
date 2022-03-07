@@ -21,13 +21,13 @@ package org.apache.shiro.hazelcast.cache;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import org.apache.shiro.ShiroException;
+import org.apache.shiro.lang.ShiroException;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.MapCache;
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.Initializable;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -242,4 +242,5 @@ public class HazelcastCacheManager implements CacheManager, Initializable, Destr
     public void setConfig(Config config) {
         this.config = config;
     }
+
 }

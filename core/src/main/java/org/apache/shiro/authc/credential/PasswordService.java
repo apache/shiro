@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.authc.credential;
 
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * A {@code PasswordService} supports common use cases when using passwords as a credentials mechanism.
@@ -106,7 +106,7 @@ public interface PasswordService {
      * </pre>
      *
      * @param plaintextPassword the raw password as 'byte-backed' object (String, character array, {@link ByteSource},
-     *                          etc) usually acquired from your application's 'new user' or 'password reset' workflow.
+     *                          etc.) usually acquired from your application's 'new user' or 'password reset' workflow.
      * @return the encrypted password, formatted for storage.
      * @throws IllegalArgumentException if the argument cannot be easily converted to bytes as defined by
      *                                  {@link ByteSource.Util#isCompatible(Object)}.

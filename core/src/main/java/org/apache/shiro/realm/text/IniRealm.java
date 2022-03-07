@@ -20,7 +20,7 @@ package org.apache.shiro.realm.text;
 
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +58,7 @@ public class IniRealm extends TextConfigurationRealm {
 
     /**
      * This constructor will immediately process the definitions in the {@code Ini} argument.  If you need to perform
-     * additional configuration before processing (e.g. setting a permissionResolver, etc), do not call this
+     * additional configuration before processing (e.g. setting a permissionResolver, etc.), do not call this
      * constructor.  Instead, do the following:
      * <ol>
      * <li>Call the default no-arg constructor</li>
@@ -77,7 +77,7 @@ public class IniRealm extends TextConfigurationRealm {
     /**
      * This constructor will immediately process the definitions in the {@code Ini} resolved from the specified
      * {@code resourcePath}.  If you need to perform additional configuration before processing (e.g. setting a
-     * permissionResolver, etc), do not call this constructor.  Instead, do the following:
+     * permissionResolver, etc.), do not call this constructor.  Instead, do the following:
      * <ol>
      * <li>Call the default no-arg constructor</li>
      * <li>Set the Ini instance you wish to use via {@code #setIni}</li>

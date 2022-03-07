@@ -28,7 +28,7 @@ import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.LifecycleUtils;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.mgt.*;
 import org.apache.shiro.web.subject.WebSubject;
@@ -46,7 +46,7 @@ import java.util.Collection;
 
 /**
  * Default {@link WebSecurityManager WebSecurityManager} implementation used in web-based applications or any
- * application that requires HTTP connectivity (SOAP, http remoting, etc).
+ * application that requires HTTP connectivity (SOAP, http remoting, etc.).
  *
  * @since 0.2
  */
@@ -69,11 +69,13 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
 
     public DefaultWebSecurityManager() {
         super();
-        ((DefaultSubjectDAO) this.subjectDAO).setSessionStorageEvaluator(new DefaultWebSessionStorageEvaluator());
+        DefaultWebSessionStorageEvaluator webEvaluator = new DefaultWebSessionStorageEvaluator();  
+        ((DefaultSubjectDAO) this.subjectDAO).setSessionStorageEvaluator(webEvaluator);
         this.sessionMode = HTTP_SESSION_MODE;
         setSubjectFactory(new DefaultWebSubjectFactory());
         setRememberMeManager(new CookieRememberMeManager());
         setSessionManager(new ServletContainerSessionManager());
+        webEvaluator.setSessionManager(getSessionManager());
     }
 
     @SuppressWarnings({"UnusedDeclaration"})

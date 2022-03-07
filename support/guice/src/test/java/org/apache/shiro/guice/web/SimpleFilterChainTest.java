@@ -18,17 +18,22 @@
  */
 package org.apache.shiro.guice.web;
 
-import com.google.common.collect.Iterators;
-import org.easymock.Capture;
-import org.easymock.IMocksControl;
-import org.junit.Test;
+import java.util.Arrays;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import static org.easymock.EasyMock.*;
+import org.easymock.Capture;
+import org.easymock.IMocksControl;
+import org.junit.Test;
+
+import static org.easymock.EasyMock.and;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.createStrictControl;
+import static org.easymock.EasyMock.same;
 
 public class SimpleFilterChainTest {
     @Test
@@ -42,15 +47,15 @@ public class SimpleFilterChainTest {
         ServletRequest request = ctrl.createMock(ServletRequest.class);
         ServletResponse response = ctrl.createMock(ServletResponse.class);
 
-        Capture<FilterChain> fc1 = new Capture<FilterChain>();
-        Capture<FilterChain> fc2 = new Capture<FilterChain>();
+        Capture<FilterChain> fc1 = Capture.newInstance();
+        Capture<FilterChain> fc2 = Capture.newInstance();
         filter1.doFilter(same(request), same(response), and(anyObject(FilterChain.class), capture(fc1)));
         filter2.doFilter(same(request), same(response), and(anyObject(FilterChain.class), capture(fc2)));
         originalChain.doFilter(request, response);
 
         ctrl.replay();
 
-        SimpleFilterChain underTest = new SimpleFilterChain(originalChain, Iterators.forArray(filter1, filter2));
+        SimpleFilterChain underTest = new SimpleFilterChain(originalChain, Arrays.asList(filter1, filter2).iterator());
 
         // all we actually care about is that, if we keep calling the filter chain, everything is called in the right
         // order - we don't care what fc actually contains

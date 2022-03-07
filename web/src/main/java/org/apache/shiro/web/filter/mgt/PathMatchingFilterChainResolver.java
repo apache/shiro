@@ -21,6 +21,7 @@ package org.apache.shiro.web.filter.mgt;
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
 import org.apache.shiro.web.util.WebUtils;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ import javax.servlet.ServletResponse;
 
 /**
  * A {@code FilterChainResolver} that resolves {@link FilterChain}s based on url path
- * matching, as determined by a configurable {@link #setPathMatcher(org.apache.shiro.util.PatternMatcher) PathMatcher}.
+ * matching, as determined by a configurable {@link #setPathMatcher(org.apache.shiro.lang.util.PatternMatcher) PathMatcher}.
  * <p/>
  * This implementation functions by consulting a {@link org.apache.shiro.web.filter.mgt.FilterChainManager} for all configured filter chains (keyed
  * by configured path pattern).  If an incoming Request path matches one of the configured path patterns (via
@@ -47,6 +48,8 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
 
     private PatternMatcher pathMatcher;
 
+    private static final String DEFAULT_PATH_SEPARATOR = "/";
+
     public PathMatchingFilterChainResolver() {
         this.pathMatcher = new AntPathMatcher();
         this.filterChainManager = new DefaultFilterChainManager();
@@ -60,7 +63,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
     /**
      * Returns the {@code PatternMatcher} used when determining if an incoming request's path
      * matches a configured filter chain.  Unless overridden, the
-     * default implementation is an {@link org.apache.shiro.util.AntPathMatcher AntPathMatcher}.
+     * default implementation is an {@link org.apache.shiro.lang.util.AntPathMatcher AntPathMatcher}.
      *
      * @return the {@code PatternMatcher} used when determining if an incoming request's path
      *         matches a configured filter chain.
@@ -72,7 +75,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
     /**
      * Sets the {@code PatternMatcher} used when determining if an incoming request's path
      * matches a configured filter chain.  Unless overridden, the
-     * default implementation is an {@link org.apache.shiro.util.AntPathMatcher AntPathMatcher}.
+     * default implementation is an {@link org.apache.shiro.lang.util.AntPathMatcher AntPathMatcher}.
      *
      * @param pathMatcher the {@code PatternMatcher} used when determining if an incoming request's path
      *                    matches a configured filter chain.
@@ -96,19 +99,34 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
             return null;
         }
 
-        String requestURI = getPathWithinApplication(request);
+        final String requestURI = getPathWithinApplication(request);
+        final String requestURINoTrailingSlash = removeTrailingSlash(requestURI);
 
         //the 'chain names' in this implementation are actually path patterns defined by the user.  We just use them
         //as the chain name for the FilterChainManager's requirements
         for (String pathPattern : filterChainManager.getChainNames()) {
-
             // If the path does match, then pass on to the subclass implementation for specific checks:
             if (pathMatches(pathPattern, requestURI)) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Matched path pattern [" + pathPattern + "] for requestURI [" + requestURI + "].  " +
-                            "Utilizing corresponding filter chain...");
+                    log.trace("Matched path pattern [{}] for requestURI [{}].  " +
+                            "Utilizing corresponding filter chain...", pathPattern, Encode.forHtml(requestURI));
                 }
                 return filterChainManager.proxy(originalChain, pathPattern);
+            } else {
+
+                // in spring web, the requestURI "/resource/menus" ---- "resource/menus/" both can access the resource
+                // but the pathPattern match "/resource/menus" can not match "resource/menus/"
+                // user can use requestURI + "/" to simply bypassed chain filter, to bypassed shiro protect
+
+                pathPattern = removeTrailingSlash(pathPattern);
+
+                if (pathMatches(pathPattern, requestURINoTrailingSlash)) {
+                    if (log.isTraceEnabled()) {
+                        log.trace("Matched path pattern [{}] for requestURI [{}].  " +
+                                  "Utilizing corresponding filter chain...", pathPattern, Encode.forHtml(requestURINoTrailingSlash));
+                    }
+                    return filterChainManager.proxy(originalChain, pathPattern);
+                }
             }
         }
 
@@ -120,8 +138,8 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      * matches a configured filter chain path (the {@code pattern} argument), {@code false} otherwise.
      * <p/>
      * Simply delegates to
-     * <b><code>{@link #getPathMatcher() getPathMatcher()}.{@link org.apache.shiro.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>.
-     * Subclass implementors should think carefully before overriding this method, as typically a custom
+     * <b><code>{@link #getPathMatcher() getPathMatcher()}.{@link org.apache.shiro.lang.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>.
+     * Subclass implementers should think carefully before overriding this method, as typically a custom
      * {@code PathMatcher} should be configured for custom path matching behavior instead.  Favor OO composition
      * rather than inheritance to limit your exposure to Shiro implementation details which may change over time.
      *
@@ -141,9 +159,17 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      * and can be overridden by subclasses for custom request-to-application-path resolution behavior.
      *
      * @param request the incoming {@code ServletRequest}
-     * @return the request's path within the appliation.
+     * @return the request's path within the application.
      */
     protected String getPathWithinApplication(ServletRequest request) {
         return WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
+    }
+
+    private static String removeTrailingSlash(String path) {
+        if(path != null && !DEFAULT_PATH_SEPARATOR.equals(path)
+           && path.endsWith(DEFAULT_PATH_SEPARATOR)) {
+            return path.substring(0, path.length() - 1);
+        }
+        return path;
     }
 }

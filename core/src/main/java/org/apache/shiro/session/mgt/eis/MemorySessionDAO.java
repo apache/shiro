@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentMap;
  * <p/>
  * In this case, it is recommended to instead use a custom
  * {@link CachingSessionDAO} implementation that communicates with a higher-capacity data store of your choice
- * (file system, database, etc).
+ * (file system, database, etc.).
  * <h2>Changes in 1.0</h2>
  * This implementation prior to 1.0 used to subclass the {@link CachingSessionDAO}, but this caused problems with many
  * cache implementations that would expunge entries due to TTL settings, resulting in Sessions that would be randomly

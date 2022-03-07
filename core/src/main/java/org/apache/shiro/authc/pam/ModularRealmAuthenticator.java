@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 
 /**
- * A {@code ModularRealmAuthenticator} delgates account lookups to a pluggable (modular) collection of
+ * A {@code ModularRealmAuthenticator} delegates account lookups to a pluggable (modular) collection of
  * {@link Realm}s.  This enables PAM (Pluggable Authentication Module) behavior in Shiro.
  * In addition to authorization duties, a Shiro Realm can also be thought of a PAM 'module'.
  * <p/>
@@ -50,7 +50,7 @@ import java.util.Collection;
  * <p/>
  * The strategy object provides callback methods that allow you to
  * determine what constitutes a success or failure in a multi-realm (PAM) scenario.  And because this only makes sense
- * in a mult-realm scenario, the strategy object is only utilized when more than one Realm is configured.
+ * in a multi-realm scenario, the strategy object is only utilized when more than one Realm is configured.
  * <p/>
  * As most multi-realm applications require at least one Realm authenticates successfully, the default
  * implementation is the {@link AtLeastOneSuccessfulStrategy}.
@@ -207,7 +207,13 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
         for (Realm realm : realms) {
 
-            aggregate = strategy.beforeAttempt(realm, token, aggregate);
+            try {
+                aggregate = strategy.beforeAttempt(realm, token, aggregate);
+            } catch (ShortCircuitIterationException shortCircuitSignal) {
+                // Break from continuing with subsequent realms on receiving 
+                // short circuit signal from strategy
+                break;
+            }
 
             if (realm.supports(token)) {
 
@@ -219,9 +225,9 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                     info = realm.getAuthenticationInfo(token);
                 } catch (Throwable throwable) {
                     t = throwable;
-                    if (log.isWarnEnabled()) {
+                    if (log.isDebugEnabled()) {
                         String msg = "Realm [" + realm + "] threw an exception during a multi-realm authentication attempt:";
-                        log.warn(msg, t);
+                        log.debug(msg, t);
                     }
                 }
 

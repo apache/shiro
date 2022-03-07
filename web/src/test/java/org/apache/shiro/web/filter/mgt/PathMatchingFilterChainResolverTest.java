@@ -20,7 +20,6 @@ package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.web.WebTest;
-import org.apache.shiro.web.util.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,8 +30,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver}.
@@ -59,14 +65,12 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
     @Test
     public void testNewInstanceWithFilterConfig() {
         FilterConfig mock = createNiceMockFilterConfig();
-        replay(mock);
         resolver = new PathMatchingFilterChainResolver(mock);
         assertNotNull(resolver.getPathMatcher());
         assertTrue(resolver.getPathMatcher() instanceof AntPathMatcher);
         assertNotNull(resolver.getFilterChainManager());
         assertTrue(resolver.getFilterChainManager() instanceof DefaultFilterChainManager);
         assertEquals(((DefaultFilterChainManager) resolver.getFilterChainManager()).getFilterConfig(), mock);
-        verify(mock);
     }
 
     @Test
@@ -81,86 +85,214 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
     @Test
     public void testGetChainsWithoutChains() {
-        ServletRequest request = createNiceMock(HttpServletRequest.class);
-        ServletResponse response = createNiceMock(HttpServletResponse.class);
-        FilterChain chain = createNiceMock(FilterChain.class);
+        ServletRequest request = mock(HttpServletRequest.class);
+        ServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
         FilterChain resolved = resolver.getChain(request, response, chain);
         assertNull(resolved);
     }
 
     @Test
     public void testGetChainsWithMatch() {
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
-        FilterChain chain = createNiceMock(FilterChain.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
 
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/index.html", "authcBasic");
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/index.html");
-        replay(request);
+        when(request.getServletPath()).thenReturn("");
+        when(request.getPathInfo()).thenReturn("/index.html");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
         assertNotNull(resolved);
-        verify(request);
+        verify(request).getServletPath();
     }
     
     @Test
     public void testPathTraversalWithDot() {
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
-        FilterChain chain = createNiceMock(FilterChain.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
 
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/index.html", "authcBasic");
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/./index.html");
-        replay(request);
+        when(request.getServletPath()).thenReturn("/");
+        when(request.getPathInfo()).thenReturn("./index.html");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
         assertNotNull(resolved);
-        verify(request);
+        verify(request).getServletPath();
     }
     
     @Test
     public void testPathTraversalWithDotDot() {
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
-        FilterChain chain = createNiceMock(FilterChain.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
 
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/index.html", "authcBasic");
-
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/public/../index.html");
-        replay(request);
+        when(request.getServletPath()).thenReturn("/public/");
+        when(request.getPathInfo()).thenReturn("../index.html");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
         assertNotNull(resolved);
-        verify(request);
+        verify(request).getServletPath();
     }
 
     @Test
     public void testGetChainsWithoutMatch() {
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
-        FilterChain chain = createNiceMock(FilterChain.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
 
         //ensure at least one chain is defined:
         resolver.getFilterChainManager().addToChain("/index.html", "authcBasic");
 
-        expect(request.getAttribute(WebUtils.INCLUDE_CONTEXT_PATH_ATTRIBUTE)).andReturn(null).anyTimes();
-        expect(request.getContextPath()).andReturn("");
-        expect(request.getRequestURI()).andReturn("/");
-        replay(request);
+        when(request.getServletPath()).thenReturn("/");
+        when(request.getPathInfo()).thenReturn(null);
 
         FilterChain resolved = resolver.getChain(request, response, chain);
         assertNull(resolved);
-        verify(request);
+        verify(request).getServletPath();
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-682">SHIRO-682<a/>.
+     */
+    @Test
+    public void testGetChain() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        //ensure at least one chain is defined:
+        resolver.getFilterChainManager().addToChain("/resource/book", "authcBasic");
+
+        when(request.getServletPath()).thenReturn("");
+        when(request.getPathInfo()).thenReturn("/resource/book");
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertNotNull(resolved);
+        verify(request).getServletPath();
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-742">SHIRO-742<a/>.
+     */
+    @Test
+    public void testGetChainEqualUrlSeparator() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        //ensure at least one chain is defined:
+        resolver.getFilterChainManager().addToChain("/", "authcBasic");
+
+        when(request.getServletPath()).thenReturn("/");
+        when(request.getPathInfo()).thenReturn(null);
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertNotNull(resolved);
+        verify(request).getServletPath();
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-682">SHIRO-682<a/>.
+     */
+    @Test
+    public void testGetChainEndWithUrlSeparator() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        //ensure at least one chain is defined:
+        resolver.getFilterChainManager().addToChain("/resource/book", "authcBasic");
+
+        when(request.getServletPath()).thenReturn("");
+        when(request.getPathInfo()).thenReturn("/resource/book");
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertNotNull(resolved);
+        verify(request).getServletPath();
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-682">SHIRO-682<a/>.
+     */
+    @Test
+    public void testGetChainEndWithMultiUrlSeparator() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        //ensure at least one chain is defined:
+        resolver.getFilterChainManager().addToChain("/resource/book", "authcBasic");
+
+        when(request.getServletPath()).thenReturn("");
+        when(request.getPathInfo()).thenReturn("/resource/book//");
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertNotNull(resolved);
+        verify(request).getServletPath();
+    }
+
+    @Test
+    public void testMultipleChainsPathEndsWithSlash() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        //Define the filter chain
+        resolver.getFilterChainManager().addToChain("/login", "authc");
+        resolver.getFilterChainManager().addToChain("/resource/*", "authcBasic");
+
+        when(request.getServletPath()).thenReturn("");
+        when(request.getPathInfo()).thenReturn("/resource/");
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertThat(resolved, notNullValue());
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-825">SHIRO-825<a/>.
+     */
+    @Test
+    public void testGetChainWhenPathEndsWithSlash() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        //ensure at least one chain is defined:
+        resolver.getFilterChainManager().addToChain("/resource/*/book", "authcBasic");
+
+        when(request.getServletPath()).thenReturn("");
+        when(request.getPathInfo()).thenReturn("/resource/123/book/");
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertNotNull(resolved);
+        verify(request).getServletPath();
+    }
+
+    /**
+     * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-825">SHIRO-825<a/>.
+     */
+    @Test
+    public void testGetChainWhenPathDoesNotEndWithSlash() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        //ensure at least one chain is defined:
+        resolver.getFilterChainManager().addToChain("/resource/*/book", "authcBasic");
+
+        when(request.getServletPath()).thenReturn("");
+        when(request.getPathInfo()).thenReturn("/resource/123/book");
+
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertNotNull(resolved);
+        verify(request).getServletPath();
     }
 }

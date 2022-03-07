@@ -35,12 +35,13 @@ import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -54,7 +55,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * architecture.  It instead asks the underlying {@code SecurityManager} every time to perform
  * the authorization check.
  * <p/>
- * A common misconception in using this implementation is that an EIS resource (RDBMS, etc) would
+ * A common misconception in using this implementation is that an EIS resource (RDBMS, etc.) would
  * be &quot;hit&quot; every time a method is called.  This is not necessarily the case and is
  * up to the implementation of the underlying {@code SecurityManager} instance.  If caching of authorization
  * data is desired (to eliminate EIS round trips and therefore improve database performance), it is considered
@@ -294,7 +295,7 @@ public class DelegatingSubject implements Subject {
     }
 
     public boolean isAuthenticated() {
-        return authenticated;
+        return authenticated && hasPrincipals();
     }
 
     public boolean isRemembered() {
@@ -514,5 +515,17 @@ public class DelegatingSubject implements Subject {
         }
 
         return popped;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", "DelegatingSubject{", "}")
+            .add("principals=" + principals)
+            .add("authenticated=" + authenticated)
+            .add("host='******")
+            .add("session='******'")
+            .add("sessionCreationEnabled=" + sessionCreationEnabled)
+            .add("securityManager=" + securityManager)
+            .toString();
     }
 }

@@ -18,7 +18,11 @@
  */
 package org.apache.shiro.guice.web;
 
-import com.google.common.collect.ImmutableSet;
+import java.lang.reflect.Constructor;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -26,9 +30,6 @@ import com.google.inject.ProvisionException;
 import com.google.inject.spi.Dependency;
 import com.google.inject.spi.InjectionPoint;
 import com.google.inject.spi.ProviderWithDependencies;
-
-import java.lang.reflect.Constructor;
-import java.util.Set;
 
 class AbstractInjectionProvider<T> implements ProviderWithDependencies<T> {
     private Key<T> key;
@@ -43,12 +44,12 @@ class AbstractInjectionProvider<T> implements ProviderWithDependencies<T> {
         this.key = key;
         constructorInjectionPoint = InjectionPoint.forConstructorOf(key.getTypeLiteral());
 
-        ImmutableSet.Builder<Dependency<?>> dependencyBuilder = ImmutableSet.builder();
+        Set<Dependency<?>> dependencyBuilder = new HashSet<Dependency<?>>();
         dependencyBuilder.addAll(constructorInjectionPoint.getDependencies());
         for (InjectionPoint injectionPoint : InjectionPoint.forInstanceMethodsAndFields(key.getTypeLiteral())) {
             dependencyBuilder.addAll(injectionPoint.getDependencies());
         }
-        this.dependencies = dependencyBuilder.build();
+        this.dependencies = Collections.unmodifiableSet(dependencyBuilder);
     }
 
     public T get() {

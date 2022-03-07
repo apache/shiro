@@ -21,9 +21,9 @@ package org.apache.shiro.cache.ehcache;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.io.ResourceUtils;
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.Initializable;
+import org.apache.shiro.lang.io.ResourceUtils;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.Initializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ import java.io.InputStream;
  * This class can {@link #setCacheManager(net.sf.ehcache.CacheManager) accept} a manually configured
  * {@link net.sf.ehcache.CacheManager net.sf.ehcache.CacheManager} instance,
  * or an {@code ehcache.xml} path location can be specified instead and one will be constructed. If neither are
- * specified, Shiro's failsafe <code><a href="./ehcache.xml">ehcache.xml</a>} file will be used by default.
+ * specified, Shiro's failsafe <code><a href="./ehcache.xml">ehcache.xml</a></code> file will be used by default.
  * <p/>
  * This implementation requires EhCache 1.2 and above. Make sure EhCache 1.1 or earlier
  * is not in the classpath or it will not work.
@@ -96,7 +96,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     /**
      * Returns the resource location of the config file used to initialize a new
      * EhCache CacheManager instance.  The string can be any resource path supported by the
-     * {@link org.apache.shiro.io.ResourceUtils#getInputStreamForPath(String)} call.
+     * {@link org.apache.shiro.lang.io.ResourceUtils#getInputStreamForPath(String)} call.
      * <p/>
      * This property is ignored if the CacheManager instance is injected directly - that is, it is only used to
      * lazily create a CacheManager if one is not already provided.
@@ -111,7 +111,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     /**
      * Sets the resource location of the config file used to initialize the wrapped
      * EhCache CacheManager instance.  The string can be any resource path supported by the
-     * {@link org.apache.shiro.io.ResourceUtils#getInputStreamForPath(String)} call.
+     * {@link org.apache.shiro.lang.io.ResourceUtils#getInputStreamForPath(String)} call.
      * <p/>
      * This property is ignored if the CacheManager instance is injected directly - that is, it is only used to
      * lazily create a CacheManager if one is not already provided.
@@ -179,7 +179,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * Initializes this instance.
      * <p/>
      * If a {@link #setCacheManager CacheManager} has been
-     * explicitly set (e.g. via Dependency Injection or programatically) prior to calling this
+     * explicitly set (e.g. via Dependency Injection or programmatically) prior to calling this
      * method, this method does nothing.
      * <p/>
      * However, if no {@code CacheManager} has been set, the default Ehcache singleton will be initialized, where
@@ -228,7 +228,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * Shuts-down the wrapped Ehcache CacheManager <b>only if implicitly created</b>.
      * <p/>
      * If another component injected
-     * a non-null CacheManager into this instace before calling {@link #init() init}, this instance expects that same
+     * a non-null CacheManager into this instance before calling {@link #init() init}, this instance expects that same
      * component to also destroy the CacheManager instance, and it will not attempt to do so.
      */
     public void destroy() {

@@ -21,7 +21,7 @@ package org.apache.shiro.authz.permission;
 import org.apache.shiro.authz.Permission;
 
 /**
- * A {@code PermisisonResolver} resolves a String value and converts it into a
+ * A {@code PermissionResolver} resolves a String value and converts it into a
  * {@link org.apache.shiro.authz.Permission Permission} instance.
  * <p/>
  * The default {@link WildcardPermissionResolver} should be

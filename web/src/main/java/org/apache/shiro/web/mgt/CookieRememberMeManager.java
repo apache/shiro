@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.web.mgt;
 
-import org.apache.shiro.codec.Base64;
+import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.mgt.AbstractRememberMeManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
  * Remembers a Subject's identity by saving the Subject's {@link Subject#getPrincipals() principals} to a {@link Cookie}
  * for later retrieval.
  * <p/>
- * Cookie attributes (path, domain, maxAge, etc) may be set on this class's default
+ * Cookie attributes (path, domain, maxAge, etc.) may be set on this class's default
  * {@link #getCookie() cookie} attribute, which acts as a template to use to set all properties of outgoing cookies
  * created by this implementation.
  * <p/>
@@ -212,9 +212,21 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
             if (log.isTraceEnabled()) {
                 log.trace("Acquired Base64 encoded identity [" + base64 + "]");
             }
-            byte[] decoded = Base64.decode(base64);
+            byte[] decoded;
+            try {
+                decoded = Base64.decode(base64);
+            } catch (RuntimeException rtEx) {
+                /*
+                 * https://issues.apache.org/jira/browse/SHIRO-766:
+                 * If the base64 string cannot be decoded, just assume there is no valid cookie value.
+                 * */
+                getCookie().removeFrom(request, response);
+                log.warn("Unable to decode existing base64 encoded entity: [" + base64 + "].", rtEx);
+                return null;
+            }
+
             if (log.isTraceEnabled()) {
-                log.trace("Base64 decoded byte array length: " + (decoded != null ? decoded.length : 0) + " bytes.");
+                log.trace("Base64 decoded byte array length: " + decoded.length + " bytes.");
             }
             return decoded;
         } else {

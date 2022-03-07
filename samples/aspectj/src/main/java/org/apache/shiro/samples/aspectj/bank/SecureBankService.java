@@ -137,7 +137,7 @@ public class SecureBankService implements BankService {
         assertServiceState();
         log.info("Getting owner of account " + anAccountId);
 
-        Account a = safellyRetrieveAccountForId(anAccountId);
+        Account a = safelyRetrieveAccountForId(anAccountId);
         return a.getOwnerName();
     }
 
@@ -150,7 +150,7 @@ public class SecureBankService implements BankService {
         assertServiceState();
         log.info("Getting balance of account " + anAccountId);
 
-        Account a = safellyRetrieveAccountForId(anAccountId);
+        Account a = safelyRetrieveAccountForId(anAccountId);
         return a.getBalance();
     }
 
@@ -164,7 +164,7 @@ public class SecureBankService implements BankService {
         log.info("Making deposit of " + anAmount + " into account " + anAccountId);
 
         try {
-            Account a = safellyRetrieveAccountForId(anAccountId);
+            Account a = safelyRetrieveAccountForId(anAccountId);
             AccountTransaction tx = AccountTransaction.createDepositTx(anAccountId, anAmount);
             tx.setCreatedBy(getCurrentUsername());
             log.debug("Created a new transaction " + tx);
@@ -188,7 +188,7 @@ public class SecureBankService implements BankService {
         assertServiceState();
         log.info("Making withdrawal of " + anAmount + " from account " + anAccountId);
 
-        Account a = safellyRetrieveAccountForId(anAccountId);
+        Account a = safelyRetrieveAccountForId(anAccountId);
         AccountTransaction tx = AccountTransaction.createWithdrawalTx(anAccountId, anAmount);
         tx.setCreatedBy(getCurrentUsername());
         log.debug("Created a new transaction " + tx);
@@ -208,7 +208,7 @@ public class SecureBankService implements BankService {
         assertServiceState();
         log.info("Getting transactions of account " + anAccountId);
 
-        Account a = safellyRetrieveAccountForId(anAccountId);
+        Account a = safelyRetrieveAccountForId(anAccountId);
 
         TxLog[] txs = new TxLog[a.getTransactions().size()];
         int index = 0;
@@ -234,7 +234,7 @@ public class SecureBankService implements BankService {
         assertServiceState();
         log.info("Closing account " + anAccountId);
 
-        Account a = safellyRetrieveAccountForId(anAccountId);
+        Account a = safelyRetrieveAccountForId(anAccountId);
         if (!a.isActive()) {
             throw new InactiveAccountException("The account " + anAccountId + " is already closed");
         }
@@ -263,19 +263,19 @@ public class SecureBankService implements BankService {
         assertServiceState();
         log.info("Getting active status of account " + anAccountId);
 
-        Account a = safellyRetrieveAccountForId(anAccountId);
+        Account a = safelyRetrieveAccountForId(anAccountId);
         return a.isActive();
     }
 
 
     /**
-     * Internal method that safelly (concurrency-wise) retrieves an account from the id passed in.
+     * Internal method that safely (concurrency-wise) retrieves an account from the id passed in.
      *
      * @param anAccountId The identifier of the account to retrieve.
      * @return The account instance retrieved.
      * @throws AccountNotFoundException If no account is found for the provided identifier.
      */
-    protected Account safellyRetrieveAccountForId(long anAccountId) throws AccountNotFoundException {
+    protected Account safelyRetrieveAccountForId(long anAccountId) throws AccountNotFoundException {
         Account account = null;
         synchronized (_accounts) {
             account = _accountsById.get(anAccountId);

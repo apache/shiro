@@ -20,7 +20,7 @@ package org.apache.shiro.web.session;
 
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
 
 import javax.servlet.http.HttpSession;
@@ -33,7 +33,7 @@ import java.util.Enumeration;
 /**
  * {@link Session Session} implementation that is backed entirely by a standard servlet container
  * {@link HttpSession HttpSession} instance.  It does not interact with any of Shiro's session-related components
- * {@code SessionManager}, {@code SecurityManager}, etc, and instead satisfies all method implementations by interacting
+ * {@code SessionManager}, {@code SecurityManager}, etc., and instead satisfies all method implementations by interacting
  * with a servlet container provided {@link HttpSession HttpSession} instance.
  *
  * @since 1.0
@@ -75,7 +75,7 @@ public class HttpServletSession implements Session {
 
     public long getTimeout() throws InvalidSessionException {
         try {
-            return httpSession.getMaxInactiveInterval() * 1000;
+            return httpSession.getMaxInactiveInterval() * 1000L;
         } catch (Exception e) {
             throw new InvalidSessionException(e);
         }
@@ -83,7 +83,7 @@ public class HttpServletSession implements Session {
 
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
         try {
-            int timeout = Long.valueOf(maxIdleTimeInMillis / 1000).intValue();
+            int timeout = (int) (maxIdleTimeInMillis / 1000);
             httpSession.setMaxInactiveInterval(timeout);
         } catch (Exception e) {
             throw new InvalidSessionException(e);

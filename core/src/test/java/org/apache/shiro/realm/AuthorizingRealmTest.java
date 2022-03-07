@@ -18,7 +18,18 @@
  */
 package org.apache.shiro.realm;
 
-import org.apache.shiro.authc.*;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAccount;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.Permission;
@@ -26,21 +37,24 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.authz.permission.WildcardPermission;
+import org.apache.shiro.authz.permission.WildcardPermissionResolver;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.junit.After;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.security.Principal;
-import java.util.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 /**
  * Simple test case for AuthorizingRealm.
  * <p/>
- * TODO - this could/should be expaned to be more robust end to end test for the AuthorizingRealm
+ * TODO - this could/should be expanded to be more robust end to end test for the AuthorizingRealm
  */
 public class AuthorizingRealmTest {
 
@@ -212,6 +226,40 @@ public class AuthorizingRealmTest {
         assertTrue( realm.isPermitted( pCollection, ROLE + ":perm2" ) );
         assertFalse( realm.isPermitted( pCollection, ROLE + ":perm3" ) );
         assertTrue( realm.isPermitted( pCollection, "other:bar:foo" ) );
+    }
+
+    @Test
+    public void testRealmWithEmptyOrNullPermissions() {
+        Principal principal = new UsernamePrincipal("rolePermResolver");
+        PrincipalCollection pCollection = new SimplePrincipalCollection(principal, "testRealmWithRolePermissionResolver");
+
+        AuthorizingRealm realm = new AllowAllRealm();
+        realm.setRolePermissionResolver( new RolePermissionResolver()
+        {
+            public Collection<Permission> resolvePermissionsInRole( String roleString )
+            {
+                Collection<Permission> permissions = new HashSet<Permission>();
+                if( roleString.equals( ROLE ))
+                {
+                    permissions.add( new WildcardPermission( ROLE + ":perm1" ) );
+                    permissions.add( new WildcardPermission( ROLE + ":perm2" ) );
+                    permissions.add( new WildcardPermission( ROLE + ": " ) );
+                    permissions.add( new WildcardPermission( ROLE + ":\t" ) );
+                    permissions.add( new WildcardPermission( "other:*:foo" ) );
+                }
+                return permissions;
+            }
+        });
+
+        realm.setPermissionResolver(new WildcardPermissionResolver());
+        SimpleAuthorizationInfo authorizationInfo = (SimpleAuthorizationInfo) realm.getAuthorizationInfo(pCollection);
+        assertNotNull(authorizationInfo);
+        authorizationInfo.addStringPermission("");
+        authorizationInfo.addStringPermission(" ");
+        authorizationInfo.addStringPermission("\t");
+        authorizationInfo.addStringPermission(null);
+        Collection<Permission> permissions = realm.getPermissions(authorizationInfo);
+        assertEquals(permissions.size(), 4);
     }
 
     private void assertArrayEquals(boolean[] expected, boolean[] actual) {

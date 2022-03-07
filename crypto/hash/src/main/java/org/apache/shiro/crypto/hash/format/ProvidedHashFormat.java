@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
+import java.util.Locale;
+
 /**
  * An enum representing Shiro's default provided {@link HashFormat} implementations.
  *
@@ -38,11 +40,16 @@ public enum ProvidedHashFormat {
     /**
      * Value representing the {@link Shiro1CryptFormat} implementation.
      */
-    SHIRO1(Shiro1CryptFormat.class);
+    SHIRO1(Shiro1CryptFormat.class),
+
+    /**
+     * Value representing the {@link Shiro2CryptFormat} implementation.
+     */
+    SHIRO2(Shiro2CryptFormat.class);
 
     private final Class<? extends HashFormat> clazz;
 
-    private ProvidedHashFormat(Class<? extends HashFormat> clazz) {
+    ProvidedHashFormat(final Class<? extends HashFormat> clazz) {
         this.clazz = clazz;
     }
 
@@ -50,13 +57,15 @@ public enum ProvidedHashFormat {
         return this.clazz;
     }
 
-    public static ProvidedHashFormat byId(String id) {
+    public static ProvidedHashFormat byId(final String id) {
         if (id == null) {
             return null;
         }
         try {
-            return valueOf(id.toUpperCase());
-        } catch (IllegalArgumentException ignored) {
+            // Use English Locale, some Locales handle uppercase/lower differently. i.e. Turkish and upper case 'i'
+            // is not 'I'. And 'SHIRO1' would be 'SHİRO1'
+            return valueOf(id.toUpperCase(Locale.ENGLISH));
+        } catch (final IllegalArgumentException ignored) {
             return null;
         }
     }

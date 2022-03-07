@@ -28,20 +28,22 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.env.Environment;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.EventBusAware;
+import org.apache.shiro.event.Subscribe;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.Destroyable;
+import org.apache.shiro.lang.util.Destroyable;
 import org.junit.Test;
 
 import java.util.Collection;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ShiroModuleTest {
 
@@ -204,6 +206,82 @@ public class ShiroModuleTest {
         verify(myDestroyable);
     }
 
+    /**
+     * @since 1.4
+     * @throws Exception
+     */
+    @Test
+    public void testEventListener() throws Exception {
+
+        final MockRealm mockRealm = createMock(MockRealm.class);
+        final EventBus eventBus = createMock(EventBus.class);
+
+        // expect both objects to be registered
+        eventBus.register(anyObject(MockEventListener1.class));
+        eventBus.register(anyObject(MockEventListener2.class));
+        replay(eventBus);
+
+        final ShiroModule shiroModule = new ShiroModule() {
+            @Override
+            protected void configureShiro() {
+                bindRealm().to(MockRealm.class);
+
+                // bind our event listeners
+                binder().bind(MockEventListener1.class).asEagerSingleton();
+                binder().bind(MockEventListener2.class).asEagerSingleton();
+            }
+
+            @Override
+            protected void bindEventBus(AnnotatedBindingBuilder<EventBus> bind) {
+                bind.toInstance(eventBus);
+            }
+
+            @Provides
+            public MockRealm createRealm() {
+                return mockRealm;
+            }
+
+        };
+        Guice.createInjector(shiroModule);
+
+        verify(eventBus);
+
+    }
+
+    /**
+     * @since 1.4
+     * @throws Exception
+     */
+    @Test
+    public void testEventBusAware() throws Exception {
+
+        final MockRealm mockRealm = createMock(MockRealm.class);
+
+        final ShiroModule shiroModule = new ShiroModule() {
+            @Override
+            protected void configureShiro() {
+                bindRealm().to(MockRealm.class);
+
+                binder().bind(MockEventBusAware.class).asEagerSingleton();
+                expose(MockEventBusAware.class);
+            }
+
+            @Provides
+            public MockRealm createRealm() {
+                return mockRealm;
+            }
+
+        };
+        Injector injector = Guice.createInjector(shiroModule);
+        EventBus eventBus = injector.getInstance(EventBus.class);
+        SecurityManager securityManager = injector.getInstance(SecurityManager.class);
+
+        MockEventBusAware eventBusAware = injector.getInstance(MockEventBusAware.class);
+
+        assertSame(eventBus, eventBusAware.eventBus);
+        assertSame(eventBus, ((DefaultSecurityManager)securityManager).getEventBus());
+    }
+
     public static interface MockRealm extends Realm {
 
     }
@@ -226,5 +304,28 @@ public class ShiroModuleTest {
     }
 
     public static interface MyDestroyable extends Destroyable {
+    }
+
+    public static class MockEventListener1 {
+        @Subscribe
+        public void listenToAllAndDoNothing(Object o) {}
+    }
+
+    public static class MockEventListener2 {
+        @Subscribe
+        public void listenToAllAndDoNothing(Object o) {}
+    }
+
+    public static class MockEventBusAware implements EventBusAware {
+        private EventBus eventBus;
+
+        public EventBus getEventBus() {
+            return eventBus;
+        }
+
+        @Override
+        public void setEventBus(EventBus eventBus) {
+            this.eventBus = eventBus;
+        }
     }
 }

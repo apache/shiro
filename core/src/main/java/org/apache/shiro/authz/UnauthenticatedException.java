@@ -23,7 +23,7 @@ package org.apache.shiro.authz;
  * authentication hasn't yet occurred.
  *
  * <p>Authorizations can only be performed after a successful
- * authentication because authorization data (roles, permissions, etc) must always be associated
+ * authentication because authorization data (roles, permissions, etc.) must always be associated
  * with a known identity.  Such a known identity can only be obtained upon a successful log-in.
  *
  * @since 0.1

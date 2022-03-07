@@ -78,6 +78,7 @@ public class DefaultWebSessionManagerTest {
         expect(cookie.getVersion()).andReturn(SimpleCookie.DEFAULT_VERSION);
         expect(cookie.isSecure()).andReturn(true);
         expect(cookie.isHttpOnly()).andReturn(true);
+        expect(cookie.getSameSite()).andReturn(Cookie.SameSiteOptions.LAX);
 
         replay(cookie);
 
@@ -126,6 +127,7 @@ public class DefaultWebSessionManagerTest {
                 ShiroHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+        request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.FALSE);
 
         replay(cookie);
         replay(request);
@@ -145,6 +147,7 @@ public class DefaultWebSessionManagerTest {
         Cookie cookie = createMock(Cookie.class);
         mgr.setSessionIdCookie(cookie);
         mgr.setSessionIdCookieEnabled(false);
+        mgr.setSessionIdUrlRewritingEnabled(true)
 
         //we should not have any reads from the cookie fields - if we do, this test case will fail.
 
@@ -155,11 +158,13 @@ public class DefaultWebSessionManagerTest {
 
         expect(cookie.getName()).andReturn(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
         expect(request.getRequestURI()).andReturn("/foo/bar?JSESSIONID=$id" as String)
+        expect(request.getQueryString()).andReturn("JSESSIONID=$id" as String)
         expect(request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME)).andReturn(id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                 ShiroHttpServletRequest.URL_SESSION_ID_SOURCE);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+        request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.TRUE);
 
         replay(cookie);
         replay(request);
@@ -179,6 +184,7 @@ public class DefaultWebSessionManagerTest {
         Cookie cookie = createMock(Cookie.class);
         mgr.setSessionIdCookie(cookie);
         mgr.setSessionIdCookieEnabled(false);
+        mgr.setSessionIdUrlRewritingEnabled(true)
 
         //we should not have any reads from the cookie fields - if we do, this test case will fail.
 
@@ -188,13 +194,14 @@ public class DefaultWebSessionManagerTest {
         String id = "12345";
 
         expect(cookie.getName()).andReturn(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
-        expect(request.getRequestURI()).andReturn("/foo/bar?JSESSIONID=$id" as String)
-        expect(request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME)).andReturn(null);
+        expect(request.getRequestURI()).andReturn("/foo/bar?jsessionid=$id" as String)
+        expect(request.getQueryString()).andReturn("jsessionid=$id" as String)
         expect(request.getParameter(ShiroHttpSession.DEFAULT_SESSION_ID_NAME.toLowerCase())).andReturn(id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                 ShiroHttpServletRequest.URL_SESSION_ID_SOURCE);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+        request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.TRUE);
 
         replay(cookie);
         replay(request);
@@ -214,6 +221,7 @@ public class DefaultWebSessionManagerTest {
     public void testGetSessionIdFromRequestUriPathSegmentParam() {
 
         mgr.setSessionIdCookieEnabled(false);
+        mgr.setSessionIdUrlRewritingEnabled(true)
 
         HttpServletRequest request = createMock(HttpServletRequest.class);
         HttpServletResponse response = createMock(HttpServletResponse.class);
@@ -225,6 +233,7 @@ public class DefaultWebSessionManagerTest {
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE, ShiroHttpServletRequest.URL_SESSION_ID_SOURCE);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID, id);
         request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID, Boolean.TRUE);
+        request.setAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED, Boolean.TRUE);
 
         replay(request);
         replay(response);

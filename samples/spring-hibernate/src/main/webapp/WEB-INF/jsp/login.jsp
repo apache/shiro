@@ -29,7 +29,7 @@
         <div class="title">Apache Shiro Sample App - Login</div>
 
         <div class="content">
-            <form:form modelAttribute="loginCommand">
+            <form:form modelAttribute="loginCommand" name="loginForm">
 
                 <form:errors path="*" element="div" cssClass="errors"/>
 

@@ -23,11 +23,14 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.test.SecurityManagerTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test cases for the {@link RoleAnnotationHandler} class.
@@ -37,72 +40,84 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
 
     //Added to satisfy SHIRO-146
 
-    @Test(expected = UnauthenticatedException.class)
+    @Test
     public void testGuestSingleRoleAssertion() throws Throwable {
         RoleAnnotationHandler handler = new RoleAnnotationHandler();
 
         Annotation requiresRolesAnnotation = new RequiresRoles() {
+            @Override
             public String[] value() {
                 return new String[]{"blah"};
             }
 
+            @Override
             public Class<? extends Annotation> annotationType() {
                 return RequiresRoles.class;
             }
-	    public Logical logical() {
-		return Logical.AND;
-	    }
+
+            @Override
+            public Logical logical() {
+                return Logical.AND;
+            }
         };
 
-        handler.assertAuthorized(requiresRolesAnnotation);
+        assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresRolesAnnotation));
     }
 
     //Added to satisfy SHIRO-146
 
-    @Test(expected = UnauthenticatedException.class)
+    @Test
     public void testGuestMultipleRolesAssertion() throws Throwable {
         RoleAnnotationHandler handler = new RoleAnnotationHandler();
 
         Annotation requiresRolesAnnotation = new RequiresRoles() {
+            @Override
             public String[] value() {
                 return new String[]{"blah", "blah2"};
             }
 
+            @Override
             public Class<? extends Annotation> annotationType() {
                 return RequiresRoles.class;
             }
-	    public Logical logical() {
-		return Logical.AND;
-	    }
+
+            @Override
+            public Logical logical() {
+                return Logical.AND;
+            }
         };
 
-        handler.assertAuthorized(requiresRolesAnnotation);
+        assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresRolesAnnotation));
     }
-    
+
     @Test
-    public void testOneOfTheRolesRequired() throws Throwable {
-	subject = createMock(Subject.class);
-	expect(subject.hasRole("blah")).andReturn(true);
-	expect(subject.hasRole("blah2")).andReturn(false);
+    public void testOneOfTheRolesRequired() {
+        subject = createMock(Subject.class);
+        expect(subject.hasRole("blah")).andReturn(true);
+        expect(subject.hasRole("blah2")).andReturn(false);
         replay(subject);
-	RoleAnnotationHandler handler = new RoleAnnotationHandler() {
+        RoleAnnotationHandler handler = new RoleAnnotationHandler() {
             @Override
-	    protected Subject getSubject() {
-        	return subject;
+            protected Subject getSubject() {
+                return subject;
             }
         };
 
         Annotation requiresRolesAnnotation = new RequiresRoles() {
+            @Override
             public String[] value() {
                 return new String[]{"blah", "blah2"};
             }
 
+            @Override
             public Class<? extends Annotation> annotationType() {
                 return RequiresRoles.class;
             }
-	    public Logical logical() {
-		return Logical.OR;
-	    }
+
+            @Override
+            public Logical logical() {
+                return Logical.OR;
+            }
         };
         handler.assertAuthorized(requiresRolesAnnotation);
     }

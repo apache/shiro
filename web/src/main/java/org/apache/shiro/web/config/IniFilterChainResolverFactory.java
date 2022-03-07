@@ -19,11 +19,12 @@
 package org.apache.shiro.web.config;
 
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.config.IniFactorySupport;
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.config.ReflectionBuilder;
+import org.apache.shiro.ini.IniFactorySupport;
+import org.apache.shiro.ini.IniSecurityManagerFactory;
+import org.apache.shiro.config.ogdl.ReflectionBuilder;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.Factory;
+import org.apache.shiro.lang.util.Factory;
+import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.filter.mgt.FilterChainManager;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
@@ -32,7 +33,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterConfig;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,7 +52,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     private FilterConfig filterConfig;
 
-    private Map<String, ?> defaultBeans;
+    private List<String> globalFilters = Collections.singletonList(DefaultFilter.invalidRequest.name());
 
     public IniFilterChainResolverFactory() {
         super();
@@ -61,7 +64,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     public IniFilterChainResolverFactory(Ini ini, Map<String, ?> defaultBeans) {
         this(ini);
-        this.defaultBeans = defaultBeans;
+        this.setDefaults(defaultBeans);
     }
 
     public FilterConfig getFilterConfig() {
@@ -70,6 +73,14 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     public void setFilterConfig(FilterConfig filterConfig) {
         this.filterConfig = filterConfig;
+    }
+
+    public List<String> getGlobalFilters() {
+        return globalFilters;
+    }
+
+    public void setGlobalFilters(List<String> globalFilters) {
+        this.globalFilters = globalFilters;
     }
 
     protected FilterChainResolver createInstance(Ini ini) {
@@ -113,8 +124,9 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         }
         //User-provided objects must come _after_ the default filters - to allow the user-provided
         //ones to override the default filters if necessary.
-        if (!CollectionUtils.isEmpty(this.defaultBeans)) {
-            defaults.putAll(this.defaultBeans);
+        Map<String, ?> defaultBeans = getDefaults();
+        if (!CollectionUtils.isEmpty(defaultBeans)) {
+            defaults.putAll(defaultBeans);
         }
 
         Map<String, Filter> filters = getFilters(section, defaults);
@@ -122,9 +134,14 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         //add the filters to the manager:
         registerFilters(filters, manager);
 
+        manager.setGlobalFilters(getGlobalFilters());
+
         //urls section:
         section = ini.getSection(URLS);
         createChains(section, manager);
+
+        // create the default chain, to match anything the path matching would have missed
+        manager.createDefaultChain("/**"); // TODO this assumes ANT path matching
     }
 
     protected void registerFilters(Map<String, Filter> filters, FilterChainManager manager) {

@@ -19,6 +19,6 @@
 /**
  * <a href="http://www.opensymphony.com/quartz/" target="_top">Quartz</a>-based implementations of
  * components that help <tt>SessionManager</tt> implementations maintain sessions (timed expiration, orphan cleanup,
- * etc).
+ * etc.).
  */
 package org.apache.shiro.session.mgt.quartz;

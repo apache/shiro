@@ -18,20 +18,23 @@
  */
 package org.apache.shiro.guice.web;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.Filter;
+
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
 import com.google.inject.spi.Dependency;
 import com.google.inject.spi.ProviderWithDependencies;
+
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
-
-import javax.servlet.Filter;
-import java.util.Map;
-import java.util.Set;
 
 @Singleton
 class FilterChainResolverProvider implements ProviderWithDependencies<FilterChainResolver> {
@@ -46,13 +49,13 @@ class FilterChainResolverProvider implements ProviderWithDependencies<FilterChai
 
     public FilterChainResolverProvider(Map<String, Key<? extends Filter>[]> chains) {
         this.chains = chains;
-        ImmutableSet.Builder<Dependency<?>> dependenciesBuilder = ImmutableSet.builder();
+        Set<Dependency<?>> dependenciesBuilder = new HashSet<Dependency<?>>();
         for (String chain : chains.keySet()) {
             for (Key<? extends Filter> filterKey : chains.get(chain)) {
                 dependenciesBuilder.add(Dependency.get(filterKey));
             }
         }
-        this.dependencies = dependenciesBuilder.build();
+        this.dependencies = Collections.unmodifiableSet(dependenciesBuilder);
     }
 
     @Inject(optional = true)

@@ -21,7 +21,6 @@ package org.apache.shiro.cache.ehcache;
 import net.sf.ehcache.Element;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
-import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,7 +151,7 @@ public class EhCache<K, V> implements Cache<K, V> {
         try {
             @SuppressWarnings({"unchecked"})
             List<K> keys = cache.getKeys();
-            if (!CollectionUtils.isEmpty(keys)) {
+            if (!isEmpty(keys)) {
                 return Collections.unmodifiableSet(new LinkedHashSet<K>(keys));
             } else {
                 return Collections.emptySet();
@@ -166,7 +165,7 @@ public class EhCache<K, V> implements Cache<K, V> {
         try {
             @SuppressWarnings({"unchecked"})
             List<K> keys = cache.getKeys();
-            if (!CollectionUtils.isEmpty(keys)) {
+            if (!isEmpty(keys)) {
                 List<V> values = new ArrayList<V>(keys.size());
                 for (K key : keys) {
                     V value = get(key);
@@ -237,5 +236,14 @@ public class EhCache<K, V> implements Cache<K, V> {
      */
     public String toString() {
         return "EhCache [" + cache.getName() + "]";
+    }
+
+    //////////////////////////
+    // From CollectionUtils //
+    //////////////////////////
+    // CollectionUtils cannot be removed from shiro-core until 2.0 as it has a dependency on PrincipalCollection
+
+    private static boolean isEmpty(Collection c) {
+        return c == null || c.isEmpty();
     }
 }

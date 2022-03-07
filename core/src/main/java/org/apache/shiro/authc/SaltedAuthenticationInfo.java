@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.authc;
 
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * Interface representing account information that may use a salt when hashing credentials.  This interface

@@ -26,7 +26,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.hash.AbstractHash;
-import org.apache.shiro.util.ClassUtils;
+import org.apache.shiro.lang.util.ClassUtils;
 
 /**
  * @since Jun 10, 2008 4:47:09 PM

@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.authz.permission;
 
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 import java.util.Set;
 
@@ -131,7 +131,6 @@ public class DomainPermission extends WildcardPermission {
     }
 
     protected void setTargets(Set<String> targets) {
-        this.targets = targets;
         if (this.targets != null && this.targets.equals(targets)) {
             return;
         }

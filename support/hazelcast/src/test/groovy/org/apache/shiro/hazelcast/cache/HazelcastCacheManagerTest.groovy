@@ -19,164 +19,134 @@
 package org.apache.shiro.hazelcast.cache
 
 import com.hazelcast.config.Config
-import com.hazelcast.core.Hazelcast
 import com.hazelcast.core.HazelcastInstance
-import com.hazelcast.core.IMap
 import com.hazelcast.core.LifecycleService
-import org.apache.shiro.cache.MapCache
+import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.powermock.core.classloader.annotations.PrepareForTest
-import org.powermock.modules.junit4.PowerMockRunner
 
-import static org.easymock.EasyMock.expect
-import static org.easymock.EasyMock.same
 import static org.junit.Assert.*
-import static org.powermock.api.easymock.PowerMock.*
+import static org.mockito.Mockito.*
 
 /**
- * Unit tests for {@link HazelcastCacheManager}.  Uses PowerMock to mock Hazelcast's static method calls.
+ * Unit tests for {@link HazelcastCacheManager}.
  *
  * @since 1.3
  */
-@RunWith(PowerMockRunner)
-@PrepareForTest(Hazelcast)
 class HazelcastCacheManagerTest {
+
+    @BeforeClass
+    static void setUpLogging() {
+        System.setProperty("hazelcast.logging.type", "log4j2")
+    }
 
     @Test
     void testGetSetHazelcastInstance() {
-        def hc = createStrictMock(HazelcastInstance)
+
+        // given
+        HazelcastInstance hc = mock(HazelcastInstance)
         def manager = new HazelcastCacheManager();
+
+        // when
         manager.hazelcastInstance = hc
 
-        replay hc
-
+        // then
         assertSame hc, manager.hazelcastInstance
-
-        verify hc
-    }
-
-    @Test
-    void testInit() {
-
-        mockStatic(Hazelcast)
-        //create a mock instead of starting a networked node:
-        def hc = createStrictMock(HazelcastInstance)
-
-        expect(Hazelcast.newHazelcastInstance(null)).andReturn(hc)
-
-        replay Hazelcast, hc
-
-        def manager = new HazelcastCacheManager()
-
-        try {
-            manager.init()
-
-            assertNull manager.config
-            assertSame hc, manager.hazelcastInstance
-            assertTrue manager.implicitlyCreated
-        } finally {
-            verify Hazelcast, hc
-        }
-    }
-
-    @Test
-    void testDestroy() {
-
-        mockStatic Hazelcast
-        def hc = createStrictMock(HazelcastInstance)
-        def lcService = createStrictMock(LifecycleService)
-
-        expect(Hazelcast.newHazelcastInstance(null)).andReturn(hc)
-        expect(hc.getLifecycleService()).andReturn(lcService)
-        lcService.shutdown()
-
-        replay Hazelcast, hc, lcService
-
-        def manager = new HazelcastCacheManager()
-        manager.init() //force implicit creation
-
-        manager.destroy()
-
-        assertNull manager.hazelcastInstance
-        assertFalse manager.implicitlyCreated
-
-        verify Hazelcast, hc, lcService
-    }
-
-    @Test
-    void testDestroyWithThrowable() {
-
-        mockStatic Hazelcast
-        def hc = createStrictMock(HazelcastInstance)
-        def lcService = createStrictMock(LifecycleService)
-
-        expect(Hazelcast.newHazelcastInstance(null)).andReturn(hc)
-        expect(hc.getLifecycleService()).andReturn(lcService)
-        lcService.shutdown()
-        expectLastCall().andThrow(new IllegalStateException())
-
-        replay Hazelcast, hc, lcService
-
-        def manager = new HazelcastCacheManager()
-        manager.init() //force implicit creation
-
-        manager.destroy()
-
-        assertNull manager.hazelcastInstance
-        assertFalse manager.implicitlyCreated
-
-        verify Hazelcast, hc, lcService
-    }
-
-
-    @Test
-    void testGetCache() {
-
-        mockStatic Hazelcast
-        def hc = createStrictMock(HazelcastInstance)
-        def hcMap = createStrictMock(IMap)
-
-        expect(Hazelcast.newHazelcastInstance(null)).andReturn(hc)
-        expect(hc.getMap("foo")).andReturn(hcMap)
-
-        replay Hazelcast, hc, hcMap
-
-        try {
-            def manager = new HazelcastCacheManager()
-            def cache = manager.getCache("foo")
-
-            assertNotNull cache
-            assertTrue cache instanceof MapCache
-            assertNotNull cache.map
-            assertTrue cache.map instanceof IMap
-        } finally {
-            verify Hazelcast, hc, hcMap
-        }
     }
 
     @Test
     void testCustomConfig() {
 
-        mockStatic Hazelcast
+        // given
+        Config config = mock(Config)
+        def manager = new HazelcastCacheManager();
 
-        def hc = createStrictMock(HazelcastInstance)
-        def config = createStrictMock(Config)
-
-        expect(Hazelcast.newHazelcastInstance(same(config))).andReturn(hc)
-
-        replay Hazelcast, config
-
-        def manager = new HazelcastCacheManager()
+        // when
         manager.config = config
 
-        manager.init()
-
+        // then
         assertSame config, manager.config
-        assertSame hc, manager.hazelcastInstance
-
-        verify Hazelcast, config
     }
 
+    @Test
+    void testImplicitlyCreated() {
+
+        // given
+        HazelcastInstance hazelcastInstance = mock(HazelcastInstance)
+
+        HazelcastCacheManager manager = spy(HazelcastCacheManager);
+        when(manager.createHazelcastInstance()).then(args -> hazelcastInstance)
+
+        // when
+        manager.init()
+
+        // then
+        assertTrue manager.implicitlyCreated
+        manager.destroy()
+    }
+
+    @Test
+    void testDestroy() {
+
+        // given
+        LifecycleService lifecycleService = mock(LifecycleService)
+
+        HazelcastInstance hazelcastInstance = spy(HazelcastInstance)
+        when(hazelcastInstance.getLifecycleService()).then(args -> lifecycleService)
+
+        HazelcastCacheManager manager = spy(HazelcastCacheManager);
+        when(manager.createHazelcastInstance()).then(args -> hazelcastInstance)
+
+
+        // when
+        manager.init()
+        manager.destroy()
+
+        // then
+        assertFalse manager.implicitlyCreated
+        assertNull manager.hazelcastInstance
+        verify(hazelcastInstance).getLifecycleService()
+        verify(manager).createHazelcastInstance()
+    }
+
+    @Test
+    void testDestroyExplicit() {
+
+        // given
+        HazelcastInstance hazelcastInstance = mock(HazelcastInstance)
+        HazelcastCacheManager manager = new HazelcastCacheManager()
+        manager.hazelcastInstance = hazelcastInstance
+
+        // when
+        manager.init()
+        manager.destroy()
+
+        // then
+        assertNotNull manager.hazelcastInstance
+        assertFalse manager.implicitlyCreated
+    }
+
+    @Test
+    void testUncleanShutdown() {
+
+        // given
+        LifecycleService lifecycleService = mock(LifecycleService)
+        when(lifecycleService.shutdown()).thenThrow(new IllegalStateException())
+
+        HazelcastInstance hazelcastInstance = mock(HazelcastInstance)
+        when(hazelcastInstance.getLifecycleService()).then(args -> lifecycleService)
+
+        HazelcastCacheManager manager = spy(HazelcastCacheManager);
+        when(manager.createHazelcastInstance()).then(args -> hazelcastInstance)
+
+        // when
+        manager.init()
+        manager.destroy()
+
+        // then
+        assertFalse manager.implicitlyCreated
+        verify(lifecycleService).shutdown()
+        verify(hazelcastInstance).getLifecycleService()
+        verify(manager).createHazelcastInstance()
+    }
 
 }

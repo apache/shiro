@@ -29,7 +29,7 @@ import org.apache.shiro.authz.AuthorizationInfo;
  * encapsulate both the authentication and authorization information used by both authc and authz operations.
  * <p/>
  * <b>Please Note</b>:  Since Shiro sometimes logs account operations, please ensure your Account's <code>toString()</code>
- * implementation does <em>not</em> print out account credentials (password, etc), as these might be viewable to
+ * implementation does <em>not</em> print out account credentials (password, etc.), as these might be viewable to
  * someone reading your logs.  This is good practice anyway, and account principals should rarely (if ever) be printed
  * out for any reason.  If you're using Shiro's default implementations of this interface, they only ever print the
  * account {@link #getPrincipals() principals}, so you do not need to do anything additional.

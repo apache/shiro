@@ -19,10 +19,11 @@
 package org.apache.shiro.crypto.hash
 
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
-import org.apache.shiro.util.ByteSource
-import org.junit.Test
+import org.apache.shiro.lang.util.ByteSource
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
+
 
 /**
  * Unit tests for the {@link HashRequest.Builder} implementation
@@ -33,16 +34,7 @@ class HashRequestBuilderTest {
 
     @Test
     void testNullSource() {
-        try {
-            new HashRequest.Builder().build()
-            fail "NullPointerException should be thrown"
-        } catch (NullPointerException expected) {
-        }
-    }
-
-    @Test
-    void testDefault() {
-        assertEquals 0, new HashRequest.Builder().setSource("test").build().iterations
+        assertThrows NullPointerException, { new HashRequest.Builder().build() }
     }
 
     @Test
@@ -50,15 +42,16 @@ class HashRequestBuilderTest {
         ByteSource source = ByteSource.Util.bytes("test")
         ByteSource salt = new SecureRandomNumberGenerator().nextBytes()
         def request = new HashRequest.Builder()
-            .setSource(source)
-            .setSalt(salt)
-            .setIterations(2)
-            .setAlgorithmName('MD5').build()
+                .setSource(source)
+                .setSalt(salt)
+                .addParameter(SimpleHashProvider.Parameters.PARAMETER_ITERATIONS, 2)
+                .setAlgorithmName('MD5')
+                .build()
 
         assertNotNull request
         assertEquals source, request.source
-        assertEquals salt, request.salt
-        assertEquals 2, request.iterations
-        assertEquals 'MD5', request.algorithmName
+        assertEquals salt, request.salt.orElse(null)
+        assertEquals 2, request.getParameters().get(SimpleHashProvider.Parameters.PARAMETER_ITERATIONS)
+        assertEquals 'MD5', request.algorithmName.orElse(null)
     }
 }

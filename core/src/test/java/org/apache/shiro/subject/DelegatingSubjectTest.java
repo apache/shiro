@@ -21,13 +21,12 @@ package org.apache.shiro.subject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.config.IniSecurityManagerFactory;
+import org.apache.shiro.ini.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.support.DelegatingSubject;
-import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.LifecycleUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.junit.After;
 import org.junit.Before;
@@ -217,4 +216,25 @@ public class DelegatingSubjectTest {
 
         LifecycleUtils.destroy(sm);
     }
+
+    @Test
+    public void testToString() {
+        // given
+        String username = "jsmith";
+
+        DefaultSecurityManager securityManager = new DefaultSecurityManager();
+        PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
+        final String hostname = "localhost";
+        final DelegatingSubject sourceSubject = new DelegatingSubject(identity, true, hostname, null, securityManager);
+
+        // when
+        final String subjectToString = sourceSubject.toString();
+
+        // then
+        final Session session = sourceSubject.getSession(true);
+        String sessionId = (String) session.getId();
+        assertFalse("toString must not leak sessionId", subjectToString.contains(sessionId));
+        assertFalse("toString must not leak host", subjectToString.contains(hostname));
+    }
+
 }

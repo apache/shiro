@@ -20,11 +20,11 @@ package org.apache.shiro.authz.permission;
 
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -154,14 +154,16 @@ public class WildcardPermission implements Permission, Serializable {
             throw new IllegalArgumentException("Wildcard string cannot be null or empty. Make sure permission strings are properly formatted.");
         }
 
+        if (!caseSensitive) {
+            wildcardString = wildcardString.toLowerCase();
+        }
+
         List<String> parts = CollectionUtils.asList(wildcardString.split(PART_DIVIDER_TOKEN));
 
         this.parts = new ArrayList<Set<String>>();
         for (String part : parts) {
             Set<String> subparts = CollectionUtils.asSet(part.split(SUBPART_DIVIDER_TOKEN));
-            if (!caseSensitive) {
-                subparts = lowercase(subparts);
-            }
+
             if (subparts.isEmpty()) {
                 throw new IllegalArgumentException("Wildcard string cannot contain parts with only dividers. Make sure permission strings are properly formatted.");
             }
@@ -173,19 +175,20 @@ public class WildcardPermission implements Permission, Serializable {
         }
     }
 
-    private Set<String> lowercase(Set<String> subparts) {
-        Set<String> lowerCasedSubparts = new LinkedHashSet<String>(subparts.size());
-        for (String subpart : subparts) {
-            lowerCasedSubparts.add(subpart.toLowerCase());
-        }
-        return lowerCasedSubparts;
-    }
-
     /*--------------------------------------------
     |  A C C E S S O R S / M O D I F I E R S    |
     ============================================*/
     protected List<Set<String>> getParts() {
         return this.parts;
+    }
+
+    /**
+     * Sets the pre-split String parts of this <code>WildcardPermission</code>.
+     * @since 1.3.0
+     * @param parts pre-split String parts.
+     */
+    protected void setParts(List<Set<String>> parts) {
+        this.parts = parts;
     }
 
     /*--------------------------------------------
@@ -232,9 +235,15 @@ public class WildcardPermission implements Permission, Serializable {
         StringBuilder buffer = new StringBuilder();
         for (Set<String> part : parts) {
             if (buffer.length() > 0) {
-                buffer.append(":");
+                buffer.append(PART_DIVIDER_TOKEN);
             }
-            buffer.append(part);
+            Iterator<String> partIt = part.iterator();
+            while(partIt.hasNext()) {
+                buffer.append(partIt.next());
+                if (partIt.hasNext()) {
+                    buffer.append(SUBPART_DIVIDER_TOKEN);
+                }
+            }
         }
         return buffer.toString();
     }

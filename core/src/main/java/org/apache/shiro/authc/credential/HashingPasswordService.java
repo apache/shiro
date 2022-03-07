@@ -19,7 +19,7 @@
 package org.apache.shiro.authc.credential;
 
 import org.apache.shiro.crypto.hash.Hash;
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.lang.util.ByteSource;
 
 /**
  * A {@code HashingPasswordService} is a {@link PasswordService} that performs password encryption and comparisons
@@ -58,7 +58,7 @@ public interface HashingPasswordService extends PasswordService {
      * </pre>
      *
      * @param plaintext the raw password as 'byte-backed' object (String, character array, {@link ByteSource},
-     *                  etc) usually acquired from your application's 'new user' or 'password reset' workflow.
+     *                  etc.) usually acquired from your application's 'new user' or 'password reset' workflow.
      * @return the hashed password.
      * @throws IllegalArgumentException if the argument cannot be easily converted to bytes as defined by
      *                                  {@link ByteSource.Util#isCompatible(Object)}.

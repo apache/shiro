@@ -21,12 +21,15 @@ package org.apache.shiro.authc.credential;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SaltedAuthenticationInfo;
-import org.apache.shiro.codec.Base64;
-import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.hash.AbstractHash;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.codec.Base64;
+import org.apache.shiro.lang.codec.Hex;
+import org.apache.shiro.lang.util.SimpleByteSource;
+import org.apache.shiro.lang.util.StringUtils;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A {@code HashedCredentialMatcher} provides support for hashing of supplied {@code AuthenticationToken} credentials
@@ -49,10 +52,7 @@ import org.apache.shiro.util.StringUtils;
  * and multiple hash iterations.  Please read this excellent
  * <a href="http://www.owasp.org/index.php/Hashing_Java" _target="blank">Hashing Java article</a> to learn about
  * salting and multiple iterations and why you might want to use them. (Note of sections 5
- * &quot;Why add salt?&quot; and 6 "Hardening against the attacker's attack").   We should also note here that all of
- * Shiro's Hash implementations (for example, {@link org.apache.shiro.crypto.hash.Md5Hash Md5Hash},
- * {@link org.apache.shiro.crypto.hash.Sha1Hash Sha1Hash}, etc) support salting and multiple hash iterations via
- * overloaded constructors.
+ * &quot;Why add salt?&quot; and 6 "Hardening against the attacker's attack").</p>
  * <h4>Real World Case Study</h4>
  * In April 2010, some public Atlassian Jira and Confluence
  * installations (Apache Software Foundation, Codehaus, etc) were the target of account attacks and user accounts
@@ -93,7 +93,7 @@ import org.apache.shiro.util.StringUtils;
  * If this is not possible for some reason, this class will retain 1.0 backwards-compatible behavior of obtaining
  * the salt via the now-deprecated {@link #getSalt(AuthenticationToken) getSalt(AuthenticationToken)} method.  This
  * method will only be invoked if a {@code Realm} <em>does not</em> return
- * {@link SaltedAuthenticationInfo SaltedAutenticationInfo} instances and {@link #isHashSalted() hashSalted} is
+ * {@link SaltedAuthenticationInfo SaltedAuthenticationInfo} instances and {@link #isHashSalted() hashSalted} is
  * {@code true}.
  * But please note that the {@link #isHashSalted() hashSalted} property and the
  * {@link #getSalt(AuthenticationToken) getSalt(AuthenticationToken)} methods will be removed before the Shiro 2.0
@@ -112,8 +112,8 @@ import org.apache.shiro.util.StringUtils;
  * two, if your application mandates high security, use the SHA-256 (or higher) hashing algorithms and their
  * supporting {@code CredentialsMatcher} implementations.
  *
- * @see org.apache.shiro.crypto.hash.Md5Hash
- * @see org.apache.shiro.crypto.hash.Sha1Hash
+ * @see org.apache.shiro.crypto.hash.Sha256Hash
+ * @see org.apache.shiro.crypto.hash.Sha384Hash
  * @see org.apache.shiro.crypto.hash.Sha256Hash
  * @since 0.9
  */
@@ -128,7 +128,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
     private boolean storedCredentialsHexEncoded;
 
     /**
-     * JavaBeans-compatibile no-arg constructor intended for use in IoC/Dependency Injection environments.  If you
+     * JavaBeans-compatible no-arg constructor intended for use in IoC/Dependency Injection environments.  If you
      * use this constructor, you <em>MUST</em> also additionally set the
      * {@link #setHashAlgorithmName(String) hashAlgorithmName} property.
      */
@@ -341,6 +341,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * @param info the AuthenticationInfo from which to retrieve the credentials which assumed to be in already-hashed form.
      * @return a {@link Hash Hash} instance representing the given AuthenticationInfo's stored credentials.
      */
+    @Override
     protected Object getCredentials(AuthenticationInfo info) {
         Object credentials = info.getCredentials();
 
@@ -400,14 +401,14 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * @since 1.1
      */
     protected Object hashProvidedCredentials(AuthenticationToken token, AuthenticationInfo info) {
-        Object salt = null;
+        final Object salt;
         if (info instanceof SaltedAuthenticationInfo) {
             salt = ((SaltedAuthenticationInfo) info).getCredentialsSalt();
-        } else {
+        } else if (isHashSalted()) {
             //retain 1.0 backwards compatibility:
-            if (isHashSalted()) {
-                salt = getSalt(token);
-            }
+            salt = getSalt(token);
+        } else {
+            salt = SimpleByteSource.empty();
         }
         return hashProvidedCredentials(token.getCredentials(), salt, getHashIterations());
     }
@@ -435,14 +436,15 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * implementation/algorithm used is based on the {@link #getHashAlgorithmName() hashAlgorithmName} property.
      *
      * @param credentials    the submitted authentication token's credentials to hash
-     * @param salt           the value to salt the hash, or {@code null} if a salt will not be used.
+     * @param salt           the value to salt the hash. Cannot be {@code null}, but an empty ByteSource.
      * @param hashIterations the number of times to hash the credentials.  At least one hash will always occur though,
      *                       even if this argument is 0 or negative.
      * @return the hashed value of the provided credentials, according to the specified salt and hash iterations.
+     * @throws NullPointerException if salt is {@code null}.
      */
     protected Hash hashProvidedCredentials(Object credentials, Object salt, int hashIterations) {
         String hashAlgorithmName = assertHashAlgorithmName();
-        return new SimpleHash(hashAlgorithmName, credentials, salt, hashIterations);
+        return new SimpleHash(hashAlgorithmName, credentials, requireNonNull(salt, "salt cannot be null."), hashIterations);
     }
 
     /**

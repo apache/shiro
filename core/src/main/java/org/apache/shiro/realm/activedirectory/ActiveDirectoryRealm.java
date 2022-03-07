@@ -125,7 +125,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      * <p/>
      * This implementation expects the <tt>principal</tt> argument to be a String username.
      * <p/>
-     * Subclasses can override this method to determine authorization data (roles, permissions, etc) in a more
+     * Subclasses can override this method to determine authorization data (roles, permissions, etc.) in a more
      * complex way.  Note that this default implementation does not support permissions, only roles.
      *
      * @param principals         the principal of the Subject whose account is being retrieved.
@@ -155,23 +155,21 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         return new SimpleAuthorizationInfo(roleNames);
     }
 
-    private Set<String> getRoleNamesForUser(String username, LdapContext ldapContext) throws NamingException {
+    protected Set<String> getRoleNamesForUser(String username, LdapContext ldapContext) throws NamingException {
         Set<String> roleNames;
         roleNames = new LinkedHashSet<String>();
 
-        SearchControls searchCtls = new SearchControls();
-        searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        SearchControls searchControls = new SearchControls();
+        searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         String userPrincipalName = username;
         if (principalSuffix != null) {
             userPrincipalName += principalSuffix;
         }
 
-        //SHIRO-115 - prevent potential code injection:
-        String searchFilter = "(&(objectClass=*)(userPrincipalName={0}))";
         Object[] searchArguments = new Object[]{userPrincipalName};
 
-        NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchArguments, searchCtls);
+        NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchArguments, searchControls);
 
         while (answer.hasMoreElements()) {
             SearchResult sr = (SearchResult) answer.next();

@@ -93,8 +93,8 @@ class SingleArgumentMethodEventListenerTest {
 
     @Test(expected=IllegalArgumentException)
     void testNonPublicMethodSubscriber() {
-        def target = new InvalidMethodModiferSubscriber()
-        def method = InvalidMethodModiferSubscriber.class.getDeclaredMethods().find { it.name == "onEvent" }
+        def target = new InvalidMethodModifierSubscriber()
+        def method = InvalidMethodModifierSubscriber.class.getDeclaredMethods().find { it.name == "onEvent" }
 
         new SingleArgumentMethodEventListener(target, method)
     }

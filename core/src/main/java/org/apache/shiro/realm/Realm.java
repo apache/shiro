@@ -26,9 +26,9 @@ import org.apache.shiro.authc.AuthenticationToken;
  * A <tt>Realm</tt> is a security component that can access application-specific security entities
  * such as users, roles, and permissions to determine authentication and authorization operations.
  *
- * <p><tt>Realm</tt>s usually have a 1-to-1 correspondance with a datasource such as a relational database,
- * file sysetem, or other similar resource.  As such, implementations of this interface use datasource-specific APIs to
- * determine authorization data (roles, permissions, etc), such as JDBC, File IO, Hibernate or JPA, or any other
+ * <p><tt>Realm</tt>s usually have a 1-to-1 correspondence with a datasource such as a relational database,
+ * file system, or other similar resource.  As such, implementations of this interface use datasource-specific APIs to
+ * determine authorization data (roles, permissions, etc.), such as JDBC, File IO, Hibernate or JPA, or any other
  * Data Access API.  They are essentially security-specific
  * <a href="http://en.wikipedia.org/wiki/Data_Access_Object" target="_blank">DAO</a>s.
  *
@@ -51,7 +51,7 @@ import org.apache.shiro.authc.AuthenticationToken;
  * practically any application environment.
  *
  * <p>Most users will not implement the <tt>Realm</tt> interface directly, but will extend one of the subclasses,
- * {@link org.apache.shiro.realm.AuthenticatingRealm AuthenticatingRealm} or {@link org.apache.shiro.realm.AuthorizingRealm}, greatly reducing the effort requird
+ * {@link org.apache.shiro.realm.AuthenticatingRealm AuthenticatingRealm} or {@link org.apache.shiro.realm.AuthorizingRealm}, greatly reducing the effort required
  * to implement a <tt>Realm</tt> from scratch.</p>
  *
  * @see org.apache.shiro.realm.CachingRealm CachingRealm
@@ -98,7 +98,7 @@ public interface Realm {
      *         or <tt>null</tt> if no account could be found.
      * @throws org.apache.shiro.authc.AuthenticationException
      *          if there is an error obtaining or constructing an AuthenticationInfo object based on the
-     *          specified <tt>token</tt> or implementation-specifc login behavior fails.
+     *          specified <tt>token</tt> or implementation-specific login behavior fails.
      */
     AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException;
 

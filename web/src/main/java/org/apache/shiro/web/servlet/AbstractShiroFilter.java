@@ -40,7 +40,7 @@ import java.util.concurrent.Callable;
 
 /**
  * Abstract base class that provides all standard Shiro request filtering behavior and expects
- * subclasses to implement configuration-specific logic (INI, XML, .properties, etc).
+ * subclasses to implement configuration-specific logic (INI, XML, .properties, etc.).
  * <p/>
  * Subclasses should perform configuration and construction logic in an overridden
  * {@link #init()} method implementation.  That implementation should make available any constructed
@@ -314,7 +314,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
                     try {
                         session.touch();
                     } catch (Throwable t) {
-                        log.error("session.touch() method invocation has failed.  Unable to update" +
+                        log.error("session.touch() method invocation has failed.  Unable to update " +
                                 "the corresponding session's last access time based on the incoming request.", t);
                     }
                 }
@@ -404,6 +404,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * @since 1.0
      */
     protected FilterChain getExecutionChain(ServletRequest request, ServletResponse response, FilterChain origChain) {
+
         FilterChain chain = origChain;
 
         FilterChainResolver resolver = getFilterChainResolver();

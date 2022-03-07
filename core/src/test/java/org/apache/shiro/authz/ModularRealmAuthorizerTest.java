@@ -18,12 +18,11 @@
  */
 package org.apache.shiro.authz;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import junit.framework.Assert;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -48,7 +47,7 @@ public class ModularRealmAuthorizerTest
         // its null to start with
         for ( Realm realm : realms )
         {
-            Assert.assertNull( ((AuthorizingRealm)realm).getRolePermissionResolver() );
+            assertNull( ((AuthorizingRealm)realm).getRolePermissionResolver() );
         }
         
         ModularRealmAuthorizer modRealmAuthz = new ModularRealmAuthorizer();
@@ -57,7 +56,7 @@ public class ModularRealmAuthorizerTest
         // make sure they are still null
         for ( Realm realm : realms )
         {
-            Assert.assertNull( ((AuthorizingRealm)realm).getRolePermissionResolver() );
+            assertNull( ((AuthorizingRealm)realm).getRolePermissionResolver() );
         }
         
         // now set the RolePermissionResolver
@@ -74,7 +73,7 @@ public class ModularRealmAuthorizerTest
         for ( Realm realm : realms )
         {
             // check for same instance
-            Assert.assertTrue( ((AuthorizingRealm)realm).getRolePermissionResolver() == rolePermissionResolver );
+            assertTrue( ((AuthorizingRealm)realm).getRolePermissionResolver() == rolePermissionResolver );
         }
         
         // add a new realm and make sure the RolePermissionResolver is set
@@ -84,12 +83,12 @@ public class ModularRealmAuthorizerTest
         assertTrue( ((AuthorizingRealm) mockRealm).getRolePermissionResolver() == rolePermissionResolver );
         
         
-        // TODO: no way to unset them, not sure if that is a valid use case, but this is conistent with the PermissionResolver logic
+        // TODO: no way to unset them, not sure if that is a valid use case, but this is consistent with the PermissionResolver logic
 //        // now just to be sure, unset them
 //        modRealmAuthz.setRolePermissionResolver( null );
 //        for ( Realm realm : realms )
 //        {
-//            Assert.assertNull( ((AuthorizingRealm)realm).getRolePermissionResolver() );
+//            assertNull( ((AuthorizingRealm)realm).getRolePermissionResolver() );
 //        }
         
         

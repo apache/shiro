@@ -34,7 +34,7 @@ import java.security.Principal;
 /**
  * A {@code ShiroHttpServletRequest} wraps the Servlet container's original {@code ServletRequest} instance, but ensures
  * that all {@link HttpServletRequest} invocations that require Shiro's support ({@link #getRemoteUser getRemoteUser},
- * {@link #getSession getSession}, etc) can be executed first by Shiro as necessary before allowing the underlying
+ * {@link #getSession getSession}, etc.) can be executed first by Shiro as necessary before allowing the underlying
  * Servlet container instance's method to be invoked.
  *
  * @since 0.2
@@ -51,6 +51,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
     public static final String REFERENCED_SESSION_IS_NEW = ShiroHttpServletRequest.class.getName() + "_REFERENCED_SESSION_IS_NEW";
     public static final String REFERENCED_SESSION_ID_SOURCE = ShiroHttpServletRequest.class.getName() + "REFERENCED_SESSION_ID_SOURCE";
     public static final String IDENTITY_REMOVED_KEY = ShiroHttpServletRequest.class.getName() + "_IDENTITY_REMOVED_KEY";
+    public static final String SESSION_ID_URL_REWRITING_ENABLED = ShiroHttpServletRequest.class.getName() + "_SESSION_ID_URL_REWRITING_ENABLED";
 
     protected ServletContext servletContext = null;
 
@@ -150,16 +151,17 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
                 }
             }
         } else {
-            if (this.session == null) {
-
-                boolean existing = getSubject().getSession(false) != null;
-
+            boolean existing = getSubject().getSession(false) != null;
+            
+            if (this.session == null || !existing) {
                 Session shiroSession = getSubject().getSession(create);
                 if (shiroSession != null) {
                     this.session = new ShiroHttpSession(shiroSession, this, this.servletContext);
                     if (!existing) {
                         setAttribute(REFERENCED_SESSION_IS_NEW, Boolean.TRUE);
                     }
+                } else if (this.session != null) {
+                    this.session = null;
                 }
             }
             httpSession = this.session;

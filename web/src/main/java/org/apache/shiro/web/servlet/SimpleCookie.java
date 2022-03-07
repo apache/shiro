@@ -18,7 +18,8 @@
  */
 package org.apache.shiro.web.servlet;
 
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +68,7 @@ public class SimpleCookie implements Cookie {
     protected static final String COMMENT_ATTRIBUTE_NAME = "Comment";
     protected static final String SECURE_ATTRIBUTE_NAME = "Secure";
     protected static final String HTTP_ONLY_ATTRIBUTE_NAME = "HttpOnly";
+    protected static final String SAME_SITE_ATTRIBUTE_NAME = "SameSite";
 
     private static final transient Logger log = LoggerFactory.getLogger(SimpleCookie.class);
 
@@ -79,11 +81,13 @@ public class SimpleCookie implements Cookie {
     private int version;
     private boolean secure;
     private boolean httpOnly;
+    private SameSiteOptions sameSite;
 
     public SimpleCookie() {
         this.maxAge = DEFAULT_MAX_AGE;
         this.version = DEFAULT_VERSION;
         this.httpOnly = true; //most of the cookies ever used by Shiro should be as secure as possible.
+        this.sameSite = SameSiteOptions.LAX;
     }
 
     public SimpleCookie(String name) {
@@ -101,12 +105,15 @@ public class SimpleCookie implements Cookie {
         this.version = Math.max(DEFAULT_VERSION, cookie.getVersion());
         this.secure = cookie.isSecure();
         this.httpOnly = cookie.isHttpOnly();
+        this.sameSite = cookie.getSameSite();
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("Name cannot be null/empty.");
@@ -114,68 +121,98 @@ public class SimpleCookie implements Cookie {
         this.name = name;
     }
 
+    @Override
     public String getValue() {
         return value;
     }
 
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
 
+    @Override
     public String getComment() {
         return comment;
     }
 
+    @Override
     public void setComment(String comment) {
         this.comment = comment;
     }
 
+    @Override
     public String getDomain() {
         return domain;
     }
 
+    @Override
     public void setDomain(String domain) {
         this.domain = domain;
     }
 
+    @Override
     public String getPath() {
         return path;
     }
 
+    @Override
     public void setPath(String path) {
         this.path = path;
     }
 
+    @Override
     public int getMaxAge() {
         return maxAge;
     }
 
+    @Override
     public void setMaxAge(int maxAge) {
         this.maxAge = Math.max(DEFAULT_MAX_AGE, maxAge);
     }
 
+    @Override
     public int getVersion() {
         return version;
     }
 
+    @Override
     public void setVersion(int version) {
         this.version = Math.max(DEFAULT_VERSION, version);
     }
 
+    @Override
     public boolean isSecure() {
         return secure;
     }
 
+    @Override
     public void setSecure(boolean secure) {
         this.secure = secure;
     }
 
+    @Override
     public boolean isHttpOnly() {
         return httpOnly;
     }
 
+    @Override
     public void setHttpOnly(boolean httpOnly) {
         this.httpOnly = httpOnly;
+    }
+
+    @Override
+    public SameSiteOptions getSameSite() {
+        return sameSite;
+    }
+
+    @Override
+    public void setSameSite(SameSiteOptions sameSite) {
+        this.sameSite = sameSite;
+        if (this.sameSite == SameSiteOptions.NONE) {
+            // do not allow invalid cookies. Only secure cookies are allowed if SameSite is set to NONE.
+            setSecure(true);
+        }
     }
 
     /**
@@ -200,6 +237,7 @@ public class SimpleCookie implements Cookie {
         return path;
     }
 
+    @Override
     public void saveTo(HttpServletRequest request, HttpServletResponse response) {
 
         String name = getName();
@@ -211,15 +249,16 @@ public class SimpleCookie implements Cookie {
         int version = getVersion();
         boolean secure = isSecure();
         boolean httpOnly = isHttpOnly();
+        SameSiteOptions sameSite = getSameSite();
 
-        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly);
+        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly, sameSite);
     }
 
     private void addCookieHeader(HttpServletResponse response, String name, String value, String comment,
                                  String domain, String path, int maxAge, int version,
-                                 boolean secure, boolean httpOnly) {
+                                 boolean secure, boolean httpOnly, SameSiteOptions sameSite) {
 
-        String headerValue = buildHeaderValue(name, value, comment, domain, path, maxAge, version, secure, httpOnly);
+        String headerValue = buildHeaderValue(name, value, comment, domain, path, maxAge, version, secure, httpOnly, sameSite);
         response.addHeader(COOKIE_HEADER_NAME, headerValue);
 
         if (log.isDebugEnabled()) {
@@ -238,6 +277,13 @@ public class SimpleCookie implements Cookie {
                                       String domain, String path, int maxAge, int version,
                                       boolean secure, boolean httpOnly) {
 
+        return buildHeaderValue(name, value, comment, domain, path, maxAge, version, secure, httpOnly, getSameSite());
+    }
+
+    protected String buildHeaderValue(String name, String value, String comment,
+                                      String domain, String path, int maxAge, int version,
+                                      boolean secure, boolean httpOnly, SameSiteOptions sameSite) {
+
         if (!StringUtils.hasText(name)) {
             throw new IllegalStateException("Cookie name cannot be null/empty.");
         }
@@ -255,6 +301,7 @@ public class SimpleCookie implements Cookie {
         appendVersion(sb, version);
         appendSecure(sb, secure);
         appendHttpOnly(sb, httpOnly);
+        appendSameSite(sb, sameSite);
 
         return sb.toString();
 
@@ -328,6 +375,31 @@ public class SimpleCookie implements Cookie {
         }
     }
 
+    private void appendSameSite(StringBuilder sb, SameSiteOptions sameSite) {
+        if (sameSite != null) {
+            sb.append(ATTRIBUTE_DELIMITER);
+            sb.append(SAME_SITE_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(sameSite.toString().toLowerCase(Locale.ENGLISH));
+        }
+    }
+
+    /**
+     * Check whether the given {@code cookiePath} matches the {@code requestPath}
+     *
+     * @param cookiePath
+     * @param requestPath
+     * @return
+     * @see <a href="https://tools.ietf.org/html/rfc6265#section-5.1.4">RFC 6265, Section 5.1.4 "Paths and Path-Match"</a>
+     */
+    private boolean pathMatches(String cookiePath, String requestPath) {
+        if (!requestPath.startsWith(cookiePath)) {
+            return false;
+        }
+
+        return requestPath.length() == cookiePath.length()
+            || cookiePath.charAt(cookiePath.length() - 1) == '/'
+            || requestPath.charAt(cookiePath.length()) == '/';
+    }
+
     /**
      * Formats a date into a cookie date compatible string (Netscape's specification).
      *
@@ -341,6 +413,7 @@ public class SimpleCookie implements Cookie {
         return fmt.format(date);
     }
 
+    @Override
     public void removeFrom(HttpServletRequest request, HttpServletResponse response) {
         String name = getName();
         String value = DELETED_COOKIE_VALUE;
@@ -351,19 +424,28 @@ public class SimpleCookie implements Cookie {
         int version = getVersion();
         boolean secure = isSecure();
         boolean httpOnly = false; //no need to add the extra text, plus the value 'deleteMe' is not sensitive at all
+        SameSiteOptions sameSite = getSameSite();
 
-        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly);
+        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly, sameSite);
 
         log.trace("Removed '{}' cookie by setting maxAge=0", name);
     }
 
+    @Override
     public String readValue(HttpServletRequest request, HttpServletResponse ignored) {
         String name = getName();
         String value = null;
         javax.servlet.http.Cookie cookie = getCookie(request, name);
         if (cookie != null) {
-            value = cookie.getValue();
-            log.debug("Found '{}' cookie value [{}]", name, value);
+            // Validate that the cookie is used at the correct place.
+            String path = StringUtils.clean(getPath());
+            if (path != null && !pathMatches(path, request.getRequestURI())) {
+                log.warn("Found '{}' cookie at path '{}', but should be only used for '{}'", 
+                		new Object[] { name, Encode.forHtml(request.getRequestURI()), path});
+            } else {
+                value = cookie.getValue();
+                log.debug("Found '{}' cookie value [{}]", name, Encode.forHtml(value));
+            }
         } else {
             log.trace("No '{}' cookie value", name);
         }

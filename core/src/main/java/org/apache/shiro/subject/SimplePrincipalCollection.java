@@ -19,7 +19,7 @@
 package org.apache.shiro.subject;
 
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -98,10 +98,10 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
 
     public void add(Object principal, String realmName) {
         if (realmName == null) {
-            throw new IllegalArgumentException("realmName argument cannot be null.");
+            throw new NullPointerException("realmName argument cannot be null.");
         }
         if (principal == null) {
-            throw new IllegalArgumentException("principal argument cannot be null.");
+            throw new NullPointerException("principal argument cannot be null.");
         }
         this.cachedToString = null;
         getPrincipalsLazy(realmName).add(principal);
@@ -109,10 +109,10 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
 
     public void addAll(Collection principals, String realmName) {
         if (realmName == null) {
-            throw new IllegalArgumentException("realmName argument cannot be null.");
+            throw new NullPointerException("realmName argument cannot be null.");
         }
         if (principals == null) {
-            throw new IllegalArgumentException("principals argument cannot be null.");
+            throw new NullPointerException("principals argument cannot be null.");
         }
         if (principals.isEmpty()) {
             throw new IllegalArgumentException("principals argument cannot be an empty collection.");
@@ -264,7 +264,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
      * Serialization write support.
      * <p/>
      * NOTE: Don't forget to change the serialVersionUID constant at the top of this class
-     * if you make any backwards-incompatible serializatoin changes!!!
+     * if you make any backwards-incompatible serialization changes!!!
      * (use the JDK 'serialver' program for this)
      *
      * @param out output stream provided by Java serialization
@@ -284,7 +284,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
      * input stream.
      * <p/>
      * NOTE: Don't forget to change the serialVersionUID constant at the top of this class
-     * if you make any backwards-incompatible serializatoin changes!!!
+     * if you make any backwards-incompatible serialization changes!!!
      * (use the JDK 'serialver' program for this)
      *
      * @param in input stream provided by

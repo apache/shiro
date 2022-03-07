@@ -18,17 +18,29 @@
  */
 package org.apache.shiro.authc;
 
+import org.apache.logging.log4j.junit.LoggerContextRule;
+import org.apache.logging.log4j.test.appender.ListAppender;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 /**
  * @since 0.1
  */
 public class AbstractAuthenticatorTest {
+
+    @ClassRule
+    public static LoggerContextRule loggerContextRule = new LoggerContextRule("log4j2-list.xml");
 
     AbstractAuthenticator abstractAuthenticator;
     private final SimpleAuthenticationInfo info = new SimpleAuthenticationInfo("user1", "secret", "realmName");
@@ -150,6 +162,30 @@ public class AbstractAuthenticatorTest {
         };
         AuthenticationToken token = newToken();
         abstractAuthenticator.authenticate(token);
+    }
+
+    @Test
+    public void logExceptionAfterDoAuthenticateThrowsNonAuthenticationException() {
+        // NOTE: log4j is a test dependency
+        final String expectedExceptionMessage = "exception thrown for test logExceptionAfterDoAuthenticateThrowsNonAuthenticationException";
+
+        abstractAuthenticator = new AbstractAuthenticator() {
+            protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
+                throw new IllegalArgumentException(expectedExceptionMessage);
+            }
+        };
+        AuthenticationToken token = newToken();
+
+        try{
+            abstractAuthenticator.authenticate(token);
+            fail("the expected AuthenticationException was not thrown");
+        }catch(AuthenticationException expectedException){
+        }
+
+        final ListAppender listAppender = loggerContextRule.getListAppender("List");
+        String logMsg = String.join("\n", listAppender.getMessages());
+        assertTrue(logMsg.contains("WARN"));
+        assertTrue(logMsg.contains("java.lang.IllegalArgumentException: "+ expectedExceptionMessage));
     }
 
 }

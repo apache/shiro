@@ -28,6 +28,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.Locale;
 
 /**
  * Simple Filter that, upon receiving a request, will immediately log-out the currently executing
@@ -52,6 +55,13 @@ public class LogoutFilter extends AdviceFilter {
     private String redirectUrl = DEFAULT_REDIRECT_URL;
 
     /**
+     * Due to browser pre-fetching, using a GET requests for logout my cause a user to be logged accidentally, for example:
+     * out while typing in an address bar.  If <code>postOnlyLogout</code> is <code>true</code>. Only POST requests will cause
+     * a logout to occur.
+     */
+    private boolean postOnlyLogout = false;
+
+    /**
      * Acquires the currently executing {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) subject},
      * a potentially Subject or request-specific
      * {@link #getRedirectUrl(javax.servlet.ServletRequest, javax.servlet.ServletResponse, org.apache.shiro.subject.Subject) redirectUrl},
@@ -64,7 +74,18 @@ public class LogoutFilter extends AdviceFilter {
      */
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+
         Subject subject = getSubject(request, response);
+
+        // Check if POST only logout is enabled
+        if (isPostOnlyLogout()) {
+
+            // check if the current request's method is a POST, if not redirect
+            if (!WebUtils.toHttp(request).getMethod().toUpperCase(Locale.ENGLISH).equals("POST")) {
+               return onLogoutRequestNotAPost(request, response);
+            }
+        }
+
         String redirectUrl = getRedirectUrl(request, response, subject);
         //try/catch added for SHIRO-298:
         try {
@@ -140,7 +161,48 @@ public class LogoutFilter extends AdviceFilter {
      *
      * @param redirectUrl the url to where the user will be redirected after logout
      */
+    @SuppressWarnings("unused")
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
+    }
+
+
+    /**
+     * This method is called when <code>postOnlyLogout</code> is <code>true</code>, and the request was NOT a <code>POST</code>.
+     * For example if this filter is bound to '/logout' and the caller makes a GET request, this method would be invoked.
+     * <p>
+     *     The default implementation sets the response code to a 405, and sets the 'Allow' header to 'POST', and
+     *     always returns false.
+     * </p>
+     *
+     * @return The return value indicates if the processing should continue in this filter chain.
+     */
+    protected boolean onLogoutRequestNotAPost(ServletRequest request, ServletResponse response) {
+
+        HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
+        httpServletResponse.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        httpServletResponse.setHeader("Allow", "POST");
+        return false;
+    }
+
+    /**
+     * Due to browser pre-fetching, using a GET requests for logout my cause a user to be logged accidentally, for example:
+     * out while typing in an address bar.  If <code>postOnlyLogout</code> is <code>true</code>. Only POST requests will cause
+     * a logout to occur.
+     *
+     * @return Returns true if POST only logout is enabled
+     */
+    public boolean isPostOnlyLogout() {
+        return postOnlyLogout;
+    }
+
+    /**
+     * Due to browser pre-fetching, using a GET requests for logout my cause a user to be logged accidentally, for example:
+     * out while typing in an address bar.  If <code>postOnlyLogout</code> is <code>true</code>. Only POST requests will cause
+     * a logout to occur.
+     * @param postOnlyLogout enable or disable POST only logout.
+     */
+    public void setPostOnlyLogout(boolean postOnlyLogout) {
+        this.postOnlyLogout = postOnlyLogout;
     }
 }

@@ -22,10 +22,18 @@ import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.crypto.hash.HashService;
-import org.apache.shiro.crypto.hash.format.*;
-import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
+import org.apache.shiro.crypto.hash.format.HashFormat;
+import org.apache.shiro.crypto.hash.format.HashFormatFactory;
+import org.apache.shiro.crypto.hash.format.ParsableHashFormat;
+import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat;
+import org.apache.shiro.lang.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.security.MessageDigest;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Default implementation of the {@link PasswordService} interface that relies on an internal
@@ -33,15 +41,13 @@ import org.slf4j.LoggerFactory;
  * <h2>Hashing Passwords</h2>
  *
  * <h2>Comparing Passwords</h2>
- * All hashing operations are performed by the internal {@link #getHashService() hashService}.  After the hash
- * is computed, it is formatted into a String value via the internal {@link #getHashFormat() hashFormat}.
+ * All hashing operations are performed by the internal {@link #getHashService() hashService}.
  *
  * @since 1.2
  */
 public class DefaultPasswordService implements HashingPasswordService {
 
-    public static final String DEFAULT_HASH_ALGORITHM = "SHA-256";
-    public static final int DEFAULT_HASH_ITERATIONS = 500000; //500,000
+    public static final String DEFAULT_HASH_ALGORITHM = "argon2id";
 
     private static final Logger log = LoggerFactory.getLogger(DefaultPasswordService.class);
 
@@ -51,25 +57,33 @@ public class DefaultPasswordService implements HashingPasswordService {
 
     private volatile boolean hashFormatWarned; //used to avoid excessive log noise
 
+    /**
+     * Constructs a new PasswordService with a default hash service and the default
+     * algorithm name {@value #DEFAULT_HASH_ALGORITHM}, a default hash format (shiro2) and
+     * a default hash format factory.
+     *
+     * <p>The default algorithm can change between minor versions and does not introduce
+     * API incompatibility by design.</p>
+     */
     public DefaultPasswordService() {
         this.hashFormatWarned = false;
 
         DefaultHashService hashService = new DefaultHashService();
-        hashService.setHashAlgorithmName(DEFAULT_HASH_ALGORITHM);
-        hashService.setHashIterations(DEFAULT_HASH_ITERATIONS);
-        hashService.setGeneratePublicSalt(true); //always want generated salts for user passwords to be most secure
+        hashService.setDefaultAlgorithmName(DEFAULT_HASH_ALGORITHM);
         this.hashService = hashService;
 
-        this.hashFormat = new Shiro1CryptFormat();
+        this.hashFormat = new Shiro2CryptFormat();
         this.hashFormatFactory = new DefaultHashFormatFactory();
     }
 
+    @Override
     public String encryptPassword(Object plaintext) {
-        Hash hash = hashPassword(plaintext);
+        Hash hash = hashPassword(requireNonNull(plaintext));
         checkHashFormatDurability();
         return this.hashFormat.format(hash);
     }
 
+    @Override
     public Hash hashPassword(Object plaintext) {
         ByteSource plaintextBytes = createByteSource(plaintext);
         if (plaintextBytes == null || plaintextBytes.isEmpty()) {
@@ -79,6 +93,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         return hashService.computeHash(request);
     }
 
+    @Override
     public boolean passwordsMatch(Object plaintext, Hash saved) {
         ByteSource plaintextBytes = createByteSource(plaintext);
 
@@ -90,11 +105,15 @@ public class DefaultPasswordService implements HashingPasswordService {
             }
         }
 
-        HashRequest request = buildHashRequest(plaintextBytes, saved);
+        return saved.matchesPassword(plaintextBytes);
+    }
 
-        Hash computed = this.hashService.computeHash(request);
+    private boolean constantEquals(String savedHash, String computedHash) {
 
-        return saved.equals(computed);
+        byte[] savedHashByteArray = savedHash.getBytes();
+        byte[] computedHashByteArray = computedHash.getBytes();
+
+        return MessageDigest.isEqual(savedHashByteArray, computedHashByteArray);
     }
 
     protected void checkHashFormatDurability() {
@@ -123,6 +142,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         return ByteSource.Util.bytes(o);
     }
 
+    @Override
     public boolean passwordsMatch(Object submittedPlaintext, String saved) {
         ByteSource plaintextBytes = createByteSource(submittedPlaintext);
 
@@ -141,9 +161,9 @@ public class DefaultPasswordService implements HashingPasswordService {
         //configuration changes.
         HashFormat discoveredFormat = this.hashFormatFactory.getInstance(saved);
 
-        if (discoveredFormat != null && discoveredFormat instanceof ParsableHashFormat) {
+        if (discoveredFormat instanceof ParsableHashFormat) {
 
-            ParsableHashFormat parsableHashFormat = (ParsableHashFormat)discoveredFormat;
+            ParsableHashFormat parsableHashFormat = (ParsableHashFormat) discoveredFormat;
             Hash savedHash = parsableHashFormat.parse(saved);
 
             return passwordsMatch(submittedPlaintext, savedHash);
@@ -161,17 +181,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         Hash computed = this.hashService.computeHash(request);
         String formatted = this.hashFormat.format(computed);
 
-        return saved.equals(formatted);
-    }
-
-    protected HashRequest buildHashRequest(ByteSource plaintext, Hash saved) {
-        //keep everything from the saved hash except for the source:
-        return new HashRequest.Builder().setSource(plaintext)
-                //now use the existing saved data:
-                .setAlgorithmName(saved.getAlgorithmName())
-                .setSalt(saved.getSalt())
-                .setIterations(saved.getIterations())
-                .build();
+        return constantEquals(saved, formatted);
     }
 
     public HashService getHashService() {

@@ -23,7 +23,7 @@ import org.apache.shiro.dao.InvalidResourceUsageException;
 /**
  * Exception thrown when a configured LDAP
  * <a href="http://download.oracle.com/javase/jndi/tutorial/ldap/security/auth.html">
- * Authentication Mechanism</a> is unsupported by the target LDAP server. (e.g. DIGEST-MD5, simple, etc)
+ * Authentication Mechanism</a> is unsupported by the target LDAP server. (e.g. DIGEST-MD5, simple, etc.)
  *
  * @since 1.2
  */

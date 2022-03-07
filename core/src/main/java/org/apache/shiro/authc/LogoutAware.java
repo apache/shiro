@@ -23,7 +23,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 /**
  * An SPI interface allowing cleanup logic to be executed during logout of a previously authenticated Subject/user.
  *
- * <p>As it is an SPI interface, it is really intended for SPI implementors such as those implementing Realms.
+ * <p>As it is an SPI interface, it is really intended for SPI implementers such as those implementing Realms.
  *
  * <p>All of Shiro's concrete Realm implementations implement this interface as a convenience for those wishing
  * to subclass them.

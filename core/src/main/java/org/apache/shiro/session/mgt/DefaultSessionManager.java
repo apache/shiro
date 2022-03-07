@@ -101,7 +101,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
      * This property is provided because some systems need the ability to perform querying/reporting against sessions in
      * the data store, even after they have stopped or expired.  Setting this attribute to {@code false} will allow
      * such querying, but with the caveat that the application developer/configurer deletes the sessions themselves by
-     * some other means (cron, quartz, etc).
+     * some other means (cron, quartz, etc.).
      *
      * @return {@code true} if sessions should be automatically deleted after they are discovered to be invalid,
      *         {@code false} if invalid sessions will be manually deleted by some process external to Shiro's control.
@@ -116,7 +116,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
      * value is {@code true} to ensure no orphans will exist in the underlying data store.
      * <h4>WARNING</h4>
      * Only set this value to {@code false} if you are manually going to delete sessions yourself by some process
-     * (quartz, cron, etc) external to Shiro's control.  See the
+     * (quartz, cron, etc.) external to Shiro's control.  See the
      * {@link #isDeleteInvalidSessions() isDeleteInvalidSessions()} JavaDoc for more.
      *
      * @param deleteInvalidSessions whether or not sessions should be automatically deleted after they are discovered

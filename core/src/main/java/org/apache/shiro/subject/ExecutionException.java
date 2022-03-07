@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.subject;
 
-import org.apache.shiro.ShiroException;
+import org.apache.shiro.lang.ShiroException;
 
 /**
  * Exception wrapping any potential checked exception thrown when a {@code Subject} executes a

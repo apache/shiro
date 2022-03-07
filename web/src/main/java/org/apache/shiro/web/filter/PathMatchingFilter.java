@@ -20,9 +20,9 @@ package org.apache.shiro.web.filter;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
-import org.apache.shiro.util.StringUtils;
 import org.apache.shiro.web.servlet.AdviceFilter;
 import org.apache.shiro.web.util.WebUtils;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ import javax.servlet.ServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.apache.shiro.util.StringUtils.split;
+import static org.apache.shiro.lang.util.StringUtils.split;
 
 /**
  * <p>Base class for Filters that will process only specified paths and allow all others to pass through.</p>
@@ -45,6 +45,8 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * Log available to this class only
      */
     private static final Logger log = LoggerFactory.getLogger(PathMatchingFilter.class);
+
+    private static final String DEFAULT_PATH_SEPARATOR = "/";
 
     /**
      * PatternMatcher used in determining which paths to react to for a given request.
@@ -62,7 +64,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     protected Map<String, Object> appliedPaths = new LinkedHashMap<String, Object>();
 
     /**
-     * Splits any comma-delmited values that might be found in the <code>config</code> argument and sets the resulting
+     * Splits any comma-delimited values that might be found in the <code>config</code> argument and sets the resulting
      * <code>String[]</code> array on the <code>appliedPaths</code> internal Map.
      * <p/>
      * That is:
@@ -120,8 +122,24 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      */
     protected boolean pathsMatch(String path, ServletRequest request) {
         String requestURI = getPathWithinApplication(request);
-        log.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, requestURI);
-        return pathsMatch(path, requestURI);
+
+        log.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, Encode.forHtml(requestURI));
+        boolean match = pathsMatch(path, requestURI);
+
+        if (!match) {
+            if (requestURI != null && !DEFAULT_PATH_SEPARATOR.equals(requestURI)
+                && requestURI.endsWith(DEFAULT_PATH_SEPARATOR)) {
+                requestURI = requestURI.substring(0, requestURI.length() - 1);
+            }
+            if (path != null && !DEFAULT_PATH_SEPARATOR.equals(path)
+                && path.endsWith(DEFAULT_PATH_SEPARATOR)) {
+                path = path.substring(0, path.length() - 1);
+            }
+            log.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, Encode.forHtml(requestURI));
+            match = pathsMatch(path, requestURI);
+        }
+
+        return match;
     }
 
     /**
@@ -138,7 +156,9 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      *         <code>false</code> otherwise.
      */
     protected boolean pathsMatch(String pattern, String path) {
-        return pathMatcher.matches(pattern, path);
+        boolean matches = pathMatcher.matches(pattern, path);
+        log.trace("Pattern [{}] matches path [{}] => [{}]", pattern, path, matches);
+        return matches;
     }
 
     /**

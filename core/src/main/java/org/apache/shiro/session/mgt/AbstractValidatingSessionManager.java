@@ -23,8 +23,8 @@ import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.LifecycleUtils;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.LifecycleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,7 +213,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
             log.debug("No sessionValidationScheduler set.  Attempting to create default instance.");
         }
         scheduler = new ExecutorServiceSessionValidationScheduler(this);
-        scheduler.setInterval(getSessionValidationInterval());
+        scheduler.setSessionValidationInterval(getSessionValidationInterval());
         if (log.isTraceEnabled()) {
             log.trace("Created default SessionValidationScheduler instance of type [" + scheduler.getClass().getName() + "].");
         }
@@ -225,6 +225,10 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
         if (scheduler == null) {
             scheduler = createSessionValidationScheduler();
             setSessionValidationScheduler(scheduler);
+        }
+        // it is possible that that a scheduler was already created and set via 'setSessionValidationScheduler()'
+        // but would not have been enabled/started yet
+        if (!scheduler.isEnabled()) {
             if (log.isInfoEnabled()) {
                 log.info("Enabling session validation scheduler...");
             }
@@ -236,7 +240,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
     protected void afterSessionValidationEnabled() {
     }
 
-    protected void disableSessionValidation() {
+    protected synchronized void disableSessionValidation() {
         beforeSessionValidationDisabled();
         SessionValidationScheduler scheduler = getSessionValidationScheduler();
         if (scheduler != null) {

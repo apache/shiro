@@ -22,9 +22,11 @@ import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.test.SecurityManagerTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test cases for the {@link PermissionAnnotationHandler} class.
@@ -33,48 +35,54 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
 
     //Added to satisfy SHIRO-146
 
-    @Test(expected = UnauthenticatedException.class)
-    public void testGuestSinglePermissionAssertion() throws Throwable {
+    @Test
+    public void testGuestSinglePermissionAssertion() {
         PermissionAnnotationHandler handler = new PermissionAnnotationHandler();
 
         Annotation requiresPermissionAnnotation = new RequiresPermissions() {
+            @Override
             public String[] value() {
                 return new String[]{"test:test"};
             }
 
+            @Override
             public Class<? extends Annotation> annotationType() {
                 return RequiresPermissions.class;
             }
 
-	    public Logical logical() {
+	    @Override
+        public Logical logical() {
 		return Logical.AND;
 	    }
         };
 
-        handler.assertAuthorized(requiresPermissionAnnotation);
+        assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresPermissionAnnotation));
     }
 
     //Added to satisfy SHIRO-146
 
-    @Test(expected = UnauthenticatedException.class)
-    public void testGuestMultiplePermissionAssertion() throws Throwable {
+    @Test
+    public void testGuestMultiplePermissionAssertion() {
         PermissionAnnotationHandler handler = new PermissionAnnotationHandler();
 
         Annotation requiresPermissionAnnotation = new RequiresPermissions() {
+            @Override
             public String[] value() {
                 return new String[]{"test:test", "test2:test2"};
             }
 
+            @Override
             public Class<? extends Annotation> annotationType() {
                 return RequiresPermissions.class;
             }
             
-	    public Logical logical() {
+	    @Override
+        public Logical logical() {
 		return Logical.AND;
 	    }
         };
 
-        handler.assertAuthorized(requiresPermissionAnnotation);
+        assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresPermissionAnnotation));
     }
 
 }

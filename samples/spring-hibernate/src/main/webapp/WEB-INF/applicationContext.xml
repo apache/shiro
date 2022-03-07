@@ -51,32 +51,26 @@
     </bean>
 
     <!-- Hibernate SessionFactory -->
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <!-- Because we're using an in-memory database for demo purposes (which is lost every time the app
-             shuts down), we have to ensure that the HSQLDB DDL is run each time the app starts.  The
-             DDL is auto-generated based on the *.hbm.xml mapping definitions below. -->
-        <property name="schemaUpdate" value="true"/>
         <!-- Scan packages for JPA annotations -->
         <property name="packagesToScan" value="org.apache.shiro.samples.sprhib.model"/>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
                 <prop key="hibernate.jdbc.fetch_size">100</prop>
-                <prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.SingletonEhCacheProvider</prop>
+
+                <!-- Because we're using an in-memory database for demo purposes (which is lost every time the app
+                     shuts down), we have to ensure that the HSQLDB DDL is run each time the app starts.  The
+                     DDL is auto-generated based on the *.hbm.xml mapping definitions below. -->
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
             </props>
-        </property>
-        <property name="eventListeners">
-            <map>
-                <entry key="merge">
-                    <bean class="org.springframework.orm.hibernate3.support.IdTransferringMergeEventListener"/>
-                </entry>
-            </map>
         </property>
     </bean>
 
     <!-- Transaction support beans -->
-    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
@@ -93,10 +87,11 @@
         <!-- Single realm app (realm configured next, below).  If you have multiple realms, use the 'realms'
       property instead. -->
         <property name="realm" ref="sampleRealm"/>
-        <!-- Uncomment this next property if you want heterogenous session access or clusterable/distributable
-             sessions.  The default value is 'http' which uses the Servlet container's HttpSession as the underlying
-             Session implementation.
-        <property name="sessionMode" value="native"/> -->
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="sessionIdUrlRewritingEnabled" value="false"/>
     </bean>
 
     <!-- Post processor that automatically invokes init() and destroy() methods -->

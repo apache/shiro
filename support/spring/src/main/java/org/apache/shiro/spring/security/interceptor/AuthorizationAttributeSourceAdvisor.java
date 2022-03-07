@@ -63,7 +63,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     }
 
     /**
-     * Returns <tt>true</tt> if the method has any Shiro annotations, false otherwise.
+     * Returns <tt>true</tt> if the method or the class has any Shiro annotations, false otherwise.
      * The annotations inspected are:
      * <ul>
      * <li>{@link org.apache.shiro.authz.annotation.RequiresAuthentication RequiresAuthentication}</li>
@@ -90,15 +90,23 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
         if ( targetClass != null) {
             try {
                 m = targetClass.getMethod(m.getName(), m.getParameterTypes());
-                if ( isAuthzAnnotationPresent(m) ) {
-                    return true;
-                }
+                return isAuthzAnnotationPresent(m) || isAuthzAnnotationPresent(targetClass);
             } catch (NoSuchMethodException ignored) {
                 //default return value is false.  If we can't find the method, then obviously
                 //there is no annotation, so just use the default return value.
             }
         }
 
+        return false;
+    }
+
+    private boolean isAuthzAnnotationPresent(Class<?> targetClazz) {
+        for( Class<? extends Annotation> annClass : AUTHZ_ANNOTATION_CLASSES ) {
+            Annotation a = AnnotationUtils.findAnnotation(targetClazz, annClass);
+            if ( a != null ) {
+                return true;
+            }
+        }
         return false;
     }
 

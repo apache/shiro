@@ -27,7 +27,7 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -52,7 +52,7 @@ import java.util.concurrent.Callable;
  * type-safe method.  (Shiro's default implementations do String-to-Permission conversion for these methods using
  * {@link org.apache.shiro.authz.permission.PermissionResolver PermissionResolver}s.)
  * <p/>
- * These overloaded *Permission methods forgo type-saftey for the benefit of convenience and simplicity,
+ * These overloaded *Permission methods forgo type-safety for the benefit of convenience and simplicity,
  * so you should choose which ones to use based on your preferences and needs.
  *
  * @since 0.1
@@ -97,7 +97,7 @@ public interface Subject {
      * <p/>
      * The word &quot;principals&quot; is nothing more than a fancy security term for identifying attributes associated
      * with a Subject, aka, application user.  For example, user id, a surname (family/last name), given (first) name,
-     * social security number, nickname, username, etc, are all examples of a principal.
+     * social security number, nickname, username, etc., are all examples of a principal.
      *
      * @return all of this Subject's principals (identifying attributes).
      * @see #getPrincipal()
@@ -432,7 +432,7 @@ public interface Subject {
      * <h3>Web Environment Warning</h3>
      * Calling this method in web environments will usually remove any associated session cookie as part of
      * session invalidation.  Because cookies are part of the HTTP header, and headers can only be set before the
-     * response body (html, image, etc) is sent, this method in web environments must be called before <em>any</em>
+     * response body (html, image, etc.) is sent, this method in web environments must be called before <em>any</em>
      * content has been rendered.
      * <p/>
      * The typical approach most applications use in this scenario is to redirect the user to a different
@@ -557,7 +557,7 @@ public interface Subject {
      * Releases the current 'run as' (assumed) identity and reverts back to the previous 'pre run as'
      * identity that existed before {@code #runAs runAs} was called.
      * <p/>
-     * This method returne 'run as' (assumed) identity being released or {@code null} if this {@code Subject} is not
+     * This method returns 'run as' (assumed) identity being released or {@code null} if this {@code Subject} is not
      * operating under an assumed identity.
      *
      * @return the 'run as' (assumed) identity being released or {@code null} if this {@code Subject} is not operating
@@ -670,7 +670,7 @@ public interface Subject {
          * specified {@code sessionId}.
          * <p/>
          * Usually when specifying a {@code sessionId}, no other {@code Builder} methods would be specified because
-         * everything else (principals, inet address, etc) can usually be reconstructed based on the referenced
+         * everything else (principals, inet address, etc.) can usually be reconstructed based on the referenced
          * session alone.  In other words, this is almost always sufficient:
          * <pre>
          * new Subject.Builder().sessionId(sessionId).buildSubject();</pre>

@@ -25,7 +25,8 @@ import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
-import org.apache.shiro.util.Initializable;
+import org.apache.shiro.lang.util.Initializable;
+import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -244,8 +245,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
                 }
                 this.authorizationCache = cacheManager.getCache(cacheName);
             } else {
-                if (log.isInfoEnabled()) {
-                    log.info("No cache or cacheManager properties have been set.  Authorization cache cannot " +
+                if (log.isDebugEnabled()) {
+                    log.debug("No cache or cacheManager properties have been set.  Authorization cache cannot " +
                             "be obtained.");
                 }
             }
@@ -431,8 +432,10 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
         if (resolver != null && !CollectionUtils.isEmpty(stringPerms)) {
             perms = new LinkedHashSet<Permission>(stringPerms.size());
             for (String strPermission : stringPerms) {
-                Permission permission = getPermissionResolver().resolvePermission(strPermission);
-                perms.add(permission);
+                if (StringUtils.clean(strPermission) != null) {
+                    Permission permission = resolver.resolvePermission(strPermission);
+                    perms.add(permission);
+                }
             }
         }
         return perms;

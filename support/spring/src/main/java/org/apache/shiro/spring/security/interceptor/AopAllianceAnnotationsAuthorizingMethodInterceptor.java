@@ -57,7 +57,7 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
      * Creates a {@link MethodInvocation MethodInvocation} that wraps an
      * {@link org.aopalliance.intercept.MethodInvocation org.aopalliance.intercept.MethodInvocation} instance,
      * enabling Shiro Annotations in <a href="http://aopalliance.sourceforge.net/">AOP Alliance</a> environments
-     * (Spring, etc).
+     * (Spring, etc.).
      *
      * @param implSpecificMethodInvocation AOP Alliance {@link org.aopalliance.intercept.MethodInvocation MethodInvocation}
      * @return a Shiro {@link MethodInvocation MethodInvocation} instance that wraps the AOP Alliance instance.
