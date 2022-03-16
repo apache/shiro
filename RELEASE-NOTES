@@ -21,6 +21,58 @@ combined with Jira's auto-generated release notes during a release for the
 total set.
 
 ###########################################################
+# 1.9.0
+###########################################################
+
+Bug
+
+    [SHIRO-829] - beanPostProcessor and FactoryBean cause aop to fail in the same Configuration
+    [SHIRO-845] - Dependencies for test-jars missing
+
+Improvement
+
+    [SHIRO-804] - Avoid conflicts with spring boot aop
+    [SHIRO-836] - Delete jsecurty-sample.jks
+    [SHIRO-838] - Create SHA512-Hashes
+    [SHIRO-846] - Creation of site takes very long time
+    [SHIRO-848] - Relative Path in pom.xml is not needed
+    [SHIRO-850] - The profile name jdk19-plus is misleading
+    [SHIRO-851] - Handling properties for compile/enconding vs. default configurations of plugins
+    [SHIRO-852] - Configuration for maven-release-plugin prepationGoal should be changed
+    [SHIRO-853] - Versions of maven-surefire/failsafe/report plugin are not in sync
+    [SHIRO-854] - Konfiguration includes/excludes maven-failsafe-plugin can be reduced to default
+    [SHIRO-860] - update logback to 1.2.10
+    [SHIRO-862] - Replace Google Analytics with Matomo for new Javadocs
+
+Task
+
+    [SHIRO-841] - NullPointerException from SessionsSecurityManager.start()
+    [SHIRO-867] - Skip Deployment of integration-test and samples artifacts
+
+Dependency upgrade
+
+    [SHIRO-828] - aspectj-maven-plugin 1.14.0
+    [SHIRO-842] - shiro-web depends on older log4j
+    [SHIRO-843] - Update maven-project-info-reports
+    [SHIRO-844] - Update maven-javadoc-plugin to 3.3.1
+
+
+###########################################################
+# 1.8.0
+###########################################################
+
+Bug
+
+    [SHIRO-678] - Strings garbled when POST without JSESSIONID cookie
+    [SHIRO-812] - Key value separator in config is broken with escape char
+    [SHIRO-825] - Trailing slash in URI results in "IllegalArgumentException: There is no configured chain under the name/key"
+
+Improvement
+
+    [SHIRO-216] - Add @Documented to Shiro authorization annotations
+
+
+###########################################################
 # 1.7.1
 ###########################################################
 
