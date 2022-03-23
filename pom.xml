@@ -69,7 +69,7 @@
         <shiro.previousVersion>1.7.1</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
-        <project.build.outputTimestamp>2021-07-16T23:08:15Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2022-03-22T23:08:15Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
         <!--suppress CheckTagEmptyBody -->
         <surefire.argLine></surefire.argLine>
@@ -289,12 +289,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.3.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>5.1.1</version>
+                    <version>5.1.4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -548,7 +548,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.2.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -608,7 +608,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
+                <version>3.0.0-M5</version>
                 <configuration>
                     <!-- do not update upstream, with a pending release. -->
                     <pushChanges>false</pushChanges>

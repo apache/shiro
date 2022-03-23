@@ -35,6 +35,11 @@ bin/
 target/
 
 #
+# VS Code
+#
+.factorypath
+
+#
 # Maven release metadata
 #
 release.properties
