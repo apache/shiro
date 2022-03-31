@@ -19,6 +19,7 @@
 package org.apache.shiro.samples;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
@@ -38,14 +39,15 @@ public class RestrictedErrorController implements ErrorController {
     @Autowired
     private ErrorAttributes errorAttributes;
 
-    @Override
     public String getErrorPath() {
         return ERROR_PATH;
     }
 
     @RequestMapping(ERROR_PATH)
     String error(HttpServletRequest request, Model model) {
-        Map<String, Object> errorMap = errorAttributes.getErrorAttributes(new ServletWebRequest(request), false);
+        Map<String, Object> errorMap = errorAttributes.getErrorAttributes(
+                new ServletWebRequest(request),
+                ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE));
         model.addAttribute("errors", errorMap);
         return "error";
     }
