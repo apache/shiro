@@ -21,8 +21,6 @@ package org.apache.shiro.util;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-import java.util.regex.Pattern;
-
 /**
  * Unit tests for the {@link RegExPatternMatcher}.
  *
@@ -32,12 +30,44 @@ public class RegExPatternMatcherTest {
 
     @Test
     public void testSimplePattern() {
-        PatternMatcher pm = new RegExPatternMatcher();
-        String pattern = "a*b";
-        String test = "aaaaaaab";
-        //not necessary for the test, but Idea performs auto validation when it sees this:
-        Pattern.compile(pattern);
-        assertTrue(pm.matches(pattern, test));
+        assertPatternMatch("a*b", "aaaaaaab");
     }
 
+    @Test
+    public void testMatchesWithCarriageReturn() {
+        assertPatternMatch(".*", "/blah\n");
+    }
+
+    @Test
+    public void testMatchesWithLineFeed() {
+        assertPatternMatch(".*", "/blah\r");
+    }
+
+    @Test
+    public void testCaseInsensitive() {
+        RegExPatternMatcher pm = new RegExPatternMatcher();
+        pm.setCaseInsensitive(true);
+        assertPatternMatch("/blah", "/BlaH", pm);
+    }
+
+    @Test
+    public void testCaseSensitive() {
+        assertPatternNotMatch("/blah", "/BlaH");
+    }
+
+    private void assertPatternMatch(String pattern, String path) {
+        assertPatternMatch(pattern, path, new RegExPatternMatcher());
+    }
+
+    private void assertPatternMatch(String pattern, String path, PatternMatcher pm) {
+        assertTrue("Expected path '" + path + "' to match pattern '" + pattern + "'" , pm.matches(pattern, path));
+    }
+
+    private void assertPatternNotMatch(String pattern, String path) {
+        assertPatternNotMatch(pattern, path, new RegExPatternMatcher());
+    }
+
+    private void assertPatternNotMatch(String pattern, String path, PatternMatcher pm) {
+        assertFalse("Expected path '" + path + "' to NOT match pattern '" + pattern + "'" , pm.matches(pattern, path));
+    }
 }
