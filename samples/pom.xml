@@ -49,6 +49,7 @@
         <module>guice</module>
         <module>quickstart-guice</module>
         <module>servlet-plugin</module>
+        <module>web-jakarta</module>
     </modules>
 
     <reporting>
