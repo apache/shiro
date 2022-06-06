@@ -50,6 +50,7 @@
         <module>quickstart-guice</module>
         <module>servlet-plugin</module>
         <module>jaxrs</module>
+        <module>web-jakarta</module>
     </modules>
 
     <reporting>
@@ -63,4 +64,3 @@
         </plugins>
     </reporting>
 </project>
-

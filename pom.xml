@@ -147,6 +147,7 @@
         <module>samples</module>
         <module>integration-tests</module>
         <module>test-coverage</module>
+        <module>bom</module>
     </modules>
 
     <mailingLists>
@@ -438,6 +439,74 @@
                         <complianceLevel>${maven.compiler.target}</complianceLevel>
                         <showWeaveInfo>true</showWeaveInfo>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <executions>
+                        <execution>
+                            <id>jakarta</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <configuration>
+                                <minimizeJar>false</minimizeJar>
+                                <shadedArtifactAttached>true</shadedArtifactAttached>
+                                <shadedClassifierName>jakarta</shadedClassifierName>
+                                <createDependencyReducedPom>false</createDependencyReducedPom>
+                                <transformers>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                </transformers>
+                                <artifactSet>
+                                    <includes>
+                                        <include>${project.groupId}:${project.artifactId}</include>
+                                    </includes>
+                                </artifactSet>
+                                <relocations>
+                                    <relocation>
+                                        <pattern>javax.annotation</pattern>
+                                        <shadedPattern>jakarta.annotation</shadedPattern>
+                                        <excludes>
+                                            <exclude>javax.annotation.processing.**</exclude>
+                                        </excludes>
+                                    </relocation>
+                                    <relocation>
+                                        <pattern>javax.enterprise</pattern>
+                                        <shadedPattern>jakarta.enterprise</shadedPattern>
+                                        <excludes>
+                                            <exclude>javax.enterprise.deploy.**</exclude>
+                                        </excludes>
+                                    </relocation>
+                                    <relocation>
+                                        <pattern>javax.inject</pattern>
+                                        <shadedPattern>jakarta.inject</shadedPattern>
+                                    </relocation>
+                                    <relocation>
+                                        <pattern>javax.json</pattern>
+                                        <shadedPattern>jakarta.json</shadedPattern>
+                                    </relocation>
+                                    <relocation>
+                                        <pattern>javax.servlet</pattern>
+                                        <shadedPattern>jakarta.servlet</shadedPattern>
+                                    </relocation>
+                                    <relocation>
+                                        <pattern>javax.websocket</pattern>
+                                        <shadedPattern>jakarta.websocket</shadedPattern>
+                                    </relocation>
+                                    <relocation>
+                                        <pattern>javax.ws.rs</pattern>
+                                        <shadedPattern>jakarta.ws.rs</shadedPattern>
+                                    </relocation>
+                                    <relocation>
+                                        <pattern>javax.crypto</pattern>
+                                        <shadedPattern>jakarta.crypto</shadedPattern>
+                                    </relocation>
+                                </relocations>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
