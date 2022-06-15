@@ -29,7 +29,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.easymock.EasyMock.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Test cases for the {@link AuthorizationFilter} class.
@@ -43,22 +46,20 @@ public class AuthorizationFilterTest extends SecurityManagerTestSupport {
 
         //log in the user using the account provided by the superclass for tests:
         SecurityUtils.getSubject().login(new UsernamePasswordToken("test", "test"));
-        
+
         AuthorizationFilter filter = new AuthorizationFilter() {
             @Override
-            protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue)
-                    throws Exception {
+            protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
                 return false; //for this test case
             }
         };
 
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        replay(response);
+        // response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         filter.onAccessDenied(request, response);
-        verify(response);
+        verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
     @Test
@@ -73,27 +74,22 @@ public class AuthorizationFilterTest extends SecurityManagerTestSupport {
 
         AuthorizationFilter filter = new AuthorizationFilter() {
             @Override
-            protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue)
-                    throws Exception {
+            protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
                 return false; //for this test case
             }
         };
         filter.setUnauthorizedUrl(unauthorizedUrl);
 
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
-
-        expect(request.getContextPath()).andReturn("/").anyTimes();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
         String encoded = "/" + unauthorizedUrl;
-        expect(response.encodeRedirectURL(unauthorizedUrl)).andReturn(encoded);
+        when(response.encodeRedirectURL(unauthorizedUrl)).thenReturn(encoded);
         response.sendRedirect(encoded);
-        replay(request);
-        replay(response);
 
         filter.onAccessDenied(request, response);
 
-        verify(request);
-        verify(response);
+        verify(response, atLeastOnce()).sendRedirect(encoded);
+        verify(response).encodeRedirectURL(unauthorizedUrl);
     }
 }
