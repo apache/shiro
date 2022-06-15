@@ -18,8 +18,9 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.Test;
 
@@ -27,9 +28,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.util.Objects;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 /**
  * Test cases for the {@link AuthorizationFilter} class.
@@ -37,63 +41,107 @@ import static org.easymock.EasyMock.*;
 public class AuthorizationFilterTest extends SecurityManagerTestSupport {
 
     @Test
-    public void testUserOnAccessDeniedWithResponseError() throws IOException {
+    public void testUserOnAccessDeniedWithResponseError() throws Exception {
         // Tests when a user (known identity) is denied access and no unauthorizedUrl has been configured.
         // This should trigger an HTTP response error code.
 
         //log in the user using the account provided by the superclass for tests:
-        SecurityUtils.getSubject().login(new UsernamePasswordToken("test", "test"));
-        
-        AuthorizationFilter filter = new AuthorizationFilter() {
-            @Override
-            protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue)
-                    throws Exception {
-                return false; //for this test case
-            }
-        };
+        runWithSubject(subject -> {
+            subject.login(new UsernamePasswordToken("test", "test"));
+                AuthorizationFilter filter = new AuthorizationFilter() {
+                    @Override
+                    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue)
+                            throws Exception {
+                        return false; //for this test case
+                    }
+                };
 
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
+                HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+                HttpServletResponse response = createNiceMock(HttpServletResponse.class);
 
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        replay(response);
-        filter.onAccessDenied(request, response);
-        verify(response);
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                replay(response);
+                filter.onAccessDenied(request, response);
+                verify(response);
+        });
     }
 
     @Test
-    public void testUserOnAccessDeniedWithRedirect() throws IOException {
+    public void testUserOnAccessDeniedWithRedirect() throws Exception {
         // Tests when a user (known identity) is denied access and an unauthorizedUrl *has* been configured.
         // This should trigger an HTTP redirect
 
         //log in the user using the account provided by the superclass for tests:
-        SecurityUtils.getSubject().login(new UsernamePasswordToken("test", "test"));
+        runWithSubject(subject -> {
+            subject.login(new UsernamePasswordToken("test", "test"));
 
-        String unauthorizedUrl = "unauthorized.jsp";
+            String unauthorizedUrl = "unauthorized.jsp";
 
-        AuthorizationFilter filter = new AuthorizationFilter() {
-            @Override
-            protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue)
-                    throws Exception {
-                return false; //for this test case
+            AuthorizationFilter filter = new AuthorizationFilter() {
+                @Override
+                protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue)
+                        throws Exception {
+                    return false; //for this test case
+                }
+            };
+            filter.setUnauthorizedUrl(unauthorizedUrl);
+
+            HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+            HttpServletResponse response = createNiceMock(HttpServletResponse.class);
+
+            expect(request.getContextPath()).andReturn("/").anyTimes();
+
+            String encoded = "/" + unauthorizedUrl;
+            expect(response.encodeRedirectURL(unauthorizedUrl)).andReturn(encoded);
+            response.sendRedirect(encoded);
+            replay(request);
+            replay(response);
+
+            filter.onAccessDenied(request, response);
+
+            verify(request);
+            verify(response);
+        });
+    }
+
+    /**
+     * Associates the {@code consumer} with the {@code subject} and executes. If an exeception was thrown by the
+     * consumer, it is re-thrown by this method.
+     * @param subject The subject to bind to the current thread.
+     * @param consumer The block of code to run under the context of the subject.
+     * @throws Exception propagates any exception thrown by the consumer.
+     */
+    private static void runWithSubject(Subject subject, SubjectConsumer consumer) throws Exception {
+        Exception exception = subject.execute(() -> {
+            try {
+                consumer.accept(subject);
+                return null;
+            } catch (Exception e) {
+                return e;
             }
-        };
-        filter.setUnauthorizedUrl(unauthorizedUrl);
+        });
+        if (Objects.nonNull(exception)) {
+            throw exception;
+        }
+    }
 
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        HttpServletResponse response = createNiceMock(HttpServletResponse.class);
+    private static void runWithSubject(SubjectConsumer consumer) throws Exception {
+        runWithSubject(createSubject(), consumer);
+    }
 
-        expect(request.getContextPath()).andReturn("/").anyTimes();
+    private static Subject createSubject() {
+        SecurityManager securityManager = createTestSecurityManager();
+        return new Subject.Builder(securityManager).buildSubject();
+    }
 
-        String encoded = "/" + unauthorizedUrl;
-        expect(response.encodeRedirectURL(unauthorizedUrl)).andReturn(encoded);
-        response.sendRedirect(encoded);
-        replay(request);
-        replay(response);
+    // NOOP for the previous before/after test (the parent class is annotated)
+    public void setup() {}
 
-        filter.onAccessDenied(request, response);
+    public void teardown() {}
 
-        verify(request);
-        verify(response);
+    // A simple consumer that allows exceptions to be thrown
+    @FunctionalInterface
+    private interface SubjectConsumer {
+        void accept(Subject subject) throws Exception;
     }
 }
