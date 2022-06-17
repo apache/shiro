@@ -43,10 +43,12 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
 
         HttpServletRequest request = mockRequest()
         HttpServletResponse response = mockResponse()
-        
-        AuthenticationToken token = testFilter.createToken(request, response)
-        assertThat(token, CoreMatchers.instanceOf(BearerToken.class))
-        assertThat(token.getPrincipal(), Matchers.is(""))
+
+        runWithSubject({
+            AuthenticationToken token = testFilter.createToken(request, response)
+            assertThat(token, CoreMatchers.instanceOf(BearerToken.class))
+            assertThat(token.getPrincipal(), Matchers.is(""))
+        })
 
         verify(request, response)
     }
@@ -57,10 +59,12 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
 
         HttpServletRequest request = mockRequest("")
         HttpServletResponse response = mockResponse()
-        
-        AuthenticationToken token = testFilter.createToken(request, response)
-        assertThat(token, CoreMatchers.instanceOf(BearerToken.class))
-        assertThat(token.getPrincipal(), Matchers.is(""))
+
+        runWithSubject({
+            AuthenticationToken token = testFilter.createToken(request, response)
+            assertThat(token, CoreMatchers.instanceOf(BearerToken.class))
+            assertThat(token.getPrincipal(), Matchers.is(""))
+        })
 
         verify(request, response)
     }
@@ -72,9 +76,11 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         HttpServletRequest request = mockRequest("some-value")
         HttpServletResponse response = mockResponse()
 
-        AuthenticationToken token = testFilter.createToken(request, response)
-        assertThat(token, CoreMatchers.instanceOf(BearerToken.class))
-        assertThat(token.getPrincipal(), Matchers.is("some-value"))
+        runWithSubject({
+            AuthenticationToken token = testFilter.createToken(request, response)
+            assertThat(token, CoreMatchers.instanceOf(BearerToken.class))
+            assertThat(token.getPrincipal(), Matchers.is("some-value"))
+        })
 
         verify(request, response)
     }
@@ -86,9 +92,11 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         HttpServletRequest request = mockRequest("  ")
         HttpServletResponse response = mockResponse()
 
-        AuthenticationToken token = testFilter.createToken(request, response)
-        assertThat(token, CoreMatchers.instanceOf(BearerToken.class))
-        assertThat(token.getPrincipal(), Matchers.is(""))
+        runWithSubject({
+            AuthenticationToken token = testFilter.createToken(request, response)
+            assertThat(token, CoreMatchers.instanceOf(BearerToken.class))
+            assertThat(token.getPrincipal(), Matchers.is(""))
+        })
 
         verify(request, response)
     }
@@ -104,9 +112,11 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         HttpServletResponse response = createMock(HttpServletResponse.class)
         replay(response)
 
-        String[] methods =  [ "POST", "PUT", "DELETE" ]
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, methods)
-        assertThat("Access not allowed for GET", accessAllowed)
+        runWithSubject({
+            String[] methods = ["POST", "PUT", "DELETE"]
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, methods)
+            assertThat("Access not allowed for GET", accessAllowed)
+        })
         verify(request, response)
     }
     
@@ -120,9 +130,11 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         
         HttpServletResponse response = mockResponse()
 
-        String[] methods =  [ "POST", "PUT", "DELETE" ]
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, methods)
-        assertThat("Access allowed for POST", !accessAllowed)
+        runWithSubject({
+            String[] methods = ["POST", "PUT", "DELETE"]
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, methods)
+            assertThat("Access allowed for POST", !accessAllowed)
+        })
     }
 
     @Test
@@ -135,9 +147,11 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
 
         HttpServletResponse response = mockResponse()
 
-        String[] mappedValue = ["permissive"]
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue)
-        assertThat("Access allowed for GET", !accessAllowed) // login attempt should always be false
+        runWithSubject({
+            String[] mappedValue = ["permissive"]
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue)
+            assertThat("Access allowed for GET", !accessAllowed) // login attempt should always be false
+        })
     }
 
     @Test
@@ -152,9 +166,11 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
 
         HttpServletResponse response = mockResponse()
 
-        String[] mappedValue = ["permissive"]
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue)
-        assertThat("Access should be allowed for GET", accessAllowed) // non-login attempt, return true
+        runWithSubject({
+            String[] mappedValue = ["permissive"]
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue)
+            assertThat("Access should be allowed for GET", accessAllowed) // non-login attempt, return true
+        })
     }
 
     @Test
@@ -167,9 +183,11 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
 
         HttpServletResponse response = mockResponse()
 
-        String[] mappedValue = ["permissive", "POST", "PUT", "DELETE" ]
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue)
-        assertThat("Access allowed for POST", !accessAllowed)
+        runWithSubject({
+            String[] mappedValue = ["permissive", "POST", "PUT", "DELETE"]
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue)
+            assertThat("Access allowed for POST", !accessAllowed)
+        })
     }
 
     static private String createAuthorizationHeader(String token) {

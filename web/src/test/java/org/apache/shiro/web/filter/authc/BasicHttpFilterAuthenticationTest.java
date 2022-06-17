@@ -45,71 +45,71 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
 
     BasicHttpAuthenticationFilter testFilter;
 
-    @BeforeEach
-    public void setUp() {
-    }
-
     @Test
-    public void createTokenNoAuthorizationHeader() throws Exception {
+    public void createTokenNoAuthorizationHeader() {
         testFilter = new BasicHttpAuthenticationFilter();
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getHeader("Authorization")).then(args -> null);
         when(request.getRemoteHost()).then(args -> "localhost");
-        
+
         HttpServletResponse response = mock(HttpServletResponse.class);
-        
-		AuthenticationToken token = testFilter.createToken(request, response);
-		assertNotNull(token);
-		assertTrue(token instanceof UsernamePasswordToken, "Token is not a username and password token.");
-		assertEquals("", token.getPrincipal());
-		
-		verify(request).getHeader("Authorization");
-		verify(request).getRemoteHost();
+
+        runWithSubject(subject -> {
+            AuthenticationToken token = testFilter.createToken(request, response);
+            assertNotNull(token);
+            assertTrue(token instanceof UsernamePasswordToken, "Token is not a username and password token.");
+            assertEquals("", token.getPrincipal());
+
+            verify(request).getHeader("Authorization");
+            verify(request).getRemoteHost();
+        });
     }
 
     @Test
-    public void createTokenNoUsername() throws Exception {
+    public void createTokenNoUsername() {
         testFilter = new BasicHttpAuthenticationFilter();
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getHeader("Authorization")).then(args -> createAuthorizationHeader("", ""));
         when(request.getRemoteHost()).then(args -> "localhost");
-        
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        
-        
-		AuthenticationToken token = testFilter.createToken(request, response);
-		assertNotNull(token);
-		assertTrue(token instanceof UsernamePasswordToken, "Token is not a username and password token.");
-		assertEquals("", token.getPrincipal());
 
-        verify(request).getHeader("Authorization");
-        verify(request).getRemoteHost();
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        runWithSubject(subject -> {
+            AuthenticationToken token = testFilter.createToken(request, response);
+            assertNotNull(token);
+            assertTrue(token instanceof UsernamePasswordToken, "Token is not a username and password token.");
+            assertEquals("", token.getPrincipal());
+
+            verify(request).getHeader("Authorization");
+            verify(request).getRemoteHost();
+        });
     }
 
     @Test
-    public void createTokenNoPassword() throws Exception {
+    public void createTokenNoPassword() {
         testFilter = new BasicHttpAuthenticationFilter();
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getHeader("Authorization")).then(args -> createAuthorizationHeader("pedro", ""));
         when(request.getRemoteHost()).then(args -> "localhost");
-        
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        
-        
-		AuthenticationToken token = testFilter.createToken(request, response);
-		assertNotNull(token);
-		assertTrue(token instanceof UsernamePasswordToken, "Token is not a username and password token.");
-		
-		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-		assertEquals("pedro", upToken.getUsername());
-		assertEquals(0, upToken.getPassword().length, "Password is not empty.");
 
-        verify(request).getHeader("Authorization");
-        verify(request).getRemoteHost();
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        runWithSubject(subject -> {
+            AuthenticationToken token = testFilter.createToken(request, response);
+            assertNotNull(token);
+            assertTrue(token instanceof UsernamePasswordToken, "Token is not a username and password token.");
+
+            UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+            assertEquals("pedro", upToken.getUsername());
+            assertEquals(0, upToken.getPassword().length, "Password is not empty.");
+
+            verify(request).getHeader("Authorization");
+            verify(request).getRemoteHost();
+        });
     }
 
     @Test
-    public void createTokenColonInPassword() throws Exception {
+    public void createTokenColonInPassword() {
         testFilter = new BasicHttpAuthenticationFilter();
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getHeader("Authorization")).then(args -> createAuthorizationHeader("pedro", "pass:word"));
@@ -117,102 +117,113 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
 
         HttpServletResponse response = mock(HttpServletResponse.class);
 
+        runWithSubject(subject -> {
+            AuthenticationToken token = testFilter.createToken(request, response);
+            assertNotNull(token);
+            assertTrue(token instanceof UsernamePasswordToken, "Token is not a username and password token.");
 
-		AuthenticationToken token = testFilter.createToken(request, response);
-		assertNotNull(token);
-		assertTrue(token instanceof UsernamePasswordToken, "Token is not a username and password token.");
+            UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+            assertEquals("pedro", upToken.getUsername());
+            assertEquals("pass:word", new String(upToken.getPassword()));
 
-		UsernamePasswordToken upToken = (UsernamePasswordToken) token;
-		assertEquals("pedro", upToken.getUsername());
-		assertEquals("pass:word", new String(upToken.getPassword()));
-
-        verify(request).getHeader("Authorization");
-        verify(request).getRemoteHost();
+            verify(request).getHeader("Authorization");
+            verify(request).getRemoteHost();
+        });
     }
     
     @Test
-    public void httpMethodDoesNotRequireAuthentication() throws Exception {
+    public void httpMethodDoesNotRequireAuthentication() {
         testFilter = new BasicHttpAuthenticationFilter();
-        
+
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getMethod()).then(args -> "GET");
-        
+
         HttpServletResponse response = mock(HttpServletResponse.class);
-        
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[] { "POST", "PUT", "DELETE" });
-        assertTrue(accessAllowed, "Access not allowed for GET");
+
+        runWithSubject(subject -> {
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"POST", "PUT", "DELETE"});
+            assertTrue(accessAllowed, "Access not allowed for GET");
+        });
     }
     
     @Test
-    public void httpMethodRequiresAuthentication() throws Exception {
+    public void httpMethodRequiresAuthentication() {
         testFilter = new BasicHttpAuthenticationFilter();
-        
+
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getHeader("Authorization")).then(args -> createAuthorizationHeader("pedro", ""));
         when(request.getRemoteHost()).then(args -> "localhost");
         when(request.getMethod()).then(args -> "POST");
-        
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[] { "POST", "PUT", "DELETE" });
-        assertFalse(accessAllowed, "Access allowed for POST");
-    }
-    
-    @Test
-    public void httpMethodsAreCaseInsensitive() throws Exception {
-        testFilter = new BasicHttpAuthenticationFilter();
-        
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getMethod()).then(args -> "GET");
-        when(request.getHeader("Authorization")).then(args -> createAuthorizationHeader("pedro", ""));
-        when(request.getRemoteHost()).then(args -> "localhost");
-        
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[] { "POST", "put", "delete" });
-        assertTrue(accessAllowed, "Access not allowed for GET");
 
-        when(request.getMethod()).then(args -> "post");
-        accessAllowed = testFilter.isAccessAllowed(request, response, new String[] { "post", "put", "delete" });
-        assertFalse(accessAllowed, "Access allowed for POST");
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        runWithSubject(subject -> {
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"POST", "PUT", "DELETE"});
+            assertFalse(accessAllowed, "Access allowed for POST");
+        });
     }
     
     @Test
-    public void allHttpMethodsRequireAuthenticationIfNoneConfigured() throws Exception {
+    public void httpMethodsAreCaseInsensitive() {
         testFilter = new BasicHttpAuthenticationFilter();
-        
+
         HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getMethod()).then(args -> "GET");
         when(request.getHeader("Authorization")).then(args -> createAuthorizationHeader("pedro", ""));
         when(request.getRemoteHost()).then(args -> "localhost");
-        when(request.getMethod()).then(args -> "GET");
-        when(request.getMethod()).then(args -> "POST");
-        
+
         HttpServletResponse response = mock(HttpServletResponse.class);
-        
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[0]);
-        assertFalse(accessAllowed, "Access allowed for GET");
-        
-        accessAllowed = testFilter.isAccessAllowed(request, response, new String[0]);
-        assertFalse(accessAllowed, "Access allowed for POST");
+
+        runWithSubject(subject -> {
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"POST", "put", "delete"});
+            assertTrue(accessAllowed, "Access not allowed for GET");
+
+            when(request.getMethod()).then(args -> "post");
+            accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"post", "put", "delete"});
+            assertFalse(accessAllowed, "Access allowed for POST");
+        });
     }
     
     @Test
-    public void allHttpMethodsRequireAuthenticationIfNullConfig() throws Exception {
+    public void allHttpMethodsRequireAuthenticationIfNoneConfigured() {
         testFilter = new BasicHttpAuthenticationFilter();
-        
+
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getHeader("Authorization")).then(args -> createAuthorizationHeader("pedro", ""));
         when(request.getRemoteHost()).then(args -> "localhost");
         when(request.getMethod()).then(args -> "GET");
         when(request.getMethod()).then(args -> "POST");
-        
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, null);
-        assertFalse(accessAllowed, "Access allowed for GET");
-        
-        accessAllowed = testFilter.isAccessAllowed(request, response, null);
-        assertFalse(accessAllowed, "Access allowed for POST");
+
+        runWithSubject(subject -> {
+            HttpServletResponse response = mock(HttpServletResponse.class);
+
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[0]);
+            assertFalse(accessAllowed, "Access allowed for GET");
+
+            accessAllowed = testFilter.isAccessAllowed(request, response, new String[0]);
+            assertFalse(accessAllowed, "Access allowed for POST");
+        });
+    }
+    
+    @Test
+    public void allHttpMethodsRequireAuthenticationIfNullConfig() {
+        testFilter = new BasicHttpAuthenticationFilter();
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getHeader("Authorization")).then(args -> createAuthorizationHeader("pedro", ""));
+        when(request.getRemoteHost()).then(args -> "localhost");
+        when(request.getMethod()).then(args -> "GET");
+        when(request.getMethod()).then(args -> "POST");
+
+        runWithSubject(subject -> {
+            HttpServletResponse response = mock(HttpServletResponse.class);
+
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, null);
+            assertFalse(accessAllowed, "Access allowed for GET");
+
+            accessAllowed = testFilter.isAccessAllowed(request, response, null);
+            assertFalse(accessAllowed, "Access allowed for POST");
+        });
     }
 
     /**
@@ -229,9 +240,11 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
 
         HttpServletResponse response = mock(HttpServletResponse.class);
 
-        String[] mappedValue = {"permissive"};
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue);
-        assertFalse(accessAllowed, "Access allowed for GET"); // login attempt should always be false
+        runWithSubject(subject -> {
+            String[] mappedValue = {"permissive"};
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue);
+            assertFalse(accessAllowed, "Access allowed for GET"); // login attempt should always be false
+        });
     }
 
     /**
@@ -239,18 +252,20 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
      */
     @Test
     public void permissiveEnabledTest() {
-        testFilter = new BasicHttpAuthenticationFilter();
+        runWithSubject(subject -> {
+            testFilter = new BasicHttpAuthenticationFilter();
 
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getHeader("Authorization")).then(args -> null);
-        when(request.getRemoteHost()).then(args -> "localhost");
-        when(request.getMethod()).then(args -> "GET");
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            when(request.getHeader("Authorization")).then(args -> null);
+            when(request.getRemoteHost()).then(args -> "localhost");
+            when(request.getMethod()).then(args -> "GET");
 
-        HttpServletResponse response = mock(HttpServletResponse.class);
+            HttpServletResponse response = mock(HttpServletResponse.class);
 
-        String[] mappedValue = {"permissive"};
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue);
-        assertTrue(accessAllowed, "Access should be allowed for GET"); // non-login attempt, return true
+            String[] mappedValue = {"permissive"};
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue);
+            assertTrue(accessAllowed, "Access should be allowed for GET"); // non-login attempt, return true
+        });
     }
 
     /**
@@ -258,17 +273,19 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
      */
     @Test
     public void httpMethodRequiresAuthenticationWithPermissive() throws Exception {
-        testFilter = new BasicHttpAuthenticationFilter();
+        runWithSubject(subject -> {
+            testFilter = new BasicHttpAuthenticationFilter();
 
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getHeader("Authorization")).then(args -> createAuthorizationHeader("pedro", ""));
-        when(request.getRemoteHost()).then(args -> "localhost");
-        when(request.getMethod()).then(args -> "POST");
+            HttpServletRequest request = mock(HttpServletRequest.class);
+            when(request.getHeader("Authorization")).then(args -> createAuthorizationHeader("pedro", ""));
+            when(request.getRemoteHost()).then(args -> "localhost");
+            when(request.getMethod()).then(args -> "POST");
 
-        HttpServletResponse response = mock(HttpServletResponse.class);
+            HttpServletResponse response = mock(HttpServletResponse.class);
 
-        boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[] {"permissive", "POST", "PUT", "DELETE" });
-        assertFalse(accessAllowed, "Access allowed for POST");
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"permissive", "POST", "PUT", "DELETE"});
+            assertFalse(accessAllowed, "Access allowed for POST");
+        });
     }
 
     private String createAuthorizationHeader(String username, String password) {

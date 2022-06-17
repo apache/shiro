@@ -47,11 +47,13 @@ public class SubjectAwareExecutorServiceTest extends SecurityManagerTestSupport 
 
         final SubjectAwareExecutorService executor = new SubjectAwareExecutorService(mockExecutorService);
 
-        Runnable testRunnable = () -> System.out.println("Hello World");
+        runWithSubject(subject -> {
+            Runnable testRunnable = () -> System.out.println("Hello World");
 
-        executor.submit(testRunnable);
-        SubjectRunnable subjectRunnable = captor.getValue();
-        Assertions.assertNotNull(subjectRunnable);
+            executor.submit(testRunnable);
+            SubjectRunnable subjectRunnable = captor.getValue();
+            Assertions.assertNotNull(subjectRunnable);
+        });
     }
 
     private static class DummyFuture<V> implements Future<V> {
