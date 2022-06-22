@@ -42,7 +42,7 @@ public class SubjectAwareExecutorTest extends SecurityManagerTestSupport {
         final SubjectAwareExecutor executor = new SubjectAwareExecutor(targetMockExecutor);
 
         Runnable work = () -> System.out.println("Hello World");
-        executor.execute(work);
+        runWithSubject(subject -> executor.execute(work));
 
         //* ensure the target Executor receives a SubjectRunnable instance that retains the subject identity:
         //(this is what verifies the test is valid):

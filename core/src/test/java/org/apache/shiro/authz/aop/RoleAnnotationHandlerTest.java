@@ -61,7 +61,9 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
             }
         };
 
-        assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresRolesAnnotation));
+        runWithSubject(subject -> {
+            assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresRolesAnnotation));
+        });
     }
 
     //Added to satisfy SHIRO-146
@@ -87,7 +89,9 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
             }
         };
 
-        assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresRolesAnnotation));
+        runWithSubject(subject -> {
+            assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresRolesAnnotation));
+        });
     }
 
     @Test

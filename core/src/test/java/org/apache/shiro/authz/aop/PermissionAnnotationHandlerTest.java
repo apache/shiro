@@ -56,7 +56,9 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
 	    }
         };
 
-        assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresPermissionAnnotation));
+        runWithSubject(subject -> {
+            assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresPermissionAnnotation));
+        });
     }
 
     //Added to satisfy SHIRO-146
@@ -82,7 +84,9 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
 	    }
         };
 
-        assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresPermissionAnnotation));
+        runWithSubject(subject -> {
+            assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresPermissionAnnotation));
+        });
     }
 
 }

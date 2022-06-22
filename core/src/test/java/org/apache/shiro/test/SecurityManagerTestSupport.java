@@ -26,8 +26,8 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+
+import java.util.Objects;
 
 /**
  * Utility methods for use by Shiro test case subclasses.  You can use these methods as examples for your own
@@ -64,13 +64,38 @@ public class SecurityManagerTestSupport {
         return SecurityUtils.getSubject();
     }
 
-    @BeforeEach
-    public void setup() {
-        createAndBindTestSubject();
+    protected Subject createSubject() {
+        SecurityManager securityManager = createTestSecurityManager();
+        return new Subject.Builder(securityManager).buildSubject();
     }
 
-    @AfterEach
-    public void teardown() {
-        ThreadContext.remove();
+    /**
+     * Associates the {@code consumer} with the {@code subject} and executes. If an exeception was thrown by the
+     * consumer, it is re-thrown by this method.
+     * @param subject The subject to bind to the current thread.
+     * @param consumer The block of code to run under the context of the subject.
+     * @throws Exception propagates any exception thrown by the consumer.
+     */
+    protected void runWithSubject(Subject subject, SubjectConsumer consumer) {
+        Exception exception = subject.execute(() -> {
+            try {
+                consumer.accept(subject);
+                return null;
+            } catch (Exception e) {
+                return e;
+            }
+        });
+        if (Objects.nonNull(exception)) {
+            throw new RuntimeException("Test execution threw exception", exception);
+        }
+    }
+
+    protected void runWithSubject(SubjectConsumer consumer) {
+        runWithSubject(createSubject(), consumer);
+    }
+
+    @FunctionalInterface
+    protected interface SubjectConsumer {
+        void accept(Subject subject) throws Exception;
     }
 }
