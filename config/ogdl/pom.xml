@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-config</artifactId>
-        <version>1.9.1</version>
+        <version>1.9.2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -102,9 +102,4 @@
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
     </dependencies>
-
-
-  <scm>
-    <tag>shiro-root-1.9.1</tag>
-  </scm>
 </project>

@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.shiro.tools</groupId>
         <artifactId>shiro-tools</artifactId>
-        <version>1.9.1</version>
+        <version>1.9.2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -96,9 +96,4 @@
             </plugin>
         </plugins>
     </build>
-
-
-  <scm>
-    <tag>shiro-root-1.9.1</tag>
-  </scm>
 </project>

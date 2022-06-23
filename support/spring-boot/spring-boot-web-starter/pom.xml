@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-spring-boot</artifactId>
-        <version>1.9.1</version>
+        <version>1.9.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>shiro-spring-boot-web-starter</artifactId>
@@ -72,9 +72,4 @@
         </dependency>
 
     </dependencies>
-
-
-  <scm>
-    <tag>shiro-root-1.9.1</tag>
-  </scm>
 </project>
