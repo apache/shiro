@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>org.apache.shiro.integrationtests</groupId>
 		<artifactId>shiro-integration-tests</artifactId>
-		<version>1.9.1-SNAPSHOT</version>
+		<version>1.9.1</version>
 	</parent>
 
 	<artifactId>shiro-its-guice3</artifactId>
@@ -124,4 +124,8 @@
         </dependency>
 	</dependencies>
 
+
+  <scm>
+    <tag>shiro-root-1.9.1</tag>
+  </scm>
 </project>

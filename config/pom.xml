@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>1.9.1-SNAPSHOT</version>
+        <version>1.9.1</version>
     </parent>
 
     <artifactId>shiro-config</artifactId>
