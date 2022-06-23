@@ -24,6 +24,7 @@ import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.UserIdPrincipal;
 import org.apache.shiro.realm.UsernamePrincipal;
@@ -32,14 +33,29 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import org.easymock.Capture;
+import org.easymock.CaptureType;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+import javax.naming.ldap.LdapContext;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.anyString;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertTrue;
 
 
@@ -97,6 +113,43 @@ public class ActiveDirectoryRealmTest {
         subject.logout();
     }
 
+    @Test
+    public void testExistingUserSuffix() throws Exception {
+        assertExistingUserSuffix(USERNAME, "testuser@ExAmple.COM"); // suffix case matches configure suffix
+
+        // suffix matches user entry
+        assertExistingUserSuffix(USERNAME + "@example.com", "testuser@example.com");
+        assertExistingUserSuffix(USERNAME + "@EXAMPLE.com", "testuser@EXAMPLE.com");
+    }
+
+    public void assertExistingUserSuffix(String username, String expectedPrincipalName) throws Exception {
+
+        LdapContext ldapContext = createMock(LdapContext.class);
+        NamingEnumeration<SearchResult> results = createMock(NamingEnumeration.class);
+        Capture<Object[]> captureArgs = Capture.newInstance(CaptureType.ALL);
+        expect(ldapContext.search(anyString(), anyString(), capture(captureArgs), anyObject(SearchControls.class))).andReturn(results);
+        replay(ldapContext);
+
+        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm() {{
+            this.principalSuffix = "@ExAmple.COM";
+        }};
+
+        SecurityManager securityManager = new DefaultSecurityManager(activeDirectoryRealm);
+        Subject subject = new Subject.Builder(securityManager).buildSubject();
+        subject.execute(() -> {
+
+            try {
+                activeDirectoryRealm.getRoleNamesForUser(username, ldapContext);
+            } catch (NamingException e) {
+                Assert.fail("Unexpected NamingException thrown during test");
+            }
+        });
+
+        Object[] args = captureArgs.getValue();
+        assertThat(args, arrayWithSize(1));
+        assertThat(args[0], is(expectedPrincipalName));
+    }
+
     public class TestActiveDirectoryRealm extends ActiveDirectoryRealm {
 
         /*--------------------------------------------
@@ -117,6 +170,9 @@ public class ActiveDirectoryRealmTest {
             setCredentialsMatcher(credentialsMatcher);
         }
 
+        public void setPrincipalSuffix(String principalSuffix) {
+            this.principalSuffix = principalSuffix;
+        }
 
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             SimpleAccount account = (SimpleAccount) super.doGetAuthenticationInfo(token);
