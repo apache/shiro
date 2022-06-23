@@ -163,7 +163,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         String userPrincipalName = username;
-        if (principalSuffix != null) {
+        if (principalSuffix != null && !userPrincipalName.toLowerCase(Locale.ROOT).endsWith(principalSuffix.toLowerCase(Locale.ROOT))) {
             userPrincipalName += principalSuffix;
         }
 

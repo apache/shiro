@@ -63,6 +63,18 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
+
+    /**
+     * Defines the Suffix added to the User Principal Name when looking up groups (e.g. "memberOf")
+     * AD Example:
+     * User's Principal Name be "John.Doe"
+     * User's E-Mail Address be "John.Doe@example.com"
+     *
+     * For the example below, set:
+     *      realm.principalSuffix = @example.com
+     *
+     * Only then, "John.Doe" and also "John.Doe@example.com" can authorize against groups
+     */
     protected String principalSuffix = null;
 
     protected String searchBase = null;
