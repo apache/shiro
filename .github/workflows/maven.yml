@@ -20,7 +20,7 @@ name: Maven CI
 on:
   workflow_dispatch: {}
   push:
-    branches: [ main, 1.9.x ]
+    branches: [ main, 1.10.x ]
   pull_request:
     branches: [ ]
 

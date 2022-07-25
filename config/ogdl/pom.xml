@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-config</artifactId>
-        <version>1.9.2-SNAPSHOT</version>
+        <version>1.10.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
