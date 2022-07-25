@@ -616,7 +616,20 @@ public class WebUtils {
      * @return the clean param value, or null if the param does not exist or is empty.
      */
     public static String getCleanParam(ServletRequest request, String paramName) {
-        return StringUtils.clean(request.getParameter(paramName));
+        return getCleanParam(request, paramName, true);
+    }
+
+    /**
+     * Convenience method that returns a request parameter value, first running it through
+     * {@link StringUtils#clean(String)}.
+     *
+     * @param request   the servlet request.
+     * @param paramName the parameter name.
+     * @param trim specifies whether the parameter value should be trimmed or not
+     * @return the clean param value, or null if the param does not exist or is empty.
+     */
+    public static String getCleanParam(ServletRequest request, String paramName, boolean trim) {
+        return StringUtils.clean(request.getParameter(paramName), trim);
     }
 
     public static void saveRequest(ServletRequest request) {

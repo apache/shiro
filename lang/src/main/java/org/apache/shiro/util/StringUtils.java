@@ -130,6 +130,38 @@ public class StringUtils {
      * <p/>
      * <ol>
      * <li>If the specified <code>String</code> is <code>null</code>, return <code>null</code></li>
+     * <li>If not <code>null</code>, {@link String#trim() trim()} it, when the trim param is set to <code>true</code>.</li>
+     * <li>If the trimmed string is equal to the empty String (i.e. &quot;&quot;), return <code>null</code></li>
+     * <li>If the trimmed string is not the empty string, return the trimmed version</li>.
+     * </ol>
+     * <p/>
+     * Therefore this method always ensures that any given string has trimmed text, and if it doesn't, <code>null</code>
+     * is returned.
+     *
+     * @param in the input String to clean.
+     * @param trim specifies whether the input String should be trimmed or not
+     * @return a populated-but-trimmed String or <code>null</code> otherwise
+     */
+    public static String clean(String in, boolean trim) {
+        String out = in;
+
+        if (in != null) {
+            if (trim) {
+                out = in.trim();
+            }
+            if (out.equals(EMPTY_STRING)) {
+                out = null;
+            }
+        }
+
+        return out;
+    }
+
+    /**
+     * Returns a 'cleaned' representation of the specified argument.  'Cleaned' is defined as the following:
+     * <p/>
+     * <ol>
+     * <li>If the specified <code>String</code> is <code>null</code>, return <code>null</code></li>
      * <li>If not <code>null</code>, {@link String#trim() trim()} it.</li>
      * <li>If the trimmed string is equal to the empty String (i.e. &quot;&quot;), return <code>null</code></li>
      * <li>If the trimmed string is not the empty string, return the trimmed version</li>.
@@ -142,16 +174,7 @@ public class StringUtils {
      * @return a populated-but-trimmed String or <code>null</code> otherwise
      */
     public static String clean(String in) {
-        String out = in;
-
-        if (in != null) {
-            out = in.trim();
-            if (out.equals(EMPTY_STRING)) {
-                out = null;
-            }
-        }
-
-        return out;
+        return clean(in, true);
     }
 
     /**

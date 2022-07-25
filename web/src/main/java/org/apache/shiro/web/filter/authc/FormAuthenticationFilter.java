@@ -220,7 +220,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
     }
 
     protected String getPassword(ServletRequest request) {
-        return WebUtils.getCleanParam(request, getPasswordParam());
+        return WebUtils.getCleanParam(request, getPasswordParam(), false);
     }
 
 
