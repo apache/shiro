@@ -22,6 +22,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
@@ -108,6 +109,13 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
 
     public void setFilterChainResolver(FilterChainResolver filterChainResolver) {
         this.filterChainResolver = filterChainResolver;
+    }
+
+    public void setShiroFilterConfiguration(ShiroFilterConfiguration config) {
+        this.setFilterOncePerRequest(config.isFilterOncePerRequest());
+
+        // this property could have already been set with a servlet config param
+        this.setStaticSecurityManagerEnabled(config.isStaticSecurityManagerEnabled() || isStaticSecurityManagerEnabled());
     }
 
     /**
