@@ -19,13 +19,13 @@
 package org.apache.shiro.guice.web;
 
 import com.google.inject.spi.InjectionPoint;
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.createMock;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.easymock.EasyMock.*;
+import static org.junit.Assert.*;
 
 public class GuiceShiroFilterTest {
 
@@ -42,10 +42,17 @@ public class GuiceShiroFilterTest {
     public void testConstructor() {
         WebSecurityManager securityManager = createMock(WebSecurityManager.class);
         FilterChainResolver filterChainResolver = createMock(FilterChainResolver.class);
+        ShiroFilterConfiguration filterConfiguration = createMock(ShiroFilterConfiguration.class);
+        expect(filterConfiguration.isStaticSecurityManagerEnabled()).andReturn(true);
+        expect(filterConfiguration.isFilterOncePerRequest()).andReturn(false);
 
-        GuiceShiroFilter underTest = new GuiceShiroFilter(securityManager, filterChainResolver);
+        replay(securityManager, filterChainResolver, filterConfiguration);
+
+        GuiceShiroFilter underTest = new GuiceShiroFilter(securityManager, filterChainResolver, filterConfiguration);
 
         assertSame(securityManager, underTest.getSecurityManager());
         assertSame(filterChainResolver, underTest.getFilterChainResolver());
+        assertTrue(underTest.isStaticSecurityManagerEnabled());
+        assertFalse(underTest.isFilterOncePerRequest());
     }
 }

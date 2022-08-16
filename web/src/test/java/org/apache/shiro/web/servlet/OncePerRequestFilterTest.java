@@ -28,8 +28,7 @@ import javax.servlet.ServletResponse;
 import java.io.IOException;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Unit tests for the {@link OncePerRequestFilter} implementation.
@@ -38,35 +37,24 @@ import static org.junit.Assert.assertTrue;
  */
 public class OncePerRequestFilterTest {
 
-    private static final boolean[] FILTERED = new boolean[1];
     private static final String NAME = "oncePerRequestFilter";
     private static final String ATTR_NAME = NAME + OncePerRequestFilter.ALREADY_FILTERED_SUFFIX;
 
-    private OncePerRequestFilter filter;
+    private CountingOncePerRequestFilter filter;
     private FilterChain chain;
     private ServletRequest request;
     private ServletResponse response;
 
     @Before
     public void setUp() {
-        FILTERED[0] = false;
         filter = createTestInstance();
         chain = createNiceMock(FilterChain.class);
         request = createNiceMock(ServletRequest.class);
         response = createNiceMock(ServletResponse.class);
     }
 
-    private OncePerRequestFilter createTestInstance() {
-        OncePerRequestFilter filter = new OncePerRequestFilter() {
-            @Override
-            protected void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain)
-                    throws ServletException, IOException {
-                FILTERED[0] = true;
-            }
-        };
-        filter.setName(NAME);
-
-        return filter;
+    private CountingOncePerRequestFilter createTestInstance() {
+        return new CountingOncePerRequestFilter();
     }
 
     /**
@@ -81,7 +69,7 @@ public class OncePerRequestFilterTest {
         filter.doFilter(request, response, chain);
 
         verify(request);
-        assertTrue("Filter should have executed", FILTERED[0]);
+        assertEquals("Filter should have executed", 1, filter.filterCount);
     }
 
     /**
@@ -98,7 +86,35 @@ public class OncePerRequestFilterTest {
         filter.doFilter(request, response, chain);
 
         verify(request);
-        assertFalse("Filter should NOT have executed", FILTERED[0]);
+        assertEquals("Filter should NOT have executed", 0, filter.filterCount);
+    }
+
+    @Test
+    public void testFilterOncePerRequest() throws IOException, ServletException {
+        filter.setFilterOncePerRequest(false);
+
+        expect(request.getAttribute(ATTR_NAME)).andReturn(null).andReturn(true);
+        replay(request);
+
+        filter.doFilter(request, response, chain);
+        filter.doFilter(request, response, chain);
+
+        verify(request);
+        assertEquals("Filter should have executed twice", 2, filter.filterCount);
+    }
+
+    static class CountingOncePerRequestFilter extends OncePerRequestFilter {
+
+        private int filterCount = 0;
+
+        public CountingOncePerRequestFilter() {
+            this.setName(NAME);
+        }
+
+        @Override
+        protected void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain) {
+            filterCount++;
+        }
     }
 
 }

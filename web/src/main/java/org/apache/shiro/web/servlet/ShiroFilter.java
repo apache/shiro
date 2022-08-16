@@ -70,8 +70,10 @@ public class ShiroFilter extends AbstractShiroFilter {
      */
     @Override
     public void init() throws Exception {
+
         WebEnvironment env = WebUtils.getRequiredWebEnvironment(getServletContext());
 
+        setShiroFilterConfiguration(env.getShiroFilterConfiguration());
         setSecurityManager(env.getWebSecurityManager());
 
         FilterChainResolver resolver = env.getFilterChainResolver();
