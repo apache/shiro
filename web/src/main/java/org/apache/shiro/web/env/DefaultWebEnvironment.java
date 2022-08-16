@@ -20,6 +20,7 @@ package org.apache.shiro.web.env;
 
 import org.apache.shiro.env.DefaultEnvironment;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 
@@ -34,8 +35,11 @@ import java.util.Map;
 public class DefaultWebEnvironment extends DefaultEnvironment implements MutableWebEnvironment {
 
     private static final String DEFAULT_FILTER_CHAIN_RESOLVER_NAME = "filterChainResolver";
+    private static final String SHIRO_FILTER_CONFIG_NAME = "shiroFilter";
 
     private ServletContext servletContext;
+
+    private ShiroFilterConfiguration filterConfiguration;
 
     public DefaultWebEnvironment() {
         super();
@@ -83,5 +87,16 @@ public class DefaultWebEnvironment extends DefaultEnvironment implements Mutable
 
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
+    }
+
+
+    @Override
+    public void setShiroFilterConfiguration(ShiroFilterConfiguration filterConfiguration) {
+        setObject(SHIRO_FILTER_CONFIG_NAME, filterConfiguration);
+    }
+
+    @Override
+    public ShiroFilterConfiguration getShiroFilterConfiguration() {
+        return getObject(SHIRO_FILTER_CONFIG_NAME, ShiroFilterConfiguration.class);
     }
 }

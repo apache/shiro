@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.guice.web;
 
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
@@ -31,8 +32,9 @@ import javax.inject.Inject;
  */
 public class GuiceShiroFilter extends AbstractShiroFilter {
     @Inject
-    GuiceShiroFilter(WebSecurityManager webSecurityManager, FilterChainResolver filterChainResolver) {
+    GuiceShiroFilter(WebSecurityManager webSecurityManager, FilterChainResolver filterChainResolver, ShiroFilterConfiguration filterConfiguration) {
         this.setSecurityManager(webSecurityManager);
         this.setFilterChainResolver(filterChainResolver);
+        this.setShiroFilterConfiguration(filterConfiguration);
     }
 }

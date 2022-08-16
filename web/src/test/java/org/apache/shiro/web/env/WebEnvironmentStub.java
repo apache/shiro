@@ -19,6 +19,7 @@
 package org.apache.shiro.web.env;
 
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 
@@ -31,6 +32,8 @@ public class WebEnvironmentStub implements WebEnvironment, MutableWebEnvironment
     private WebSecurityManager webSecurityManager;
 
     private ServletContext servletContext;
+
+    private ShiroFilterConfiguration filterConfiguration;
 
 
     @Override
@@ -66,5 +69,15 @@ public class WebEnvironmentStub implements WebEnvironment, MutableWebEnvironment
     @Override
     public SecurityManager getSecurityManager() {
         return getWebSecurityManager();
+    }
+
+    @Override
+    public void setShiroFilterConfiguration(ShiroFilterConfiguration filterConfiguration) {
+        this.filterConfiguration = filterConfiguration;
+    }
+
+    @Override
+    public ShiroFilterConfiguration getShiroFilterConfiguration() {
+        return filterConfiguration;
     }
 }
