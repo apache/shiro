@@ -470,7 +470,12 @@ public class DelegatingSubject implements Subject {
     private List<PrincipalCollection> getRunAsPrincipalsStack() {
         Session session = getSession(false);
         if (session != null) {
-            return (List<PrincipalCollection>) session.getAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
+            try {
+                return (List<PrincipalCollection>) session.getAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
+            } catch (SessionException se) {
+                log.debug("Encountered session exception trying to get 'runAs' principal stack.  This "
+                        + "can generally safely be ignored.", se);
+            }
         }
         return null;
     }
