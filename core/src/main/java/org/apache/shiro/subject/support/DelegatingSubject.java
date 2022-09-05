@@ -474,6 +474,10 @@ public class DelegatingSubject implements Subject {
             try {
                 return (List<PrincipalCollection>) session.getAttribute(RUN_AS_PRINCIPALS_SESSION_KEY);
             } catch (SessionException se) {
+                // There could be a rare race condition when a session is invalidated in another thread,
+                // this thread could throw this exception, so we catch it
+                // similar issue as in clearRunAsIdentitiesInternal()
+                // See https://issues.apache.org/jira/browse/SHIRO-512
                 log.debug("Encountered session exception trying to get 'runAs' principal stack.  This "
                         + "can generally safely be ignored.", se);
             }
