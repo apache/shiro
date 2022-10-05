@@ -311,7 +311,7 @@
                 <plugin>
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
-                    <version>0.13</version>
+                    <version>0.15</version>
                     <configuration>
                     		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                         <excludes>
@@ -1292,7 +1292,7 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <version>0.12</version>
+                <version>0.15</version>
                 <!-- only run at the root -->
                 <inherited>false</inherited>
                 <configuration>
