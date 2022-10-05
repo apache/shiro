@@ -89,7 +89,7 @@
         <commons.codec.version>1.14</commons.codec.version>
         <commons.collection.version>3.2.2</commons.collection.version>
         <commons.configuration2.version>2.8.0</commons.configuration2.version>
-        <commons.lang3.version>3.9</commons.lang3.version>
+        <commons.lang3.version>3.12.0</commons.lang3.version>
         <commons.logging.version>1.2</commons.logging.version>
         <commons.text.version>1.8</commons.text.version>
         <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
@@ -109,7 +109,7 @@
         <logback.version>1.2.10</logback.version>
         <log4j.version>2.17.1</log4j.version>
         <spring.version>5.3.18</spring.version>
-        <spring-boot.version>2.5.12</spring-boot.version>
+        <spring-boot.version>2.7.4</spring-boot.version>
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
         <htmlunit.version>2.39.0</htmlunit.version>
@@ -299,7 +299,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.7.1</version>
+                    <version>3.12.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
