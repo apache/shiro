@@ -30,7 +30,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.1.0
 
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -93,7 +93,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3.1.0
 
       - name: Set up cache for ~./m2/repository
         uses: actions/cache@v3.0.10
