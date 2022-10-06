@@ -116,7 +116,7 @@
         <bouncycastle.version>1.68</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
-        <easymock.version>4.0.2</easymock.version>
+        <easymock.version>4.3</easymock.version>
         <mockito.version>3.12.4</mockito.version>
         <gmaven.version>1.13.0</gmaven.version>
         <groovy.version>3.0.9</groovy.version>
