@@ -113,7 +113,7 @@
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
         <htmlunit.version>2.39.0</htmlunit.version>
-        <bouncycastle.version>1.68</bouncycastle.version>
+        <bouncycastle.version>1.70</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>4.3</easymock.version>
@@ -122,7 +122,7 @@
         <groovy.version>3.0.13</groovy.version>
         <junit.version>5.9.1</junit.version>
         <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
-        <hibernate.version>5.4.24.Final</hibernate.version>
+        <hibernate.version>5.6.12.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
 
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
@@ -304,7 +304,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-scm-publish-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.rat</groupId>
@@ -347,7 +347,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -396,7 +396,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>5.2.4</version>
+                    <version>7.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.siom79.japicmp</groupId>
@@ -548,7 +548,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>3.3.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -608,7 +608,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>3.0.0-M5</version>
+                <version>3.0.0-M6</version>
                 <configuration>
                     <!-- do not update upstream, with a pending release. -->
                     <pushChanges>false</pushChanges>
