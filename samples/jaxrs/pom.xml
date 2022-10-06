@@ -128,7 +128,7 @@
         <profile>
             <id>resteasy</id>
             <properties>
-                <resteasy.version>3.9.0.Final</resteasy.version>
+                <resteasy.version>3.15.3.Final</resteasy.version>
             </properties>
             <dependencies>
                 <dependency>
