@@ -119,7 +119,7 @@
         <easymock.version>4.3</easymock.version>
         <mockito.version>3.12.4</mockito.version>
         <gmaven.version>1.13.0</gmaven.version>
-        <groovy.version>3.0.9</groovy.version>
+        <groovy.version>3.0.13</groovy.version>
         <junit.version>5.9.1</junit.version>
         <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
         <hibernate.version>5.4.24.Final</hibernate.version>
