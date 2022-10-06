@@ -89,7 +89,7 @@
         <commons.codec.version>1.14</commons.codec.version>
         <commons.collection.version>3.2.2</commons.collection.version>
         <commons.configuration2.version>2.8.0</commons.configuration2.version>
-        <commons.lang3.version>3.9</commons.lang3.version>
+        <commons.lang3.version>3.12.0</commons.lang3.version>
         <commons.logging.version>1.2</commons.logging.version>
         <commons.text.version>1.8</commons.text.version>
         <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
