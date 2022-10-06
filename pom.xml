@@ -1542,7 +1542,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>mrm-maven-plugin</artifactId>
-                        <version>1.1.0</version>
+                        <version>1.4.1</version>
                         <executions>
                             <execution>
                                 <goals>
