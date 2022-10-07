@@ -362,7 +362,7 @@
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>3.0</version>
+                    <version>4.1</version>
                     <configuration>
                         <aggregate>true</aggregate>
                         <header>${root.dir}/src/license/header.txt</header>
