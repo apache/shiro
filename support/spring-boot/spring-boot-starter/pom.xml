@@ -82,7 +82,11 @@
             <version>${commons.logging.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
