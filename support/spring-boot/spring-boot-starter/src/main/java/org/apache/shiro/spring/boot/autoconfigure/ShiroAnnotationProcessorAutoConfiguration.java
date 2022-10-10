@@ -42,9 +42,7 @@ public class ShiroAnnotationProcessorAutoConfiguration extends AbstractShiroAnno
 
     @Bean
     @DependsOn("lifecycleBeanPostProcessor")
-    @ConditionalOnMissingBean(
-            value = DefaultAdvisorAutoProxyCreator.class, name = AopConfigUtils.AUTO_PROXY_CREATOR_BEAN_NAME
-    )
+    @ConditionalOnMissingBean(name = AopConfigUtils.AUTO_PROXY_CREATOR_BEAN_NAME)
     @Override
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
         return super.defaultAdvisorAutoProxyCreator();
