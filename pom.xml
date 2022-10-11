@@ -112,7 +112,7 @@
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>4.3</easymock.version>
-        <gmaven.version>1.13.1</gmaven.version>
+        <gmaven.version>2.0.0</gmaven.version>
         <groovy.version>2.5.18</groovy.version>
         <junit.version>4.13.2</junit.version>
         <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
