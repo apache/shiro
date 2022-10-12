@@ -16,8 +16,7 @@
   ~ KIND, either express or implied.  See the License for the
   ~ specific language governing permissions and limitations
   ~ under the License.
-  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+  --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- pick up Apache distributionManagement for releasing (snapshots, releases, etc.): -->
@@ -72,9 +71,9 @@
         <project.build.outputTimestamp>2022-03-22T23:08:15Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
         <!--suppress CheckTagEmptyBody -->
-        <surefire.argLine></surefire.argLine>
+        <surefire.argLine/>
         <!--suppress CheckTagEmptyBody -->
-        <failsafe.argLine></failsafe.argLine>
+        <failsafe.argLine/>
         <nexus.deploy.skip>false</nexus.deploy.skip>
 
         <!-- non-dependency-based properties: -->
@@ -108,7 +107,7 @@
         <slf4j.version>1.7.26</slf4j.version>
         <logback.version>1.2.10</logback.version>
         <log4j.version>2.19.0</log4j.version>
-        <spring.version>5.3.23</spring.version>
+        <spring.version>5.3.19</spring.version>
         <spring-boot.version>2.7.4</spring-boot.version>
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
