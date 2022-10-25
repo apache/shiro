@@ -66,11 +66,11 @@ jobs:
           - version: 11
             dist: zulu
           # 14
-          - version: 14
+          - version: 17
             dist: adopt-hotspot
-          - version: 14
+          - version: 17
             dist: adopt-openj9
-          - version: 14
+          - version: 17
             dist: zulu
         exclude:
           # was already built
@@ -82,7 +82,7 @@ jobs:
           # excludes java 16 on macOS.
           - os: macOS-latest
             java:
-              version: 16
+              version: 11
           # exclude adopt-hotspot on MacOS. zulu (also hotspot) and OpenJ9 are sufficient.
           - os: macOS-latest
             java:
@@ -94,17 +94,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.1.0
-
-      - name: Set up cache for ~./m2/repository
-        uses: actions/cache@v3.0.10
-        with:
-          path: |
-            ~/.m2/repository
-            !~/.m2/repository/org/apache/shiro
-          key: maven-${{ matrix.os }}-java${{ matrix.java }}-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            maven-${{ matrix.os }}-java${{ matrix.java }}-
-            maven-${{ matrix.os }}-
 
       - name: Set up JDK
         uses: actions/setup-java@v3
