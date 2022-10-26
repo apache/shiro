@@ -39,8 +39,6 @@ public class DefaultWebEnvironment extends DefaultEnvironment implements Mutable
 
     private ServletContext servletContext;
 
-    private ShiroFilterConfiguration filterConfiguration;
-
     public DefaultWebEnvironment() {
         super();
     }
@@ -97,6 +95,12 @@ public class DefaultWebEnvironment extends DefaultEnvironment implements Mutable
 
     @Override
     public ShiroFilterConfiguration getShiroFilterConfiguration() {
-        return getObject(SHIRO_FILTER_CONFIG_NAME, ShiroFilterConfiguration.class);
+        ShiroFilterConfiguration config = getObject(SHIRO_FILTER_CONFIG_NAME, ShiroFilterConfiguration.class);
+        // Use the default configuration if config is null
+        if (config == null) {
+            config = MutableWebEnvironment.super.getShiroFilterConfiguration();
+            setShiroFilterConfiguration(config);
+        }
+        return config;
     }
 }

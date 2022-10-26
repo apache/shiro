@@ -30,6 +30,8 @@ import java.io.InputStream;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 
@@ -58,6 +60,24 @@ public class EnvironmentLoaderServiceTest {
         IniWebEnvironment environmentStub = (IniWebEnvironment) resultEnvironment;
 
         assertThat(environmentStub.getServletContext(), sameInstance(servletContext));
+    }
+
+    @Test
+    public void testDefaultWebEnvironment() {
+        ServletContext servletContext = EasyMock.mock(ServletContext.class);
+        expect(servletContext.getInitParameter("shiroEnvironmentClass"))
+                .andReturn(DefaultWebEnvironment.class.getName());
+        expect(servletContext.getInitParameter("shiroConfigLocations")).andReturn(null);
+
+        EasyMock.replay(servletContext);
+
+        WebEnvironment environment = new EnvironmentLoader().createEnvironment(servletContext);
+
+        EasyMock.verify(servletContext);
+
+        assertThat(environment, instanceOf(DefaultWebEnvironment.class));
+        assertThat(environment.getShiroFilterConfiguration(), is(notNullValue()));
+        assertThat(environment.getServletContext(), sameInstance(servletContext));
     }
 
     @Test()
