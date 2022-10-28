@@ -20,7 +20,7 @@ name: Maven CI
 on:
   workflow_dispatch: {}
   push:
-    branches: [ main, 1.10.x ]
+    branches: [ main, '1.*', '2.*' ]
   pull_request:
     branches: [ ]
 
@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 8
-          distribution: adopt-hotspot
+          distribution: temurin
 
       - name: License Check
         run: mvn apache-rat:check "-Drat.consoleOutput"
@@ -44,49 +44,58 @@ jobs:
       - name: Build with Maven
         run: mvn verify --errors --batch-mode --no-transfer-progress -Pdocs
 
-  build-all:
+  build-linux:
     needs: build
 
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+        os: [ ubuntu-latest ]
         java:
           #  8
           - version: 8
-            dist: adopt-hotspot
-          - version: 8
             dist: adopt-openj9
-          - version: 8
-            dist: zulu
           # 11
           - version: 11
-            dist: adopt-hotspot
+            dist: temurin
           - version: 11
             dist: adopt-openj9
-          - version: 11
-            dist: zulu
-          # 14
+          # 17
           - version: 17
-            dist: adopt-hotspot
+            dist: temurin
           - version: 17
             dist: adopt-openj9
           - version: 17
             dist: zulu
-        exclude:
-          # was already built
-          - os: ubuntu-latest
-            java:
-              version: 8
-              dist: adopt-hotspot
-          # exclude some builds, because MacOs builds have fewer resources available.
-          # excludes java 16 on macOS.
-          - os: macOS-latest
-            java:
-              version: 11
-          # exclude adopt-hotspot on MacOS. zulu (also hotspot) and OpenJ9 are sufficient.
-          - os: macOS-latest
-            java:
-              dist: adopt-hotspot
+      fail-fast: false
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java.version }}
+          distribution: ${{ matrix.java.dist }}
+
+      - name: Build with Maven
+        run: mvn verify --errors --batch-mode --no-transfer-progress -Pdocs
+
+  build-mac-win:
+    needs: build
+
+    strategy:
+      matrix:
+        os: [ windows-latest, macOS-latest ]
+        java:
+          #  8
+          - version: 8
+            dist: temurin
+          # 17
+          - version: 17
+            dist: temurin
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
