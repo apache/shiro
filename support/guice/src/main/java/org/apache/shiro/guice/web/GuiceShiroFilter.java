@@ -23,7 +23,7 @@ import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
 
-import javax.inject.Inject;
+import com.google.inject.Inject;
 
 /**
  * Shiro filter that is managed by and receives its filter chain configurations from Guice.  The convenience method to
