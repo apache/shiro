@@ -27,8 +27,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for the {@link OncePerRequestFilter} implementation.
@@ -48,9 +49,9 @@ public class OncePerRequestFilterTest {
     @Before
     public void setUp() {
         filter = createTestInstance();
-        chain = createNiceMock(FilterChain.class);
-        request = createNiceMock(ServletRequest.class);
-        response = createNiceMock(ServletResponse.class);
+        chain = mock(FilterChain.class);
+        request = mock(ServletRequest.class);
+        response = mock(ServletResponse.class);
     }
 
     private CountingOncePerRequestFilter createTestInstance() {
@@ -63,12 +64,10 @@ public class OncePerRequestFilterTest {
     @SuppressWarnings({"JavaDoc"})
     @Test
     public void testEnabled() throws IOException, ServletException {
-        expect(request.getAttribute(ATTR_NAME)).andReturn(null).anyTimes();
-        replay(request);
+        when(request.getAttribute(ATTR_NAME)).thenReturn(null);
 
         filter.doFilter(request, response, chain);
 
-        verify(request);
         assertEquals("Filter should have executed", 1, filter.filterCount);
     }
 
@@ -80,12 +79,10 @@ public class OncePerRequestFilterTest {
     public void testDisabled() throws IOException, ServletException {
         filter.setEnabled(false); //test disabled
 
-        expect(request.getAttribute(ATTR_NAME)).andReturn(null).anyTimes();
-        replay(request);
+        when(request.getAttribute(ATTR_NAME)).thenReturn(null);
 
         filter.doFilter(request, response, chain);
 
-        verify(request);
         assertEquals("Filter should NOT have executed", 0, filter.filterCount);
     }
 
@@ -93,13 +90,11 @@ public class OncePerRequestFilterTest {
     public void testFilterOncePerRequest() throws IOException, ServletException {
         filter.setFilterOncePerRequest(false);
 
-        expect(request.getAttribute(ATTR_NAME)).andReturn(null).andReturn(true);
-        replay(request);
+        when(request.getAttribute(ATTR_NAME)).thenReturn(null, true);
 
         filter.doFilter(request, response, chain);
         filter.doFilter(request, response, chain);
 
-        verify(request);
         assertEquals("Filter should have executed twice", 2, filter.filterCount);
     }
 
@@ -116,5 +111,4 @@ public class OncePerRequestFilterTest {
             filterCount++;
         }
     }
-
 }

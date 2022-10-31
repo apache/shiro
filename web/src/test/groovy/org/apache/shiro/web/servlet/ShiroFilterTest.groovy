@@ -19,17 +19,20 @@
 package org.apache.shiro.web.servlet
 
 import org.apache.shiro.web.config.ShiroFilterConfiguration
-
-import javax.servlet.FilterConfig
-import javax.servlet.ServletContext
 import org.apache.shiro.web.env.EnvironmentLoader
 import org.apache.shiro.web.env.WebEnvironment
 import org.apache.shiro.web.filter.mgt.FilterChainResolver
 import org.apache.shiro.web.mgt.WebSecurityManager
 import org.junit.Test
 
-import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import javax.servlet.FilterConfig
+import javax.servlet.ServletContext
+
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.sameInstance
+import static org.mockito.ArgumentMatchers.eq
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 /**
  * Unit tests for {@link ShiroFilter}.
@@ -39,91 +42,81 @@ class ShiroFilterTest {
     @Test
     void testInit() {
 
-        def filterConfig = createStrictMock(FilterConfig)
-        def servletContext = createStrictMock(ServletContext)
-        def shiroFilterConfig = createStrictMock(ShiroFilterConfiguration)
-        def webEnvironment = createStrictMock(WebEnvironment)
-        def webSecurityManager = createStrictMock(WebSecurityManager)
-        def filterChainResolver = createStrictMock(FilterChainResolver)
+        def filterConfig = mock(FilterConfig)
+        def servletContext = mock(ServletContext)
+        def shiroFilterConfig = mock(ShiroFilterConfiguration)
+        def webEnvironment = mock(WebEnvironment)
+        def webSecurityManager = mock(WebSecurityManager)
+        def filterChainResolver = mock(FilterChainResolver)
 
-        expect(filterConfig.servletContext).andReturn(servletContext).anyTimes()
-        expect(filterConfig.getInitParameter(eq(AbstractShiroFilter.STATIC_INIT_PARAM_NAME))).andReturn null
-        expect(servletContext.getAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY))).andReturn webEnvironment
-        expect(shiroFilterConfig.filterOncePerRequest).andReturn true
-        expect(shiroFilterConfig.staticSecurityManagerEnabled).andReturn false
-        expect(webEnvironment.shiroFilterConfiguration).andReturn shiroFilterConfig
-        expect(webEnvironment.webSecurityManager).andReturn webSecurityManager
-        expect(webEnvironment.filterChainResolver).andReturn filterChainResolver
-
-        replay filterConfig, servletContext, webEnvironment, webSecurityManager, filterChainResolver, shiroFilterConfig
+        when(filterConfig.servletContext).thenReturn(servletContext)
+        when(filterConfig.getInitParameter(eq(AbstractShiroFilter.STATIC_INIT_PARAM_NAME))).thenReturn null
+        when(servletContext.getAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY))).thenReturn webEnvironment
+        when(shiroFilterConfig.filterOncePerRequest).thenReturn true
+        when(shiroFilterConfig.staticSecurityManagerEnabled).thenReturn false
+        when(webEnvironment.shiroFilterConfiguration).thenReturn shiroFilterConfig
+        when(webEnvironment.webSecurityManager).thenReturn webSecurityManager
+        when(webEnvironment.filterChainResolver).thenReturn filterChainResolver
 
         ShiroFilter filter = new ShiroFilter()
 
         filter.init(filterConfig)
 
-        assertSame filter.securityManager, webSecurityManager
-        assertSame filter.filterChainResolver, filterChainResolver
-        assertTrue(filter.isFilterOncePerRequest())
-        assertFalse(filter.isStaticSecurityManagerEnabled())
-
-        verify filterConfig, servletContext, webEnvironment, webSecurityManager, filterChainResolver, shiroFilterConfig
+        assertThat filter.securityManager, sameInstance(webSecurityManager)
+        assertThat filter.filterChainResolver, sameInstance(filterChainResolver)
+        assertThat("expected filter.isFilterOncePerRequest() to return true", filter.isFilterOncePerRequest())
+        assertThat("expected filter.isStaticSecurityManagerEnabled() to return false", !filter.isStaticSecurityManagerEnabled())
     }
 
     @Test
     void configStaticSecManager_initParm() {
 
-        def filterConfig = createStrictMock(FilterConfig)
-        def servletContext = createStrictMock(ServletContext)
-        def shiroFilterConfig = createStrictMock(ShiroFilterConfiguration)
-        def webEnvironment = createStrictMock(WebEnvironment)
-        def webSecurityManager = createStrictMock(WebSecurityManager)
-        def filterChainResolver = createStrictMock(FilterChainResolver)
+        def filterConfig = mock(FilterConfig)
+        def servletContext = mock(ServletContext)
+        def shiroFilterConfig = mock(ShiroFilterConfiguration)
+        def webEnvironment = mock(WebEnvironment)
+        def webSecurityManager = mock(WebSecurityManager)
+        def filterChainResolver = mock(FilterChainResolver)
 
-        expect(filterConfig.servletContext).andReturn(servletContext).anyTimes()
-        expect(filterConfig.getInitParameter(eq(AbstractShiroFilter.STATIC_INIT_PARAM_NAME))).andReturn "true"
-        expect(servletContext.getAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY))).andReturn webEnvironment
-        expect(shiroFilterConfig.filterOncePerRequest).andReturn false
-        expect(shiroFilterConfig.staticSecurityManagerEnabled).andReturn false
-        expect(webEnvironment.shiroFilterConfiguration).andReturn shiroFilterConfig
-        expect(webEnvironment.webSecurityManager).andReturn webSecurityManager
-        expect(webEnvironment.filterChainResolver).andReturn filterChainResolver
-
-        replay filterConfig, servletContext, webEnvironment, webSecurityManager, filterChainResolver, shiroFilterConfig
+        when(filterConfig.servletContext).thenReturn(servletContext)
+        when(filterConfig.getInitParameter(eq(AbstractShiroFilter.STATIC_INIT_PARAM_NAME))).thenReturn "true"
+        when(servletContext.getAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY))).thenReturn webEnvironment
+        when(shiroFilterConfig.filterOncePerRequest).thenReturn false
+        when(shiroFilterConfig.staticSecurityManagerEnabled).thenReturn false
+        when(webEnvironment.shiroFilterConfiguration).thenReturn shiroFilterConfig
+        when(webEnvironment.webSecurityManager).thenReturn webSecurityManager
+        when(webEnvironment.filterChainResolver).thenReturn filterChainResolver
 
         ShiroFilter filter = new ShiroFilter()
 
         filter.init(filterConfig)
 
-        assertTrue(filter.isStaticSecurityManagerEnabled())
-        verify filterConfig, servletContext, webEnvironment, webSecurityManager, filterChainResolver, shiroFilterConfig
+        assertThat("expected filter.isStaticSecurityManagerEnabled() to return true", filter.isStaticSecurityManagerEnabled())
     }
 
     @Test
     void configStaticSecManager_config() {
 
-        def filterConfig = createStrictMock(FilterConfig)
-        def servletContext = createStrictMock(ServletContext)
-        def shiroFilterConfig = createStrictMock(ShiroFilterConfiguration)
-        def webEnvironment = createStrictMock(WebEnvironment)
-        def webSecurityManager = createStrictMock(WebSecurityManager)
-        def filterChainResolver = createStrictMock(FilterChainResolver)
+        def filterConfig = mock(FilterConfig)
+        def servletContext = mock(ServletContext)
+        def shiroFilterConfig = mock(ShiroFilterConfiguration)
+        def webEnvironment = mock(WebEnvironment)
+        def webSecurityManager = mock(WebSecurityManager)
+        def filterChainResolver = mock(FilterChainResolver)
 
-        expect(filterConfig.servletContext).andReturn(servletContext).anyTimes()
-        expect(filterConfig.getInitParameter(eq(AbstractShiroFilter.STATIC_INIT_PARAM_NAME))).andReturn null
-        expect(servletContext.getAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY))).andReturn webEnvironment
-        expect(shiroFilterConfig.filterOncePerRequest).andReturn false
-        expect(shiroFilterConfig.staticSecurityManagerEnabled).andReturn true
-        expect(webEnvironment.shiroFilterConfiguration).andReturn shiroFilterConfig
-        expect(webEnvironment.webSecurityManager).andReturn webSecurityManager
-        expect(webEnvironment.filterChainResolver).andReturn filterChainResolver
-
-        replay filterConfig, servletContext, webEnvironment, webSecurityManager, filterChainResolver, shiroFilterConfig
+        when(filterConfig.servletContext).thenReturn(servletContext)
+        when(filterConfig.getInitParameter(eq(AbstractShiroFilter.STATIC_INIT_PARAM_NAME))).thenReturn null
+        when(servletContext.getAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY))).thenReturn webEnvironment
+        when(shiroFilterConfig.filterOncePerRequest).thenReturn false
+        when(shiroFilterConfig.staticSecurityManagerEnabled).thenReturn true
+        when(webEnvironment.shiroFilterConfiguration).thenReturn shiroFilterConfig
+        when(webEnvironment.webSecurityManager).thenReturn webSecurityManager
+        when(webEnvironment.filterChainResolver).thenReturn filterChainResolver
 
         ShiroFilter filter = new ShiroFilter()
 
         filter.init(filterConfig)
 
-        assertTrue(filter.isStaticSecurityManagerEnabled())
-        verify filterConfig, servletContext, webEnvironment, webSecurityManager, filterChainResolver, shiroFilterConfig
+        assertThat("expected filter.isStaticSecurityManagerEnabled() to return true", filter.isStaticSecurityManagerEnabled())
     }
 }
