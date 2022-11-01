@@ -27,7 +27,7 @@ import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 
-import javax.inject.Named;
+import com.google.inject.name.Named;
 import javax.servlet.ServletContext;
 
 @Singleton

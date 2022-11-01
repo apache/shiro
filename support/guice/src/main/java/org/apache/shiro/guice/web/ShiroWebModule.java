@@ -29,6 +29,7 @@ import org.apache.shiro.guice.ShiroModule;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.InvalidRequestFilter;
 import org.apache.shiro.web.filter.PathMatchingFilter;
@@ -135,6 +136,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         bindBeanType(TypeLiteral.get(ServletContext.class), Key.get(ServletContext.class, Names.named(NAME)));
         bind(Key.get(ServletContext.class, Names.named(NAME))).toInstance(this.servletContext);
         bindWebSecurityManager(bind(WebSecurityManager.class));
+        bindShiroFilterConfiguration(bind(ShiroFilterConfiguration.class));
         bindWebEnvironment(bind(WebEnvironment.class));
         bind(GuiceShiroFilter.class).asEagerSingleton();
         expose(GuiceShiroFilter.class);
@@ -244,6 +246,17 @@ public abstract class ShiroWebModule extends ShiroModule {
         } catch (NoSuchMethodException e) {
             throw new ConfigurationException("This really shouldn't happen.  Either something has changed in Shiro, or there's a bug in ShiroModule.", e);
         }
+    }
+
+    /**
+     * Binds the Shiro Filter Configuration.  Override this method in order to provide your own Shiro Filter Configuration binding.
+     * <p/>
+     * By default, a {@link ShiroFilterConfiguration} is bound as an eager singleton.
+     *
+     * @param bind
+     */
+    protected void bindShiroFilterConfiguration(AnnotatedBindingBuilder<? super ShiroFilterConfiguration> bind) {
+        bind.asEagerSingleton();
     }
 
     /**

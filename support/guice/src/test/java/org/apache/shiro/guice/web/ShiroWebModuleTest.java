@@ -18,10 +18,12 @@
  */
 package org.apache.shiro.guice.web;
 
+import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.name.Named;
 import com.google.inject.Provides;
 import com.google.inject.binder.AnnotatedBindingBuilder;
 import com.google.inject.name.Names;
@@ -47,7 +49,6 @@ import org.easymock.EasyMock;
 import org.junit.Assume;
 import org.junit.Test;
 
-import javax.inject.Named;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -432,7 +433,7 @@ public class ShiroWebModuleTest {
         expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/test/foobar");
         replay(servletContext, request);
 
-        Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
+        Injector injector = Guice.createInjector(Binder::requireExplicitBindings, new ShiroWebModule(servletContext) {
             @Override
             protected void configureShiroWeb() {
 
