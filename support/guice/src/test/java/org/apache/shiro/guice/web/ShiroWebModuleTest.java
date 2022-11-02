@@ -30,6 +30,7 @@ import org.apache.shiro.env.Environment;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.env.EnvironmentLoader;
 import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.InvalidRequestFilter;
@@ -487,8 +488,8 @@ public class ShiroWebModuleTest {
 
     public static class MyWebEnvironment extends WebGuiceEnvironment {
         @Inject
-        MyWebEnvironment(FilterChainResolver filterChainResolver, @Named(ShiroWebModule.NAME) ServletContext servletContext, WebSecurityManager securityManager) {
-            super(filterChainResolver, servletContext, securityManager);
+        MyWebEnvironment(FilterChainResolver filterChainResolver, @Named(ShiroWebModule.NAME) ServletContext servletContext, WebSecurityManager securityManager, ShiroFilterConfiguration filterConfiguration) {
+            super(filterChainResolver, servletContext, securityManager, filterConfiguration);
         }
     }
 

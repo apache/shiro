@@ -66,6 +66,13 @@ public abstract class OncePerRequestFilter extends NameableFilter {
     private boolean enabled = true; //most filters wish to execute when configured, so default to true
 
     /**
+     * Determines if the filter's once per request functionality is enabled, defaults to false. It is recommended
+     * to leave this disabled if you are using a {@link javax.servlet.RequestDispatcher RequestDispatcher} to forward
+     * or include request (JSP tags, programmatically, or via a framework).
+     */
+    private boolean filterOncePerRequest = false;
+
+    /**
      * Returns {@code true} if this filter should <em>generally</em><b>*</b> execute for any request,
      * {@code false} if it should let the request/response pass through immediately to the next
      * element in the {@link FilterChain}.  The default value is {@code true}, as most filters would inherently need
@@ -96,6 +103,28 @@ public abstract class OncePerRequestFilter extends NameableFilter {
     }
 
     /**
+     * Returns {@code true} if this filter should only execute once per request. If set to {@code false} this filter
+     * will execute each time it is invoked.
+     * @return {@code true} if this filter should only execute once per request.
+     * @since 1.10
+     */
+    public boolean isFilterOncePerRequest() {
+        return filterOncePerRequest;
+    }
+
+    /**
+     * Sets whether this filter executes once per request or for every invocation of the filter. It is recommended
+     * to leave this disabled if you are using a {@link javax.servlet.RequestDispatcher RequestDispatcher} to forward
+     * or include request (JSP tags, programmatically, or via a framework). 
+     *
+     * @param filterOncePerRequest Whether this filter executes once per request.
+     * @since 1.10
+     */
+    public void setFilterOncePerRequest(boolean filterOncePerRequest) {
+        this.filterOncePerRequest = filterOncePerRequest;
+    }
+
+    /**
      * This {@code doFilter} implementation stores a request attribute for
      * "already filtered", proceeding without filtering again if the
      * attribute is already there.
@@ -107,7 +136,7 @@ public abstract class OncePerRequestFilter extends NameableFilter {
     public final void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String alreadyFilteredAttributeName = getAlreadyFilteredAttributeName();
-        if ( request.getAttribute(alreadyFilteredAttributeName) != null ) {
+        if ( request.getAttribute(alreadyFilteredAttributeName) != null && filterOncePerRequest) {
             log.trace("Filter '{}' already executed.  Proceeding without invoking this filter.", getName());
             filterChain.doFilter(request, response);
         } else //noinspection deprecation

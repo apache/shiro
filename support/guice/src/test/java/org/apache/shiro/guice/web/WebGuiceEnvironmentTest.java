@@ -19,6 +19,7 @@
 package org.apache.shiro.guice.web;
 
 import com.google.inject.spi.InjectionPoint;
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
@@ -47,13 +48,14 @@ public class WebGuiceEnvironmentTest {
         WebSecurityManager securityManager = createMock(WebSecurityManager.class);
         FilterChainResolver filterChainResolver = createMock(FilterChainResolver.class);
         ServletContext servletContext = createMock(ServletContext.class);
+        ShiroFilterConfiguration filterConfiguration = createMock(ShiroFilterConfiguration.class);
 
         Capture<WebGuiceEnvironment> capture = Capture.newInstance();
         servletContext.setAttribute(eq(EnvironmentLoaderListener.ENVIRONMENT_ATTRIBUTE_KEY), and(anyObject(WebGuiceEnvironment.class), capture(capture)));
 
         replay(servletContext, securityManager, filterChainResolver);
 
-        WebGuiceEnvironment underTest = new WebGuiceEnvironment(filterChainResolver, servletContext, securityManager);
+        WebGuiceEnvironment underTest = new WebGuiceEnvironment(filterChainResolver, servletContext, securityManager, filterConfiguration);
 
         assertSame(securityManager, underTest.getSecurityManager());
         assertSame(filterChainResolver, underTest.getFilterChainResolver());

@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.web.env;
 
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 
@@ -54,4 +55,11 @@ public interface MutableWebEnvironment extends WebEnvironment {
      * @param webSecurityManager the {@code WebEnvironment}'s {@link WebSecurityManager}.
      */
     void setWebSecurityManager(WebSecurityManager webSecurityManager);
+
+    /**
+     * Sets the {@code WebEnvironment}'s {@link ShiroFilterConfiguration}.
+     *
+     * @param filterConfiguration the {@code WebEnvironment}'s {@link ShiroFilterConfiguration}.
+     */
+    void setShiroFilterConfiguration(ShiroFilterConfiguration filterConfiguration);
 }

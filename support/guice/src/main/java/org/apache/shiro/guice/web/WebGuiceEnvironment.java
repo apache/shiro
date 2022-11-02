@@ -21,6 +21,7 @@ package org.apache.shiro.guice.web;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
@@ -35,11 +36,14 @@ class WebGuiceEnvironment implements WebEnvironment {
     private ServletContext servletContext;
     private WebSecurityManager securityManager;
 
+    private ShiroFilterConfiguration filterConfiguration;
+
     @Inject
-    WebGuiceEnvironment(FilterChainResolver filterChainResolver, @Named(ShiroWebModule.NAME) ServletContext servletContext, WebSecurityManager securityManager) {
+    WebGuiceEnvironment(FilterChainResolver filterChainResolver, @Named(ShiroWebModule.NAME) ServletContext servletContext, WebSecurityManager securityManager, ShiroFilterConfiguration filterConfiguration) {
         this.filterChainResolver = filterChainResolver;
         this.servletContext = servletContext;
         this.securityManager = securityManager;
+        this.filterConfiguration = filterConfiguration;
 
         servletContext.setAttribute(EnvironmentLoaderListener.ENVIRONMENT_ATTRIBUTE_KEY, this);
     }
@@ -58,5 +62,9 @@ class WebGuiceEnvironment implements WebEnvironment {
 
     public SecurityManager getSecurityManager() {
         return securityManager;
+    }
+
+    public ShiroFilterConfiguration getShiroFilterConfiguration() {
+        return filterConfiguration;
     }
 }

@@ -28,6 +28,7 @@ import org.apache.shiro.lang.util.Initializable;
 import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
@@ -50,6 +51,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
 
     public static final String DEFAULT_WEB_INI_RESOURCE_PATH = "/WEB-INF/shiro.ini";
     public static final String FILTER_CHAIN_RESOLVER_NAME = "filterChainResolver";
+    public static final String SHIRO_FILTER_CONFIG_NAME = "shiroFilter";
 
     private static final Logger log = LoggerFactory.getLogger(IniWebEnvironment.class);
 
@@ -122,6 +124,9 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
 
         WebSecurityManager securityManager = createWebSecurityManager();
         setWebSecurityManager(securityManager);
+
+        ShiroFilterConfiguration filterConfiguration = createFilterConfiguration();
+        setShiroFilterConfiguration(filterConfiguration);
 
         FilterChainResolver resolver = createFilterChainResolver();
         if (resolver != null) {
@@ -254,6 +259,11 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         }
 
         return ini;
+    }
+
+
+    protected ShiroFilterConfiguration createFilterConfiguration() {
+        return (ShiroFilterConfiguration) this.objects.get(SHIRO_FILTER_CONFIG_NAME);
     }
 
     protected FilterChainResolver createFilterChainResolver() {
@@ -397,6 +407,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
     protected Map<String, Object> getDefaults() {
         Map<String, Object> defaults = new HashMap<String, Object>();
         defaults.put(FILTER_CHAIN_RESOLVER_NAME, new IniFilterChainResolverFactory());
+        defaults.put(SHIRO_FILTER_CONFIG_NAME, new ShiroFilterConfiguration());
         return defaults;
     }
 

@@ -19,6 +19,7 @@
 package org.apache.shiro.web.env
 
 import org.apache.shiro.mgt.SecurityManager
+import org.apache.shiro.web.config.ShiroFilterConfiguration
 import org.apache.shiro.web.filter.mgt.FilterChainResolver
 import org.apache.shiro.web.mgt.WebSecurityManager
 
@@ -41,6 +42,11 @@ class MockWebEnvironment implements MutableWebEnvironment {
 
     @Override
     void setWebSecurityManager(WebSecurityManager webSecurityManager) {
+
+    }
+
+    @Override
+    void setShiroFilterConfiguration(ShiroFilterConfiguration filterConfiguration) {
 
     }
 

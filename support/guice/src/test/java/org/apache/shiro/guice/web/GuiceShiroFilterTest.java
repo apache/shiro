@@ -19,20 +19,24 @@
 package org.apache.shiro.guice.web;
 
 import com.google.inject.spi.InjectionPoint;
+import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.junit.Test;
 
-import static org.easymock.EasyMock.createMock;
+import static org.mockito.Mockito.mock;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.when;
 
 public class GuiceShiroFilterTest {
 
     @Test
     public void ensureInjectable() {
         try {
-            InjectionPoint ip = InjectionPoint.forConstructorOf(GuiceShiroFilter.class);
+            InjectionPoint.forConstructorOf(GuiceShiroFilter.class);
         } catch (Exception e) {
             fail("Could not create constructor injection point.");
         }
@@ -40,12 +44,17 @@ public class GuiceShiroFilterTest {
 
     @Test
     public void testConstructor() {
-        WebSecurityManager securityManager = createMock(WebSecurityManager.class);
-        FilterChainResolver filterChainResolver = createMock(FilterChainResolver.class);
+        WebSecurityManager securityManager = mock(WebSecurityManager.class);
+        FilterChainResolver filterChainResolver = mock(FilterChainResolver.class);
+        ShiroFilterConfiguration filterConfiguration = mock(ShiroFilterConfiguration.class);
+        when(filterConfiguration.isStaticSecurityManagerEnabled()).thenReturn(true);
+        when(filterConfiguration.isFilterOncePerRequest()).thenReturn(false);
 
-        GuiceShiroFilter underTest = new GuiceShiroFilter(securityManager, filterChainResolver);
+        GuiceShiroFilter underTest = new GuiceShiroFilter(securityManager, filterChainResolver, filterConfiguration);
 
         assertSame(securityManager, underTest.getSecurityManager());
         assertSame(filterChainResolver, underTest.getFilterChainResolver());
+        assertTrue(underTest.isStaticSecurityManagerEnabled());
+        assertFalse(underTest.isFilterOncePerRequest());
     }
 }
