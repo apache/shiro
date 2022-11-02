@@ -19,25 +19,16 @@
 package org.apache.shiro.test.web.jakarta;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import org.apache.logging.log4j.util.Strings;
+import io.undertow.Undertow;
+import io.undertow.jsp.JspServletBuilder;
+import io.undertow.server.handlers.PathHandler;
+import io.undertow.servlet.api.DeploymentInfo;
+import io.undertow.servlet.api.DeploymentManager;
+import io.undertow.servlet.api.ServletContainer;
+import java.util.HashMap;
+import org.apache.jasper.deploy.JspPropertyGroup;
+import org.apache.jasper.deploy.TagLibraryInfo;
 import org.apache.shiro.lang.codec.Base64;
-//import org.eclipse.jetty.http.HttpVersion;
-//import org.eclipse.jetty.server.Connector;
-//import org.eclipse.jetty.server.HttpConfiguration;
-//import org.eclipse.jetty.server.HttpConnectionFactory;
-//import org.eclipse.jetty.server.SecureRequestCustomizer;
-//import org.eclipse.jetty.server.Server;
-//import org.eclipse.jetty.server.ServerConnector;
-//import org.eclipse.jetty.server.SslConnectionFactory;
-//import org.eclipse.jetty.util.resource.Resource;
-//import org.eclipse.jetty.util.ssl.SslContextFactory;
-//import org.eclipse.jetty.webapp.Configuration;
-//import org.eclipse.jetty.webapp.FragmentConfiguration;
-//import org.eclipse.jetty.webapp.JettyWebXmlConfiguration;
-//import org.eclipse.jetty.webapp.MetaInfConfiguration;
-//import org.eclipse.jetty.webapp.WebAppContext;
-//import org.eclipse.jetty.webapp.WebInfConfiguration;
-//import org.eclipse.jetty.webapp.WebXmlConfiguration;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -52,9 +43,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-//import static org.eclipse.jetty.util.resource.Resource.newResource;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public abstract class JakartaAbstractContainerIT {
 
@@ -71,70 +60,31 @@ public abstract class JakartaAbstractContainerIT {
 
     @BeforeClass
     public static void startContainer() throws Exception {
+        final PathHandler servletPath = new PathHandler();
+        final ServletContainer container = ServletContainer.Factory.newInstance();
 
-//        jetty = new Server();
-//        ServerConnector connector = new ServerConnector(jetty);
-//        connector.setPort(9080);
-//        jetty.setConnectors(new Connector[] {connector});
-//
-//        WebAppContext ctx = new WebAppContext();
-//        ctx.setClassLoader(Thread.currentThread().getContextClassLoader());
-//        ctx.setContextPath("/");
-//
-//        // Useful for WebXmlConfiguration
-//        ctx.setBaseResource(newResource(getWarDir()));
-//
-//        ctx.setConfigurations(new Configuration[]{
-//                new WebInfConfiguration(),
-//                new WebXmlConfiguration(),
-//                new JettyWebXmlConfiguration(),
-//                new MetaInfConfiguration(),
-//                new FragmentConfiguration(),
-//        });
-//
-//        if (Strings.isNotBlank(classpath)) {
-//            // Fix to scan Spring WebApplicationInitializer
-//            // This will add compiled classes to jetty classpath
-//            // See: http://stackoverflow.com/questions/13222071/spring-3-1-webapplicationinitializer-embedded-jetty-8-annotationconfiguration
-//            // And more precisely: http://stackoverflow.com/a/18449506/1215828
-//            File classes = new File(classpath);
-//            Resource containerResources = Resource.newResource(new File(classes.toURI()));
-//            ctx.getMetaData().addContainerResource(containerResources);
-//        }
-//
-//        // web app
-//        ctx.setParentLoaderPriority(true);
-//        ctx.setWar(getWarDir());
-//        ctx.setServer(jetty);
-//
-//        // Add server context
-//        jetty.setHandler(ctx);
-//
-//        // TLS
-//        tlsPort = getFreePort();
-//
-//        final SslContextFactory sslContextFactory = new SslContextFactory.Server();
-//        sslContextFactory.setKeyStorePath(TEST_KEYSTORE_PATH.getAbsolutePath());
-//        sslContextFactory.setKeyStorePassword(TEST_KEYSTORE_PASSWORD);
-//        sslContextFactory.setKeyManagerPassword(TEST_KEYSTORE_PASSWORD);
-//
-//        HttpConfiguration https = new HttpConfiguration();
-//        https.addCustomizer(new SecureRequestCustomizer());
-//
-//        final ServerConnector httpsConnector = new ServerConnector(
-//                jetty,
-//                new SslConnectionFactory((SslContextFactory.Server) sslContextFactory, HttpVersion.HTTP_1_1.asString()),
-//                new HttpConnectionFactory(https));
-//        httpsConnector.setPort(tlsPort);
-//        jetty.addConnector(httpsConnector);
-//
-//        jetty.start();
-//
-//        assertTrue(jetty.isStarted());
+        DeploymentInfo builder = new DeploymentInfo()
+            .setClassLoader(JakartaAbstractContainerIT.class.getClassLoader())
+            .setContextPath("/servletContext")
+            //.setClassIntrospecter(TestClassIntrospector.INSTANCE)
+            .setDeploymentName("servletContext.war")
+            //.setResourceManager(new TestResourceLoader(SimpleJspTestCase.class))
+            .addServlet(JspServletBuilder.createServlet("Default Jsp Servlet", "*.jsp"));
+        JspServletBuilder.setupDeployment(builder, new HashMap<String, JspPropertyGroup>(), new HashMap<String, TagLibraryInfo>(), new TestInstanceManager());
+
+        DeploymentManager manager = container.addDeployment(builder);
+        manager.deploy();
+        servletPath.addPrefixPath(builder.getContextPath(), manager.start());
+
+        Undertow server = Undertow.builder()
+            .addHttpListener(8080, "localhost")
+            .setHandler(servletPath)
+            .build();
+        server.start();
     }
 
-    protected static String getTlsBaseUri() {
-        return "https://localhost:" + tlsPort + "/";
+    protected static String getBaseUri() {
+        return "http://localhost:8080/";
     }
 
     protected static String getWarDir() {

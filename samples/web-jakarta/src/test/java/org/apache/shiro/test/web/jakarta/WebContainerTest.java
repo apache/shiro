@@ -38,24 +38,24 @@ public class WebContainerTest extends JakartaAbstractContainerIT {
     public void startup() throws IOException {
 
         // Make sure we are logged out
-//        final HtmlPage homePage = webClient.getPage(getTlsBaseUri());
-//        try {
-//            homePage.getAnchorByHref("/logout").click();
-//        }
-//        catch (ElementNotFoundException e) {
-//            //Ignore
-//        }
+        final HtmlPage homePage = webClient.getPage(getBaseUri());
+        try {
+            homePage.getAnchorByHref("/logout").click();
+        }
+        catch (ElementNotFoundException e) {
+            //Ignore
+        }
     }
 
     @Test
     public void logIn() throws FailingHttpStatusCodeException, IOException {
 
-//        HtmlPage page = webClient.getPage(getTlsBaseUri() + "login.jsp");
-//        HtmlForm form = page.getFormByName("loginform");
-//        form.<HtmlInput>getInputByName("username").setValueAttribute("root");
-//        form.<HtmlInput>getInputByName("password").setValueAttribute("secret");
-//        page = form.<HtmlInput>getInputByName("submit").click();
-//        // This'll throw an exception if not logged in
-//        page.getAnchorByHref("/logout");
+        HtmlPage page = webClient.getPage(getBaseUri() + "login.jsp");
+        HtmlForm form = page.getFormByName("loginform");
+        form.<HtmlInput>getInputByName("username").setValueAttribute("root");
+        form.<HtmlInput>getInputByName("password").setValueAttribute("secret");
+        page = form.<HtmlInput>getInputByName("submit").click();
+        // This'll throw an exception if not logged in
+        page.getAnchorByHref("/logout");
     }
 }
