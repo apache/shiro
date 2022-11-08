@@ -39,10 +39,13 @@ jobs:
           distribution: temurin
 
       - name: License Check
-        run: mvn apache-rat:check "-Drat.consoleOutput"
+        run: mvn apache-rat:check "-Drat.consoleOutput" --errors --batch-mode --no-transfer-progress
 
       - name: Build with Maven
-        run: mvn verify --errors --batch-mode --no-transfer-progress -Pdocs
+        run: mvn verify -Dmaven.doap.skip=true -Dgpg.skip=true --no-transfer-progress --errors --batch-mode --no-transfer-progress -Pdocs,apache-release
+
+      - name: Build site with Maven
+        run: mvn site site:stage -Dmaven.doap.skip=true -Dgpg.skip=true --no-transfer-progress --errors --batch-mode --no-transfer-progress -Pdocs,apache-release
 
   build-linux:
     needs: build
@@ -111,4 +114,4 @@ jobs:
           distribution: ${{ matrix.java.dist }}
 
       - name: Build with Maven
-        run: mvn verify --errors --batch-mode --no-transfer-progress -Pdocs
+        run: mvn verify site site:stage -Dmaven.doap.skip=true -Dgpg.skip=true --no-transfer-progress --errors --batch-mode --no-transfer-progress -Pdocs,apache-release

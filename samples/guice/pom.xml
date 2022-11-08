@@ -40,30 +40,10 @@
 
 	<dependencies>
 	    <dependency>
-		<groupId>org.apache.taglibs</groupId>
-		<artifactId>taglibs-standard-spec</artifactId>
-		<scope>compile</scope>
-	    </dependency>
-	    <dependency>
-		<groupId>org.apache.taglibs</groupId>
-		<artifactId>taglibs-standard-impl</artifactId>
-		<scope>compile</scope>
-	    </dependency>
-	    <dependency>
 	        <groupId>javax.servlet</groupId>
 	        <artifactId>javax.servlet-api</artifactId>
 	        <scope>provided</scope>
 	    </dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j-impl</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<scope>runtime</scope>
-		</dependency>
 	    <dependency>
 	        <groupId>org.apache.shiro</groupId>
 	        <artifactId>shiro-core</artifactId>
@@ -89,19 +69,6 @@
         <dependency>
             <groupId>net.sourceforge.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jsp</artifactId>
-            <version>${jetty.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jstl</artifactId>
-            <version>${jetty.version}</version>
-            <type>pom</type>
             <scope>test</scope>
         </dependency>
 

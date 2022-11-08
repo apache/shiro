@@ -38,7 +38,7 @@ public class WebAppContainerIntegrationIT extends AbstractContainerIT {
     @Before
     public void logOut() throws IOException {
         // Make sure we are logged out
-        final HtmlPage homePage = webClient.getPage(getTlsBaseUri());
+        final HtmlPage homePage = webClient.getPage(getBaseUri());
         try {
             homePage.getAnchorByHref("/logout").click();
         }
@@ -50,7 +50,7 @@ public class WebAppContainerIntegrationIT extends AbstractContainerIT {
     @Test
     public void logIn() throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 
-        HtmlPage page = webClient.getPage(getTlsBaseUri() + "login.jsp");
+        HtmlPage page = webClient.getPage(getBaseUri() + "login.jsp");
         HtmlForm form = page.getFormByName("loginform");
         form.<HtmlInput>getInputByName("username").setValueAttribute("root");
         form.<HtmlInput>getInputByName("password").setValueAttribute("secret");

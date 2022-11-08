@@ -21,6 +21,7 @@ package org.apache.shiro.samples.guice;
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebAssert;
+import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
@@ -33,6 +34,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 public class ContainerIntegrationIT extends AbstractContainerIT {
+
+    private WebClient webClient = new WebClient();
 
     @Before
     public void logOut() throws IOException {
@@ -67,8 +70,6 @@ public class ContainerIntegrationIT extends AbstractContainerIT {
         HtmlCheckBoxInput checkbox = form.getInputByName("rememberMe");
         checkbox.setChecked(true);
         page = form.<HtmlInput>getInputByName("submit").click();
-        jetty.stop();
-        jetty.start();
         page = webClient.getPage(getBaseUri());
         // page.getAnchorByHref("/logout");
         WebAssert.assertLinkPresentWithText(page, "Log out");
