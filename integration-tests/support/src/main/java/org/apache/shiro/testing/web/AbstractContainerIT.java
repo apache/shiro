@@ -18,12 +18,15 @@
  */
 package org.apache.shiro.testing.web;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
 import org.apache.meecrowave.Meecrowave;
+import org.apache.shiro.codec.Base64;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+
+import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractContainerIT {
 
@@ -52,6 +55,14 @@ public abstract class AbstractContainerIT {
         assertEquals("Expected only one war file in target directory, run 'mvn clean' and try again", 1, warFiles.length);
 
         return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
+    }
+
+    protected static String getBasicAuthorizationHeaderValue(String username, String password) throws UnsupportedEncodingException {
+        String authorizationHeader = username + ":" + password;
+        byte[] valueBytes;
+        valueBytes = authorizationHeader.getBytes("UTF-8");
+        authorizationHeader = new String(Base64.encode(valueBytes));
+        return "Basic " + authorizationHeader;
     }
 
     @AfterClass

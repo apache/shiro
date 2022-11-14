@@ -108,14 +108,12 @@
         <spring-boot.version>2.7.4</spring-boot.version>
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.1</jaxrs.api.version>
-        <htmlunit.version>2.66.0</htmlunit.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.0.1</easymock.version>
         <gmaven.version>1.13.1</gmaven.version>
         <groovy.version>2.5.18</groovy.version>
         <junit.version>4.13.2</junit.version>
-        <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
         <hibernate.version>5.6.12.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <!-- so we can mock static methods in 3rd party libraries that sometimes don't use proper interfaces
@@ -126,6 +124,7 @@
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
 
         <root.dir>${session.executionRootDirectory}</root.dir>
+        <tomcat.version>9.0.62</tomcat.version>
 
     </properties>
 
@@ -1020,11 +1019,6 @@
                 <version>${hazelcast.version}</version>
             </dependency>
             <dependency>
-                <groupId>net.sourceforge.htmlunit</groupId>
-                <artifactId>htmlunit</artifactId>
-                <version>${htmlunit.version}</version>
-            </dependency>
-            <dependency>
                 <!-- Used for sample applications only - not required for the framework: -->
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
@@ -1214,11 +1208,6 @@
                 <artifactId>quartz</artifactId>
                 <version>${quartz.version}</version>
                 <optional>true</optional>
-            </dependency>
-            <dependency>
-                <groupId>com.github.mjeanroy</groupId>
-                <artifactId>junit-servers-jetty</artifactId>
-                <version>${junit.server.jetty.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

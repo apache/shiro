@@ -19,63 +19,59 @@
 package org.apache.shiro.samples.guice;
 
 import org.apache.shiro.testing.web.AbstractContainerIT;
-
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebAssert;
-import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.Response;
+import java.net.URI;
+
+import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
+import static javax.ws.rs.core.MediaType.TEXT_HTML_TYPE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ContainerIntegrationIT extends AbstractContainerIT {
 
-    @Before
-    public void logOut() throws IOException {
-        // Make sure we are logged out
-        final HtmlPage homePage = webClient.getPage(getBaseUri());
+    @Test
+    public void logIn() {
+        final Client client = ClientBuilder.newClient();
+
         try {
-            homePage.getAnchorByHref("/logout").click();
+            Cookie jsessionid;
+            try (final Response loginPage = client.target(getBaseUri())
+                    .path("/login.jsp")
+                    .request(TEXT_HTML_TYPE)
+                    .get()) {
+                jsessionid = new Cookie("JSESSIONID", loginPage.getMetadata().get("Set-Cookie").get(0).toString().split(";")[0].split("=")[1]);
+                assertTrue(loginPage.readEntity(String.class).contains("loginform"));
+            }
+
+            assertNotNull(jsessionid);
+            URI location;
+            try (final Response loginAction = client.target(getBaseUri())
+                    .path("/login.jsp")
+                    .request(APPLICATION_FORM_URLENCODED)
+                    .cookie(jsessionid)
+                    .post(Entity.entity("username=root&password=secret&submit=Login", APPLICATION_FORM_URLENCODED))) {
+                assertEquals(302, loginAction.getStatus());
+                location = loginAction.getLocation();
+            }
+
+            assertNotNull(location);
+            final String loggedPage = client.target(getBaseUri())
+                    .path(location.getPath())
+                    .request(APPLICATION_FORM_URLENCODED)
+                    .cookie(jsessionid)
+                    .get(String.class);
+
+            assertTrue(loggedPage.contains("Hi root!"));
+        } finally {
+            client.close();
         }
-        catch (ElementNotFoundException e) {
-            //Ignore
-        }
-    }
-
-    @Test
-    public void logIn() throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
-
-        HtmlPage page = webClient.getPage(getBaseUri() + "login.jsp");
-        HtmlForm form = page.getFormByName("loginform");
-        form.<HtmlInput>getInputByName("username").setValueAttribute("root");
-        form.<HtmlInput>getInputByName("password").setValueAttribute("secret");
-        page = form.<HtmlInput>getInputByName("submit").click();
-        // This'll throw an expection if not logged in
-        page.getAnchorByHref("/logout");
-    }
-
-    @Test
-    public void logInAndRememberMe() throws Exception {
-        HtmlPage page = webClient.getPage(getBaseUri() + "login.jsp");
-        HtmlForm form = page.getFormByName("loginform");
-        form.<HtmlInput>getInputByName("username").setValueAttribute("root");
-        form.<HtmlInput>getInputByName("password").setValueAttribute("secret");
-        HtmlCheckBoxInput checkbox = form.getInputByName("rememberMe");
-        checkbox.setChecked(true);
-        page = form.<HtmlInput>getInputByName("submit").click();
-        jetty.stop();
-        jetty.start();
-        page = webClient.getPage(getBaseUri());
-        // page.getAnchorByHref("/logout");
-        WebAssert.assertLinkPresentWithText(page, "Log out");
-        page = page.getAnchorByHref("/account").click();
-        // login page should be shown again - user remembered but not authenticated
-        WebAssert.assertFormPresent(page, "loginform");
     }
 
 }

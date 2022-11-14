@@ -18,45 +18,60 @@
  */
 package org.apache.shiro.samples;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.shiro.testing.web.AbstractContainerIT;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.Response;
+import java.net.URI;
+
+import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
+import static javax.ws.rs.core.MediaType.TEXT_HTML_TYPE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 public class ContainerIntegrationIT extends AbstractContainerIT {
 
-    protected final WebClient webClient = new WebClient();
-
-    @Before
-    public void logOut() throws IOException {
-        // Make sure we are logged out
-        final HtmlPage homePage = webClient.getPage(getBaseUri());
-        try {
-            homePage.getAnchorByHref("/s/logout").click();
-        }
-        catch (ElementNotFoundException e) {
-            //Ignore
-        }
-    }
-
     @Test
-    public void logIn() throws FailingHttpStatusCodeException, IOException, InterruptedException {
+    public void logIn() {
+        final Client client = ClientBuilder.newClient();
 
-        HtmlPage page = webClient.getPage(getBaseUri() + "s/login");
-        HtmlForm form = page.getFormByName("loginForm");
-        form.<HtmlInput>getInputByName("username").setValueAttribute("admin");
-        form.<HtmlInput>getInputByName("password").setValueAttribute("admin");
-        page = form.<HtmlInput>getInputByValue("Login").click();
-        // This'll throw an expection if not logged in
-        page.getAnchorByHref("/s/logout");
+        try {
+            Cookie jsessionid;
+            try (final Response loginPage = client.target(getBaseUri())
+                    .path("/s/login")
+                    .request(TEXT_HTML_TYPE)
+                    .get()) {
+                jsessionid = new Cookie("JSESSIONID", loginPage.getMetadata().get("Set-Cookie").get(0).toString().split(";")[0].split("=")[1]);
+                assertTrue(loginPage.readEntity(String.class).contains("loginCommand"));
+            }
+
+            assertNotNull(jsessionid);
+            URI location;
+            try (final Response loginAction = client.target(getBaseUri())
+                    .path("/s/login")
+                    .request(APPLICATION_FORM_URLENCODED)
+                    .cookie(jsessionid)
+                    .post(Entity.entity("username=admin&password=admin&submit=Login", APPLICATION_FORM_URLENCODED))) {
+                assertEquals(302, loginAction.getStatus());
+                location = loginAction.getLocation();
+            }
+
+            assertNotNull(location);
+            final String loggedPage = client.target(getBaseUri())
+                    .path(location.getPath())
+                    .request(APPLICATION_FORM_URLENCODED)
+                    .cookie(jsessionid)
+                    .get(String.class);
+
+            assertTrue(loggedPage.contains("Logged in as admin"));
+        } finally {
+            client.close();
+        }
     }
 }

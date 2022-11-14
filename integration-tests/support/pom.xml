@@ -33,59 +33,28 @@
 
   <properties>
     <meecrowave.version>1.2.14</meecrowave.version>
-    <tomcat.version>9.0.68</tomcat.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.shiro</groupId>
-      <artifactId>shiro-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.shiro</groupId>
-      <artifactId>shiro-web</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet.jsp.jstl</groupId>
-      <artifactId>jstl-api</artifactId>
-      <version>1.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper</artifactId>
-      <version>${tomcat.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper-el</artifactId>
-      <version>${tomcat.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <scope>runtime</scope>
+      <artifactId>shiro-lang</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.apache.meecrowave</groupId>
-      <artifactId>meecrowave-specs-api</artifactId>
+      <artifactId>meecrowave-core</artifactId>
       <version>${meecrowave.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.meecrowave</groupId>
-      <artifactId>meecrowave-core</artifactId>
+      <artifactId>meecrowave-specs-api</artifactId>
       <version>${meecrowave.version}</version>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

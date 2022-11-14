@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.test;
+package org.apache.shiro.samples.web.test;
 
 import org.apache.shiro.testing.web.AbstractContainerIT;
 import org.junit.Test;
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class ContainerIntegrationIT extends AbstractContainerIT {
+public class WebAppContainerIntegrationIT extends AbstractContainerIT {
 
     @Test
     public void logIn() {
