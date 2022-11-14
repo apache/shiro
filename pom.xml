@@ -69,7 +69,7 @@
         <shiro.previousVersion>1.9.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
-        <project.build.outputTimestamp>2022-11-14T20:26:10Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2022-11-14T20:50:06Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
         <nexus.deploy.skip>false</nexus.deploy.skip>
 
