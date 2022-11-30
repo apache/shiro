@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.shiro.util;
+package org.apache.shiro.lang.util;
 
 import org.apache.shiro.lang.util.ByteSource;
 
