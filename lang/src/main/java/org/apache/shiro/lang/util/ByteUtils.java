@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.apache.shiro.util;
+package org.apache.shiro.lang.util;
 
 import java.util.Arrays;
 

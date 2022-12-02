@@ -21,10 +21,10 @@ package org.apache.shiro.crypto.cipher;
 
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.Destroyable;
-import org.apache.shiro.util.ByteSourceWrapper;
-import org.apache.shiro.util.ByteUtils;
 
 import java.io.IOException;
+import org.apache.shiro.lang.util.ByteSourceWrapper;
+import org.apache.shiro.lang.util.ByteUtils;
 
 /**
  * A simple implementation that maintains cipher service, ciphertext and key for decrypting it later.
