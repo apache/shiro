@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package jakarta.servlet.http;
+package org.apache.shiro.web.servlet;
 
 /**
- * Shim for class that no longer exists in Jakarta EE,
+ * Shim for interface that no longer exists in Jakarta EE,
  * but still exists in Java EE
  *
  * @author lprimak
