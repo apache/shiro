@@ -183,7 +183,7 @@
             <email>jhaile@apache.org</email>
             <url>http://www.jeremyhaile.com</url>
             <organization>Mobilization Labs</organization>
-            <organizationUrl>http://www.mobilizationlabs.com</organizationUrl>            
+            <organizationUrl>http://www.mobilizationlabs.com</organizationUrl>
             <timezone>-5</timezone>
         </developer>
         <developer>
@@ -1371,7 +1371,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
+
     <!-- Note that reporting may fail with lower settings than something like: MAVEN_OPTS="-X512m -XX:MaxPermSize=128m" -->
     <reporting>
         <plugins>
@@ -1522,7 +1522,7 @@
                         </reports>
                     </reportSet>
                 </reportSets>
-	
+
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
