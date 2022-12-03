@@ -500,6 +500,10 @@
                                         <shadedPattern>jakarta.json</shadedPattern>
                                     </relocation>
                                     <relocation>
+                                        <pattern>javax.servlet.http.HttpSessionContext</pattern>
+                                        <shadedPattern>org.apache.shiro.web.servlet.HttpSessionContext</shadedPattern>
+                                    </relocation>
+                                    <relocation>
                                         <pattern>javax.servlet</pattern>
                                         <shadedPattern>jakarta.servlet</shadedPattern>
                                     </relocation>
