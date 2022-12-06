@@ -19,6 +19,7 @@
 package org.apache.shiro.web;
 
 import groovy.lang.Closure;
+import org.apache.shiro.web.util.WebUtils;
 
 import java.io.Closeable;
 import java.util.Collections;
@@ -41,6 +42,7 @@ public class RestoreSystemProperties implements Closeable {
 
     public void restore() {
         System.setProperties(originalProperties);
+        WebUtils.reloadSystemProperties();
     }
 
     private Properties copyOf(Properties source) {
@@ -57,7 +59,7 @@ public class RestoreSystemProperties implements Closeable {
 
         try (RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties()) {
             properties.forEach(System::setProperty);
-
+            WebUtils.reloadSystemProperties();
             return closure.call();
         }
     }

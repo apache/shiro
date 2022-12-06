@@ -50,7 +50,7 @@ public class InvalidRequestFilter extends AccessControlFilter {
 
     private boolean blockSemicolon = true;
 
-    private boolean blockBackslash = !Boolean.getBoolean(WebUtils.ALLOW_BACKSLASH);
+    private boolean blockBackslash = !WebUtils.isAllowBackslash();
 
     private boolean blockNonAscii = true;
 

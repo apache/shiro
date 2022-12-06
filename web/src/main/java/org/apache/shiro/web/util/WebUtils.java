@@ -58,6 +58,7 @@ public class WebUtils {
     public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_SHIRO_THREAD_CONTEXT_KEY";
 
     public static final String ALLOW_BACKSLASH = "org.apache.shiro.web.ALLOW_BACKSLASH";
+    private static boolean IS_ALLOW_BACKSLASH = Boolean.getBoolean(ALLOW_BACKSLASH);
 
     /**
      * {@link org.apache.shiro.session.Session Session} key used to save a request and later restore it, for example when redirecting to a
@@ -165,7 +166,7 @@ public class WebUtils {
      * @return normalized path
      */
     public static String normalize(String path) {
-        return normalize(path, Boolean.getBoolean(ALLOW_BACKSLASH));
+        return normalize(path, IS_ALLOW_BACKSLASH);
     }
 
     /**
@@ -687,6 +688,19 @@ public class WebUtils {
         }
 
         WebUtils.issueRedirect(request, response, successUrl, null, contextRelative);
+    }
+
+    public static boolean isAllowBackslash(){
+        return IS_ALLOW_BACKSLASH;
+    }
+
+    /**
+     * Reload System properties.
+     * If relevant system property is modified ,this method needs to be called to take effect.
+     * There is a property <code>org.apache.shiro.web.ALLOW_BACKSLASH</code> that needs attention.
+     */
+    public static void reloadSystemProperties(){
+        IS_ALLOW_BACKSLASH = Boolean.getBoolean(ALLOW_BACKSLASH);
     }
 
 }
