@@ -499,10 +499,6 @@
                                         <pattern>javax.ws.rs</pattern>
                                         <shadedPattern>jakarta.ws.rs</shadedPattern>
                                     </relocation>
-                                    <relocation>
-                                        <pattern>javax.crypto</pattern>
-                                        <shadedPattern>jakarta.crypto</shadedPattern>
-                                    </relocation>
                                 </relocations>
                             </configuration>
                         </execution>
