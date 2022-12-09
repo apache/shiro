@@ -23,8 +23,10 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.Response;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 import java.net.URI;
 
@@ -44,27 +46,27 @@ public class WebContainerTest extends JakartaAbstractContainerIT {
                     .request(TEXT_HTML_TYPE)
                     .get()) {
                 jsessionid = new Cookie("JSESSIONID", loginPage.getMetadata().get("Set-Cookie").get(0).toString().split(";")[0].split("=")[1]);
-                Assertions.assertTrue(loginPage.readEntity(String.class).contains("loginform"));
+                assertTrue(loginPage.readEntity(String.class).contains("loginform"));
             }
 
-            Assertions.assertNotNull(jsessionid);
+            assertNotNull(jsessionid);
             URI location;
             try (final Response loginAction = client.target(getBaseUri())
                     .path("/login.jsp")
                     .request(APPLICATION_FORM_URLENCODED)
                     .cookie(jsessionid)
                     .post(Entity.entity("username=root&password=secret&submit=Login", APPLICATION_FORM_URLENCODED))) {
-                Assertions.assertEquals(302, loginAction.getStatus());
+                assertEquals(302, loginAction.getStatus());
                 location = loginAction.getLocation();
             }
 
-            Assertions.assertNotNull(location);
+            assertNotNull(location);
             final String loggedPage = client.target(getBaseUri())
                     .path(location.getPath())
                     .request(APPLICATION_FORM_URLENCODED)
                     .cookie(jsessionid)
                     .get(String.class);
-            Assertions.assertTrue(loggedPage.contains("Hi root!"));
+            assertTrue(loggedPage.contains("Hi root!"));
         } finally {
             client.close();
         }

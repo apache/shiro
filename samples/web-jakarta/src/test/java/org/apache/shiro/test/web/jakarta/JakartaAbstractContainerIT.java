@@ -19,8 +19,8 @@
 package org.apache.shiro.test.web.jakarta;
 
 import org.apache.meecrowave.Meecrowave;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -31,7 +31,7 @@ public abstract class JakartaAbstractContainerIT {
 
     protected static Meecrowave meecrowave;
 
-    @BeforeAll
+    @BeforeClass
     public static void startContainer() {
         final File root = new File(getWarDir());
         try {
@@ -61,7 +61,7 @@ public abstract class JakartaAbstractContainerIT {
         return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
     }
 
-    @AfterAll
+    @AfterClass
     public static void stopContainer() {
         if (meecrowave != null) {
             meecrowave.close();
