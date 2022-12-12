@@ -250,6 +250,15 @@
             <email>bmarwell@apache.org</email>
             <timezone>Europe/Berlin</timezone>
         </developer>
+        <developer>
+            <id>lprimak</id>
+            <name>Lenny Primak</name>
+            <email>lprimak@apache.org</email>
+            <timezone>US/Central</timezone>
+            <url>https://hope.nyc.ny.us</url>
+            <organization>Flow Logix</organization>
+            <organizationUrl>https://www.flowlogix.com/</organizationUrl>
+        </developer>
     </developers>
 
     <build>
