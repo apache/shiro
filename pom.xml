@@ -1571,7 +1571,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>3.2.2</version>
+                        <version>3.4.0</version>
                         <configuration>
                             <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                             <environmentVariables>
