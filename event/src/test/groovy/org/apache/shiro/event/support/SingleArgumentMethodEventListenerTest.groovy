@@ -68,7 +68,7 @@ class SingleArgumentMethodEventListenerTest {
             Method getMethod() {
                 //sneakily swap out the valid method with an erroneous one.  This wouldn't ever happen normally, we're
                 //just doing this as a test harness:
-                return Object.class.getMethods()[0] //any method will do
+                return SimpleSubscriber.class.getMethods()[0] //any method will do
             }
         }
 
