@@ -37,4 +37,11 @@
         <cpe>cpe:/a:internet2:opensaml:1.1</cpe>
     </suppress>
 
+    <suppress>
+        <!-- The CPE doesn't have the upper bound set correctly -->
+        <notes><![CDATA[ file name: spring-web-5.3.23.jar ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework/spring\-web@.*$</packageUrl>
+        <cve>CVE-2016-1000027</cve>
+    </suppress>
+
 </suppressions>
