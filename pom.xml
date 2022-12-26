@@ -1620,7 +1620,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>mrm-maven-plugin</artifactId>
-                        <version>1.4.1</version>
+                        <version>1.5.0</version>
                         <executions>
                             <execution>
                                 <goals>
