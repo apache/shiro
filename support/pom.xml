@@ -43,5 +43,16 @@
         <module>features</module>
     </modules>
 
-</project>
+    <profiles>
+        <profile>
+            <id>jdk11-support-modules</id>
+            <activation>
+                <jdk>[11,)</jdk>
+            </activation>
+            <modules>
+                <module>jakarta-ee</module>
+            </modules>
+        </profile>
+    </profiles>
 
+</project>

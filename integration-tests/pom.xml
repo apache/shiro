@@ -48,6 +48,19 @@
         <module>jaxrs</module>
     </modules>
 
+    <profiles>
+        <profile>
+            <id>jdk11-integration-test-modules</id>
+            <activation>
+                <jdk>[11,)</jdk>
+            </activation>
+            <modules>
+                <module>jakarta-ee-support</module>
+                <module>jakarta-ee</module>
+            </modules>
+        </profile>
+    </profiles>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
