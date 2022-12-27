@@ -50,6 +50,7 @@
         <payara.start.skip>${skipITs}</payara.start.skip>
         <asadmin.cmd>asadmin</asadmin.cmd>
         <unix-sed-skip>false</unix-sed-skip>
+        <mac-backup-file/>
 
         <integration.modes.skip>${skipITs}</integration.modes.skip>
     </properties>
@@ -306,8 +307,8 @@
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <executable>sed</executable>
-                            <commandlineArgs>-i .bak 's/jvm-options>\[17|/jvm_options>\[16|/g;
-                                s/property name="HZ_LISTENER_PORT" value="5900/property name="HZ_LISTENER_PORT" value="5920/g'
+                            <commandlineArgs>-i ${mac-backup-file} -e 's/jvm-options>\[17|/jvm_options>\[16|/g'
+                                -e 's/property name="HZ_LISTENER_PORT" value="5900/property name="HZ_LISTENER_PORT" value="5920/g'
                                 ${project.build.directory}/dependency/payara5/glassfish/domains/domain1/config/domain.xml</commandlineArgs>
                             <skip>${unix-sed-skip}</skip>
                         </configuration>
@@ -365,6 +366,17 @@
             <properties>
                 <asadmin.cmd>asadmin.bat</asadmin.cmd>
                 <unix-sed-skip>true</unix-sed-skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>mac</id>
+            <activation>
+                <os>
+                    <family>Mac</family>
+                </os>
+            </activation>
+            <properties>
+                <mac-backup-file>.bak</mac-backup-file>
             </properties>
         </profile>
     </profiles>
