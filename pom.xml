@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>28</version>
+        <version>29</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -71,12 +71,13 @@
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2022-03-22T23:08:15Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
+        <surefire.version>3.0.0-M7</surefire.version>
         <!--suppress CheckTagEmptyBody -->
         <surefire.argLine></surefire.argLine>
         <!--suppress CheckTagEmptyBody -->
         <failsafe.argLine></failsafe.argLine>
         <nexus.deploy.skip>false</nexus.deploy.skip>
-
+        <jacocoAgent/>
         <!-- non-dependency-based properties: -->
         <shiro.osgi.importRange>[2, 3)</shiro.osgi.importRange>
 
@@ -118,8 +119,8 @@
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>4.3</easymock.version>
         <mockito.version>4.8.0</mockito.version>
-        <gmaven.version>1.13.0</gmaven.version>
-        <groovy.version>3.0.13</groovy.version>
+        <gmaven.version>2.1.0</gmaven.version>
+        <groovy.version>4.0.6</groovy.version>
         <junit.version>5.9.1</junit.version>
         <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
         <hibernate.version>5.6.12.Final</hibernate.version>
@@ -267,26 +268,26 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M7</version>
                     <configuration>
-                        <argLine>${surefire.argLine}</argLine>
+                        <argLine>@{jacocoAgent} @{surefire.argLine}</argLine>
                         <shutdown>kill</shutdown>
                         <enableProcessChecker>native</enableProcessChecker>
                         <trimStackTrace>false</trimStackTrace>
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.0.0-M5</version>
                     <configuration>
-                        <argLine>${failsafe.argLine}</argLine>
+                        <argLine>@{jacocoAgent} @{failsafe.argLine}</argLine>
+                        <trimStackTrace>false</trimStackTrace>
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-report-plugin</artifactId>
-                    <version>3.0.0-M7</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -330,13 +331,14 @@
                             <exclude>**/spring.factories</exclude>
                             <exclude>**/spring.provides</exclude>
                             <exclude>**/*.iml</exclude>
+                            <exclude>**/target/**</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.12.0</version>
+                    <version>2.14.1</version>
                 </plugin>
                 <!-- Allow writing tests in Groovy: -->
                 <plugin>
@@ -345,7 +347,7 @@
                     <version>${gmaven.version}</version>
                     <dependencies>
                         <dependency>
-                            <groupId>org.codehaus.groovy</groupId>
+                            <groupId>org.apache.groovy</groupId>
                             <artifactId>groovy</artifactId>
                             <version>${groovy.version}</version>
                         </dependency>
@@ -542,7 +544,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <configuration>
+                    <showWarnings>true</showWarnings>
+                    <compilerArgs>
+                        <arg>-Xlint:deprecation</arg>
+                        <arg>-Xlint:unchecked</arg>
+                    </compilerArgs>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -556,36 +564,50 @@
                     </execution>
                 </executions>
             </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>prepare-agent</id>
-                            <phase>process-test-classes</phase>
-                            <goals>
-                                <goal>prepare-agent</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>prepare-agent-integration</id>
-                            <phase>pre-integration-test</phase>
-                            <goals>
-                                <goal>prepare-agent-integration</goal>
-                            </goals>
-                            <configuration>
-                                <excludes>
-                                    <exclude>**/main/**/samples/**</exclude>
-                                </excludes>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>org/apache/shiro/**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*$$FastClassBy*$$*</exclude>
+                        <exclude>**/*$$EnhancerBy*CGLIB$$*</exclude>
+                        <exclude>**/*$MockitoMock$*</exclude>
+                        <exclude>org/apache/shiro/samples/guice/SampleShiroGuiceBootstrap</exclude>
+                        <exclude>org/apache/shiro/samples/guice/SampleShiroServletModule</exclude>
+                        <exclude>org/apache/shiro/**/*Test</exclude>
+                        <exclude>org/apache/shiro/**/*Test$*</exclude>
+                        <exclude>org/apache/shiro/**/*IT</exclude>
+                        <exclude>org/apache/shiro/**/*IT$*</exclude>
+                        <exclude>org/apache/shiro/**/__EJB31_Generated*</exclude>
+                        <!-- cause too many coverage misses -->
+                        <exclude>org/apache/shiro/**/Deployments</exclude>
+                    </excludes>
+                    <propertyName>jacocoAgent</propertyName>
+                    <classDumpDir>${project.build.directory}/classes-jacoco</classDumpDir>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>prepare-agent-integration</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Allow Groovy tests to run: -->
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>${gmaven.version}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -787,9 +809,8 @@
         </dependency>
         <!-- Writing tests in groovy is fast!: -->
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>${groovy.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -1144,7 +1165,7 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.groovy</groupId>
+                <groupId>org.apache.groovy</groupId>
                 <artifactId>groovy</artifactId>
                 <version>${groovy.version}</version>
             </dependency>
@@ -1462,6 +1483,7 @@
                         <exclude>**/spring.factories</exclude>
                         <exclude>**/spring.provides</exclude>
                         <exclude>**/*.iml</exclude>
+                        <exclude>**/target/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -1574,6 +1596,15 @@
                     </plugins>
                 </pluginManagement>
             </build>
+        </profile>
+        <profile>
+            <id>jdk11plus</id>
+            <activation>
+                <jdk>[11,)</jdk>
+            </activation>
+            <properties>
+                <surefire.argLine>-XX:+IgnoreUnrecognizedVMOptions -Xshare:off</surefire.argLine>
+            </properties>
         </profile>
         <profile>
             <id>docs</id>

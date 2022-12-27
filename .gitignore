@@ -35,6 +35,12 @@ bin/
 target/
 
 #
+# NetBeans metadata
+#
+**nb-configuration.xml
+**faces-config.NavData
+
+#
 # VS Code
 #
 .factorypath
