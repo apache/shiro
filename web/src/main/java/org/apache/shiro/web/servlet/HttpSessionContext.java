@@ -21,8 +21,6 @@ package org.apache.shiro.web.servlet;
 /**
  * Shim for interface that no longer exists in Jakarta EE,
  * but still exists in Java EE
- *
- * @author lprimak
  */
 @Deprecated
 public interface HttpSessionContext {

@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.apache.shiro.integrationtests</groupId>
+    <artifactId>org.apache.shiro.integrationtests.jakarta-ee</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>Apache Shiro :: ITs :: Jakarta EE</name>
+
+    <parent>
+        <groupId>org.apache.shiro.integrationtests</groupId>
+        <artifactId>shiro-integration-tests</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.compiler.release>11</maven.compiler.release>
+        <!-- Unfortunately ShrinkWrap only understands the older compiler source / target flags -->
+        <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
+        <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
+        <arquillian.version>1.7.0.Alpha13</arquillian.version>
+        <failsafe.argLine>
+            --add-opens java.base/java.lang=ALL-UNNAMED
+            --add-opens java.base/java.net=ALL-UNNAMED
+            --add-opens java.base/sun.net.www=ALL-UNNAMED
+        </failsafe.argLine>
+        <webdriver.browser>chromeheadless</webdriver.browser>
+
+        <payara.version>5.2022.5</payara.version>
+        <payara.start.skip>${skipITs}</payara.start.skip>
+        <asadmin.cmd>asadmin</asadmin.cmd>
+        <unix-sed-skip>false</unix-sed-skip>
+        <mac-backup-file/>
+        <create-domain-skip>true</create-domain-skip>
+        <domain.name>domain1</domain.name>
+
+        <integration.modes.skip>${skipITs}</integration.modes.skip>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>jakarta-ee</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.omnifaces</groupId>
+            <artifactId>omnifaces</artifactId>
+            <version>3.14.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <scope>provided</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>8.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <version>1.2.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.3</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Apache Shiro Dependencies -->
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.artsok</groupId>
+            <artifactId>rerunner-jupiter</artifactId>
+            <version>2.1.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.flowlogix</groupId>
+            <artifactId>flowlogix-jee</artifactId>
+            <version>5.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Arquillian test dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-container</artifactId>
+            <version>${arquillian.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>fish.payara.arquillian</groupId>
+            <artifactId>arquillian-payara-server-remote</artifactId>
+            <version>2.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-depchain</artifactId>
+            <type>pom</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eu.ingwar.tools</groupId>
+            <artifactId>arquillian-suite-extension</artifactId>
+            <version>1.2.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Selenium test dependencies -->
+        <dependency>
+            <groupId>org.jboss.arquillian.graphene</groupId>
+            <artifactId>graphene-webdriver</artifactId>
+            <version>2.5.4</version>
+            <scope>test</scope>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>${arquillian.version}</version>
+                <type>pom</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.extension</groupId>
+                <artifactId>arquillian-drone-bom</artifactId>
+                <version>2.5.5</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                <artifactId>shrinkwrap-resolver-bom</artifactId>
+                <version>3.1.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <parallel>all</parallel>
+                    <threadCount>10</threadCount>
+                    <systemPropertyVariables>
+                        <arquillian.launch>${arquillian.launch}</arquillian.launch>
+                        <integration.test.mode>${integration.test.mode}</integration.test.mode>
+                        <webdriver.browser>${webdriver.browser}</webdriver.browser>
+                        <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
+                        <webdriver.chrome.binary>${webdriver.chrome.binary}</webdriver.chrome.binary>
+                        <webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
+                    </systemPropertyVariables>
+                    <argLine>${failsafe.argLine} ${payara.argLine}</argLine>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>client-state-saving</id>
+                        <configuration>
+                            <skipITs>${integration.modes.skip}</skipITs>
+                            <systemPropertyVariables>
+                                <integration.test.mode>clientStateSaving</integration.test.mode>
+                            </systemPropertyVariables>
+                        </configuration>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>native-sessions</id>
+                        <configuration>
+                            <skipITs>${integration.modes.skip}</skipITs>
+                            <systemPropertyVariables>
+                                <integration.test.mode>shiroNativeSessions</integration.test.mode>
+                            </systemPropertyVariables>
+                        </configuration>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.18.20.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>compute-ports</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script><![CDATA[
+                                    def executor_number = System.getenv('EXECUTOR_NUMBER');
+                                    if (executor_number != null) {
+                                        int portbase = 4900 + (executor_number as int) * 100
+                                        int adminPort = portbase + 48
+                                        int sslPort = portbase + 81
+
+                                        project.properties.'payara.portbase' = portbase
+                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -DsslPort=$sslPort"
+                                        println "Payara: portbase = ${project.properties.'payara.portbase'}, argLine = ${project.properties.'payara.argLine'}"
+                                    } else {
+                                        project.properties.'payara.argLine' = ''
+                                    }
+                                    ]]></script>
+                            </scripts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <outputDirectory>${project.build.directory}/dependency</outputDirectory>
+                    <markersDirectory>${project.build.directory}/dependency-maven-plugin-markers</markersDirectory>
+                    <overWriteIfNewer>false</overWriteIfNewer>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>fish.payara.distributions</groupId>
+                            <artifactId>payara</artifactId>
+                            <version>${payara.version}</version>
+                            <type>zip</type>
+                        </artifactItem>
+                    </artifactItems>
+                    <skip>${payara.start.skip}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <executable>${project.build.directory}/dependency/payara5/bin/${asadmin.cmd}</executable>
+                    <skip>${payara.start.skip}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>create-domain</id>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <commandlineArgs>create-domain --nopassword --portbase ${payara.portbase} ${domain.name}</commandlineArgs>
+                            <skip>${create-domain-skip}</skip>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jdk-16-compliance</id>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>sed</executable>
+                            <commandlineArgs>-i ${mac-backup-file} -e 's/jvm-options>\[17|/jvm-options>\[16|/g'
+                                -e 's/property name="HZ_LISTENER_PORT" value="5900/property name="HZ_LISTENER_PORT" value="5920/g'
+                                -e 's/hazelcast-runtime-configuration start-port="5900/hazelcast-runtime-configuration start-port="5920/g'
+                                ${project.build.directory}/dependency/payara5/glassfish/domains/${domain.name}/config/domain.xml</commandlineArgs>
+                            <skip>${unix-sed-skip}</skip>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>start-domain</id>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <arguments>
+                                <argument>start-domain</argument>
+                                <argument>${domain.name}</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stop-domain</id>
+                        <phase>post-integration-test</phase>
+                        <configuration>
+                            <arguments>
+                                <argument>stop-domain</argument>
+                                <argument>${domain.name}</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>destroy-domain</id>
+                        <phase>post-integration-test</phase>
+                        <configuration>
+                            <commandlineArgs>delete-domain ${domain.name}</commandlineArgs>
+                            <skip>${create-domain-skip}</skip>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>payara-server-remote</id>
+            <properties>
+                <payara.start.skip>true</payara.start.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <asadmin.cmd>asadmin.bat</asadmin.cmd>
+                <unix-sed-skip>true</unix-sed-skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>mac</id>
+            <activation>
+                <os>
+                    <family>Mac</family>
+                </os>
+            </activation>
+            <properties>
+                <mac-backup-file>.bak</mac-backup-file>
+            </properties>
+        </profile>
+        <profile>
+            <id>jenkins-executor-runner</id>
+            <activation>
+                <property>
+                    <name>env.EXECUTOR_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <create-domain-skip>${payara.start.skip}</create-domain-skip>
+                <domain.name>test-domain</domain.name>
+            </properties>
+        </profile>
+    </profiles>
+</project>

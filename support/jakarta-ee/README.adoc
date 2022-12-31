@@ -1,0 +1,30 @@
+////
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+////
+
+Shrio-EE feature set
+
+- Able to Annotate CDI and EJB (local & remote) beans with @RequiresXXX
+and thus protect them
+- Able to use CDI @Session / ViewScoped beans in Shrio-native sessions
+- Automatically configure Shiro without anything in web.xml (via Context
+listeners)
+- Support for automatic no-loss of form data when session expires
+- Automatic turn on /off of SSL filter in JSF production/development
+mode
+- Automatic SSL URLs when proxied via haproxy / Apache
+- Mitigate JSF VIewExpiredException automatically (basically never
+throws it)
+- Works with JSF Client state saving and Server state saving
+- Basically, it’s Shiro on steroids when used with Jakarta EE stack as
+opposed to changing the way Shiro works by integrating CDI

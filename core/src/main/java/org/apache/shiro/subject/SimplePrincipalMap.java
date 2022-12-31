@@ -27,7 +27,6 @@ import java.util.*;
  *
  * *EXPERIMENTAL for Shiro 1.2 - DO NOT USE YET*
  *
- * @author Les Hazlewood
  * @since 1.2
  */
 public class SimplePrincipalMap implements PrincipalMap {
