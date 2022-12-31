@@ -274,6 +274,15 @@
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.groovy</groupId>
+                        <artifactId>groovy-all</artifactId>
+                        <version>${groovy.version}</version>
+                        <scope>runtime</scope>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>compute-ports</id>
@@ -413,6 +422,7 @@
             <id>payara-server-remote</id>
             <properties>
                 <payara.start.skip>true</payara.start.skip>
+                <payara.argLine/>
             </properties>
         </profile>
         <profile>
