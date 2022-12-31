@@ -51,6 +51,8 @@
         <asadmin.cmd>asadmin</asadmin.cmd>
         <unix-sed-skip>false</unix-sed-skip>
         <mac-backup-file/>
+        <create-domain-skip>true</create-domain-skip>
+        <domain.name>domain1</domain.name>
 
         <integration.modes.skip>${skipITs}</integration.modes.skip>
     </properties>
@@ -235,6 +237,7 @@
                         <webdriver.chrome.binary>${webdriver.chrome.binary}</webdriver.chrome.binary>
                         <webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
                     </systemPropertyVariables>
+                    <argLine>${failsafe.argLine} ${payara.argLine}</argLine>
                 </configuration>
                 <executions>
                     <execution>
@@ -267,6 +270,37 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
                 <version>1.18.20.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>compute-ports</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script><![CDATA[
+                                    def executor_number = System.getenv('EXECUTOR_NUMBER');
+                                    if (executor_number != null) {
+                                        int portbase = 4900 + (executor_number as int) * 100
+                                        int adminPort = portbase + 48
+                                        int sslPort = portbase + 81
+
+                                        project.properties.'payara.portbase' = portbase
+                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -DsslPort=$sslPort"
+                                        println "Payara: portbase = ${project.properties.'payara.portbase'}, argLine = ${project.properties.'payara.argLine'}"
+                                    } else {
+                                        project.properties.'payara.argLine' = ''
+                                    }
+                                    ]]></script>
+                            </scripts>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -303,6 +337,17 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>create-domain</id>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <commandlineArgs>create-domain --nopassword --portbase ${payara.portbase} ${domain.name}</commandlineArgs>
+                            <skip>${create-domain-skip}</skip>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
                         <id>jdk-16-compliance</id>
                         <phase>pre-integration-test</phase>
                         <configuration>
@@ -310,7 +355,7 @@
                             <commandlineArgs>-i ${mac-backup-file} -e 's/jvm-options>\[17|/jvm-options>\[16|/g'
                                 -e 's/property name="HZ_LISTENER_PORT" value="5900/property name="HZ_LISTENER_PORT" value="5920/g'
                                 -e 's/hazelcast-runtime-configuration start-port="5900/hazelcast-runtime-configuration start-port="5920/g'
-                                ${project.build.directory}/dependency/payara5/glassfish/domains/domain1/config/domain.xml</commandlineArgs>
+                                ${project.build.directory}/dependency/payara5/glassfish/domains/${domain.name}/config/domain.xml</commandlineArgs>
                             <skip>${unix-sed-skip}</skip>
                         </configuration>
                         <goals>
@@ -323,6 +368,7 @@
                         <configuration>
                             <arguments>
                                 <argument>start-domain</argument>
+                                <argument>${domain.name}</argument>
                             </arguments>
                         </configuration>
                         <goals>
@@ -335,7 +381,19 @@
                         <configuration>
                             <arguments>
                                 <argument>stop-domain</argument>
+                                <argument>${domain.name}</argument>
                             </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>destroy-domain</id>
+                        <phase>post-integration-test</phase>
+                        <configuration>
+                            <commandlineArgs>delete-domain ${domain.name}</commandlineArgs>
+                            <skip>${create-domain-skip}</skip>
                         </configuration>
                         <goals>
                             <goal>exec</goal>
@@ -378,6 +436,18 @@
             </activation>
             <properties>
                 <mac-backup-file>.bak</mac-backup-file>
+            </properties>
+        </profile>
+        <profile>
+            <id>jenkins-executor-runner</id>
+            <activation>
+                <property>
+                    <name>env.EXECUTOR_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <create-domain-skip>${payara.start.skip}</create-domain-skip>
+                <domain.name>test-domain</domain.name>
             </properties>
         </profile>
     </profiles>
