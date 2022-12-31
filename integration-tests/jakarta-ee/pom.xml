@@ -49,7 +49,7 @@
         <payara.version>5.2022.5</payara.version>
         <payara.start.skip>${skipITs}</payara.start.skip>
         <asadmin.cmd>asadmin</asadmin.cmd>
-        <unix-sed-skip>false</unix-sed-skip>
+        <unix-sed-skip>${payara.start.skip}</unix-sed-skip>
         <mac-backup-file/>
         <create-domain-skip>true</create-domain-skip>
         <domain.name>domain1</domain.name>
