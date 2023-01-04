@@ -164,12 +164,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      * <p/>
      * The default value is {@code true}.
      *
-     * @param authenticationCachingEnabled the value to set
+     * @param authorizationCachingEnabled the value to set
      */
     @SuppressWarnings({"UnusedDeclaration"})
-    public void setAuthorizationCachingEnabled(boolean authenticationCachingEnabled) {
-        this.authorizationCachingEnabled = authenticationCachingEnabled;
-        if (authenticationCachingEnabled) {
+    public void setAuthorizationCachingEnabled(boolean authorizationCachingEnabled) {
+        this.authorizationCachingEnabled = authorizationCachingEnabled;
+        if (authorizationCachingEnabled) {
             setCachingEnabled(true);
         }
     }
