@@ -271,7 +271,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.0.0-M7</version>
+                    <version>3.0.0-M8</version>
                     <configuration>
                         <argLine>${failsafe.argLine}</argLine>
                     </configuration>
