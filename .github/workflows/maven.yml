@@ -20,9 +20,9 @@ name: Maven CI
 on:
   workflow_dispatch: {}
   push:
-    branches: [ main, '1.10.x', '1.9.x' ]
+    branches: [ main, '1.11.x', '1.10.x', '1.9.x' ]
   pull_request:
-    branches: [ main, '1.10.x', '1.9.x' ]
+    branches: [ main, '1.11.x', '1.10.x', '1.9.x' ]
 
 jobs:
   build:
@@ -35,7 +35,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: 8
+          java-version: 11
           distribution: temurin
 
       - name: License Check
@@ -50,12 +50,12 @@ jobs:
     strategy:
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest', 'macOS-latest' ]
-        jdk: [ 8, 11, 17 ]
+        jdk: [ 11, 17, 19 ]
         dist: [ 'temurin', 'adopt-openj9', 'zulu' ]
         exclude:
           # was already built
           - os: 'ubuntu-latest'
-            jdk: 8
+            jdk: 11
             dist: 'temurin'
           # exclude some builds, because MacOs builds have fewer resources available.
           # excludes java 16 on macOS.
@@ -64,6 +64,9 @@ jobs:
           # exclude temurin on MacOS. zulu (also hotspot) and OpenJ9 are sufficient.
           - os: 'macOS-latest'
             dist: 'temurin'
+          # no OpenJ9 19
+          - dist: adopt-openj9
+            jdk: 19
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
