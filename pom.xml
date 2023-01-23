@@ -128,8 +128,9 @@
 
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
 
-        <root.dir>${session.executionRootDirectory}</root.dir>
-
+        <!-- checkstyle -->
+        <checkstyle.configLocation>${root.dir}/src/checkstyle.xml</checkstyle.configLocation>
+        <checkstyle.supressionsLocation>${root.dir}/src/suppressions.xml</checkstyle.supressionsLocation>
     </properties>
 
     <modules>
@@ -527,6 +528,37 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.2.1</version>
+                    <configuration>
+                        <configLocation>${checkstyle.configLocation}</configLocation>
+                        <suppressionsLocation>${checkstyle.supressionsLocation}</suppressionsLocation>
+                        <linkXRef>true</linkXRef>
+                        <consoleOutput>true</consoleOutput>
+                        <failsOnError>true</failsOnError>
+                        <failOnViolation>true</failOnViolation>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                        <enableRulesSummary>true</enableRulesSummary>
+                        <propertyExpansion>root.dir=${root.dir}</propertyExpansion>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>checkstyle</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>10.5.0</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -539,6 +571,27 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.commonjava.maven.plugins</groupId>
+                <artifactId>directory-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>directories</id>
+                        <goals>
+                            <goal>directory-of</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <property>root.dir</property>
+                            <project>
+                                <groupId>org.apache.shiro</groupId>
+                                <artifactId>shiro-root</artifactId>
+                            </project>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -712,7 +765,7 @@
                     <!-- This configuration copied from apache:apache:7 parent pom -->
                     <useReleaseProfile>false</useReleaseProfile>
                     <goals>deploy site site:stage</goals>
-                    <arguments>-Pdocs,apache-release</arguments>
+                    <arguments>-Pdocs,apache-release,skip-checkstyle</arguments>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                 </configuration>
             </plugin>
@@ -1743,6 +1796,27 @@
 <!--                            </execution>-->
 <!--                        </executions>-->
 <!--                    </plugin>-->
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>skip-checkstyle</id>
+            <activation>
+                <property>
+                    <name>checkstyle.skip</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

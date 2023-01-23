@@ -45,7 +45,6 @@ import java.util.Map;
  * by a specific realm (often in a realm implementation itself).  This {@code PrincipalMap} interface satisfies
  * those needs by providing additional realm-specific accessor/mutator methods.
  *
- * @author Les Hazlewood
  * @since 1.2
  */
 public interface PrincipalMap extends PrincipalCollection, Map<String,Object> {
