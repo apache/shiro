@@ -46,6 +46,8 @@
         <module>guice4</module>
         <module>meecrowave-support</module>
         <module>jaxrs</module>
+        <module>jakarta-ee-support</module>
+        <module>jakarta-ee</module>
     </modules>
 
     <dependencyManagement>
@@ -70,4 +72,3 @@
         </plugins>
     </reporting>
 </project>
-

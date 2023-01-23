@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<arquillian
+    xmlns="http://jboss.org/schema/arquillian"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+    <extension qualifier="webdriver">
+        <property name="browser">${webdriver.browser}</property>
+        <property name="firefoxArguments">-headless</property>
+        <property name="chromeBinary">${webdriver.chrome.binary}</property>
+        <property name="chromeArguments">--ignore-certificate-errors</property>
+        <property name="githubUsername">${gh_user}</property>
+        <property name="githubToken">${gh_token}</property>
+    </extension>
+    <container qualifier="payara-ssl" default="true">
+        <configuration>
+            <property name="ignoreCertificates">true</property>
+        </configuration>
+    </container>
+    <container qualifier="payara-docker">
+        <configuration>
+            <property name="adminHttps">true</property>
+            <property name="ignoreCertificates">true</property>
+            <property name="adminUser">admin</property>
+            <property name="adminPassword">admin</property>
+        </configuration>
+    </container>
+</arquillian>

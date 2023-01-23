@@ -42,7 +42,9 @@ jobs:
         run: mvn apache-rat:check "-Drat.consoleOutput"
 
       - name: Build with Maven
-        run: mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+        run: >-
+          mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+          -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
 
   build-all:
     needs: build
@@ -81,5 +83,24 @@ jobs:
           java-version: ${{ matrix.jdk }}
           distribution: ${{ matrix.dist }}
 
-      - name: Build with Maven
-        run: mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+      - name: Build with Maven (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: >-
+          mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+          -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build with Maven (non-Linux)
+        if: matrix.os != 'ubuntu-latest'
+        run: >-
+          mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+          -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
+          -Pskip_jakarta_ee_tests
+
+      - name: Archive test run logs
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-logs-${{ matrix.os }}-${{ matrix.jdk }}-${{ matrix.dist }}
+          path: |
+            **/target/failsafe-reports/*-output.txt
+            **/target/**/logs/server.log

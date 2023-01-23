@@ -50,10 +50,6 @@ import java.util.Map;
  * <p/>
  * <em>Gratefully borrowed from the Spring Framework, also Apache 2.0 licensed</em>
  *
- * @author Keith Donald
- * @author Juergen Hoeller
- * @author Colin Sampaleanu
- * @author Rob Harrop
  * @since 1.3
  */
 public abstract class Assert {
