@@ -93,7 +93,6 @@ jobs:
         if: matrix.os != 'ubuntu-latest'
         run: >-
           mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
-          -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
           -Pskip_jakarta_ee_tests
 
       - name: Archive test run logs
