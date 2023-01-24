@@ -30,7 +30,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <meecrowave.version>1.2.14</meecrowave.version>
+        <meecrowave.version>1.2.15</meecrowave.version>
         <tomcat.version>10.0.27</tomcat.version>
     </properties>
 
