@@ -293,10 +293,13 @@
                                         int sslPort = portbase + 81
 
                                         project.properties.'payara.portbase' = portbase as String
+                                        project.properties.'payara.adminport' = adminPort as String
                                         project.properties.'payara.argLine' = "-DadminPort=$adminPort -DsslPort=$sslPort" as String
+                                        project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
                                         println "Payara: portbase = ${project.properties.'payara.portbase'}, argLine = ${project.properties.'payara.argLine'}"
                                     } else {
                                         project.properties.'payara.argLine' = ''
+                                        project.properties.'payara.restart.skip' = 'true'
                                     }
                                     ]]></script>
                             </scripts>
@@ -372,6 +375,40 @@
                                 <argument>start-domain</argument>
                                 <argument>${domain.name}</argument>
                             </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>payara-config-tmpdir-mkdir</id>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>mkdir</executable>
+                            <commandlineArgs>${project.build.directory}/payara_tmp</commandlineArgs>
+                            <skip>${payara.restart.skip}</skip>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>payara-config-tmpdir</id>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <commandlineArgs>-p ${payara.adminport} create-system-properties java.io.tmpdir=${project.build.directory}/payara_tmp</commandlineArgs>
+                            <skip>${payara.restart.skip}</skip>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>restart-domain</id>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <commandlineArgs>-p ${payara.adminport} restart-domain ${domain.name}</commandlineArgs>
+                            <skip>${payara.restart.skip}</skip>
                         </configuration>
                         <goals>
                             <goal>exec</goal>
