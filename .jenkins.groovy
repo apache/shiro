@@ -113,7 +113,7 @@ pipeline {
                         }
                         steps {
                             echo 'Deploying'
-                            sh 'mvn --batch-mode clean deploy -Pdocs -DskipTests'
+                            sh 'mvn --batch-mode clean deploy -Pdocs -DskipTests -DskipITs'
                         }
                     }
 
