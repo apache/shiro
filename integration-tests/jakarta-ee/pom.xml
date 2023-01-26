@@ -427,17 +427,6 @@
                             <goal>exec</goal>
                         </goals>
                     </execution>
-                    <execution>
-                        <id>destroy-domain</id>
-                        <phase>post-integration-test</phase>
-                        <configuration>
-                            <commandlineArgs>delete-domain ${domain.name}</commandlineArgs>
-                            <skip>${create-domain-skip}</skip>
-                        </configuration>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
                 </executions>
             </plugin>
             <plugin>
