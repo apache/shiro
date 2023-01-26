@@ -32,7 +32,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <meecrowave.version>1.2.14</meecrowave.version>
+        <meecrowave.version>1.2.15</meecrowave.version>
         <tomcat.version>10.1.5</tomcat.version>
         <jacoco.skip>true</jacoco.skip>
     </properties>
