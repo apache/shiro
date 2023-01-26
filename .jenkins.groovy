@@ -98,6 +98,7 @@ pipeline {
                             always {
                                 junit(testResults: '**/surefire-reports/*.xml', allowEmptyResults: true)
                                 junit(testResults: '**/failsafe-reports/*.xml', allowEmptyResults: true)
+                                archiveArtifacts artifacts: '**/logs/server.log*', allowEmptyArchive: true
                             }
                         }
                     }

@@ -115,9 +115,10 @@ public class ShiroBeansIT {
         assertTrue(messages.getText().startsWith("protected unauth: Attempting to perform a user-only operation"),
                 "anonymous user should get an exception");
         webDriver.get(baseURL + "lastException");
-        assertTrue(webDriver.findElement(By.tagName("body")).getText()
+        String exceptionText = webDriver.findElement(By.tagName("body")).getText();
+        assertTrue(exceptionText
                 .startsWith(jakartify("WARNING: javax.ejb.EJBException: Attempting to perform a user-only operation")),
-                "capturing correct warning from the server");
+                String.format("capturing correct warning from the server: %s", exceptionText));
     }
 
     @Test
