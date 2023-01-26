@@ -19,6 +19,8 @@
 package org.apache.shiro.cdi.setup.servlet;
 
 import org.apache.shiro.cdi.configurer.SecurityManagerConfigurer;
+import org.apache.shiro.cdi.environment.CdiLookups;
+import org.apache.shiro.cdi.environment.CdiWebEnvironment;
 import org.apache.shiro.cdi.extension.ShiroExtension;
 import org.apache.shiro.cdi.servlet.AsyncContextWrapper;
 import org.apache.shiro.env.Environment;
@@ -35,6 +37,7 @@ import org.apache.shiro.web.servlet.ShiroFilter;
 
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.servlet.AsyncContext;
 import javax.servlet.AsyncEvent;
@@ -70,6 +73,9 @@ public class ShiroSetup implements ServletContainerInitializer {
         private ShiroFilter filter;
         private SecurityManager securityManager;
         private ServletContext servletContext;
+
+        @Inject
+        private BeanManager beanManager;
 
         @Inject
         private Instance<WebSecurityManager> manager;
@@ -150,7 +156,9 @@ public class ShiroSetup implements ServletContainerInitializer {
 
         @Override
         protected WebEnvironment createEnvironment(final ServletContext sc) {
-            final DefaultWebEnvironment environment = new DefaultWebEnvironment();
+            final DefaultWebEnvironment environment = Boolean.parseBoolean(sc.getInitParameter("shiro-cdi.use-ini")) ?
+                    new CdiWebEnvironment(new CdiLookups(beanManager)) :
+                    new DefaultWebEnvironment();
             securityManager = configurer.configureManager(!extension.isSecurityManager() ? extension.getSecurityManager() : manager.get());
             environment.setSecurityManager(securityManager);
             if (environment.getFilterChainResolver() == null && !filterChainResolver.isUnsatisfied()) {

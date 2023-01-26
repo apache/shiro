@@ -20,6 +20,7 @@ package org.apache.shiro.cdi.bean;
 
 import org.apache.shiro.cdi.loader.Load;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 
@@ -32,20 +33,37 @@ import java.lang.reflect.Proxy;
 
 @ApplicationScoped
 public class SubjectProducer {
-    private final Class<?>[] interfaces = {Load.load("org.apache.shiro.web.subject.WebSubject", Subject.class)};
-
     @Produces
-    // @RequestScoped but why using this which is actually rarely bound so doing a custom impl
+    @ApplicationScoped
     public Subject subject(final SecurityManager manager) {
         return Subject.class.cast(Proxy.newProxyInstance(
                 Thread.currentThread().getContextClassLoader(),
-                interfaces,
+                new Class<?>[]{Load.load("org.apache.shiro.web.subject.WebSubject", Subject.class)},
                 new InvocationHandler() {
                     @Override
                     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
                         try {
                             final Subject subject = ThreadContext.getSubject();
                             return method.invoke(subject, args);
+                        } catch (final InvocationTargetException ite) {
+                            throw ite.getCause();
+                        }
+                    }
+                }));
+    }
+
+    @Produces
+    @ApplicationScoped
+    public ValidatingSession session(final SecurityManager manager) {
+        return ValidatingSession.class.cast(Proxy.newProxyInstance(
+                Thread.currentThread().getContextClassLoader(),
+                new Class<?>[]{ValidatingSession.class},
+                new InvocationHandler() {
+                    @Override
+                    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                        try {
+                            final Subject subject = ThreadContext.getSubject();
+                            return method.invoke(subject.getSession(), args);
                         } catch (final InvocationTargetException ite) {
                             throw ite.getCause();
                         }
