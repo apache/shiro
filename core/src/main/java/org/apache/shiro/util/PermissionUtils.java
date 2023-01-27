@@ -49,7 +49,7 @@ public class PermissionUtils {
     }
 
     public static Set<Permission> resolvePermissions(Collection<String> permissionStrings, PermissionResolver permissionResolver) {
-        Set<Permission> permissions = new LinkedHashSet<Permission>(permissionStrings.size());
+        Set<Permission> permissions = new LinkedHashSet<>(permissionStrings.size());
         for (String permissionString : permissionStrings) {
             permissions.add(permissionResolver.resolvePermission(permissionString));
         }
