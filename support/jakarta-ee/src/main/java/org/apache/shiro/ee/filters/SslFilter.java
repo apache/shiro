@@ -29,13 +29,11 @@ import org.omnifaces.util.Faces;
 public class SslFilter extends org.apache.shiro.web.filter.authz.SslFilter {
     @Getter @Setter
     private boolean enablePortFilter = true;
-    @Getter @Setter
-    private boolean alwaysEnabled = false;
     private final boolean enabled = computeEnabled();
 
     @Override
     protected boolean isEnabled(ServletRequest request, ServletResponse response) throws ServletException, IOException {
-        return alwaysEnabled || enabled && super.isEnabled(request, response);
+        return enabled && super.isEnabled(request, response);
     }
 
     @Override
