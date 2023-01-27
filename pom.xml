@@ -110,7 +110,7 @@
         <logback.version>1.2.10</logback.version>
         <log4j.version>2.19.0</log4j.version>
         <spring.version>5.3.23</spring.version>
-        <spring-boot.version>2.7.4</spring-boot.version>
+        <spring-boot.version>2.7.8</spring-boot.version>
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
         <htmlunit.version>2.39.0</htmlunit.version>
