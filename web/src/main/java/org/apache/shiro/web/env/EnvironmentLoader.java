@@ -168,7 +168,7 @@ public class EnvironmentLoader {
      * @see #ENVIRONMENT_CLASS_PARAM
      * @see IniWebEnvironment
      * @see #determineWebEnvironment(ServletContext)
-     * @see #getDefaultWebEnvironmentClass()
+     * @see #getDefaultWebEnvironmentClass(ServletContext)
      * @deprecated This method is not longer used by Shiro, and will be removed in future versions,
      * use {@link #determineWebEnvironment(ServletContext)} or {@link #determineWebEnvironment(ServletContext)}
      */
@@ -179,7 +179,7 @@ public class EnvironmentLoader {
             return webEnvironmentClass;
         } else {
 
-            return getDefaultWebEnvironmentClass();
+            return getDefaultWebEnvironmentClass(servletContext);
         }
     }
 
@@ -230,9 +230,10 @@ public class EnvironmentLoader {
 
     /**
      * Returns the default WebEnvironment class, which is unless overridden: {@link IniWebEnvironment}.
+     * @param ctx servlet context
      * @return the default WebEnvironment class.
      */
-    protected Class<? extends WebEnvironment> getDefaultWebEnvironmentClass() {
+    protected Class<? extends WebEnvironment> getDefaultWebEnvironmentClass(ServletContext ctx) {
         return IniWebEnvironment.class;
     }
 
@@ -241,7 +242,7 @@ public class EnvironmentLoader {
      * <ul>
      *     <li>A custom WebEnvironment class - specified in the {@code servletContext} {@link #ENVIRONMENT_ATTRIBUTE_KEY} property</li>
      *     <li>{@code ServiceLoader.load(WebEnvironment.class)} - (if more then one instance is found a {@link ConfigurationException} will be thrown</li>
-     *     <li>A call to {@link #getDefaultWebEnvironmentClass()} (default: {@link IniWebEnvironment})</li>
+     *     <li>A call to {@link #getDefaultWebEnvironmentClass(ServletContext)} (default: {@link IniWebEnvironment})</li>
      * </ul>
      *
      * @param servletContext current servlet context
@@ -262,7 +263,7 @@ public class EnvironmentLoader {
 
         // if webEnvironment is not set, and ENVIRONMENT_CLASS_PARAM prop was not set, use the default
         if (webEnvironmentClass == null && webEnvironment == null) {
-            webEnvironmentClass = getDefaultWebEnvironmentClass();
+            webEnvironmentClass = getDefaultWebEnvironmentClass(servletContext);
         }
 
         // at this point, we anything is set for the webEnvironmentClass, load it.

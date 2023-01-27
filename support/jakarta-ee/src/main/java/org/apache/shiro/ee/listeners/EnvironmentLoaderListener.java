@@ -58,7 +58,11 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
     }
 
     @Override
-    protected Class<? extends WebEnvironment> getDefaultWebEnvironmentClass() {
-        return IniEnvironment.class;
+    protected Class<? extends WebEnvironment> getDefaultWebEnvironmentClass(ServletContext ctx) {
+        if (isShiroEEDisabled(ctx)) {
+            return super.getDefaultWebEnvironmentClass(ctx);
+        } else {
+            return IniEnvironment.class;
+        }
     }
 }
