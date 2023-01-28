@@ -43,6 +43,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
@@ -89,7 +90,11 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
 
         @Override
         public Principal getUserPrincipal() {
-            return null;
+            if (isServletNoPrincipal(servletContext)) {
+                return null;
+            } else {
+                return super.getUserPrincipal();
+            }
         }
 
         @Override

@@ -30,6 +30,7 @@ import org.apache.shiro.web.env.WebEnvironment;
 public class EnvironmentLoaderListener extends EnvironmentLoader implements ServletContextListener {
     private static final String SHIRO_EE_DISABLED_PARAM = "org.apache.shiro.ee.disabled";
     private static final String FORM_RESUBMIT_DISABLED_PARAM = "org.apache.shiro.form-resubmit.disabled";
+    private static final String SHIRO_EE_SERVLET_NO_PRINCIPAL_PARAM = "org.apache.shiro.servlet-no-principal";
 
     public static boolean isShiroEEDisabled(ServletContext ctx) {
         return Boolean.TRUE.equals(ctx.getAttribute(SHIRO_EE_DISABLED_PARAM));
@@ -39,10 +40,17 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
         return Boolean.TRUE.equals(ctx.getAttribute(FORM_RESUBMIT_DISABLED_PARAM));
     }
 
+    public static boolean isServletNoPrincipal(ServletContext ctx) {
+        return Boolean.TRUE.equals(ctx.getAttribute(SHIRO_EE_SERVLET_NO_PRINCIPAL_PARAM));
+    }
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_DISABLED_PARAM))) {
             sce.getServletContext().setAttribute(SHIRO_EE_DISABLED_PARAM, Boolean.TRUE);
+        }
+        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_SERVLET_NO_PRINCIPAL_PARAM))) {
+            sce.getServletContext().setAttribute(SHIRO_EE_SERVLET_NO_PRINCIPAL_PARAM, Boolean.TRUE);
         }
         if (!isShiroEEDisabled(sce.getServletContext())) {
             sce.getServletContext().setSessionTrackingModes(Set.of(COOKIE));
