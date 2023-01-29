@@ -1,4 +1,4 @@
-[<img src="http://shiro.apache.org/assets/images/apache-shiro-logo.png" align="right" />](http://shiro.apache.org)
+[<img src="http://shiro.apache.org/images/apache-shiro-logo.png" align="right" />](http://shiro.apache.org)
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.apache.shiro/shiro-core.svg)]()
 [![Build Status](https://ci-builds.apache.org/buildStatus/icon?job=Shiro%2FShiro-all%2Fmain)](https://ci-builds.apache.org/job/Shiro/job/Shiro-all/job/main/)
@@ -20,5 +20,3 @@ Tutorials
 License
 -------
 [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)
-
-
