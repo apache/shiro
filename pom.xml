@@ -71,7 +71,7 @@
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2022-03-22T23:08:15Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
-        <surefire.version>3.0.0-M7</surefire.version>
+        <surefire.version>3.0.0-M8</surefire.version>
         <!--suppress CheckTagEmptyBody -->
         <surefire.argLine></surefire.argLine>
         <!--suppress CheckTagEmptyBody -->
@@ -1827,4 +1827,24 @@
             </build>
         </profile>
     </profiles>
+<!--Disable snapshot repositories because they download snapshots
+    instead of using the current build in CI 'mvn verify' steps-->
+    <repositories>
+        <repository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
