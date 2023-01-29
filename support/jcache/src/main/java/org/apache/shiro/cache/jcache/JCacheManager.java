@@ -21,9 +21,9 @@ package org.apache.shiro.cache.jcache;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.util.Destroyable;
-import org.apache.shiro.util.Initializable;
-import org.apache.shiro.util.StringUtils;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.lang.util.Initializable;
+import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

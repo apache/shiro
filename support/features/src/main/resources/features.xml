@@ -52,6 +52,12 @@
         <bundle>mvn:org.apache.shiro/shiro-aspectj/${project.version}</bundle>
     </feature>
 
+    <feature name="shiro-cache" version="${project.version}">
+        <feature version="${project.version}">shiro-core</feature>
+        <bundle dependency='true'>mvn:javax.cache/cache-api/${jcache.api.version}</bundle>
+        <bundle>mvn:org.apache.shiro/shiro-cache/${project.version}</bundle>
+    </feature>
+
     <feature name="shiro-ehcache" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
         <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/${ehcache.bundle.version}</bundle>
