@@ -607,7 +607,7 @@ public class ReflectionBuilder {
             return stringValue;
         }
     }
-    
+
     protected void applyProperty(Object object, String propertyPath, Object value) {
 
         int mapBegin = propertyPath.indexOf(MAP_PROPERTY_BEGIN_TOKEN);
@@ -616,7 +616,7 @@ public class ReflectionBuilder {
         String keyString = null;
 
         String remaining = null;
-        
+
         if (mapBegin >= 0) {
             //a map is being referenced in the overall property path.  Find just the map's path:
             mapPropertyPath = propertyPath.substring(0, mapBegin);
@@ -633,7 +633,7 @@ public class ReflectionBuilder {
                 }
             }
         }
-        
+
         if (remaining == null) {
             //we've terminated the OGNL expression.  Check to see if we're assigning a property or a map entry:
             if (keyString == null) {
@@ -674,7 +674,7 @@ public class ReflectionBuilder {
             applyProperty(referencedValue, remaining, value);
         }
     }
-    
+
     private void setProperty(Object object, String propertyPath, Object value) {
         try {
             if (log.isTraceEnabled()) {
@@ -692,7 +692,7 @@ public class ReflectionBuilder {
             throw new ConfigurationException(msg, e);
         }
     }
-    
+
     private Object getProperty(Object object, String propertyPath) {
         try {
             return beanUtilsBean.getPropertyUtils().getProperty(object, propertyPath);
@@ -700,7 +700,7 @@ public class ReflectionBuilder {
             throw new ConfigurationException("Unable to access property '" + propertyPath + "'", e);
         }
     }
-    
+
     private void setIndexedProperty(Object object, String propertyPath, int index, Object value) {
         try {
             beanUtilsBean.getPropertyUtils().setIndexedProperty(object, propertyPath, index, value);
@@ -708,7 +708,7 @@ public class ReflectionBuilder {
             throw new ConfigurationException("Unable to set array property '" + propertyPath + "'", e);
         }
     }
-    
+
     private Object getIndexedProperty(Object object, String propertyPath, int index) {
         try {
             return beanUtilsBean.getPropertyUtils().getIndexedProperty(object, propertyPath, index);
@@ -716,7 +716,7 @@ public class ReflectionBuilder {
             throw new ConfigurationException("Unable to acquire array property '" + propertyPath + "'", e);
         }
     }
-    
+
     protected boolean isIndexedPropertyAssignment(String propertyPath) {
         return propertyPath.endsWith("" + MAP_PROPERTY_END_TOKEN);
     }
