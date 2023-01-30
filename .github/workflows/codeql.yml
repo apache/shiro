@@ -59,6 +59,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Cache local Maven repository
+      uses: actions/cache@58c146cc91c5b9e778e71775dfe9bf1442ad9a12 #v3.2.3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
