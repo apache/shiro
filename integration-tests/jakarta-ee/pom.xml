@@ -274,40 +274,6 @@
                 <version>1.18.20.0</version>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.gmavenplus</groupId>
-                <artifactId>gmavenplus-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>compute-ports</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>execute</goal>
-                        </goals>
-                        <configuration>
-                            <scripts>
-                                <script><![CDATA[
-                                    def executor_number = System.getenv('EXECUTOR_NUMBER');
-                                    if (executor_number != null) {
-                                        int portbase = 4900 + (executor_number as int) * 100
-                                        int adminPort = portbase + 48
-                                        int sslPort = portbase + 81
-
-                                        project.properties.'payara.portbase' = portbase as String
-                                        project.properties.'payara.adminport' = adminPort as String
-                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -DsslPort=$sslPort" as String
-                                        project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
-                                        println "Payara: portbase = ${project.properties.'payara.portbase'}, argLine = ${project.properties.'payara.argLine'}"
-                                    } else {
-                                        project.properties.'payara.argLine' = ''
-                                        project.properties.'payara.restart.skip' = 'true'
-                                    }
-                                    ]]></script>
-                            </scripts>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <configuration>
                     <outputDirectory>${project.build.directory}/dependency</outputDirectory>
@@ -329,6 +295,55 @@
                         <goals>
                             <goal>unpack</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>compute-ports</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <scripts>
+                                <script><![CDATA[
+                                    def executor_number = System.getenv('EXECUTOR_NUMBER')
+                                    if (executor_number != null) {
+                                        final int port_increment = 100
+                                        final int admin_port_increment = 48
+                                        int portbase = 4900 + (executor_number as int) * port_increment
+                                        // find a free port
+                                        for (; portbase < 10000; portbase += port_increment) {
+                                            def server_socket
+                                            try {
+                                                server_socket = new ServerSocket(portbase + admin_port_increment)
+                                                break
+                                            } catch (IOException e) {
+                                                println "Admin port $server_socket.localPort is busy, trying next"
+                                            } finally {
+                                                server_socket?.close()
+                                            }
+                                        }
+
+                                        int adminPort = portbase + admin_port_increment
+                                        int sslPort = portbase + 81
+
+                                        project.properties.'payara.portbase' = portbase as String
+                                        project.properties.'payara.adminport' = adminPort as String
+                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -DsslPort=$sslPort" as String
+                                        project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
+                                        println "Payara: portbase = ${project.properties.'payara.portbase'}, argLine = ${project.properties.'payara.argLine'}"
+                                    } else {
+                                        project.properties.'payara.argLine' = ''
+                                        project.properties.'payara.restart.skip' = 'true'
+                                    }
+                                    ]]></script>
+                            </scripts>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
