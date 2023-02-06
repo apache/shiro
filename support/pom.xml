@@ -41,6 +41,7 @@
         <module>servlet-plugin</module>
         <module>jaxrs</module>
         <module>features</module>
+        <module>cdi</module>
         <module>jakarta-ee</module>
     </modules>
 </project>

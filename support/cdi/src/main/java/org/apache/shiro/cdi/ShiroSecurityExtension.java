@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.shiro.ee.cdi;
+package org.apache.shiro.cdi;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.Extension;
@@ -28,7 +28,7 @@ import org.apache.shiro.authz.annotation.RequiresUser;
  */
 public class ShiroSecurityExtension implements Extension {
     @ShiroSecureAnnotation
-    static class ShiroSecureAnnotated { };
+    public static class ShiroSecureAnnotated { };
 
     public <T> void addSecurity(@Observes @WithAnnotations({
         RequiresAuthentication.class, RequiresGuest.class, RequiresPermissions.class,

@@ -28,6 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.beanutils.SuppressPropertiesBeanIntrospector;
@@ -117,6 +118,8 @@ public class ReflectionBuilder {
         return map;
     }
 
+    private Function<String, ?> alternateObjectSupplier = name -> null;
+
     public ReflectionBuilder() {
         this(null);
     }
@@ -201,8 +204,17 @@ public class ReflectionBuilder {
 
     //@since 1.3
     private boolean isEventSubscriber(Object bean, String name) {
-        List annotatedMethods = ClassUtils.getAnnotatedMethods(bean.getClass(), Subscribe.class);
+        List<?> annotatedMethods = ClassUtils.getAnnotatedMethods(bean.getClass(), Subscribe.class);
         return !isEmpty(annotatedMethods);
+    }
+
+    /**
+     * Plug in another way to get objects into configuration, ex: CDI
+     * @param alternateObjectSupplier not null (empty lambda ok)
+     * @since 2.0
+     */
+    public void setAlternateObjectSupplier(Function<String, ?> alternateObjectSupplier) {
+        this.alternateObjectSupplier = alternateObjectSupplier;
     }
 
     //@since 1.3
@@ -240,7 +252,7 @@ public class ReflectionBuilder {
         return objects.get(id);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings("unchecked")
     public <T> T getBean(String id, Class<T> requiredType) {
         if (requiredType == null) {
             throw new NullPointerException("requiredType argument cannot be null.");
@@ -338,9 +350,12 @@ public class ReflectionBuilder {
                 ((Nameable) instance).setName(name);
             }
         } catch (Exception e) {
-            String msg = "Unable to instantiate class [" + value + "] for object named '" + name + "'.  " +
-                    "Please ensure you've specified the fully qualified class name correctly.";
-            throw new ConfigurationException(msg, e);
+            instance = alternateObjectSupplier.apply(value);
+            if (instance == null) {
+                String msg = "Unable to instantiate class [" + value + "] for object named '" + name + "'.  "
+                        + "Please ensure you've specified the fully qualified class name correctly.";
+                throw new ConfigurationException(msg, e);
+            }
         }
         objects.put(name, instance);
     }

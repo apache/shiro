@@ -11,10 +11,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.shiro.ee.cdi;
+package org.apache.shiro.cdi;
 
-import org.apache.shiro.ee.cdi.AopHelper.SecurityInterceptor;
-import static org.apache.shiro.ee.cdi.AopHelper.autorizationAnnotationClasses;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -23,6 +21,8 @@ import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.authz.aop.AuthenticatedAnnotationHandler;
 import org.apache.shiro.authz.aop.UserAnnotationHandler;
+import org.apache.shiro.cdi.AopHelper.SecurityInterceptor;
+import static org.apache.shiro.cdi.AopHelper.autorizationAnnotationClasses;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;

@@ -13,7 +13,6 @@
  */
 package org.apache.shiro.ee.cdi;
 
-import org.apache.shiro.ee.cdi.ShiroSecurityExtension.ShiroSecureAnnotated;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -27,6 +26,8 @@ import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
+import org.apache.shiro.cdi.AnnotatedTypeWrapper;
+import org.apache.shiro.cdi.ShiroSecurityExtension.ShiroSecureAnnotated;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionListener;

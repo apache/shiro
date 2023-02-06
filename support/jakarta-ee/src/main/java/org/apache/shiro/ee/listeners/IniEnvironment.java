@@ -23,6 +23,7 @@ import org.apache.shiro.config.Ini;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.env.IniWebEnvironment;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
+import org.omnifaces.util.Beans;
 
 /**
  * Ability to merge two configuration files, exactly two
@@ -51,7 +52,9 @@ public class IniEnvironment extends IniWebEnvironment {
     }
 
     public IniEnvironment() {
-        setSecurityManagerFactory(new SecurityManagerFactory());
+        var securityManagerFactory = new SecurityManagerFactory();
+        securityManagerFactory.getReflectionBuilder().setAlternateObjectSupplier(Beans::getInstance);
+        setSecurityManagerFactory(securityManagerFactory);
     }
 
     @Override

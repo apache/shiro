@@ -19,9 +19,9 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>shiro-jakarta-ee</artifactId>
-    <name>Apache Shiro :: Support :: Jakarta EE</name>
-    <description>Apache Shiro - Jakarta EE Integration</description>
+    <artifactId>shiro-cdi</artifactId>
+    <name>Apache Shiro :: Support :: CDI</name>
+    <description>Apache Shiro - CDI Integration</description>
     <packaging>jar</packaging>
 
     <parent>
@@ -30,21 +30,16 @@
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <jacoco.skip>true</jacoco.skip>
-    </properties>
-
     <dependencies>
         <dependency>
-            <groupId>jakarta.platform</groupId>
-            <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>8.0.0</version>
-            <scope>provided</scope>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>2.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.26</version>
+            <version>1.18.24</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
@@ -53,27 +48,14 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.shiro</groupId>
-            <artifactId>shiro-cdi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.omnifaces</groupId>
-            <artifactId>omnifaces</artifactId>
-            <version>3.14.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.15.3</version>
-        </dependency>
 
         <!-- Test Dependencies -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>2.0.2</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
@@ -106,7 +88,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.ee</Bundle-SymbolicName>
-                        <Export-Package>org.apache.shiro.ee*;version=${project.version}</Export-Package>
+                        <Export-Package>org.apache.shiro.cdi*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
                             *
@@ -136,14 +118,6 @@
                         <relocation>
                             <pattern>javax.activation</pattern>
                             <shadedPattern>jakarta.activation</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>window.jsf</pattern>
-                            <shadedPattern>window.faces</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>jsf.ajax</pattern>
-                            <shadedPattern>faces.ajax</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

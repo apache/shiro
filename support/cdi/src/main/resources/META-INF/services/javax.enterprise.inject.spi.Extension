@@ -15,4 +15,4 @@
 ## specific language governing permissions and limitations
 ## under the License.
 
-org.apache.shiro.ee.cdi.ShiroSessionScopeExtension
+org.apache.shiro.cdi.ShiroSecurityExtension

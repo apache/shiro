@@ -11,21 +11,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.shiro.testing.jakarta.ee;
+package org.apache.shiro.cdi;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
-import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
-import javax.servlet.http.HttpServletRequest;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Target;
+import javax.interceptor.InterceptorBinding;
 
 /**
- * Fallback if we are an auth page
+ * CDI Marker Annotation to use Shiro
+ * to secure the bean
  */
-@Named
-@ApplicationScoped
-public class UseFallback implements FallbackPredicate {
-    @Override
-    public boolean useFallback(String path, HttpServletRequest request) {
-        return path.contains("shiro/auth/");
-    }
-}
+@Inherited
+@InterceptorBinding
+@Target({TYPE, METHOD})
+@Retention(RUNTIME)
+@interface ShiroSecureAnnotation { }
