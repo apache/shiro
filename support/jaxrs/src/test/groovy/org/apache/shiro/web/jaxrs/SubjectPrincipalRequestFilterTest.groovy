@@ -40,6 +40,7 @@ class SubjectPrincipalRequestFilterTest {
         def contextCapture = new Capture<ShiroSecurityContext>()
         def requestContext = mock(ContainerRequestContext)
         def originalSecurityContext = mock(SecurityContext)
+        expect(requestContext.getProperty(anyObject())).andReturn null
         expect(requestContext.getSecurityContext()).andReturn(originalSecurityContext)
         expect(requestContext.setSecurityContext(capture(contextCapture)))
         replay requestContext, originalSecurityContext

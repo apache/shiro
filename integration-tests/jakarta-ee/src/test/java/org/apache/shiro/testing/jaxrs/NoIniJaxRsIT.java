@@ -17,48 +17,51 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import javax.json.bind.JsonbException;
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
+import lombok.Builder;
+import lombok.SneakyThrows;
 import org.apache.shiro.testing.cdi.ComponentInjectionIT;
 import static org.apache.shiro.testing.cdi.ComponentInjectionIT.TESTABLE_MODE;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ArquillianExtension.class)
 public class NoIniJaxRsIT {
-    @ArquillianResource
-    private URL base;
-    private WebTarget webTarget;
-    private Client client;
-
-    @BeforeEach
-    void init() throws MalformedURLException {
-        client = ClientBuilder.newClient();
-        var uri = UriBuilder.fromUri(URI.create(new URL(base, "whoami").toExternalForm()))
-                .queryParam("user", "powerful").queryParam("password", "awesome").build();
-        webTarget = client.target(uri);
+    @Builder
+    private static class Credentials {
+        final boolean send;
+        final String username;
+        final String password;
     }
 
-    @AfterEach
-    void destroy() {
-        client.close();
+    @ArquillianResource
+    private URL base;
+
+    @SneakyThrows(MalformedURLException.class)
+    WebTarget createWebTarget(String path, Credentials credentials) {
+        var client = ClientBuilder.newClient();
+        var uri = credentials.send ? UriBuilder.fromUri(URI.create(new URL(base, path).toExternalForm()))
+                .queryParam("user", credentials.username).queryParam("password", credentials.password).build()
+                : URI.create(new URL(base, path).toExternalForm());
+        return client.target(uri);
     }
 
     @Test
     @OperateOnDeployment(TESTABLE_MODE)
     void whoami() {
         try {
-            var pojo = webTarget.request().get().readEntity(JsonPojo.class);
+            var pojo = createWebTarget("whoami/whoami", Credentials.builder()
+                    .username("powerful").password("awesome").send(true).build())
+                    .request().get().readEntity(JsonPojo.class);
             assertEquals("powerful", pojo.getUserId());
         } catch (JsonbException t) {
             fail(t.getMessage());
@@ -67,10 +70,58 @@ public class NoIniJaxRsIT {
 
     @Test
     @OperateOnDeployment(TESTABLE_MODE)
-    void unauthenticated() throws MalformedURLException {
-        var target = client.target(URI.create(new URL(base, "whoami").toExternalForm()));
-        var pojo = target.request().get().readEntity(JsonPojo.class);
+    void unauthenticated() {
+        var pojo = createWebTarget("whoami/whoami", Credentials.builder().send(false).build())
+                .request().get().readEntity(JsonPojo.class);
         assertEquals("unauthenticated", pojo.getUserId());
+    }
+
+    @Test
+    @OperateOnDeployment(TESTABLE_MODE)
+    void rolesAllowed() {
+        assertEquals(Status.OK.getStatusCode(), createWebTarget("whoami/rolesAllowed",
+                Credentials.builder().username("regular").password("meh").send(true).build())
+                .request().get().getStatus());
+    }
+
+    @Test
+    @OperateOnDeployment(TESTABLE_MODE)
+    void otherRolesAllowed() {
+        assertEquals(Status.OK.getStatusCode(), createWebTarget("whoami/otherRolesAllowed",
+                Credentials.builder().username("regular").password("meh").send(true).build())
+                .request().get().getStatus());
+    }
+
+    @Test
+    @OperateOnDeployment(TESTABLE_MODE)
+    void otherRolesNotAllowed() {
+        assertEquals(Status.UNAUTHORIZED.getStatusCode(), createWebTarget("whoami/otherRolesAllowed",
+                Credentials.builder().username("powerful").password("awesome").send(true).build())
+                .request().get().getStatus());
+    }
+
+    @Test
+    @OperateOnDeployment(TESTABLE_MODE)
+    void rolesNotAllowed() {
+        assertEquals(Status.UNAUTHORIZED.getStatusCode(), createWebTarget("whoami/rolesAllowed",
+                Credentials.builder().username("powerful").password("awesome").send(true).build())
+                .request().get().getStatus());
+    }
+
+    @Test
+    @OperateOnDeployment(TESTABLE_MODE)
+    void permit() {
+        assertEquals(Status.OK.getStatusCode(), createWebTarget("whoami/permit",
+                Credentials.builder().send(false).build())
+                .request().get().getStatus());
+    }
+
+    @Test
+    @OperateOnDeployment(TESTABLE_MODE)
+    void deny() {
+        assertEquals(Status.UNAUTHORIZED.getStatusCode(), createWebTarget("whoami/rolesAllowed",
+                Credentials.builder().username("powerful").password("awesome").send(true).build())
+                .request().get().getStatus());
     }
 
     @OperateOnDeployment(TESTABLE_MODE)

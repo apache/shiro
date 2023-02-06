@@ -30,16 +30,21 @@ import org.apache.shiro.authz.aop.GuestAnnotationHandler;
 import org.apache.shiro.authz.aop.PermissionAnnotationHandler;
 import org.apache.shiro.authz.aop.RoleAnnotationHandler;
 import org.apache.shiro.authz.aop.UserAnnotationHandler;
+import org.apache.shiro.authz.aop.DenyAllAnnotationHandler;
+import org.apache.shiro.authz.aop.PermitAllAnnotationHandler;
+import org.apache.shiro.authz.aop.RolesAllowedAnnotationHandler;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
 /**
  * A filter that grants or denies access to a JAX-RS resource based on the Shiro annotations on it.
@@ -66,6 +71,9 @@ public class AnnotationAuthorizationFilter implements ContainerRequestFilter {
         else if (RequiresUser.class.equals(t)) return new UserAnnotationHandler();
         else if (RequiresGuest.class.equals(t)) return new GuestAnnotationHandler();
         else if (RequiresAuthentication.class.equals(t)) return new AuthenticatedAnnotationHandler();
+        else if (RolesAllowed.class.equals(t)) return new RolesAllowedAnnotationHandler();
+        else if (PermitAll.class.equals(t)) return new PermitAllAnnotationHandler();
+        else if (DenyAll.class.equals(t)) return new DenyAllAnnotationHandler();
         else throw new IllegalArgumentException("Cannot create a handler for the unknown for annotation " + t);
     }
 

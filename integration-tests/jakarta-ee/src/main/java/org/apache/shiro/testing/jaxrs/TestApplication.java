@@ -29,7 +29,8 @@ public class TestApplication extends Application {
     void configureSecurityManager(@Observes @Initialized(ApplicationScoped.class) Object nothing) {
         var realm = new SimpleAccountRealm();
         var sm = new DefaultSecurityManager(realm);
-        realm.addAccount("powerful", "awesome");
+        realm.addAccount("powerful", "awesome", "admin");
+        realm.addAccount("regular", "meh", "user");
         SecurityUtils.setSecurityManager(sm);
     }
 

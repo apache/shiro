@@ -59,6 +59,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-jaxrs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-cdi</artifactId>
             <version>${project.version}</version>
         </dependency>
