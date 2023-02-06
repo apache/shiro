@@ -123,7 +123,7 @@
         <groovy.version>4.0.8</groovy.version>
         <junit.version>5.9.2</junit.version>
         <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
-        <hibernate.version>5.6.14.Final</hibernate.version>
+        <hibernate.version>5.6.15.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
 
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
