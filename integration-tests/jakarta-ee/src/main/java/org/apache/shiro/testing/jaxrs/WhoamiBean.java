@@ -11,21 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.shiro.testing.jakarta.ee;
+package org.apache.shiro.testing.jaxrs;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
-import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
-import javax.servlet.http.HttpServletRequest;
+import javax.inject.Inject;
+import org.apache.shiro.authz.annotation.RequiresUser;
+import org.apache.shiro.subject.Subject;
 
-/**
- * Fallback if we are an auth page
- */
-@Named
 @ApplicationScoped
-public class UseFallback implements FallbackPredicate {
-    @Override
-    public boolean useFallback(String path, HttpServletRequest request) {
-        return path.contains("shiro/auth/");
+public class WhoamiBean {
+    @Inject
+    Subject subject;
+
+    @RequiresUser
+    JsonPojo whoami() {
+        return JsonPojo.builder().userId(subject.getPrincipal().toString()).build();
+    }
+
+    JsonPojo noUser() {
+        return JsonPojo.builder().userId("unauthenticated").build();
     }
 }

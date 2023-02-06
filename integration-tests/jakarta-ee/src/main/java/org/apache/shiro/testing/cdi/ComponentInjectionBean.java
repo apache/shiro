@@ -11,21 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.shiro.testing.jakarta.ee;
+package org.apache.shiro.testing.cdi;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
-import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
-import javax.servlet.http.HttpServletRequest;
+import javax.inject.Inject;
+import org.apache.shiro.cdi.annotations.NoSessionCreation;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 
-/**
- * Fallback if we are an auth page
- */
-@Named
 @ApplicationScoped
-public class UseFallback implements FallbackPredicate {
-    @Override
-    public boolean useFallback(String path, HttpServletRequest request) {
-        return path.contains("shiro/auth/");
-    }
+public class ComponentInjectionBean {
+    @Inject
+    SecurityManager securityManager;
+    @Inject
+    Subject subject;
+    @Inject
+    Session session;
+    @Inject
+    @NoSessionCreation
+    Session noCreateionSession;
 }

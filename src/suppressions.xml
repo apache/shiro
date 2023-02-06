@@ -22,6 +22,7 @@
     <!-- do not require package-info.java -->
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]ee[\\/]*"/>
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]testing[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]cdi[\\/]*"/>
 
     <suppress checks="ConstantName" lines="41-44" files="com[\\/]flowlogix[\\/]shiro[\\/]ee[\\/]filters[\\/]CryptoSupport"/>
 </suppressions>

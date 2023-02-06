@@ -354,7 +354,8 @@ public class ShiroAuthFormsIT {
     static WebArchive createDeploymentDev(String archiveName) {
         WebArchive archive = ShrinkWrap.create(MavenImporter.class, archiveName)
                 .loadPomFromFile("pom.xml").importBuildOutput()
-                .as(WebArchive.class);
+                .as(WebArchive.class)
+                .deletePackage("org.apache.shiro.testing.jaxrs");
         new ShrinkWrapManipulator().webXmlXPath(archive, getStandardActions());
         return archive;
     }
@@ -367,7 +368,8 @@ public class ShiroAuthFormsIT {
     static WebArchive createDeploymentProd(String archiveName) {
         WebArchive archive = ShrinkWrap.create(MavenImporter.class, archiveName)
                 .loadPomFromFile("pom.xml").importBuildOutput()
-                .as(WebArchive.class);
+                .as(WebArchive.class)
+                .deletePackage("org.apache.shiro.testing.jaxrs");
         var productionList = List.of(new Action(
                 jakartify("//web-app/context-param[param-name = 'javax.faces.PROJECT_STAGE']/param-value"),
                 node -> node.setTextContent("Production")));

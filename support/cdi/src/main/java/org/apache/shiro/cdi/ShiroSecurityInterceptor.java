@@ -11,9 +11,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.shiro.ee.cdi;
+package org.apache.shiro.cdi;
 
-import org.apache.shiro.ee.cdi.AopHelper.SecurityInterceptor;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.Priority;
@@ -21,6 +20,7 @@ import javax.enterprise.context.Dependent;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import org.apache.shiro.cdi.AopHelper.SecurityInterceptor;
 
 /**
  * Enforce Shiro security on EJBs and CDI Beans

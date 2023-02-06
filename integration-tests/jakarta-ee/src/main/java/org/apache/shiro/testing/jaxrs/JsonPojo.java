@@ -11,22 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.shiro.ee.cdi;
+package org.apache.shiro.testing.jaxrs;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
-import javax.interceptor.InterceptorBinding;
+import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-/**
- * CDI Marker Annotation to use Shiro
- * to secure the bean
- */
-@Inherited
-@InterceptorBinding
-@Target({TYPE, METHOD})
-@Retention(RUNTIME)
-@interface ShiroSecureAnnotation { }
+@Builder
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class JsonPojo implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private String userId;
+}

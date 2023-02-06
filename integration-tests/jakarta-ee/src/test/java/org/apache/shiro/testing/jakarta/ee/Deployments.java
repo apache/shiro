@@ -13,6 +13,8 @@
  */
 package org.apache.shiro.testing.jakarta.ee;
 
+import org.apache.shiro.testing.cdi.ComponentInjectionIT;
+import static org.apache.shiro.testing.cdi.ComponentInjectionIT.TESTABLE_MODE;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_DEV_MODE;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_PROD_MODE;
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
@@ -27,11 +29,16 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 public class Deployments {
     @Deployment(testable = false, name = DEPLOYMENT_DEV_MODE)
     public static WebArchive createDeployment() {
-        return ShiroAuthFormsIT.createDeploymentDev("ShiroSuiteTest.war");
+        return ShiroAuthFormsIT.createDeploymentDev("ShiroSuiteTest-ui.war");
     }
 
     @Deployment(testable = false, name = DEPLOYMENT_PROD_MODE)
     public static WebArchive createDeploymentProd() {
         return ShiroAuthFormsIT.createDeploymentProd();
+    }
+
+    @Deployment(name = TESTABLE_MODE)
+    public static WebArchive createNonUIDeployment() {
+        return ComponentInjectionIT.createDeployment("ShiroSuiteTest.war");
     }
 }

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.shiro.ee.cdi;
+package org.apache.shiro.cdi;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
@@ -26,19 +26,19 @@ import lombok.experimental.Delegate;
  *
  * @param <T> type of annotated class
  */
-class AnnotatedTypeWrapper<T> implements AnnotatedType<T> {
+public class AnnotatedTypeWrapper<T> implements AnnotatedType<T> {
     // the below is so the compiler doesn't complain about unchecked casts
     private abstract class AT implements AnnotatedType<T> { }
     private final @Delegate(types = AT.class) AnnotatedType<T> wrapped;
     private final @Getter Set<Annotation> annotations;
 
 
-    AnnotatedTypeWrapper(AnnotatedType<T> wrapped, Annotation... additionalAnnotations) {
+    public AnnotatedTypeWrapper(AnnotatedType<T> wrapped, Annotation... additionalAnnotations) {
         this(wrapped, true, Set.of(additionalAnnotations), Set.of());
     }
 
 
-    AnnotatedTypeWrapper(AnnotatedType<T> wrapped, boolean keepOriginalAnnotations,
+    public AnnotatedTypeWrapper(AnnotatedType<T> wrapped, boolean keepOriginalAnnotations,
             Set<Annotation> additionalAnnotations, Set<Annotation> annotationsToRemove) {
         this.wrapped = wrapped;
         Stream.Builder<Annotation> builder = Stream.builder();

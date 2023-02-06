@@ -133,7 +133,8 @@ public class DefaultEnvironment implements NamedObjectEnvironment, Destroyable {
         return this.objects;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @Override
+    @SuppressWarnings("unchecked")
     public <T> T getObject(String name, Class<T> requiredType) throws RequiredTypeException {
         if (name == null) {
             throw new NullPointerException("name parameter cannot be null.");
