@@ -338,7 +338,7 @@
                                         project.properties.'payara.argLine' = "-DadminPort=$adminPort -DsslPort=$sslPort" as String
                                         project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
                                         println "Payara: portbase = ${project.properties.'payara.portbase'}, " +
-                                                "argLine = ${project.properties.'payara.argLine'}, matrix_jdk = $matrix_jdk"
+                                                "argLine = ${project.properties.'payara.argLine'}"
                                     } else {
                                         project.properties.'payara.argLine' = ''
                                         project.properties.'payara.restart.skip' = 'true'
