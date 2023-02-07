@@ -322,7 +322,9 @@
                                             def server_socket
                                             adminPort = portbase + admin_port_increment
                                             try {
-                                                server_socket = new ServerSocket(adminPort)
+                                                server_socket = new ServerSocket()
+                                                server_socket.setReuseAddress true
+                                                server_socket.bind(new InetSocketAddress(adminPort))
                                                 break
                                             } catch (IOException e) {
                                                 println "Admin port $adminPort is busy, trying next"
