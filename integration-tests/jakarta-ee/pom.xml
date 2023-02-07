@@ -316,7 +316,10 @@
                                     if (executor_number != null) {
                                         final int port_increment = 100
                                         final int admin_port_increment = 48
-                                        final int random_port_adjustment =  ThreadLocalRandom.current().nextInt(0, 50 + 1);
+                                        final String matrix_jdk = System.getenv('MATRIX_JDK')
+                                        final int random_port_adjustment =
+                                            matrix_jdk ? Math.abs(matrix_jdk.hashCode()) % 50
+                                            : ThreadLocalRandom.current().nextInt(0, 50 + 1);
                                         int portbase = 4900 + (executor_number as int + random_port_adjustment) * port_increment
                                         int adminPort
                                         // find a free port
@@ -339,7 +342,8 @@
                                         project.properties.'payara.adminport' = adminPort as String
                                         project.properties.'payara.argLine' = "-DadminPort=$adminPort -DsslPort=$sslPort" as String
                                         project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
-                                        println "Payara: portbase = ${project.properties.'payara.portbase'}, argLine = ${project.properties.'payara.argLine'}"
+                                        println "Payara: portbase = ${project.properties.'payara.portbase'}, " +
+                                                "argLine = ${project.properties.'payara.argLine'}, matrix_jdk = $matrix_jdk"
                                     } else {
                                         project.properties.'payara.argLine' = ''
                                         project.properties.'payara.restart.skip' = 'true'
