@@ -46,6 +46,7 @@ pipeline {
                     node {
                         // https://cwiki.apache.org/confluence/display/INFRA/ci-builds.apache.org
                         label 'ubuntu'
+                        customWorkspace "workspace/${JOB_NAME}/MatrixCheckout/${MATRIX_JDK}/"
                     }
                 }
 
