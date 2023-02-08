@@ -364,7 +364,8 @@
                         <id>create-domain</id>
                         <phase>pre-integration-test</phase>
                         <configuration>
-                            <commandlineArgs>create-domain --nopassword --portbase ${payara.portbase} ${domain.name}</commandlineArgs>
+                            <commandlineArgs>create-domain --nopassword --checkports=false
+                                --portbase ${payara.portbase} ${domain.name}</commandlineArgs>
                             <skip>${create-domain-skip}</skip>
                         </configuration>
                         <goals>
