@@ -66,7 +66,7 @@ pipeline {
                         steps {
                             echo 'Building Branch: ' + env.BRANCH_NAME
                             echo 'Using PATH = ' + env.PATH
-                            echo 'Slave Node = ' + env.HOSTNAME
+                            echo 'Slave Node = ' + env.NODE_NAME
                         }
                     }
 
