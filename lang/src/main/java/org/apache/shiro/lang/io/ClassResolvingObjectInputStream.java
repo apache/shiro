@@ -50,6 +50,9 @@ public class ClassResolvingObjectInputStream extends ObjectInputStream {
     @Override
     protected Class<?> resolveClass(ObjectStreamClass osc) throws IOException, ClassNotFoundException {
         try {
+            if (!(osc.getName().startsWith("org.apache.shiro") || osc.getName().startsWith("java.util"))) {
+                throw new ClassNotFoundException("Forbidden to load ObjectStreamClass for: " + osc.getName());
+            }
             return ClassUtils.forName(osc.getName());
         } catch (UnknownClassException e) {
             throw new ClassNotFoundException("Unable to load ObjectStreamClass [" + osc + "]: ", e);
