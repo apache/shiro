@@ -32,10 +32,12 @@ import java.io.IOException;
 @Provider
 @PreMatching
 public class SubjectPrincipalRequestFilter implements ContainerRequestFilter {
+    public static final String SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.jaxrs.disable-principal";
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        requestContext.setSecurityContext(new ShiroSecurityContext(requestContext));
-
+        if (!Boolean.TRUE.equals(requestContext.getProperty(SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM))) {
+            requestContext.setSecurityContext(new ShiroSecurityContext(requestContext));
+        }
     }
 }

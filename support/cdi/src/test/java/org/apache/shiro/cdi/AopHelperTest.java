@@ -83,7 +83,7 @@ class AopHelperTest {
     @SneakyThrows
     @SuppressWarnings("MagicNumber")
     void checkAllAnnotationTypes() {
-        assertEquals(5, autorizationAnnotationClasses.keySet().stream().distinct().count());
+        assertEquals(8, autorizationAnnotationClasses.keySet().stream().distinct().count());
         for (Class<? extends Annotation> clz : autorizationAnnotationClasses.keySet()) {
             assertEquals(clz, autorizationAnnotationClasses.get(clz).call().getAnnotationClass());
         }

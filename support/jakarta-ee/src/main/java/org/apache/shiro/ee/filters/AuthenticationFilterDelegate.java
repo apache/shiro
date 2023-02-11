@@ -34,7 +34,9 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
 import org.apache.shiro.subject.Subject;
+import static org.apache.shiro.web.jaxrs.SubjectPrincipalRequestFilter.SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM;
 import org.apache.shiro.web.util.WebUtils;
 
 /**
@@ -67,6 +69,9 @@ class AuthenticationFilterDelegate {
         request.setAttribute(LOGIN_PREDICATE_ATTR_NAME, loginFallbackType);
         request.setAttribute(LOGIN_WAITTIME_ATTR_NAME, loginFailedWaitTime);
         request.setAttribute(LOGOUT_PREDICATE_ATTR_NAME, logoutFallbackType);
+        if (isServletNoPrincipal(request.getServletContext())) {
+            request.setAttribute(SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM, Boolean.TRUE);
+        }
         try {
             request.setAttribute(LOGIN_URL_ATTR_NAME, methods.getLoginUrl());
         } catch (UnsupportedOperationException e) {

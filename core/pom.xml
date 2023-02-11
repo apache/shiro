@@ -132,6 +132,11 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-event</artifactId>
         </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>${jakarta.annotations.version}</version>
+        </dependency>
 
         <!-- Test dependencies -->
         <dependency>

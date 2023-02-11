@@ -13,6 +13,9 @@
  */
 package org.apache.shiro.cdi;
 
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
@@ -32,7 +35,8 @@ public class ShiroSecurityExtension implements Extension {
 
     public <T> void addSecurity(@Observes @WithAnnotations({
         RequiresAuthentication.class, RequiresGuest.class, RequiresPermissions.class,
-        RequiresRoles.class, RequiresUser.class}) ProcessAnnotatedType<T> pat) {
+        RequiresRoles.class, RequiresUser.class, RolesAllowed.class,
+        PermitAll.class, DenyAll.class}) ProcessAnnotatedType<T> pat) {
         pat.setAnnotatedType(new AnnotatedTypeWrapper<>(pat.getAnnotatedType(),
                 ShiroSecureAnnotated.class.getDeclaredAnnotations()[0]));
     }

@@ -22,6 +22,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,9 +37,12 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.authz.aop.AuthenticatedAnnotationHandler;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
+import org.apache.shiro.authz.aop.DenyAllAnnotationHandler;
 import org.apache.shiro.authz.aop.GuestAnnotationHandler;
 import org.apache.shiro.authz.aop.PermissionAnnotationHandler;
+import org.apache.shiro.authz.aop.PermitAllAnnotationHandler;
 import org.apache.shiro.authz.aop.RoleAnnotationHandler;
+import org.apache.shiro.authz.aop.RolesAllowedAnnotationHandler;
 import org.apache.shiro.authz.aop.UserAnnotationHandler;
 
 /**
@@ -55,7 +61,10 @@ class AopHelper {
                     RequiresRoles.class, RoleAnnotationHandler::new,
                     RequiresUser.class, UserAnnotationHandler::new,
                     RequiresGuest.class, GuestAnnotationHandler::new,
-                    RequiresAuthentication.class, AuthenticatedAnnotationHandler::new);
+                    RequiresAuthentication.class, AuthenticatedAnnotationHandler::new,
+                    RolesAllowed.class, RolesAllowedAnnotationHandler::new,
+                    PermitAll.class, PermitAllAnnotationHandler::new,
+                    DenyAll.class, DenyAllAnnotationHandler::new);
     /**
      * Create list of
      * {@link SecurityInterceptor}
