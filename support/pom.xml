@@ -32,6 +32,7 @@
 
     <modules>
         <module>aspectj</module>
+        <module>jcache</module>
         <module>ehcache</module>
         <module>hazelcast</module>
         <module>quartz</module>
