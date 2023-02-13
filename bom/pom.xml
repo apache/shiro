@@ -35,7 +35,37 @@
         <dependencies>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-core</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-web</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.shiro</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-jakarta-ee</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.shiro</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-cdi</artifactId>
                 <classifier>jakarta</classifier>
                 <version>${project.version}</version>
                 <exclusions>
