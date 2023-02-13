@@ -59,7 +59,7 @@
         <dependency>
             <groupId>org.cache2k</groupId>
             <artifactId>cache2k-jcache</artifactId>
-            <version>2.4.1.Final</version>
+            <version>2.6.1.Final</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
