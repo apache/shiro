@@ -13,12 +13,14 @@
  */
 package org.apache.shiro.cdi;
 
+import java.util.Optional;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.cdi.annotations.NoSessionCreation;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 
@@ -49,6 +51,7 @@ public class ShiroComponentProducer {
     @NoSessionCreation
     @RequestScoped
     public static Session getSessionNoCreation() {
-        return SecurityUtils.getSubject().getSession(false);
+        return Optional.ofNullable(SecurityUtils.getSubject().getSession(false))
+                .orElseThrow(InvalidSessionException::new);
     }
 }
