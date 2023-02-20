@@ -13,14 +13,19 @@
  */
 package org.apache.shiro.testing.cdi;
 
+import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import lombok.Getter;
 import org.apache.shiro.cdi.annotations.NoSessionCreation;
+import org.apache.shiro.cdi.annotations.Principal;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.testing.jakarta.ee.PropertyPrincipal;
 
 @ApplicationScoped
+@Getter
 public class ComponentInjectionBean {
     @Inject
     SecurityManager securityManager;
@@ -31,4 +36,7 @@ public class ComponentInjectionBean {
     @Inject
     @NoSessionCreation
     Session noCreateionSession;
+    @Inject
+    @Principal
+    Optional<PropertyPrincipal> propertyPincipal;
 }

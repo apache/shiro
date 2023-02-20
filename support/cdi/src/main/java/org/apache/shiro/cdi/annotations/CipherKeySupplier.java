@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.shiro.testing.jaxrs;
+package org.apache.shiro.cdi.annotations;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import java.util.function.Supplier;
 
-@ApplicationPath("/")
-@ApplicationScoped
-public class TestApplication extends Application {
+/**
+ * Marker interface for specifying the Shiro cipher key
+ */
+public interface CipherKeySupplier extends Supplier<String> {
 }

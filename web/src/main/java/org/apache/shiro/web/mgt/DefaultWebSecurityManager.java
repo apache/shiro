@@ -42,6 +42,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.function.Supplier;
 
 
 /**
@@ -69,11 +70,21 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
 
     public DefaultWebSecurityManager() {
         super();
-        DefaultWebSessionStorageEvaluator webEvaluator = new DefaultWebSessionStorageEvaluator();  
+        init(null);
+    }
+
+    public DefaultWebSecurityManager(Supplier<byte[]> keySupplier) {
+        super();
+        init(keySupplier);
+    }
+
+    private void init(Supplier<byte[]> keySupplier) {
+        DefaultWebSessionStorageEvaluator webEvaluator = new DefaultWebSessionStorageEvaluator();
         ((DefaultSubjectDAO) this.subjectDAO).setSessionStorageEvaluator(webEvaluator);
         this.sessionMode = HTTP_SESSION_MODE;
         setSubjectFactory(new DefaultWebSubjectFactory());
-        setRememberMeManager(new CookieRememberMeManager());
+        setRememberMeManager(keySupplier == null ? new CookieRememberMeManager()
+                : new CookieRememberMeManager(keySupplier));
         setSessionManager(new ServletContainerSessionManager());
         webEvaluator.setSessionManager(getSessionManager());
     }

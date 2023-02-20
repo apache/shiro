@@ -11,13 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.shiro.testing.jaxrs;
+package org.apache.shiro.testing.cdi;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import org.apache.shiro.cdi.annotations.CipherKeySupplier;
 
-@ApplicationPath("/")
 @ApplicationScoped
-public class TestApplication extends Application {
+public class CipherKeyGenerator implements CipherKeySupplier {
+    @Override
+    public String get() {
+        return "34D7E5C61B87A38C971B3716AED7899E";
+    }
 }

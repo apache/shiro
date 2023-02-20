@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.mgt;
 
+import java.util.function.Supplier;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -72,12 +73,12 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     /**
      * Serializer to use for converting PrincipalCollection instances to/from byte arrays
      */
-    private Serializer<PrincipalCollection> serializer;
+    private Serializer<PrincipalCollection> serializer = new DefaultSerializer<>();
 
     /**
      * Cipher to use for encrypting/decrypting serialized byte arrays for added security
      */
-    private CipherService cipherService;
+    private CipherService cipherService = new AesCipherService();;
 
     /**
      * Cipher encryption key to use with the Cipher when encrypting data
@@ -94,10 +95,18 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * an {@link AesCipherService} as the {@link #getCipherService() cipherService}.
      */
     public AbstractRememberMeManager() {
-        this.serializer = new DefaultSerializer<PrincipalCollection>();
-        AesCipherService cipherService = new AesCipherService();
-        this.cipherService = cipherService;
-        setCipherKey(cipherService.generateNewKey().getEncoded());
+        setCipherKey(((AesCipherService) cipherService).generateNewKey().getEncoded());
+    }
+
+    /**
+     * Constructor. Pass keySupplier that supplies encryption key
+     *
+     * @param keySupplier
+     * @since 2.0
+     */
+    public AbstractRememberMeManager(Supplier<byte[]> keySupplier) {
+        this();
+        setCipherKey(keySupplier.get());
     }
 
     /**

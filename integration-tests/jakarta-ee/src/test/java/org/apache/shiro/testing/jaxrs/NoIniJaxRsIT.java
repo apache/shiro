@@ -25,6 +25,7 @@ import lombok.Builder;
 import lombok.SneakyThrows;
 import org.apache.shiro.testing.cdi.ComponentInjectionIT;
 import static org.apache.shiro.testing.cdi.ComponentInjectionIT.TESTABLE_MODE;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -124,7 +125,7 @@ public class NoIniJaxRsIT {
                 .request().get().getStatus());
     }
 
-    @OperateOnDeployment(TESTABLE_MODE)
+    @Deployment(name = TESTABLE_MODE)
     public static WebArchive createDeployment() {
         return ComponentInjectionIT.createDeployment("no-ini-jaxrs.war");
     }

@@ -22,14 +22,15 @@ import javax.ws.rs.QueryParam;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.lang.ShiroException;
-import org.apache.shiro.subject.Subject;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.realm.SimpleAccountRealm;
+import org.apache.shiro.util.ThreadContext;
 
 @Path("whoami")
 public class WhoamiResource {
-    @Inject
-    Subject subject;
     @Inject
     WhoamiBean whoamiBean;
     @Inject
@@ -72,12 +73,20 @@ public class WhoamiResource {
 
     private <T> T check(Supplier<T> happy, Supplier<T> sad, String user, String password) {
         try {
-            subject.login(new UsernamePasswordToken(user, password));
+            var realm = new SimpleAccountRealm();
+            var sm = new DefaultSecurityManager(realm);
+            realm.addAccount("powerful", "awesome", "admin");
+            realm.addAccount("regular", "meh", "user");
+            ThreadContext.bind(sm);
+            SecurityUtils.getSubject().login(new UsernamePasswordToken(user, password));
             return happy.get();
         } catch (ShiroException e) {
             return sad.get();
         } finally {
-            subject.logout();
+            SecurityUtils.getSubject().logout();
+            ThreadContext.unbindSecurityManager();
+            ThreadContext.unbindSubject();
+            ThreadContext.remove();
         }
     }
 }

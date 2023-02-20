@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.web.mgt;
 
+import java.util.function.Supplier;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.mgt.AbstractRememberMeManager;
 import org.apache.shiro.subject.Subject;
@@ -85,12 +86,18 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      * Constructs a new {@code CookieRememberMeManager} with a default {@code rememberMe} cookie template.
      */
     public CookieRememberMeManager() {
-        Cookie cookie = new SimpleCookie(DEFAULT_REMEMBER_ME_COOKIE_NAME);
-        cookie.setHttpOnly(true);
-        //One year should be long enough - most sites won't object to requiring a user to log in if they haven't visited
-        //in a year:
-        cookie.setMaxAge(Cookie.ONE_YEAR);
-        this.cookie = cookie;
+        setCookie(createDefaultCookie());
+    }
+
+    /**
+     * Constructor. Pass keySupplier that supplies encryption key
+     *
+     * @param keySupplier
+     * @since 2.0
+     */
+    public CookieRememberMeManager(Supplier<byte[]> keySupplier) {
+        super(keySupplier);
+        setCookie(createDefaultCookie());
     }
 
     /**
@@ -299,5 +306,13 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
     private void forgetIdentity(HttpServletRequest request, HttpServletResponse response) {
         getCookie().removeFrom(request, response);
     }
-}
 
+    private Cookie createDefaultCookie() {
+        Cookie cookie = new SimpleCookie(DEFAULT_REMEMBER_ME_COOKIE_NAME);
+        cookie.setHttpOnly(true);
+        //One year should be long enough - most sites won't object to requiring a user to log in if they haven't visited
+        //in a year:
+        cookie.setMaxAge(Cookie.ONE_YEAR);
+        return cookie;
+    }
+}

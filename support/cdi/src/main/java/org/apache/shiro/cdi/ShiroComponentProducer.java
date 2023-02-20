@@ -13,12 +13,16 @@
  */
 package org.apache.shiro.cdi;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.Optional;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.cdi.annotations.NoSessionCreation;
+import org.apache.shiro.cdi.annotations.Principal;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
@@ -29,6 +33,7 @@ import org.apache.shiro.subject.Subject;
  */
 @SuppressWarnings("HideUtilityClassConstructor")
 @Dependent
+@Slf4j
 public class ShiroComponentProducer {
     @Produces
     public static SecurityManager getSecurityManager() {
@@ -53,5 +58,14 @@ public class ShiroComponentProducer {
     public static Session getSessionNoCreation() {
         return Optional.ofNullable(SecurityUtils.getSubject().getSession(false))
                 .orElseThrow(InvalidSessionException::new);
+    }
+
+    @Produces
+    @Principal
+    @SuppressWarnings("unchecked")
+    public static <T> Optional<T> getPrincipal(InjectionPoint injectionPoint, Subject subject) {
+        var parameterizedType = (ParameterizedType) injectionPoint.getType();
+        return Optional.ofNullable(subject.getPrincipals())
+                .map(pc -> pc.oneByType((Class<T>) parameterizedType.getActualTypeArguments()[0]));
     }
 }

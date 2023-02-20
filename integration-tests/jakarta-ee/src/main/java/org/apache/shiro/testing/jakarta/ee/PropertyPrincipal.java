@@ -14,11 +14,13 @@
 package org.apache.shiro.testing.jakarta.ee;
 
 import java.io.Serializable;
+import javax.enterprise.inject.Vetoed;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
+@Vetoed
 public class PropertyPrincipal implements Serializable {
     private static final long serialVersionUID = 1L;
 
