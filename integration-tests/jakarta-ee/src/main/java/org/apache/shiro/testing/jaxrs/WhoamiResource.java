@@ -25,8 +25,6 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.lang.ShiroException;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.realm.SimpleAccountRealm;
 import org.apache.shiro.util.ThreadContext;
 
 @Path("whoami")
@@ -35,6 +33,8 @@ public class WhoamiResource {
     WhoamiBean whoamiBean;
     @Inject
     RolesAllowedBean rolesAllowedBean;
+    @Inject
+    TestApplication testApplication;
 
     @GET
     @Path("whoami")
@@ -73,11 +73,7 @@ public class WhoamiResource {
 
     private <T> T check(Supplier<T> happy, Supplier<T> sad, String user, String password) {
         try {
-            var realm = new SimpleAccountRealm();
-            var sm = new DefaultSecurityManager(realm);
-            realm.addAccount("powerful", "awesome", "admin");
-            realm.addAccount("regular", "meh", "user");
-            ThreadContext.bind(sm);
+            ThreadContext.bind(testApplication.getSecurityManager());
             SecurityUtils.getSubject().login(new UsernamePasswordToken(user, password));
             return happy.get();
         } catch (ShiroException e) {

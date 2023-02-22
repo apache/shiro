@@ -13,18 +13,14 @@
  */
 package org.apache.shiro.testing.cdi;
 
-import java.util.List;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.SimpleAccount;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.realm.SimpleAccountRealm;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.testing.jakarta.ee.PropertyPrincipal;
 import org.apache.shiro.testing.jaxrs.NoIniJaxRsIT;
+import org.apache.shiro.testing.jaxrs.TestApplication;
 import org.apache.shiro.util.ThreadContext;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -45,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * Tests @Injecting Subject, Session and SecurityManager with CDI
+ * Tests @Injecting Subject, Session, Principal and SecurityManager with CDI
  */
 @ExtendWith(ArquillianExtension.class)
 @Execution(ExecutionMode.SAME_THREAD)
@@ -56,24 +52,17 @@ public class ComponentInjectionIT {
 
     @Inject
     ComponentInjectionBean injectedComponents;
+    @Inject
+    TestApplication testApplication;
 
     @BeforeEach
     void bind() {
-        var realm = new SimpleAccountRealm("testRealm") {
-            @Override
-            public void addAccount(String username, String password) {
-                SimpleAccount account = new SimpleAccount(new SimplePrincipalCollection(
-                        List.of(username, new PropertyPrincipal(username)), getName()), password);
-                add(account);
-            }
-        };
-        var sm = new DefaultSecurityManager(realm);
-        realm.addAccount("user", "password");
-        ThreadContext.bind(sm);
+        ThreadContext.bind(testApplication.getSecurityManager());
     }
 
     @AfterEach
     void unbind() {
+        SecurityUtils.getSubject().logout();
         ThreadContext.unbindSecurityManager();
         ThreadContext.unbindSubject();
         ThreadContext.remove();
