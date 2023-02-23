@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtilsBean;
+import org.apache.commons.beanutils.FluentPropertyBeanIntrospector;
 import org.apache.commons.beanutils.SuppressPropertiesBeanIntrospector;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
@@ -135,6 +136,7 @@ public class ReflectionBuilder {
             }
         });
         beanUtilsBean.getPropertyUtils().addBeanIntrospector(SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
+        beanUtilsBean.getPropertyUtils().addBeanIntrospector(new FluentPropertyBeanIntrospector());
 
         this.interpolator = createInterpolator();
 
