@@ -1244,6 +1244,10 @@
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>net.sf.ehcache</groupId>
+                        <artifactId>sizeof-agent</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1464,12 +1468,12 @@
                 <configuration>
                     <linksource>true</linksource>
                     <links>
-                        <link>https://docs.oracle.com/javase/6/docs/api/</link>
-                        <link>https://docs.oracle.com/javaee/5/api//</link>
+                        <link>https://docs.oracle.com/javase/11/docs/api/</link>
+                        <link>https://docs.oracle.com/javaee/7/api/</link>
                         <link>https://www.slf4j.org/api/</link>
                         <link>https://docs.spring.io/spring/docs/2.5.x/javadoc-api/</link>
                         <link>https://junit.org/junit4/javadoc/4.12/</link>
-                        <link>http://easymock.org/api/easymock/2.4</link>
+                        <link>https://easymock.org/api/</link>
                         <link>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}/org/mockito/Mockito.html</link>
                         <link>https://www.quartz-scheduler.org/api/1.8.6/</link>
                     </links>
