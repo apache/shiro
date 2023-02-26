@@ -769,6 +769,7 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <!-- This configuration copied from apache:apache:7 parent pom -->
                     <useReleaseProfile>false</useReleaseProfile>
+                    <preparationGoals>validate</preparationGoals>
                     <goals>deploy site site:stage</goals>
                     <arguments>-Pdocs,apache-release,skip-checkstyle</arguments>
                     <mavenExecutorId>forked-path</mavenExecutorId>
