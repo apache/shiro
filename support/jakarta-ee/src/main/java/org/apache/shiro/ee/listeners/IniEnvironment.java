@@ -65,7 +65,8 @@ public class IniEnvironment extends IniWebEnvironment {
         }
 
         private byte[] generateCipherKey() {
-            var cipherKeySupplier = Beans.getReference(CipherKeySupplier.class);
+            var cipherKeySupplier = Beans.getManager() == null ? null
+                    : Beans.getReference(CipherKeySupplier.class);
             if (cipherKeySupplier == null || isBlank(cipherKeySupplier.get())) {
                 return cipherService.get().generateNewKey().getEncoded();
             } else {
