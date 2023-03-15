@@ -72,7 +72,7 @@ pipeline {
                     stage('Cleanup') {
                         steps {
                             echo 'Cleaning up the workspace'
-                            cleanWs()
+                            cleanBeforeCheckout()
                         }
                     }
 
@@ -160,7 +160,7 @@ Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BRANC
                     success {
                         // Cleanup the build directory if the build was successful
                         // (in this cae we probably don't have to do any post-build analysis)
-                        cleanWs()
+                        cleanBeforeCheckout()
                         script {
                             if (deployableBranch
                                     && (currentBuild.previousBuild != null) && (currentBuild.previousBuild.result != 'SUCCESS')) {
