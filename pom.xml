@@ -128,6 +128,7 @@
         <hibernate.version>5.6.15.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <jakarta.annotations.version>1.3.5</jakarta.annotations.version>
+        <lombok.version>1.18.26</lombok.version>
 
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
 
@@ -303,6 +304,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.3.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-help-plugin</artifactId>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
@@ -634,6 +640,7 @@
                         <exclude>**/*$$FastClassBy*$$*</exclude>
                         <exclude>**/*$$EnhancerBy*CGLIB$$*</exclude>
                         <exclude>**/*$MockitoMock$*</exclude>
+                        <exclude>**/*$HibernateProxy$*</exclude>
                         <exclude>org/apache/shiro/samples/guice/SampleShiroGuiceBootstrap</exclude>
                         <exclude>org/apache/shiro/samples/guice/SampleShiroServletModule</exclude>
                         <exclude>org/apache/shiro/**/*Test</exclude>
