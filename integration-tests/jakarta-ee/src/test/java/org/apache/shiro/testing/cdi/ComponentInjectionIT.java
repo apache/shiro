@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -103,8 +104,8 @@ public class ComponentInjectionIT {
     @OperateOnDeployment(TESTABLE_MODE)
     void principalInjection() {
         SecurityUtils.getSubject().login(new UsernamePasswordToken("user", "password"));
-        assertNotNull(injectedComponents.getPropertyPincipal());
-        assertEquals("user", injectedComponents.getPropertyPincipal().orElseThrow().getUserName());
+        assertNotNull(injectedComponents.getPropertyPrincipal());
+        assertEquals("user", Optional.ofNullable(injectedComponents.getPropertyPrincipal().get()).orElseThrow().getUserName());
         injectedComponents.getSubject().logout();
     }
 

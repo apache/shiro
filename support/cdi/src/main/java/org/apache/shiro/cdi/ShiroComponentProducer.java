@@ -63,9 +63,8 @@ public class ShiroComponentProducer {
     @Produces
     @Principal
     @SuppressWarnings("unchecked")
-    public static <T> Optional<T> getPrincipal(InjectionPoint injectionPoint, Subject subject) {
+    public static <T> ShiroPrincipal<T> getPrincipal(InjectionPoint injectionPoint) {
         var parameterizedType = (ParameterizedType) injectionPoint.getType();
-        return Optional.ofNullable(subject.getPrincipals())
-                .map(pc -> pc.oneByType((Class<T>) parameterizedType.getActualTypeArguments()[0]));
+        return new ShiroPrincipal<>((Class<T>) parameterizedType.getActualTypeArguments()[0]);
     }
 }
