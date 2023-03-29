@@ -16,13 +16,13 @@ package org.apache.shiro.testing.cdi;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import lombok.Getter;
-import org.apache.shiro.cdi.ShiroPrincipal;
 import org.apache.shiro.cdi.annotations.NoSessionCreation;
 import org.apache.shiro.cdi.annotations.Principal;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.testing.jakarta.ee.PropertyPrincipal;
+import java.util.function.Supplier;
 
 @ApplicationScoped
 @Getter
@@ -38,5 +38,5 @@ public class ComponentInjectionBean {
     Session noCreateionSession;
     @Inject
     @Principal
-    ShiroPrincipal<PropertyPrincipal> propertyPrincipal;
+    Supplier<PropertyPrincipal> propertyPrincipal;
 }

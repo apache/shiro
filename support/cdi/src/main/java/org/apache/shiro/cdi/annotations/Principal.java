@@ -31,7 +31,7 @@ import javax.inject.Qualifier;
  * {@code
  * @Inject
  * @Principal
- * ShiroPrincipal<UserAccount> account;
+ * Supplier<UserAccount> account;
  * }
  */
 @Qualifier

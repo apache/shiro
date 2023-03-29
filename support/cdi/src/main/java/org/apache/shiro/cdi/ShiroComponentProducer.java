@@ -13,8 +13,10 @@
  */
 package org.apache.shiro.cdi;
 
+import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.Optional;
+import java.util.function.Supplier;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
@@ -35,6 +37,8 @@ import org.apache.shiro.subject.Subject;
 @Dependent
 @Slf4j
 public class ShiroComponentProducer {
+    interface SerializableSupplier<T> extends Supplier<T>, Serializable { }
+
     @Produces
     public static SecurityManager getSecurityManager() {
         return SecurityUtils.getSecurityManager();
@@ -63,8 +67,10 @@ public class ShiroComponentProducer {
     @Produces
     @Principal
     @SuppressWarnings("unchecked")
-    public static <T> ShiroPrincipal<T> getPrincipal(InjectionPoint injectionPoint) {
+    public static <T> Supplier<T> getPrincipal(InjectionPoint injectionPoint) {
         var parameterizedType = (ParameterizedType) injectionPoint.getType();
-        return new ShiroPrincipal<>((Class<T>) parameterizedType.getActualTypeArguments()[0]);
+        var principalType = (Class<T>) parameterizedType.getActualTypeArguments()[0];
+        SerializableSupplier<T> supplier = () -> SecurityUtils.getSubject().getPrincipals().oneByType(principalType);
+        return supplier;
     }
 }
