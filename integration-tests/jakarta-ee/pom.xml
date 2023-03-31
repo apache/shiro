@@ -152,7 +152,7 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>5.4</version>
+            <version>5.4.1</version>
             <scope>test</scope>
         </dependency>
 

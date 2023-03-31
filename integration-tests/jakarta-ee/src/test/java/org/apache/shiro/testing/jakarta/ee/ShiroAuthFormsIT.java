@@ -15,9 +15,10 @@ package org.apache.shiro.testing.jakarta.ee;
 
 import com.flowlogix.util.ShrinkWrapManipulator;
 import com.flowlogix.util.ShrinkWrapManipulator.Action;
-import static com.flowlogix.util.ShrinkWrapManipulator.getStandardActions;
-import static com.flowlogix.util.ShrinkWrapManipulator.isClientStateSavingIntegrationTest;
-import static com.flowlogix.util.ShrinkWrapManipulator.isShiroNativeSessionsIntegrationTest;
+import static com.flowlogix.util.ShrinkWrapManipulator.getContextParamValue;
+import static org.apache.shiro.testing.jakarta.ee.Deployments.standardActions;
+import static org.apache.shiro.testing.jakarta.ee.Deployments.isClientStateSavingIntegrationTest;
+import static org.apache.shiro.testing.jakarta.ee.Deployments.isShiroNativeSessionsIntegrationTest;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -356,7 +357,7 @@ public class ShiroAuthFormsIT {
                 .loadPomFromFile("pom.xml").importBuildOutput()
                 .as(WebArchive.class)
                 .deletePackage("org.apache.shiro.testing.jaxrs");
-        new ShrinkWrapManipulator().webXmlXPath(archive, getStandardActions());
+        new ShrinkWrapManipulator().webXmlXPath(archive, standardActions);
         return archive;
     }
 
@@ -371,10 +372,10 @@ public class ShiroAuthFormsIT {
                 .as(WebArchive.class)
                 .deletePackage("org.apache.shiro.testing.jaxrs");
         var productionList = List.of(new Action(
-                jakartify("//web-app/context-param[param-name = 'javax.faces.PROJECT_STAGE']/param-value"),
+                getContextParamValue(jakartify("javax.faces.PROJECT_STAGE")),
                 node -> node.setTextContent("Production")));
         new ShrinkWrapManipulator().webXmlXPath(archive, Stream.concat(productionList.stream(),
-                getStandardActions().stream()).collect(Collectors.toList()));
+                standardActions.stream()).collect(Collectors.toList()));
         return archive;
     }
 }
