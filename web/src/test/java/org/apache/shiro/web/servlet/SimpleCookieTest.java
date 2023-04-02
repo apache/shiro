@@ -49,7 +49,7 @@ public class SimpleCookieTest extends TestCase {
     }
 
     @Test
-    //Verifies fix for JSEC-94
+    // Verifies fix for JSEC-94
     public void testRemoveValue() throws Exception {
 
         //verify that the cookie header starts with what we want
@@ -71,7 +71,7 @@ public class SimpleCookieTest extends TestCase {
         assertTrue(headerValue.startsWith(expectedStart));
 
         expect(mockRequest.getContextPath()).andReturn(path).times(1);
-        mockResponse.addHeader(eq(SimpleCookie.COOKIE_HEADER_NAME), isA(String.class)); //can't calculate the date format in the test
+        mockResponse.addHeader(eq(SimpleCookie.COOKIE_HEADER_NAME), isA(String.class)); // can't calculate the date format in the test
         replay(mockRequest);
         replay(mockResponse);
 
@@ -87,12 +87,13 @@ public class SimpleCookieTest extends TestCase {
         String expectedCookieValue = new StringBuilder()
                 .append("test").append(SimpleCookie.NAME_VALUE_DELIMITER).append("blah")
                 .append(SimpleCookie.ATTRIBUTE_DELIMITER)
-                .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(Cookie.ROOT_PATH)
+                .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER)
+                .append(Cookie.ROOT_PATH)
                 .append(SimpleCookie.ATTRIBUTE_DELIMITER)
                 .append(SimpleCookie.HTTP_ONLY_ATTRIBUTE_NAME)
                 .append(SimpleCookie.ATTRIBUTE_DELIMITER)
                 .append(SimpleCookie.SAME_SITE_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER)
-                    .append(Cookie.SameSiteOptions.LAX.toString().toLowerCase(Locale.ENGLISH))
+                .append(Cookie.SameSiteOptions.LAX.toString().toLowerCase(Locale.ENGLISH))
                 .toString();
 
         expect(mockRequest.getContextPath()).andReturn(contextPath);
@@ -112,7 +113,6 @@ public class SimpleCookieTest extends TestCase {
     public void testEmptyContextPath() throws Exception {
         testRootContextPath("");
     }
-
 
     @Test
     /** Verifies fix for <a href="http://issues.apache.org/jira/browse/JSEC-34">JSEC-34</a> (2 of 2)*/
@@ -157,12 +157,27 @@ public class SimpleCookieTest extends TestCase {
         reportMatcher(new IArgumentMatcher() {
             public boolean matches(Object o) {
                 javax.servlet.http.Cookie c = (javax.servlet.http.Cookie) o;
-                return c.getName().equals(in.getName()) &&
-                        c.getValue().equals(in.getValue()) &&
-                        c.getPath().equals(in.getPath()) &&
-                        c.getMaxAge() == in.getMaxAge() &&
-                        c.getSecure() == in.getSecure() &&
-                        c.getValue().equals(in.getValue());
+                return isNameMatch(c) && isValueMatch(c) && isPathMatch(c) && isMaxAgeMatch(c) && isSecureMatch(c);
+            }
+
+            private boolean isNameMatch(javax.servlet.http.Cookie c) {
+                return c.getName().equals(in.getName());
+            }
+
+            private boolean isValueMatch(javax.servlet.http.Cookie c) {
+                return c.getValue().equals(in.getValue());
+            }
+
+            private boolean isPathMatch(javax.servlet.http.Cookie c) {
+                return c.getPath().equals(in.getPath());
+            }
+
+            private boolean isMaxAgeMatch(javax.servlet.http.Cookie c) {
+                return c.getMaxAge() == in.getMaxAge();
+            }
+
+            private boolean isSecureMatch(javax.servlet.http.Cookie c) {
+                return c.getSecure() == in.getSecure() && c.getValue().equals(in.getValue());
             }
 
             public void appendTo(StringBuffer sb) {
