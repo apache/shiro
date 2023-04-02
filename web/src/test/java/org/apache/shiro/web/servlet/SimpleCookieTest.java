@@ -49,12 +49,13 @@ public class SimpleCookieTest extends TestCase {
     }
 
     @Test
-    //Verifies fix for JSEC-94
+    // Verifies fix for JSEC-94
     public void testRemoveValue() throws Exception {
 
-        //verify that the cookie header starts with what we want
-        //we can't verify the exact date format string that is appended, so we resort to just
-        //simple 'startsWith' matching, which is good enough:
+        // verify that the cookie header starts with what we want
+        // we can't verify the exact date format string that is appended, so we resort
+        // to just
+        // simple 'startsWith' matching, which is good enough:
         String name = "test";
         String value = "deleteMe";
         String path = "/somepath";
@@ -71,7 +72,8 @@ public class SimpleCookieTest extends TestCase {
         assertTrue(headerValue.startsWith(expectedStart));
 
         expect(mockRequest.getContextPath()).andReturn(path).times(1);
-        mockResponse.addHeader(eq(SimpleCookie.COOKIE_HEADER_NAME), isA(String.class)); //can't calculate the date format in the test
+        mockResponse.addHeader(eq(SimpleCookie.COOKIE_HEADER_NAME), isA(String.class)); // can't calculate the date
+                                                                                        // format in the test
         replay(mockRequest);
         replay(mockResponse);
 
@@ -87,12 +89,13 @@ public class SimpleCookieTest extends TestCase {
         String expectedCookieValue = new StringBuilder()
                 .append("test").append(SimpleCookie.NAME_VALUE_DELIMITER).append("blah")
                 .append(SimpleCookie.ATTRIBUTE_DELIMITER)
-                .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(Cookie.ROOT_PATH)
+                .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER)
+                .append(Cookie.ROOT_PATH)
                 .append(SimpleCookie.ATTRIBUTE_DELIMITER)
                 .append(SimpleCookie.HTTP_ONLY_ATTRIBUTE_NAME)
                 .append(SimpleCookie.ATTRIBUTE_DELIMITER)
                 .append(SimpleCookie.SAME_SITE_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER)
-                    .append(Cookie.SameSiteOptions.LAX.toString().toLowerCase(Locale.ENGLISH))
+                .append(Cookie.SameSiteOptions.LAX.toString().toLowerCase(Locale.ENGLISH))
                 .toString();
 
         expect(mockRequest.getContextPath()).andReturn(contextPath);
@@ -108,14 +111,19 @@ public class SimpleCookieTest extends TestCase {
     }
 
     @Test
-    /** Verifies fix for <a href="http://issues.apache.org/jira/browse/JSEC-34">JSEC-34</a> (1 of 2)*/
+    /**
+     * Verifies fix for
+     * <a href="http://issues.apache.org/jira/browse/JSEC-34">JSEC-34</a> (1 of 2)
+     */
     public void testEmptyContextPath() throws Exception {
         testRootContextPath("");
     }
 
-
     @Test
-    /** Verifies fix for <a href="http://issues.apache.org/jira/browse/JSEC-34">JSEC-34</a> (2 of 2)*/
+    /**
+     * Verifies fix for
+     * <a href="http://issues.apache.org/jira/browse/JSEC-34">JSEC-34</a> (2 of 2)
+     */
     public void testNullContextPath() throws Exception {
         testRootContextPath(null);
     }
@@ -123,7 +131,8 @@ public class SimpleCookieTest extends TestCase {
     @Test
     public void testReadValueInvalidPath() throws Exception {
         expect(mockRequest.getRequestURI()).andStubReturn("/foo/index.jsp");
-        expect(mockRequest.getCookies()).andStubReturn(new javax.servlet.http.Cookie[] { new javax.servlet.http.Cookie(this.cookie.getName(), "value") });
+        expect(mockRequest.getCookies()).andStubReturn(
+                new javax.servlet.http.Cookie[] { new javax.servlet.http.Cookie(this.cookie.getName(), "value") });
         replay(mockRequest);
         replay(mockResponse);
 
@@ -134,7 +143,8 @@ public class SimpleCookieTest extends TestCase {
     @Test
     public void testReadValuePrefixPath() throws Exception {
         expect(mockRequest.getRequestURI()).andStubReturn("/bar/index.jsp");
-        expect(mockRequest.getCookies()).andStubReturn(new javax.servlet.http.Cookie[] { new javax.servlet.http.Cookie(this.cookie.getName(), "value") });
+        expect(mockRequest.getCookies()).andStubReturn(
+                new javax.servlet.http.Cookie[] { new javax.servlet.http.Cookie(this.cookie.getName(), "value") });
         replay(mockRequest);
         replay(mockResponse);
 
@@ -145,7 +155,8 @@ public class SimpleCookieTest extends TestCase {
     @Test
     public void testReadValueInvalidPrefixPath() throws Exception {
         expect(mockRequest.getRequestURI()).andStubReturn("/foobar/index.jsp");
-        expect(mockRequest.getCookies()).andStubReturn(new javax.servlet.http.Cookie[] { new javax.servlet.http.Cookie(this.cookie.getName(), "value") });
+        expect(mockRequest.getCookies()).andStubReturn(
+                new javax.servlet.http.Cookie[] { new javax.servlet.http.Cookie(this.cookie.getName(), "value") });
         replay(mockRequest);
         replay(mockResponse);
 
@@ -157,12 +168,32 @@ public class SimpleCookieTest extends TestCase {
         reportMatcher(new IArgumentMatcher() {
             public boolean matches(Object o) {
                 javax.servlet.http.Cookie c = (javax.servlet.http.Cookie) o;
-                return c.getName().equals(in.getName()) &&
-                        c.getValue().equals(in.getValue()) &&
-                        c.getPath().equals(in.getPath()) &&
-                        c.getMaxAge() == in.getMaxAge() &&
-                        c.getSecure() == in.getSecure() &&
-                        c.getValue().equals(in.getValue());
+                return isNameEqual(c) && isValueEqual(c) && isPathEqual(c) && isMaxAgeEqual(c) && isSecureEqual(c)
+                        && isHttpOnlyEqual(c);
+            }
+
+            private boolean isNameEqual(javax.servlet.http.Cookie c) {
+                return c.getName().equals(in.getName());
+            }
+
+            private boolean isValueEqual(javax.servlet.http.Cookie c) {
+                return c.getValue().equals(in.getValue());
+            }
+
+            private boolean isPathEqual(javax.servlet.http.Cookie c) {
+                return c.getPath().equals(in.getPath());
+            }
+
+            private boolean isMaxAgeEqual(javax.servlet.http.Cookie c) {
+                return c.getMaxAge() == in.getMaxAge();
+            }
+
+            private boolean isSecureEqual(javax.servlet.http.Cookie c) {
+                return c.getSecure() == in.getSecure();
+            }
+
+            private boolean isHttpOnlyEqual(javax.servlet.http.Cookie c) {
+                return c.isHttpOnly() == in.isHttpOnly();
             }
 
             public void appendTo(StringBuffer sb) {

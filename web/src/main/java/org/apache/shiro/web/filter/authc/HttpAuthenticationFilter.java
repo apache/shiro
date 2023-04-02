@@ -202,19 +202,10 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
         }
     }
 
-    private Set<String> httpMethodsFromOptions(String[] options) {
-        Set<String> methods = new HashSet<String>();
+    private HttpMethodsExtractor httpMethodsExtractor = new HttpMethodsExtractor();
 
-        if (options != null) {
-            for (String option : options) {
-                // to be backwards compatible with 1.3, we can ONLY check for known args
-                // ideally we would just validate HTTP methods, but someone could already be using this for webdav
-                if (!option.equalsIgnoreCase(PERMISSIVE)) {
-                    methods.add(option.toUpperCase(Locale.ENGLISH));
-                }
-            }
-        }
-        return methods;
+    private Set<String> httpMethodsFromOptions(String[] options) {
+        return httpMethodsExtractor.extractHttpMethodsFromOptions(options);
     }
 
     /**
