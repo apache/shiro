@@ -31,7 +31,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-
 /**
  * Requires the requesting user to be {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated} for the
  * request to continue, and if they're not, requires the user to login via the HTTP "Authentication" header (e.g. BASIC, Bearer, etc.)
@@ -185,7 +184,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
         // If no methods have been configured, then all of them require auth,
         // otherwise only the declared ones need authentication.
 
-        Set<String> methods = httpMethodsFromOptions((String[])mappedValue);
+        Set<String> methods = httpMethodsFromOptions((String[]) mappedValue);
         boolean authcRequired = methods.size() == 0;
         for (String m : methods) {
             if (httpMethod.toUpperCase(Locale.ENGLISH).equals(m)) { // list of methods is in upper case
@@ -196,25 +195,13 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
 
         if (authcRequired) {
             return super.isAccessAllowed(request, response, mappedValue);
-        }
-        else {
+        } else {
             return true;
         }
     }
 
     private Set<String> httpMethodsFromOptions(String[] options) {
-        Set<String> methods = new HashSet<String>();
-
-        if (options != null) {
-            for (String option : options) {
-                // to be backwards compatible with 1.3, we can ONLY check for known args
-                // ideally we would just validate HTTP methods, but someone could already be using this for webdav
-                if (!option.equalsIgnoreCase(PERMISSIVE)) {
-                    methods.add(option.toUpperCase(Locale.ENGLISH));
-                }
-            }
-        }
-        return methods;
+        return HttpMethodsExtractor.extractHttpMethodsFromOptions(options);
     }
 
     /**
@@ -225,7 +212,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      * @return true if the request should be processed; false if the request should not continue to be processed
      */
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        boolean loggedIn = false; //false by default or we wouldn't be in this method
+        boolean loggedIn = false; // false by default or we wouldn't be in this method
         if (isLoginAttempt(request, response)) {
             loggedIn = executeLogin(request, response);
         }
@@ -292,7 +279,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      *         the {@link #getAuthzScheme() authzScheme}.
      */
     protected boolean isLoginAttempt(String authzHeader) {
-        //SHIRO-415: use English Locale:
+        // SHIRO-415: use English Locale:
         String authzScheme = getAuthzScheme().toLowerCase(Locale.ENGLISH);
         return authzHeader.toLowerCase(Locale.ENGLISH).startsWith(authzScheme);
     }

@@ -209,17 +209,21 @@ class Argon2Hash extends AbstractCryptHash {
             int outputLengthBits
     ) {
         final int type;
+        Argon2Algorithm algorithm;
         switch (requireNonNull(algorithmName, "algorithmName")) {
             case "argon2i":
-                type = Argon2Parameters.ARGON2_i;
+                algorithm = new Argon2iAlgorithm();
+                type = algorithm.getType();
                 break;
             case "argon2d":
-                type = Argon2Parameters.ARGON2_d;
+                algorithm = new Argon2dAlgorithm();
+                type = algorithm.getType();
                 break;
             case "argon2":
                 // fall through
             case "argon2id":
-                type = Argon2Parameters.ARGON2_id;
+                algorithm = new Argon2idAlgorithm();
+                type = algorithm.getType();
                 break;
             default:
                 throw new IllegalArgumentException("Unknown argon2 algorithm: " + algorithmName);
@@ -367,5 +371,30 @@ class Argon2Hash extends AbstractCryptHash {
                 .add("memoryKiB=" + memoryKiB)
                 .add("parallelism=" + parallelism)
                 .toString();
+    }
+}
+
+abstract class Argon2Algorithm {
+    abstract int getType();
+}
+
+class Argon2iAlgorithm extends Argon2Algorithm {
+    @Override
+    int getType() {
+        return Argon2Parameters.ARGON2_i;
+    }
+}
+
+class Argon2dAlgorithm extends Argon2Algorithm {
+    @Override
+    int getType() {
+        return Argon2Parameters.ARGON2_d;
+    }
+}
+
+class Argon2idAlgorithm extends Argon2Algorithm {
+    @Override
+    int getType() {
+        return Argon2Parameters.ARGON2_id;
     }
 }
