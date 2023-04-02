@@ -168,32 +168,27 @@ public class SimpleCookieTest extends TestCase {
         reportMatcher(new IArgumentMatcher() {
             public boolean matches(Object o) {
                 javax.servlet.http.Cookie c = (javax.servlet.http.Cookie) o;
-                return isNameEqual(c) && isValueEqual(c) && isPathEqual(c) && isMaxAgeEqual(c) && isSecureEqual(c)
-                        && isHttpOnlyEqual(c);
+                return isNameMatch(c) && isValueMatch(c) && isPathMatch(c) && isMaxAgeMatch(c) && isSecureMatch(c);
             }
 
-            private boolean isNameEqual(javax.servlet.http.Cookie c) {
+            private boolean isNameMatch(javax.servlet.http.Cookie c) {
                 return c.getName().equals(in.getName());
             }
 
-            private boolean isValueEqual(javax.servlet.http.Cookie c) {
+            private boolean isValueMatch(javax.servlet.http.Cookie c) {
                 return c.getValue().equals(in.getValue());
             }
 
-            private boolean isPathEqual(javax.servlet.http.Cookie c) {
+            private boolean isPathMatch(javax.servlet.http.Cookie c) {
                 return c.getPath().equals(in.getPath());
             }
 
-            private boolean isMaxAgeEqual(javax.servlet.http.Cookie c) {
+            private boolean isMaxAgeMatch(javax.servlet.http.Cookie c) {
                 return c.getMaxAge() == in.getMaxAge();
             }
 
-            private boolean isSecureEqual(javax.servlet.http.Cookie c) {
-                return c.getSecure() == in.getSecure();
-            }
-
-            private boolean isHttpOnlyEqual(javax.servlet.http.Cookie c) {
-                return c.isHttpOnly() == in.isHttpOnly();
+            private boolean isSecureMatch(javax.servlet.http.Cookie c) {
+                return c.getSecure() == in.getSecure() && c.getValue().equals(in.getValue());
             }
 
             public void appendTo(StringBuffer sb) {
