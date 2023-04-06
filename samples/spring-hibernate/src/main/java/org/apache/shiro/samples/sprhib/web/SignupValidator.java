@@ -37,12 +37,21 @@ public class SignupValidator implements Validator {
     }
 
     public void validate(Object o, Errors errors) {
-        SignupCommand command = (SignupCommand)o;
+        SignupCommand command = (SignupCommand) o;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "error.username.empty", "Please specify a username.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "error.email.empty", "Please specify an email address.");
-        if( StringUtils.hasText( command.getEmail() ) && !Pattern.matches( SIMPLE_EMAIL_REGEX, command.getEmail().toUpperCase() ) ) {
-            errors.rejectValue( "email", "error.email.invalid", "Please enter a valid email address." );
+        if (hasInvalidEmail(command)) {
+            errors.rejectValue("email", "error.email.invalid", "Please enter a valid email address.");
         }
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "error.password.empty", "Please specify a password.");
+    }
+
+    private boolean isEmailInvalid(String email) {
+        return StringUtils.hasText(email) && !Pattern.matches(SIMPLE_EMAIL_REGEX, email.toUpperCase());
+    }
+
+    private boolean hasInvalidEmail(SignupCommand command) {
+        String email = command.getEmail();
+        return isEmailInvalid(email);
     }
 }

@@ -42,14 +42,14 @@ public class SimpleNamedFilterListTest {
 
     @Test
     public void testNewInstance() {
-        @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
+        @SuppressWarnings({ "MismatchedQueryAndUpdateOfCollection" })
         SimpleNamedFilterList list = new SimpleNamedFilterList("test");
         assertNotNull(list.getName());
         assertEquals("test", list.getName());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testNewInstanceNameless() {
+    public void testNewInstanceWithNullName() {
         new SimpleNamedFilterList(null);
     }
 
@@ -84,7 +84,7 @@ public class SimpleNamedFilterListTest {
         list.add(0, singleFilter);
         assertEquals(2, list.size());
         assertTrue(list.get(0) instanceof SslFilter);
-        assertTrue(Arrays.equals(list.toArray(), new Object[]{singleFilter, filter}));
+        assertTrue(Arrays.equals(list.toArray(), new Object[] { singleFilter, filter }));
 
         list.addAll(multipleFilters);
         assertEquals(4, list.size());
@@ -146,9 +146,8 @@ public class SimpleNamedFilterListTest {
         assertEquals(3, list.size());
         list.retainAll(multipleFilters);
         assertEquals(2, list.size());
-        //noinspection unchecked
+        // noinspection unchecked
         assertEquals(new ArrayList(list), multipleFilters);
     }
-
 
 }
