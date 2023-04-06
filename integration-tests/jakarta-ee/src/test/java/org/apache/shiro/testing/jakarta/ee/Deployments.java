@@ -26,6 +26,92 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
+ * This abstract class represents a common interface for all integration test
+ * mode actions.
+ * Subclasses must implement the {@code getActions} method that returns a list
+ * of actions to be performed
+ * based on the integration test mode.
+ */
+abstract class IntegrationTestModeAction {
+
+    /**
+     * Returns a list of actions to be performed based on the integration test mode.
+     *
+     * @param contextParamValue the value of the context parameter for the
+     *                          integration test mode
+     * @return a list of actions to be performed
+     */
+    public abstract List<Action> getActions(String contextParamValue);
+}
+
+/**
+ * This class represents an integration test mode action for client-side state
+ * saving.
+ * It returns a list of actions that set the state saving method to "client".
+ */
+
+class ClientStateSavingAction extends IntegrationTestModeAction {
+
+    /**
+     * Returns a list of actions that set the state saving method to "client".
+     *
+     * @param contextParamValue the value of the context parameter for the
+     *                          integration test mode
+     * @return a list of actions to be performed
+     */
+    @Override
+    public List<Action> getActions(String contextParamValue) {
+        return List.of(new Action(getContextParamValue(jakartify("javax.faces.STATE_SAVING_METHOD")),
+                node -> node.setTextContent("client")));
+    }
+}
+
+/**
+ * This class represents an integration test mode action for Shiro native
+ * sessions.
+ * It returns a list of actions that add the Shiro native sessions configuration
+ * to the classpath.
+ */
+class ShiroNativeSessionsAction extends IntegrationTestModeAction {
+
+    /**
+     * Returns a list of actions that add the Shiro native sessions configuration to
+     * the classpath.
+     *
+     * @param contextParamValue the value of the context parameter for the
+     *                          integration test mode
+     * @return a list of actions to be performed
+     */
+    @Override
+    public List<Action> getActions(String contextParamValue) {
+        return List.of(new Action(getContextParamValue("shiroConfigLocations"),
+                node -> node.setTextContent(node.getTextContent()
+                        + ",classpath:META-INF/shiro-native-sessions.ini")));
+    }
+}
+
+/**
+ * This class represents an integration test mode action for disabling Shiro EE
+ * features.
+ * It returns a list of actions that disable the Shiro EE features.
+ */
+class ShiroEEDisabledAction extends IntegrationTestModeAction {
+
+    /**
+     * Returns a list of actions that disable the Shiro EE features.
+     *
+     * @param contextParamValue the value of the context parameter for the
+     *                          integration test mode
+     * @return a list of actions to be performed
+     */
+    @Override
+    public List<Action> getActions(String contextParamValue) {
+        return List.of(new Action(getContextParamValue("org.apache.shiro.ee.disabled"),
+                node -> node.setTextContent("true"), true));
+    }
+}
+
+/**
  * Arquillian Suite deployments
  */
 @ArquillianSuiteDeployment
@@ -62,17 +148,18 @@ public class Deployments {
     }
 
     private static List<Action> initializeStandardActions() {
-        switch (System.getProperty(INTEGRATION_TEST_MODE_PROPERTY, "none")) {
+        IntegrationTestModeAction action;
+        String integrationTestMode = System.getProperty(INTEGRATION_TEST_MODE_PROPERTY, "none");
+        switch (integrationTestMode) {
             case CLIENT_STATE_SAVING:
-                return List.of(new Action(getContextParamValue(jakartify("javax.faces.STATE_SAVING_METHOD")),
-                        node -> node.setTextContent("client")));
+                action = new ClientStateSavingAction();
+                return action.getActions(getContextParamValue(integrationTestMode));
             case SHIRO_NATIVE_SESSIONS:
-                return List.of(new Action(getContextParamValue("shiroConfigLocations"),
-                        node -> node.setTextContent(node.getTextContent()
-                                + ",classpath:META-INF/shiro-native-sessions.ini")));
+                action = new ShiroNativeSessionsAction();
+                return action.getActions(getContextParamValue(integrationTestMode));
             case SHIRO_EE_DISABLED:
-                return List.of(new Action(getContextParamValue("org.apache.shiro.ee.disabled"),
-                                node -> node.setTextContent("true"), true));
+                action = new ShiroEEDisabledAction();
+                return action.getActions(getContextParamValue(integrationTestMode));
             default:
                 return List.of();
         }
