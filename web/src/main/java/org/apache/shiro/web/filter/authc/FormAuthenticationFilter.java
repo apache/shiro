@@ -74,7 +74,7 @@ class LoginUtils {
  * and {@link #setRememberMeParam(String) rememberMe} request parameters.  It then calls
  * {@link org.apache.shiro.subject.Subject#login(org.apache.shiro.authc.AuthenticationToken) Subject.login(usernamePasswordToken)},
  * effectively automatically performing a login attempt.  Note that the login attempt will only occur when the
- * {@link #isLoginSubmission(javax.servlet.ServletRequest, javax.servlet.ServletResponse) isLoginSubmission(request,response)}
+ *
  * is <code>true</code>, which by default occurs when the request is for the {@link #setLoginUrl(String) loginUrl} and
  * is a POST request.
  * <p/>
@@ -85,7 +85,7 @@ class LoginUtils {
  * <p/>
  * <p>If you would prefer to handle the authentication validation and login in your own code, consider using the
  * {@link PassThruAuthenticationFilter} instead, which allows requests to the
- * {@link #loginUrl} to pass through to your application's code directly.
+ *  to pass through to your application's code directly.
  *
  * @see PassThruAuthenticationFilter
  * @since 0.9
