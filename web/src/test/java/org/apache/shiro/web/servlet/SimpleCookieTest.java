@@ -19,6 +19,7 @@
 package org.apache.shiro.web.servlet;
 
 import junit.framework.TestCase;
+
 import org.easymock.IArgumentMatcher;
 import org.junit.Before;
 import org.junit.Test;
