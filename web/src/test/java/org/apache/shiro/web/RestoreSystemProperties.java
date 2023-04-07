@@ -37,7 +37,7 @@ public class RestoreSystemProperties implements Closeable {
 
     public RestoreSystemProperties() {
         originalProperties = System.getProperties();
-        System.setProperties(copyOf(originalProperties));
+        System.setProperties(copyProperties(originalProperties));
     }
 
     public void restore() {
@@ -45,7 +45,7 @@ public class RestoreSystemProperties implements Closeable {
         WebUtils.reloadSystemProperties();
     }
 
-    private Properties copyOf(Properties source) {
+    private Properties copyProperties(Properties source) {
         Properties copy = new Properties();
         copy.putAll(source);
         return copy;

@@ -22,6 +22,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,39 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+/**
+
+ * The LoginUtils class provides utility methods for handling login functionality in a web application.
+ * It contains a method for detecting whether a login submission has been made via an HTTP POST request,
+ * which can be overridden by subclasses to provide custom behavior for detecting login submissions.
+ * <p>
+ * Subclasses can modify this behavior to detect login submissions via an HTTP PUT request or other HTTP methods.
+ * </p>
+ * <p>
+ * This class is designed to work together with the AccessControlFilter, which enforces access control policies in a web application.
+ * The AccessControlFilter can use the isLoginSubmission() method to determine whether a request is a login submission
+ * and should be handled differently from other requests.
+ * </p>
+ * <p>
+ * This class is not intended to be instantiated or subclassed, as all of its methods are static and protected.
+ * </p>
+ * @since 0.9
+ */
+class LoginUtils {
+    /**
+     * This default implementation merely returns <code>true</code> if the request is an HTTP <code>POST</code>,
+     * <code>false</code> otherwise. Can be overridden by subclasses for custom login submission detection behavior.
+     *
+     * @param request  the incoming ServletRequest
+     * @param response the outgoing ServletResponse.
+     * @return <code>true</code> if the request is an HTTP <code>POST</code>, <code>false</code> otherwise.
+     */
+    @SuppressWarnings({ "UnusedDeclaration" })
+    protected static boolean isLoginSubmission(ServletRequest request, ServletResponse response) {
+        return (request instanceof HttpServletRequest)
+                && WebUtils.toHttp(request).getMethod().equalsIgnoreCase(AccessControlFilter.POST_METHOD);
+    }
+}
 
 /**
  * Requires the requesting user to be authenticated for the request to continue, and if they are not, forces the user
@@ -58,7 +92,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class FormAuthenticationFilter extends AuthenticatingFilter {
 
-    //TODO - complete JavaDoc
+    // TODO - complete JavaDoc
 
     public static final String DEFAULT_ERROR_KEY_ATTRIBUTE_NAME = "shiroLoginFailure";
 
@@ -147,7 +181,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
 
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         if (isLoginRequest(request, response)) {
-            if (isLoginSubmission(request, response)) {
+            if (LoginUtils.isLoginSubmission(request, response)) {
                 if (log.isTraceEnabled()) {
                     log.trace("Login submission detected.  Attempting to execute login.");
                 }
@@ -156,7 +190,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
                 if (log.isTraceEnabled()) {
                     log.trace("Login page view.");
                 }
-                //allow them to see the login page ;)
+                // allow them to see the login page ;)
                 return true;
             }
         } else {
@@ -170,19 +204,6 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
         }
     }
 
-    /**
-     * This default implementation merely returns <code>true</code> if the request is an HTTP <code>POST</code>,
-     * <code>false</code> otherwise. Can be overridden by subclasses for custom login submission detection behavior.
-     *
-     * @param request  the incoming ServletRequest
-     * @param response the outgoing ServletResponse.
-     * @return <code>true</code> if the request is an HTTP <code>POST</code>, <code>false</code> otherwise.
-     */
-    @SuppressWarnings({"UnusedDeclaration"})
-    protected boolean isLoginSubmission(ServletRequest request, ServletResponse response) {
-        return (request instanceof HttpServletRequest) && WebUtils.toHttp(request).getMethod().equalsIgnoreCase(POST_METHOD);
-    }
-
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) {
         String username = getUsername(request);
         String password = getPassword(request);
@@ -194,19 +215,19 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
     }
 
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject,
-                                     ServletRequest request, ServletResponse response) throws Exception {
+            ServletRequest request, ServletResponse response) throws Exception {
         issueSuccessRedirect(request, response);
-        //we handled the success redirect directly, prevent the chain from continuing:
+        // we handled the success redirect directly, prevent the chain from continuing:
         return false;
     }
 
     protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e,
-                                     ServletRequest request, ServletResponse response) {
+            ServletRequest request, ServletResponse response) {
         if (log.isDebugEnabled()) {
-            log.debug( "Authentication exception", e );
+            log.debug("Authentication exception", e);
         }
         setFailureAttribute(request, e);
-        //login failed, let request continue back to the login page:
+        // login failed, let request continue back to the login page:
         return true;
     }
 
@@ -222,6 +243,5 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
     protected String getPassword(ServletRequest request) {
         return WebUtils.getCleanParam(request, getPasswordParam());
     }
-
 
 }
