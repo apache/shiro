@@ -122,6 +122,7 @@ public class FormResubmitSupport {
     static class PartialAjaxResult {
         public final String result;
         public final boolean isPartialAjaxRequest;
+        public final boolean isStatelessRequest;
     }
 
     static void savePostDataForResubmit(HttpServletRequest request, HttpServletResponse response, @NonNull String loginUrl) {
@@ -362,7 +363,7 @@ public class FormResubmitSupport {
                 .build();
         HttpResponse<String> response = client.send(postRequest, HttpResponse.BodyHandlers.ofString());
         log.debug("Resubmit request: {}, response: {}", postRequest, response);
-        if (rememberedAjaxResubmit) {
+        if (rememberedAjaxResubmit && !decodedFormData.isStatelessRequest) {
             HttpRequest redirectRequest = HttpRequest.newBuilder().uri(URI.create(savedRequest))
                     .POST(HttpRequest.BodyPublishers.ofString(savedFormData))
                     .headers(CONTENT_TYPE, APPLICATION_FORM_URLENCODED)
@@ -375,19 +376,22 @@ public class FormResubmitSupport {
             deleteCookie(originalResponse, servletContext, SHIRO_FORM_DATA_KEY);
             return processResubmitResponse(response, originalRequest, originalResponse,
                     response.headers(), savedRequest, servletContext,
-                    decodedFormData.isPartialAjaxRequest, rememberedAjaxResubmit);
+                    decodedFormData.isStatelessRequest ? false : decodedFormData.isPartialAjaxRequest,
+                    rememberedAjaxResubmit);
         }
     }
 
     private static PartialAjaxResult parseFormData(String savedFormData, String savedRequest,
             HttpClient client, ServletContext servletContext) throws IOException, InterruptedException {
+        boolean isStateless = true;
         if (!isJSFClientStateSavingMethod(servletContext)) {
             String decodedFormData = URLDecoder.decode(savedFormData, StandardCharsets.UTF_8);
             if (isJSFStatefulForm(decodedFormData)) {
+                isStateless = false;
                 savedFormData = getJSFNewViewState(savedRequest, client, decodedFormData);
             }
         }
-        return noJSFAjaxRequests(savedFormData);
+        return noJSFAjaxRequests(savedFormData, isStateless);
     }
 
     @SuppressWarnings("fallthrough")
@@ -495,11 +499,11 @@ public class FormResubmitSupport {
         return savedFormData;
     }
 
-    static PartialAjaxResult noJSFAjaxRequests(String savedFormData) {
+    static PartialAjaxResult noJSFAjaxRequests(String savedFormData, boolean isStateless) {
         var partialMatcher = PARTIAL_REQUEST_PATTERN.matcher(savedFormData);
         boolean hasPartialAjax = partialMatcher.find();
-        return new PartialAjaxResult(INITIAL_AMPERSAND.matcher(partialMatcher
-                .replaceAll("")).replaceFirst(""), hasPartialAjax);
+        return new PartialAjaxResult(isStateless ? savedFormData : INITIAL_AMPERSAND.matcher(partialMatcher
+                .replaceAll("")).replaceFirst(""), hasPartialAjax, isStateless);
     }
 
     static boolean isJSFStatefulForm(@NonNull String savedFormData) {

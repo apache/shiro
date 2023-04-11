@@ -51,3 +51,4 @@ target/
 release.properties
 pom.xml.*
 -
+.sdkmanrc
