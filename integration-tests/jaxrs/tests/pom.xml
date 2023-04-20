@@ -34,7 +34,7 @@
 
     <properties>
         <jaxrs.api.version>2.1.1</jaxrs.api.version>
-        <johnzon.version>1.2.19</johnzon.version>
+        <johnzon.version>1.2.20</johnzon.version>
     </properties>
 
     <dependencies>
