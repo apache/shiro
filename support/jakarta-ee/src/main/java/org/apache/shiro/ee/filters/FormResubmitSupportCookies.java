@@ -36,7 +36,7 @@ import static org.apache.shiro.web.servlet.ShiroHttpSession.DEFAULT_SESSION_ID_N
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("HideUtilityClassConstructor")
 public class FormResubmitSupportCookies {
-    static final String DONT_ADD_ANY_MORE_COOKIES = "org.apache.no-more-cookies";
+    static final String DONT_ADD_ANY_MORE_COOKIES = "org.apache.shiro.no-more-cookies";
 
     static void addCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
             @NonNull String cokieName, @NonNull String cookieValue, int maxAge) {

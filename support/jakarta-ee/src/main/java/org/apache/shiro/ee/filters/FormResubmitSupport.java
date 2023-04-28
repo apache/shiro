@@ -81,9 +81,9 @@ import org.omnifaces.util.Servlets;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("HideUtilityClassConstructor")
 public class FormResubmitSupport {
-    static final String SHIRO_FORM_DATA_KEY = "org.apache.form-data-key";
-    static final String SESSION_EXPIRED_PARAMETER = "org.apache.sessionExpired";
-    static final String FORM_IS_RESUBMITTED = "org.apache.form-is-resubmitted";
+    static final String SHIRO_FORM_DATA_KEY = "org.apache.shiro.form-data-key";
+    static final String SESSION_EXPIRED_PARAMETER = "org.apache.shiro.sessionExpired";
+    static final String FORM_IS_RESUBMITTED = "org.apache.shiro.form-is-resubmitted";
     // encoded view state
     private static final String FACES_VIEW_STATE = jakartify("javax.faces.ViewState");
     private static final String FACES_VIEW_STATE_EQUALS = FACES_VIEW_STATE + "=";
@@ -93,7 +93,7 @@ public class FormResubmitSupport {
     private static final Pattern PARTIAL_REQUEST_PATTERN
             = Pattern.compile(String.format("[\\&]?%s.\\w+=[\\w\\s:%%\\d]*", PARTIAL_VIEW));
     private static final Pattern INITIAL_AMPERSAND = Pattern.compile("^\\&");
-    private static final String FORM_DATA_CACHE = "org.apache.form-data-cache";
+    private static final String FORM_DATA_CACHE = "org.apache.shiro.form-data-cache";
 
     static class HttpMethod {
         static final String GET = "GET";
