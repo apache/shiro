@@ -444,9 +444,14 @@ public class FormResubmitSupport {
         cookieManager.getCookieStore().add(new URI(savedRequest), sessionCookie);
         for (Cookie origCookie : originalRequest.getCookies()) {
             if (!origCookie.getName().equals(sessionCookieName)) {
-                HttpCookie cookie = new HttpCookie(origCookie.getName(), origCookie.getValue());
-                cookie.setPath(servletContext.getContextPath());
-                cookieManager.getCookieStore().add(new URI(savedRequest), cookie);
+                try {
+                    HttpCookie cookie = new HttpCookie(origCookie.getName(), origCookie.getValue());
+                    cookie.setPath(servletContext.getContextPath());
+                    cookieManager.getCookieStore().add(new URI(savedRequest), cookie);
+                } catch (IllegalArgumentException e) {
+                    log.warn("Form Resubmit: Ignoring invalid cookie [{} - {}]",
+                            origCookie.getName(), origCookie.getValue(), e);
+                }
             }
         }
         return HttpClient.newBuilder().cookieHandler(cookieManager).build();
