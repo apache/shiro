@@ -149,6 +149,8 @@ public class FormSupportTest {
         var map = Map.of("name1", "value1", "name2", "value2", "name3", "value3");
         assertEquals(map, transformCookieHeader(List.of("name1=value1", "name2=value2; path=/my/path", "name3=value3")));
         assertEquals(Map.of("name", ""), transformCookieHeader(List.of("name=")));
+        assertEquals(Map.of("JSESSIONID", "abc"),
+                transformCookieHeader(List.of("JSESSIONID=\"abc\"; $Version=\"1\"; $Path=\"/mypath\"")));
     }
 
     private static String decode(String plain) {

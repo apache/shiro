@@ -15,10 +15,12 @@ package org.apache.shiro.ee.filters;
 
 import static org.apache.shiro.ee.cdi.ShiroScopeContext.isWebContainerSessions;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getNativeSessionManager;
+import java.net.HttpCookie;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
@@ -78,7 +80,11 @@ public class FormResubmitSupportCookies {
     }
 
     static Map<String, String> transformCookieHeader(@NonNull List<String> cookies) {
-        return cookies.stream().map(s -> s.split("[=;]"))
-                .collect(Collectors.toMap(k -> k[0], v -> (v.length > 1) ? v[1] : ""));
+        return cookieStreamFromHeader(cookies)
+                .collect(Collectors.toMap(HttpCookie::getName, HttpCookie::getValue));
+    }
+
+    static Stream<HttpCookie> cookieStreamFromHeader(@NonNull List<String> cookies) {
+        return cookies.stream().map(HttpCookie::parse).map(list -> list.get(0));
     }
 }

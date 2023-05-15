@@ -15,20 +15,24 @@ package org.apache.shiro.ee.filters;
 
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.CONTENT_TYPE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.COOKIE;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.LOCATION;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.SET_COOKIE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.AUTHFAIL;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.FOUND;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.OK;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.MediaType.TEXT_XML;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.DONT_ADD_ANY_MORE_COOKIES;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.addCookie;
+import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.cookieStreamFromHeader;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.deleteCookie;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getCookieAge;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getSessionCookieName;
-import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
+import java.util.Collections;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 import org.apache.shiro.ee.filters.ShiroFilter.WrappedSecurityManager;
+import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResumbitDisabled;
 import java.io.IOException;
 import java.net.CookieManager;
@@ -103,6 +107,7 @@ public class FormResubmitSupport {
     static class HttpHeaderContstants {
         static final String CONTENT_TYPE = "Content-Type";
         static final String LOCATION = "Location";
+        static final String COOKIE = "Cookie";
         static final String SET_COOKIE = "Set-Cookie";
     }
 
@@ -114,6 +119,7 @@ public class FormResubmitSupport {
     static class HttpResponseCodes {
         static final int OK = 200;
         static final int FOUND = 302;
+        static final int AUTHFAIL = 401;
     }
 
     @RequiredArgsConstructor
@@ -353,21 +359,24 @@ public class FormResubmitSupport {
             HttpServletRequest originalRequest, HttpServletResponse originalResponse,
             ServletContext servletContext, boolean rememberedAjaxResubmit)
             throws InterruptedException, URISyntaxException, IOException {
-        log.debug("saved form data: {}", savedFormData);
-        HttpClient client = buildHttpClient(savedRequest, servletContext, originalRequest);
-        PartialAjaxResult decodedFormData = parseFormData(savedFormData, savedRequest, client, servletContext);
-        HttpRequest postRequest = HttpRequest.newBuilder().uri(URI.create(savedRequest))
-                .POST(HttpRequest.BodyPublishers.ofString(decodedFormData.result))
-                .headers(CONTENT_TYPE, APPLICATION_FORM_URLENCODED,
-                        FORM_IS_RESUBMITTED, Boolean.TRUE.toString())
-                .build();
-        HttpResponse<String> response = client.send(postRequest, HttpResponse.BodyHandlers.ofString());
-        log.debug("Resubmit request: {}, response: {}", postRequest, response);
+        if (log.isDebugEnabled()) {
+            log.debug("saved form data: {}", savedFormData);
+            log.debug("Set Cookie Headers: {}", originalResponse.getHeaders(SET_COOKIE));
+            log.debug("Original Request Headers: {}", Collections.list(originalRequest.getHeaderNames()));
+            log.debug("Original Request Cookie Header: {}", Collections.list(originalRequest.getHeaders(COOKIE)));
+        }
+        if (Boolean.TRUE.toString().equals(originalRequest.getHeader(FORM_IS_RESUBMITTED))) {
+            log.debug("Form resubmit: internal auth failure");
+            originalResponse.setStatus(AUTHFAIL);
+            return resubmitResponseCleanup(originalRequest);
+        }
+        var savedRequestURI = URI.create(savedRequest);
+        HttpClient client = buildHttpClient(savedRequestURI, servletContext, originalRequest);
+        PartialAjaxResult decodedFormData = parseFormData(savedFormData, savedRequestURI, client, servletContext);
+        HttpRequest postRequest = constructPostRequest(savedRequestURI, decodedFormData.result);
+        HttpResponse<String> response = sendResubmitRequest(client, postRequest);
         if (rememberedAjaxResubmit && !decodedFormData.isStatelessRequest) {
-            HttpRequest redirectRequest = HttpRequest.newBuilder().uri(URI.create(savedRequest))
-                    .POST(HttpRequest.BodyPublishers.ofString(savedFormData))
-                    .headers(CONTENT_TYPE, APPLICATION_FORM_URLENCODED)
-                    .build();
+            HttpRequest redirectRequest = constructPostRequest(savedRequestURI, savedFormData);
             var redirectResponse = client.send(redirectRequest, HttpResponse.BodyHandlers.ofString());
             log.debug("Redirect request: {}, response: {}", redirectRequest, redirectResponse);
             return processResubmitResponse(redirectResponse, originalRequest, originalResponse,
@@ -381,7 +390,36 @@ public class FormResubmitSupport {
         }
     }
 
-    private static PartialAjaxResult parseFormData(String savedFormData, String savedRequest,
+    private static HttpRequest constructPostRequest(URI request, String body) {
+        return HttpRequest.newBuilder().uri(request)
+                .POST(HttpRequest.BodyPublishers.ofString(body))
+                .headers(CONTENT_TYPE, APPLICATION_FORM_URLENCODED,
+                        FORM_IS_RESUBMITTED, Boolean.TRUE.toString())
+                .build();
+    }
+
+    private static HttpResponse<String>
+    sendResubmitRequest(HttpClient client, HttpRequest request) throws IOException, InterruptedException {
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (log.isDebugEnabled()) {
+            log.debug("Resubmit request: {}, response: {}", request, response);
+            log.debug("Response Headers: {}", response.headers().map());
+        }
+        if (response.statusCode() == AUTHFAIL) {
+            log.debug("processing authfail");
+            var cookieManager = (CookieManager) client.cookieHandler().get();
+            cookieStreamFromHeader(response.headers().allValues(SET_COOKIE))
+                    .forEach(cookie -> cookieManager.getCookieStore().add(request.uri(), cookie));
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (log.isDebugEnabled()) {
+                log.debug("Resubmit request(authfail): {}, response: {}", request, response);
+                log.debug("Response Headers(authfail): {}", response.headers().map());
+            }
+        }
+        return response;
+    }
+
+    private static PartialAjaxResult parseFormData(String savedFormData, URI savedRequest,
             HttpClient client, ServletContext servletContext) throws IOException, InterruptedException {
         boolean isStateless = true;
         if (!isJSFClientStateSavingMethod(servletContext)) {
@@ -412,7 +450,7 @@ public class FormResubmitSupport {
                 // do not duplicate the session cookie(s)
                 transformCookieHeader(headers.allValues(SET_COOKIE))
                         .entrySet().stream().filter(not(entry -> entry.getKey()
-                        .startsWith(getSessionCookieName(servletContext, SecurityUtils.getSecurityManager()))))
+                                .startsWith(getSessionCookieName(servletContext, SecurityUtils.getSecurityManager()))))
                         .forEach(entry -> addCookie(originalResponse, servletContext,
                                 entry.getKey(), entry.getValue(), -1));
                 if (isPartialAjaxRequest) {
@@ -424,30 +462,38 @@ public class FormResubmitSupport {
                 } else {
                     originalResponse.getWriter().append(response.body());
                 }
-                originalRequest.setAttribute(DONT_ADD_ANY_MORE_COOKIES, Boolean.TRUE);
-                if (hasFacesContext()) {
-                    Faces.responseComplete();
-                }
-                return null;
+                return resubmitResponseCleanup(originalRequest);
             default:
                 return savedRequest;
         }
     }
 
-    private static HttpClient buildHttpClient(String savedRequest, ServletContext servletContext,
+    private static String resubmitResponseCleanup(HttpServletRequest originalRequest) {
+        originalRequest.setAttribute(DONT_ADD_ANY_MORE_COOKIES, Boolean.TRUE);
+        if (hasFacesContext()) {
+            Faces.responseComplete();
+        }
+        return null;
+    }
+
+    private static HttpClient buildHttpClient(URI savedRequest, ServletContext servletContext,
             HttpServletRequest originalRequest) throws URISyntaxException {
         CookieManager cookieManager = new CookieManager();
         var session = SecurityUtils.getSubject().getSession();
         var sessionCookieName = getSessionCookieName(servletContext, SecurityUtils.getSecurityManager());
         var sessionCookie = new HttpCookie(sessionCookieName, session.getId().toString());
         sessionCookie.setPath(servletContext.getContextPath());
-        cookieManager.getCookieStore().add(new URI(savedRequest), sessionCookie);
+        sessionCookie.setVersion(0);
+        cookieManager.getCookieStore().add(savedRequest, sessionCookie);
+        log.debug("Setting Cookie {}", sessionCookieName);
         for (Cookie origCookie : originalRequest.getCookies()) {
             if (!origCookie.getName().equals(sessionCookieName)) {
                 try {
+                    log.debug("Setting Cookie {}", origCookie.getName());
                     HttpCookie cookie = new HttpCookie(origCookie.getName(), origCookie.getValue());
                     cookie.setPath(servletContext.getContextPath());
-                    cookieManager.getCookieStore().add(new URI(savedRequest), cookie);
+                    cookie.setVersion(0);
+                    cookieManager.getCookieStore().add(savedRequest, cookie);
                 } catch (IllegalArgumentException e) {
                     log.warn("Form Resubmit: Ignoring invalid cookie [{} - {}]",
                             origCookie.getName(), origCookie.getValue(), e);
@@ -479,10 +525,10 @@ public class FormResubmitSupport {
         }
     }
 
-    private static String getJSFNewViewState(String savedRequest, HttpClient client, String savedFormData)
+    private static String getJSFNewViewState(URI savedRequest, HttpClient client, String savedFormData)
             throws IOException, InterruptedException {
-        var getRequest = HttpRequest.newBuilder().uri(URI.create(savedRequest)).GET().build();
-        HttpResponse<String> htmlResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        var getRequest = HttpRequest.newBuilder().uri(savedRequest).GET().build();
+        HttpResponse<String> htmlResponse = sendResubmitRequest(client, getRequest);
         if (htmlResponse.statusCode() == OK) {
             savedFormData = extractJSFNewViewState(htmlResponse.body(), savedFormData);
         }
