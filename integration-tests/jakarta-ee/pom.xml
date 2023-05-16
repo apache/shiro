@@ -36,7 +36,7 @@
         <!-- Unfortunately ShrinkWrap only understands the older compiler source / target flags -->
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
-        <arquillian.version>1.7.0.Alpha14</arquillian.version>
+        <arquillian.version>1.7.0.Final</arquillian.version>
         <failsafe.argLine>
             --add-opens java.base/java.lang=ALL-UNNAMED
             --add-opens java.base/java.net=ALL-UNNAMED
