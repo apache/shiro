@@ -17,10 +17,13 @@
 github:
   description: "Apache Shiro"
   homepage: https://shiro.apache.org/
+  dependabot_alerts: true
+  protected_branches:
+    main: { }
   features:
     wiki: false
-    issues: false
-    projects: false
+    issues: true
+    projects: true
   enabled_merge_buttons:
     squash:  false
     merge:   true
