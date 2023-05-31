@@ -37,6 +37,7 @@ import java.util.List;
  *     <li>Semicolon - can be disabled by setting {@code blockSemicolon = false}</li>
  *     <li>Backslash - can be disabled by setting {@code blockBackslash = false}</li>
  *     <li>Non-ASCII characters - can be disabled by setting {@code blockNonAscii = false}, the ability to disable this check will be removed in future version.</li>
+ *     <li>Path traversals - can be disabled by setting {@code blockTraversal = false}</li>
  * </ul>
  *
  * @see <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/web/firewall/StrictHttpFirewall.html">This class was inspired by Spring Security StrictHttpFirewall</a>
@@ -48,11 +49,17 @@ public class InvalidRequestFilter extends AccessControlFilter {
 
     private static final List<String> BACKSLASH = Collections.unmodifiableList(Arrays.asList("\\", "%5c", "%5C"));
 
+    private static final List<String> FORWARDSLASH = Collections.unmodifiableList(Arrays.asList("%2f", "%2F"));
+
+    private static final List<String> PERIOD = Collections.unmodifiableList(Arrays.asList("%2e", "%2E"));
+
     private boolean blockSemicolon = true;
 
     private boolean blockBackslash = !WebUtils.isAllowBackslash();
 
     private boolean blockNonAscii = true;
+
+    private boolean blockTraversal = true;
 
     @Override
     protected boolean isAccessAllowed(ServletRequest req, ServletResponse response, Object mappedValue) throws Exception {
@@ -67,7 +74,8 @@ public class InvalidRequestFilter extends AccessControlFilter {
         return !StringUtils.hasText(uri)
                || ( !containsSemicolon(uri)
                  && !containsBackslash(uri)
-                 && !containsNonAsciiCharacters(uri));
+                 && !containsNonAsciiCharacters(uri))
+                 && !containsTraversal(uri);
     }
 
     @Override
@@ -108,6 +116,39 @@ public class InvalidRequestFilter extends AccessControlFilter {
         return true;
     }
 
+    private boolean containsTraversal(String uri) {
+        if (isBlockTraversal()) {
+            return !(isNormalized(uri)
+                    && PERIOD.stream().noneMatch(uri::contains)
+                    && FORWARDSLASH.stream().noneMatch(uri::contains));
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether a path is normalized (doesn't contain path traversal sequences like
+     * "./", "/../" or "/.")
+     * @param path the path to test
+     * @return true if the path doesn't contain any path-traversal character sequences.
+     */
+    private boolean isNormalized(String path) {
+        if (path == null) {
+            return true;
+        }
+        for (int i = path.length(); i > 0;) {
+            int slashIndex = path.lastIndexOf('/', i - 1);
+            int gap = i - slashIndex;
+            if (gap == 2 && path.charAt(slashIndex + 1) == '.') {
+                return false; // ".", "/./" or "/."
+            }
+            if (gap == 3 && path.charAt(slashIndex + 1) == '.' && path.charAt(slashIndex + 2) == '.') {
+                return false;
+            }
+            i = slashIndex;
+        }
+        return true;
+    }
+
     public boolean isBlockSemicolon() {
         return blockSemicolon;
     }
@@ -130,5 +171,13 @@ public class InvalidRequestFilter extends AccessControlFilter {
 
     public void setBlockNonAscii(boolean blockNonAscii) {
         this.blockNonAscii = blockNonAscii;
+    }
+
+    public boolean isBlockTraversal() {
+        return blockTraversal;
+    }
+
+    public void setBlockTraversal(boolean blockTraversal) {
+        this.blockTraversal = blockTraversal;
     }
 }
