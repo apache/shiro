@@ -24,10 +24,10 @@ updates:
       interval: 'daily'
     open-pull-requests-limit: 50
 
-  # Dependencies for Maven - on 1.11.x
+  # Dependencies for Maven - on 1.12.x
   - package-ecosystem: 'maven'
     directory: '/'
-    target-branch: '1.11.x'
+    target-branch: '1.12.x'
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 50
@@ -39,10 +39,10 @@ updates:
       interval: 'daily'
     open-pull-requests-limit: 10
 
-  # Dependencies for GitHub Actions - on 1.11.x
+  # Dependencies for GitHub Actions - on 1.12.x
   - package-ecosystem: 'github-actions'
     directory: '/'
-    target-branch: '1.11.x'
+    target-branch: '1.12.x'
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 10
