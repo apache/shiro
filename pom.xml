@@ -418,7 +418,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>8.2.1</version>
+                    <version>8.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.siom79.japicmp</groupId>
