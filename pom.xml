@@ -93,7 +93,7 @@
              modules' OSGi metadata: -->
         <ehcache.version>2.6.11</ehcache.version>
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
-        <hazelcast.version>3.12.13</hazelcast.version>
+        <hazelcast.version>5.3.1</hazelcast.version>
         <hsqldb.version>2.7.2</hsqldb.version>
         <javax.annotation.api.version>1.3.2</javax.annotation.api.version>
         <jcache.api.version>1.1.1</jcache.api.version>
