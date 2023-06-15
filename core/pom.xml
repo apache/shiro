@@ -157,8 +157,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <classifier>tests</classifier>
+            <artifactId>log4j-core-test</artifactId>
             <scope>test</scope>
         </dependency>
 
