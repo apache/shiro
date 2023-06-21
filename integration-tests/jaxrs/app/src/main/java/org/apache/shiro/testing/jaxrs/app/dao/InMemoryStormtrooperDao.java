@@ -45,7 +45,7 @@ public class InMemoryStormtrooperDao implements StormtrooperDao {
     static {
         Faker faker = new Faker();
         final FakeValuesService fakeValuesService = new FakeValuesService(Locale.ENGLISH, new RandomService());
-        for (int ii = 0; ii < 50; ii++) {
+        while (TROOPERS.size() < 50) {
             final StormtrooperId stormtrooperId = new StormtrooperId(fakeValuesService.numerify("u######"));
             final Name name = faker.name();
             final Instant registeredAt = faker.date().birthday(16, 67).toInstant();
