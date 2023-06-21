@@ -147,10 +147,10 @@
         <module>web</module>
         <module>support</module>
         <module>tools</module>
+        <module>bom</module>
         <module>integration-tests</module>
         <module>samples</module>
         <module>test-coverage</module>
-        <module>bom</module>
     </modules>
 
     <mailingLists>

@@ -87,6 +87,42 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.shiro</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring-boot-web-starter</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.shiro</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring-boot-starter</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.shiro</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
