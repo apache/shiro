@@ -27,10 +27,12 @@ import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration
 import org.apache.shiro.web.filter.InvalidRequestFilter
 import org.apache.shiro.web.filter.mgt.FilterChainManager
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 import org.springframework.test.context.web.WebAppConfiguration
 
@@ -51,6 +53,7 @@ import static org.hamcrest.MatcherAssert.assertThat
  */
 @WebAppConfiguration
 @ContextConfiguration(classes = [RealmTestConfiguration, FilterConfiguration, ShiroConfiguration, ShiroWebFilterConfiguration])
+@ExtendWith(SpringExtension.class)
 class ShiroWebFilterConfigurationTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired

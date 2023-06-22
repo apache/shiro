@@ -30,10 +30,13 @@ import org.apache.shiro.spring.web.config.ShiroWebConfiguration
 import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration
 import org.apache.shiro.subject.Subject
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 
+import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 import static org.junit.jupiter.api.Assertions.*
 
@@ -41,7 +44,8 @@ import static org.junit.jupiter.api.Assertions.*
  * @since 1.4.0
  */
 @ContextConfiguration(classes = [RealmTestConfiguration, ShiroConfiguration, ShiroWebConfiguration, ShiroWebFilterConfiguration])
-public class ShiroWebConfigurationTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+class ShiroWebConfigurationTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     private SecurityManager securityManager
@@ -57,7 +61,8 @@ public class ShiroWebConfigurationTest extends AbstractJUnit4SpringContextTests 
 
         // first do a quick check of the injected objects
         assertNotNull securityManager
-        assertThat securityManager.realms, allOf(hasSize(1), hasItem(instanceOf(TextConfigurationRealm)))
+        assertThat securityManager.realms, hasSize(1)
+        assertThat securityManager.realms, hasItem(instanceOf(TextConfigurationRealm))
         assertNull securityManager.cacheManager
 
         assertNotNull shiroFilterFactoryBean
