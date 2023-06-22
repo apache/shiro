@@ -19,14 +19,14 @@
 package org.apache.shiro.web.util
 
 import org.apache.shiro.web.RestoreSystemProperties
-import org.hamcrest.CoreMatchers
 import org.junit.jupiter.api.Test
 
 import javax.servlet.http.HttpServletRequest
 
 import static org.easymock.EasyMock.*
+import static org.hamcrest.MatcherAssert.*
+import static org.hamcrest.Matchers.*
 import static org.junit.jupiter.api.Assertions.*
-import static org.hamcrest.CoreMatchers.*
 
 /**
  * Tests for {@link WebUtils}.

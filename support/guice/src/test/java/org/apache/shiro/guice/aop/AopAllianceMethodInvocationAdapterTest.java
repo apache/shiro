@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  */
 public class AopAllianceMethodInvocationAdapterTest {
     @Test
-    void testGetMethod() throws Exception {
+    public void testGetMethod() throws Exception {
         MethodInvocation mock = createMock(MethodInvocation.class);
         Method method = AopAllianceMethodInvocationAdapterTest.class.getMethod("testGetMethod");
         expect(mock.getMethod()).andReturn(method);

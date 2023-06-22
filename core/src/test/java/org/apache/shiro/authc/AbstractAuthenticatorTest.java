@@ -18,11 +18,15 @@
  */
 package org.apache.shiro.authc;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.test.appender.ListAppender;
-import org.apache.logging.log4j.core.test.junit.LoggerContextRule;
-import org.junit.ClassRule;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.net.URI;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.replay;
@@ -35,11 +39,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class AbstractAuthenticatorTest {
 
-    @ClassRule
-    public static LoggerContextRule loggerContextRule = new LoggerContextRule("log4j2-list.xml");
+    static ListAppender listAppender;
 
     AbstractAuthenticator abstractAuthenticator;
     private final SimpleAuthenticationInfo info = new SimpleAuthenticationInfo("user1", "secret", "realmName");
+
+    @BeforeAll
+    static void setUpLogger() {
+        LoggerContext loggerContext = (LoggerContext) LogManager.getContext(AbstractAuthenticatorTest.class.getClassLoader(), false, URI.create("log4j2-list.xml"));
+        Configuration configuration = loggerContext.getConfiguration();
+        listAppender = configuration.getAppender("List");
+    }
 
     private AbstractAuthenticator createAuthcReturnNull() {
         return new AbstractAuthenticator() {
@@ -184,7 +194,6 @@ public class AbstractAuthenticatorTest {
         }catch(AuthenticationException expectedException){
         }
 
-        final ListAppender listAppender = loggerContextRule.getListAppender("List");
         String logMsg = String.join("\n", listAppender.getMessages());
         assertTrue(logMsg.contains("WARN"));
         assertTrue(logMsg.contains("java.lang.IllegalArgumentException: "+ expectedExceptionMessage));

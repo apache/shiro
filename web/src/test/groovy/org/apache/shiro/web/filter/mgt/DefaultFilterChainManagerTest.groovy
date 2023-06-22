@@ -22,12 +22,12 @@ import org.apache.shiro.config.ConfigurationException
 import org.apache.shiro.web.filter.authz.SslFilter
 import org.apache.shiro.web.servlet.ShiroFilter
 import org.hamcrest.Matchers
+import org.junit.jupiter.api.BeforeEach
 
 import javax.servlet.Filter
 import javax.servlet.FilterChain
 import javax.servlet.FilterConfig
 import javax.servlet.ServletContext
-import org.junit.Before
 import org.junit.jupiter.api.Test
 
 import static org.easymock.EasyMock.*
@@ -41,7 +41,7 @@ class DefaultFilterChainManagerTest {
 
     DefaultFilterChainManager manager;
 
-    @Before
+    @BeforeEach
     void setUp() {
         this.manager = new DefaultFilterChainManager();
     }

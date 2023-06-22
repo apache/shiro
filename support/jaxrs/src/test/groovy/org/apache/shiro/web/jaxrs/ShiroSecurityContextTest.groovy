@@ -21,7 +21,7 @@ package org.apache.shiro.web.jaxrs
 import org.apache.shiro.subject.SimplePrincipalCollection
 import org.apache.shiro.subject.Subject
 import org.apache.shiro.util.ThreadContext
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
 import javax.ws.rs.container.ContainerRequestContext
@@ -183,7 +183,7 @@ class ShiroSecurityContextTest {
         verify requestContext, originalSecurityContext, subject
     }
 
-    @After
+    @AfterEach
     void cleanUp() {
         ThreadContext.remove()
     }
