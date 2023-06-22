@@ -18,8 +18,9 @@
  */
 package org.apache.shiro.authc.credential;
 
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -28,7 +29,7 @@ import org.junit.Test;
 public class AllowAllCredentialsMatcherTest {
 
     @Test
-    public void testBasic() {
+    void testBasic() {
         assertTrue(new AllowAllCredentialsMatcher().doCredentialsMatch(null, null));
     }
 

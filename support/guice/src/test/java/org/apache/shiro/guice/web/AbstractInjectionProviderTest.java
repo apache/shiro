@@ -24,7 +24,7 @@ import com.google.inject.Key;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.google.inject.spi.Dependency;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -32,12 +32,12 @@ import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AbstractInjectionProviderTest {
 
     @Test
-    public void testGet() throws Exception {
+    void testGet() throws Exception {
         Injector mockInjector = createMock(Injector.class);
 
         Object c1 = new Object();
@@ -63,16 +63,16 @@ public class AbstractInjectionProviderTest {
 
         SomeInjectedClass got = underTest.get();
 
-        assertEquals("Wrong parameter passed to constructor (index 0).", c1, got.c1);
-        assertEquals("Wrong parameter passed to constructor (index 1).", c2, got.c2);
+        assertEquals(c1, got.c1, "Wrong parameter passed to constructor (index 0).");
+        assertEquals(c2, got.c2, "Wrong parameter passed to constructor (index 1).");
 
-        assertTrue("postProcess method was not called.", postProcessCalled.get());
+        assertTrue(postProcessCalled.get(), "postProcess method was not called.");
 
         verify(mockInjector);
     }
 
     @Test
-    public void testGetDependencies() throws Exception {
+    void testGetDependencies() throws Exception {
         AbstractInjectionProvider<SomeInjectedClass> underTest =
                 new AbstractInjectionProvider<SomeInjectedClass>(Key.get(SomeInjectedClass.class));
 
@@ -110,11 +110,11 @@ public class AbstractInjectionProviderTest {
             }
         }
 
-        assertTrue("Did not find dependency C1", foundC1);
-        assertTrue("Did not find dependency C2", foundC2);
-        assertTrue("Did not find dependency V1", foundV1);
-        assertTrue("Did not find dependency V2", foundV2);
-        assertTrue("Did not find dependency F1", foundF1);
+        assertTrue(foundC1, "Did not find dependency C1");
+        assertTrue(foundC2, "Did not find dependency C2");
+        assertTrue(foundV1, "Did not find dependency V1");
+        assertTrue(foundV2, "Did not find dependency V2");
+        assertTrue(foundF1, "Did not find dependency F1");
     }
 
     static Key keyC1 = Key.get(Object.class, Names.named("constructor1"));

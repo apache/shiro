@@ -22,9 +22,9 @@ import org.apache.shiro.ini.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.lang.util.Factory;
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Simple example test class to be used to show how one might write Shiro-compatible unit tests.
@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class ExampleShiroIntegrationTest extends AbstractShiroTest {
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         //0.  Build and set the SecurityManager used to build Subject instances used in your tests
         //    This typically only needs to be done once per class if your shiro.ini doesn't change,
@@ -43,7 +43,7 @@ public class ExampleShiroIntegrationTest extends AbstractShiroTest {
     }
 
     @Test
-    public void testSimple() {
+    void testSimple() {
         //1.  Build the Subject instance for the test to run:
         Subject subjectUnderTest = new Subject.Builder(getSecurityManager()).buildSubject();
 
@@ -55,7 +55,7 @@ public class ExampleShiroIntegrationTest extends AbstractShiroTest {
         //call stack) will work properly.
     }
 
-    @After
+    @AfterEach
     public void tearDownSubject() {
         //3. Unbind the subject from the current thread:
         clearSubject();

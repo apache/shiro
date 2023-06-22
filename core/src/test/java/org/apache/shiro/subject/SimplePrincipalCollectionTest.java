@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.subject;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ public class SimplePrincipalCollectionTest {
     private static final Logger LOG = LoggerFactory.getLogger(SimplePrincipalCollectionTest.class);
 
     @Test
-    public void multiplePrincipalsTest()
+    void multiplePrincipalsTest()
     {
         SimplePrincipalCollection principalCollection = new SimplePrincipalCollection();
         principalCollection.add("frank", "realm1");

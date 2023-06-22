@@ -20,7 +20,7 @@ package org.apache.shiro.guice.web;
 
 import com.google.inject.Key;
 import org.apache.shiro.web.filter.PathMatchingFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ import static org.easymock.EasyMock.*;
 
 public class PathMatchingFilterProviderTest {
     @Test
-    public void testPostProcess() {
+    void testPostProcess() {
         PathMatchingFilter filter = createMock(PathMatchingFilter.class);
 
         expect(filter.processPathConfig("/1", "first")).andReturn(filter);

@@ -23,13 +23,13 @@ import com.google.inject.spi.TypeEncounter;
 import org.apache.shiro.lang.ShiroException;
 import org.apache.shiro.lang.util.Destroyable;
 import org.apache.shiro.lang.util.Initializable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.easymock.EasyMock.*;
 
 public class LifecycleTypeListenerTest {
     @Test
-    public void testHearInitializable() throws Exception {
+    void testHearInitializable() throws Exception {
         TypeEncounter encounter = createMock(TypeEncounter.class);
 
         encounter.register(anyObject(InitializableInjectionListener.class));
@@ -44,7 +44,7 @@ public class LifecycleTypeListenerTest {
     }
 
     @Test
-    public void testHearDestroyable() throws Exception {
+    void testHearDestroyable() throws Exception {
         TypeEncounter encounter = createMock(TypeEncounter.class);
 
         encounter.register(anyObject(DestroyableInjectionListener.class));

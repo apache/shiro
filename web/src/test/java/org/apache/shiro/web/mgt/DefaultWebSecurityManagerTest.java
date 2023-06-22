@@ -31,9 +31,9 @@ import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
 import org.apache.shiro.web.session.mgt.WebSessionManager;
 import org.apache.shiro.web.subject.WebSubject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -42,12 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -60,7 +55,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
     private DefaultWebSecurityManager sm;
 
-    @Before
+    @BeforeEach
     public void setup() {
         sm = new DefaultWebSecurityManager();
         sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
@@ -71,7 +66,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() {
         sm.destroy();
         super.tearDown();
@@ -81,8 +76,8 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         return new WebSubject.Builder(sm, request, response).buildSubject();
     }
 
-	@Test
-	public void checkSessionManagerDeterminesContainerSessionMode() {
+    @Test
+    void checkSessionManagerDeterminesContainerSessionMode() {
 		sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
 		WebSessionManager sessionManager = mock(WebSessionManager.class);
 
@@ -90,13 +85,13 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
 		sm.setSessionManager(sessionManager);
 
-		assertTrue("The set SessionManager is not being used to determine isHttpSessionMode.", sm.isHttpSessionMode());
+		assertTrue(sm.isHttpSessionMode(), "The set SessionManager is not being used to determine isHttpSessionMode.");
 
 		verify(sessionManager).isServletContainerSessions();
 	}
 
     @Test
-    public void shiroSessionModeInit() {
+    void shiroSessionModeInit() {
         sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
     }
 
@@ -109,7 +104,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     }
 
     @Test
-    public void testLogin() {
+    void testLogin() {
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
         HttpServletResponse mockResponse = mock(HttpServletResponse.class);
 
@@ -129,7 +124,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     }
 
     @Test
-    public void testSessionTimeout() {
+    void testSessionTimeout() {
         shiroSessionModeInit();
         long globalTimeout = 100;
         ((AbstractSessionManager) sm.getSessionManager()).setGlobalSessionTimeout(globalTimeout);
@@ -155,7 +150,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     }
 
     @Test
-    public void testGetSubjectByRequestResponsePair() {
+    void testGetSubjectByRequestResponsePair() {
         shiroSessionModeInit();
 
         HttpServletRequest mockRequest = mock(HttpServletRequest.class);
@@ -172,7 +167,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     }
 
     @Test
-    public void testGetSubjectByRequestSessionId() {
+    void testGetSubjectByRequestSessionId() {
 
         shiroSessionModeInit();
 
@@ -204,7 +199,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
      * Asserts fix for <a href="https://issues.apache.org/jira/browse/SHIRO-350">SHIRO-350</a>.
      */
     @Test
-    public void testBuildNonWebSubjectWithDefaultServletContainerSessionManager() {
+    void testBuildNonWebSubjectWithDefaultServletContainerSessionManager() {
 
         Ini ini = new Ini();
         Ini.Section section = ini.addSection(IniRealm.USERS_SECTION_NAME);

@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeAll;
 import java.io.File;
 import java.io.FilenameFilter;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class JakartaAbstractContainerIT {
 
@@ -56,7 +56,7 @@ public abstract class JakartaAbstractContainerIT {
             }
         });
 
-        assertEquals("Expected only one war file in target directory, run 'mvn clean' and try again", 1, warFiles.length);
+        assertEquals(1, warFiles.length, "Expected only one war file in target directory, run 'mvn clean' and try again");
 
         return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
     }

@@ -18,16 +18,16 @@
  */
 package org.apache.shiro.web.filter;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for the {@link PathMatchingFilter} implementation.
@@ -42,7 +42,7 @@ public class PathMatchingFilterTest {
     ServletResponse response;
     PathMatchingFilter filter;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         request = createNiceMock(HttpServletRequest.class);
         response = createNiceMock(ServletResponse.class);
@@ -79,7 +79,7 @@ public class PathMatchingFilterTest {
      */
     @SuppressWarnings({"JavaDoc"})
     @Test
-    public void testDisabledBasedOnPath() throws Exception {
+    void testDisabledBasedOnPath() throws Exception {
         filter.processPathConfig(DISABLED_PATH, null);
 
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
@@ -91,7 +91,7 @@ public class PathMatchingFilterTest {
 
         boolean continueFilterChain = filter.preHandle(request, response);
 
-        assertTrue("FilterChain should continue.", continueFilterChain);
+        assertTrue(continueFilterChain, "FilterChain should continue.");
 
         verify(request);
     }
@@ -101,7 +101,7 @@ public class PathMatchingFilterTest {
      */
     @SuppressWarnings({"JavaDoc"})
     @Test
-    public void testEnabled() throws Exception {
+    void testEnabled() throws Exception {
         //Configure the filter to reflect 2 configured paths.  This test will simulate a request to the
         //enabled path
         filter.processPathConfig(DISABLED_PATH, null);
@@ -118,7 +118,7 @@ public class PathMatchingFilterTest {
 
         boolean continueFilterChain = filter.preHandle(request, response);
 
-        assertFalse("FilterChain should NOT continue.", continueFilterChain);
+        assertFalse(continueFilterChain, "FilterChain should NOT continue.");
 
         verify(request);
     }
@@ -127,7 +127,7 @@ public class PathMatchingFilterTest {
      * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-742">SHIRO-742<a/>.
      */
     @Test
-    public void testPathMatchEqualUrlSeparatorEnabled() {
+    void testPathMatchEqualUrlSeparatorEnabled() {
         expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
         expect(request.getRequestURI()).andReturn("/").anyTimes();
         expect(request.getServletPath()).andReturn("").anyTimes();
@@ -135,7 +135,7 @@ public class PathMatchingFilterTest {
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/", request);
-        assertTrue("PathMatch can match URL end with Separator", matchEnabled);
+        assertTrue(matchEnabled, "PathMatch can match URL end with Separator");
         verify(request);
     }
 
@@ -143,7 +143,7 @@ public class PathMatchingFilterTest {
      * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-682">SHIRO-682<a/>.
      */
     @Test
-    public void testPathMatchEEnabled() {
+    void testPathMatchEEnabled() {
         expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
         expect(request.getRequestURI()).andReturn("/resource/book").anyTimes();
         expect(request.getServletPath()).andReturn("").anyTimes();
@@ -151,7 +151,7 @@ public class PathMatchingFilterTest {
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/resource/book", request);
-        assertTrue("PathMatch can match URL end with Separator", matchEnabled);
+        assertTrue(matchEnabled, "PathMatch can match URL end with Separator");
         verify(request);
     }
 
@@ -159,7 +159,7 @@ public class PathMatchingFilterTest {
      * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-682">SHIRO-682<a/>.
      */
     @Test
-    public void testPathMatchEndWithUrlSeparatorEnabled() {
+    void testPathMatchEndWithUrlSeparatorEnabled() {
         expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
         expect(request.getRequestURI()).andReturn("/resource/book/").anyTimes();
         expect(request.getServletPath()).andReturn("").anyTimes();
@@ -167,7 +167,7 @@ public class PathMatchingFilterTest {
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/resource/book", request);
-        assertTrue("PathMatch can match URL end with Separator", matchEnabled);
+        assertTrue(matchEnabled, "PathMatch can match URL end with Separator");
         verify(request);
     }
 
@@ -175,7 +175,7 @@ public class PathMatchingFilterTest {
      * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-682">SHIRO-682<a/>.
      */
     @Test
-    public void testPathMatchEndWithMultiUrlSeparatorEnabled() {
+    void testPathMatchEndWithMultiUrlSeparatorEnabled() {
         expect(request.getContextPath()).andReturn(CONTEXT_PATH).anyTimes();
         expect(request.getRequestURI()).andReturn("/resource/book//").anyTimes();
         expect(request.getServletPath()).andReturn("").anyTimes();
@@ -183,7 +183,7 @@ public class PathMatchingFilterTest {
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/resource/book", request);
-        assertTrue("PathMatch can match URL end with multi Separator", matchEnabled);
+        assertTrue(matchEnabled, "PathMatch can match URL end with multi Separator");
         verify(request);
     }
 

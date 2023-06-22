@@ -22,8 +22,8 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
@@ -31,7 +31,7 @@ import javax.naming.ldap.LdapContext;
 import java.util.UUID;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the {@link DefaultLdapRealm} class.
@@ -48,42 +48,48 @@ public class DefaultLdapRealmTest {
         return new DefaultLdapRealm();
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         realm = getNewRealmUnderTest();
     }
 
     @Test
-    public void testDefaultInstance() {
+    void testDefaultInstance() {
         assertTrue(realm.getCredentialsMatcher() instanceof AllowAllCredentialsMatcher);
         assertEquals(AuthenticationToken.class, realm.getAuthenticationTokenClass());
         assertTrue(realm.getContextFactory() instanceof JndiLdapContextFactory);
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void testSetUserDnTemplateNull() {
-        realm.setUserDnTemplate(null);
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void testSetUserDnTemplateEmpty() {
-        realm.setUserDnTemplate("  ");
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void testSetUserDnTemplateWithoutToken() {
-        realm.setUserDnTemplate("uid=,ou=users,dc=mycompany,dc=com");
+    @Test
+    void testSetUserDnTemplateNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            realm.setUserDnTemplate(null);
+        });
     }
 
     @Test
-    public void testUserDnTemplate() {
+    void testSetUserDnTemplateEmpty() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            realm.setUserDnTemplate("  ");
+        });
+    }
+
+    @Test
+    void testSetUserDnTemplateWithoutToken() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            realm.setUserDnTemplate("uid=,ou=users,dc=mycompany,dc=com");
+        });
+    }
+
+    @Test
+    void testUserDnTemplate() {
         String template = "uid={0},ou=users,dc=mycompany,dc=com";
         realm.setUserDnTemplate(template);
         assertEquals(template, realm.getUserDnTemplate());
     }
 
     @Test
-    public void testUserDnTemplateSubstitution() throws NamingException {
+    void testUserDnTemplateSubstitution() throws NamingException {
         realm.setUserDnTemplate("uid={0},ou=users,dc=mycompany,dc=com");
         LdapContextFactory factory = createMock(LdapContextFactory.class);
         realm.setContextFactory(factory);
@@ -97,30 +103,34 @@ public class DefaultLdapRealmTest {
         verify(factory);
     }
 
-    @Test(expected= AuthenticationException.class)
-    public void testGetAuthenticationInfoNamingAuthenticationException() throws NamingException {
-        realm.setUserDnTemplate("uid={0},ou=users,dc=mycompany,dc=com");
-        LdapContextFactory factory = createMock(LdapContextFactory.class);
-        realm.setContextFactory(factory);
+    @Test
+    void testGetAuthenticationInfoNamingAuthenticationException() throws NamingException {
+        assertThrows(AuthenticationException.class, () -> {
+            realm.setUserDnTemplate("uid={0},ou=users,dc=mycompany,dc=com");
+            LdapContextFactory factory = createMock(LdapContextFactory.class);
+            realm.setContextFactory(factory);
 
-        expect(factory.getLdapContext(isA(Object.class), isA(Object.class)))
-                .andThrow(new javax.naming.AuthenticationException("LDAP Authentication failed."));
-        replay(factory);
+            expect(factory.getLdapContext(isA(Object.class), isA(Object.class)))
+                    .andThrow(new javax.naming.AuthenticationException("LDAP Authentication failed."));
+            replay(factory);
 
-        realm.getAuthenticationInfo(new UsernamePasswordToken("jsmith", "secret") );
+            realm.getAuthenticationInfo(new UsernamePasswordToken("jsmith", "secret"));
+        });
     }
 
-    @Test(expected= AuthenticationException.class)
-    public void testGetAuthenticationInfoNamingException() throws NamingException {
-        realm.setUserDnTemplate("uid={0},ou=users,dc=mycompany,dc=com");
-        LdapContextFactory factory = createMock(LdapContextFactory.class);
-        realm.setContextFactory(factory);
+    @Test
+    void testGetAuthenticationInfoNamingException() throws NamingException {
+        assertThrows(AuthenticationException.class, () -> {
+            realm.setUserDnTemplate("uid={0},ou=users,dc=mycompany,dc=com");
+            LdapContextFactory factory = createMock(LdapContextFactory.class);
+            realm.setContextFactory(factory);
 
-        expect(factory.getLdapContext(isA(Object.class), isA(Object.class)))
-                .andThrow(new NamingException("Communication error."));
-        replay(factory);
+            expect(factory.getLdapContext(isA(Object.class), isA(Object.class)))
+                    .andThrow(new NamingException("Communication error."));
+            replay(factory);
 
-        realm.getAuthenticationInfo(new UsernamePasswordToken("jsmith", "secret") );
+            realm.getAuthenticationInfo(new UsernamePasswordToken("jsmith", "secret"));
+        });
     }
 
     /**
@@ -131,7 +141,7 @@ public class DefaultLdapRealmTest {
      * @throws NamingException not thrown
      */
     @Test
-    public void testGetAuthenticationInfoNonSimpleToken() throws NamingException {
+    void testGetAuthenticationInfoNonSimpleToken() throws NamingException {
         realm.setUserDnTemplate("uid={0},ou=users,dc=mycompany,dc=com");
         LdapContextFactory factory = createMock(LdapContextFactory.class);
         realm.setContextFactory(factory);
@@ -154,13 +164,15 @@ public class DefaultLdapRealmTest {
         verify(factory);
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void testGetUserDnNullArgument() {
-        realm.getUserDn(null);
+    @Test
+    void testGetUserDnNullArgument() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            realm.getUserDn(null);
+        });
     }
 
     @Test
-    public void testGetUserDnWithOutPrefixAndSuffix() {
+    void testGetUserDnWithOutPrefixAndSuffix() {
         realm = new DefaultLdapRealm() {
             @Override
             protected String getUserDnPrefix() {

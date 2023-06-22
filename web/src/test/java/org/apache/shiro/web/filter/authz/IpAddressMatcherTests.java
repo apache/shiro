@@ -15,10 +15,10 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @since 2.0 
@@ -30,41 +30,41 @@ public class IpAddressMatcherTests {
     final String ipv4Address = "192.168.1.104";
 
     @Test
-    public void ipv6MatcherMatchesIpv6Address() {
+    void ipv6MatcherMatchesIpv6Address() {
         assertTrue(v6matcher.matches(ipv6Address));
     }
-    
+
     @Test
-    public void ipv6MatcherDoesntMatchIpv4Address() {
+    void ipv6MatcherDoesntMatchIpv4Address() {
         assertFalse(v6matcher.matches(ipv4Address));
     }
-    
+
     @Test
-    public void ipv4MatcherMatchesIpv4Address() {
+    void ipv4MatcherMatchesIpv4Address() {
         assertTrue(v4matcher.matches(ipv4Address));
     }
-    
+
     @Test
-    public void ipv4SubnetMatchesCorrectly() throws Exception {
+    void ipv4SubnetMatchesCorrectly() throws Exception {
         IpAddressMatcher matcher = new IpAddressMatcher("192.168.1.0/24");
         assertTrue(matcher.matches(ipv4Address));
         matcher = new IpAddressMatcher("192.168.1.128/25");
         assertFalse(matcher.matches(ipv4Address));
         assertTrue(matcher.matches("192.168.1.159"));
     }
-    
+
     @Test
-    public void ipv6RangeMatches() throws Exception {
+    void ipv6RangeMatches() throws Exception {
         IpAddressMatcher matcher = new IpAddressMatcher("2001:DB8::/48");
         assertTrue(matcher.matches("2001:DB8:0:0:0:0:0:0"));
         assertTrue(matcher.matches("2001:DB8:0:0:0:0:0:1"));
         assertTrue(matcher.matches("2001:DB8:0:FFFF:FFFF:FFFF:FFFF:FFFF"));
         assertFalse(matcher.matches("2001:DB8:1:0:0:0:0:0"));
     }
-    
+
     // https://github.com/spring-projects/spring-security/issues/1970q
     @Test
-    public void zeroMaskMatchesAnything() throws Exception {
+    void zeroMaskMatchesAnything() throws Exception {
         IpAddressMatcher matcher = new IpAddressMatcher("0.0.0.0/0");
         
         assertTrue(matcher.matches("123.4.5.6"));

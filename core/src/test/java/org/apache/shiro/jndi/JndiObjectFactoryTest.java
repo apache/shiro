@@ -18,11 +18,12 @@
  */
 package org.apache.shiro.jndi;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.naming.NamingException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * This test makes the assumption that {@link JndiLocator} is tested elsewhere and only makes an attempt to test the
@@ -30,7 +31,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class JndiObjectFactoryTest {
     @Test
-    public void testGetInstanceWithType() throws Exception {
+    void testGetInstanceWithType() throws Exception {
         final String name = "my/jndi/resource";
         final String returnValue = "jndiString";
         JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
@@ -49,7 +50,7 @@ public class JndiObjectFactoryTest {
     }
 
     @Test
-    public void testGetInstanceNoType() throws Exception {
+    void testGetInstanceNoType() throws Exception {
         final String name = "my/jndi/resource";
         final String returnValue = "jndiString";
         JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
@@ -65,34 +66,38 @@ public class JndiObjectFactoryTest {
         assertEquals(returnValue, underTest.getInstance());
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testJndiLookupFailsWithType() throws Exception {
-        final String name = "my/jndi/resource";
-        JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
-            @Override
-            protected Object lookup(String jndiName, Class requiredType) throws NamingException {
-                throw new NamingException("No resource named " + jndiName);
-            }
-        };
+    @Test
+    void testJndiLookupFailsWithType() throws Exception {
+        assertThrows(IllegalStateException.class, () -> {
+            final String name = "my/jndi/resource";
+            JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
+                @Override
+                protected Object lookup(String jndiName, Class requiredType) throws NamingException {
+                    throw new NamingException("No resource named " + jndiName);
+                }
+            };
 
-        underTest.setResourceName(name);
-        underTest.setRequiredType(String.class);
+            underTest.setResourceName(name);
+            underTest.setRequiredType(String.class);
 
-        underTest.getInstance();
+            underTest.getInstance();
+        });
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testJndiLookupFailsNoType() throws Exception {
-        final String name = "my/jndi/resource";
-        JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
-            @Override
-            protected Object lookup(String jndiName) throws NamingException {
-                throw new NamingException("No resource named " + jndiName);
-            }
-        };
+    @Test
+    void testJndiLookupFailsNoType() throws Exception {
+        assertThrows(IllegalStateException.class, () -> {
+            final String name = "my/jndi/resource";
+            JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
+                @Override
+                protected Object lookup(String jndiName) throws NamingException {
+                    throw new NamingException("No resource named " + jndiName);
+                }
+            };
 
-        underTest.setResourceName(name);
+            underTest.setResourceName(name);
 
-        underTest.getInstance();
+            underTest.getInstance();
+        });
     }
 }

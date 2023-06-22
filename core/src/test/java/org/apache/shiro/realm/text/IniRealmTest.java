@@ -21,9 +21,9 @@ package org.apache.shiro.realm.text;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.Ini;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the {@link IniRealm} class.
@@ -33,22 +33,24 @@ import org.junit.Test;
 public class IniRealmTest {
 
     @Test
-    public void testNullIni() {
+    void testNullIni() {
         IniRealm realm = new IniRealm((Ini) null);
     }
 
     @Test
-    public void testEmptyIni() {
+    void testEmptyIni() {
         new IniRealm(new Ini());
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testInitWithoutIniResource() {
-        new IniRealm().init();
+    @Test
+    void testInitWithoutIniResource() {
+        assertThrows(IllegalStateException.class, () -> {
+            new IniRealm().init();
+        });
     }
 
     @Test
-    public void testIniFile() {
+    void testIniFile() {
         IniRealm realm = new IniRealm();
         realm.setResourcePath("classpath:org/apache/shiro/realm/text/IniRealmTest.simple.ini");
         realm.init();
@@ -60,7 +62,7 @@ public class IniRealmTest {
     }
 
     @Test
-    public void testIniFileWithoutUsers() {
+    void testIniFileWithoutUsers() {
         IniRealm realm = new IniRealm();
         realm.setResourcePath("classpath:org/apache/shiro/realm/text/IniRealmTest.noUsers.ini");
         realm.init();

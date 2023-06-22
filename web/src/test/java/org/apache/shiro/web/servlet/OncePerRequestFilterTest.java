@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.web.servlet;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -27,7 +27,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,7 +46,7 @@ public class OncePerRequestFilterTest {
     private ServletRequest request;
     private ServletResponse response;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         filter = createTestInstance();
         chain = mock(FilterChain.class);
@@ -63,12 +63,12 @@ public class OncePerRequestFilterTest {
      */
     @SuppressWarnings({"JavaDoc"})
     @Test
-    public void testEnabled() throws IOException, ServletException {
+    void testEnabled() throws IOException, ServletException {
         when(request.getAttribute(ATTR_NAME)).thenReturn(null);
 
         filter.doFilter(request, response, chain);
 
-        assertEquals("Filter should have executed", 1, filter.filterCount);
+        assertEquals(1, filter.filterCount, "Filter should have executed");
     }
 
     /**
@@ -76,18 +76,18 @@ public class OncePerRequestFilterTest {
      */
     @SuppressWarnings({"JavaDoc"})
     @Test
-    public void testDisabled() throws IOException, ServletException {
+    void testDisabled() throws IOException, ServletException {
         filter.setEnabled(false); //test disabled
 
         when(request.getAttribute(ATTR_NAME)).thenReturn(null);
 
         filter.doFilter(request, response, chain);
 
-        assertEquals("Filter should NOT have executed", 0, filter.filterCount);
+        assertEquals(0, filter.filterCount, "Filter should NOT have executed");
     }
 
     @Test
-    public void testFilterOncePerRequest() throws IOException, ServletException {
+    void testFilterOncePerRequest() throws IOException, ServletException {
         filter.setFilterOncePerRequest(false);
 
         when(request.getAttribute(ATTR_NAME)).thenReturn(null, true);
@@ -95,7 +95,7 @@ public class OncePerRequestFilterTest {
         filter.doFilter(request, response, chain);
         filter.doFilter(request, response, chain);
 
-        assertEquals("Filter should have executed twice", 2, filter.filterCount);
+        assertEquals(2, filter.filterCount, "Filter should have executed twice");
     }
 
     static class CountingOncePerRequestFilter extends OncePerRequestFilter {

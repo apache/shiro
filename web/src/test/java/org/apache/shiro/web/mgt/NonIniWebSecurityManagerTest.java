@@ -22,15 +22,15 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.subject.Subject;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class NonIniWebSecurityManagerTest extends AbstractWebSecurityManagerTest {
     
     private DefaultWebSecurityManager sm;
     
-    @Before
+    @BeforeEach
     public void setup() {
         sm = new DefaultWebSecurityManager();
         Ini ini = new Ini();
@@ -39,7 +39,7 @@ public class NonIniWebSecurityManagerTest extends AbstractWebSecurityManagerTest
         sm.setRealm(new IniRealm(ini));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         sm.destroy();
         super.tearDown();
@@ -49,7 +49,7 @@ public class NonIniWebSecurityManagerTest extends AbstractWebSecurityManagerTest
      * Test for SHIRO-646: Unable to login a DelegatingSubject on a DefaultWebSecurityManager.
      */
     @Test
-    public void testLoginNonWebSubject(){
+    void testLoginNonWebSubject(){
         Subject.Builder builder = new Subject.Builder(sm);
         Subject subject = builder.buildSubject();
         subject.login(new UsernamePasswordToken("lonestarr", "vespa"));

@@ -22,9 +22,9 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test cases for the {@link AbstractRememberMeManager} implementation.
@@ -38,7 +38,7 @@ public class AbstractRememberMeManagerTest {
      * returns null or empty bytes.
      */
     @Test
-    public void testGetRememberedPrincipalsWithEmptySerializedBytes() {
+    void testGetRememberedPrincipalsWithEmptySerializedBytes() {
         AbstractRememberMeManager rmm = new DummyRememberMeManager();
         //Since the dummy's getRememberedSerializedIdentity implementation returns an empty byte
         //array, we should be ok:

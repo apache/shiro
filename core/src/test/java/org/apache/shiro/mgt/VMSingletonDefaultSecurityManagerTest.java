@@ -25,11 +25,11 @@ import org.apache.shiro.config.Ini;
 import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -37,18 +37,18 @@ import static org.junit.Assert.assertTrue;
  */
 public class VMSingletonDefaultSecurityManagerTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         ThreadContext.remove();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ThreadContext.remove();
     }
 
     @Test
-    public void testVMSingleton() {
+    void testVMSingleton() {
         DefaultSecurityManager sm = new DefaultSecurityManager();
         Ini ini = new Ini();
         Ini.Section section = ini.addSection(IniRealm.USERS_SECTION_NAME);

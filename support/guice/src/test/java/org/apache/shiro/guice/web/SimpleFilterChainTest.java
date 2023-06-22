@@ -27,7 +27,7 @@ import javax.servlet.ServletResponse;
 
 import org.easymock.Capture;
 import org.easymock.IMocksControl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.anyObject;
@@ -37,7 +37,7 @@ import static org.easymock.EasyMock.same;
 
 public class SimpleFilterChainTest {
     @Test
-    public void testDoFilter() throws Exception {
+    void testDoFilter() throws Exception {
         IMocksControl ctrl = createStrictControl();
 
         FilterChain originalChain = ctrl.createMock(FilterChain.class);

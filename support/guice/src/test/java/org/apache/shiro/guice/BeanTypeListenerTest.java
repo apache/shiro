@@ -32,16 +32,13 @@ import org.apache.shiro.aop.DefaultAnnotationResolver;
 import org.apache.shiro.crypto.cipher.BlowfishCipherService;
 import org.apache.shiro.guice.aop.ShiroAopModule;
 import org.apache.shiro.guice.web.ShiroWebModule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -58,21 +55,21 @@ import static org.mockito.Mockito.when;
  */
 public class BeanTypeListenerTest {
     @Test
-    public void testUnmatchedPackage() throws Exception {
+    void testUnmatchedPackage() throws Exception {
         assertFalse(BeanTypeListener.MATCHER.matches(TypeLiteral.get(GuiceEnvironment.class)));
         assertFalse(BeanTypeListener.MATCHER.matches(TypeLiteral.get(ShiroWebModule.class)));
         assertFalse(BeanTypeListener.MATCHER.matches(TypeLiteral.get(ShiroAopModule.class)));
     }
 
     @Test
-    public void testMatchedPackage() throws Exception {
+    void testMatchedPackage() throws Exception {
         assertTrue(BeanTypeListener.MATCHER.matches(TypeLiteral.get(SecurityUtils.class)));
         assertTrue(BeanTypeListener.MATCHER.matches(TypeLiteral.get(DefaultAnnotationResolver.class)));
         assertTrue(BeanTypeListener.MATCHER.matches(TypeLiteral.get(BlowfishCipherService.class)));
     }
 
     @Test
-    public void testPropertySetting() throws Exception {
+    void testPropertySetting() throws Exception {
         TypeEncounter<SomeInjectableBean> encounter = mock(TypeEncounter.class);
 
         Provider<Injector> injectorProvider = mock(Provider.class);

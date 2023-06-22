@@ -20,15 +20,15 @@ package org.apache.shiro.guice;
 
 import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matcher;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShiroMatchersTest {
     @Test
-    public void testTypeLiteral() throws Exception {
+    void testTypeLiteral() throws Exception {
         Matcher<Class> classMatcher = createMock(Matcher.class);
         expect(classMatcher.matches(MatchingClass.class)).andReturn(true);
         expect(classMatcher.matches(NotMatchingClass.class)).andReturn(false);

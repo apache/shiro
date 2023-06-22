@@ -24,7 +24,7 @@ import com.google.inject.Provides;
 import org.apache.shiro.guice.ShiroModuleTest;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.util.WebUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletContext;
@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FilterConfigTest {
     private FilterChainResolver setupResolver() {
@@ -59,7 +59,7 @@ public class FilterConfigTest {
     }
 
     @Test
-    public void testSimple() throws Exception {
+    void testSimple() throws Exception {
         FilterChainResolver resolver = setupResolver();
         HttpServletResponse response = createNiceMock(HttpServletResponse.class);
         FilterChain chain = createNiceMock(FilterChain.class);
@@ -71,7 +71,7 @@ public class FilterConfigTest {
     }
 
     @Test
-    public void testWithConfig() throws Exception {
+    void testWithConfig() throws Exception {
         FilterChainResolver resolver = setupResolver();
         HttpServletResponse response = createNiceMock(HttpServletResponse.class);
         FilterChain chain = createNiceMock(FilterChain.class);

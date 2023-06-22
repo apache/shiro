@@ -22,15 +22,15 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.shiro.web.filter.authz.SslFilter.HSTS.*;
 import org.easymock.Capture;
 import org.easymock.CaptureType;
 import static org.easymock.EasyMock.*;
 import org.easymock.IAnswer;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SslFilterTest {
     
@@ -38,7 +38,7 @@ public class SslFilterTest {
     private HttpServletResponse response;
     private SslFilter sslFilter;
     
-    @Before
+    @BeforeEach
     public void before() {
         request = createNiceMock(HttpServletRequest.class);
         response = createNiceMock(HttpServletResponse.class);
@@ -75,20 +75,20 @@ public class SslFilterTest {
     }
 
     @Test
-    public void testDisabledByDefault() {
+    void testDisabledByDefault() {
         sslFilter.postHandle(request, response);
         assertNull(response.getHeader(HTTP_HEADER));
     }
 
     @Test
-    public void testDefaultValues() {
+    void testDefaultValues() {
         sslFilter.getHsts().setEnabled(true);
         sslFilter.postHandle(request, response);
         assertEquals("max-age=" + DEFAULT_MAX_AGE, response.getHeader(HTTP_HEADER));
     }
-    
+
     @Test
-    public void testSetProperties() {
+    void testSetProperties() {
         sslFilter.getHsts().setEnabled(true);
         sslFilter.getHsts().setMaxAge(7776000);
         sslFilter.getHsts().setIncludeSubDomains(true);

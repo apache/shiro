@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -29,8 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Test cases for the {@link AuthorizationFilter} class.
@@ -39,7 +38,7 @@ import static org.junit.Assert.assertFalse;
 public class IpFilterTest {
 
     @Test
-    public void accessShouldBeDeniedByDefault() throws Exception {
+    void accessShouldBeDeniedByDefault() throws Exception {
         IpFilter filter = new IpFilter();
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getRemoteAddr()).andReturn("192.168.42.42");
@@ -49,7 +48,7 @@ public class IpFilterTest {
     }
 
     @Test
-    public void accessShouldBeDeniedWhenNotInTheAllowedSet() throws Exception {
+    void accessShouldBeDeniedWhenNotInTheAllowedSet() throws Exception {
         IpFilter filter = new IpFilter();
         filter.setAuthorizedIps("192.168.33/24");
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
@@ -60,7 +59,7 @@ public class IpFilterTest {
     }
 
     @Test
-    public void accessShouldBeGrantedToIpsInTheAllowedSet() throws Exception {
+    void accessShouldBeGrantedToIpsInTheAllowedSet() throws Exception {
         IpFilter filter = new IpFilter();
         filter.setAuthorizedIps("192.168.32/24 192.168.33/24 192.168.34/24");
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
@@ -71,7 +70,7 @@ public class IpFilterTest {
     }
 
     @Test
-    public void deniedTakesPrecedenceOverAllowed() throws Exception {
+    void deniedTakesPrecedenceOverAllowed() throws Exception {
         IpFilter filter = new IpFilter();
         filter.setAuthorizedIps("192.168.0.0/16");
         filter.setDeniedIps("192.168.33.0/24");
@@ -83,7 +82,7 @@ public class IpFilterTest {
     }
 
     @Test
-    public void willBlockAndAllowBasedOnIpSource() throws Exception {
+    void willBlockAndAllowBasedOnIpSource() throws Exception {
         IpSource source = new IpSource() {
                 public Collection<String> getAuthorizedIps() {
                     return Collections.singleton("192.168.0.0/16");

@@ -24,7 +24,7 @@ import com.google.inject.name.Names;
 import org.apache.shiro.util.PatternMatcher;
 import org.apache.shiro.web.util.WebUtils;
 import org.easymock.IMocksControl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -36,7 +36,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 /**
@@ -45,7 +45,7 @@ import static org.junit.Assert.assertNull;
  */
 public class SimpleFilterChainResolverTest {
     @Test
-    public void testGetChain() throws Exception {
+    void testGetChain() throws Exception {
         // test that it uses the pattern matcher - check
         // test that the FIRST chain found is the one that gets returned - check
         // test that the chain returned actually contains the filters returned by the injector - check
@@ -119,7 +119,7 @@ public class SimpleFilterChainResolverTest {
 
         ctrl.replay();
 
-        assertNull("Expected no chain to match, did not get a null value in return.", underTest.getChain(request, response, originalChain));
+        assertNull(underTest.getChain(request, response, originalChain), "Expected no chain to match, did not get a null value in return.");
 
         ctrl.verify();
     }

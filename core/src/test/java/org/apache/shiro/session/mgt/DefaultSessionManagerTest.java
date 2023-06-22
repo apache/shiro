@@ -27,14 +27,14 @@ import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.util.ThreadContext;
 import org.easymock.EasyMock;
 import org.easymock.IArgumentMatcher;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for the {@link DefaultSessionManager DefaultSessionManager} implementation.
@@ -43,13 +43,13 @@ public class DefaultSessionManagerTest {
 
     DefaultSessionManager sm = null;
 
-    @Before
+    @BeforeEach
     public void setup() {
         ThreadContext.remove();
         sm = new DefaultSessionManager();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         sm.destroy();
         ThreadContext.remove();
@@ -64,7 +64,7 @@ public class DefaultSessionManagerTest {
     }
 
     @Test
-    public void testGlobalTimeout() {
+    void testGlobalTimeout() {
         long timeout = 1000;
         sm.setGlobalSessionTimeout(timeout);
         Session session = sm.start(null);
@@ -74,7 +74,7 @@ public class DefaultSessionManagerTest {
     }
 
     @Test
-    public void testSessionListenerStartNotification() {
+    void testSessionListenerStartNotification() {
         final boolean[] started = new boolean[1];
         SessionListener listener = new SessionListenerAdapter() {
             public void onStart(Session session) {
@@ -87,7 +87,7 @@ public class DefaultSessionManagerTest {
     }
 
     @Test
-    public void testSessionListenerStopNotification() {
+    void testSessionListenerStopNotification() {
         final boolean[] stopped = new boolean[1];
         SessionListener listener = new SessionListenerAdapter() {
             public void onStop(Session session) {
@@ -104,7 +104,7 @@ public class DefaultSessionManagerTest {
     //Ensures that a session attribute can be accessed in the listener without
     //causing a stack overflow exception.
     @Test
-    public void testSessionListenerStopNotificationWithReadAttribute() {
+    void testSessionListenerStopNotificationWithReadAttribute() {
         final boolean[] stopped = new boolean[1];
         final String[] value = new String[1];
         SessionListener listener = new SessionListenerAdapter() {
@@ -124,7 +124,7 @@ public class DefaultSessionManagerTest {
     }
 
     @Test
-    public void testSessionListenerExpiredNotification() {
+    void testSessionListenerExpiredNotification() {
         final boolean[] expired = new boolean[1];
         SessionListener listener = new SessionListenerAdapter() {
             public void onExpiration(Session session) {
@@ -145,7 +145,7 @@ public class DefaultSessionManagerTest {
     }
 
     @Test
-    public void testSessionDeleteOnExpiration() {
+    void testSessionDeleteOnExpiration() {
         sm.setGlobalSessionTimeout(100);
 
         SessionDAO sessionDAO = createMock(SessionDAO.class);
@@ -200,7 +200,7 @@ public class DefaultSessionManagerTest {
      * Tests a bug introduced by SHIRO-443, where a custom sessionValidationScheduler would not be started.
      */
     @Test
-    public void testEnablingOfCustomSessionValidationScheduler() {
+    void testEnablingOfCustomSessionValidationScheduler() {
 
         // using the default impl of sessionValidationScheduler, as the but effects any scheduler we set directly via
         // sessionManager.setSessionValidationScheduler(), commonly used in INI configuration.
@@ -213,7 +213,7 @@ public class DefaultSessionManagerTest {
             Session session = sessionManager.start(null);
 
             // now sessionValidationScheduler should be enabled
-            assertTrue("sessionValidationScheduler was not enabled", sessionValidationScheduler.isEnabled());
+            assertTrue(sessionValidationScheduler.isEnabled(), "sessionValidationScheduler was not enabled");
         }
         finally {
             // cleanup after test

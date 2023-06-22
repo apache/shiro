@@ -40,9 +40,9 @@ import org.eclipse.jetty.webapp.MetaInfConfiguration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -56,8 +56,8 @@ import java.nio.file.StandardCopyOption;
 
 import static com.github.mjeanroy.junit.servers.commons.Strings.isNotBlank;
 import static org.eclipse.jetty.util.resource.Resource.newResource;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractContainerIT {
 
@@ -70,7 +70,7 @@ public abstract class AbstractContainerIT {
     protected static final File TEST_KEYSTORE_PATH = setupKeyStore();
     protected static final String TEST_KEYSTORE_PASSWORD = "password";
 
-    @BeforeClass
+    @BeforeAll
     public static void startContainer() throws Exception {
 
         EmbeddedJettyConfiguration config = EmbeddedJettyConfiguration.builder()
@@ -169,7 +169,7 @@ public abstract class AbstractContainerIT {
             }
         });
 
-        assertEquals("Expected only one war file in target directory, run 'mvn clean' and try again", 1, warFiles.length);
+        assertEquals(1, warFiles.length, "Expected only one war file in target directory, run 'mvn clean' and try again");
 
         return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
     }
@@ -182,12 +182,12 @@ public abstract class AbstractContainerIT {
         return "Basic " + authorizationHeader;
     }
 
-    @Before
+    @BeforeEach
     public void beforeTest() {
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(true);
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopContainer() {
         if (jetty != null) {
             jetty.stop();

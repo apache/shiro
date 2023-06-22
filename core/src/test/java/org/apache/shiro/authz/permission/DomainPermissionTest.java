@@ -18,20 +18,20 @@
  */
 package org.apache.shiro.authz.permission;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @since 1.3
  */
 public class DomainPermissionTest {
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         DomainPermission p;
         List<Set<String>> parts;
         Set<String> set;
@@ -53,7 +53,7 @@ public class DomainPermissionTest {
 
         // Verify parts
         parts = p.getParts();
-        assertEquals("Number of parts", 1, parts.size());
+        assertEquals(1, parts.size(), "Number of parts");
         set = parts.get(0);
         assertEquals(1, set.size());
         entry = set.iterator().next();
@@ -61,7 +61,7 @@ public class DomainPermissionTest {
     }
 
     @Test
-    public void testActionsConstructorWithSingleAction() {
+    void testActionsConstructorWithSingleAction() {
         DomainPermission p;
         List<Set<String>> parts;
         Set<String> set;
@@ -102,7 +102,7 @@ public class DomainPermissionTest {
     }
 
     @Test
-    public void testActionsConstructorWithMultipleActions() {
+    void testActionsConstructorWithMultipleActions() {
         DomainPermission p;
         List<Set<String>> parts;
         Set<String> set;
@@ -151,7 +151,7 @@ public class DomainPermissionTest {
     }
 
     @Test
-    public void testActionsTargetsConstructorWithSingleActionAndTarget() {
+    void testActionsTargetsConstructorWithSingleActionAndTarget() {
         DomainPermission p;
         List<Set<String>> parts;
         Set<String> set;
@@ -201,7 +201,7 @@ public class DomainPermissionTest {
     }
 
     @Test
-    public void testActionsTargetsConstructorWithMultipleActionsAndTargets() {
+    void testActionsTargetsConstructorWithMultipleActionsAndTargets() {
         DomainPermission p;
         List<Set<String>> parts;
         Set<String> set;

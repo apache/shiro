@@ -24,14 +24,15 @@ import com.google.inject.Provider;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ShiroSessionScopeTest {
     @Test
-    public void testScope() throws Exception {
+    void testScope() throws Exception {
         Subject subject = createMock(Subject.class);
         try {
             ThreadContext.bind(subject);
@@ -66,15 +67,17 @@ public class ShiroSessionScopeTest {
 
     }
 
-    @Test(expected = OutOfScopeException.class)
-    public void testOutOfScope() throws Exception {
-        ShiroSessionScope underTest = new ShiroSessionScope();
+    @Test
+    void testOutOfScope() throws Exception {
+        assertThrows(OutOfScopeException.class, () -> {
+            ShiroSessionScope underTest = new ShiroSessionScope();
 
-        Provider<SomeClass> mockProvider = createMock(Provider.class);
+            Provider<SomeClass> mockProvider = createMock(Provider.class);
 
-        replay(mockProvider);
+            replay(mockProvider);
 
-        underTest.scope(Key.get(SomeClass.class), mockProvider).get();
+            underTest.scope(Key.get(SomeClass.class), mockProvider).get();
+        });
     }
 
 

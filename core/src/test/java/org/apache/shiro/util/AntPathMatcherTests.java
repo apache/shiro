@@ -19,11 +19,9 @@
 
 package org.apache.shiro.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link AntPathMatcher}.
@@ -33,9 +31,9 @@ import static org.junit.Assert.assertFalse;
 public class AntPathMatcherTests {
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
-    
+
     @Test
-    public void match() {
+    void match() {
         // test exact matching
         assertTrue(pathMatcher.match("test", "test"));
         assertTrue(pathMatcher.match("/test", "/test"));
@@ -121,14 +119,14 @@ public class AntPathMatcherTests {
     }
 
     @Test
-    public void matchWithNullPath() {
+    void matchWithNullPath() {
         assertFalse(pathMatcher.match("/test", null));
         assertFalse(pathMatcher.match("/", null));
         assertFalse(pathMatcher.match(null, null));
     }
 
     @Test
-    public void matchStart() {
+    void matchStart() {
         // test exact matching
         assertTrue(pathMatcher.matchStart("test", "test"));
         assertTrue(pathMatcher.matchStart("/test", "/test"));
@@ -215,7 +213,7 @@ public class AntPathMatcherTests {
     }
 
     @Test
-    public void uniqueDelimiter() {
+    void uniqueDelimiter() {
         pathMatcher.setPathSeparator(".");
 
         // test exact matching
@@ -277,7 +275,7 @@ public class AntPathMatcherTests {
     }
 
     @Test
-    public void extractPathWithinPattern() throws Exception {
+    void extractPathWithinPattern() throws Exception {
         assertEquals(pathMatcher.extractPathWithinPattern("/docs/commit.html", "/docs/commit.html"), "");
 
         assertEquals(pathMatcher.extractPathWithinPattern("/docs/*", "/docs/cvs/commit"), "cvs/commit");
@@ -302,13 +300,13 @@ public class AntPathMatcherTests {
     }
 
     @Test
-    public void spaceInTokens() {
+    void spaceInTokens() {
         assertTrue(pathMatcher.match("/group/sales/members", "/group/sales/members"));
         assertFalse(pathMatcher.match("/group/sales/members", "/Group/  sales/Members"));
     }
 
     @Test
-    public void isPattern() {
+    void isPattern() {
         assertTrue(pathMatcher.isPattern("/test/*"));
         assertTrue(pathMatcher.isPattern("/test/**/name"));
         assertTrue(pathMatcher.isPattern("/test?"));
@@ -319,12 +317,12 @@ public class AntPathMatcherTests {
     }
 
     @Test
-    public void matches() {
+    void matches() {
         assertTrue(pathMatcher.matches("/foo/*", "/foo/"));
     }
 
     @Test
-    public void isPatternWithNullPath() {
+    void isPatternWithNullPath() {
         assertFalse(pathMatcher.isPattern(null));
     }
 }

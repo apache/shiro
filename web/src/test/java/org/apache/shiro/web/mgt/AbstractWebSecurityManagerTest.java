@@ -19,14 +19,14 @@
 package org.apache.shiro.web.mgt;
 
 import org.apache.shiro.util.ThreadContext;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 
 /**
  * @since 1.0
  */
 public abstract class AbstractWebSecurityManagerTest {
 
-    @After
+    @AfterEach
     public void tearDown() {
         ThreadContext.remove();
     }

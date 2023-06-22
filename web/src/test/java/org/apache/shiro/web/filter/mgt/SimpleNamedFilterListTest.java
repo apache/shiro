@@ -24,14 +24,14 @@ import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
 import org.apache.shiro.web.filter.authz.PortFilter;
 import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
 import org.apache.shiro.web.filter.authz.SslFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import java.util.*;
 
 import static org.easymock.EasyMock.createNiceMock;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test case for the {@link SimpleNamedFilterList} implementation.
@@ -41,26 +41,30 @@ import static org.junit.Assert.*;
 public class SimpleNamedFilterListTest {
 
     @Test
-    public void testNewInstance() {
+    void testNewInstance() {
         @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
         SimpleNamedFilterList list = new SimpleNamedFilterList("test");
         assertNotNull(list.getName());
         assertEquals("test", list.getName());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNewInstanceNameless() {
-        new SimpleNamedFilterList(null);
+    @Test
+    void testNewInstanceNameless() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SimpleNamedFilterList(null);
+        });
     }
 
     @Test
-    public void testNewInstanceBackingList() {
+    void testNewInstanceBackingList() {
         new SimpleNamedFilterList("test", new ArrayList<Filter>());
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testNewInstanceNullBackingList() {
-        new SimpleNamedFilterList("test", null);
+    @Test
+    void testNewInstanceNullBackingList() {
+        assertThrows(NullPointerException.class, () -> {
+            new SimpleNamedFilterList("test", null);
+        });
     }
 
     /**
@@ -68,7 +72,7 @@ public class SimpleNamedFilterListTest {
      * implementation is a direct pass through.
      */
     @Test
-    public void testListMethods() {
+    void testListMethods() {
         FilterChain mock = createNiceMock(FilterChain.class);
         Filter filter = createNiceMock(Filter.class);
 

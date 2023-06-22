@@ -18,8 +18,9 @@
  */
 package org.apache.shiro.web.filter.authc;
 
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test for {@link org.apache.shiro.web.filter.authc.AnonymousFilter}.
@@ -29,7 +30,7 @@ import org.junit.Test;
 public class AnonymousFilterTest {
 
     @Test
-    public void test() {
+    void test() {
         AnonymousFilter filter = new AnonymousFilter();
         boolean allow = filter.onPreHandle(null, null, null);
         assertTrue(allow);

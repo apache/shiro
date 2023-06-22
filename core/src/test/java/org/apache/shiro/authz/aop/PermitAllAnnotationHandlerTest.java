@@ -20,7 +20,7 @@ package org.apache.shiro.authz.aop;
 
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.test.SecurityManagerTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.security.PermitAll;
 import java.lang.annotation.Annotation;
@@ -30,7 +30,7 @@ import java.lang.annotation.Annotation;
  */
 public class PermitAllAnnotationHandlerTest extends SecurityManagerTestSupport {
     @Test
-    public void testPermitAll() throws Throwable {
+    void testPermitAll() throws Throwable {
         PermitAllAnnotationHandler handler = new PermitAllAnnotationHandler();
 
         Annotation permitallAnnotation = new PermitAll() {

@@ -26,8 +26,9 @@ import java.lang.reflect.Method;
 
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class AnnotationResolverTest {
@@ -42,7 +43,7 @@ public class AnnotationResolverTest {
     DefaultAnnotationResolver annotationResolver = new DefaultAnnotationResolver();
 
     @Test
-    public void testAnnotationFoundFromClass() throws SecurityException, NoSuchMethodException {
+    void testAnnotationFoundFromClass() throws SecurityException, NoSuchMethodException {
 	MyFixture myFixture = new MyFixture();
 	MethodInvocation methodInvocation = createMock(MethodInvocation.class);
 	Method method = MyFixture.class.getDeclaredMethod("operateThis");
@@ -51,9 +52,9 @@ public class AnnotationResolverTest {
         replay(methodInvocation);
 	assertNotNull(annotationResolver.getAnnotation(methodInvocation, RequiresRoles.class));
     }
-    
+
     @Test
-    public void testAnnotationFoundFromMethod() throws SecurityException, NoSuchMethodException {
+    void testAnnotationFoundFromMethod() throws SecurityException, NoSuchMethodException {
 	MethodInvocation methodInvocation = createMock(MethodInvocation.class);
 	Method method = MyFixture.class.getDeclaredMethod("operateThat");
         expect(methodInvocation.getMethod()).andReturn(method);
@@ -62,7 +63,7 @@ public class AnnotationResolverTest {
     }
 
     @Test
-    public void testNullMethodInvocation() throws SecurityException, NoSuchMethodException {
+    void testNullMethodInvocation() throws SecurityException, NoSuchMethodException {
         MethodInvocation methodInvocation = createMock(MethodInvocation.class);
         Method method = MyFixture.class.getDeclaredMethod("operateThis");
         expect(methodInvocation.getMethod()).andReturn(method);

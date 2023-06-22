@@ -18,8 +18,9 @@
  */
 package org.apache.shiro.util;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the {@link RegExPatternMatcher}.
@@ -29,29 +30,29 @@ import static org.junit.Assert.*;
 public class RegExPatternMatcherTest {
 
     @Test
-    public void testSimplePattern() {
+    void testSimplePattern() {
         assertPatternMatch("a*b", "aaaaaaab");
     }
 
     @Test
-    public void testMatchesWithCarriageReturn() {
+    void testMatchesWithCarriageReturn() {
         assertPatternMatch(".*", "/blah\n");
     }
 
     @Test
-    public void testMatchesWithLineFeed() {
+    void testMatchesWithLineFeed() {
         assertPatternMatch(".*", "/blah\r");
     }
 
     @Test
-    public void testCaseInsensitive() {
+    void testCaseInsensitive() {
         RegExPatternMatcher pm = new RegExPatternMatcher();
         pm.setCaseInsensitive(true);
         assertPatternMatch("/blah", "/BlaH", pm);
     }
 
     @Test
-    public void testCaseSensitive() {
+    void testCaseSensitive() {
         assertPatternNotMatch("/blah", "/BlaH");
     }
 
@@ -60,7 +61,7 @@ public class RegExPatternMatcherTest {
     }
 
     private void assertPatternMatch(String pattern, String path, PatternMatcher pm) {
-        assertTrue("Expected path '" + path + "' to match pattern '" + pattern + "'" , pm.matches(pattern, path));
+        assertTrue(pm.matches(pattern, path), "Expected path '" + path + "' to match pattern '" + pattern + "'" );
     }
 
     private void assertPatternNotMatch(String pattern, String path) {
@@ -68,6 +69,6 @@ public class RegExPatternMatcherTest {
     }
 
     private void assertPatternNotMatch(String pattern, String path, PatternMatcher pm) {
-        assertFalse("Expected path '" + path + "' to NOT match pattern '" + pattern + "'" , pm.matches(pattern, path));
+        assertFalse(pm.matches(pattern, path), "Expected path '" + path + "' to NOT match pattern '" + pattern + "'" );
     }
 }

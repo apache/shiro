@@ -24,18 +24,18 @@ import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.easymock.Capture;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletContext;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class WebGuiceEnvironmentTest {
 
     @Test
-    public void ensureInjectable() {
+    void ensureInjectable() {
         try {
             InjectionPoint ip = InjectionPoint.forConstructorOf(WebGuiceEnvironment.class);
         } catch (Exception e) {
@@ -44,7 +44,7 @@ public class WebGuiceEnvironmentTest {
     }
 
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         WebSecurityManager securityManager = createMock(WebSecurityManager.class);
         FilterChainResolver filterChainResolver = createMock(FilterChainResolver.class);
         ServletContext servletContext = createMock(ServletContext.class);
