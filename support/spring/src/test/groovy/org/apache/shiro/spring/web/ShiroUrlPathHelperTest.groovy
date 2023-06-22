@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.spring.web
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.util.UrlPathHelper
 

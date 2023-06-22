@@ -22,14 +22,14 @@ import org.apache.shiro.subject.SimplePrincipalCollection
 import org.apache.shiro.subject.Subject
 import org.apache.shiro.util.ThreadContext
 import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import javax.ws.rs.container.ContainerRequestContext
 import javax.ws.rs.core.SecurityContext
 import java.security.Principal
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Tests for {@link ShiroSecurityContext}.

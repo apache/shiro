@@ -29,13 +29,13 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean
 import org.apache.shiro.spring.web.config.ShiroWebConfiguration
 import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration
 import org.apache.shiro.subject.Subject
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 
 import static org.hamcrest.Matchers.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * @since 1.4.0

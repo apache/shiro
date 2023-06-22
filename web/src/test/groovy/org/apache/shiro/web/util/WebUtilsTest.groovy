@@ -20,12 +20,12 @@ package org.apache.shiro.web.util
 
 import org.apache.shiro.web.RestoreSystemProperties
 import org.hamcrest.CoreMatchers
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import javax.servlet.http.HttpServletRequest
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 import static org.hamcrest.CoreMatchers.*
 
 /**

@@ -30,10 +30,10 @@ import org.apache.shiro.web.filter.authc.FormAuthenticationFilter
 import org.apache.shiro.web.filter.authz.SslFilter
 import org.apache.shiro.web.filter.mgt.FilterChainResolver
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 import static org.hamcrest.MatcherAssert.assertThat
 
 /**

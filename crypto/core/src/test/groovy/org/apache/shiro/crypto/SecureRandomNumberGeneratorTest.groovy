@@ -19,9 +19,9 @@
 package org.apache.shiro.crypto
 
 import org.apache.shiro.lang.util.ByteSource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the {@link SecureRandomNumberGenerator} class.
@@ -62,10 +62,10 @@ class SecureRandomNumberGeneratorTest {
         assertEquals(64, bs.getBytes().length);
     }
 
-    @Test(expected=NullPointerException.class)
+    @Test
     public void testInvalidSecureRandomProperty() {
         SecureRandomNumberGenerator rng = new SecureRandomNumberGenerator();
-        rng.setSecureRandom(null);
+        assertThrows(NullPointerException.class, { rng.setSecureRandom(null) })
     }
 
     @Test

@@ -23,10 +23,10 @@ import org.apache.shiro.subject.PrincipalCollection
 import org.apache.shiro.subject.Subject
 import org.apache.shiro.subject.support.DefaultSubjectContext
 import org.apache.shiro.subject.support.DelegatingSubject
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link DefaultSubjectDAO} implementation.

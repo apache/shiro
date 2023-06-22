@@ -24,10 +24,10 @@ import org.apache.shiro.config.ogdl.SimpleBean
 import org.apache.shiro.web.filter.mgt.DefaultFilter
 import org.apache.shiro.web.filter.mgt.FilterChainManager
 import org.hamcrest.Matchers
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import static org.hamcrest.MatcherAssert.assertThat
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link IniWebEnvironment} implementation.

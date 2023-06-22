@@ -24,11 +24,11 @@ import org.apache.shiro.authc.SimpleAuthenticationInfo
 import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.crypto.hash.Sha256Hash
 import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.DisplayName
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link PasswordMatcher} implementation.

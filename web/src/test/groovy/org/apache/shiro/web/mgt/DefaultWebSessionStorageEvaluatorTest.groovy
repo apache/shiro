@@ -25,10 +25,10 @@ import org.apache.shiro.subject.Subject
 import org.apache.shiro.subject.support.DefaultSubjectContext
 import org.apache.shiro.web.subject.WebSubject
 import org.apache.shiro.web.util.RequestPairSource
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link DefaultWebSessionStorageEvaluator} implementation.

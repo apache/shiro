@@ -24,11 +24,11 @@ import org.apache.shiro.lang.util.ByteSource
 import org.apache.shiro.lang.util.Destroyable
 import org.apache.shiro.lang.util.ByteUtils
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import java.security.Security
 
-import static org.junit.Assert.assertTrue
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 /**
  * Test class for the AesCipherService class.

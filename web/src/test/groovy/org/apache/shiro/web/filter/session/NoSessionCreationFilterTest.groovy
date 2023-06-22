@@ -21,10 +21,10 @@ package org.apache.shiro.web.filter.session
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
 import org.apache.shiro.subject.support.DefaultSubjectContext
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link NoSessionCreationFilter} implementation.

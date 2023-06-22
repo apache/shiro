@@ -18,13 +18,13 @@
  */
 package org.apache.shiro.web.servlet
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import javax.servlet.ServletContext
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 
-import static org.junit.Assert.assertEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
 import static org.mockito.Mockito.*
 
 /**

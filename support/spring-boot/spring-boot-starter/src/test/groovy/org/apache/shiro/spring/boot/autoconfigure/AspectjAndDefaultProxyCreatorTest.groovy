@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.spring.boot.autoconfigure;
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator
 import org.springframework.aop.config.AopConfigUtils

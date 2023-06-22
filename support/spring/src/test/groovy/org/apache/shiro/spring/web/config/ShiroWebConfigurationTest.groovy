@@ -26,7 +26,7 @@ import org.apache.shiro.spring.testconfig.RealmTestConfiguration
 import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator
 import org.apache.shiro.web.mgt.WebSecurityManager
 import org.apache.shiro.web.servlet.Cookie
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.function.Executable
 import org.junit.runner.RunWith
@@ -42,7 +42,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * @since 1.4.0

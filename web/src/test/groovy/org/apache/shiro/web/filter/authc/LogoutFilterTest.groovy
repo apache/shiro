@@ -19,7 +19,7 @@
 package org.apache.shiro.web.filter.authc
 
 import org.apache.shiro.subject.Subject
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import javax.servlet.ServletRequest
 import javax.servlet.ServletResponse
@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Tests for {@link LogoutFilterTest}.

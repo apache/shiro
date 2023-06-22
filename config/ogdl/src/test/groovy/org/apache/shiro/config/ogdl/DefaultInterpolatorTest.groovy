@@ -19,10 +19,10 @@
 package org.apache.shiro.config.ogdl
 
 import org.apache.shiro.config.ogdl.DefaultInterpolator
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.assertNull
-import static org.junit.Assert.assertSame
+import static org.junit.jupiter.api.Assertions.assertNull
+import static org.junit.jupiter.api.Assertions.assertSame
 
 /**
  * Tests for {@link org.apache.shiro.config.ogdl.DefaultInterpolator}.

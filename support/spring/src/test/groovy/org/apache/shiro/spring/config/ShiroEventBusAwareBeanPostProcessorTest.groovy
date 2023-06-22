@@ -22,7 +22,7 @@ import org.apache.shiro.event.EventBus
 import org.apache.shiro.event.EventBusAware
 import org.apache.shiro.spring.ShiroEventBusBeanPostProcessor
 import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import static org.mockito.Mockito.mock
 

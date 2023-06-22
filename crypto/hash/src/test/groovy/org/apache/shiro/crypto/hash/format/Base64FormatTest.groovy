@@ -20,10 +20,10 @@ package org.apache.shiro.crypto.hash.format
 
 import org.apache.shiro.crypto.hash.Hash
 import org.apache.shiro.crypto.hash.Sha512Hash
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertThrows
+import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertThrows
 
 /**
  * Unit tests for the {@link Base64Format} implementation.

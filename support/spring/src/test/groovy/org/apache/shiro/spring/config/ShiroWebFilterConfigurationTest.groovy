@@ -26,7 +26,7 @@ import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition
 import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration
 import org.apache.shiro.web.filter.InvalidRequestFilter
 import org.apache.shiro.web.filter.mgt.FilterChainManager
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
