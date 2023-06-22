@@ -59,7 +59,7 @@
             <plugin>
                 <groupId>io.openliberty.tools</groupId>
                 <artifactId>liberty-maven-plugin</artifactId>
-                <version>3.3.4</version>
+                <version>3.8.2</version>
                 <configuration>
                     <serverName>shiro-its-jaxrs-openliberty</serverName>
                     <features>
@@ -70,6 +70,7 @@
                         <feature>jsonb-1.0</feature>
                     </features>
                     <deployPackages>dependencies</deployPackages>
+                    <looseApplication>false</looseApplication>
                     <copyDependencies>
                         <dependency>
                             <groupId>org.slf4j</groupId>
