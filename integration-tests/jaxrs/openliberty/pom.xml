@@ -70,6 +70,7 @@
                         <feature>jsonb-1.0</feature>
                     </features>
                     <deployPackages>dependencies</deployPackages>
+                    <looseApplication>false</looseApplication>
                     <copyDependencies>
                         <dependency>
                             <groupId>org.slf4j</groupId>
