@@ -109,7 +109,6 @@
              modules' OSGi metadata: -->
         <quartz.version>2.3.2</quartz.version>
         <slf4j.version>1.7.33</slf4j.version>
-        <logback.version>1.2.10</logback.version>
         <log4j.version>2.20.0</log4j.version>
         <spring.version>5.3.28</spring.version>
         <spring-boot.version>2.7.13</spring-boot.version>
@@ -1132,11 +1131,6 @@
                 <version>${owasp.java.encoder.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
