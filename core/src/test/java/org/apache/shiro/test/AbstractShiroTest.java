@@ -25,7 +25,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectThreadState;
 import org.apache.shiro.lang.util.LifecycleUtils;
 import org.apache.shiro.util.ThreadState;
-import org.junit.AfterClass;
+import org.junit.jupiter.api.AfterAll;
 
 /**
  * Abstract test case showing how to use Shiro in testing environments.
@@ -80,7 +80,7 @@ public abstract class AbstractShiroTest {
         return SecurityUtils.getSecurityManager();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownShiro() {
         doClearSubject();
         try {

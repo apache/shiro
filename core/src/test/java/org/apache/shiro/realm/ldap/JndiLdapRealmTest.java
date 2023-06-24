@@ -18,8 +18,9 @@
  */
 package org.apache.shiro.realm.ldap;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests for the {@link JndiLdapRealm} class.

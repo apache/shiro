@@ -36,9 +36,9 @@ import org.apache.shiro.session.mgt.eis.CachingSessionDAO
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO
 import org.apache.shiro.session.mgt.eis.SessionDAO
 import org.apache.shiro.subject.Subject
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link IniSecurityManagerFactory} implementation.

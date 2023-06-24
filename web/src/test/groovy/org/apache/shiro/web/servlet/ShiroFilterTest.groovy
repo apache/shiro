@@ -23,7 +23,7 @@ import org.apache.shiro.web.env.EnvironmentLoader
 import org.apache.shiro.web.env.WebEnvironment
 import org.apache.shiro.web.filter.mgt.FilterChainResolver
 import org.apache.shiro.web.mgt.WebSecurityManager
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import javax.servlet.FilterConfig
 import javax.servlet.ServletContext

@@ -20,8 +20,8 @@ package org.apache.shiro.cache.jcache
 
 import org.apache.shiro.cache.Cache
 import org.apache.shiro.cache.CacheException
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 import static org.hamcrest.MatcherAssert.assertThat
 
@@ -140,7 +140,7 @@ class JCacheManagerTest {
             }
             throw t
         }
-        Assert.fail("Expected ${exceptionClass.getName()} to be thrown");
+        Assertions.fail("Expected ${exceptionClass.getName()} to be thrown");
         return null
     }
 }

@@ -37,18 +37,18 @@ import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
+import org.junit.jupiter.api.Test;
 import org.apache.shiro.lang.util.Destroyable;
-import org.junit.Test;
 
 import java.util.Collection;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ShiroModuleTest {
 
     @Test
-    public void basicInstantiation() {
+    void basicInstantiation() {
 
         final MockRealm mockRealm = createMock(MockRealm.class);
 
@@ -68,7 +68,7 @@ public class ShiroModuleTest {
     }
 
     @Test
-    public void testConfigure() {
+    void testConfigure() {
         final MockRealm mockRealm = createMock(MockRealm.class);
         AuthenticationToken authToken = createMock(AuthenticationToken.class);
         AuthenticationInfo info = new SimpleAuthenticationInfo("mockUser", "password", "mockRealm");
@@ -100,7 +100,7 @@ public class ShiroModuleTest {
     }
 
     @Test
-    public void testBindSecurityManager() {
+    void testBindSecurityManager() {
         final MockRealm mockRealm = createMock(MockRealm.class);
 
         Injector injector = Guice.createInjector(new ShiroModule() {
@@ -125,7 +125,7 @@ public class ShiroModuleTest {
     }
 
     @Test
-    public void testBindSessionManager() {
+    void testBindSessionManager() {
         final MockRealm mockRealm = createMock(MockRealm.class);
 
         Injector injector = Guice.createInjector(new ShiroModule() {
@@ -151,7 +151,7 @@ public class ShiroModuleTest {
     }
 
     @Test
-    public void testBindEnvironment() {
+    void testBindEnvironment() {
         final MockRealm mockRealm = createMock(MockRealm.class);
 
         Injector injector = Guice.createInjector(new ShiroModule() {
@@ -177,7 +177,7 @@ public class ShiroModuleTest {
     }
 
     @Test
-    public void testDestroy() throws Exception {
+    void testDestroy() throws Exception {
         final MockRealm mockRealm = createMock(MockRealm.class);
         final MyDestroyable myDestroyable = createMock(MyDestroyable.class);
 
@@ -211,7 +211,7 @@ public class ShiroModuleTest {
      * @throws Exception
      */
     @Test
-    public void testEventListener() throws Exception {
+    void testEventListener() throws Exception {
 
         final MockRealm mockRealm = createMock(MockRealm.class);
         final EventBus eventBus = createMock(EventBus.class);
@@ -253,7 +253,7 @@ public class ShiroModuleTest {
      * @throws Exception
      */
     @Test
-    public void testEventBusAware() throws Exception {
+    void testEventBusAware() throws Exception {
 
         final MockRealm mockRealm = createMock(MockRealm.class);
 

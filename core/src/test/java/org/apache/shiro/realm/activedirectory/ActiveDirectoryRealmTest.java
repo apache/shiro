@@ -35,10 +35,10 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.easymock.Capture;
 import org.easymock.CaptureType;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -56,7 +56,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -78,7 +78,7 @@ public class ActiveDirectoryRealmTest {
     private static final int USER_ID = 12345;
     private static final String ROLE = "admin";
 
-    @Before
+    @BeforeEach
     public void setup() {
         ThreadContext.remove();
         realm = new TestActiveDirectoryRealm();
@@ -86,7 +86,7 @@ public class ActiveDirectoryRealmTest {
         SecurityUtils.setSecurityManager(securityManager);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         SecurityUtils.setSecurityManager(null);
         securityManager.destroy();
@@ -94,7 +94,7 @@ public class ActiveDirectoryRealmTest {
     }
 
     @Test
-    public void testDefaultConfig() {
+    void testDefaultConfig() {
         String localhost = "localhost";
         Subject subject = SecurityUtils.getSubject();
         subject.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
@@ -114,7 +114,7 @@ public class ActiveDirectoryRealmTest {
     }
 
     @Test
-    public void testExistingUserSuffix() throws Exception {
+    void testExistingUserSuffix() throws Exception {
         assertExistingUserSuffix(USERNAME, "testuser@ExAmple.COM"); // suffix case matches configure suffix
 
         // suffix matches user entry
@@ -141,7 +141,7 @@ public class ActiveDirectoryRealmTest {
             try {
                 activeDirectoryRealm.getRoleNamesForUser(username, ldapContext);
             } catch (NamingException e) {
-                Assert.fail("Unexpected NamingException thrown during test");
+                Assertions.fail("Unexpected NamingException thrown during test");
             }
         });
 

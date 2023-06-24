@@ -20,9 +20,9 @@ package org.apache.shiro.crypto.hash.format
 
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
 import org.apache.shiro.crypto.hash.SimpleHash
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link Shiro1CryptFormat} implementation.

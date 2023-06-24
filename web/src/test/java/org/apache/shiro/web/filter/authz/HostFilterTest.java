@@ -18,16 +18,17 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.regex.Pattern;
+
+import org.junit.jupiter.api.Test;
 
 /** @since 1.0 */
 public class HostFilterTest {
 
     @Test
-    public void testPrivateClassC() {
+    void testPrivateClassC() {
         Pattern p = Pattern.compile(HostFilter.PRIVATE_CLASS_C_REGEX);
 
         String base = "192.168.";
@@ -42,7 +43,7 @@ public class HostFilterTest {
     }
 
     @Test
-    public void testPrivateClassB() {
+    void testPrivateClassB() {
         Pattern p = Pattern.compile(HostFilter.PRIVATE_CLASS_B_REGEX);
 
         String base = "172.";

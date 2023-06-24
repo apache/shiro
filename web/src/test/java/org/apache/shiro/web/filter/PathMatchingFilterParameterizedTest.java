@@ -18,10 +18,9 @@
  */
 package org.apache.shiro.web.filter;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,14 +34,11 @@ import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for the {@link PathMatchingFilter} implementation.
  */
-@RunWith(Parameterized.class)
 public class PathMatchingFilterParameterizedTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(PathMatchingFilterParameterizedTest.class);
@@ -51,14 +47,8 @@ public class PathMatchingFilterParameterizedTest {
     private static final String DISABLED_PATH = CONTEXT_PATH + "disabled";
 
     private PathMatchingFilter filter;
-
-    @Parameterized.Parameter(0)
     public String pattern;
-
-    @Parameterized.Parameter(1)
     public HttpServletRequest request;
-
-    @Parameterized.Parameter(2)
     public boolean shouldMatch;
 
     /**
@@ -71,7 +61,6 @@ public class PathMatchingFilterParameterizedTest {
      * /foo                /foo                    /foo/*
      * </pre>
      */
-    @Parameterized.Parameters
     public static Object[][] generateParameters() {
 
         return Stream.of(
@@ -110,7 +99,7 @@ public class PathMatchingFilterParameterizedTest {
         return request;
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         filter = createTestInstance();
     }
@@ -140,11 +129,19 @@ public class PathMatchingFilterParameterizedTest {
         return filter;
     }
 
-    @Test
-    public void testBasicAssumptions()  {
+    @MethodSource("generateParameters")
+    @ParameterizedTest
+    void testBasicAssumptions(String pattern, HttpServletRequest request, boolean shouldMatch) {
+        initPathMatchingFilterParameterizedTest(pattern, request, shouldMatch);
         LOG.debug("Input pattern: [{}], input path: [{}].", this.pattern, this.request.getPathInfo());
         boolean matchEnabled = filter.pathsMatch(this.pattern, this.request);
-        assertEquals("PathMatch can match URL end with multi Separator, ["+ this.pattern + "] - [" + this.request.getPathInfo() + "]", this.shouldMatch, matchEnabled);
+        assertEquals(this.shouldMatch, matchEnabled, "PathMatch can match URL end with multi Separator, ["+ this.pattern + "] - [" + this.request.getPathInfo() + "]");
         verify(request);
+    }
+
+    public void initPathMatchingFilterParameterizedTest(String pattern, HttpServletRequest request, boolean shouldMatch) {
+        this.pattern = pattern;
+        this.request = request;
+        this.shouldMatch = shouldMatch;
     }
 }

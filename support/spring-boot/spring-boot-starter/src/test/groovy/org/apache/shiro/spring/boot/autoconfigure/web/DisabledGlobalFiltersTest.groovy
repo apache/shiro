@@ -16,25 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.spring.boot.autoconfigure.web;
+package org.apache.shiro.spring.boot.autoconfigure.web
 
 import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager
 import org.apache.shiro.web.servlet.AbstractShiroFilter
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
 import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.equalTo
-import static org.hamcrest.Matchers.instanceOf
-import static org.hamcrest.Matchers.nullValue
+import static org.hamcrest.Matchers.*
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = [ShiroWebAutoConfigurationTestApplication, Config])
 class DisabledGlobalFiltersTest {
 

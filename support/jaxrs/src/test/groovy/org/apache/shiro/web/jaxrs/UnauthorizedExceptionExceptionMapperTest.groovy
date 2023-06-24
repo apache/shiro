@@ -22,12 +22,12 @@ import org.apache.shiro.authz.AuthorizationException
 import org.apache.shiro.authz.HostUnauthorizedException
 import org.apache.shiro.authz.UnauthenticatedException
 import org.apache.shiro.authz.UnauthorizedException
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import javax.ws.rs.core.Response
 import javax.ws.rs.ext.ExceptionMapper
 
-import static org.junit.Assert.assertEquals
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 /**
  * Tests for {@link UnauthorizedExceptionExceptionMapper}.

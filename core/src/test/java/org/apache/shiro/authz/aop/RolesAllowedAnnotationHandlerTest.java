@@ -21,10 +21,12 @@ package org.apache.shiro.authz.aop;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.test.SecurityManagerTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.security.RolesAllowed;
 import java.lang.annotation.Annotation;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -35,65 +37,69 @@ import static org.mockito.Mockito.when;
 public class RolesAllowedAnnotationHandlerTest extends SecurityManagerTestSupport {
     private Subject subject;
 
-    @Test(expected = UnauthenticatedException.class)
-    public void testGuestSingleRoleAssertion() throws Throwable {
-        subject = mock(Subject.class);
-        doThrow(new UnauthenticatedException()).when(subject).checkRole("blah");
+    @Test
+    void testGuestSingleRoleAssertion() throws Throwable {
+        assertThrows(UnauthenticatedException.class, () -> {
+            subject = mock(Subject.class);
+            doThrow(new UnauthenticatedException()).when(subject).checkRole("blah");
 
-        RolesAllowedAnnotationHandler handler = new RolesAllowedAnnotationHandler() {
-            @Override
-            protected Subject getSubject() {
-                return subject;
-            }
-        };
+            RolesAllowedAnnotationHandler handler = new RolesAllowedAnnotationHandler() {
+                @Override
+                protected Subject getSubject() {
+                    return subject;
+                }
+            };
 
-        Annotation rolesAllowedAnnotation = new RolesAllowed() {
-            @Override
-            public String[] value() {
-                return new String[]{"blah"};
-            }
+            Annotation rolesAllowedAnnotation = new RolesAllowed() {
+                @Override
+                public String[] value() {
+                    return new String[]{"blah"};
+                }
 
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return RolesAllowed.class;
-            }
-        };
+                @Override
+                public Class<? extends Annotation> annotationType() {
+                    return RolesAllowed.class;
+                }
+            };
 
-        handler.assertAuthorized(rolesAllowedAnnotation);
-    }
-
-    @Test(expected = UnauthenticatedException.class)
-    public void testGuestMultipleRolesAssertion() throws Throwable {
-        subject = mock(Subject.class);
-
-        doThrow(new UnauthenticatedException()).when(subject).checkRole("blah");
-        when(subject.hasRole("blah")).thenReturn(false);
-        when(subject.hasRole("blah2")).thenReturn(false);
-
-        RolesAllowedAnnotationHandler handler = new RolesAllowedAnnotationHandler() {
-            @Override
-            protected Subject getSubject() {
-                return subject;
-            }
-        };
-
-        Annotation rolesAllowedAnnotation = new RolesAllowed() {
-            @Override
-            public String[] value() {
-                return new String[]{"blah", "blah2"};
-            }
-
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return RolesAllowed.class;
-            }
-        };
-
-        handler.assertAuthorized(rolesAllowedAnnotation);
+            handler.assertAuthorized(rolesAllowedAnnotation);
+        });
     }
 
     @Test
-    public void testOneOfTheRolesRequired() throws Throwable {
+    void testGuestMultipleRolesAssertion() throws Throwable {
+        assertThrows(UnauthenticatedException.class, () -> {
+            subject = mock(Subject.class);
+
+            doThrow(new UnauthenticatedException()).when(subject).checkRole("blah");
+            when(subject.hasRole("blah")).thenReturn(false);
+            when(subject.hasRole("blah2")).thenReturn(false);
+
+            RolesAllowedAnnotationHandler handler = new RolesAllowedAnnotationHandler() {
+                @Override
+                protected Subject getSubject() {
+                    return subject;
+                }
+            };
+
+            Annotation rolesAllowedAnnotation = new RolesAllowed() {
+                @Override
+                public String[] value() {
+                    return new String[]{"blah", "blah2"};
+                }
+
+                @Override
+                public Class<? extends Annotation> annotationType() {
+                    return RolesAllowed.class;
+                }
+            };
+
+            handler.assertAuthorized(rolesAllowedAnnotation);
+        });
+    }
+
+    @Test
+    void testOneOfTheRolesRequired() throws Throwable {
         subject = mock(Subject.class);
         when(subject.hasRole("blah")).thenReturn(true);
         when(subject.hasRole("blah2")).thenReturn(false);

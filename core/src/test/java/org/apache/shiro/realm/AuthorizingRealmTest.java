@@ -40,15 +40,11 @@ import org.apache.shiro.authz.permission.WildcardPermission;
 import org.apache.shiro.authz.permission.WildcardPermissionResolver;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -66,19 +62,19 @@ public class AuthorizingRealmTest {
     private static final String ROLE = "admin";
     private String localhost = "localhost";
 
-    @Before
+    @BeforeEach
     public void setup() {
         realm = new AllowAllRealm();
 
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         realm = null;
     }
 
     @Test
-    public void testDefaultConfig() {
+    void testDefaultConfig() {
         AuthenticationInfo info = realm.getAuthenticationInfo(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
 
         assertNotNull(info);
@@ -98,7 +94,7 @@ public class AuthorizingRealmTest {
     }
 
     @Test
-    public void testCreateAccountOverride() {
+    void testCreateAccountOverride() {
 
         AuthorizingRealm realm = new AllowAllRealm() {
             @Override
@@ -120,7 +116,7 @@ public class AuthorizingRealmTest {
     }
 
     @Test
-    public void testNullAuthzInfo() {
+    void testNullAuthzInfo() {
 	AuthorizingRealm realm = new AuthorizingRealm() {
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
                 return null;
@@ -198,9 +194,9 @@ public class AuthorizingRealmTest {
         assertFalse(realm.isPermittedAll(pCollection, "perm1", "perm2"));
         assertFalse(realm.isPermittedAll(pCollection, permList));
     }
-    
+
     @Test
-    public void testRealmWithRolePermissionResolver()
+    void testRealmWithRolePermissionResolver()
     {   
         Principal principal = new UsernamePrincipal("rolePermResolver");
         PrincipalCollection pCollection = new SimplePrincipalCollection(principal, "testRealmWithRolePermissionResolver");
@@ -229,7 +225,7 @@ public class AuthorizingRealmTest {
     }
 
     @Test
-    public void testRealmWithEmptyOrNullPermissions() {
+    void testRealmWithEmptyOrNullPermissions() {
         Principal principal = new UsernamePrincipal("rolePermResolver");
         PrincipalCollection pCollection = new SimplePrincipalCollection(principal, "testRealmWithRolePermissionResolver");
 

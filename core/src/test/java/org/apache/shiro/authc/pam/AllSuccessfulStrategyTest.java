@@ -18,11 +18,13 @@
  */
 package org.apache.shiro.authc.pam;
 
-import static org.junit.Assert.assertNotNull;
-import org.junit.Before;
-import org.junit.Test;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.apache.shiro.authc.AuthenticationException;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -36,41 +38,43 @@ public class AllSuccessfulStrategyTest {
 
     private AllSuccessfulStrategy strategy;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         strategy = new AllSuccessfulStrategy();
     }
 
     @Test
-    public void beforeAllAttempts() {
+    void beforeAllAttempts() {
         AuthenticationInfo info = strategy.beforeAllAttempts(null, null);
         assertNotNull(info);
     }
 
     @Test
-    public void beforeAttemptSupportingToken() {
+    void beforeAttemptSupportingToken() {
         new SimpleAccountRealm();
     }
 
-    @Test(expected = UnsupportedTokenException.class)
-    public void beforeAttemptRealmDoesntSupportToken() {
-        Realm notSupportingRealm = new AuthorizingRealm() {
+    @Test
+    void beforeAttemptRealmDoesntSupportToken() {
+        assertThrows(UnsupportedTokenException.class, () -> {
+            Realm notSupportingRealm = new AuthorizingRealm() {
 
-            public boolean supports(AuthenticationToken token) {
-                return false;
-            }
+                public boolean supports(AuthenticationToken token) {
+                    return false;
+                }
 
-            protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-                return null;
-            }
+                protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
+                    return null;
+                }
 
-            protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
-                return null;
-            }
+                protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
+                    return null;
+                }
 
-        };
+            };
 
-        strategy.beforeAttempt(notSupportingRealm, null, null);
+            strategy.beforeAttempt(notSupportingRealm, null, null);
+        });
     }
 
 

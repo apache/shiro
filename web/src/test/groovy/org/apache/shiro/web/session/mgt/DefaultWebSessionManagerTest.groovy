@@ -24,17 +24,17 @@ import org.apache.shiro.web.servlet.Cookie
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest
 import org.apache.shiro.web.servlet.ShiroHttpSession
 import org.apache.shiro.web.servlet.SimpleCookie
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 import javax.servlet.ServletRequest
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNull
+import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertNull
 
 /**
  * Test cases for the {@link DefaultWebSessionManager} implementation.
@@ -46,12 +46,12 @@ public class DefaultWebSessionManagerTest {
 
     DefaultWebSessionManager mgr;
 
-    @Before
+    @BeforeEach
     void setUp() {
         this.mgr = new DefaultWebSessionManager()
     }
 
-    @After
+    @AfterEach
     public void clearThread() {
         ThreadContext.remove();
     }

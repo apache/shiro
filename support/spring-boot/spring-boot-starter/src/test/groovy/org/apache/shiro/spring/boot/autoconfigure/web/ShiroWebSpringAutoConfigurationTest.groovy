@@ -29,7 +29,7 @@ import org.apache.shiro.web.filter.mgt.DefaultFilter
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager
 import org.apache.shiro.web.mgt.WebSecurityManager
 import org.apache.shiro.web.servlet.AbstractShiroFilter
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
@@ -37,7 +37,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.instanceOf
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 import static org.hamcrest.MatcherAssert.assertThat
 
 /**

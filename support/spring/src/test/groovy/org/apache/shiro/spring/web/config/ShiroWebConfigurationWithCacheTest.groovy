@@ -23,22 +23,23 @@ import org.apache.shiro.realm.text.TextConfigurationRealm
 import org.apache.shiro.spring.testconfig.EventBusTestConfiguration
 import org.apache.shiro.spring.testconfig.RealmTestConfiguration
 import org.apache.shiro.spring.web.testconfig.CacheManagerConfiguration
-import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
+import static org.junit.jupiter.api.Assertions.assertNotNull
 
 /**
  * @since 1.4.0
  */
 @ContextConfiguration(classes = [EventBusTestConfiguration, RealmTestConfiguration, CacheManagerConfiguration, ShiroWebConfiguration])
-@RunWith(SpringJUnit4ClassRunner.class)
-public class ShiroWebConfigurationWithCacheTest {
+@ExtendWith(SpringExtension.class)
+class ShiroWebConfigurationWithCacheTest {
 
     @Autowired
     private SecurityManager securityManager
@@ -47,9 +48,10 @@ public class ShiroWebConfigurationWithCacheTest {
     public void testMinimalConfiguration() {
 
         // first do a quick check of the injected objects
-        Assert.assertNotNull securityManager
-        assertThat securityManager.realms, allOf(hasSize(1), hasItem(instanceOf(TextConfigurationRealm)))
-        Assert.assertNotNull securityManager.cacheManager
+        assertNotNull securityManager
+        assertThat securityManager.realms, hasSize(1)
+        assertThat securityManager.realms, hasItem(instanceOf(TextConfigurationRealm))
+        assertNotNull securityManager.cacheManager
     }
 
 }

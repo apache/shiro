@@ -23,10 +23,10 @@ import javax.servlet.ServletContext
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.UnavailableSecurityManagerException
 import org.apache.shiro.web.mgt.WebSecurityManager
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link AbstractShiroFilter} implementation.

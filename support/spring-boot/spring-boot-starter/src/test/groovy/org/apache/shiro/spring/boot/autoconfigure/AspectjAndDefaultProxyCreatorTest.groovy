@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.spring.boot.autoconfigure;
 
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator
 import org.springframework.aop.config.AopConfigUtils
 import org.springframework.aop.framework.autoproxy.AbstractAdvisorAutoProxyCreator
@@ -28,13 +28,13 @@ import org.springframework.beans.BeansException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationContext
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
 import static org.hamcrest.Matchers.*
 import static org.hamcrest.MatcherAssert.assertThat
 
 @SpringBootTest(classes = AspectjAndDefaultProxyCreatorApplication.class)
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 class AspectjAndDefaultProxyCreatorTest {
 
     @Autowired

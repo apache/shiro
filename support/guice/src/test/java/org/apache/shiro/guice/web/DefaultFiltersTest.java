@@ -20,18 +20,18 @@ package org.apache.shiro.guice.web;
 
 import com.google.inject.Key;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.Filter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.EnumSet;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultFiltersTest {
     @Test
-    public void checkDefaultFilters() throws Exception {
+    void checkDefaultFilters() throws Exception {
         EnumSet<DefaultFilter> defaultFilters = EnumSet.allOf(DefaultFilter.class);
         for(Field field: ShiroWebModule.class.getFields()) {
             if(Modifier.isStatic(field.getModifiers()) && Key.class.isAssignableFrom(field.getType())) {

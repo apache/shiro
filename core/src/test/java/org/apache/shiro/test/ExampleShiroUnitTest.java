@@ -19,8 +19,8 @@
 package org.apache.shiro.test;
 
 import org.apache.shiro.subject.Subject;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -33,7 +33,7 @@ import static org.easymock.EasyMock.expect;
 public class ExampleShiroUnitTest extends AbstractShiroTest {
 
     @Test
-    public void testSimple() {
+    void testSimple() {
         //1.  Create a mock Subject instance for the test to run
         //    (for example, as an authenticated Subject):
         Subject subjectUnderTest = createNiceMock(Subject.class);
@@ -48,7 +48,7 @@ public class ExampleShiroUnitTest extends AbstractShiroTest {
         //call stack) will work properly.
     }
 
-    @After
+    @AfterEach
     public void tearDownSubject() {
         //3. Unbind the subject from the current thread:
         clearSubject();

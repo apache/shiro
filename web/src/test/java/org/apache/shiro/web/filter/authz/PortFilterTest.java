@@ -18,13 +18,13 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the {@link PortFilter} class.
@@ -42,7 +42,7 @@ public class PortFilterTest {
     }
 
     @Test
-    public void testDefault() throws Exception {
+    void testDefault() throws Exception {
         HttpServletResponse response = createNiceMock(HttpServletResponse.class);
         HttpServletRequest request = createBaseMockRequest();
 
@@ -66,7 +66,7 @@ public class PortFilterTest {
      * @throws Exception if there is a test failure
      */
     @Test
-    public void testConfiguredPort() throws Exception {
+    void testConfiguredPort() throws Exception {
         int port = 8080;
         HttpServletResponse response = createNiceMock(HttpServletResponse.class);
         HttpServletRequest request = createBaseMockRequest();

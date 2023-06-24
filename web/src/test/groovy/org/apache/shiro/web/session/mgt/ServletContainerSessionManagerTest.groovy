@@ -24,10 +24,10 @@ import javax.servlet.http.HttpSession
 import org.apache.shiro.session.mgt.SessionContext
 import org.apache.shiro.session.mgt.SessionKey
 import org.apache.shiro.web.session.HttpServletSession
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link ServletContainerSessionManager} implementation.

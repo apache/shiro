@@ -22,7 +22,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectThreadState;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.util.ThreadState;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 
 /**
  * @since 1.0
@@ -31,7 +31,7 @@ public abstract class AbstractSecurityManagerTest {
 
     protected ThreadState threadState;
 
-    @After
+    @AfterEach
     public void tearDown() {
         ThreadContext.remove();
     }

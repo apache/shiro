@@ -27,9 +27,9 @@ import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the {@link org.apache.shiro.authc.credential.HashedCredentialsMatcher} class.
@@ -41,7 +41,7 @@ public class HashedCredentialsMatcherTest {
      * should be.  See <a href="https://issues.apache.org/jira/browse/SHIRO-186">SHIRO-186</a>
      */
     @Test
-    public void testSaltedAuthenticationInfo() {
+    void testSaltedAuthenticationInfo() {
         //use SHA-1 hashing in this test:
         HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
 
@@ -62,7 +62,7 @@ public class HashedCredentialsMatcherTest {
      * <a href="https://issues.apache.org/jira/browse/SHIRO-186">SHIRO-186</a> edits.
      */
     @Test
-    public void testBackwardsCompatibleUnsaltedAuthenticationInfo() {
+    void testBackwardsCompatibleUnsaltedAuthenticationInfo() {
         HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
 
         //simulate an account with SHA-1 hashed password (no salt)
@@ -95,7 +95,7 @@ public class HashedCredentialsMatcherTest {
      * <a href="https://issues.apache.org/jira/browse/SHIRO-186">SHIRO-186</a> edits.
      */
     @Test
-    public void testBackwardsCompatibleSaltedAuthenticationInfo() {
+    void testBackwardsCompatibleSaltedAuthenticationInfo() {
         HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
         //enable this for Shiro 1.0 backwards compatibility:
         matcher.setHashSalted(true);

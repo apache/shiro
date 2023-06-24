@@ -44,8 +44,8 @@ import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 import org.easymock.EasyMock;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 import javax.inject.Named;
 import javax.servlet.Filter;
@@ -63,7 +63,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 
 
@@ -71,7 +72,7 @@ public class ShiroWebModuleTest {
 
 
     @Test
-    public void basicInstantiation() {
+    void basicInstantiation() {
         final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
         ServletContext servletContext = createMock(ServletContext.class);
 
@@ -100,12 +101,12 @@ public class ShiroWebModuleTest {
     }
 
     @Test
-    public void testBindGuiceFilter() throws Exception {
+    void testBindGuiceFilter() throws Exception {
 
     }
 
     @Test
-    public void testBindWebSecurityManager() throws Exception {
+    void testBindWebSecurityManager() throws Exception {
         final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
         ServletContext servletContext = createMock(ServletContext.class);
 
@@ -137,7 +138,7 @@ public class ShiroWebModuleTest {
     }
 
     @Test
-    public void testBindWebEnvironment() throws Exception {
+    void testBindWebEnvironment() throws Exception {
         final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
         ServletContext servletContext = createMock(ServletContext.class);
 
@@ -173,7 +174,7 @@ public class ShiroWebModuleTest {
      * @since 1.4
      */
     @Test
-    public void testAddFilterChainGuice3and4() {
+    void testAddFilterChainGuice3and4() {
 
         final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
         ServletContext servletContext = createMock(ServletContext.class);
@@ -260,9 +261,9 @@ public class ShiroWebModuleTest {
      * @since 1.4
      */
     @Test
-    public void testAddFilterChainGuice3Only() {
+    void testAddFilterChainGuice3Only() {
 
-        Assume.assumeTrue("This test only runs against Guice 3.x", ShiroWebModule.isGuiceVersion3());
+        Assumptions.assumeTrue(ShiroWebModule.isGuiceVersion3(), "This test only runs against Guice 3.x");
 
         final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
         ServletContext servletContext = createMock(ServletContext.class);
@@ -327,7 +328,7 @@ public class ShiroWebModuleTest {
     }
 
     @Test
-    public void testDefaultPath() {
+    void testDefaultPath() {
 
         final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
         ServletContext servletContext = createMock(ServletContext.class);
@@ -370,7 +371,7 @@ public class ShiroWebModuleTest {
     }
 
     @Test
-    public void testDisableGlobalFilters() {
+    void testDisableGlobalFilters() {
 
         final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
         ServletContext servletContext = createMock(ServletContext.class);
@@ -418,7 +419,7 @@ public class ShiroWebModuleTest {
     }
 
     @Test
-    public void testChangeInvalidFilterConfig() {
+    void testChangeInvalidFilterConfig() {
 
         final ShiroModuleTest.MockRealm mockRealm = createMock(ShiroModuleTest.MockRealm.class);
         ServletContext servletContext = createMock(ServletContext.class);
@@ -459,7 +460,7 @@ public class ShiroWebModuleTest {
 
         Filter invalidRequestFilter = getNextFilter((SimpleFilterChain) filterChain);
         assertThat(invalidRequestFilter, instanceOf(InvalidRequestFilter.class));
-        assertFalse("Expected 'blockBackslash' to be false", ((InvalidRequestFilter) invalidRequestFilter).isBlockBackslash());
+        assertFalse(((InvalidRequestFilter) invalidRequestFilter).isBlockBackslash(), "Expected 'blockBackslash' to be false");
         assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(FormAuthenticationFilter.class));
         assertThat(getNextFilter((SimpleFilterChain) filterChain), nullValue());
 

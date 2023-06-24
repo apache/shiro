@@ -24,7 +24,7 @@ import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.NamedFilterList;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.servlet.*;
@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the {@link ShiroFilterFactoryBean} implementation.
@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
 public class ShiroFilterFactoryBeanTest {
 
     @Test
-    public void testFilterDefinition() {
+    void testFilterDefinition() {
 
         ClassPathXmlApplicationContext context =
                 new ClassPathXmlApplicationContext("org/apache/shiro/spring/web/ShiroFilterFactoryBeanTest.xml");
@@ -70,7 +70,7 @@ public class ShiroFilterFactoryBeanTest {
      * @throws Exception if there is any unexpected error
      */
     @Test
-    public void testFilterDefinitionWithInit() throws Exception {
+    void testFilterDefinitionWithInit() throws Exception {
 
         ClassPathXmlApplicationContext context =
                 new ClassPathXmlApplicationContext("org/apache/shiro/spring/web/ShiroFilterFactoryBeanTest.xml");

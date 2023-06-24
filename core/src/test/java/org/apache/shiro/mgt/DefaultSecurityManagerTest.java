@@ -30,13 +30,13 @@ import org.apache.shiro.session.mgt.AbstractValidatingSessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.ThreadContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -46,7 +46,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
 
     DefaultSecurityManager sm = null;
 
-    @Before
+    @BeforeEach
     public void setup() {
         sm = new DefaultSecurityManager();
         Ini ini = new Ini();
@@ -57,7 +57,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         SecurityUtils.setSecurityManager(sm);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         SecurityUtils.setSecurityManager(null);
         sm.destroy();
@@ -65,7 +65,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
     }
 
     @Test
-    public void testDefaultConfig() {
+    void testDefaultConfig() {
         Subject subject = SecurityUtils.getSubject();
 
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
@@ -90,7 +90,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
      * <a href="https://issues.apache.org/jira/browse/JSEC-46">JSEC-46</a>
      */
     @Test
-    public void testAutoCreateSessionAfterInvalidation() {
+    void testAutoCreateSessionAfterInvalidation() {
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
         Serializable origSessionId = session.getId();
@@ -119,7 +119,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
      * <a href="https://issues.apache.org/jira/browse/JSEC-22">JSEC-22</a>
      */
     @Test
-    public void testSubjectReuseAfterLogout() {
+    void testSubjectReuseAfterLogout() {
 
         Subject subject = SecurityUtils.getSubject();
 
@@ -165,7 +165,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
      * <a href="https://issues.apache.org/jira/browse/SHIRO-457">SHIRO-457</a>
      */
     @Test
-    public void testNewSubjectWithoutThreadSecurityManager() {
+    void testNewSubjectWithoutThreadSecurityManager() {
         // Ensure no fallback sm exists in thread context or statically
         SecurityUtils.setSecurityManager(null);
         try {

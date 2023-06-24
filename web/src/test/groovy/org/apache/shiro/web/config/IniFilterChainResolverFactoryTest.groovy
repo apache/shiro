@@ -21,6 +21,7 @@ package org.apache.shiro.web.config
 import org.apache.shiro.web.filter.InvalidRequestFilter
 import org.apache.shiro.web.filter.mgt.DefaultFilter
 import org.hamcrest.Matchers
+import org.junit.jupiter.api.BeforeEach
 
 import javax.servlet.Filter
 import javax.servlet.FilterConfig
@@ -29,11 +30,10 @@ import org.apache.shiro.config.Ini
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter
 import org.apache.shiro.web.filter.authz.SslFilter
 import org.apache.shiro.web.filter.mgt.FilterChainResolver
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 import static org.hamcrest.MatcherAssert.assertThat
 
 /**
@@ -52,7 +52,7 @@ class IniFilterChainResolverFactoryTest {
         return mock
     }
 
-    @Before
+    @BeforeEach
     void setUp() {
         this.factory = new IniFilterChainResolverFactory()
     }

@@ -20,9 +20,9 @@ package org.apache.shiro.crypto.hash
 
 
 import org.apache.shiro.lang.util.ByteSource
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link DefaultHashService} implementation.

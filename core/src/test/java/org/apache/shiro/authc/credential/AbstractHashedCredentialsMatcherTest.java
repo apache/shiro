@@ -18,27 +18,27 @@
  */
 package org.apache.shiro.authc.credential;
 
-import junit.framework.TestCase;
-import org.junit.Test;
-
 import org.apache.shiro.authc.AuthenticationInfo;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.hash.AbstractHash;
 import org.apache.shiro.lang.util.ClassUtils;
+import org.junit.jupiter.api.Test;
 
 /**
  * @since Jun 10, 2008 4:47:09 PM
  */
-public abstract class AbstractHashedCredentialsMatcherTest extends TestCase {
+public abstract class AbstractHashedCredentialsMatcherTest {
 
     public abstract Class<? extends HashedCredentialsMatcher> getMatcherClass();
 
     public abstract AbstractHash hash(Object credentials);
 
     @Test
-    public void testBasic() {
+    void testBasic() {
         CredentialsMatcher matcher = (CredentialsMatcher) ClassUtils.newInstance(getMatcherClass());
         byte[] hashed = hash("password").getBytes();
         AuthenticationInfo account = new SimpleAuthenticationInfo("username", hashed, "realmName");

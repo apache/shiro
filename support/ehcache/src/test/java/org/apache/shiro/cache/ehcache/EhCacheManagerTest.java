@@ -20,11 +20,11 @@ package org.apache.shiro.cache.ehcache;
 
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.lang.util.LifecycleUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collection;
 import java.util.Set;
@@ -38,18 +38,18 @@ public class EhCacheManagerTest {
 
     private EhCacheManager cacheManager;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         cacheManager = new EhCacheManager();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         LifecycleUtils.destroy(cacheManager);
     }
 
     @Test
-    public void testCacheManagerCreationDuringInit() {
+    void testCacheManagerCreationDuringInit() {
         net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertNull(ehCacheManager);
         cacheManager.init();
@@ -59,7 +59,7 @@ public class EhCacheManagerTest {
     }
 
     @Test
-    public void testLazyCacheManagerCreationWithoutCallingInit() {
+    void testLazyCacheManagerCreationWithoutCallingInit() {
         net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertNull(ehCacheManager);
 
@@ -79,7 +79,7 @@ public class EhCacheManagerTest {
     }
 
     @Test
-    public void testRemove() {
+    void testRemove() {
         net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertNull(ehCacheManager);
 
@@ -106,7 +106,7 @@ public class EhCacheManagerTest {
     }
 
     @Test
-    public void testClear() {
+    void testClear() {
         net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertNull(ehCacheManager);
 
@@ -131,7 +131,7 @@ public class EhCacheManagerTest {
     }
 
     @Test
-    public void testKeys() {
+    void testKeys() {
         net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertNull(ehCacheManager);
 
@@ -165,7 +165,7 @@ public class EhCacheManagerTest {
     }
 
     @Test
-    public void testValues() {
+    void testValues() {
         net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertNull(ehCacheManager);
 

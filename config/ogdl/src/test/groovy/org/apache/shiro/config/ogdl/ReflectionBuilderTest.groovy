@@ -25,11 +25,12 @@ import org.apache.shiro.lang.codec.Hex
 import org.apache.shiro.config.ConfigurationException
 import org.apache.shiro.config.Ini
 import org.apache.shiro.config.ogdl.event.BeanEvent
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import java.util.concurrent.ConcurrentHashMap
 
-import static org.junit.Assert.*
+import static org.hamcrest.MatcherAssert.assertThat
+import static org.junit.jupiter.api.Assertions.*
 import static org.hamcrest.Matchers.*
 
 /**
@@ -719,9 +720,10 @@ class ReflectionBuilderTest {
     void checkType(String instanceName, List<? extends BeanEvent> events, String name, Class<?> expectedType) {
         for(BeanEvent event: events) {
             if(event.getBeanName().equals(name)) {
-                assertTrue("Notification for bean " + name + " did not provide an instance of " + expectedType
-                        + " to listener " + instanceName,
-                expectedType.isInstance(event.getBean()))
+                assertTrue(
+                        expectedType.isInstance(event.getBean()),
+                        "Notification for bean " + name + " did not provide an instance of " + expectedType
+                                + " to listener " + instanceName)
                 return;
             }
         }

@@ -28,15 +28,15 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.lang.util.LifecycleUtils;
 import org.apache.shiro.util.ThreadContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 import java.util.concurrent.Callable;
 
 import static org.easymock.EasyMock.createNiceMock;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -44,18 +44,18 @@ import static org.junit.Assert.*;
  */
 public class DelegatingSubjectTest {
 
-    @Before
+    @BeforeEach
     public void setup() {
         ThreadContext.remove();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ThreadContext.remove();
     }
 
     @Test
-    public void testSessionStopThenStart() {
+    void testSessionStopThenStart() {
         String key = "testKey";
         String value = "testValue";
         DefaultSecurityManager sm = new DefaultSecurityManager();
@@ -83,7 +83,7 @@ public class DelegatingSubjectTest {
     }
 
     @Test
-    public void testExecuteCallable() {
+    void testExecuteCallable() {
 
         String username = "jsmith";
 
@@ -113,7 +113,7 @@ public class DelegatingSubjectTest {
     }
 
     @Test
-    public void testExecuteRunnable() {
+    void testExecuteRunnable() {
 
         String username = "jsmith";
 
@@ -139,7 +139,7 @@ public class DelegatingSubjectTest {
     }
 
     @Test
-    public void testRunAs() {
+    void testRunAs() {
 
         Ini ini = new Ini();
         Ini.Section users = ini.addSection("users");
@@ -218,7 +218,7 @@ public class DelegatingSubjectTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         // given
         String username = "jsmith";
 
@@ -233,8 +233,8 @@ public class DelegatingSubjectTest {
         // then
         final Session session = sourceSubject.getSession(true);
         String sessionId = (String) session.getId();
-        assertFalse("toString must not leak sessionId", subjectToString.contains(sessionId));
-        assertFalse("toString must not leak host", subjectToString.contains(hostname));
+        assertFalse(subjectToString.contains(sessionId), "toString must not leak sessionId");
+        assertFalse(subjectToString.contains(hostname), "toString must not leak host");
     }
 
 }

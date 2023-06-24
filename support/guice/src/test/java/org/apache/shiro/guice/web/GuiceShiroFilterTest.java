@@ -22,19 +22,16 @@ import com.google.inject.spi.InjectionPoint;
 import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.when;
 
 public class GuiceShiroFilterTest {
 
     @Test
-    public void ensureInjectable() {
+    void ensureInjectable() {
         try {
             InjectionPoint.forConstructorOf(GuiceShiroFilter.class);
         } catch (Exception e) {
@@ -43,7 +40,7 @@ public class GuiceShiroFilterTest {
     }
 
     @Test
-    public void testConstructor() {
+    void testConstructor() {
         WebSecurityManager securityManager = mock(WebSecurityManager.class);
         FilterChainResolver filterChainResolver = mock(FilterChainResolver.class);
         ShiroFilterConfiguration filterConfiguration = mock(ShiroFilterConfiguration.class);

@@ -20,8 +20,8 @@ package org.apache.shiro.web.env;
 
 import org.apache.shiro.config.ConfigurationException;
 import org.easymock.EasyMock;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletContext;
 import java.util.Arrays;
@@ -44,8 +44,8 @@ import static org.mockito.Mockito.when;
  */
 public class EnvironmentLoaderServiceTest {
 
-    @Test()
-    public void singleServiceTest() throws Exception {
+    @Test
+    void singleServiceTest() throws Exception {
 
         ServletContext servletContext = EasyMock.mock(ServletContext.class);
         expect(servletContext.getInitParameter("shiroEnvironmentClass")).andReturn(null);
@@ -66,7 +66,7 @@ public class EnvironmentLoaderServiceTest {
     }
 
     @Test
-    public void testDefaultWebEnvironment() {
+    void testDefaultWebEnvironment() {
         ServletContext servletContext = EasyMock.mock(ServletContext.class);
         expect(servletContext.getInitParameter("shiroEnvironmentClass"))
                 .andReturn(DefaultWebEnvironment.class.getName());
@@ -83,8 +83,8 @@ public class EnvironmentLoaderServiceTest {
         assertThat(environment.getServletContext(), sameInstance(servletContext));
     }
 
-    @Test()
-    public void multipleServiceTest() throws Exception {
+    @Test
+    void multipleServiceTest() throws Exception {
 
         List<WebEnvironment> environmentList = Arrays.asList(new WebEnvironmentStub(), new WebEnvironmentStub());
 
@@ -96,7 +96,7 @@ public class EnvironmentLoaderServiceTest {
 
         try {
             environmentLoader.createEnvironment(servletContext);
-            Assert.fail("Expected ConfigurationException to be thrown");
+            Assertions.fail("Expected ConfigurationException to be thrown");
         } catch (ConfigurationException e) {
             assertThat(e.getMessage(), stringContainsInOrder("zero or exactly one", "shiroEnvironmentClass"));
         }
@@ -105,8 +105,8 @@ public class EnvironmentLoaderServiceTest {
         verify(environmentLoader).doLoadWebEnvironmentsFromServiceLoader();
     }
 
-    @Test()
-    public void loadFromInitParamTest() throws Exception {
+    @Test
+    void loadFromInitParamTest() throws Exception {
 
         ServletContext servletContext = EasyMock.mock(ServletContext.class);
         expect(servletContext.getInitParameter(EnvironmentLoader.ENVIRONMENT_CLASS_PARAM)).andReturn(WebEnvironmentStub.class.getName());

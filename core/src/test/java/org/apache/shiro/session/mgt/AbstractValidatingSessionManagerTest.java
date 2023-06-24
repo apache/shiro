@@ -23,7 +23,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.session.SessionListenerAdapter;
 import org.apache.shiro.session.UnknownSessionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the {@link org.apache.shiro.session.mgt.AbstractValidatingSessionManager} class.
@@ -44,7 +44,7 @@ public class AbstractValidatingSessionManagerTest {
      * Verifies <a href="https://issues.apache.org/jira/browse/SHIRO-199">SHIRO-199</a>.
      */
     @Test
-    public void testValidateSessions() {
+    void testValidateSessions() {
 
         final SimpleSession validSession = new SimpleSession();
         validSession.setId(1);
@@ -99,7 +99,7 @@ public class AbstractValidatingSessionManagerTest {
      * Verifies <a href="https://issues.apache.org/jira/browse/SHIRO-399">SHIRO-399</a>.
      */
     @Test
-    public void testNoMemoryLeakOnInvalidSessions() throws Exception {
+    void testNoMemoryLeakOnInvalidSessions() throws Exception {
         SessionListener sessionListener = new SessionListener() {
             public void onStart(Session session) {
                 session.setAttribute("I love", "Romania");

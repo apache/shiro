@@ -29,8 +29,8 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.apache.shiro.aop.*;
 import org.apache.shiro.authz.annotation.*;
 import org.apache.shiro.authz.aop.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Method;
@@ -38,11 +38,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ShiroAopModuleTest {
     @Test
-    public void testGetAnnotationResolver() {
+    void testGetAnnotationResolver() {
 
         final AnnotationResolver annotationResolver = new DefaultAnnotationResolver();
 
@@ -87,7 +87,7 @@ public class ShiroAopModuleTest {
     }
 
     @Test
-    public void testBindShiroInterceptor() {
+    void testBindShiroInterceptor() {
 
 
         ShiroAopModule underTest = new ShiroAopModule() {
@@ -127,7 +127,7 @@ public class ShiroAopModuleTest {
             }
         }
 
-        assertTrue("Not all interceptors were bound.", protectedMethods.isEmpty());
+        assertTrue(protectedMethods.isEmpty(), "Not all interceptors were bound.");
     }
 
     @Target({ElementType.TYPE, ElementType.METHOD})
@@ -192,7 +192,7 @@ public class ShiroAopModuleTest {
     private Map<Class<? extends Annotation>, Method> protectedMethods;
     private Map<Class<? extends Annotation>, Class<? extends AnnotationMethodInterceptor>> interceptorTypes;
 
-    @Before
+    @BeforeEach
     public void setup() throws NoSuchMethodException {
         protectedMethods = new HashMap<Class<? extends Annotation>, Method>();
         protectedMethods.put(RequiresRoles.class, getClass().getMethod("roleProtected"));

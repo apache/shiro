@@ -19,11 +19,11 @@
 package org.apache.shiro.lang.codec
 
 import org.apache.shiro.crypto.SecureRandomNumberGenerator
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import static org.junit.Assert.assertNotNull
+import static org.junit.jupiter.api.Assertions.assertNotNull
 
 /**
  * Test cases for the {@link H64} implementation.

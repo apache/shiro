@@ -20,7 +20,7 @@
 package org.apache.shiro.web.filter
 
 import org.apache.shiro.web.RestoreSystemProperties
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import javax.servlet.http.HttpServletRequest
 

@@ -25,12 +25,14 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectThreadState;
 import org.apache.shiro.util.ThreadState;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Common method tests across implementations.  In actuality, the methods don't change across
@@ -39,7 +41,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  * @since 1.1
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
 public abstract class AbstractAuthorizationAnnotationTest {
 
@@ -58,7 +60,7 @@ public abstract class AbstractAuthorizationAnnotationTest {
         this.threadState.bind();
     }
 
-    @After
+    @AfterEach
     public void clearSubject() {
         if (threadState != null) {
             threadState.clear();
@@ -83,22 +85,25 @@ public abstract class AbstractAuthorizationAnnotationTest {
     // GUEST OPERATIONS:
 
     @Test
-    public void testGuestImplementation() {
+    void testGuestImplementation() {
         bindGuest();
-        testService.guestImplementation();
-    }
-
-    @Test(expected = UnauthenticatedException.class)
-    public void testGuestImplementationFailure() {
-        bindUser();
         testService.guestImplementation();
     }
 
     @Test
-    public void testGuestInterface() {
+    void testGuestImplementationFailure() {
+        assertThrows(UnauthenticatedException.class, () -> {
+            bindUser();
+            testService.guestImplementation();
+        });
+    }
+
+    @Test
+    void testGuestInterface() {
         bindGuest();
         testService.guestInterface();
     }
+
     //testGuestInterfaceFailure() cannot be in this class - the SchemaAuthorizationAnnotationTest
     //subclass does not support annotations on interfaces (Spring AspectJ pointcut expressions
     //do not support annotations on interface methods).  It is instead in the
@@ -108,22 +113,25 @@ public abstract class AbstractAuthorizationAnnotationTest {
     // USER OPERATIONS
 
     @Test
-    public void testUserImplementation() {
+    void testUserImplementation() {
         bindUser();
-        testService.userImplementation();
-    }
-
-    @Test(expected = UnauthenticatedException.class)
-    public void testUserImplementationFailure() {
-        bindGuest();
         testService.userImplementation();
     }
 
     @Test
-    public void testUserInterface() {
+    void testUserImplementationFailure() {
+        assertThrows(UnauthenticatedException.class, () -> {
+            bindGuest();
+            testService.userImplementation();
+        });
+    }
+
+    @Test
+    void testUserInterface() {
         bindUser();
         testService.userInterface();
     }
+
     //testUserInterfaceFailure() cannot be in this class - the SchemaAuthorizationAnnotationTest
     //subclass does not support annotations on interfaces (Spring AspectJ pointcut expressions
     //do not support annotations on interface methods).  It is instead in the
@@ -133,19 +141,21 @@ public abstract class AbstractAuthorizationAnnotationTest {
     // AUTHENTICATED USER OPERATIONS
 
     @Test
-    public void testAuthenticatedImplementation() {
+    void testAuthenticatedImplementation() {
         bindAuthenticatedUser();
         testService.authenticatedImplementation();
     }
 
-    @Test(expected = UnauthenticatedException.class)
-    public void testAuthenticatedImplementationFailure() {
-        bindUser();
-        testService.authenticatedImplementation();
+    @Test
+    void testAuthenticatedImplementationFailure() {
+        assertThrows(UnauthenticatedException.class, () -> {
+            bindUser();
+            testService.authenticatedImplementation();
+        });
     }
 
     @Test
-    public void testAuthenticatedInterface() {
+    void testAuthenticatedInterface() {
         bindAuthenticatedUser();
         testService.authenticatedInterface();
     }

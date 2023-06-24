@@ -21,9 +21,9 @@ package org.apache.shiro.spring.config
 import org.apache.shiro.event.EventBus
 import org.apache.shiro.event.EventBusAware
 import org.apache.shiro.spring.ShiroEventBusBeanPostProcessor
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
+import static org.junit.jupiter.api.Assertions.*
 import static org.mockito.Mockito.mock
 
 /**
@@ -41,8 +41,8 @@ class ShiroEventBusAwareBeanPostProcessorTest {
         def resultAfter = postProcessor.postProcessAfterInitialization(bean, "bean")
         def resultBefore = postProcessor.postProcessBeforeInitialization(bean, "bean")
 
-        Assert.assertSame resultAfter, bean
-        Assert.assertSame resultBefore, bean
+        assertSame resultAfter, bean
+        assertSame resultBefore, bean
     }
 
     @Test
@@ -56,8 +56,8 @@ class ShiroEventBusAwareBeanPostProcessorTest {
         def resultAfter = postProcessor.postProcessAfterInitialization(bean, "bean")
         def resultBefore = postProcessor.postProcessBeforeInitialization(bean, "bean")
 
-        Assert.assertSame resultAfter, bean
-        Assert.assertSame resultBefore, bean
+        assertSame resultAfter, bean
+        assertSame resultBefore, bean
     }
 
 }

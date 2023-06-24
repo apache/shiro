@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.authz;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,13 +31,13 @@ import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ModularRealmAuthorizerTest
 {
-    
+
     @Test
-    public void testSettingOfRolePermissionResolver()
+    void testSettingOfRolePermissionResolver()
     {
         Collection<Realm> realms = new ArrayList<Realm>();
         

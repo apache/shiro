@@ -20,15 +20,15 @@ package org.apache.shiro.guice;
 
 import com.google.inject.spi.InjectionPoint;
 import org.apache.shiro.mgt.SecurityManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.easymock.EasyMock.createMock;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class GuiceEnvironmentTest {
     @Test
-    public void testGetSecurityManager() throws Exception {
+    void testGetSecurityManager() throws Exception {
         SecurityManager securityManager = createMock(SecurityManager.class);
 
         GuiceEnvironment underTest = new GuiceEnvironment(securityManager);
@@ -36,7 +36,7 @@ public class GuiceEnvironmentTest {
     }
 
     @Test
-    public void ensureInjectable() {
+    void ensureInjectable() {
         try {
             InjectionPoint ip = InjectionPoint.forConstructorOf(GuiceEnvironment.class);
         } catch (Exception e) {

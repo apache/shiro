@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.config.ogdl.event
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * @since 1.3

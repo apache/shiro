@@ -22,13 +22,13 @@ import org.apache.shiro.config.Ini;
 import org.apache.shiro.ini.IniSecurityManagerFactory;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.servlet.Filter;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * TODO - Class JavaDoc
@@ -43,7 +43,7 @@ public class WebIniSecurityManagerFactoryTest {
      * filters to the pool of beans before the INI configuration is interpreted.
      */
     @Test
-    public void testDefaultFiltersPresent() {
+    void testDefaultFiltersPresent() {
         Ini ini = new Ini();
         //just a normal configuration line in the MAIN section for any of the default filters should work
         //out of the box.  So, create the main section and just config one of them:

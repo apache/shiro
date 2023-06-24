@@ -23,9 +23,9 @@ import org.apache.shiro.authc.AuthenticationToken
 import org.apache.shiro.cache.Cache
 import org.apache.shiro.cache.CacheManager
 import org.apache.shiro.subject.PrincipalCollection
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import static org.easymock.EasyMock.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Unit tests for the {@link CachingRealm} implementation.

@@ -20,19 +20,19 @@ package org.apache.shiro.spring.config
 
 import org.apache.shiro.event.EventBus
 import org.apache.shiro.spring.testconfig.EventBusConsumersTestConfiguration
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * @since 1.4.0
  */
 @ContextConfiguration(classes = [ShiroBeanConfiguration, EventBusConsumersTestConfiguration])
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 public class ShiroBeanConfigurationTest {
 
     @Autowired

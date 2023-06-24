@@ -18,14 +18,14 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class HttpMethodPermissionFilterTest {
 
     @Test
-    public void testPermissionMapping() {
+    void testPermissionMapping() {
         // Testing the isAccessAllowed would be easier, but would need to mock out the servlet request
 
         HttpMethodPermissionFilter filter = new HttpMethodPermissionFilter();
@@ -33,16 +33,16 @@ public class HttpMethodPermissionFilterTest {
         String[] permsBefore = {"foo", "bar"};
 
         String[] permsAfter = filter.buildPermissions(permsBefore, filter.getHttpMethodAction("get"));
-        Assert.assertEquals(2, permsAfter.length);
-        Assert.assertEquals("foo:read", permsAfter[0]);
-        Assert.assertEquals("bar:read", permsAfter[1]);
+        Assertions.assertEquals(2, permsAfter.length);
+        Assertions.assertEquals("foo:read", permsAfter[0]);
+        Assertions.assertEquals("bar:read", permsAfter[1]);
 
-        Assert.assertEquals("foo:read", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("head"))[0]);
-        Assert.assertEquals("foo:update", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("put"))[0]);
-        Assert.assertEquals("foo:create", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("post"))[0]);
-        Assert.assertEquals("foo:create", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("mkcol"))[0]);
-        Assert.assertEquals("foo:delete", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("delete"))[0]);
-        Assert.assertEquals("foo:read", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("options"))[0]);
-        Assert.assertEquals("foo:read", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("trace"))[0]);
+        Assertions.assertEquals("foo:read", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("head"))[0]);
+        Assertions.assertEquals("foo:update", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("put"))[0]);
+        Assertions.assertEquals("foo:create", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("post"))[0]);
+        Assertions.assertEquals("foo:create", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("mkcol"))[0]);
+        Assertions.assertEquals("foo:delete", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("delete"))[0]);
+        Assertions.assertEquals("foo:read", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("options"))[0]);
+        Assertions.assertEquals("foo:read", filter.buildPermissions(permsBefore, filter.getHttpMethodAction("trace"))[0]);
     }
 }

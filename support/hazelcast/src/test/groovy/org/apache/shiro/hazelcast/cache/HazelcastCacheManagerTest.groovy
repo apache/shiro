@@ -21,10 +21,14 @@ package org.apache.shiro.hazelcast.cache
 import com.hazelcast.config.Config
 import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.core.LifecycleService
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.assertFalse
+import static org.junit.jupiter.api.Assertions.assertNull
+import static org.junit.jupiter.api.Assertions.assertNotNull
+import static org.junit.jupiter.api.Assertions.assertSame
+import static org.junit.jupiter.api.Assertions.assertTrue
 import static org.mockito.Mockito.*
 
 /**
@@ -34,7 +38,7 @@ import static org.mockito.Mockito.*
  */
 class HazelcastCacheManagerTest {
 
-    @BeforeClass
+    @BeforeAll
     static void setUpLogging() {
         System.setProperty("hazelcast.logging.type", "log4j2")
     }

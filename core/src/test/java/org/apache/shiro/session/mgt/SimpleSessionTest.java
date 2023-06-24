@@ -18,18 +18,18 @@
  */
 package org.apache.shiro.session.mgt;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SimpleSessionTest {
 
     @Test
-    public void testDefaultSerialization() throws Exception {
+    void testDefaultSerialization() throws Exception {
         SimpleSession session = new SimpleSession();
 
         long timeout = session.getTimeout();
@@ -44,13 +44,13 @@ public class SimpleSessionTest {
     }
 
     @Test
-    public void serializeHost() throws IOException, ClassNotFoundException {
+    void serializeHost() throws IOException, ClassNotFoundException {
         SimpleSession session = new SimpleSession("localhost");
         assertEquals("localhost", serializeAndDeserialize(session).getHost());
     }
 
     @Test
-    public void serializeExpired() throws IOException, ClassNotFoundException {
+    void serializeExpired() throws IOException, ClassNotFoundException {
         SimpleSession session = new SimpleSession();
         session.setExpired(true);
         assertTrue(serializeAndDeserialize(session).isExpired());

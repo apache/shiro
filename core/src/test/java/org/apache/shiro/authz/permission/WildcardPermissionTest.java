@@ -18,9 +18,9 @@
  */
 package org.apache.shiro.authz.permission;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -28,28 +28,36 @@ import org.junit.Test;
  */
 public class WildcardPermissionTest {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNull() {
-        new WildcardPermission(null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testEmpty() {
-        new WildcardPermission("");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testBlank() {
-        new WildcardPermission("   ");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testOnlyDelimiters() {
-        new WildcardPermission("::,,::,:");
+    @Test
+    void testNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new WildcardPermission(null);
+        });
     }
 
     @Test
-    public void testNamed() {
+    void testEmpty() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new WildcardPermission("");
+        });
+    }
+
+    @Test
+    void testBlank() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new WildcardPermission("   ");
+        });
+    }
+
+    @Test
+    void testOnlyDelimiters() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new WildcardPermission("::,,::,:");
+        });
+    }
+
+    @Test
+    void testNamed() {
         WildcardPermission p1, p2;
 
         // Case insensitive, same
@@ -91,7 +99,7 @@ public class WildcardPermissionTest {
     }
 
     @Test
-    public void testLists() {
+    void testLists() {
         WildcardPermission p1, p2, p3;
 
         p1 = new WildcardPermission("one,two");
@@ -132,7 +140,7 @@ public class WildcardPermissionTest {
      * Validates WildcardPermissions with that contain the same list parts are equal.
      */
     @Test
-    public void testListDifferentOrder() {
+    void testListDifferentOrder() {
 
         WildcardPermission p6 = new WildcardPermission("one,two:three,four");
         WildcardPermission p6DiffOrder = new WildcardPermission("two,one:four,three");
@@ -140,7 +148,7 @@ public class WildcardPermissionTest {
     }
 
     @Test
-    public void testWildcards() {
+    void testWildcards() {
         WildcardPermission p1, p2, p3, p4, p5, p6, p7, p8, p9;
 
         p1 = new WildcardPermission("*");
@@ -221,7 +229,7 @@ public class WildcardPermissionTest {
     }
 
     @Test
-    public void testToString() {
+    void testToString() {
         WildcardPermission p1 = new WildcardPermission("*");
         WildcardPermission p2 = new WildcardPermission("one");
         WildcardPermission p3 = new WildcardPermission("one:two");
@@ -241,7 +249,7 @@ public class WildcardPermissionTest {
     }
 
     @Test
-    public void testWildcardLeftTermination() {
+    void testWildcardLeftTermination() {
         WildcardPermission p1, p2, p3, p4;
 
         p1 = new WildcardPermission("one");

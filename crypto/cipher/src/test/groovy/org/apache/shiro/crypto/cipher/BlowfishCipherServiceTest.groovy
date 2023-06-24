@@ -22,9 +22,9 @@ package org.apache.shiro.crypto.cipher
 import org.apache.shiro.lang.codec.CodecSupport
 import org.apache.shiro.lang.util.ByteSource
 import org.apache.shiro.lang.util.ByteUtils
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.assertTrue
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 /**
  * Test cases for the {@link org.apache.shiro.crypto.cipher.BlowfishCipherService} class.

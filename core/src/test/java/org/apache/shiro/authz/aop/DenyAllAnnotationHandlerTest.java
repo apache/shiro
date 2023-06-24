@@ -21,7 +21,7 @@ package org.apache.shiro.authz.aop;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.test.SecurityManagerTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.security.DenyAll;
 import java.lang.annotation.Annotation;
@@ -29,6 +29,7 @@ import java.lang.annotation.Annotation;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test cases for the {@link DenyAllAnnotationHandler} class.
@@ -36,38 +37,42 @@ import static org.easymock.EasyMock.replay;
 public class DenyAllAnnotationHandlerTest extends SecurityManagerTestSupport {
     private Subject subject;
 
-    @Test(expected = UnauthenticatedException.class)
-    public void testGuestSingleRoleAssertion() throws Throwable {
-        DenyAllAnnotationHandler handler = new DenyAllAnnotationHandler();
+    @Test
+    void testGuestSingleRoleAssertion() throws Throwable {
+        assertThrows(UnauthenticatedException.class, () -> {
+            DenyAllAnnotationHandler handler = new DenyAllAnnotationHandler();
 
-        Annotation denyAllAnnotation = new DenyAll() {
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return DenyAll.class;
-            }
-        };
+            Annotation denyAllAnnotation = new DenyAll() {
+                @Override
+                public Class<? extends Annotation> annotationType() {
+                    return DenyAll.class;
+                }
+            };
 
-        handler.assertAuthorized(denyAllAnnotation);
+            handler.assertAuthorized(denyAllAnnotation);
+        });
     }
 
-    @Test(expected = UnauthenticatedException.class)
-    public void testOneOfTheRolesRequired() throws Throwable {
-        subject = createMock(Subject.class);
-        expect(subject.hasRole("blah")).andReturn(true);
-        replay(subject);
-        DenyAllAnnotationHandler handler = new DenyAllAnnotationHandler() {
-            @Override
-            protected Subject getSubject() {
-                return subject;
-            }
-        };
+    @Test
+    void testOneOfTheRolesRequired() throws Throwable {
+        assertThrows(UnauthenticatedException.class, () -> {
+            subject = createMock(Subject.class);
+            expect(subject.hasRole("blah")).andReturn(true);
+            replay(subject);
+            DenyAllAnnotationHandler handler = new DenyAllAnnotationHandler() {
+                @Override
+                protected Subject getSubject() {
+                    return subject;
+                }
+            };
 
-        Annotation denyAllAnnotation = new DenyAll() {
-            @Override
-            public Class<? extends Annotation> annotationType() {
-                return DenyAll.class;
-            }
-        };
-        handler.assertAuthorized(denyAllAnnotation);
+            Annotation denyAllAnnotation = new DenyAll() {
+                @Override
+                public Class<? extends Annotation> annotationType() {
+                    return DenyAll.class;
+                }
+            };
+            handler.assertAuthorized(denyAllAnnotation);
+        });
     }
 }

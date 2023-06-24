@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.authc;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,7 +26,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.shiro.subject.PrincipalCollection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
@@ -37,7 +37,7 @@ import org.junit.Test;
 public class SimpleAuthenticationInfoTest {
 
     @Test
-    public void testMergeWithEmptyInstances() {
+    void testMergeWithEmptyInstances() {
         SimpleAuthenticationInfo aggregate = new SimpleAuthenticationInfo();
         SimpleAuthenticationInfo local = new SimpleAuthenticationInfo();
         aggregate.merge(local);
@@ -47,15 +47,15 @@ public class SimpleAuthenticationInfoTest {
      * Verifies fix for JSEC-122
      */
     @Test
-    public void testMergeWithAggregateNullCredentials() {
+    void testMergeWithAggregateNullCredentials() {
         SimpleAuthenticationInfo aggregate = new SimpleAuthenticationInfo();
         SimpleAuthenticationInfo local = new SimpleAuthenticationInfo("username", "password", "testRealm");
         aggregate.merge(local);
     }
-    
+
     @SuppressWarnings("serial")
     @Test
-    public void testMergeWithImmutablePrincipalCollection() {
+    void testMergeWithImmutablePrincipalCollection() {
         SimpleAuthenticationInfo aggregate = new SimpleAuthenticationInfo();
         // Make a quick test fixture that does *not* implement MutablePrincipalCollection 
         PrincipalCollection principalCollection = new PrincipalCollection() {

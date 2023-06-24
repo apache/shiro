@@ -25,8 +25,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.shiro.testing.web.AbstractContainerIT;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,7 +35,7 @@ public class WebAppContainerIntegrationIT extends AbstractContainerIT {
 
     protected final WebClient webClient = new WebClient();
 
-    @Before
+    @BeforeEach
     public void logOut() throws IOException {
         // Make sure we are logged out
         final HtmlPage homePage = webClient.getPage(getTlsBaseUri());
@@ -48,7 +48,7 @@ public class WebAppContainerIntegrationIT extends AbstractContainerIT {
     }
 
     @Test
-    public void logIn() throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
+    void logIn() throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException {
 
         HtmlPage page = webClient.getPage(getTlsBaseUri() + "login.jsp");
         HtmlForm form = page.getFormByName("loginform");

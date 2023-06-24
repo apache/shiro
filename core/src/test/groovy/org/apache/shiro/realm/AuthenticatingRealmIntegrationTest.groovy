@@ -24,9 +24,9 @@ import org.apache.shiro.config.Ini
 import org.apache.shiro.ini.IniSecurityManagerFactory
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.subject.Subject
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * Integration tests for the AuthenticatingRealm implementation.

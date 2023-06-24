@@ -24,8 +24,8 @@ import org.easymock.IAnswer
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
-import org.junit.Test
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test
 
 import javax.servlet.ServletContext
 

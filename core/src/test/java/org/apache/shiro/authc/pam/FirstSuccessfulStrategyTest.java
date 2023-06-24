@@ -23,30 +23,31 @@ import org.apache.shiro.authc.MergableAuthenticationInfo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class FirstSuccessfulStrategyTest {
 
     private FirstSuccessfulStrategy strategy;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         strategy = new FirstSuccessfulStrategy();
         strategy.setStopAfterFirstSuccess(true);
     }
 
     @Test
-    public void beforeAllAttempts() {
+    void beforeAllAttempts() {
         AuthenticationInfo authenticationInfo = strategy.beforeAllAttempts(null, null);
         assertNull(authenticationInfo);
     }
 
     @Test
-    public void testMergeWithValidAggregateInfo() {
+    void testMergeWithValidAggregateInfo() {
         AuthenticationInfo aggregate = new MergableAuthenticationInfo() {
             @Override
             public void merge(AuthenticationInfo info) {
@@ -68,7 +69,7 @@ public class FirstSuccessfulStrategyTest {
     }
 
     @Test
-    public void testMergeWithInvalidAggregateInfo() {
+    void testMergeWithInvalidAggregateInfo() {
         AuthenticationInfo aggregate = new MergableAuthenticationInfo() {
             @Override
             public void merge(AuthenticationInfo info) {
@@ -93,27 +94,29 @@ public class FirstSuccessfulStrategyTest {
         assertNull(info);
     }
 
-    @Test 
-    public void testBeforeAttemptNull() {
+    @Test
+    void testBeforeAttemptNull() {
         assertNull(strategy.beforeAttempt(null, null, null));
     }
 
     @Test
-    public void testBeforeAttemptEmptyPrincipal() {
+    void testBeforeAttemptEmptyPrincipal() {
         AuthenticationInfo aggregate = new SimpleAuthenticationInfo();
         assertEquals(strategy.beforeAttempt(null, null, aggregate), aggregate);
     }
 
     @Test
-    public void testBeforeAttemptEmptyList() {
+    void testBeforeAttemptEmptyList() {
         SimplePrincipalCollection principalCollection = new SimplePrincipalCollection();
         AuthenticationInfo aggregate = new SimpleAuthenticationInfo(principalCollection, null);
         assertEquals(strategy.beforeAttempt(null, null, aggregate), aggregate);
     }
 
-    @Test (expected=ShortCircuitIterationException.class)
-    public void testBeforeAttemptStopAfterFirstSuccess() {
-        AuthenticationInfo aggregate = new SimpleAuthenticationInfo("principal", null, "a-realm-name");
-        strategy.beforeAttempt(null, null, aggregate);
+    @Test
+    void testBeforeAttemptStopAfterFirstSuccess() {
+        assertThrows(ShortCircuitIterationException.class, () -> {
+            AuthenticationInfo aggregate = new SimpleAuthenticationInfo("principal", null, "a-realm-name");
+            strategy.beforeAttempt(null, null, aggregate);
+        });
     }
 }

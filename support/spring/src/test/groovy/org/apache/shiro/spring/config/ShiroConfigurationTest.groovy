@@ -24,24 +24,25 @@ import org.apache.shiro.event.EventBus
 import org.apache.shiro.mgt.DefaultSecurityManager
 import org.apache.shiro.mgt.SecurityManager
 import org.apache.shiro.realm.text.TextConfigurationRealm
-import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor
 import org.apache.shiro.spring.testconfig.RealmTestConfiguration
 import org.apache.shiro.subject.Subject
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
-import static org.junit.Assert.*
+import static org.junit.jupiter.api.Assertions.*
 
 /**
  * @since 1.4.0
  */
 @ContextConfiguration(classes = [RealmTestConfiguration, ShiroConfiguration])
-public class ShiroConfigurationTest extends AbstractJUnit4SpringContextTests {
+@ExtendWith(SpringExtension.class)
+class ShiroConfigurationTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
     private SecurityManager securityManager
@@ -50,7 +51,7 @@ public class ShiroConfigurationTest extends AbstractJUnit4SpringContextTests {
     private EventBus eventBus;
 
     @Test
-    public void testMinimalConfiguration() {
+    void testMinimalConfiguration() {
 
         // first do a quick check of the injected objects
         assertNotNull securityManager
