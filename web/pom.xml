@@ -30,6 +30,9 @@
     <artifactId>shiro-web</artifactId>
     <name>Apache Shiro :: Web</name>
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>web</module.name>
+    </properties>
 
     <dependencies>
         <dependency>

@@ -29,6 +29,9 @@
     <artifactId>shiro-core</artifactId>
     <name>Apache Shiro :: Core</name>
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>core</module.name>
+    </properties>
 
     <build>
         <plugins>

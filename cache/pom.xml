@@ -29,6 +29,9 @@
     <artifactId>shiro-cache</artifactId>
     <name>Apache Shiro :: Cache</name>
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>cache</module.name>
+    </properties>
 
     <build>
         <plugins>

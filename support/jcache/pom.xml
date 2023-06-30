@@ -32,7 +32,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-
+        <module.name>jcache</module.name>
     </properties>
 
     <dependencies>

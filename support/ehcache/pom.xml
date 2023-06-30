@@ -29,6 +29,9 @@
     <artifactId>shiro-ehcache</artifactId>
     <name>Apache Shiro :: Support :: EHCache</name>
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>ehcache</module.name>
+    </properties>
 
     <dependencies>
         <dependency>

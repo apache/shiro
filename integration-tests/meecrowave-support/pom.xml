@@ -33,6 +33,7 @@
     <name>Apache Shiro :: ITs :: Meecrowave-Support</name>
 
     <properties>
+        <module.name>its.meecrowave.support</module.name>
     </properties>
 
     <dependencies>

@@ -34,6 +34,9 @@
         other modules.  It exists to augment what we would have liked to see in the JDK but does not exist.
     </description>
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>lang</module.name>
+    </properties>
 
     <dependencies>
 

@@ -33,6 +33,7 @@
     <name>Apache Shiro :: ITs :: JAX-RS :: OpenLiberty</name>
 
     <properties>
+        <module.name>its.jaxrs.openliberty</module.name>
         <liberty.var.default.http.port>9080</liberty.var.default.http.port>
         <liberty.var.default.https.port>9443</liberty.var.default.https.port>
         <liberty.var.app.filename>shiro-its-jaxrs-app-${project.version}</liberty.var.app.filename>

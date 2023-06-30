@@ -29,6 +29,9 @@
     <artifactId>shiro-crypto-core</artifactId>
     <name>Apache Shiro :: Cryptography :: Core</name>
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>crypto.core</module.name>
+    </properties>
 
     <build>
         <plugins>

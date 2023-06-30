@@ -29,6 +29,9 @@
     <artifactId>shiro-event</artifactId>
     <name>Apache Shiro :: Event</name>
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>event</module.name>
+    </properties>
 
     <build>
         <plugins>

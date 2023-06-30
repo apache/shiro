@@ -31,6 +31,9 @@
     <description>Support for Shiro's Object Graph Definition Language (mostly used in Ini configuration) where
         declared name/value pairs are interpreted to create an object graph</description>
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>config.ogdl</module.name>
+    </properties>
 
     <build>
         <plugins>

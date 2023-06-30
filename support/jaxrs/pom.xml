@@ -29,7 +29,9 @@
     <artifactId>shiro-jaxrs</artifactId>
     <name>Apache Shiro :: Support :: JAX-RS</name>
     <packaging>bundle</packaging>
-
+    <properties>
+        <module.name>jaxrs</module.name>
+    </properties>
 
     <dependencies>
 

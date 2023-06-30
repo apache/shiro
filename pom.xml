@@ -715,6 +715,9 @@
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Automatic-Module-Name>org.apache.shiro.${module.name}</Automatic-Module-Name>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
@@ -1659,8 +1662,9 @@
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-javadoc-plugin</artifactId>
                             <configuration>
+                                <sourcepath>${project.build.sourceDirectory}</sourcepath>
+                                <doclint>none</doclint>
                                 <additionalJOptions>
-                                    <additionalJOption>-Xdoclint:none</additionalJOption>
                                     <additionalJOption>--allow-script-in-comments</additionalJOption>
                                 </additionalJOptions>
                             </configuration>

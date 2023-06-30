@@ -28,6 +28,9 @@
 
 	<artifactId>shiro-its-support</artifactId>
 	<name>Apache Shiro :: ITs :: Support</name>
+    <properties>
+        <module.name>its.support</module.name>
+    </properties>
 
 	<dependencies>
 	    <dependency>
