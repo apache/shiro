@@ -33,6 +33,7 @@
     <name>Apache Shiro :: ITs :: JAX-RS :: Tests</name>
 
     <properties>
+        <module.name>its.jaxrs.tests</module.name>
         <jaxrs.api.version>2.1.1</jaxrs.api.version>
         <johnzon.version>1.2.20</johnzon.version>
     </properties>

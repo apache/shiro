@@ -30,6 +30,9 @@
 
     <artifactId>shiro-spring-boot-web-starter</artifactId>
     <name>Apache Shiro :: Support :: Spring Boot Web</name>
+    <properties>
+        <module.name>spring.boot.web.starter</module.name>
+    </properties>
 
     <dependencies>
 

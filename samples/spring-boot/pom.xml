@@ -30,6 +30,9 @@
 
     <artifactId>samples-spring-boot</artifactId>
     <name>Apache Shiro :: Samples :: Spring Boot</name>
+    <properties>
+        <module.name>samples.spring.boot</module.name>
+    </properties>
 
     <dependencies>
 

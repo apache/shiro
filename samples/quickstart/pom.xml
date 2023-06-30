@@ -30,6 +30,9 @@
     <artifactId>samples-quickstart</artifactId>
     <name>Apache Shiro :: Samples :: Quick Start</name>
     <packaging>jar</packaging>
+    <properties>
+        <module.name>samples.quickstart</module.name>
+    </properties>
 
     <build>
         <plugins>

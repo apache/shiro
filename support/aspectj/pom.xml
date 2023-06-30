@@ -29,6 +29,9 @@
     <artifactId>shiro-aspectj</artifactId>
     <name>Apache Shiro :: Support :: AspectJ</name>
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>aspectj</module.name>
+    </properties>
 
     <dependencies>
         <dependency>

@@ -33,6 +33,9 @@
     <description>
         Automatically deploys Shiro in a servlet container-based web application.
     </description>
+    <properties>
+        <module.name>servlet.plugin</module.name>
+    </properties>
 
     <dependencies>
         <dependency>

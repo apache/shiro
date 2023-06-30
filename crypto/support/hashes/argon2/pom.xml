@@ -34,6 +34,9 @@
     <name>Apache Shiro :: Cryptography :: Support :: Argon2</name>
 
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>hashes.argon2</module.name>
+    </properties>
 
     <dependencies>
         <dependency>

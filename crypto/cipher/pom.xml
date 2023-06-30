@@ -29,6 +29,9 @@
     <artifactId>shiro-crypto-cipher</artifactId>
     <name>Apache Shiro :: Cryptography :: Ciphers</name>
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>crypto.cipher</module.name>
+    </properties>
 
     <build>
         <plugins>

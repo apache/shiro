@@ -28,6 +28,9 @@
     <artifactId>samples-quickstart-guice</artifactId>
     <name>Apache Shiro :: Samples :: Quick Start Guice</name>
     <packaging>jar</packaging>
+    <properties>
+        <module.name>samples.quickstart.guice</module.name>
+    </properties>
 
     <build>
         <plugins>

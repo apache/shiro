@@ -29,6 +29,9 @@
     <artifactId>shiro-spring</artifactId>
     <name>Apache Shiro :: Support :: Spring</name>
     <packaging>bundle</packaging>
+    <properties>
+        <module.name>spring</module.name>
+    </properties>
 
     <dependencies>
         <dependency>

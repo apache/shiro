@@ -32,7 +32,9 @@
     <description>
     	Spring-based application sample demonstrating Shiro's capabilities.
     </description>
-
+    <properties>
+        <module.name>samples.spring</module.name>
+    </properties>
 
     <dependencies>
         <dependency>

@@ -29,6 +29,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>samples-aspectj</artifactId>
 	<name>Apache Shiro :: Samples :: AspectJ</name>
+	<properties>
+		<module.name>samples.aspectj</module.name>
+	</properties>
 
 	<build>
 		<plugins>
