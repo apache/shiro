@@ -23,6 +23,25 @@ updates:
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 50
+    ignore:
+      - dependency-name: "org.omnifaces:omnifaces"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jakarta.platform:*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jakarta.activation:jakarta.activation-api"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jakarta.annotation:jakarta.annotation-api"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jakarta.enterprise:*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jakarta.xml.bind:jakarta.xml.bind-api"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "org.aspectj:*"
+        update-types: ["version-update:semver-patch"]
+      - dependency-name: "org.springframework.*:*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "org.eclipse.jetty:*"
+        update-types: ["version-update:semver-major"]
 
   # Dependencies for Maven - on 1.12.x
   - package-ecosystem: 'maven'
@@ -31,6 +50,19 @@ updates:
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 50
+    ignore:
+      - dependency-name: "org.glassfish.jersey.*:*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "org.apereo.cas.client:*"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "org.slf4j:*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "org.codehaus.groovy:*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jakarta.servlet.*:*"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "ch.qos.logback:logback-classic"
+        update-types: ["version-update:semver-minor"]
 
   # Dependencies for GitHub Actions
   - package-ecosystem: 'github-actions'
