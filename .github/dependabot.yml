@@ -24,8 +24,6 @@ updates:
       interval: 'daily'
     open-pull-requests-limit: 50
     ignore:
-      - dependency-name: "org.omnifaces:omnifaces"
-        update-types: ["version-update:semver-major"]
       - dependency-name: "jakarta.platform:*"
         update-types: ["version-update:semver-major"]
       - dependency-name: "jakarta.activation:jakarta.activation-api"
@@ -48,13 +46,18 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "org.glassfish.jaxb:jaxb-runtime"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "org.omnifaces:omnifaces"
+        update-types: ["version-update:semver-major"]
+
       - dependency-name: "org.aspectj:*"
         update-types: ["version-update:semver-patch"]
+
       - dependency-name: "org.springframework*:*"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "org.eclipse.jetty:*"
-        update-types: ["version-update:semver-major"]
       - dependency-name: "com.flowlogix:flowlogix-jee"
+        update-types: ["version-update:semver-major"]
+
+      - dependency-name: "org.eclipse.jetty:*"
         update-types: ["version-update:semver-major"]
       - dependency-name: "com.github.mjeanroy:junit-servers-jetty"
         update-types: ["version-update:semver-major"]
@@ -67,33 +70,35 @@ updates:
       interval: 'daily'
     open-pull-requests-limit: 50
     ignore:
-      - dependency-name: "org.glassfish.jersey.*:*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "org.jasig.cas.client:*"
-        update-types: ["version-update:semver-minor"]
-      - dependency-name: "org.slf4j:*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "org.codehaus.groovy:*"
-        update-types: ["version-update:semver-major"]
       - dependency-name: "jakarta.servlet.*:*"
         update-types: ["version-update:semver-major"]
       - dependency-name: "javax.servlet:javax.servlet-api"
         update-types: ["version-update:semver-major"]
       - dependency-name: "org.glassfish.web:jakarta.servlet.jsp.jstl"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "org.glassfish.jersey.*:*"
+        update-types: ["version-update:semver-major"]
+
+      - dependency-name: "org.jasig.cas.client:*"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "org.slf4j:*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "org.codehaus.groovy:*"
+        update-types: ["version-update:semver-major"]
       - dependency-name: "ch.qos.logback:logback-classic"
         update-types: ["version-update:semver-minor"]
+      - dependency-name: "com.hazelcast:hazelcast"
+        update-types: ["version-update:semver-major"]
       - dependency-name: "org.aspectj:*"
         update-types: ["version-update:semver-patch"]
+
       - dependency-name: "org.springframework*:*"
         update-types: ["version-update:semver-major"]
+
       - dependency-name: "org.eclipse.jetty:*"
         update-types: ["version-update:semver-major"]
       - dependency-name: "com.github.mjeanroy:junit-servers-jetty"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "com.hazelcast:hazelcast"
-        update-types: ["version-update:semver-major"]
-
+        update-types: ["version-update:semver-minor"]
 
   # Dependencies for GitHub Actions
   - package-ecosystem: 'github-actions'
