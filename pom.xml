@@ -334,7 +334,7 @@
                             <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                             <exclude>velocity.log</exclude>
                             <exclude>CONTRIBUTING.md</exclude>
-                            <exclude>README.md</exclude>
+                            <exclude>**/README.md</exclude>
                             <exclude>**/*.json</exclude>
                             <exclude>**/spring.factories</exclude>
                             <exclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</exclude>
@@ -1547,7 +1547,7 @@
                         <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                         <exclude>velocity.log</exclude>
                         <exclude>CONTRIBUTING.md</exclude>
-                        <exclude>README.md</exclude>
+                        <exclude>**/README.md</exclude>
                         <exclude>**/*.json</exclude>
                         <exclude>**/spring.factories</exclude>
                         <exclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</exclude>
