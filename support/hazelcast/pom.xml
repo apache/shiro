@@ -31,7 +31,7 @@
     <packaging>bundle</packaging>
 
     <properties>
-        <hazelcast.osgi.importRange>[3, 4)</hazelcast.osgi.importRange>
+        <hazelcast.osgi.importRange>[4,)</hazelcast.osgi.importRange>
         <module.name>hazelcast</module.name>
     </properties>
 
