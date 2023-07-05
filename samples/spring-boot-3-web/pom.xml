@@ -37,7 +37,6 @@
         <spring-boot.version>3.1.1</spring-boot.version>
 <!--    below versions are not necessary in "real" applications -->
         <spring.version>6.0.10</spring.version>
-        <slf4j.version>2.0.7</slf4j.version>
     </properties>
 
     <dependencies>
@@ -79,7 +78,7 @@
             <optional>true</optional>
         </dependency>
 
-<!--    below dependencies are not necessary in "real" applications -->
+<!--    below dependencies may not be necessary in "real" applications -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
