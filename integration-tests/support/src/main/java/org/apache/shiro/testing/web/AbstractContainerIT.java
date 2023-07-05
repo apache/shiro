@@ -21,7 +21,7 @@ package org.apache.shiro.testing.web;
 import org.apache.shiro.lang.codec.Base64;
 
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.github.mjeanroy.junit.servers.jetty.EmbeddedJetty;
+import com.github.mjeanroy.junit.servers.jetty9.EmbeddedJetty;
 import com.github.mjeanroy.junit.servers.jetty.EmbeddedJettyConfiguration;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.http.HttpVersion;
@@ -54,7 +54,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-import static com.github.mjeanroy.junit.servers.commons.Strings.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.eclipse.jetty.util.resource.Resource.newResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

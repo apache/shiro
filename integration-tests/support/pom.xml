@@ -92,7 +92,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.mjeanroy</groupId>
-            <artifactId>junit-servers-jetty</artifactId>
+            <artifactId>junit-servers-jetty-9</artifactId>
             <!-- Exclude Jetty 9.2 artifacts -->
             <exclusions>
                 <exclusion>
