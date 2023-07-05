@@ -56,8 +56,6 @@ updates:
 
       - dependency-name: "org.eclipse.jetty:*"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "com.github.mjeanroy:junit-servers-jetty"
-        update-types: ["version-update:semver-major"]
 
   # Dependencies for Maven - on 1.12.x
   - package-ecosystem: 'maven'
