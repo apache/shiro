@@ -49,17 +49,12 @@ body:
     validations:
       required: true
 
-  - type: dropdown
+  - type: textarea
     attributes:
       label: Shiro version
       description: Describe the Shiro version.
-      options:
-        - master
-        - 1.5.0
-        - 1.4.0
-        - 1.3.0
-        - 1.2.0
-        - Other
+      placeholder: >
+        Describe the Shiro version here.
     validations:
       required: true
 
