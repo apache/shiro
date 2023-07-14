@@ -578,7 +578,7 @@
                 <artifactId>apache-rat-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>rat-chec</id>
+                        <id>rat-check</id>
                         <goals>
                             <goal>check</goal>
                         </goals>

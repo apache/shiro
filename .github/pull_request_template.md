@@ -14,8 +14,9 @@ Following this checklist to help us incorporate your contribution quickly and ea
        is to use the GitHub issue title in the pull request title and in the first line of the commit message.
  - [ ] Write a pull request description that is detailed enough to understand what the pull request does, how, and why.
  - [ ] add `fixes #XXX` if merging the PR should close a related issue.
- - [ ] Run `mvn clean install apache-rat:check` to make sure basic checks pass. A more thorough check will be performed on your pull request automatically.
+ - [ ] Run `mvn verify` to make sure basic checks pass. A more thorough check will be performed on your pull request automatically.
  - [ ] If you have a group of commits related to the same change, please squash your commits into one and force push your branch using `git rebase -i`. 
+ - [ ] Committers: Make sure a milestone is set on the PR
  
 Trivial changes like typos do not require a GitHub issue (javadoc, comments...). 
 In this case, just format the pull request title like `[DOC] - Add javadoc in SessionManager`.
