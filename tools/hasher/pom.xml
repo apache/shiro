@@ -87,7 +87,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.7.13</version>
+                <version>2.7.14</version>
                 <executions>
                     <execution>
                         <goals>
