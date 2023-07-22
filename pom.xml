@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>29</version>
+        <version>30</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -71,7 +71,6 @@
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2022-03-22T23:08:15Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
-        <surefire.version>3.0.0</surefire.version>
         <!--suppress CheckTagEmptyBody -->
         <surefire.argLine></surefire.argLine>
         <!--suppress CheckTagEmptyBody -->
@@ -119,9 +118,10 @@
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.1.0</easymock.version>
-        <mockito.version>5.2.0</mockito.version>
+        <mockito.version>5.4.0</mockito.version>
+        <mockito-inline.version>5.2.0</mockito-inline.version>
         <gmaven.version>3.0.0</gmaven.version>
-        <groovy.version>4.0.12</groovy.version>
+        <groovy.version>4.0.13</groovy.version>
         <junit.version>5.9.3</junit.version>
         <junit.server.jetty.version>3.0.0</junit.server.jetty.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
@@ -372,11 +372,6 @@
                     <version>3.4.0</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.5.0</version>
-                </plugin>
-                <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.8.10</version>
@@ -440,10 +435,6 @@
                             <postAnalysisScript>${root.dir}/src/japicmp/postAnalysisScript.groovy</postAnalysisScript>
                         </parameter>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -542,7 +533,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.3.0</version>
                     <configuration>
                         <configLocation>${checkstyle.configLocation}</configLocation>
                         <suppressionsLocation>${checkstyle.supressionsLocation}</suppressionsLocation>
@@ -1524,7 +1515,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.20.0</version>
+                <version>3.21.0</version>
             </plugin>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
