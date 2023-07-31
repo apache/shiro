@@ -40,7 +40,7 @@ public class IniEnvironment extends IniWebEnvironment {
     private String otherConfigLocation;
 
     @SuppressWarnings("deprecation")
-    private static class SecurityManagerFactory extends WebIniSecurityManagerFactory {
+    private static final class SecurityManagerFactory extends WebIniSecurityManagerFactory {
         private final Lazy<AesCipherService> cipherService = new Lazy<>(AesCipherService::new);
 
         @Override

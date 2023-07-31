@@ -38,7 +38,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(ArquillianExtension.class)
 public class NoIniJaxRsIT {
     @Builder
-    private static class Credentials {
+    private static final class Credentials {
         final boolean send;
         final String username;
         final String password;

@@ -38,7 +38,7 @@ public class FormAuthenticationFilter extends org.apache.shiro.web.filter.authc.
     static final FallbackPredicate NO_PREDICATE = (path, request) -> false;
     private final @Delegate AuthenticationFilterDelegate delegate;
 
-    private class Methods implements MethodsFromFilter {
+    private final class Methods implements MethodsFromFilter {
         @Override
         public Subject getSubject(ServletRequest request, ServletResponse response) {
             return FormAuthenticationFilter.super.getSubject(request, response);
