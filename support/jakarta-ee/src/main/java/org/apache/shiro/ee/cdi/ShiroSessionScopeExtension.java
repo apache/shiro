@@ -46,23 +46,23 @@ public class ShiroSessionScopeExtension implements Extension, Serializable {
 
     @SessionScoped
     @SuppressWarnings("serial")
-    private static class SessionScopedAnnotated implements Serializable { }
+    private static final class SessionScopedAnnotated implements Serializable { }
     @javax.faces.view.ViewScoped
     @SuppressWarnings("serial")
-    private static class FacesViewScopedAnnotated implements Serializable { }
+    private static final class FacesViewScopedAnnotated implements Serializable { }
     @org.omnifaces.cdi.ViewScoped
     @SuppressWarnings("serial")
-    private static class OmniViewScopedAnnotated implements Serializable { }
+    private static final class OmniViewScopedAnnotated implements Serializable { }
 
     @ShiroSessionScoped
     @SuppressWarnings("serial")
-    private static class ShiroSessionScopedAnnotated implements Serializable { }
+    private static final class ShiroSessionScopedAnnotated implements Serializable { }
     @ShiroFacesViewScoped
     @SuppressWarnings("serial")
-    private static class ShiroFacesViewScopedAnnotated implements Serializable { }
+    private static final class ShiroFacesViewScopedAnnotated implements Serializable { }
     @ShiroOmniViewScoped
     @SuppressWarnings("serial")
-    private static class ShiroOmniViewScopedAnnotated implements Serializable { }
+    private static final class ShiroOmniViewScopedAnnotated implements Serializable { }
 
 
     /**

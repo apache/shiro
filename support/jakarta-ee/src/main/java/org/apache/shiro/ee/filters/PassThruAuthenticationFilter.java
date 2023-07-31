@@ -30,7 +30,7 @@ import org.apache.shiro.subject.Subject;
 public class PassThruAuthenticationFilter extends org.apache.shiro.web.filter.authc.PassThruAuthenticationFilter {
     private final @Delegate AuthenticationFilterDelegate delegate;
 
-    private class Methods implements MethodsFromFilter {
+    private final class Methods implements MethodsFromFilter {
         @Override
         public Subject getSubject(ServletRequest request, ServletResponse response) {
             return PassThruAuthenticationFilter.super.getSubject(request, response);
