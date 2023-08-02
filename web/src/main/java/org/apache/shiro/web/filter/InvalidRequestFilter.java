@@ -45,6 +45,12 @@ import java.util.List;
  */
 public class InvalidRequestFilter extends AccessControlFilter {
 
+	static enum PathTraversalBlockMode {
+		STRICT,
+		NORMAL,
+		NO_BLOCK;
+	}
+	
     private static final List<String> SEMICOLON = Collections.unmodifiableList(Arrays.asList(";", "%3b", "%3B"));
 
     private static final List<String> BACKSLASH = Collections.unmodifiableList(Arrays.asList("\\", "%5c", "%5C"));
@@ -59,7 +65,7 @@ public class InvalidRequestFilter extends AccessControlFilter {
 
     private boolean blockNonAscii = true;
 
-    private boolean blockTraversal = true;
+    private PathTraversalBlockMode pathTraversalBlockMode = PathTraversalBlockMode.NORMAL;
 
     @Override
     protected boolean isAccessAllowed(ServletRequest req, ServletResponse response, Object mappedValue) throws Exception {
@@ -117,7 +123,10 @@ public class InvalidRequestFilter extends AccessControlFilter {
     }
 
     private boolean containsTraversal(String uri) {
-        if (isBlockTraversal()) {
+        if (isBlockTraversalNormal()) {
+            return !(isNormalized(uri));
+        }
+        if (isBlockTraversalStrict()) {
             return !(isNormalized(uri)
                     && PERIOD.stream().noneMatch(uri::contains)
                     && FORWARDSLASH.stream().noneMatch(uri::contains));
@@ -173,11 +182,24 @@ public class InvalidRequestFilter extends AccessControlFilter {
         this.blockNonAscii = blockNonAscii;
     }
 
-    public boolean isBlockTraversal() {
-        return blockTraversal;
+    public boolean isBlockTraversalNormal() {
+        return pathTraversalBlockMode == PathTraversalBlockMode.NORMAL;
     }
 
+    public boolean isBlockTraversalStrict() {
+        return pathTraversalBlockMode == PathTraversalBlockMode.STRICT;
+    }
+
+    public void setPathTraversalBlockMode(PathTraversalBlockMode mode) {
+        this.pathTraversalBlockMode = mode;
+    }
+
+    /**
+     * 
+     * @deprecated Use {@link #setPathTraversalBlockMode(PathTraversalBlockMode)}
+     */
+    @Deprecated
     public void setBlockTraversal(boolean blockTraversal) {
-        this.blockTraversal = blockTraversal;
+        this.pathTraversalBlockMode = blockTraversal ? PathTraversalBlockMode.NORMAL : PathTraversalBlockMode.NO_BLOCK;
     }
 }

@@ -37,7 +37,7 @@ class InvalidRequestFilterTest {
         assertThat "filter.blockBackslash expected to be true", filter.isBlockBackslash()
         assertThat "filter.blockNonAscii expected to be true", filter.isBlockNonAscii()
         assertThat "filter.blockSemicolon expected to be true", filter.isBlockSemicolon()
-        assertThat "filter.blockTraversal expected to be true", filter.isBlockTraversal()
+        assertThat "filter.blockTraversal expected to be NORMAL", filter.isBlockTraversalNormal()
     }
 
     @Test
@@ -75,29 +75,63 @@ class InvalidRequestFilterTest {
     }
 
     @Test
-    void testBlocksTraversal() {
+    void testBlocksTraversalNormal() {
         InvalidRequestFilter filter = new InvalidRequestFilter()
         assertPathBlocked(filter, "/something/../")
         assertPathBlocked(filter, "/something/../bar")
         assertPathBlocked(filter, "/something/../bar/")
-        assertPathBlocked(filter, "/something/%2e%2E/bar/")
         assertPathBlocked(filter, "/something/..")
         assertPathBlocked(filter, "/..")
         assertPathBlocked(filter, "..")
         assertPathBlocked(filter, "../")
-        assertPathBlocked(filter, "%2E./")
-        assertPathBlocked(filter, "%2F./")
         assertPathBlocked(filter, "/something/./")
         assertPathBlocked(filter, "/something/./bar")
         assertPathBlocked(filter, "/something/\u002e/bar")
         assertPathBlocked(filter, "/something/./bar/")
-        assertPathBlocked(filter, "/something/%2e/bar/")
-        assertPathBlocked(filter, "/something/%2f/bar/")
         assertPathBlocked(filter, "/something/.")
         assertPathBlocked(filter, "/.")
         assertPathBlocked(filter, "/something/../something/.")
         assertPathBlocked(filter, "/something/../something/.")
+		
+        assertPathAllowed(filter, "%2E./")
+        assertPathAllowed(filter, "%2F./")
+        assertPathAllowed(filter, "/something/%2e/bar/")
+        assertPathAllowed(filter, "/something/%2f/bar/")
+        assertPathAllowed(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
+        assertPathAllowed(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
+        assertPathAllowed(filter, "/something/%2e%2E/bar/")
+        assertPathAllowed(filter, "/something/http:%2f%2fmydomain%2eexample%2ecom%2foidc/bar/")
     }
+	
+	@Test
+	void testBlocksTraversalStrict() {
+        InvalidRequestFilter filter = new InvalidRequestFilter()
+        filter.setPathTraversalBlockMode(InvalidRequestFilter.PathTraversalBlockMode.STRICT)
+        assertPathBlocked(filter, "/something/../")
+        assertPathBlocked(filter, "/something/../bar")
+        assertPathBlocked(filter, "/something/../bar/")
+        assertPathBlocked(filter, "/something/..")
+        assertPathBlocked(filter, "/..")
+        assertPathBlocked(filter, "..")
+        assertPathBlocked(filter, "../")
+        assertPathBlocked(filter, "/something/./")
+        assertPathBlocked(filter, "/something/./bar")
+        assertPathBlocked(filter, "/something/\u002e/bar")
+        assertPathBlocked(filter, "/something/./bar/")
+        assertPathBlocked(filter, "/something/.")
+        assertPathBlocked(filter, "/.")
+        assertPathBlocked(filter, "/something/../something/.")
+        assertPathBlocked(filter, "/something/../something/.")
+
+        assertPathBlocked(filter, "%2E./")
+        assertPathBlocked(filter, "%2F./")
+        assertPathBlocked(filter, "/something/%2e/bar/")
+        assertPathBlocked(filter, "/something/%2f/bar/")
+        assertPathBlocked(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
+        assertPathBlocked(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
+        assertPathBlocked(filter, "/something/%2e%2E/bar/")
+        assertPathBlocked(filter, "/something/http:%2f%2fmydomain%2eexample%2ecom%2foidc/bar/")
+	}
 
     @Test
     void testFilterAllowsBackslash() {
@@ -149,7 +183,7 @@ class InvalidRequestFilterTest {
     @Test
     void testAllowTraversal() {
         InvalidRequestFilter filter = new InvalidRequestFilter()
-        filter.setBlockTraversal(false)
+        filter.setPathTraversalBlockMode(InvalidRequestFilter.PathTraversalBlockMode.NO_BLOCK);
 
         assertPathAllowed(filter, "/something/../")
         assertPathAllowed(filter, "/something/../bar")
@@ -158,18 +192,23 @@ class InvalidRequestFilterTest {
         assertPathAllowed(filter, "/..")
         assertPathAllowed(filter, "..")
         assertPathAllowed(filter, "../")
-        assertPathAllowed(filter, "%2E./")
-        assertPathAllowed(filter, "%2F./")
         assertPathAllowed(filter, "/something/./")
         assertPathAllowed(filter, "/something/./bar")
         assertPathAllowed(filter, "/something/\u002e/bar")
         assertPathAllowed(filter, "/something\u002fbar")
         assertPathAllowed(filter, "/something/./bar/")
-        assertPathAllowed(filter, "/something/%2e/bar/")
-        assertPathAllowed(filter, "/something/%2f/bar/")
         assertPathAllowed(filter, "/something/.")
         assertPathAllowed(filter, "/.")
         assertPathAllowed(filter, "/something/../something/.")
+        
+        assertPathAllowed(filter, "%2E./")
+        assertPathAllowed(filter, "%2F./")
+        assertPathAllowed(filter, "/something/%2e/bar/")
+        assertPathAllowed(filter, "/something/%2f/bar/")
+        assertPathAllowed(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
+        assertPathAllowed(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
+        assertPathAllowed(filter, "/something/%2e%2E/bar/")
+        assertPathAllowed(filter, "/something/http:%2f%2fmydomain%2eexample%2ecom%2foidc/bar/")
     }
 
     static void assertPathBlocked(InvalidRequestFilter filter, String requestUri, String servletPath = requestUri, String pathInfo = null) {
