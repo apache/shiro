@@ -356,7 +356,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
                 storedBytes = Base64.decode(storedBytes);
             }
         }
-        AbstractHash hash = newHashInstance();
+        SimpleHash hash = newHashInstance();
         hash.setBytes(storedBytes);
         return hash;
     }
@@ -453,7 +453,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      *
      * @return a new, <em>uninitialized</em> instance, without its byte array set.
      */
-    protected AbstractHash newHashInstance() {
+    protected SimpleHash newHashInstance() {
         String hashAlgorithmName = assertHashAlgorithmName();
         return new SimpleHash(hashAlgorithmName);
     }

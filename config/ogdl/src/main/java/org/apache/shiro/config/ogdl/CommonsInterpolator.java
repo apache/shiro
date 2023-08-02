@@ -18,10 +18,7 @@
  */
 package org.apache.shiro.config.ogdl;
 
-import org.apache.commons.configuration2.interpol.ConfigurationInterpolator;
-import org.apache.commons.configuration2.interpol.ConstantLookup;
-import org.apache.commons.configuration2.interpol.EnvironmentLookup;
-import org.apache.commons.configuration2.interpol.SystemPropertiesLookup;
+import org.apache.commons.configuration2.interpol.*;
 
 /**
  * Commons-Config interpolation wrapper. This implementation uses a {@link ConfigurationInterpolator} with the default
@@ -61,8 +58,8 @@ public class CommonsInterpolator implements Interpolator {
         this.interpolator = new ConfigurationInterpolator();
 
         interpolator.registerLookup("const", new ConstantLookup());
-        interpolator.addDefaultLookup(new SystemPropertiesLookup());
-        interpolator.addDefaultLookup(new EnvironmentLookup());
+        interpolator.addDefaultLookup(DefaultLookups.SYSTEM_PROPERTIES.getLookup());
+        interpolator.addDefaultLookup(DefaultLookups.ENVIRONMENT.getLookup());
     }
 
     @Override

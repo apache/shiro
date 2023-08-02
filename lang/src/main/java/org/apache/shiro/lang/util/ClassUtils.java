@@ -203,7 +203,7 @@ public class ClassUtils {
             throw new IllegalArgumentException(msg);
         }
         try {
-            return clazz.newInstance();
+            return clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new InstantiationException("Unable to instantiate class [" + clazz.getName() + "]", e);
         }
