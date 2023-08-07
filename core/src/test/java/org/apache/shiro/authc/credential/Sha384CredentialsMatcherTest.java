@@ -20,6 +20,7 @@ package org.apache.shiro.authc.credential;
 
 import org.apache.shiro.crypto.hash.AbstractHash;
 import org.apache.shiro.crypto.hash.Sha384Hash;
+import org.apache.shiro.crypto.hash.SimpleHash;
 
 
 /**
@@ -31,7 +32,7 @@ public class Sha384CredentialsMatcherTest extends AbstractHashedCredentialsMatch
         return Sha384CredentialsMatcher.class;
     }
 
-    public AbstractHash hash(Object credentials) {
+    public SimpleHash hash(Object credentials) {
         return new Sha384Hash(credentials);
     }
 }
