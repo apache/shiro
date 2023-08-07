@@ -18,7 +18,9 @@
  */
 package org.apache.shiro.config.ogdl;
 
-import org.apache.commons.configuration2.interpol.*;
+import org.apache.commons.configuration2.interpol.ConfigurationInterpolator;
+import org.apache.commons.configuration2.interpol.ConstantLookup;
+import org.apache.commons.configuration2.interpol.DefaultLookups;
 
 /**
  * Commons-Config interpolation wrapper. This implementation uses a {@link ConfigurationInterpolator} with the default
