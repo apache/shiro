@@ -26,6 +26,7 @@ import org.apache.shiro.crypto.hash.SimpleHash;
 /**
  * @since Jun 10, 2008 5:02:27 PM
  */
+@SuppressWarnings("deprecation")
 public class Sha384CredentialsMatcherTest extends AbstractHashedCredentialsMatcherTest {
 
     public Class<? extends HashedCredentialsMatcher> getMatcherClass() {
