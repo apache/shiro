@@ -20,7 +20,6 @@ package org.apache.shiro.testing.web;
 
 import org.apache.shiro.lang.codec.Base64;
 
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.github.mjeanroy.junit.servers.jetty9.EmbeddedJetty;
 import com.github.mjeanroy.junit.servers.jetty.EmbeddedJettyConfiguration;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
@@ -40,6 +39,7 @@ import org.eclipse.jetty.webapp.MetaInfConfiguration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.webapp.WebInfConfiguration;
 import org.eclipse.jetty.webapp.WebXmlConfiguration;
+import org.htmlunit.WebClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
