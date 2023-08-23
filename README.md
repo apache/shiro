@@ -1,6 +1,6 @@
 [<img src="http://shiro.apache.org/images/apache-shiro-logo.png" align="right" />](http://shiro.apache.org)
 
-[![Maven Central](https://img.shields.io/maven-central/v/org.apache.shiro/shiro-core.svg)]()
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.shiro/shiro-core)](https://search.maven.org/artifact/org.apache.shiro/shiro-core)
 [![Build Status](https://ci-builds.apache.org/buildStatus/icon?job=Shiro%2FShiro-all%2Fmain)](https://ci-builds.apache.org/job/Shiro/job/Shiro-all/job/main/)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/apache/shiro/badge)](https://api.securityscorecards.dev/projects/github.com/apache/shiro)
 
