@@ -113,7 +113,7 @@
         <htmlunit.version>2.70.0</htmlunit.version>
 
         <!-- Test 3rd-party dependencies: -->
-        <easymock.version>5.1.0</easymock.version>
+        <easymock.version>5.2.0</easymock.version>
         <gmaven.version>3.0.0</gmaven.version>
         <groovy.version>2.5.23</groovy.version>
         <junit.version>4.13.2</junit.version>
