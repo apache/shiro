@@ -244,11 +244,11 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      * @param base64 the base64 encoded String that may need to be padded
      * @return the base64 String padded if necessary.
      */
-    protected String ensurePadding(String base64) {
+    private String ensurePadding(String base64) {
         int length = base64.length();
         if (length % 4 != 0) {
             StringBuilder sb = new StringBuilder(base64);
-            while (sb.length() % 4 != 0) {
+            for (int i = 0; i < length % 4; ++i) {
                 sb.append('=');
             }
             base64 = sb.toString();
