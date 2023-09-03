@@ -81,7 +81,12 @@ public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
         if (Logical.OR.equals(rpAnnotation.logical())) {
             // Avoid processing exceptions unnecessarily - "delay" throwing the exception by calling hasRole first
             boolean hasAtLeastOnePermission = false;
-            for (String permission : perms) if (getSubject().isPermitted(permission)) hasAtLeastOnePermission = true;
+            for (String permission : perms) {
+                if (getSubject().isPermitted(permission)) {
+                    hasAtLeastOnePermission = true;
+                    break;
+                }
+            }
             // Cause the exception if none of the role match, note that the exception message will be a bit misleading
             if (!hasAtLeastOnePermission) getSubject().checkPermission(perms[0]);
             
