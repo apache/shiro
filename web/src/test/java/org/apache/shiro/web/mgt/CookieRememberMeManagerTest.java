@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since 1.0
  */
-public class CookieRememberMeManagerTest {
+class CookieRememberMeManagerTest {
 
     @Test
     void onSuccessfulLogin() {
@@ -142,7 +142,7 @@ public class CookieRememberMeManagerTest {
         replay(mockRequest);
 
         CookieRememberMeManager mgr = new CookieRememberMeManager();
-        mgr.setCipherKey( Base64.decode("kPH+bIxk5D2deZiIxcaaaA=="));
+        mgr.setCipherKey(Base64.decode("kPH+bIxk5D2deZiIxcaaaA=="));
         PrincipalCollection collection = mgr.getRememberedPrincipals(context);
 
         verify(mockRequest);
@@ -193,7 +193,7 @@ public class CookieRememberMeManagerTest {
     // SHIRO-69
 
     @Test
-    void getRememberedPrincipalsDecryptionError() {
+    void getRememberedPrincipalsDecryptionError_whenWrongCookieValue() {
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
 
@@ -203,8 +203,8 @@ public class CookieRememberMeManagerTest {
 
         expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
 
-        // Simulate a bad return value here (for example if this was encrypted with a different key
-        final String userPCAesBase64 = "garbage";
+        // Simulate a bad return value here (valid Base64 does not contain key)
+        String userPCAesBase64 = "garbage";
         Cookie[] cookies = new Cookie[]{
                 new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
         };
@@ -213,7 +213,31 @@ public class CookieRememberMeManagerTest {
         replay(mockRequest);
 
         CookieRememberMeManager mgr = new CookieRememberMeManager();
-        final PrincipalCollection rememberedPrincipals = mgr.getRememberedPrincipals(context);
+        assertThrows(CryptoException.class, () -> mgr.getRememberedPrincipals(context), "CryptoException should be thrown on invalid cookies");
+    }
+
+    @Test
+    void getRememberedPrincipalsDecryptionError_whenInvalidBase64() {
+        HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
+
+        WebSubjectContext context = new DefaultWebSubjectContext();
+        context.setServletRequest(mockRequest);
+        context.setServletResponse(mockResponse);
+
+        expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
+
+        // Simulate a bad return value here (not valid Base64)
+        String userPCAesBase64 = "InvalidBase64";
+        Cookie[] cookies = new Cookie[]{
+                new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
+        };
+
+        expect(mockRequest.getCookies()).andReturn(cookies).anyTimes();
+        replay(mockRequest);
+
+        CookieRememberMeManager mgr = new CookieRememberMeManager();
+        PrincipalCollection rememberedPrincipals = mgr.getRememberedPrincipals(context);
         assertNull(rememberedPrincipals, "rememberedPrincipals should be null on invalid cookies.");
     }
 
@@ -269,5 +293,20 @@ public class CookieRememberMeManagerTest {
 
         // then
         assertNull(rememberedSerializedIdentity, "should ignore invalid cookie values");
+    }
+
+    @Test
+    void ensurePaddingShouldAddEnoughEquals() {
+        CookieRememberMeManager mgr = new CookieRememberMeManager();
+        StringBuilder stringToTest = new StringBuilder("A string to test padding");
+        for (int i = 0; i < 10; i++) {
+            stringToTest.append("x");
+            String encoded = Base64.encodeToString(stringToTest.toString().getBytes());
+            while (encoded.endsWith("=")) {
+                encoded = encoded.substring(0, encoded.length() - 1);
+            }
+            String base64 = mgr.ensurePadding(encoded);
+            assertDoesNotThrow(() -> Base64.decode(base64), "Error decoding " + stringToTest);
+        }
     }
 }
