@@ -28,7 +28,7 @@ import org.aopalliance.intercept.MethodInvocation;
 class AopAllianceMethodInterceptorAdapter implements MethodInterceptor {
     org.apache.shiro.aop.MethodInterceptor shiroInterceptor;
 
-    public AopAllianceMethodInterceptorAdapter(org.apache.shiro.aop.MethodInterceptor shiroInterceptor) {
+    AopAllianceMethodInterceptorAdapter(org.apache.shiro.aop.MethodInterceptor shiroInterceptor) {
         this.shiroInterceptor = shiroInterceptor;
     }
 

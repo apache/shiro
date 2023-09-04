@@ -45,7 +45,7 @@ public class DefaultUserService implements UserService {
 
     public User getCurrentUser() {
         final Long currentUserId = (Long) SecurityUtils.getSubject().getPrincipal();
-        if( currentUserId != null ) {
+        if (currentUserId != null) {
             return getUser(currentUserId);
         } else {
             return null;
@@ -56,8 +56,8 @@ public class DefaultUserService implements UserService {
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
-        user.setPassword( new Sha256Hash(password).toHex() );
-        userDAO.createUser( user );
+        user.setPassword(new Sha256Hash(password).toHex());
+        userDAO.createUser(user);
     }
 
     public List<User> getAllUsers() {
@@ -69,11 +69,11 @@ public class DefaultUserService implements UserService {
     }
 
     public void deleteUser(Long userId) {
-        userDAO.deleteUser( userId );
+        userDAO.deleteUser(userId);
     }
 
     public void updateUser(User user) {
-        userDAO.updateUser( user );
+        userDAO.updateUser(user);
     }
 
 }

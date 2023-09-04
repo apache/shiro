@@ -165,7 +165,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      * use for salts.  Therefore it doesn't make sense to 'merge' salts in a multi-realm scenario.
      *
      * @return the salt used to hash the credentials, or {@code null} if no salt was used or credentials were not
-     *         hashed at all.
+     * hashed at all.
      * @since 1.1
      */
     @Override
@@ -254,7 +254,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      *
      * @param o the object to compare for equality.
      * @return <code>true</code> if the Object argument is an <code>instanceof SimpleAuthenticationInfo</code> and
-     *         its {@link #getPrincipals() principals} are equal to this instance's principals, <code>false</code> otherwise.
+     * its {@link #getPrincipals() principals} are equal to this instance's principals, <code>false</code> otherwise.
      */
     @Override
     public boolean equals(Object o) {

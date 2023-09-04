@@ -44,19 +44,40 @@ import java.util.Set;
  *
  * @since 1.0
  */
-public class Ini implements Map<String, Ini.Section> {
+public final class Ini implements Map<String, Ini.Section> {
 
-    private static transient final Logger log = LoggerFactory.getLogger(Ini.class);
+    /**
+     * empty string means the first unnamed section
+     */
+    public static final String DEFAULT_SECTION_NAME = "";
 
-    public static final String DEFAULT_SECTION_NAME = ""; //empty string means the first unnamed section
+    /**
+     * default charset name.
+     */
     public static final String DEFAULT_CHARSET_NAME = "UTF-8";
 
+    /**
+     * comment pound.
+     */
     public static final String COMMENT_POUND = "#";
+
+    /**
+     * comment semicolon.
+     */
     public static final String COMMENT_SEMICOLON = ";";
+
+    /**
+     * section prefix
+     */
     public static final String SECTION_PREFIX = "[";
+    /**
+     * section suffix
+     */
     public static final String SECTION_SUFFIX = "]";
 
-    protected static final char ESCAPE_TOKEN = '\\';
+    private static final char ESCAPE_TOKEN = '\\';
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Ini.class);
 
     private final Map<String, Section> sections;
 
@@ -165,7 +186,7 @@ public class Ini implements Map<String, Ini.Section> {
     private static String cleanName(String sectionName) {
         String name = StringUtils.clean(sectionName);
         if (name == null) {
-            log.trace("Specified name was null or empty.  Defaulting to the default section (name = \"\")");
+            LOGGER.trace("Specified name was null or empty.  Defaulting to the default section (name = \"\")");
             name = DEFAULT_SECTION_NAME;
         }
         return name;
@@ -297,7 +318,7 @@ public class Ini implements Map<String, Ini.Section> {
             try {
                 scanner.close();
             } catch (Exception e) {
-                log.debug("Unable to cleanly close the InputStream scanner.  Non-critical - ignoring.", e);
+                LOGGER.debug("Unable to cleanly close the InputStream scanner.  Non-critical - ignoring.", e);
             }
         }
     }
@@ -397,8 +418,8 @@ public class Ini implements Map<String, Ini.Section> {
 
                 sectionName = newSectionName;
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Parsing " + SECTION_PREFIX + sectionName + SECTION_SUFFIX);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Parsing " + SECTION_PREFIX + sectionName + SECTION_SUFFIX);
                 }
             } else {
                 //normal line - add it to the existing content buffer:
@@ -501,7 +522,7 @@ public class Ini implements Map<String, Ini.Section> {
      * An {@code Ini.Section} is String-key-to-String-value Map, identifiable by a
      * {@link #getName() name} unique within an {@link Ini} instance.
      */
-    public static class Section implements Map<String, String> {
+    public static final class Section implements Map<String, String> {
         private final String name;
         private final Map<String, String> props;
 
@@ -518,17 +539,13 @@ public class Ini implements Map<String, Ini.Section> {
                 throw new NullPointerException("name");
             }
             this.name = name;
-            Map<String,String> props;
-            if (StringUtils.hasText(sectionContent) ) {
+            Map<String, String> props;
+            if (StringUtils.hasText(sectionContent)) {
                 props = toMapProps(sectionContent);
             } else {
-                props = new LinkedHashMap<String,String>();
+                props = new LinkedHashMap<String, String>();
             }
-            if ( props != null ) {
-                this.props = props;
-            } else {
-                this.props = new LinkedHashMap<String,String>();
-            }
+            this.props = props;
         }
 
         private Section(Section defaults) {
@@ -573,21 +590,21 @@ public class Ini implements Map<String, Ini.Section> {
             StringBuilder keyBuffer = new StringBuilder();
             StringBuilder valueBuffer = new StringBuilder();
 
-            boolean buildingKey = true; //we'll build the value next:
+            //we'll build the value next:
+            boolean buildingKey = true;
 
             for (int i = 0; i < line.length(); i++) {
                 char c = line.charAt(i);
 
                 if (buildingKey) {
-                    if (isKeyValueSeparatorChar(c) && !isCharEscaped(line, i) && !isCharEscaped(line, i-1)) {
-                        buildingKey = false;//now start building the value
-                    } else if (!isCharEscaped(line, i)){
+                    if (isKeyValueSeparatorChar(c) && !isCharEscaped(line, i) && !isCharEscaped(line, i - 1)) {
+                        //now start building the value
+                        buildingKey = false;
+                    } else if (!isCharEscaped(line, i)) {
                         keyBuffer.append(c);
                     }
                 } else {
-                    if (valueBuffer.length() == 0 && isKeyValueSeparatorChar(c) && !isCharEscaped(line, i)) {
-                        //swallow the separator chars before we start building the value
-                    } else {
+                    if (valueBuffer.length() != 0 || !isKeyValueSeparatorChar(c) || isCharEscaped(line, i)) {
                         valueBuffer.append(c);
                     }
                 }
@@ -601,7 +618,7 @@ public class Ini implements Map<String, Ini.Section> {
                 throw new IllegalArgumentException(msg);
             }
 
-            log.trace("Discovered key/value pair: {} = {}", key, value);
+            LOGGER.trace("Discovered key/value pair: {} = {}", key, value);
 
             return new String[]{key, value};
         }

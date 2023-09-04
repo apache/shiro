@@ -71,7 +71,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class DelegatingSubject implements Subject {
 
-    private static final Logger log = LoggerFactory.getLogger(DelegatingSubject.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DelegatingSubject.class);
 
     private static final String RUN_AS_PRINCIPALS_SESSION_KEY =
             DelegatingSubject.class.getName() + ".RUN_AS_PRINCIPALS_SESSION_KEY";
@@ -193,14 +193,14 @@ public class DelegatingSubject implements Subject {
 
     protected void assertAuthzCheckPossible() throws AuthorizationException {
         if (!hasPrincipals()) {
-            String msg = "This subject is anonymous - it does not have any identifying principals and " +
-                    "authorization operations require an identity to check against.  A Subject instance will " +
-                    "acquire these identifying principals automatically after a successful login is performed " +
-                    "be executing " + Subject.class.getName() + ".login(AuthenticationToken) or when 'Remember Me' " +
-                    "functionality is enabled by the SecurityManager.  This exception can also occur when a " +
-                    "previously logged-in Subject has logged out which " +
-                    "makes it anonymous again.  Because an identity is currently not known due to any of these " +
-                    "conditions, authorization is denied.";
+            String msg = "This subject is anonymous - it does not have any identifying principals and "
+                    + "authorization operations require an identity to check against.  A Subject instance will "
+                    + "acquire these identifying principals automatically after a successful login is performed "
+                    + "be executing " + Subject.class.getName() + ".login(AuthenticationToken) or when 'Remember Me' "
+                    + "functionality is enabled by the SecurityManager.  This exception can also occur when a "
+                    + "previously logged-in Subject has logged out which "
+                    + "makes it anonymous again.  Because an identity is currently not known due to any of these "
+                    + "conditions, authorization is denied.";
             throw new UnauthenticatedException(msg);
         }
     }
@@ -274,8 +274,8 @@ public class DelegatingSubject implements Subject {
         }
 
         if (principals == null || principals.isEmpty()) {
-            String msg = "Principals returned from securityManager.login( token ) returned a null or " +
-                    "empty value.  This value must be non null and populated with one or more elements.";
+            String msg = "Principals returned from securityManager.login( token ) returned a null or "
+                    + "empty value.  This value must be non null and populated with one or more elements.";
             throw new IllegalStateException(msg);
         }
         this.principals = principals;
@@ -318,25 +318,25 @@ public class DelegatingSubject implements Subject {
     }
 
     public Session getSession(boolean create) {
-        if (log.isTraceEnabled()) {
-            log.trace("attempting to get session; create = " + create +
-                    "; session is null = " + (this.session == null) +
-                    "; session has id = " + (this.session != null && session.getId() != null));
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("attempting to get session; create = " + create
+                    + "; session is null = " + (this.session == null)
+                    + "; session has id = " + (this.session != null && session.getId() != null));
         }
 
         if (this.session == null && create) {
 
             //added in 1.2:
             if (!isSessionCreationEnabled()) {
-                String msg = "Session creation has been disabled for the current subject.  This exception indicates " +
-                        "that there is either a programming error (using a session when it should never be " +
-                        "used) or that Shiro's configuration needs to be adjusted to allow Sessions to be created " +
-                        "for the current Subject.  See the " + DisabledSessionException.class.getName() + " JavaDoc " +
-                        "for more.";
+                String msg = "Session creation has been disabled for the current subject.  This exception indicates "
+                        + "that there is either a programming error (using a session when it should never be "
+                        + "used) or that Shiro's configuration needs to be adjusted to allow Sessions to be created "
+                        + "for the current Subject.  See the " + DisabledSessionException.class.getName() + " JavaDoc "
+                        + "for more.";
                 throw new DisabledSessionException(msg);
             }
 
-            log.trace("Starting session for host {}", getHost());
+            LOGGER.trace("Starting session for host {}", getHost());
             SessionContext sessionContext = createSessionContext();
             Session session = this.securityManager.start(sessionContext);
             this.session = decorate(session);
@@ -357,8 +357,8 @@ public class DelegatingSubject implements Subject {
         try {
             clearRunAsIdentities();
         } catch (SessionException se) {
-            log.debug("Encountered session exception trying to clear 'runAs' identities during logout.  This " +
-                    "can generally safely be ignored.", se);
+            LOGGER.debug("Encountered session exception trying to clear 'runAs' identities during logout.  This "
+                    + "can generally safely be ignored.", se);
         }
     }
 
@@ -402,16 +402,16 @@ public class DelegatingSubject implements Subject {
 
     public Runnable associateWith(Runnable runnable) {
         if (runnable instanceof Thread) {
-            String msg = "This implementation does not support Thread arguments because of JDK ThreadLocal " +
-                    "inheritance mechanisms required by Shiro.  Instead, the method argument should be a non-Thread " +
-                    "Runnable and the return value from this method can then be given to an ExecutorService or " +
-                    "another Thread.";
+            String msg = "This implementation does not support Thread arguments because of JDK ThreadLocal "
+                    + "inheritance mechanisms required by Shiro.  Instead, the method argument should be a non-Thread "
+                    + "Runnable and the return value from this method can then be given to an ExecutorService or "
+                    + "another Thread.";
             throw new UnsupportedOperationException(msg);
         }
         return new SubjectRunnable(this, runnable);
     }
 
-    private class StoppingAwareProxiedSession extends ProxiedSession {
+    private static final class StoppingAwareProxiedSession extends ProxiedSession {
 
         private final DelegatingSubject owner;
 
@@ -433,10 +433,10 @@ public class DelegatingSubject implements Subject {
 
     public void runAs(PrincipalCollection principals) {
         if (!hasPrincipals()) {
-            String msg = "This subject does not yet have an identity.  Assuming the identity of another " +
-                    "Subject is only allowed for Subjects with an existing identity.  Try logging this subject in " +
-                    "first, or using the " + Subject.Builder.class.getName() + " to build ad hoc Subject instances " +
-                    "with identities as necessary.";
+            String msg = "This subject does not yet have an identity.  Assuming the identity of another "
+                    + "Subject is only allowed for Subjects with an existing identity.  Try logging this subject in "
+                    + "first, or using the " + Subject.Builder.class.getName() + " to build ad hoc Subject instances "
+                    + "with identities as necessary.";
             throw new IllegalStateException(msg);
         }
         pushIdentity(principals);
@@ -478,7 +478,7 @@ public class DelegatingSubject implements Subject {
                 // this thread could throw this exception, so we catch it
                 // similar issue as in clearRunAsIdentitiesInternal()
                 // See https://issues.apache.org/jira/browse/SHIRO-512
-                log.debug("Encountered session exception trying to get 'runAs' principal stack.  This "
+                LOGGER.debug("Encountered session exception trying to get 'runAs' principal stack.  This "
                         + "can generally safely be ignored.", se);
             }
         }

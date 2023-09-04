@@ -44,7 +44,7 @@ import java.util.Date;
  */
 public abstract class AbstractNativeSessionManager extends AbstractSessionManager implements NativeSessionManager, EventBusAware {
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractSessionManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSessionManager.class);
 
     private EventBus eventBus;
 
@@ -280,8 +280,8 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
     public void stop(SessionKey key) throws InvalidSessionException {
         Session session = lookupRequiredSession(key);
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Stopping session with id [" + session.getId() + "]");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Stopping session with id [" + session.getId() + "]");
             }
             session.stop();
             onStop(session, key);

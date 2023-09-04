@@ -75,7 +75,7 @@ import java.util.Map;
  */
 public class HazelcastCacheManager implements CacheManager, Initializable, Destroyable {
 
-    public static final Logger log = LoggerFactory.getLogger(HazelcastCacheManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastCacheManager.class);
 
     private boolean implicitlyCreated = false;
     private HazelcastInstance hazelcastInstance;
@@ -96,7 +96,8 @@ public class HazelcastCacheManager implements CacheManager, Initializable, Destr
      *
      */
     public <K, V> Cache<K, V> getCache(String name) throws CacheException {
-        Map<K, V> map = ensureHazelcastInstance().getMap(name); //returned map is a ConcurrentMap
+        //returned map is a ConcurrentMap
+        Map<K, V> map = ensureHazelcastInstance().getMap(name);
         return new MapCache<K, V>(name, map);
     }
 
@@ -178,9 +179,9 @@ public class HazelcastCacheManager implements CacheManager, Initializable, Destr
             try {
                 this.hazelcastInstance.getLifecycleService().shutdown();
             } catch (Throwable t) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Unable to cleanly shutdown implicitly created HazelcastInstance.  " +
-                            "Ignoring (shutting down)...", t);
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("Unable to cleanly shutdown implicitly created HazelcastInstance.  "
+                            + "Ignoring (shutting down)...", t);
                 }
             } finally {
                 this.hazelcastInstance = null;

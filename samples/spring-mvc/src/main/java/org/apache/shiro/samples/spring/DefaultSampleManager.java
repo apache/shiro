@@ -45,7 +45,7 @@ public class DefaultSampleManager implements SampleManager {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private static final Logger log = LoggerFactory.getLogger(DefaultSampleManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSampleManager.class);
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -66,8 +66,8 @@ public class DefaultSampleManager implements SampleManager {
         Session session = subject.getSession(false);
         if (session != null) {
             value = (String) session.getAttribute(VALUE_KEY);
-            if (log.isDebugEnabled()) {
-                log.debug("retrieving session key [" + VALUE_KEY + "] with value [" + value + "] on session with id [" + session.getId() + "]");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("retrieving session key [" + VALUE_KEY + "] with value [" + value + "] on session with id [" + session.getId() + "]");
             }
         }
 
@@ -78,28 +78,28 @@ public class DefaultSampleManager implements SampleManager {
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
 
-        if (log.isDebugEnabled()) {
-            log.debug("saving session key [" + VALUE_KEY + "] with value [" + newValue + "] on session with id [" + session.getId() + "]");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("saving session key [" + VALUE_KEY + "] with value [" + newValue + "] on session with id [" + session.getId() + "]");
         }
 
         session.setAttribute(VALUE_KEY, newValue);
     }
 
     public void secureMethod1() {
-        if (log.isInfoEnabled()) {
-            log.info("Secure method 1 called...");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Secure method 1 called...");
         }
     }
 
     public void secureMethod2() {
-        if (log.isInfoEnabled()) {
-            log.info("Secure method 2 called...");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Secure method 2 called...");
         }
     }
 
     public void secureMethod3() {
-        if (log.isInfoEnabled()) {
-            log.info("Secure method 3 called...");
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Secure method 3 called...");
         }
     }
 }

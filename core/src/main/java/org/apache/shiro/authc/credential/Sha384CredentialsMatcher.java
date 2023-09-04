@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.authc.credential;
 
-import org.apache.shiro.crypto.hash.AbstractHash;
-import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.Sha384Hash;
 
 

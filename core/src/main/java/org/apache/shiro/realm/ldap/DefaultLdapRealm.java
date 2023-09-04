@@ -83,7 +83,7 @@ import javax.naming.ldap.LdapContext;
  */
 public class DefaultLdapRealm extends AuthorizingRealm {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultLdapRealm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapRealm.class);
 
     //The zero index currently means nothing, but could be utilized in the future for other substitution techniques.
     private static final String USERDN_SUBSTITUTION_TOKEN = "{0}";
@@ -185,15 +185,15 @@ public class DefaultLdapRealm extends AuthorizingRealm {
         }
         int index = template.indexOf(USERDN_SUBSTITUTION_TOKEN);
         if (index < 0) {
-            String msg = "User DN template must contain the '" +
-                    USERDN_SUBSTITUTION_TOKEN + "' replacement token to understand where to " +
-                    "insert the runtime authentication principal.";
+            String msg = "User DN template must contain the '"
+                    + USERDN_SUBSTITUTION_TOKEN + "' replacement token to understand where to "
+                    + "insert the runtime authentication principal.";
             throw new IllegalArgumentException(msg);
         }
         String prefix = template.substring(0, index);
         String suffix = template.substring(prefix.length() + USERDN_SUBSTITUTION_TOKEN.length());
-        if (log.isDebugEnabled()) {
-            log.debug("Determined user DN prefix [{}] and suffix [{}]", prefix, suffix);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Determined user DN prefix [{}] and suffix [{}]", prefix, suffix);
         }
         this.userDnPrefix = prefix;
         this.userDnSuffix = suffix;
@@ -231,9 +231,9 @@ public class DefaultLdapRealm extends AuthorizingRealm {
         String prefix = getUserDnPrefix();
         String suffix = getUserDnSuffix();
         if (prefix == null && suffix == null) {
-            log.debug("userDnTemplate property has not been configured, indicating the submitted " +
-                    "AuthenticationToken's principal is the same as the User DN.  Returning the method argument " +
-                    "as is.");
+            LOGGER.debug("userDnTemplate property has not been configured, indicating the submitted "
+                    + "AuthenticationToken's principal is the same as the User DN.  Returning the method argument "
+                    + "as is.");
             return principal;
         }
 
@@ -366,7 +366,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
         Object principal = token.getPrincipal();
         Object credentials = token.getCredentials();
 
-        log.debug("Authenticating user '{}' through LDAP", principal);
+        LOGGER.debug("Authenticating user '{}' through LDAP", principal);
 
         principal = getLdapPrincipal(token);
 

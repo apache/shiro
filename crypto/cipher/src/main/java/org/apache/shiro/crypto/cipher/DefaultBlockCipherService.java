@@ -135,18 +135,30 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
     private static final int DEFAULT_BLOCK_SIZE = 0;
 
     private static final String TRANSFORMATION_STRING_DELIMITER = "/";
-    private static final int DEFAULT_STREAMING_BLOCK_SIZE = 8; //8 bits (1 byte)
+    //8 bits (1 byte)
+    private static final int DEFAULT_STREAMING_BLOCK_SIZE = 8;
 
     private String modeName;
-    private int blockSize; //size in bits (not bytes) - i.e. a blockSize of 8 equals 1 byte. negative or zero value = use system default
+
+    /**
+     * size in bits (not bytes) - i.e. a blockSize of 8 equals 1 byte. negative or zero value = use system default
+     */
+    private int blockSize;
     private String paddingSchemeName;
 
     private String streamingModeName;
     private int streamingBlockSize;
     private String streamingPaddingSchemeName;
 
-    private String transformationString; //cached value - rebuilt whenever any of its constituent parts change
-    private String streamingTransformationString; //cached value - rebuilt whenever any of its constituent parts change
+    /**
+     * cached value - rebuilt whenever any of its constituent parts change.
+     */
+    private String transformationString;
+
+    /**
+     * cached value - rebuilt whenever any of its constituent parts change.
+     */
+    private String streamingTransformationString;
 
 
     /**
@@ -166,7 +178,8 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
 
         this.modeName = OperationMode.CBC.name();
         this.paddingSchemeName = PaddingScheme.PKCS5.getTransformationName();
-        this.blockSize = DEFAULT_BLOCK_SIZE; //0 = use the JCA provider's default
+        //0 = use the JCA provider's default
+        this.blockSize = DEFAULT_BLOCK_SIZE;
 
         this.streamingModeName = OperationMode.CBC.name();
         this.streamingPaddingSchemeName = PaddingScheme.PKCS5.getTransformationName();
@@ -376,9 +389,9 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
     }
 
     private boolean isModeStreamingCompatible(String modeName) {
-        return modeName != null &&
-                !modeName.equalsIgnoreCase(OperationMode.ECB.name()) &&
-                !modeName.equalsIgnoreCase(OperationMode.NONE.name());
+        return modeName != null
+                   && !modeName.equalsIgnoreCase(OperationMode.ECB.name())
+                   && !modeName.equalsIgnoreCase(OperationMode.NONE.name());
     }
 
     /**
@@ -486,9 +499,9 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
      *         {@code false} otherwise.
      */
     private boolean isModeInitializationVectorCompatible(String modeName) {
-        return modeName != null &&
-                !modeName.equalsIgnoreCase(OperationMode.ECB.name()) &&
-                !modeName.equalsIgnoreCase(OperationMode.NONE.name());
+        return modeName != null
+                   && !modeName.equalsIgnoreCase(OperationMode.ECB.name())
+                   && !modeName.equalsIgnoreCase(OperationMode.NONE.name());
     }
 
     /**
@@ -512,17 +525,17 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
         if (streaming) {
             String streamingModeName = getStreamingModeName();
             if (!isModeInitializationVectorCompatible(streamingModeName)) {
-                String msg = "streamingMode attribute value [" + streamingModeName + "] does not support " +
-                        "Initialization Vectors.  Ensure the streamingMode value represents an operation mode " +
-                        "that is compatible with initialization vectors.";
+                String msg = "streamingMode attribute value [" + streamingModeName + "] does not support "
+                         + "Initialization Vectors.  Ensure the streamingMode value represents an operation mode "
+                         + "that is compatible with initialization vectors.";
                 throw new IllegalStateException(msg);
             }
         } else {
             String modeName = getModeName();
             if (!isModeInitializationVectorCompatible(modeName)) {
-                String msg = "mode attribute value [" + modeName + "] does not support " +
-                        "Initialization Vectors.  Ensure the mode value represents an operation mode " +
-                        "that is compatible with initialization vectors.";
+                String msg = "mode attribute value [" + modeName + "] does not support "
+                         + "Initialization Vectors.  Ensure the mode value represents an operation mode "
+                         + "that is compatible with initialization vectors.";
                 throw new IllegalStateException(msg);
             }
         }

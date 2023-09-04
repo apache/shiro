@@ -93,8 +93,7 @@ public class DefaultWebSessionStorageEvaluator extends DefaultSessionStorageEval
             return false;
         }
 
-        return WebUtils._isSessionCreationEnabled(subject);
+        return WebUtils.isSessionCreationEnabled(subject);
     }
-
 
 }

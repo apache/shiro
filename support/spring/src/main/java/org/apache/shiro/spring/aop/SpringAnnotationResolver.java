@@ -40,7 +40,9 @@ public class SpringAnnotationResolver implements AnnotationResolver {
         Method m = mi.getMethod();
 
         Annotation a = AnnotationUtils.findAnnotation(m, clazz);
-        if (a != null) return a;
+        if (a != null) {
+            return a;
+        }
 
         //The MethodInvocation's method object could be a method defined in an interface.
         //However, if the annotation existed in the interface's implementation (and not
@@ -50,7 +52,9 @@ public class SpringAnnotationResolver implements AnnotationResolver {
         Class<?> targetClass = mi.getThis().getClass();
         m = ClassUtils.getMostSpecificMethod(m, targetClass);
         a = AnnotationUtils.findAnnotation(m, clazz);
-        if (a != null) return a;
+        if (a != null) {
+            return a;
+        }
         // See if the class has the same annotation
         return AnnotationUtils.findAnnotation(mi.getThis().getClass(), clazz);
     }

@@ -97,8 +97,8 @@ public abstract class CodecSupport {
         try {
             return source.getBytes(encoding);
         } catch (UnsupportedEncodingException e) {
-            String msg = "Unable to convert source [" + source + "] to byte array using " +
-                    "encoding '" + encoding + "'";
+            String msg = "Unable to convert source [" + source + "] to byte array using "
+                             + "encoding '" + encoding + "'";
             throw new CodecException(msg, e);
         }
     }
@@ -149,7 +149,8 @@ public abstract class CodecSupport {
     /**
      * Converts the specified byte array to a character array using the specified character encoding.
      * <p/>
-     * Effectively calls <code>{@link #toString(byte[], String) toString(bytes,encoding)}.{@link String#toCharArray() toCharArray()};</code>
+     * Effectively calls <code>{@link #toString(byte[], String) toString(bytes,encoding)}
+     *                                      .{@link String#toCharArray() toCharArray()};</code>
      *
      * @param bytes    the byte array to convert to a String
      * @param encoding the character encoding used to encode the bytes.
@@ -181,8 +182,8 @@ public abstract class CodecSupport {
      * @since 1.0
      */
     protected boolean isByteSource(Object o) {
-        return o instanceof byte[] || o instanceof char[] || o instanceof String ||
-                o instanceof ByteSource || o instanceof File || o instanceof InputStream;
+        return o instanceof byte[] || o instanceof char[] || o instanceof String
+                   || o instanceof ByteSource || o instanceof File || o instanceof InputStream;
     }
 
     /**
@@ -272,9 +273,9 @@ public abstract class CodecSupport {
         if (in == null) {
             throw new IllegalArgumentException("InputStream argument cannot be null.");
         }
-        final int BUFFER_SIZE = 512;
-        ByteArrayOutputStream out = new ByteArrayOutputStream(BUFFER_SIZE);
-        byte[] buffer = new byte[BUFFER_SIZE];
+        final int bufferSize = 512;
+        ByteArrayOutputStream out = new ByteArrayOutputStream(bufferSize);
+        byte[] buffer = new byte[bufferSize];
         int bytesRead;
         try {
             while ((bytesRead = in.read(buffer)) != -1) {
@@ -304,13 +305,13 @@ public abstract class CodecSupport {
      * @return a byte array representation of the Object argument.
      */
     protected byte[] objectToBytes(Object o) {
-        String msg = "The " + getClass().getName() + " implementation only supports conversion to " +
-                "byte[] if the source is of type byte[], char[], String, " + ByteSource.class.getName() +
-                " File or InputStream.  The instance provided as a method " +
-                "argument is of type [" + o.getClass().getName() + "].  If you would like to convert " +
-                "this argument type to a byte[], you can 1) convert the argument to one of the supported types " +
-                "yourself and then use that as the method argument or 2) subclass " + getClass().getName() +
-                "and override the objectToBytes(Object o) method.";
+        String msg = "The " + getClass().getName() + " implementation only supports conversion to "
+                 + "byte[] if the source is of type byte[], char[], String, " + ByteSource.class.getName()
+                 + " File or InputStream.  The instance provided as a method "
+                 + "argument is of type [" + o.getClass().getName() + "].  If you would like to convert "
+                 + "this argument type to a byte[], you can 1) convert the argument to one of the supported types "
+                 + "yourself and then use that as the method argument or 2) subclass " + getClass().getName()
+                 + "and override the objectToBytes(Object o) method.";
         throw new CodecException(msg);
     }
 

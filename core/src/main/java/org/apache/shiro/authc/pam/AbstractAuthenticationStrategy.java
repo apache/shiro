@@ -18,7 +18,11 @@
  */
 package org.apache.shiro.authc.pam;
 
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.MergableAuthenticationInfo;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.realm.Realm;
 
 import java.util.Collection;
@@ -51,7 +55,9 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
      * Base implementation that will aggregate the specified <code>singleRealmInfo</code> into the
      * <code>aggregateInfo</code> and then returns the aggregate.  Can be overridden by subclasses for custom behavior.
      */
-    public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo, Throwable t) throws AuthenticationException {
+    public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token,
+                                           AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo,
+                                           Throwable t) throws AuthenticationException {
         AuthenticationInfo info;
         if (singleRealmInfo == null) {
             info = aggregateInfo;
@@ -78,12 +84,12 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
      * {@link org.apache.shiro.authc.MergableAuthenticationInfo MergableAuthenticationInfo} is not desired for some reason.
      */
     protected AuthenticationInfo merge(AuthenticationInfo info, AuthenticationInfo aggregate) {
-        if( aggregate instanceof MergableAuthenticationInfo ) {
-            ((MergableAuthenticationInfo)aggregate).merge(info);
+        if (aggregate instanceof MergableAuthenticationInfo) {
+            ((MergableAuthenticationInfo) aggregate).merge(info);
             return aggregate;
         } else {
-            throw new IllegalArgumentException( "Attempt to merge authentication info from multiple realms, but aggregate " +
-                      "AuthenticationInfo is not of type MergableAuthenticationInfo." );
+            throw new IllegalArgumentException("Attempt to merge authentication info from multiple realms, but aggregate "
+                    + "AuthenticationInfo is not of type MergableAuthenticationInfo.");
         }
     }
 

@@ -31,16 +31,19 @@ import java.util.Map;
 /**
  * Base support class for {@link Factory} implementations that generate their instance(s) based on
  * {@link Ini} configuration.
- *
+ * @param <T> T
  * @since 1.0
  * @deprecated use Shiro's {@code Environment} mechanisms instead.
  */
 @Deprecated
 public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
 
+    /**
+     * default ini resource path.
+     */
     public static final String DEFAULT_INI_RESOURCE_PATH = "classpath:shiro.ini";
 
-    private static transient final Logger log = LoggerFactory.getLogger(IniFactorySupport.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IniFactorySupport.class);
 
     private Ini ini;
 
@@ -64,6 +67,7 @@ public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
     /**
      * Returns a mapping of String to bean representing the default set of object used by the factory.
      * These beans can be used by this factory in conjunction with objects parsed from the INI configuration.
+     *
      * @return A Map of default objects, or <code>null</code>.
      * @since 1.4
      */
@@ -74,6 +78,7 @@ public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
     /**
      * Sets the default objects used by this factory. These defaults may be used in conjunction with the INI
      * configuration.
+     *
      * @param defaultBeans String to object mapping used for default configuration in this factory.
      * @since 1.4
      */
@@ -86,16 +91,16 @@ public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
      * the file does not exist.
      *
      * @return a new Ini instance created from the default {@code classpath:shiro.ini} file, or {@code null} if
-     *         the file does not exist.
+     * the file does not exist.
      */
     public static Ini loadDefaultClassPathIni() {
         Ini ini = null;
         if (ResourceUtils.resourceExists(DEFAULT_INI_RESOURCE_PATH)) {
-            log.debug("Found shiro.ini at the root of the classpath.");
+            LOGGER.debug("Found shiro.ini at the root of the classpath.");
             ini = new Ini();
             ini.loadFromPath(DEFAULT_INI_RESOURCE_PATH);
             if (CollectionUtils.isEmpty(ini)) {
-                log.warn("shiro.ini found at the root of the classpath, but it did not contain any data.");
+                LOGGER.warn("shiro.ini found at the root of the classpath, but it did not contain any data.");
             }
         }
         return ini;
@@ -115,7 +120,7 @@ public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
     protected Ini resolveIni() {
         Ini ini = getIni();
         if (CollectionUtils.isEmpty(ini)) {
-            log.debug("Null or empty Ini instance.  Falling back to the default {} file.", DEFAULT_INI_RESOURCE_PATH);
+            LOGGER.debug("Null or empty Ini instance.  Falling back to the default {} file.", DEFAULT_INI_RESOURCE_PATH);
             ini = loadDefaultClassPathIni();
         }
         return ini;
@@ -137,20 +142,20 @@ public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
         T instance;
 
         if (CollectionUtils.isEmpty(ini)) {
-            log.debug("No populated Ini available.  Creating a default instance.");
+            LOGGER.debug("No populated Ini available.  Creating a default instance.");
             instance = createDefaultInstance();
             if (instance == null) {
-                String msg = getClass().getName() + " implementation did not return a default instance in " +
-                        "the event of a null/empty Ini configuration.  This is required to support the " +
-                        "Factory interface.  Please check your implementation.";
+                String msg = getClass().getName() + " implementation did not return a default instance in "
+                        + "the event of a null/empty Ini configuration.  This is required to support the "
+                        + "Factory interface.  Please check your implementation.";
                 throw new IllegalStateException(msg);
             }
         } else {
-            log.debug("Creating instance from Ini [" + ini + "]");
+            LOGGER.debug("Creating instance from Ini [" + ini + "]");
             instance = createInstance(ini);
             if (instance == null) {
-                String msg = getClass().getName() + " implementation did not return a constructed instance from " +
-                        "the createInstance(Ini) method implementation.";
+                String msg = getClass().getName() + " implementation did not return a constructed instance from "
+                        + "the createInstance(Ini) method implementation.";
                 throw new IllegalStateException(msg);
             }
         }
@@ -158,7 +163,16 @@ public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
         return instance;
     }
 
+    /**
+     * create instance.
+     * @param ini ini
+     * @return T
+     */
     protected abstract T createInstance(Ini ini);
 
+    /**
+     * create default instance.
+     * @return T
+     */
     protected abstract T createDefaultInstance();
 }

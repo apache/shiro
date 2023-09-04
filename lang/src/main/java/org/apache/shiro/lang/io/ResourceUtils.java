@@ -33,7 +33,7 @@ import java.net.URL;
  * @see #getInputStreamForPath(String)
  * @since 0.2
  */
-public class ResourceUtils {
+public final class ResourceUtils {
 
     /**
      * Resource path prefix that specifies to load from a classpath location, value is <b>{@code classpath:}</b>
@@ -51,7 +51,7 @@ public class ResourceUtils {
     /**
      * Private internal log instance.
      */
-    private static final Logger log = LoggerFactory.getLogger(ResourceUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceUtils.class);
 
     /**
      * Prevent instantiation.
@@ -71,10 +71,9 @@ public class ResourceUtils {
      */
     @SuppressWarnings({"UnusedDeclaration"})
     public static boolean hasResourcePrefix(String resourcePath) {
-        return resourcePath != null &&
-                (resourcePath.startsWith(CLASSPATH_PREFIX) ||
-                        resourcePath.startsWith(URL_PREFIX) ||
-                        resourcePath.startsWith(FILE_PREFIX));
+        return resourcePath != null
+                   && (resourcePath.startsWith(CLASSPATH_PREFIX)
+                           || resourcePath.startsWith(URL_PREFIX) || resourcePath.startsWith(FILE_PREFIX));
     }
 
     /**
@@ -143,20 +142,20 @@ public class ResourceUtils {
     }
 
     private static InputStream loadFromFile(String path) throws IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("Opening file [" + path + "]...");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Opening file [" + path + "]...");
         }
         return new FileInputStream(path);
     }
 
     private static InputStream loadFromUrl(String urlPath) throws IOException {
-        log.debug("Opening url {}", urlPath);
+        LOGGER.debug("Opening url {}", urlPath);
         URL url = new URL(urlPath);
         return url.openStream();
     }
 
     private static InputStream loadFromClassPath(String path) {
-        log.debug("Opening resource from class path [{}]", path);
+        LOGGER.debug("Opening resource from class path [{}]", path);
         return ClassUtils.getResourceAsStream(path);
     }
 
@@ -176,7 +175,7 @@ public class ResourceUtils {
             try {
                 is.close();
             } catch (IOException e) {
-                log.warn("Error closing input stream.", e);
+                LOGGER.warn("Error closing input stream.", e);
             }
         }
     }

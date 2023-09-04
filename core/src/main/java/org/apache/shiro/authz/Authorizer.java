@@ -57,7 +57,7 @@ public interface Authorizer {
      * @param principals the application-specific subject/user identifier.
      * @param permission the String representation of a Permission that is being checked.
      * @return true if the corresponding Subject/user is permitted, false otherwise.
-     * @see #isPermitted(PrincipalCollection principals,Permission permission)
+     * @see #isPermitted(PrincipalCollection principals, Permission permission)
      * @since 0.9
      */
     boolean isPermitted(PrincipalCollection principals, String permission);
@@ -85,9 +85,9 @@ public interface Authorizer {
      * @param subjectPrincipal the application-specific subject/user identifier.
      * @param permissions      the String representations of the Permissions that are being checked.
      * @return an array of booleans whose indices correspond to the index of the
-     *         permissions in the given list.  A true value at an index indicates the user is permitted for
-     *         for the associated <tt>Permission</tt> string in the list.  A false value at an index
-     *         indicates otherwise.
+     * permissions in the given list.  A true value at an index indicates the user is permitted for
+     * for the associated <tt>Permission</tt> string in the list.  A false value at an index
+     * indicates otherwise.
      * @since 0.9
      */
     boolean[] isPermitted(PrincipalCollection subjectPrincipal, String... permissions);
@@ -106,9 +106,9 @@ public interface Authorizer {
      * @param subjectPrincipal the application-specific subject/user identifier.
      * @param permissions      the permissions that are being checked.
      * @return an array of booleans whose indices correspond to the index of the
-     *         permissions in the given list.  A true value at an index indicates the user is permitted for
-     *         for the associated <tt>Permission</tt> object in the list.  A false value at an index
-     *         indicates otherwise.
+     * permissions in the given list.  A true value at an index indicates the user is permitted for
+     * for the associated <tt>Permission</tt> object in the list.  A false value at an index
+     * indicates otherwise.
      */
     boolean[] isPermitted(PrincipalCollection subjectPrincipal, List<Permission> permissions);
 
@@ -122,7 +122,7 @@ public interface Authorizer {
      * @param subjectPrincipal the application-specific subject/user identifier.
      * @param permissions      the String representations of the Permissions that are being checked.
      * @return true if the user has all of the specified permissions, false otherwise.
-     * @see #isPermittedAll(PrincipalCollection,Collection)
+     * @see #isPermittedAll(PrincipalCollection, Collection)
      * @since 0.9
      */
     boolean isPermittedAll(PrincipalCollection subjectPrincipal, String... permissions);
@@ -151,8 +151,7 @@ public interface Authorizer {
      *
      * @param subjectPrincipal the application-specific subject/user identifier.
      * @param permission       the String representation of the Permission to check.
-     * @throws AuthorizationException
-     *          if the user does not have the permission.
+     * @throws AuthorizationException if the user does not have the permission.
      * @since 0.9
      */
     void checkPermission(PrincipalCollection subjectPrincipal, String permission) throws AuthorizationException;
@@ -164,8 +163,7 @@ public interface Authorizer {
      *
      * @param subjectPrincipal the application-specific subject/user identifier.
      * @param permission       the Permission to check.
-     * @throws AuthorizationException
-     *          if the user does not have the permission.
+     * @throws AuthorizationException if the user does not have the permission.
      */
     void checkPermission(PrincipalCollection subjectPrincipal, Permission permission) throws AuthorizationException;
 
@@ -173,7 +171,7 @@ public interface Authorizer {
      * Ensures the corresponding Subject/user
      * {@link Permission#implies(Permission) implies} all of the
      * specified permission strings.
-     *
+     * <p>
      * If the subject's existing associated permissions do not
      * {@link Permission#implies(Permission) imply} all of the given permissions,
      * an {@link AuthorizationException} will be thrown.
@@ -192,7 +190,7 @@ public interface Authorizer {
      * Ensures the corresponding Subject/user
      * {@link Permission#implies(Permission) implies} all of the
      * specified permission strings.
-     *
+     * <p>
      * If the subject's existing associated permissions do not
      * {@link Permission#implies(Permission) imply} all of the given permissions,
      * an {@link AuthorizationException} will be thrown.
@@ -222,8 +220,8 @@ public interface Authorizer {
      * @param subjectPrincipal the application-specific subject/user identifier.
      * @param roleIdentifiers  the application-specific role identifiers to check (usually role ids or role names).
      * @return an array of booleans whose indices correspond to the index of the
-     *         roles in the given identifiers.  A true value indicates the user has the
-     *         role at that index.  False indicates the user does not have the role at that index.
+     * roles in the given identifiers.  A true value indicates the user has the
+     * role at that index.  False indicates the user does not have the role at that index.
      */
     boolean[] hasRoles(PrincipalCollection subjectPrincipal, List<String> roleIdentifiers);
 
@@ -242,8 +240,7 @@ public interface Authorizer {
      *
      * @param subjectPrincipal the application-specific subject/user identifier.
      * @param roleIdentifier   the application-specific role identifier (usually a role id or role name ).
-     * @throws AuthorizationException
-     *          if the user does not have the role.
+     * @throws AuthorizationException if the user does not have the role.
      */
     void checkRole(PrincipalCollection subjectPrincipal, String roleIdentifier) throws AuthorizationException;
 
@@ -253,8 +250,7 @@ public interface Authorizer {
      *
      * @param subjectPrincipal the application-specific subject/user identifier.
      * @param roleIdentifiers  the application-specific role identifiers to check (usually role ids or role names).
-     * @throws AuthorizationException
-     *          if the user does not have all of the specified roles.
+     * @throws AuthorizationException if the user does not have all of the specified roles.
      */
     void checkRoles(PrincipalCollection subjectPrincipal, Collection<String> roleIdentifiers) throws AuthorizationException;
 
@@ -267,12 +263,9 @@ public interface Authorizer {
      *
      * @param subjectPrincipal the application-specific subject/user identifier.
      * @param roleIdentifiers  the application-specific role identifiers to check (usually role ids or role names).
-     * @throws AuthorizationException
-     *          if the user does not have all of the specified roles.
-     *          
-     *  @since 1.1.0
+     * @throws AuthorizationException if the user does not have all of the specified roles.
+     * @since 1.1.0
      */
     void checkRoles(PrincipalCollection subjectPrincipal, String... roleIdentifiers) throws AuthorizationException;
-    
-}
 
+}

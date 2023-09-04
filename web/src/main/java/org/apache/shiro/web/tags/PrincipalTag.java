@@ -53,7 +53,7 @@ public class PrincipalTag extends SecureTag {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private static final Logger log = LoggerFactory.getLogger(PrincipalTag.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalTag.class);
 
     /**
      * The type of principal to be retrieved, or null if the default principal should be used.
@@ -159,8 +159,8 @@ public class PrincipalTag extends SecureTag {
             Class cls = Class.forName(type);
             principal = getSubject().getPrincipals().oneByType(cls);
         } catch (ClassNotFoundException e) {
-            if (log.isErrorEnabled()) {
-                log.error("Unable to find class for name [" + type + "]");
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Unable to find class for name [" + type + "]");
             }
         }
         return principal;
@@ -186,16 +186,16 @@ public class PrincipalTag extends SecureTag {
 
             if (!foundProperty) {
                 final String message = "Property [" + property + "] not found in principal of type [" + principal.getClass().getName() + "]";
-                if (log.isErrorEnabled()) {
-                    log.error(message);
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error(message);
                 }
                 throw new JspTagException(message);
             }
 
         } catch (Exception e) {
             final String message = "Error reading property [" + property + "] from principal of type [" + principal.getClass().getName() + "]";
-            if (log.isErrorEnabled()) {
-                log.error(message, e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error(message, e);
             }
             throw new JspTagException(message, e);
         }

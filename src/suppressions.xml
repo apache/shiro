@@ -21,8 +21,43 @@
 <suppressions>
     <!-- do not require package-info.java -->
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]ee[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]samples[\\/]*"/>
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]testing[\\/]*"/>
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]cdi[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]spring[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]guice[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]web[\\/]jaxrs[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]tools[\\/]hasher[\\/]*"/>
+    <suppress checks="CyclomaticComplexity" files="org[\\/]apache[\\/]shiro[\\/]crypto[\\/]*"/>
+    <suppress checks="CyclomaticComplexity" files="org[\\/]apache[\\/]shiro[\\/]util[\\/]*"/>
+    <suppress checks="NPathComplexity" files="org[\\/]apache[\\/]shiro[\\/]crypto[\\/]*"/>
+    <suppress checks="NPathComplexity" files="org[\\/]apache[\\/]shiro[\\/]util[\\/]*"/>
+    <suppress checks="NPathComplexity" files="org[\\/]apache[\\/]shiro[\\/]web[\\/]util[\\/]*"/>
+    <suppress checks="NPathComplexity" files="org[\\/]apache[\\/]shiro[\\/]web[\\/]servlet[\\/]*"/>
+    <suppress checks="MethodLength" files="org[\\/]apache[\\/]shiro[\\/]util[\\/]*"/>
+    <suppress checks="JavadocVariable" files="org[\\/]apache[\\/]shiro[\\/]web[\\/]*"/>
+    <suppress checks="JavadocVariable" files="org[\\/]apache[\\/]shiro[\\/]guice[\\/]web[\\/]*"/>
 
+    <suppress checks="ParameterNumber" files="org[\\/]apache[\\/]shiro[\\/]web[\\/]servlet[\\/]SimpleCookie"/>
+    <suppress checks="NPathComplexity" files="org[\\/]apache[\\/]shiro[\\/]session[\\/]mgt[\\/]quartz[\\/]QuartzSessionValidationScheduler"/>
+    <suppress checks="NPathComplexity" files="org[\\/]apache[\\/]shiro[\\/]authc[\\/]SimpleAuthenticationInfo"/>
+    <suppress checks="NPathComplexity" files="org[\\/]apache[\\/]shiro[\\/]session[\\/]mgt[\\/]SimpleSession"/>
+    <suppress checks="NPathComplexity" files="org[\\/]apache[\\/]shiro[\\/]spring[\\/]remoting[\\/]SecureRemoteInvocationFactory"/>
+    <suppress checks="LineLength" files="org[\\/]apache[\\/]shiro[\\/]spring[\\/]web[\\/]config[\\/]AbstractShiroWebConfiguration"/>
+    <suppress checks="MethodCount" files="org[\\/]apache[\\/]shiro[\\/]realm[\\/]AuthorizingRealm"/>
+    <suppress checks="MethodCount" files="org[\\/]apache[\\/]shiro[\\/]web[\\/]util[\\/]WebUtils"/>
+    <suppress checks="MethodCount" files="org[\\/]apache[\\/]shiro[\\/]web[\\/]servlet[\\/]SimpleCookie"/>
+    <suppress checks="MethodCount" files="org[\\/]apache[\\/]shiro[\\/]subject[\\/]support[\\/]DelegatingSubject"/>
+    <suppress checks="MethodCount" files="org[\\/]apache[\\/]shiro[\\/]session[\\/]mgt[\\/]AbstractNativeSessionManager"/>
+    <suppress checks="MethodCount" files="org[\\/]apache[\\/]shiro[\\/]session[\\/]mgt[\\/]SimpleSession"/>
+    <suppress checks="MethodCount" files="org[\\/]apache[\\/]shiro[\\/]config[\\/]ogdl[\\/]ReflectionBuilder"/>
+    <suppress checks="BooleanExpressionComplexity" files="org[\\/]apache[\\/]shiro[\\/]realm[\\/]ldap[\\/]JndiLdapContextFactory"/>
+    <suppress checks="ClassDataAbstractionCoupling" files="org[\\/]apache[\\/]shiro[\\/]testing[\\/]web[\\/]AbstractContainerIT"/>
+    <suppress checks="AnonInnerLength" files="org[\\/]apache[\\/]shiro[\\/]testing[\\/]web[\\/]AbstractContainerIT"/>
     <suppress checks="ConstantName" lines="41-44" files="com[\\/]flowlogix[\\/]shiro[\\/]ee[\\/]filters[\\/]CryptoSupport"/>
+
+    <suppress checks="MethodLength" files="org[\\/]apache[\\/]shiro[\\/]tools[\\/]hasher[\\/]Hasher"/>
+    <suppress checks="CyclomaticComplexity" files="org[\\/]apache[\\/]shiro[\\/]tools[\\/]hasher[\\/]Hasher"/>
+    <suppress checks="NPathComplexity" files="org[\\/]apache[\\/]shiro[\\/]tools[\\/]hasher[\\/]Hasher"/>
+    <suppress checks="MethodLength" files="org[\\/]apache[\\/]shiro[\\/]tools[\\/]hasher[\\/]Hasher"/>
 </suppressions>

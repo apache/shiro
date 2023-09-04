@@ -41,10 +41,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * NOPMD
+ */
 @Configuration
 @ControllerAdvice
 @SpringBootApplication
-public class WebApp { //NOPMD
+public class WebApp {
 
     private static Logger log = LoggerFactory.getLogger(WebApp.class);
 
@@ -72,11 +75,9 @@ public class WebApp { //NOPMD
     @Bean
     public Realm realm() {
         TextConfigurationRealm realm = new TextConfigurationRealm();
-        realm.setUserDefinitions("joe.coder=password,user\n" +
-                "jill.coder=password,admin");
+        realm.setUserDefinitions("joe.coder=password,user\n" + "jill.coder=password,admin");
 
-        realm.setRoleDefinitions("admin=read,write\n" +
-                "user=read");
+        realm.setRoleDefinitions("admin=read,write\n" + "user=read");
         realm.setCachingEnabled(true);
         return realm;
     }
@@ -84,7 +85,8 @@ public class WebApp { //NOPMD
     @Bean
     public ShiroFilterChainDefinition shiroFilterChainDefinition() {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
-        chainDefinition.addPathDefinition("/login.html", "authc"); // need to accept POSTs from the login form
+        // need to accept POSTs from the login form
+        chainDefinition.addPathDefinition("/login.html", "authc");
         chainDefinition.addPathDefinition("/logout", "logout");
         return chainDefinition;
     }

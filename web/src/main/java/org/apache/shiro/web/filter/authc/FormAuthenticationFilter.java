@@ -58,15 +58,27 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class FormAuthenticationFilter extends AuthenticatingFilter {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * default error key attribute name.
+     */
     public static final String DEFAULT_ERROR_KEY_ATTRIBUTE_NAME = "shiroLoginFailure";
 
+    /**
+     * username param.
+     */
     public static final String DEFAULT_USERNAME_PARAM = "username";
+
+    /**
+     * password param.
+     */
     public static final String DEFAULT_PASSWORD_PARAM = "password";
+
+    /**
+     * rememberMe param.
+     */
     public static final String DEFAULT_REMEMBER_ME_PARAM = "rememberMe";
 
-    private static final Logger log = LoggerFactory.getLogger(FormAuthenticationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FormAuthenticationFilter.class);
 
     private String usernameParam = DEFAULT_USERNAME_PARAM;
     private String passwordParam = DEFAULT_PASSWORD_PARAM;
@@ -85,8 +97,8 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
             this.appliedPaths.remove(previous);
         }
         super.setLoginUrl(loginUrl);
-        if (log.isTraceEnabled()) {
-            log.trace("Adding login url to applied paths.");
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Adding login url to applied paths.");
         }
         this.appliedPaths.put(getLoginUrl(), null);
     }
@@ -148,23 +160,22 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         if (isLoginRequest(request, response)) {
             if (isLoginSubmission(request, response)) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Login submission detected.  Attempting to execute login.");
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Login submission detected.  Attempting to execute login.");
                 }
                 return executeLogin(request, response);
             } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("Login page view.");
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Login page view.");
                 }
                 //allow them to see the login page ;)
                 return true;
             }
         } else {
-            if (log.isTraceEnabled()) {
-                log.trace("Attempting to access a path which requires authentication.  Forwarding to the " +
-                        "Authentication url [" + getLoginUrl() + "]");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Attempting to access a path which requires authentication.  Forwarding to the "
+                        + "Authentication url [" + getLoginUrl() + "]");
             }
-
             saveRequestAndRedirectToLogin(request, response);
             return false;
         }
@@ -202,8 +213,8 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
 
     protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e,
                                      ServletRequest request, ServletResponse response) {
-        if (log.isDebugEnabled()) {
-            log.debug( "Authentication exception", e );
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Authentication exception", e);
         }
         setFailureAttribute(request, e);
         //login failed, let request continue back to the login page:

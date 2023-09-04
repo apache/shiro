@@ -29,30 +29,30 @@ import java.util.List;
 
 public class Account {
 
-    private static long _SEQUENCE;
+    private static long sequence;
 
-    private long _id;
+    private long id;
 
-    private String _ownerName;
+    private String ownerName;
 
-    private volatile boolean _isActive;
+    private volatile boolean isActive;
 
-    private double _balance;
+    private double balance;
 
-    private final List<AccountTransaction> _transactions;
+    private final List<AccountTransaction> transactionList;
 
-    private String _createdBy;
+    private String createdBy;
 
-    private Date _creationDate;
+    private Date creationDate;
 
     public Account(String anOwnerName) {
-        _id = ++_SEQUENCE;
-        _ownerName = anOwnerName;
-        _isActive = true;
-        _balance = 0.0d;
-        _transactions = new ArrayList<AccountTransaction>();
-        _createdBy = "unknown";
-        _creationDate = new Date();
+        id = ++sequence;
+        ownerName = anOwnerName;
+        isActive = true;
+        balance = 0.0d;
+        transactionList = new ArrayList<AccountTransaction>();
+        createdBy = "unknown";
+        creationDate = new Date();
     }
 
     /**
@@ -61,7 +61,7 @@ public class Account {
      * @return The id value.
      */
     public long getId() {
-        return _id;
+        return id;
     }
 
     /**
@@ -70,7 +70,7 @@ public class Account {
      * @return The ownerName value.
      */
     public String getOwnerName() {
-        return _ownerName;
+        return ownerName;
     }
 
     /**
@@ -79,7 +79,7 @@ public class Account {
      * @return The isActive value.
      */
     public boolean isActive() {
-        return _isActive;
+        return isActive;
     }
 
     /**
@@ -88,7 +88,7 @@ public class Account {
      * @param aIsActive The new value of the isActive attribute.
      */
     public void setActive(boolean aIsActive) {
-        _isActive = aIsActive;
+        isActive = aIsActive;
     }
 
     /**
@@ -97,7 +97,7 @@ public class Account {
      * @param aOwnerName The new value of the ownerName attribute.
      */
     public void setOwnerName(String aOwnerName) {
-        _ownerName = aOwnerName;
+        ownerName = aOwnerName;
     }
 
     /**
@@ -106,7 +106,7 @@ public class Account {
      * @return The balance value.
      */
     public double getBalance() {
-        return _balance;
+        return balance;
     }
 
     /**
@@ -115,25 +115,27 @@ public class Account {
      * @return The transactions value.
      */
     public List<AccountTransaction> getTransactions() {
-        return _transactions;
+        return transactionList;
     }
 
     protected void applyTransaction(AccountTransaction aTransaction) throws NotEnoughFundsException, InactiveAccountException {
-        if (!_isActive) {
-            throw new InactiveAccountException("Unable to apply " + aTransaction.getType() + " of amount " + aTransaction.getAmount() + " to account " + _id);
+        if (!isActive) {
+            throw new InactiveAccountException("Unable to apply "
+                    + aTransaction.getType() + " of amount " + aTransaction.getAmount() + " to account " + id);
         }
 
-        synchronized (_transactions) {
+        synchronized (transactionList) {
             if (AccountTransaction.TransactionType.DEPOSIT == aTransaction.getType()) {
-                _transactions.add(aTransaction);
-                _balance += aTransaction.getAmount();
+                transactionList.add(aTransaction);
+                balance += aTransaction.getAmount();
 
             } else if (AccountTransaction.TransactionType.WITHDRAWAL == aTransaction.getType()) {
-                if (_balance < aTransaction.getAmount()) {
-                    throw new NotEnoughFundsException("Unable to withdraw " + aTransaction.getAmount() + "$ from account " + _id + " - current balance is " + _balance);
+                if (balance < aTransaction.getAmount()) {
+                    throw new NotEnoughFundsException("Unable to withdraw "
+                            + aTransaction.getAmount() + "$ from account " + id + " - current balance is " + balance);
                 }
-                _transactions.add(aTransaction);
-                _balance -= aTransaction.getAmount();
+                transactionList.add(aTransaction);
+                balance -= aTransaction.getAmount();
 
             } else {
                 throw new IllegalArgumentException("The transaction passed in has an invalid type: " + aTransaction.getType());
@@ -147,7 +149,7 @@ public class Account {
      * @param aCreatedBy The new value of the createdBy attribute.
      */
     protected void setCreatedBy(String aCreatedBy) {
-        _createdBy = aCreatedBy;
+        createdBy = aCreatedBy;
     }
 
     /**
@@ -156,7 +158,7 @@ public class Account {
      * @return The createdBy value.
      */
     public String getCreatedBy() {
-        return _createdBy;
+        return createdBy;
     }
 
     /**
@@ -165,7 +167,7 @@ public class Account {
      * @return The creationDate value.
      */
     public Date getCreationDate() {
-        return _creationDate;
+        return creationDate;
     }
 
     /* (non-Javadoc)
@@ -174,13 +176,13 @@ public class Account {
 
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
-                append("id", _id).
-                append("ownerName", _ownerName).
-                append("isActive", _isActive).
-                append("balance", _balance).
-                append("tx.count", _transactions.size()).
-                append("createdBy", _createdBy).
-                append("creationDate", new Timestamp(_creationDate.getTime())).
+                append("id", id).
+                append("ownerName", ownerName).
+                append("isActive", isActive).
+                append("balance", balance).
+                append("tx.count", transactionList.size()).
+                append("createdBy", createdBy).
+                append("creationDate", new Timestamp(creationDate.getTime())).
                 toString();
     }
 }

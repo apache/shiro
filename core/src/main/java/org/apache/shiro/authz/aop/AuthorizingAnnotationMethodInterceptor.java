@@ -30,27 +30,26 @@ import org.apache.shiro.authz.AuthorizationException;
  *
  * @since 0.1
  */
-public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationMethodInterceptor
-{
-    
+public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationMethodInterceptor {
+
     /**
      * Constructor that ensures the internal <code>handler</code> is set which will be used to perform the
      * authorization assertion checks when a supported annotation is encountered.
-     * @param handler the internal <code>handler</code> used to perform authorization assertion checks when a 
-     * supported annotation is encountered.
+     *
+     * @param handler the internal <code>handler</code> used to perform authorization assertion checks when a
+     *                supported annotation is encountered.
      */
-    public AuthorizingAnnotationMethodInterceptor( AuthorizingAnnotationHandler handler ) {
+    public AuthorizingAnnotationMethodInterceptor(AuthorizingAnnotationHandler handler) {
         super(handler);
     }
 
     /**
-     *
      * @param handler
      * @param resolver
      * @since 1.1
      */
-    public AuthorizingAnnotationMethodInterceptor( AuthorizingAnnotationHandler handler,
-                                                   AnnotationResolver resolver) {
+    public AuthorizingAnnotationMethodInterceptor(AuthorizingAnnotationHandler handler,
+                                                  AnnotationResolver resolver) {
         super(handler, resolver);
     }
 
@@ -59,9 +58,10 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
      * {@link #assertAuthorized(org.apache.shiro.aop.MethodInvocation) assertAuthorized} method first.
      *
      * @param methodInvocation the method invocation to check for authorization prior to allowing it to proceed/execute.
-     * @return the return value from the method invocation (the value of {@link org.apache.shiro.aop.MethodInvocation#proceed() MethodInvocation.proceed()}).
+     * @return the return value from the method invocation
+     *      (the value of {@link org.apache.shiro.aop.MethodInvocation#proceed() MethodInvocation.proceed()}).
      * @throws org.apache.shiro.authz.AuthorizationException if the <code>MethodInvocation</code> is not allowed to proceed.
-     * @throws Throwable if any other error occurs.
+     * @throws Throwable                                     if any other error occurs.
      */
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         assertAuthorized(methodInvocation);
@@ -81,14 +81,15 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
      */
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
         try {
-            ((AuthorizingAnnotationHandler)getHandler()).assertAuthorized(getAnnotation(mi));
-        }
-        catch(AuthorizationException ae) {
-            // Annotation handler doesn't know why it was called, so add the information here if possible. 
-            // Don't wrap the exception here since we don't want to mask the specific exception, such as 
-            // UnauthenticatedException etc. 
-            if (ae.getCause() == null) ae.initCause(new AuthorizationException("Not authorized to invoke method: " + mi.getMethod()));
+            ((AuthorizingAnnotationHandler) getHandler()).assertAuthorized(getAnnotation(mi));
+        } catch (AuthorizationException ae) {
+            // Annotation handler doesn't know why it was called, so add the information here if possible.
+            // Don't wrap the exception here since we don't want to mask the specific exception, such as
+            // UnauthenticatedException etc.
+            if (ae.getCause() == null) {
+                ae.initCause(new AuthorizationException("Not authorized to invoke method: " + mi.getMethod()));
+            }
             throw ae;
-        }         
+        }
     }
 }

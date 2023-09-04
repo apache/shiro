@@ -34,9 +34,18 @@ import static java.util.Objects.requireNonNull;
  */
 public class SimpleHashRequest implements HashRequest {
 
-    private final ByteSource source; //cannot be null - this is the source to hash.
-    private final ByteSource salt; //null = no salt specified
-    private final String algorithmName; //null = let the HashService decide.
+    /**
+     * cannot be null - this is the source to hash.
+     */
+    private final ByteSource source;
+    /**
+     * can be null = no salt specified
+     */
+    private final ByteSource salt;
+    /**
+     * can be null = let the HashService decide.
+     */
+    private final String algorithmName;
     private final Map<String, Object> parameters = new ConcurrentHashMap<>();
 
     /**

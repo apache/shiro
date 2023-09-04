@@ -51,8 +51,8 @@ public class HttpServletSession implements Session {
             throw new IllegalArgumentException(msg);
         }
         if (httpSession instanceof ShiroHttpSession) {
-            String msg = "HttpSession constructor argument cannot be an instance of ShiroHttpSession.  This " +
-                    "is enforced to prevent circular dependencies and infinite loops.";
+            String msg = "HttpSession constructor argument cannot be an instance of ShiroHttpSession.  This "
+                    + "is enforced to prevent circular dependencies and infinite loops.";
             throw new IllegalArgumentException(msg);
         }
         this.httpSession = httpSession;
@@ -134,8 +134,8 @@ public class HttpServletSession implements Session {
 
     private static String assertString(Object key) {
         if (!(key instanceof String)) {
-            String msg = "HttpSession based implementations of the Shiro Session interface requires attribute keys " +
-                    "to be String objects.  The HttpSession class does not support anything other than String keys.";
+            String msg = "HttpSession based implementations of the Shiro Session interface requires attribute keys "
+                    + "to be String objects.  The HttpSession class does not support anything other than String keys.";
             throw new IllegalArgumentException(msg);
         }
         return (String) key;

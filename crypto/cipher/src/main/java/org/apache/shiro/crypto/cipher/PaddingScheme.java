@@ -147,7 +147,7 @@ public enum PaddingScheme {
 
     private final String transformationName;
 
-    private PaddingScheme(String transformationName) {
+    PaddingScheme(String transformationName) {
         this.transformationName = transformationName;
     }
 

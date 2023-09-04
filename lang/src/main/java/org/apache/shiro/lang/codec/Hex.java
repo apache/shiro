@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.lang.codec;
 
+
 /**
  * <a href="http://en.wikipedia.org/wiki/Hexadecimal">Hexadecimal</a> encoder and decoder.
  * <p/>
@@ -31,7 +32,7 @@ package org.apache.shiro.lang.codec;
  * @see <a href="http://en.wikipedia.org/wiki/Hexadecimal">Wikipedia: Hexadecimal</a>
  * @since 0.9
  */
-public class Hex {
+public final class Hex {
 
     /**
      * Used to build output as Hex
@@ -40,6 +41,10 @@ public class Hex {
             '0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
+
+    private Hex() {
+
+    }
 
     /**
      * Encodes the specified byte array to a character array and then returns that character array
@@ -120,6 +125,7 @@ public class Hex {
      * @throws IllegalArgumentException if an odd number or illegal of characters
      *                                  is supplied
      */
+    @SuppressWarnings("magicNumber")
     public static byte[] decode(char[] data) throws IllegalArgumentException {
 
         int len = data.length;
@@ -151,7 +157,7 @@ public class Hex {
      * @throws IllegalArgumentException if ch is an illegal hex character
      */
     protected static int toDigit(char ch, int index) throws IllegalArgumentException {
-        int digit = Character.digit(ch, 16);
+        int digit = Character.digit(ch, 2 << 3);
         if (digit == -1) {
             throw new IllegalArgumentException("Illegal hexadecimal character " + ch + " at index " + index);
         }

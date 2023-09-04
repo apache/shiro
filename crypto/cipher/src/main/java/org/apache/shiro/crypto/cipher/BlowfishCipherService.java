@@ -87,6 +87,7 @@ public class BlowfishCipherService extends DefaultBlockCipherService {
      */
     public BlowfishCipherService() {
         super(ALGORITHM_NAME);
-        setInitializationVectorSize(BLOCK_SIZE); //like most block ciphers, the IV size is the same as the block size
+        //like most block ciphers, the IV size is the same as the block size
+        setInitializationVectorSize(BLOCK_SIZE);
     }
 }

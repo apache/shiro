@@ -83,7 +83,8 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
 
     /**
      * Redirects to user to the previously attempted URL after a successful login.  This implementation simply calls
-     * <code>{@link org.apache.shiro.web.util.WebUtils WebUtils}.{@link WebUtils#redirectToSavedRequest(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String) redirectToSavedRequest}</code>
+     * <code>{@link org.apache.shiro.web.util.WebUtils WebUtils}.
+     *  {@link WebUtils#redirectToSavedRequest(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String) redirectToSavedRequest}</code>
      * using the {@link #getSuccessUrl() successUrl} as the {@code fallbackUrl} argument to that call.
      *
      * @param request  the incoming request

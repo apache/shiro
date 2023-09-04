@@ -58,9 +58,9 @@ public class GuestAnnotationHandler extends AuthorizingAnnotationHandler {
      */
     public void assertAuthorized(Annotation a) throws AuthorizationException {
         if (a instanceof RequiresGuest && getSubject().getPrincipal() != null) {
-            throw new UnauthenticatedException("Attempting to perform a guest-only operation.  The current Subject is " +
-                    "not a guest (they have been authenticated or remembered from a previous login).  Access " +
-                    "denied.");
+            throw new UnauthenticatedException("Attempting to perform a guest-only operation.  The current Subject is "
+                   + "not a guest (they have been authenticated or remembered from a previous login).  Access "
+                   + "denied.");
         }
     }
 }

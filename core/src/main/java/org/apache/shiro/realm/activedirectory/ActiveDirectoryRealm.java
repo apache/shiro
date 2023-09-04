@@ -39,7 +39,12 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -52,13 +57,11 @@ import java.util.*;
  */
 public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
-    //TODO - complete JavaDoc
-
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
 
-    private static final Logger log = LoggerFactory.getLogger(ActiveDirectoryRealm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActiveDirectoryRealm.class);
 
     private static final String ROLE_NAMES_DELIMETER = ",";
 
@@ -133,7 +136,8 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      * @return the AuthorizationInfo for the given Subject principal.
      * @throws NamingException if an error occurs when searching the LDAP server.
      */
-    protected AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principals, LdapContextFactory ldapContextFactory) throws NamingException {
+    protected AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principals,
+                                                          LdapContextFactory ldapContextFactory) throws NamingException {
 
         String username = (String) getAvailablePrincipal(principals);
 
@@ -174,8 +178,8 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         while (answer.hasMoreElements()) {
             SearchResult sr = (SearchResult) answer.next();
 
-            if (log.isDebugEnabled()) {
-                log.debug("Retrieving group names for user [" + sr.getName() + "]");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Retrieving group names for user [" + sr.getName() + "]");
             }
 
             Attributes attrs = sr.getAttributes();
@@ -189,8 +193,8 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
                         Collection<String> groupNames = LdapUtils.getAllAttributeValues(attr);
 
-                        if (log.isDebugEnabled()) {
-                            log.debug("Groups found for user [" + username + "]: " + groupNames);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Groups found for user [" + username + "]: " + groupNames);
                         }
 
                         Collection<String> rolesForGroups = getRoleNamesForGroups(groupNames);
@@ -218,8 +222,8 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
                 if (strRoleNames != null) {
                     for (String roleName : strRoleNames.split(ROLE_NAMES_DELIMETER)) {
 
-                        if (log.isDebugEnabled()) {
-                            log.debug("User is member of group [" + groupName + "] so adding role [" + roleName + "]");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("User is member of group [" + groupName + "] so adding role [" + roleName + "]");
                         }
 
                         roleNames.add(roleName);

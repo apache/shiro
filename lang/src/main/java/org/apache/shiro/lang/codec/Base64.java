@@ -36,7 +36,11 @@ package org.apache.shiro.lang.codec;
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @since 0.9
  */
-public class Base64 {
+public final class Base64 {
+
+    private Base64() {
+
+    }
 
     /**
      * Base64 encodes the specified byte array and then encodes it as a String using Shiro's preferred character

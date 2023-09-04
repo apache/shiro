@@ -80,23 +80,19 @@ public class SampleShiroNativeSessionsServletModule extends ShiroWebModule {
     }
 
     @Override
-    protected void bindWebSecurityManager(AnnotatedBindingBuilder<? super WebSecurityManager> bind)
-    {
-        try
-        {
-            String cipherKey = loadShiroIni().getSectionProperty( "main", "securityManager.rememberMeManager.cipherKey" );
+    protected void bindWebSecurityManager(AnnotatedBindingBuilder<? super WebSecurityManager> bind) {
+        try {
+            String cipherKey = loadShiroIni().getSectionProperty("main", "securityManager.rememberMeManager.cipherKey");
 
             DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
             CookieRememberMeManager rememberMeManager = new CookieRememberMeManager();
-            rememberMeManager.setCipherKey( Base64.decode( cipherKey ) );
+            rememberMeManager.setCipherKey(Base64.decode(cipherKey));
             securityManager.setRememberMeManager(rememberMeManager);
             bind.toInstance(securityManager);
-        }
-        catch ( MalformedURLException e )
-        {
+        } catch (MalformedURLException e) {
             // for now just throw, you could just call
             // super.bindWebSecurityManager(bind) if you do not need rememberMe functionality
-            throw new ConfigurationException( "securityManager.rememberMeManager.cipherKey must be set in shiro.ini." );
+            throw new ConfigurationException("securityManager.rememberMeManager.cipherKey must be set in shiro.ini.");
         }
     }
 }

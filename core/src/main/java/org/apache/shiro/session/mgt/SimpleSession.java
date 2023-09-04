@@ -30,7 +30,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -41,6 +45,13 @@ import java.util.*;
  */
 public class SimpleSession implements ValidatingSession, Serializable {
 
+    protected static final long MILLIS_PER_SECOND = 1000;
+    protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
+    protected static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
+
+    //serialization bitmask fields. DO NOT CHANGE THE ORDER THEY ARE DECLARED!
+    static int bitIndexCounter;
+
     // Serialization reminder:
     // You _MUST_ change this number if you introduce a change to this class
     // that is NOT serialization backwards compatible.  Serialization-compatible
@@ -48,15 +59,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     // a new number in this case, use the JDK's 'serialver' program to generate it.
     private static final long serialVersionUID = -7125642695178165650L;
 
-    //TODO - complete JavaDoc
-    private transient static final Logger log = LoggerFactory.getLogger(SimpleSession.class);
-
-    protected static final long MILLIS_PER_SECOND = 1000;
-    protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
-    protected static final long MILLIS_PER_HOUR = 60 * MILLIS_PER_MINUTE;
-
-    //serialization bitmask fields. DO NOT CHANGE THE ORDER THEY ARE DECLARED!
-    static int bitIndexCounter = 0;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSession.class);
     private static final int ID_BIT_MASK = 1 << bitIndexCounter++;
     private static final int START_TIMESTAMP_BIT_MASK = 1 << bitIndexCounter++;
     private static final int STOP_TIMESTAMP_BIT_MASK = 1 << bitIndexCounter++;
@@ -93,7 +96,8 @@ public class SimpleSession implements ValidatingSession, Serializable {
     private transient Map<Object, Object> attributes;
 
     public SimpleSession() {
-        this.timeout = DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT; //TODO - remove concrete reference to DefaultSessionManager
+        //TODO - remove concrete reference to DefaultSessionManager
+        this.timeout = DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT;
         this.startTimestamp = new Date();
         this.lastAccessTime = this.startTimestamp;
     }
@@ -134,7 +138,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
      * Once stopped, a session may no longer be used.  It is locked from all further activity.
      *
      * @return The time the session was stopped, or <tt>null</tt> if the session is still
-     *         active.
+     * active.
      */
     public Date getStopTimestamp() {
         return stopTimestamp;
@@ -229,16 +233,16 @@ public class SimpleSession implements ValidatingSession, Serializable {
 
         long timeout = getTimeout();
 
-        if (timeout >= 0l) {
+        if (timeout >= 0L) {
 
             Date lastAccessTime = getLastAccessTime();
 
             if (lastAccessTime == null) {
-                String msg = "session.lastAccessTime for session with id [" +
-                        getId() + "] is null.  This value must be set at " +
-                        "least once, preferably at least upon instantiation.  Please check the " +
-                        getClass().getName() + " implementation and ensure " +
-                        "this value will be set (perhaps in the constructor?)";
+                String msg = "session.lastAccessTime for session with id ["
+                        + getId() + "] is null.  This value must be set at "
+                        + "least once, preferably at least upon instantiation.  Please check the "
+                        + getClass().getName() + " implementation and ensure "
+                        + "this value will be set (perhaps in the constructor?)";
                 throw new IllegalStateException(msg);
             }
 
@@ -251,9 +255,9 @@ public class SimpleSession implements ValidatingSession, Serializable {
             Date expireTime = new Date(expireTimeMillis);
             return lastAccessTime.before(expireTime);
         } else {
-            if (log.isTraceEnabled()) {
-                log.trace("No timeout for session with id [" + getId() +
-                        "].  Session is not considered expired.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("No timeout for session with id [" + getId()
+                        + "].  Session is not considered expired.");
             }
         }
 
@@ -264,9 +268,9 @@ public class SimpleSession implements ValidatingSession, Serializable {
         //check for stopped:
         if (isStopped()) {
             //timestamp is set, so the session is considered stopped:
-            String msg = "Session with id [" + getId() + "] has been " +
-                    "explicitly stopped.  No further interaction under this session is " +
-                    "allowed.";
+            String msg = "Session with id [" + getId() + "] has been "
+                    + "explicitly stopped.  No further interaction under this session is "
+                    + "allowed.";
             throw new StoppedSessionException(msg);
         }
 
@@ -281,13 +285,13 @@ public class SimpleSession implements ValidatingSession, Serializable {
             Serializable sessionId = getId();
 
             DateFormat df = DateFormat.getInstance();
-            String msg = "Session with id [" + sessionId + "] has expired. " +
-                    "Last access time: " + df.format(lastAccessTime) +
-                    ".  Current time: " + df.format(new Date()) +
-                    ".  Session timeout is set to " + timeout / MILLIS_PER_SECOND + " seconds (" +
-                    timeout / MILLIS_PER_MINUTE + " minutes)";
-            if (log.isTraceEnabled()) {
-                log.trace(msg);
+            String msg = "Session with id [" + sessionId + "] has expired. "
+                    + "Last access time: " + df.format(lastAccessTime)
+                    + ".  Current time: " + df.format(new Date())
+                    + ".  Session timeout is set to " + timeout / MILLIS_PER_SECOND + " seconds ("
+                    + timeout / MILLIS_PER_MINUTE + " minutes)";
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(msg);
             }
             throw new ExpiredSessionException(msg);
         }
@@ -375,13 +379,13 @@ public class SimpleSession implements ValidatingSession, Serializable {
      * @since 1.0
      */
     protected boolean onEquals(SimpleSession ss) {
-        return (getStartTimestamp() != null ? getStartTimestamp().equals(ss.getStartTimestamp()) : ss.getStartTimestamp() == null) &&
-                (getStopTimestamp() != null ? getStopTimestamp().equals(ss.getStopTimestamp()) : ss.getStopTimestamp() == null) &&
-                (getLastAccessTime() != null ? getLastAccessTime().equals(ss.getLastAccessTime()) : ss.getLastAccessTime() == null) &&
-                (getTimeout() == ss.getTimeout()) &&
-                (isExpired() == ss.isExpired()) &&
-                (getHost() != null ? getHost().equals(ss.getHost()) : ss.getHost() == null) &&
-                (getAttributes() != null ? getAttributes().equals(ss.getAttributes()) : ss.getAttributes() == null);
+        return (getStartTimestamp() != null ? getStartTimestamp().equals(ss.getStartTimestamp()) : ss.getStartTimestamp() == null)
+                && (getStopTimestamp() != null ? getStopTimestamp().equals(ss.getStopTimestamp()) : ss.getStopTimestamp() == null)
+                && (getLastAccessTime() != null ? getLastAccessTime().equals(ss.getLastAccessTime()) : ss.getLastAccessTime() == null)
+                && (getTimeout() == ss.getTimeout())
+                && (isExpired() == ss.isExpired())
+                && (getHost() != null ? getHost().equals(ss.getHost()) : ss.getHost() == null)
+                && (getAttributes() != null ? getAttributes().equals(ss.getAttributes()) : ss.getAttributes() == null);
     }
 
     /**
@@ -415,7 +419,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
      * <code>getClass().getName() + &quot;,id=&quot; + getId()</code>.
      *
      * @return the string representation of this SimpleSession, equal to
-     *         <code>getClass().getName() + &quot;,id=&quot; + getId()</code>.
+     * <code>getClass().getName() + &quot;,id=&quot; + getId()</code>.
      * @since 1.0
      */
     @Override
@@ -448,7 +452,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         if (lastAccessTime != null) {
             out.writeObject(lastAccessTime);
         }
-        if (timeout != 0l) {
+        if (timeout != 0L) {
             out.writeLong(timeout);
         }
         if (expired) {
@@ -515,7 +519,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         bitMask = startTimestamp != null ? bitMask | START_TIMESTAMP_BIT_MASK : bitMask;
         bitMask = stopTimestamp != null ? bitMask | STOP_TIMESTAMP_BIT_MASK : bitMask;
         bitMask = lastAccessTime != null ? bitMask | LAST_ACCESS_TIME_BIT_MASK : bitMask;
-        bitMask = timeout != 0l ? bitMask | TIMEOUT_BIT_MASK : bitMask;
+        bitMask = timeout != 0L ? bitMask | TIMEOUT_BIT_MASK : bitMask;
         bitMask = expired ? bitMask | EXPIRED_BIT_MASK : bitMask;
         bitMask = host != null ? bitMask | HOST_BIT_MASK : bitMask;
         bitMask = !CollectionUtils.isEmpty(attributes) ? bitMask | ATTRIBUTES_BIT_MASK : bitMask;
@@ -531,7 +535,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
      *                     been serialized, 0 means it hasn't been serialized.
      * @param fieldBitMask the field bit mask constant identifying which bit to inspect (corresponds to a class attribute).
      * @return {@code true} if the given {@code bitMask} argument indicates that the specified field has been
-     *         serialized and therefore should be read during deserialization, {@code false} otherwise.
+     * serialized and therefore should be read during deserialization, {@code false} otherwise.
      * @since 1.0
      */
     private static boolean isFieldPresent(short bitMask, int fieldBitMask) {

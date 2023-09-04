@@ -54,33 +54,34 @@ class BeanTypeListener implements TypeListener {
     public static final Package SHIRO_GUICE_PACKAGE = ShiroModule.class.getPackage();
     public static final Package SHIRO_PACKAGE = SecurityUtils.class.getPackage();
 
+    public static final Matcher<TypeLiteral> MATCHER = ShiroMatchers.typeLiteral(classMatcher);
+
+    static final Key<?> MAP_KEY = Key.get(Types.mapOf(TypeLiteral.class, BeanTypeKey.class), Names.named(BEAN_TYPE_MAP_NAME));
+
     private static Matcher<Class> shiroMatcher = Matchers.inSubpackage(SHIRO_PACKAGE.getName());
     private static Matcher<Class> shiroGuiceMatcher = Matchers.inSubpackage(SHIRO_GUICE_PACKAGE.getName());
 
-    private static Matcher<Class> classMatcher = ShiroMatchers.ANY_PACKAGE.and(shiroMatcher.and(Matchers.not(shiroGuiceMatcher)));
-
-    public static final Matcher<TypeLiteral> MATCHER = ShiroMatchers.typeLiteral(classMatcher);
-
-    private static final String BEAN_TYPE_MAP_NAME = "__SHIRO_BEAN_TYPES__";
-    static final Key<?> MAP_KEY = Key.get(Types.mapOf(TypeLiteral.class, BeanTypeKey.class), Names.named(BEAN_TYPE_MAP_NAME));
+    private static Matcher<Class> classMatcher = ShiroMatchers.anyPackage.and(shiroMatcher.and(Matchers.not(shiroGuiceMatcher)));
 
     /**
      * @since 1.4
      */
-    private final BeanUtilsBean beanUtilsBean;
+    private static final String BEAN_TYPE_MAP_NAME = "__SHIRO_BEAN_TYPES__";
 
     private static final Set<Class<?>> WRAPPER_TYPES = new HashSet<Class<?>>(Arrays.asList(
-        Byte.class,
-        Boolean.class,
-        Character.class,
-        Double.class,
-        Float.class,
-        Integer.class,
-        Long.class,
-        Short.class,
-        Void.class));
+            Byte.class,
+            Boolean.class,
+            Character.class,
+            Double.class,
+            Float.class,
+            Integer.class,
+            Long.class,
+            Short.class,
+            Void.class));
 
-    public BeanTypeListener() {
+    private final BeanUtilsBean beanUtilsBean;
+
+    BeanTypeListener() {
         // SHIRO-619
         beanUtilsBean = new BeanUtilsBean();
         beanUtilsBean.getPropertyUtils().addBeanIntrospector(
@@ -88,7 +89,7 @@ class BeanTypeListener implements TypeListener {
     }
 
     public <I> void hear(TypeLiteral<I> type, final TypeEncounter<I> encounter) {
-        PropertyDescriptor propertyDescriptors[] = beanUtilsBean.getPropertyUtils().getPropertyDescriptors(type.getRawType());
+        PropertyDescriptor[] propertyDescriptors = beanUtilsBean.getPropertyUtils().getPropertyDescriptors(type.getRawType());
         final Map<PropertyDescriptor, Key<?>> propertyDependencies = new HashMap<PropertyDescriptor, Key<?>>(propertyDescriptors.length);
         final Provider<Injector> injectorProvider = encounter.getProvider(Injector.class);
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -122,7 +123,7 @@ class BeanTypeListener implements TypeListener {
 
     private static Key<?> getMappedKey(Injector injector, Key<?> key) {
         Map<TypeLiteral, BeanTypeKey> beanTypeMap = getBeanTypeMap(injector);
-        if(key.getAnnotation() == null && beanTypeMap.containsKey(key.getTypeLiteral())) {
+        if (key.getAnnotation() == null && beanTypeMap.containsKey(key.getTypeLiteral())) {
             return beanTypeMap.get(key.getTypeLiteral()).key;
         } else {
             return key;
@@ -135,7 +136,7 @@ class BeanTypeListener implements TypeListener {
     }
 
     private static Key<?> createDependencyKey(PropertyDescriptor propertyDescriptor, Type propertyType) {
-        if(requiresName(propertyType)) {
+        if (requiresName(propertyType)) {
             return Key.get(propertyType, Names.named("shiro." + propertyDescriptor.getName()));
         } else {
             return Key.get(propertyType);
@@ -163,7 +164,7 @@ class BeanTypeListener implements TypeListener {
         return MapBinder.newMapBinder(binder, TypeLiteral.class, BeanTypeKey.class, Names.named(BEAN_TYPE_MAP_NAME));
     }
 
-    private static class BeanTypeKey {
+    private static final class BeanTypeKey {
         Key<?> key;
 
         private BeanTypeKey(Key<?> key) {

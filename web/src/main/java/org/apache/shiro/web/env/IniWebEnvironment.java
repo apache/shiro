@@ -49,11 +49,21 @@ import java.util.Map;
  */
 public class IniWebEnvironment extends ResourceBasedWebEnvironment implements Initializable, Destroyable {
 
+    /**
+     * web ini resource path.
+     */
     public static final String DEFAULT_WEB_INI_RESOURCE_PATH = "/WEB-INF/shiro.ini";
+    /**
+     * filter chain resolver name.
+     */
     public static final String FILTER_CHAIN_RESOLVER_NAME = "filterChainResolver";
+
+    /**
+     * shiro filter config name.
+     */
     public static final String SHIRO_FILTER_CONFIG_NAME = "shiroFilter";
 
-    private static final Logger log = LoggerFactory.getLogger(IniWebEnvironment.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IniWebEnvironment.class);
 
     /**
      * The Ini that configures this WebEnvironment instance.
@@ -81,6 +91,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      * Loads configuration {@link Ini} from {@link #getConfigLocations()} if set, otherwise falling back
      * to the {@link #getDefaultConfigLocations()}. Finally any Ini objects will be merged with the value returned
      * from {@link #getFrameworkIni()}
+     *
      * @return Ini configuration to be used by this Environment.
      * @since 1.4
      */
@@ -89,21 +100,21 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
 
         String[] configLocations = getConfigLocations();
 
-        if (log.isWarnEnabled() && !CollectionUtils.isEmpty(ini) &&
-                configLocations != null && configLocations.length > 0) {
-            log.warn("Explicit INI instance has been provided, but configuration locations have also been " +
-                    "specified.  The {} implementation does not currently support multiple Ini config, but this may " +
-                    "be supported in the future. Only the INI instance will be used for configuration.",
+        if (LOGGER.isWarnEnabled() && !CollectionUtils.isEmpty(ini)
+                && configLocations != null && configLocations.length > 0) {
+            LOGGER.warn("Explicit INI instance has been provided, but configuration locations have also been "
+                            + "specified.  The {} implementation does not currently support multiple Ini config, but this may "
+                            + "be supported in the future. Only the INI instance will be used for configuration.",
                     IniWebEnvironment.class.getName());
         }
 
         if (CollectionUtils.isEmpty(ini)) {
-            log.debug("Checking any specified config locations.");
+            LOGGER.debug("Checking any specified config locations.");
             ini = getSpecifiedIni(configLocations);
         }
 
         if (CollectionUtils.isEmpty(ini)) {
-            log.debug("No INI instance or config locations specified.  Trying default config locations.");
+            LOGGER.debug("No INI instance or config locations specified.  Trying default config locations.");
             ini = getDefaultIni();
         }
 
@@ -151,14 +162,14 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      *     [main]
      *     realm = net.differentco.MyCustomRealm
      * </code></pre>
-     *
+     * <p>
      * This would merge into:
      * <pre><code>
      *     [main]
      *     realm = net.differentco.MyCustomRealm
      *     realm.foobarSpecificField = A string
      * </code></pre>
-     *
+     * <p>
      * This may cause a configuration error if <code>MyCustomRealm</code> does not contain the field <code>foobarSpecificField</code>.
      * This can be avoided if the Framework Ini uses more unique names, such as <code>foobarRealm</code>. which would result
      * in a merged configuration that looks like:
@@ -185,9 +196,9 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         if (configLocations != null && configLocations.length > 0) {
 
             if (configLocations.length > 1) {
-                log.warn("More than one Shiro .ini config location has been specified.  Only the first will be " +
-                        "used for configuration as the {} implementation does not currently support multiple " +
-                        "files.  This may be supported in the future however.", IniWebEnvironment.class.getName());
+                LOGGER.warn("More than one Shiro .ini config location has been specified.  Only the first will be "
+                        + "used for configuration as the {} implementation does not currently support multiple "
+                        + "files.  This may be supported in the future however.", IniWebEnvironment.class.getName());
             }
 
             //required, as it is user specified:
@@ -223,7 +234,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
             for (String location : configLocations) {
                 ini = createIni(location, false);
                 if (!CollectionUtils.isEmpty(ini)) {
-                    log.debug("Discovered non-empty INI configuration at location '{}'.  Using for configuration.",
+                    LOGGER.debug("Discovered non-empty INI configuration at location '{}'.  Using for configuration.",
                             location);
                     break;
                 }
@@ -242,7 +253,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      * @param configLocation the resource path to load into an {@code Ini} instance.
      * @param required       if the path must exist and be converted to a non-empty {@link Ini} instance.
      * @return an {@link Ini} instance reflecting the specified path, or {@code null} if the path does not exist and
-     *         is not required.
+     * is not required.
      * @throws ConfigurationException if the path is required but results in a null or empty Ini instance.
      */
     protected Ini createIni(String configLocation, boolean required) throws ConfigurationException {
@@ -253,8 +264,8 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
             ini = convertPathToIni(configLocation, required);
         }
         if (required && CollectionUtils.isEmpty(ini)) {
-            String msg = "Required configuration location '" + configLocation + "' does not exist or did not " +
-                    "contain any INI configuration.";
+            String msg = "Required configuration location '" + configLocation + "' does not exist or did not "
+                    + "contain any INI configuration.";
             throw new ConfigurationException(msg);
         }
 
@@ -297,7 +308,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
             factory.setDefaults(defaults);
         }
 
-        WebSecurityManager wsm = (WebSecurityManager)factory.getInstance();
+        WebSecurityManager wsm = (WebSecurityManager) factory.getInstance();
 
         //SHIRO-306 - get beans after they've been created (the call was before the factory.getInstance() call,
         //which always returned null.
@@ -315,7 +326,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      * @return an array with two elements, {@code /WEB-INF/shiro.ini} and {@code classpath:shiro.ini}.
      */
     protected String[] getDefaultConfigLocations() {
-        return new String[]{
+        return new String[] {
                 DEFAULT_WEB_INI_RESOURCE_PATH,
                 IniFactorySupport.DEFAULT_INI_RESOURCE_PATH
         };
@@ -351,8 +362,8 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
                     if (required) {
                         throw new ConfigurationException(e);
                     } else {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Unable to load optional path '" + path + "'.", e);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Unable to load optional path '" + path + "'.", e);
                         }
                     }
                 }

@@ -42,7 +42,7 @@ import java.util.List;
  */
 public class ShiroEventBusBeanPostProcessor implements BeanPostProcessor {
 
-    final private EventBus eventBus;
+    private final EventBus eventBus;
 
     public ShiroEventBusBeanPostProcessor(EventBus eventBus) {
         this.eventBus = eventBus;
@@ -57,8 +57,7 @@ public class ShiroEventBusBeanPostProcessor implements BeanPostProcessor {
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof EventBusAware) {
             ((EventBusAware) bean).setEventBus(eventBus);
-        }
-        else if (isEventSubscriber(bean)) {
+        } else if (isEventSubscriber(bean)) {
             eventBus.register(bean);
         }
 

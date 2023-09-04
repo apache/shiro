@@ -38,7 +38,7 @@ import org.apache.shiro.lang.util.ByteSource;
  * </ul>
  * For example, consider the following example generating password salts for new user accounts:
  * <pre>
- * RandomNumberGenerator saltGenerator = new {@link org.apache.shiro.crypto.SecureRandomNumberGenerator SecureRandomNumberGenerator}();
+ * RandomNumberGenerator saltGenerator = new {@link SecureRandomNumberGenerator SecureRandomNumberGenerator}();
  * User user = new User();
  * user.setPasswordSalt(saltGenerator.nextBytes().toBase64());
  * userDAO.save(user);

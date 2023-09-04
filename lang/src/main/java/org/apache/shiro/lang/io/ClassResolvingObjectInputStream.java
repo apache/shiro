@@ -39,9 +39,8 @@ public class ClassResolvingObjectInputStream extends ObjectInputStream {
     }
 
     /**
-     * Resolves an {@link ObjectStreamClass} by delegating to Shiro's 
+     * Resolves an {@link ObjectStreamClass} by delegating to Shiro's
      * {@link ClassUtils#forName(String)} utility method, which is known to work in all ClassLoader environments.
-     * 
      * @param osc the ObjectStreamClass to resolve the class name.
      * @return the discovered class
      * @throws IOException never - declaration retained for subclass consistency

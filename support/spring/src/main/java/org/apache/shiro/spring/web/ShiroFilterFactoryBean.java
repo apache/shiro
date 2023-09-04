@@ -121,7 +121,7 @@ import java.util.Map;
  */
 public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
-    private static transient final Logger log = LoggerFactory.getLogger(ShiroFilterFactoryBean.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShiroFilterFactoryBean.class);
 
     private SecurityManager securityManager;
 
@@ -129,7 +129,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
     private List<String> globalFilters;
 
-    private Map<String, String> filterChainDefinitionMap; //urlPathExpression_to_comma-delimited-filter-chain-definition
+    //urlPathExpression_to_comma-delimited-filter-chain-definition
+    private Map<String, String> filterChainDefinitionMap;
 
     private String loginUrl;
     private String successUrl;
@@ -143,7 +144,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
         this.filters = new LinkedHashMap<String, Filter>();
         this.globalFilters = new ArrayList<>();
         this.globalFilters.add(DefaultFilter.invalidRequest.name());
-        this.filterChainDefinitionMap = new LinkedHashMap<String, String>(); //order matters!
+        //order matters!
+        this.filterChainDefinitionMap = new LinkedHashMap<String, String>();
         this.filterConfiguration = new ShiroFilterConfiguration();
     }
 
@@ -363,7 +365,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     }
 
     /**
-     * Sets the list of filters that will be executed against every request.  Defaults to the {@link InvalidRequestFilter} which will block known invalid request attacks.
+     * Sets the list of filters that will be executed against every request.
+     * Defaults to the {@link InvalidRequestFilter} which will block known invalid request attacks.
      * @param globalFilters the list of filters to execute before specific path filters.
      */
     public void setGlobalFilters(List<String> globalFilters) {
@@ -441,7 +444,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
         }
 
         // create the default chain, to match anything the path matching would have missed
-        manager.createDefaultChain("/**"); // TODO this assumes ANT path matching, which might be OK here
+        // TODO this assumes ANT path matching, which might be OK here
+        manager.createDefaultChain("/**");
 
         return manager;
     }
@@ -466,7 +470,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      */
     protected AbstractShiroFilter createInstance() throws Exception {
 
-        log.debug("Creating Shiro Filter instance.");
+        LOGGER.debug("Creating Shiro Filter instance.");
 
         SecurityManager securityManager = getSecurityManager();
         if (securityManager == null) {
@@ -547,12 +551,12 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      */
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof Filter) {
-            log.debug("Found filter chain candidate filter '{}'", beanName);
+            LOGGER.debug("Found filter chain candidate filter '{}'", beanName);
             Filter filter = (Filter) bean;
             applyGlobalPropertiesIfNecessary(filter);
             getFilters().put(beanName, filter);
         } else {
-            log.trace("Ignoring non-Filter bean '{}'", beanName);
+            LOGGER.trace("Ignoring non-Filter bean '{}'", beanName);
         }
         return bean;
     }
@@ -576,7 +580,9 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      */
     private static final class SpringShiroFilter extends AbstractShiroFilter {
 
-        protected SpringShiroFilter(WebSecurityManager webSecurityManager, FilterChainResolver resolver, ShiroFilterConfiguration filterConfiguration) {
+        protected SpringShiroFilter(WebSecurityManager webSecurityManager,
+                                    FilterChainResolver resolver,
+                                    ShiroFilterConfiguration filterConfiguration) {
             super();
             if (webSecurityManager == null) {
                 throw new IllegalArgumentException("WebSecurityManager property cannot be null.");

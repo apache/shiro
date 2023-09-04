@@ -33,7 +33,7 @@ public class RegExPatternMatcher implements PatternMatcher {
 
     private static final int CASE_INSENSITIVE = DEFAULT | Pattern.CASE_INSENSITIVE;
 
-    private boolean caseInsensitive = false;
+    private boolean caseInsensitive;
 
     /**
      * Simple implementation that merely uses the default pattern comparison logic provided by the

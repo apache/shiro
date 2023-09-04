@@ -123,6 +123,7 @@ public class WildcardPermission implements Permission, Serializable {
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
     ============================================*/
+
     /**
      * Default no-arg constructor for subclasses only - end-user developers instantiating Permission instances must
      * provide a wildcard string at a minimum, since Permission instances are immutable once instantiated.
@@ -165,7 +166,8 @@ public class WildcardPermission implements Permission, Serializable {
             Set<String> subparts = CollectionUtils.asSet(part.split(SUBPART_DIVIDER_TOKEN));
 
             if (subparts.isEmpty()) {
-                throw new IllegalArgumentException("Wildcard string cannot contain parts with only dividers. Make sure permission strings are properly formatted.");
+                throw new IllegalArgumentException(
+                        "Wildcard string cannot contain parts with only dividers. Make sure permission strings are properly formatted.");
             }
             this.parts.add(subparts);
         }
@@ -184,8 +186,9 @@ public class WildcardPermission implements Permission, Serializable {
 
     /**
      * Sets the pre-split String parts of this <code>WildcardPermission</code>.
-     * @since 1.3.0
+     *
      * @param parts pre-split String parts.
+     * @since 1.3.0
      */
     protected void setParts(List<Set<String>> parts) {
         this.parts = parts;
@@ -238,7 +241,7 @@ public class WildcardPermission implements Permission, Serializable {
                 buffer.append(PART_DIVIDER_TOKEN);
             }
             Iterator<String> partIt = part.iterator();
-            while(partIt.hasNext()) {
+            while (partIt.hasNext()) {
                 buffer.append(partIt.next());
                 if (partIt.hasNext()) {
                     buffer.append(SUBPART_DIVIDER_TOKEN);

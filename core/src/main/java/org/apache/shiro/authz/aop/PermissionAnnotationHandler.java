@@ -21,7 +21,6 @@ package org.apache.shiro.authz.aop;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 
 import java.lang.annotation.Annotation;
@@ -59,12 +58,13 @@ public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
      * <code>AuthorizingException</code> indicating access is denied.
      *
      * @param a the RequiresPermission annotation being inspected to check for one or more permissions
-     * @throws org.apache.shiro.authz.AuthorizationException
-     *          if the calling <code>Subject</code> does not have the permission(s) necessary to
-     *          continue access or execution.
+     * @throws org.apache.shiro.authz.AuthorizationException if the calling <code>Subject</code> does not have the permission(s) necessary to
+     *                                                       continue access or execution.
      */
     public void assertAuthorized(Annotation a) throws AuthorizationException {
-        if (!(a instanceof RequiresPermissions)) return;
+        if (!(a instanceof RequiresPermissions)) {
+            return;
+        }
 
         RequiresPermissions rpAnnotation = (RequiresPermissions) a;
         String[] perms = getAnnotationValue(a);
@@ -88,8 +88,10 @@ public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
                 }
             }
             // Cause the exception if none of the role match, note that the exception message will be a bit misleading
-            if (!hasAtLeastOnePermission) getSubject().checkPermission(perms[0]);
-            
+            if (!hasAtLeastOnePermission) {
+                getSubject().checkPermission(perms[0]);
+            }
+
         }
     }
 }

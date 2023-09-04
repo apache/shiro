@@ -72,7 +72,7 @@ public abstract class JcaCipherService implements CipherService {
     /**
      * Internal private log instance.
      */
-    private static final Logger log = LoggerFactory.getLogger(JcaCipherService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JcaCipherService.class);
 
     /**
      * Default key size (in bits) for generated keys.
@@ -129,7 +129,8 @@ public abstract class JcaCipherService implements CipherService {
         }
         this.algorithmName = algorithmName;
         this.keySize = DEFAULT_KEY_SIZE;
-        this.initializationVectorSize = DEFAULT_KEY_SIZE; //default to same size as the key size (a common algorithm practice)
+        //default to same size as the key size (a common algorithm practice)
+        this.initializationVectorSize = DEFAULT_KEY_SIZE;
         this.streamingBufferSize = DEFAULT_STREAMING_BUFFER_SIZE;
         this.generateInitializationVectors = true;
     }
@@ -189,8 +190,8 @@ public abstract class JcaCipherService implements CipherService {
      */
     public void setInitializationVectorSize(int initializationVectorSize) throws IllegalArgumentException {
         if (initializationVectorSize % BITS_PER_BYTE != 0) {
-            String msg = "Initialization vector sizes are specified in bits, but must be a multiple of 8 so they " +
-                    "can be easily represented as a byte array.";
+            String msg = "Initialization vector sizes are specified in bits, but must be a multiple of 8 so they "
+                     + "can be easily represented as a byte array.";
             throw new IllegalArgumentException(msg);
         }
         this.initializationVectorSize = initializationVectorSize;
@@ -254,8 +255,8 @@ public abstract class JcaCipherService implements CipherService {
         try {
             return java.security.SecureRandom.getInstance(RANDOM_NUM_GENERATOR_ALGORITHM_NAME);
         } catch (java.security.NoSuchAlgorithmException e) {
-            log.debug("The SecureRandom SHA1PRNG algorithm is not available on the current platform.  Using the " +
-                    "platform's default SecureRandom algorithm.", e);
+            LOGGER.debug("The SecureRandom SHA1PRNG algorithm is not available on the current platform.  Using the "
+                     + "platform's default SecureRandom algorithm.", e);
             return new java.security.SecureRandom();
         }
     }
@@ -285,9 +286,9 @@ public abstract class JcaCipherService implements CipherService {
     protected byte[] generateInitializationVector(boolean streaming) {
         int size = getInitializationVectorSize();
         if (size <= 0) {
-            String msg = "initializationVectorSize property must be greater than zero.  This number is " +
-                    "typically set in the " + CipherService.class.getSimpleName() + " subclass constructor.  " +
-                    "Also check your configuration to ensure that if you are setting a value, it is positive.";
+            String msg = "initializationVectorSize property must be greater than zero.  This number is "
+                     + "typically set in the " + CipherService.class.getSimpleName() + " subclass constructor.  "
+                     + "Also check your configuration to ensure that if you are setting a value, it is positive.";
             throw new IllegalStateException(msg);
         }
         if (size % BITS_PER_BYTE != 0) {
@@ -307,8 +308,8 @@ public abstract class JcaCipherService implements CipherService {
         if (generate) {
             ivBytes = generateInitializationVector(false);
             if (ivBytes == null || ivBytes.length == 0) {
-                throw new IllegalStateException("Initialization vector generation is enabled - generated vector " +
-                        "cannot be null or empty.");
+                throw new IllegalStateException("Initialization vector generation is enabled - generated vector "
+                                    + "cannot be null or empty.");
             }
         }
         return encrypt(plaintext, key, ivBytes, generate);
@@ -316,13 +317,13 @@ public abstract class JcaCipherService implements CipherService {
 
     private ByteSource encrypt(byte[] plaintext, byte[] key, byte[] iv, boolean prependIv) throws CryptoException {
 
-        final int MODE = javax.crypto.Cipher.ENCRYPT_MODE;
+        final int mode = javax.crypto.Cipher.ENCRYPT_MODE;
 
         byte[] output;
 
         if (prependIv && iv != null && iv.length > 0) {
 
-            byte[] encrypted = crypt(plaintext, key, iv, MODE);
+            byte[] encrypted = crypt(plaintext, key, iv, mode);
 
             output = new byte[iv.length + encrypted.length];
 
@@ -334,12 +335,12 @@ public abstract class JcaCipherService implements CipherService {
             // + encrypted bytes:
             System.arraycopy(encrypted, 0, output, iv.length, encrypted.length);
         } else {
-            output = crypt(plaintext, key, iv, MODE);
+            output = crypt(plaintext, key, iv, mode);
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Incoming plaintext of size " + (plaintext != null ? plaintext.length : 0) + ".  Ciphertext " +
-                    "byte array is size " + (output != null ? output.length : 0));
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Incoming plaintext of size " + (plaintext != null ? plaintext.length : 0) + ".  Ciphertext "
+                + "byte array is size " + (output != null ? output.length : 0));
         }
 
         return ByteSource.Util.bytes(output);
@@ -388,9 +389,9 @@ public abstract class JcaCipherService implements CipherService {
     }
 
     private ByteSource decryptInternal(byte[] ciphertext, byte[] key, byte[] iv) throws CryptoException {
-        if (log.isTraceEnabled()) {
-            log.trace("Attempting to decrypt incoming byte array of length " +
-                    (ciphertext != null ? ciphertext.length : 0));
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Attempting to decrypt incoming byte array of length "
+                  + (ciphertext != null ? ciphertext.length : 0));
         }
         byte[] decrypted = crypt(ciphertext, key, iv, javax.crypto.Cipher.DECRYPT_MODE);
         return decrypted == null ? null : ByteSource.Util.bytes(decrypted);
@@ -412,10 +413,10 @@ public abstract class JcaCipherService implements CipherService {
         try {
             return javax.crypto.Cipher.getInstance(transformationString);
         } catch (Exception e) {
-            String msg = "Unable to acquire a Java JCA Cipher instance using " +
-                    javax.crypto.Cipher.class.getName() + ".getInstance( \"" + transformationString + "\" ). " +
-                    getAlgorithmName() + " under this configuration is required for the " +
-                    getClass().getName() + " instance to function.";
+            String msg = "Unable to acquire a Java JCA Cipher instance using "
+                     + javax.crypto.Cipher.class.getName() + ".getInstance( \"" + transformationString + "\" ). "
+                     + getAlgorithmName() + " under this configuration is required for the "
+                     + getClass().getName() + " instance to function.";
             throw new CryptoException(msg, e);
         }
     }
@@ -508,8 +509,8 @@ public abstract class JcaCipherService implements CipherService {
         if (generate) {
             iv = generateInitializationVector(true);
             if (iv == null || iv.length == 0) {
-                throw new IllegalStateException("Initialization vector generation is enabled - generated vector " +
-                        "cannot be null or empty.");
+                throw new IllegalStateException("Initialization vector generation is enabled - generated vector "
+                                                    + "cannot be null or empty.");
             }
         }
         encrypt(in, out, key, iv, generate);
@@ -552,9 +553,8 @@ public abstract class JcaCipherService implements CipherService {
             }
 
             if (read != ivByteSize) {
-                throw new CryptoException("Unable to read initialization vector bytes from the InputStream.  " +
-                        "This is required when initialization vectors are autogenerated during an encryption " +
-                        "operation.");
+                throw new CryptoException("Unable to read initialization vector bytes from the InputStream.  "
+                         + "This is required when initialization vectors are autogenerated during an encryption operation.");
             }
         }
 

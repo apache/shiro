@@ -67,7 +67,7 @@ public class Argon2HashProvider implements HashSpi {
 
         private final SecureRandom random;
 
-        public Argon2HashFactory(Random random) {
+        Argon2HashFactory(Random random) {
             if (!(random instanceof SecureRandom)) {
                 throw new IllegalArgumentException("Only SecureRandom instances are supported at the moment!");
             }
@@ -157,11 +157,34 @@ public class Argon2HashProvider implements HashSpi {
      */
     public static final class Parameters {
 
+        /**
+         * Default algorithm name.
+         */
         public static final String DEFAULT_ALGORITHM_NAME = Argon2Hash.DEFAULT_ALGORITHM_NAME;
+
+        /**
+         * Default algorithm version.
+         */
         public static final int DEFAULT_ALGORITHM_VERSION = Argon2Hash.DEFAULT_ALGORITHM_VERSION;
+
+        /**
+         *  Default iterations.
+         */
         public static final int DEFAULT_ITERATIONS = Argon2Hash.DEFAULT_ITERATIONS;
+
+        /**
+         *  Default memory kib.
+         */
         public static final int DEFAULT_MEMORY_KIB = Argon2Hash.DEFAULT_MEMORY_KIB;
+
+        /**
+         *  Default parallelism number.
+         */
         public static final int DEFAULT_PARALLELISM = Argon2Hash.DEFAULT_PARALLELISM;
+
+        /**
+         *  Default output length bits.
+         */
         public static final int DEFAULT_OUTPUT_LENGTH_BITS = Argon2Hash.DEFAULT_OUTPUT_LENGTH_BITS;
 
         /**
@@ -174,6 +197,10 @@ public class Argon2HashProvider implements HashSpi {
          * <p>The default value is {@value DEFAULT_ALGORITHM_NAME} when this parameter is not specified.</p>
          */
         public static final String PARAMETER_ALGORITHM_NAME = "Argon2.algorithmName";
+
+        /**
+         * Argon2 algorithm version.
+         */
         public static final String PARAMETER_ALGORITHM_VERSION = "Argon2.version";
 
         /**
@@ -187,8 +214,19 @@ public class Argon2HashProvider implements HashSpi {
          */
         public static final String PARAMETER_SALT = "Argon2.salt";
 
+        /**
+         * Argon2 parameter iterations.
+         */
         public static final String PARAMETER_ITERATIONS = "Argon2.iterations";
+
+        /**
+         *  Argon2 parameter memory kib.
+         */
         public static final String PARAMETER_MEMORY_KIB = "Argon2.memoryKib";
+
+        /**
+         *  Argon2 parameter parallelism.
+         */
         public static final String PARAMETER_PARALLELISM = "Argon2.parallelism";
 
         /**

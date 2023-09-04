@@ -139,9 +139,9 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         EventBus eventBus = getEventBus();
         Collection<Realm> realms = getRealms();
         if (eventBus != null && realms != null && !realms.isEmpty()) {
-            for(Realm realm : realms) {
+            for (Realm realm : realms) {
                 if (realm instanceof EventBusAware) {
-                    ((EventBusAware)realm).setEventBus(eventBus);
+                    ((EventBusAware) realm).setEventBus(eventBus);
                 }
             }
         }

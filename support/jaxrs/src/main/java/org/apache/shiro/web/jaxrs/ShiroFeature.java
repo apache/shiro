@@ -46,9 +46,11 @@ import javax.ws.rs.ext.Provider;
  *         }
  *     }
  * </pre></blockquote>
+ * NOTE: Apache CXF requires this annotation on this feature (jersey and resteasy do not)
+ *
  * @since 1.4
  */
-@Provider // NOTE: Apache CXF requires this annotation on this feature (jersey and resteasy do not)
+@Provider
 public class ShiroFeature implements Feature {
 
     @Override

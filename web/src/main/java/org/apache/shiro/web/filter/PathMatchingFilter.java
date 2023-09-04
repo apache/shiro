@@ -44,7 +44,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     /**
      * Log available to this class only
      */
-    private static final Logger log = LoggerFactory.getLogger(PathMatchingFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PathMatchingFilter.class);
 
     private static final String DEFAULT_PATH_SEPARATOR = "/";
 
@@ -123,7 +123,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     protected boolean pathsMatch(String path, ServletRequest request) {
         String requestURI = getPathWithinApplication(request);
 
-        log.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, Encode.forHtml(requestURI));
+        LOGGER.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, Encode.forHtml(requestURI));
         boolean match = pathsMatch(path, requestURI);
 
         if (!match) {
@@ -135,7 +135,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
                 && path.endsWith(DEFAULT_PATH_SEPARATOR)) {
                 path = path.substring(0, path.length() - 1);
             }
-            log.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, Encode.forHtml(requestURI));
+            LOGGER.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, Encode.forHtml(requestURI));
             match = pathsMatch(path, requestURI);
         }
 
@@ -157,7 +157,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      */
     protected boolean pathsMatch(String pattern, String path) {
         boolean matches = pathMatcher.matches(pattern, path);
-        log.trace("Pattern [{}] matches path [{}] => [{}]", pattern, path, matches);
+        LOGGER.trace("Pattern [{}] matches path [{}] => [{}]", pattern, path, matches);
         return matches;
     }
 
@@ -183,8 +183,8 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
 
         if (this.appliedPaths == null || this.appliedPaths.isEmpty()) {
-            if (log.isTraceEnabled()) {
-                log.trace("appliedPaths property is null or empty.  This Filter will passthrough immediately.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("appliedPaths property is null or empty.  This Filter will passthrough immediately.");
             }
             return true;
         }
@@ -193,7 +193,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
             // If the path does match, then pass on to the subclass implementation for specific checks
             //(first match 'wins'):
             if (pathsMatch(path, request)) {
-                log.trace("Current requestURI matches pattern '{}'.  Determining filter chain execution...", path);
+                LOGGER.trace("Current requestURI matches pattern '{}'.  Determining filter chain execution...", path);
                 Object config = this.appliedPaths.get(path);
                 return isFilterChainContinued(request, response, path, config);
             }
@@ -212,21 +212,22 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     private boolean isFilterChainContinued(ServletRequest request, ServletResponse response,
                                            String path, Object pathConfig) throws Exception {
 
-        if (isEnabled(request, response, path, pathConfig)) { //isEnabled check added in 1.2
-            if (log.isTraceEnabled()) {
-                log.trace("Filter '{}' is enabled for the current request under path '{}' with config [{}].  " +
-                        "Delegating to subclass implementation for 'onPreHandle' check.",
-                        new Object[]{getName(), path, pathConfig});
+        //isEnabled check added in 1.2
+        if (isEnabled(request, response, path, pathConfig)) {
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Filter '{}' is enabled for the current request under path '{}' with config [{}].  "
+                        + "Delegating to subclass implementation for 'onPreHandle' check.",
+                        getName(), path, pathConfig);
             }
             //The filter is enabled for this specific request, so delegate to subclass implementations
             //so they can decide if the request should continue through the chain or not:
             return onPreHandle(request, response, pathConfig);
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Filter '{}' is disabled for the current request under path '{}' with config [{}].  " +
-                    "The next element in the FilterChain will be called immediately.",
-                    new Object[]{getName(), path, pathConfig});
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Filter '{}' is disabled for the current request under path '{}' with config [{}].  "
+                    + "The next element in the FilterChain will be called immediately.",
+                    getName(), path, pathConfig);
         }
         //This filter is disabled for this specific request,
         //return 'true' immediately to indicate that the filter will not process the request

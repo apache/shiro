@@ -80,12 +80,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
     /**
      * This class's private logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(HttpMethodPermissionFilter.class);
-
-    /**
-     * Map that contains a mapping between http methods to permission actions (verbs)
-     */
-    private final Map<String, String> httpMethodActions = new HashMap<String, String>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpMethodPermissionFilter.class);
 
     //Actions representing HTTP Method values (GET -> read, POST -> create, etc.)
     private static final String CREATE_ACTION = "create";
@@ -94,23 +89,53 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
     private static final String DELETE_ACTION = "delete";
 
     /**
+     * Map that contains a mapping between http methods to permission actions (verbs)
+     */
+    private final Map<String, String> httpMethodActions = new HashMap<String, String>();
+
+    /**
      * Enum of constants for well-defined mapping values.  Used in the Filter's constructor to perform the map instance
      * used at runtime.
      */
-    private static enum HttpMethodAction {
+    private enum HttpMethodAction {
 
+        /**
+         * DELETE
+         */
         DELETE(DELETE_ACTION),
+        /**
+         * GET
+         */
         GET(READ_ACTION),
+        /**
+         * HEAD
+         */
         HEAD(READ_ACTION),
-        MKCOL(CREATE_ACTION), //webdav, but useful here
+        /**
+         * MKCOL
+         */
+        MKCOL(CREATE_ACTION),
+        /**
+         * OPTIONS
+         * webdav, but useful here
+         */
         OPTIONS(READ_ACTION),
+        /**
+         * POST
+         */
         POST(CREATE_ACTION),
+        /**
+         * PUT
+         */
         PUT(UPDATE_ACTION),
+        /**
+         * TRACE
+         */
         TRACE(READ_ACTION);
 
         private final String action;
 
-        private HttpMethodAction(String action) {
+        HttpMethodAction(String action) {
             this.action = action;
         }
 
@@ -226,7 +251,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
             mappedPerms[i] = configuredPerms[i] + ":" + action;
         }
 
-        if (log.isTraceEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < mappedPerms.length; i++) {
                 if (i > 0) {
@@ -234,7 +259,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
                 }
                 sb.append(mappedPerms[i]);
             }
-            log.trace("MAPPED '{}' action to permission(s) '{}'", action, sb);
+            LOGGER.trace("MAPPED '{}' action to permission(s) '{}'", action, sb);
         }
 
         return mappedPerms;

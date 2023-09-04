@@ -47,7 +47,7 @@ class FilterChainResolverProvider implements ProviderWithDependencies<FilterChai
 
     private PatternMatcher patternMatcher = new AntPathMatcher();
 
-    public FilterChainResolverProvider(Map<String, Key<? extends Filter>[]> chains) {
+    FilterChainResolverProvider(Map<String, Key<? extends Filter>[]> chains) {
         this.chains = chains;
         Set<Dependency<?>> dependenciesBuilder = new HashSet<Dependency<?>>();
         for (String chain : chains.keySet()) {

@@ -126,8 +126,8 @@ public class SimpleByteSource implements ByteSource {
      * @since 1.2
      */
     public static boolean isCompatible(Object o) {
-        return o instanceof byte[] || o instanceof char[] || o instanceof String ||
-                o instanceof ByteSource || o instanceof File || o instanceof InputStream;
+        return o instanceof byte[] || o instanceof char[] || o instanceof String
+                   || o instanceof ByteSource || o instanceof File || o instanceof InputStream;
     }
 
     public static ByteSource empty() {
@@ -146,7 +146,7 @@ public class SimpleByteSource implements ByteSource {
 
     @Override
     public String toHex() {
-        if ( this.cachedHex == null ) {
+        if (this.cachedHex == null) {
             this.cachedHex = Hex.encodeToString(getBytes());
         }
         return this.cachedHex;
@@ -154,7 +154,7 @@ public class SimpleByteSource implements ByteSource {
 
     @Override
     public String toBase64() {
-        if ( this.cachedBase64 == null ) {
+        if (this.cachedBase64 == null) {
             this.cachedBase64 = Base64.encodeToString(getBytes());
         }
         return this.cachedBase64;

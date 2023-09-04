@@ -31,7 +31,7 @@ class LifecycleTypeListener implements TypeListener {
     public static final Matcher<TypeLiteral> MATCHER = InitializableInjectionListener.MATCHER.or(DestroyableInjectionListener.MATCHER);
     private DestroyableInjectionListener.DestroyableRegistry registry;
 
-    public LifecycleTypeListener(DestroyableInjectionListener.DestroyableRegistry registry) {
+    LifecycleTypeListener(DestroyableInjectionListener.DestroyableRegistry registry) {
         this.registry = registry;
     }
 

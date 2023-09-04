@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -74,10 +73,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class DefaultEventBus implements EventBus {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultEventBus.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultEventBus.class);
 
-    private static final String EVENT_LISTENER_ERROR_MSG = "Event listener processing failed.  Listeners should " +
-            "generally handle exceptions directly and not propagate to the event bus.";
+    private static final String EVENT_LISTENER_ERROR_MSG = "Event listener processing failed.  Listeners should "
+            + "generally handle exceptions directly and not propagate to the event bus.";
 
     //this is stateless, we can retain a static final reference:
     private static final EventListenerComparator EVENT_LISTENER_COMPARATOR = new EventListenerComparator();
@@ -103,7 +102,8 @@ public class DefaultEventBus implements EventBus {
     private final Lock registryWriteLock;
 
     public DefaultEventBus() {
-        this.registry = new LinkedHashMap<Object, Subscription>(); //not thread safe, so we need locks:
+        //not thread safe, so we need locks:
+        this.registry = new LinkedHashMap<Object, Subscription>();
         ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
         this.registryReadLock = rwl.readLock();
         this.registryWriteLock = rwl.writeLock();
@@ -120,7 +120,7 @@ public class DefaultEventBus implements EventBus {
 
     public void publish(Object event) {
         if (event == null) {
-            log.info("Received null event for publishing.  Ignoring and returning.");
+            LOGGER.info("Received null event for publishing.  Ignoring and returning.");
             return;
         }
 
@@ -149,7 +149,7 @@ public class DefaultEventBus implements EventBus {
 
     public void register(Object instance) {
         if (instance == null) {
-            log.info("Received null instance for event listener registration.  Ignoring registration request.");
+            LOGGER.info("Received null instance for event listener registration.  Ignoring registration request.");
             return;
         }
 
@@ -158,7 +158,7 @@ public class DefaultEventBus implements EventBus {
         List<EventListener> listeners = getEventListenerResolver().getEventListeners(instance);
 
         if (listeners == null || listeners.isEmpty()) {
-            log.warn("Unable to resolve event listeners for subscriber instance [{}]. Ignoring registration request.",
+            LOGGER.warn("Unable to resolve event listeners for subscriber instance [{}]. Ignoring registration request.",
                     instance);
             return;
         }
@@ -185,13 +185,13 @@ public class DefaultEventBus implements EventBus {
         }
     }
 
-    private class Subscription {
+    private static class Subscription {
 
         private final List<EventListener> listeners;
 
-        public Subscription(List<EventListener> listeners) {
+        Subscription(List<EventListener> listeners) {
             List<EventListener> toSort = new ArrayList<EventListener>(listeners);
-            Collections.sort(toSort, EVENT_LISTENER_COMPARATOR);
+            toSort.sort(EVENT_LISTENER_COMPARATOR);
             this.listeners = toSort;
         }
 
@@ -209,7 +209,7 @@ public class DefaultEventBus implements EventBus {
                     try {
                         listener.onEvent(event);
                     } catch (Throwable t) {
-                        log.warn(EVENT_LISTENER_ERROR_MSG, t);
+                        LOGGER.warn(EVENT_LISTENER_ERROR_MSG, t);
                     }
                     delivered.add(target);
                 }

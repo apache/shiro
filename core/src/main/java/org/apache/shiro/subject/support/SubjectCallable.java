@@ -53,6 +53,7 @@ import java.util.concurrent.Callable;
  * {@link org.apache.shiro.concurrent.SubjectAwareExecutorService SubjectAwareExecutorService}, which
  * transparently uses instances of this class.
  *
+ * @param <V> V
  * @see Subject#associateWith(Callable)
  * @see org.apache.shiro.concurrent.SubjectAwareExecutorService SubjectAwareExecutorService
  * @since 1.0

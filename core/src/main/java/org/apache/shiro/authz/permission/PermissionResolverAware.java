@@ -36,5 +36,5 @@ public interface PermissionResolverAware {
      *
      * @param pr the <tt>PermissionResolver</tt> being set.
      */
-    public void setPermissionResolver(PermissionResolver pr);
+    void setPermissionResolver(PermissionResolver pr);
 }

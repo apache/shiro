@@ -172,6 +172,7 @@ interface OpenBSDBase64 {
                     out[index++] = map[((in[end] & 0x03) << 4) | ((in[end + 1] & 0xff) >> 4)];
                     out[index] = map[((in[end + 1] & 0x0f) << 2)];
                     break;
+                default:
             }
             return out;
         }

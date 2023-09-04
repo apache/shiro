@@ -604,7 +604,7 @@ public interface Subject {
      *
      * @since 1.0
      */
-    public static class Builder {
+    class Builder {
 
         /**
          * Hold all contextual data via the Builder instance's method invocations to be sent to the
@@ -639,8 +639,8 @@ public interface Subject {
             this.securityManager = securityManager;
             this.subjectContext = newSubjectContextInstance();
             if (this.subjectContext == null) {
-                throw new IllegalStateException("Subject instance returned from 'newSubjectContextInstance' " +
-                        "cannot be null.");
+                throw new IllegalStateException("Subject instance returned from 'newSubjectContextInstance' "
+                       + "cannot be null.");
             }
             this.subjectContext.setSecurityManager(securityManager);
         }
@@ -737,7 +737,8 @@ public interface Subject {
          * was named &quot;{@code myRealm}&quot;, you might create the '{@code jsmith} {@code Subject} instance this
          * way:
          * <pre>
-         * PrincipalCollection identity = new {@link org.apache.shiro.subject.SimplePrincipalCollection#SimplePrincipalCollection(Object, String) SimplePrincipalCollection}(&quot;jsmith&quot;, &quot;myRealm&quot;);
+         * PrincipalCollection identity = new {@link org.apache.shiro.subject.SimplePrincipalCollection#SimplePrincipalCollection(Object, String)
+         *                                  SimplePrincipalCollection}(&quot;jsmith&quot;, &quot;myRealm&quot;);
          * Subject jsmith = new Subject.Builder().principals(identity).buildSubject();</pre>
          * <p/>
          * Similarly, if your application's unique identifier for users is a {@code long} value (such as might be used
@@ -746,7 +747,8 @@ public interface Subject {
          * instance this way:
          * <pre>
          * long userId = //get user ID from somewhere
-         * PrincipalCollection userIdentity = new {@link org.apache.shiro.subject.SimplePrincipalCollection#SimplePrincipalCollection(Object, String) SimplePrincipalCollection}(<em>userId</em>, &quot;jdbcRealm&quot;);
+         * PrincipalCollection userIdentity = new {@link org.apache.shiro.subject.SimplePrincipalCollection#SimplePrincipalCollection(Object, String)
+         *                                  SimplePrincipalCollection}(<em>userId</em>, &quot;jdbcRealm&quot;);
          * Subject user = new Subject.Builder().principals(identity).buildSubject();</pre>
          *
          * @param principals the principals to use as the {@code Subject}'s identity.

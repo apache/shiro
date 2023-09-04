@@ -112,9 +112,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class AuthenticatingRealm extends CachingRealm implements Initializable {
 
-    //TODO - complete JavaDoc
-
-    private static final Logger log = LoggerFactory.getLogger(AuthenticatingRealm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticatingRealm.class);
 
     private static final AtomicInteger INSTANCE_COUNT = new AtomicInteger();
 
@@ -455,13 +453,13 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
 
         if (this.authenticationCache == null) {
 
-            log.trace("No authenticationCache instance set.  Checking for a cacheManager...");
+            LOGGER.trace("No authenticationCache instance set.  Checking for a cacheManager...");
 
             CacheManager cacheManager = getCacheManager();
 
             if (cacheManager != null) {
                 String cacheName = getAuthenticationCacheName();
-                log.debug("CacheManager [{}] configured.  Building authentication cache '{}'", cacheManager, cacheName);
+                LOGGER.debug("CacheManager [{}] configured.  Building authentication cache '{}'", cacheManager, cacheName);
                 this.authenticationCache = cacheManager.getCache(cacheName);
             }
         }
@@ -483,13 +481,13 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
 
         Cache<Object, AuthenticationInfo> cache = getAvailableAuthenticationCache();
         if (cache != null && token != null) {
-            log.trace("Attempting to retrieve the AuthenticationInfo from cache.");
+            LOGGER.trace("Attempting to retrieve the AuthenticationInfo from cache.");
             Object key = getAuthenticationCacheKey(token);
             info = cache.get(key);
             if (info == null) {
-                log.trace("No AuthorizationInfo found in cache for key [{}]", key);
+                LOGGER.trace("No AuthorizationInfo found in cache for key [{}]", key);
             } else {
-                log.trace("Found cached AuthorizationInfo for key [{}]", key);
+                LOGGER.trace("Found cached AuthorizationInfo for key [{}]", key);
             }
         }
 
@@ -507,7 +505,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      */
     private void cacheAuthenticationInfoIfPossible(AuthenticationToken token, AuthenticationInfo info) {
         if (!isAuthenticationCachingEnabled(token, info)) {
-            log.debug("AuthenticationInfo caching is disabled for info [{}].  Submitted token: [{}].", info, token);
+            LOGGER.debug("AuthenticationInfo caching is disabled for info [{}].  Submitted token: [{}].", info, token);
             //return quietly, caching is disabled for this token/info pair:
             return;
         }
@@ -516,7 +514,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
         if (cache != null) {
             Object key = getAuthenticationCacheKey(token);
             cache.put(key, info);
-            log.trace("Cached AuthenticationInfo for continued authentication.  key=[{}], value=[{}].", key, info);
+            LOGGER.trace("Cached AuthenticationInfo for continued authentication.  key=[{}], value=[{}].", key, info);
         }
     }
 
@@ -569,18 +567,18 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
         if (info == null) {
             //otherwise not cached, perform the lookup:
             info = doGetAuthenticationInfo(token);
-            log.debug("Looked up AuthenticationInfo [{}] from doGetAuthenticationInfo", info);
+            LOGGER.debug("Looked up AuthenticationInfo [{}] from doGetAuthenticationInfo", info);
             if (token != null && info != null) {
                 cacheAuthenticationInfoIfPossible(token, info);
             }
         } else {
-            log.debug("Using cached authentication info [{}] to perform credentials matching.", info);
+            LOGGER.debug("Using cached authentication info [{}] to perform credentials matching.", info);
         }
 
         if (info != null) {
             assertCredentialsMatch(token, info);
         } else {
-            log.debug("No AuthenticationInfo found for submitted AuthenticationToken [{}].  Returning null.", token);
+            LOGGER.debug("No AuthenticationInfo found for submitted AuthenticationToken [{}].  Returning null.", token);
         }
 
         return info;
@@ -603,9 +601,9 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
                 throw new IncorrectCredentialsException(msg);
             }
         } else {
-            throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify " +
-                    "credentials during authentication.  If you do not wish for credentials to be examined, you " +
-                    "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
+            throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify "
+                    + "credentials during authentication.  If you do not wish for credentials to be examined, you "
+                    + "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
         }
     }
 

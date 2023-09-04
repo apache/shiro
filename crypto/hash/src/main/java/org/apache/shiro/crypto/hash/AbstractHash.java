@@ -50,16 +50,16 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
     /**
      * The hashed data
      */
-    private byte[] bytes = null;
+    private byte[] bytes;
 
     /**
      * Cached value of the {@link #toHex() toHex()} call so multiple calls won't incur repeated overhead.
      */
-    private transient String hexEncoded = null;
+    private transient String hexEncoded;
     /**
      * Cached value of the {@link #toBase64() toBase64()} call so multiple calls won't incur repeated overhead.
      */
-    private transient String base64Encoded = null;
+    private transient String base64Encoded;
 
     /**
      * Creates an new instance without any of its properties set (no hashing is performed).
@@ -138,9 +138,8 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
     }
 
     /**
-     * Implemented by subclasses, this specifies the {@link MessageDigest MessageDigest} algorithm name 
+     * Implemented by subclasses, this specifies the {@link MessageDigest MessageDigest} algorithm name
      * to use when performing the hash.
-     *
      * @return the {@link MessageDigest MessageDigest} algorithm name to use when performing the hash.
      */
     @Override
@@ -218,7 +217,8 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
             digest.update(salt);
         }
         byte[] hashed = digest.digest(bytes);
-        int iterations = hashIterations - 1; //already hashed once above
+        //already hashed once above
+        int iterations = hashIterations - 1;
         //iterate remaining number:
         for (int i = 0; i < iterations; i++) {
             digest.reset();

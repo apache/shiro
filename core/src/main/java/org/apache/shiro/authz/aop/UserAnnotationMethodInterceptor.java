@@ -34,16 +34,15 @@ public class UserAnnotationMethodInterceptor extends AuthorizingAnnotationMethod
 
     /**
      * Default no-argument constructor that ensures this interceptor looks for
-     *
+     * <p>
      * {@link org.apache.shiro.authz.annotation.RequiresUser RequiresUser} annotations in a method
      * declaration.
      */
     public UserAnnotationMethodInterceptor() {
-        super( new UserAnnotationHandler() );
+        super(new UserAnnotationHandler());
     }
 
     /**
-     *
      * @param resolver
      * @since 1.1
      */

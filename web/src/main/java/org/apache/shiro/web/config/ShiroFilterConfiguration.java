@@ -27,9 +27,9 @@ import org.apache.shiro.SecurityUtils;
  */
 public class ShiroFilterConfiguration {
 
-    private boolean filterOncePerRequest = false;
+    private boolean filterOncePerRequest;
 
-    private boolean staticSecurityManagerEnabled = false;
+    private boolean staticSecurityManagerEnabled;
 
     /**
      * Returns {@code true} if the filter should only execute once per request. If set to {@code false} the filter
@@ -61,7 +61,8 @@ public class ShiroFilterConfiguration {
      * <p/>
      *
      * @return {@code true} if the constructed {@link SecurityManager SecurityManager} associated with the filter should be bound
-     *         to static memory (via {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}),
+     *         to static memory (via {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager)
+     *         setSecurityManager}),
      *         {@code false} otherwise.
      * @see <a href="https://issues.apache.org/jira/browse/SHIRO-287">SHIRO-287</a>
      */
@@ -76,8 +77,8 @@ public class ShiroFilterConfiguration {
      * The default value is {@code false}.
      *
      * @param staticSecurityManagerEnabled if the constructed {@link SecurityManager SecurityManager} associated with the filter
-     *                                       should be bound to static memory (via
-     *                                       {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}).
+     *    should be bound to static memory (via
+     *    {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}).
      * @see <a href="https://issues.apache.org/jira/browse/SHIRO-287">SHIRO-287</a>
      */
     public ShiroFilterConfiguration setStaticSecurityManagerEnabled(boolean staticSecurityManagerEnabled) {

@@ -22,13 +22,17 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matcher;
 
-class ShiroMatchers {
-    public static Matcher<Class> ANY_PACKAGE = new AbstractMatcher<Class>() {
+final class ShiroMatchers {
+
+    static Matcher<Class> anyPackage = new AbstractMatcher<Class>() {
 
         public boolean matches(Class aClass) {
             return aClass.getPackage() != null;
         }
     };
+
+    private ShiroMatchers() {
+    }
 
     public static Matcher<TypeLiteral> typeLiteral(final Matcher<Class> classMatcher) {
         return new AbstractMatcher<TypeLiteral>() {

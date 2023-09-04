@@ -136,19 +136,21 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
         this.hashAlgorithm = null;
         this.hashSalted = false;
         this.hashIterations = 1;
-        this.storedCredentialsHexEncoded = true; //false means Base64-encoded
+        //false means Base64-encoded
+        this.storedCredentialsHexEncoded = true;
     }
 
     /**
      * Creates an instance using the specified {@link #getHashAlgorithmName() hashAlgorithmName} to hash submitted
      * credentials.
+     *
      * @param hashAlgorithmName the {@code Hash} {@link org.apache.shiro.crypto.hash.Hash#getAlgorithmName() algorithmName}
      *                          to use when performing hashes for credentials matching.
      * @since 1.1
      */
     public HashedCredentialsMatcher(String hashAlgorithmName) {
         this();
-        if (!StringUtils.hasText(hashAlgorithmName) ) {
+        if (!StringUtils.hasText(hashAlgorithmName)) {
             throw new IllegalArgumentException("hashAlgorithmName cannot be null or empty.");
         }
         this.hashAlgorithm = hashAlgorithmName;
@@ -159,7 +161,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * when performing hashes for credentials matching.
      *
      * @return the {@code Hash} {@link org.apache.shiro.crypto.hash.Hash#getAlgorithmName() algorithmName} to use
-     *         when performing hashes for credentials matching.
+     * when performing hashes for credentials matching.
      * @since 1.1
      */
     public String getHashAlgorithmName() {
@@ -187,7 +189,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * easier.
      *
      * @return {@code true} if the system's stored credential hash is Hex encoded, {@code false} if it
-     *         is Base64 encoded.  Default is {@code true}
+     * is Base64 encoded.  Default is {@code true}
      */
     public boolean isStoredCredentialsHexEncoded() {
         return storedCredentialsHexEncoded;
@@ -219,19 +221,19 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * The default value is {@code false}.
      *
      * @return {@code true} if a submitted {@code AuthenticationToken}'s credentials should be salted when hashing,
-     *         {@code false} if it should not be salted.
+     * {@code false} if it should not be salted.
      * @deprecated since Shiro 1.1.  Hash salting is now expected to be based on if the {@link AuthenticationInfo}
-     *             returned from the {@code Realm} is a {@link SaltedAuthenticationInfo} instance and its
-     *             {@link org.apache.shiro.authc.SaltedAuthenticationInfo#getCredentialsSalt() getCredentialsSalt()} method returns a non-null value.
-     *             This method and the 1.0 behavior still exists for backwards compatibility if the {@code Realm} does not return
-     *             {@code SaltedAuthenticationInfo} instances, but <b>it is highly recommended that {@code Realm} implementations
-     *             that support hashed credentials start returning {@link SaltedAuthenticationInfo SaltedAuthenticationInfo}
-     *             instances as soon as possible</b>.
-     *             <p/>
-     *             This is because salts should always be obtained from the stored account information and
-     *             never be interpreted based on user/Subject-entered data.  User-entered data is easier to compromise for
-     *             attackers, whereas account-unique (and secure randomly-generated) salts never disseminated to the end-user
-     *             are almost impossible to break.  This method will be removed in Shiro 2.0.
+     * returned from the {@code Realm} is a {@link SaltedAuthenticationInfo} instance and its
+     * {@link org.apache.shiro.authc.SaltedAuthenticationInfo#getCredentialsSalt() getCredentialsSalt()} method returns a non-null value.
+     * This method and the 1.0 behavior still exists for backwards compatibility if the {@code Realm} does not return
+     * {@code SaltedAuthenticationInfo} instances, but <b>it is highly recommended that {@code Realm} implementations
+     * that support hashed credentials start returning {@link SaltedAuthenticationInfo SaltedAuthenticationInfo}
+     * instances as soon as possible</b>.
+     * <p/>
+     * This is because salts should always be obtained from the stored account information and
+     * never be interpreted based on user/Subject-entered data.  User-entered data is easier to compromise for
+     * attackers, whereas account-unique (and secure randomly-generated) salts never disseminated to the end-user
+     * are almost impossible to break.  This method will be removed in Shiro 2.0.
      */
     @Deprecated
     public boolean isHashSalted() {
@@ -247,17 +249,17 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      *
      * @param hashSalted whether or not to salt a submitted {@code AuthenticationToken}'s credentials when hashing.
      * @deprecated since Shiro 1.1.  Hash salting is now expected to be based on if the {@link AuthenticationInfo}
-     *             returned from the {@code Realm} is a {@link SaltedAuthenticationInfo} instance and its
-     *             {@link org.apache.shiro.authc.SaltedAuthenticationInfo#getCredentialsSalt() getCredentialsSalt()} method returns a non-null value.
-     *             This method and the 1.0 behavior still exists for backwards compatibility if the {@code Realm} does not return
-     *             {@code SaltedAuthenticationInfo} instances, but <b>it is highly recommended that {@code Realm} implementations
-     *             that support hashed credentials start returning {@link SaltedAuthenticationInfo SaltedAuthenticationInfo}
-     *             instances as soon as possible</b>.
-     *             <p/>
-     *             This is because salts should always be obtained from the stored account information and
-     *             never be interpreted based on user/Subject-entered data.  User-entered data is easier to compromise for
-     *             attackers, whereas account-unique (and secure randomly-generated) salts never disseminated to the end-user
-     *             are almost impossible to break.  This method will be removed in Shiro 2.0.
+     * returned from the {@code Realm} is a {@link SaltedAuthenticationInfo} instance and its
+     * {@link org.apache.shiro.authc.SaltedAuthenticationInfo#getCredentialsSalt() getCredentialsSalt()} method returns a non-null value.
+     * This method and the 1.0 behavior still exists for backwards compatibility if the {@code Realm} does not return
+     * {@code SaltedAuthenticationInfo} instances, but <b>it is highly recommended that {@code Realm} implementations
+     * that support hashed credentials start returning {@link SaltedAuthenticationInfo SaltedAuthenticationInfo}
+     * instances as soon as possible</b>.
+     * <p/>
+     * This is because salts should always be obtained from the stored account information and
+     * never be interpreted based on user/Subject-entered data.  User-entered data is easier to compromise for
+     * attackers, whereas account-unique (and secure randomly-generated) salts never disseminated to the end-user
+     * are almost impossible to break.  This method will be removed in Shiro 2.0.
      */
     @Deprecated
     public void setHashSalted(boolean hashSalted) {
@@ -271,7 +273,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * Unless overridden, the default value is {@code 1}, meaning a normal hash execution will occur.
      *
      * @return the number of times a submitted {@code AuthenticationToken}'s credentials will be hashed before
-     *         comparing to the credentials stored in the system.
+     * comparing to the credentials stored in the system.
      */
     public int getHashIterations() {
         return hashIterations;
@@ -306,16 +308,16 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * @param token the AuthenticationToken submitted during the authentication attempt.
      * @return a salt value to use to hash the authentication token's credentials.
      * @deprecated since Shiro 1.1.  Hash salting is now expected to be based on if the {@link AuthenticationInfo}
-     *             returned from the {@code Realm} is a {@link SaltedAuthenticationInfo} instance and its
-     *             {@link org.apache.shiro.authc.SaltedAuthenticationInfo#getCredentialsSalt() getCredentialsSalt()} method returns a non-null value.
-     *             This method and the 1.0 behavior still exists for backwards compatibility if the {@code Realm} does not return
-     *             {@code SaltedAuthenticationInfo} instances, but <b>it is highly recommended that {@code Realm} implementations
-     *             that support hashed credentials start returning {@link SaltedAuthenticationInfo SaltedAuthenticationInfo}
-     *             instances as soon as possible</b>.<p/>
-     *             This is because salts should always be obtained from the stored account information and
-     *             never be interpreted based on user/Subject-entered data.  User-entered data is easier to compromise for
-     *             attackers, whereas account-unique (and secure randomly-generated) salts never disseminated to the end-user
-     *             are almost impossible to break.  This method will be removed in Shiro 2.0.
+     * returned from the {@code Realm} is a {@link SaltedAuthenticationInfo} instance and its
+     * {@link org.apache.shiro.authc.SaltedAuthenticationInfo#getCredentialsSalt() getCredentialsSalt()} method returns a non-null value.
+     * This method and the 1.0 behavior still exists for backwards compatibility if the {@code Realm} does not return
+     * {@code SaltedAuthenticationInfo} instances, but <b>it is highly recommended that {@code Realm} implementations
+     * that support hashed credentials start returning {@link SaltedAuthenticationInfo SaltedAuthenticationInfo}
+     * instances as soon as possible</b>.<p/>
+     * This is because salts should always be obtained from the stored account information and
+     * never be interpreted based on user/Subject-entered data.  User-entered data is easier to compromise for
+     * attackers, whereas account-unique (and secure randomly-generated) salts never disseminated to the end-user
+     * are almost impossible to break.  This method will be removed in Shiro 2.0.
      */
     @Deprecated
     protected Object getSalt(AuthenticationToken token) {
@@ -372,7 +374,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * @param token the {@code AuthenticationToken} submitted during the authentication attempt.
      * @param info  the {@code AuthenticationInfo} stored in the system matching the token principal
      * @return {@code true} if the provided token credentials hash match to the stored account credentials hash,
-     *         {@code false} otherwise
+     * {@code false} otherwise
      * @since 1.1
      */
     @Override
@@ -424,8 +426,8 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
     private String assertHashAlgorithmName() throws IllegalStateException {
         String hashAlgorithmName = getHashAlgorithmName();
         if (hashAlgorithmName == null) {
-            String msg = "Required 'hashAlgorithmName' property has not been set.  This is required to execute " +
-                    "the hashing algorithm.";
+            String msg = "Required 'hashAlgorithmName' property has not been set.  This is required to execute "
+                    + "the hashing algorithm.";
             throw new IllegalStateException(msg);
         }
         return hashAlgorithmName;

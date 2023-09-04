@@ -87,6 +87,7 @@ public class InMemoryStormtrooperDao implements StormtrooperDao {
     @Override
     public boolean deleteStormtrooper(StormtrooperId id) {
         // TODO: implement
-        throw new UnsupportedOperationException("not yet implemented: [org.apache.shiro.testing.meecrowave.jaxrs.dao.InMemoryStormtrooperDao::deleteStormtrooper].");
+        throw new UnsupportedOperationException("not yet implemented: "
+                + "[org.apache.shiro.testing.meecrowave.jaxrs.dao.InMemoryStormtrooperDao::deleteStormtrooper].");
     }
 }

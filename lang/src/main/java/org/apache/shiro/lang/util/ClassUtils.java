@@ -36,33 +36,30 @@ import java.util.List;
  *
  * @since 0.1
  */
-public class ClassUtils {
-
-    //TODO - complete JavaDoc
+public final class ClassUtils {
 
     /**
      * Private internal log instance.
      */
-    private static final Logger log = LoggerFactory.getLogger(ClassUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassUtils.class);
 
 
     /**
      * SHIRO-767: add a map to mapping primitive data type
      */
-    private static final HashMap<String, Class<?>> primClasses
+    private static final HashMap<String, Class<?>> PRIM_CLASSES
             = new HashMap<>(8, 1.0F);
     static {
-        primClasses.put("boolean", boolean.class);
-        primClasses.put("byte", byte.class);
-        primClasses.put("char", char.class);
-        primClasses.put("short", short.class);
-        primClasses.put("int", int.class);
-        primClasses.put("long", long.class);
-        primClasses.put("float", float.class);
-        primClasses.put("double", double.class);
-        primClasses.put("void", void.class);
+        PRIM_CLASSES.put("boolean", boolean.class);
+        PRIM_CLASSES.put("byte", byte.class);
+        PRIM_CLASSES.put("char", char.class);
+        PRIM_CLASSES.put("short", short.class);
+        PRIM_CLASSES.put("int", int.class);
+        PRIM_CLASSES.put("long", long.class);
+        PRIM_CLASSES.put("float", float.class);
+        PRIM_CLASSES.put("double", double.class);
+        PRIM_CLASSES.put("void", void.class);
     }
-
 
     /**
      * @since 1.0
@@ -94,6 +91,10 @@ public class ClassUtils {
         }
     };
 
+    private ClassUtils() {
+
+    }
+
     /**
      * Returns the specified resource by checking the current thread's
      * {@link Thread#getContextClassLoader() context class loader}, then the
@@ -111,24 +112,24 @@ public class ClassUtils {
         InputStream is = THREAD_CL_ACCESSOR.getResourceStream(name);
 
         if (is == null) {
-            if (log.isTraceEnabled()) {
-                log.trace("Resource [" + name + "] was not found via the thread context ClassLoader.  Trying the " +
-                        "current ClassLoader...");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Resource [" + name + "] was not found via the thread context ClassLoader.  Trying the "
+                              + "current ClassLoader...");
             }
             is = CLASS_CL_ACCESSOR.getResourceStream(name);
         }
 
         if (is == null) {
-            if (log.isTraceEnabled()) {
-                log.trace("Resource [" + name + "] was not found via the current class loader.  Trying the " +
-                        "system/application ClassLoader...");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Resource [" + name + "] was not found via the current class loader.  Trying the "
+                              + "system/application ClassLoader...");
             }
             is = SYSTEM_CL_ACCESSOR.getResourceStream(name);
         }
 
-        if (is == null && log.isTraceEnabled()) {
-            log.trace("Resource [" + name + "] was not found via the thread context, current, or " +
-                    "system/application ClassLoaders.  All heuristics have been exhausted.  Returning null.");
+        if (is == null && LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Resource [" + name + "] was not found via the thread context, current, or "
+                          + "system/application ClassLoaders.  All heuristics have been exhausted.  Returning null.");
         }
 
         return is;
@@ -151,29 +152,29 @@ public class ClassUtils {
         Class clazz = THREAD_CL_ACCESSOR.loadClass(fqcn);
 
         if (clazz == null) {
-            if (log.isTraceEnabled()) {
-                log.trace("Unable to load class named [" + fqcn +
-                        "] from the thread context ClassLoader.  Trying the current ClassLoader...");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Unable to load class named [" + fqcn
+                              + "] from the thread context ClassLoader.  Trying the current ClassLoader...");
             }
             clazz = CLASS_CL_ACCESSOR.loadClass(fqcn);
         }
 
         if (clazz == null) {
-            if (log.isTraceEnabled()) {
-                log.trace("Unable to load class named [" + fqcn + "] from the current ClassLoader.  " +
-                        "Trying the system/application ClassLoader...");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Unable to load class named [" + fqcn + "] from the current ClassLoader.  "
+                              + "Trying the system/application ClassLoader...");
             }
             clazz = SYSTEM_CL_ACCESSOR.loadClass(fqcn);
         }
 
         if (clazz == null) {
             //SHIRO-767: support for getting primitive data type,such as int,double...
-            clazz = primClasses.get(fqcn);
+            clazz = PRIM_CLASSES.get(fqcn);
         }
 
         if (clazz == null) {
-            String msg = "Unable to load class named [" + fqcn + "] from the thread context, current, or " +
-                    "system/application ClassLoaders.  All heuristics have been exhausted.  Class could not be found.";
+            String msg = "Unable to load class named [" + fqcn + "] from the thread context, current, or "
+                             + "system/application ClassLoaders.  All heuristics have been exhausted.  Class could not be found.";
             throw new UnknownClassException(msg);
         }
 
@@ -262,7 +263,7 @@ public class ClassUtils {
     /**
      * @since 1.0
      */
-    private static interface ClassLoaderAccessor {
+    private interface ClassLoaderAccessor {
         Class loadClass(String fqcn);
         InputStream getResourceStream(String name);
     }
@@ -270,7 +271,7 @@ public class ClassUtils {
     /**
      * @since 1.0
      */
-    private static abstract class ExceptionIgnoringAccessor implements ClassLoaderAccessor {
+    private abstract static class ExceptionIgnoringAccessor implements ClassLoaderAccessor {
 
         public Class loadClass(String fqcn) {
             Class clazz = null;
@@ -280,8 +281,8 @@ public class ClassUtils {
                     //SHIRO-767: Use Class.forName instead of cl.loadClass(), as byte arrays would fail otherwise.
                     clazz = Class.forName(fqcn, false, cl);
                 } catch (ClassNotFoundException e) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Unable to load clazz named [" + fqcn + "] from class loader [" + cl + "]");
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace("Unable to load clazz named [" + fqcn + "] from class loader [" + cl + "]");
                     }
                 }
             }
@@ -301,8 +302,8 @@ public class ClassUtils {
             try {
                 return doGetClassLoader();
             } catch (Throwable t) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Unable to acquire ClassLoader.", t);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Unable to acquire ClassLoader.", t);
                 }
             }
             return null;

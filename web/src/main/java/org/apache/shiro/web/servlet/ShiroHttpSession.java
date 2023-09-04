@@ -27,8 +27,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
-import java.util.*;
-
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Wrapper class that uses a Shiro {@link Session Session} under the hood for all session operations instead of the
@@ -68,12 +72,13 @@ public class ShiroHttpSession implements HttpSession {
 
     protected ServletContext servletContext = null;
     protected HttpServletRequest currentRequest = null;
-    protected Session session = null; //'real' Shiro Session
+    //'real' Shiro Session
+    protected Session session = null;
 
     public ShiroHttpSession(Session session, HttpServletRequest currentRequest, ServletContext servletContext) {
         if (session instanceof HttpServletSession) {
-            String msg = "Session constructor argument cannot be an instance of HttpServletSession.  This is enforced to " +
-                    "prevent circular dependencies and infinite loops.";
+            String msg = "Session constructor argument cannot be an instance of HttpServletSession.  This is enforced to "
+                    + "prevent circular dependencies and infinite loops.";
             throw new IllegalArgumentException(msg);
         }
         this.session = session;

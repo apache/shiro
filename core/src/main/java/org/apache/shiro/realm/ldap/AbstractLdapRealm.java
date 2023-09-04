@@ -37,8 +37,8 @@ import javax.naming.NamingException;
  * list as well.</p>
  *
  * <p>Implementations would need to implement the
- * {@link #queryForAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken ,LdapContextFactory)} and
- * {@link #queryForAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection ,LdapContextFactory)} abstract methods.</p>
+ * {@link #queryForAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken, LdapContextFactory)} and
+ * {@link #queryForAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection, LdapContextFactory)} abstract methods.</p>
  *
  * <p>By default, this implementation will create an instance of {@link JndiLdapContextFactory} to use for
  * creating LDAP connections using the principalSuffix, searchBase, url, systemUsername, and systemPassword properties
@@ -46,19 +46,17 @@ import javax.naming.NamingException;
  * sufficient.  If more customized connections are needed, you should inject a custom {@link LdapContextFactory}, which
  * will cause these properties specified on the realm to be ignored.</p>
  *
- * @see #queryForAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken , LdapContextFactory)
- * @see #queryForAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection , LdapContextFactory)
+ * @see #queryForAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken, LdapContextFactory)
+ * @see #queryForAuthorizationInfo(org.apache.shiro.subject.PrincipalCollection, LdapContextFactory)
  * @since 0.1
  */
 public abstract class AbstractLdapRealm extends AuthorizingRealm {
-
-    //TODO - complete JavaDoc
 
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractLdapRealm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractLdapRealm.class);
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -69,26 +67,26 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
      * AD Example:
      * User's Principal Name be "John.Doe"
      * User's E-Mail Address be "John.Doe@example.com"
-     *
      * For the example below, set:
-     *      realm.principalSuffix = @example.com
-     *
+     * realm.principalSuffix = @example.com
      * Only then, "John.Doe" and also "John.Doe@example.com" can authorize against groups
      */
-    protected String principalSuffix = null;
+    protected String principalSuffix;
 
-    protected String searchBase = null;
+    protected String searchBase;
 
-    protected String url = null;
+    protected String url;
 
-    protected String systemUsername = null;
+    protected String systemUsername;
 
-    protected String systemPassword = null;
+    protected String systemPassword;
 
-    //SHIRO-115 - prevent potential code injection:
+    /**
+     * SHIRO-115 - prevent potential code injection.
+     */
     protected String searchFilter = "(&(objectClass=*)(userPrincipalName={0}))";
 
-    private LdapContextFactory ldapContextFactory = null;
+    private LdapContextFactory ldapContextFactory;
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -177,8 +175,8 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     private LdapContextFactory ensureContextFactory() {
         if (this.ldapContextFactory == null) {
 
-            if (log.isDebugEnabled()) {
-                log.debug("No LdapContextFactory specified - creating a default instance.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("No LdapContextFactory specified - creating a default instance.");
             }
 
             JndiLdapContextFactory defaultFactory = new JndiLdapContextFactory();
@@ -230,7 +228,8 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
      * @return an {@link AuthenticationInfo} instance containing information retrieved from the LDAP server.
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    protected abstract AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException;
+    protected abstract AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory)
+            throws NamingException;
 
 
     /**
@@ -243,6 +242,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
      * @return an {@link AuthorizationInfo} instance containing information retrieved from the LDAP server.
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    protected abstract AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principal, LdapContextFactory ldapContextFactory) throws NamingException;
+    protected abstract AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principal, LdapContextFactory ldapContextFactory)
+            throws NamingException;
 
 }

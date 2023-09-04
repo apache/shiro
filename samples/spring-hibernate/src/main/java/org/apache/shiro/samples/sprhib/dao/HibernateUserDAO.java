@@ -39,7 +39,7 @@ public class HibernateUserDAO extends HibernateDao implements UserDAO {
     }
 
     public void createUser(User user) {
-        getSession().save( user );
+        getSession().save(user);
     }
 
     public List<User> getAllUsers() {
@@ -48,7 +48,7 @@ public class HibernateUserDAO extends HibernateDao implements UserDAO {
 
     public void deleteUser(Long userId) {
         User user = getUser(userId);
-        if( user != null ) {
+        if (user != null) {
             getSession().delete(user);
         }
     }

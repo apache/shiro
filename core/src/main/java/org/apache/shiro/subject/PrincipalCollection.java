@@ -18,6 +18,10 @@
  */
 package org.apache.shiro.subject;
 
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.pam.AuthenticationStrategy;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -68,7 +72,8 @@ public interface PrincipalCollection extends Iterable, Serializable {
      * If this heuristic is not sufficient, most Shiro end-users will need to implement a custom
      * {@link org.apache.shiro.authc.pam.AuthenticationStrategy}.  An {@code AuthenticationStrategy} has exact control
      * over the {@link PrincipalCollection} returned at the end of an authentication attempt via the
-     * <code>AuthenticationStrategy#{@link org.apache.shiro.authc.pam.AuthenticationStrategy#afterAllAttempts(org.apache.shiro.authc.AuthenticationToken, org.apache.shiro.authc.AuthenticationInfo) afterAllAttempts}</code>
+     * <code>AuthenticationStrategy#
+     * {@link AuthenticationStrategy#afterAllAttempts(AuthenticationToken, AuthenticationInfo) afterAllAttempts}</code>
      * implementation.
      *
      * @return the primary principal used to uniquely identify the owning account/Subject

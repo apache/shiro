@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LoggingBeanEventListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoggingBeanEventListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingBeanEventListener.class);
     private static final String SUFFIX = BeanEvent.class.getSimpleName();
 
     @Subscribe
@@ -37,6 +37,6 @@ public class LoggingBeanEventListener {
         String className = e.getClass().getSimpleName();
         int i = className.lastIndexOf(SUFFIX);
         String subclassPrefix = i > 0 ? className.substring(0, i) : className;
-        logger.trace("{} bean '{}' [{}]", new Object[]{subclassPrefix, e.getBeanName(), e.getBean()});
+        LOGGER.trace("{} bean '{}' [{}]", subclassPrefix, e.getBeanName(), e.getBean());
     }
 }

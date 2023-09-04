@@ -24,7 +24,11 @@ import com.google.inject.matcher.Matchers;
 import org.apache.shiro.aop.AnnotationMethodInterceptor;
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.DefaultAnnotationResolver;
-import org.apache.shiro.authz.aop.*;
+import org.apache.shiro.authz.aop.AuthenticatedAnnotationMethodInterceptor;
+import org.apache.shiro.authz.aop.GuestAnnotationMethodInterceptor;
+import org.apache.shiro.authz.aop.PermissionAnnotationMethodInterceptor;
+import org.apache.shiro.authz.aop.RoleAnnotationMethodInterceptor;
+import org.apache.shiro.authz.aop.UserAnnotationMethodInterceptor;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

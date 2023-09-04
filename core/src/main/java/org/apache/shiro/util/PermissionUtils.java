@@ -33,7 +33,10 @@ import java.util.Set;
  *
  * @since 0.1
  */
-public class PermissionUtils {
+public final class PermissionUtils {
+
+    private PermissionUtils() {
+    }
 
     public static Set<Permission> resolveDelimitedPermissions(String s, PermissionResolver permissionResolver) {
         Set<String> permStrings = toPermissionStrings(s);

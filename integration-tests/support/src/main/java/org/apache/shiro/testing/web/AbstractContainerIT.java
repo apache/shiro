@@ -61,14 +61,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractContainerIT {
 
+    protected static final File TEST_KEYSTORE_PATH = setupKeyStore();
+    protected static final String TEST_KEYSTORE_PASSWORD = "password";
+
     protected static EmbeddedJetty jetty;
 
     protected static int tlsPort;
 
     protected final WebClient webClient = new WebClient();
-
-    protected static final File TEST_KEYSTORE_PATH = setupKeyStore();
-    protected static final String TEST_KEYSTORE_PASSWORD = "password";
 
     @BeforeAll
     public static void startContainer() throws Exception {
@@ -81,7 +81,7 @@ public abstract class AbstractContainerIT {
 
             /**
              * Overriding with contents of this pull request, to make fragment scanning work.
-             * https://github.com/mjeanroy/junit-servers/pull/3
+             * <a href="https://github.com/mjeanroy/junit-servers/pull/3"></a>
              */
             protected WebAppContext createdWebAppContext() throws Exception {
                 final String path = configuration.getPath();

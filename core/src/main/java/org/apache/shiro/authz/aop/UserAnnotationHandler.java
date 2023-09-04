@@ -58,9 +58,9 @@ public class UserAnnotationHandler extends AuthorizingAnnotationHandler {
      */
     public void assertAuthorized(Annotation a) throws AuthorizationException {
         if (a instanceof RequiresUser && getSubject().getPrincipal() == null) {
-            throw new UnauthenticatedException("Attempting to perform a user-only operation.  The current Subject is " +
-                    "not a user (they haven't been authenticated or remembered from a previous login).  " +
-                    "Access denied.");
+            throw new UnauthenticatedException("Attempting to perform a user-only operation.  The current Subject is "
+                    + "not a user (they haven't been authenticated or remembered from a previous login).  "
+                    + "Access denied.");
         }
     }
 }

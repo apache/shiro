@@ -35,10 +35,10 @@ import org.slf4j.LoggerFactory;
  *
  * @since 0.2
  */
-public class JdbcUtils {
+public final class JdbcUtils {
 
     /** Private internal log instance. */
-    private static final Logger log = LoggerFactory.getLogger(JdbcUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcUtils.class);
 
     /**
      * Private constructor to prevent instantiation.
@@ -57,12 +57,12 @@ public class JdbcUtils {
             try {
                 connection.close();
             } catch (SQLException ex) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Could not close JDBC Connection", ex);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Could not close JDBC Connection", ex);
                 }
             } catch (Throwable ex) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Unexpected exception on closing JDBC Connection", ex);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Unexpected exception on closing JDBC Connection", ex);
                 }
             }
         }
@@ -79,12 +79,12 @@ public class JdbcUtils {
             try {
                 statement.close();
             } catch (SQLException ex) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Could not close JDBC Statement", ex);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Could not close JDBC Statement", ex);
                 }
             } catch (Throwable ex) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Unexpected exception on closing JDBC Statement", ex);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Unexpected exception on closing JDBC Statement", ex);
                 }
             }
         }
@@ -101,12 +101,12 @@ public class JdbcUtils {
             try {
                 rs.close();
             } catch (SQLException ex) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Could not close JDBC ResultSet", ex);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Could not close JDBC ResultSet", ex);
                 }
             } catch (Throwable ex) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Unexpected exception on closing JDBC ResultSet", ex);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Unexpected exception on closing JDBC ResultSet", ex);
                 }
             }
         }

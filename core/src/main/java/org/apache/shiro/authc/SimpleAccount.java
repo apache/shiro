@@ -81,7 +81,8 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * @param realmName   the name of the realm that accesses this account data
      */
     public SimpleAccount(Object principal, Object credentials, String realmName) {
-        this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal : new SimplePrincipalCollection(principal, realmName), credentials);
+        this(principal instanceof PrincipalCollection
+                ? (PrincipalCollection) principal : new SimplePrincipalCollection(principal, realmName), credentials);
     }
 
     /**

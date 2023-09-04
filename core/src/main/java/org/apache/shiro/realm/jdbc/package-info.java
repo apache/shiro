@@ -16,8 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 /**
- * Realms that acquire security data from an RDBMS (Relational Database Management System) using the 
+ * Realms that acquire security data from an RDBMS (Relational Database Management System) using the
  * JDBC API.
  */
 package org.apache.shiro.realm.jdbc;

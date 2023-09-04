@@ -45,25 +45,34 @@ import java.io.IOException;
  *
  * @since 1.2
  */
-public class H64 {
+public final class H64 {
 
-    private static final char[] itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
+    private static final byte FF = (byte) 0xff;
+
+    private static final char[] ITOA_64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".toCharArray();
+
+    private H64() {
+
+    }
 
     private static short toShort(byte b) {
-        return (short) (b & 0xff);
+        return (short) (b & FF);
     }
 
     private static int toInt(byte[] bytes, int offset, int numBytes) {
         if (numBytes < 1 || numBytes > 4) {
             throw new IllegalArgumentException("numBytes must be between 1 and 4.");
         }
-        int val = toShort(bytes[offset]); //1st byte
-        for (int i = 1; i < numBytes; i++) { //any remaining bytes:
+        //1st byte
+        int val = toShort(bytes[offset]);
+        for (int i = 1; i < numBytes; i++) {
+            //any remaining bytes:
             short s = toShort(bytes[offset + i]);
             switch (i) {
-                case 1: val |= s << 8; break;
-                case 2: val |= s << 16; break;
-                case 3: val |= s << 24; break;
+                case 1: val |= s << (2 << 2); break;
+                case 2: val |= s << ((2 << 2) * 2); break;
+                case 3: val |= s << ((2 << 2) * 3); break;
+                default:
             }
         }
         return val;
@@ -94,7 +103,7 @@ public class H64 {
      */
     private static void encodeAndAppend(int value, Appendable buf, int numChars) {
         for (int i = 0; i < numChars; i++) {
-            append(buf, itoa64[value & 0x3f]);
+            append(buf, ITOA_64[value & 0x3f]);
             value >>= 6;
         }
     }
@@ -106,16 +115,20 @@ public class H64 {
      * @return
      */
     public static String encodeToString(byte[] bytes) {
-        if (bytes == null || bytes.length == 0) return null;
+        if (bytes == null || bytes.length == 0) {
+            return null;
+        }
 
         StringBuilder buf = new StringBuilder();
 
         int length = bytes.length;
         int remainder = length % 3;
-        int i = 0; //starting byte
-        int last3ByteIndex = length - remainder; //last byte whose index is a multiple of 3
+        //starting byte
+        int i = 0;
+        //last byte whose index is a multiple of 3
+        int last3ByteIndex = length - remainder;
 
-        for(; i < last3ByteIndex; i += 3) {
+        for (; i < last3ByteIndex; i += 3) {
             int twentyFourBit = toInt(bytes, i, 3);
             encodeAndAppend(twentyFourBit, buf, 4);
         }

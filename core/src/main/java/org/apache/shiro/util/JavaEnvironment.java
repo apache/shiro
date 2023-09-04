@@ -67,13 +67,13 @@ public abstract class JavaEnvironment {
     public static final int JAVA_18 = 5;
 
     /** The virtual machine version, i.e. <code>System.getProperty("java.version");</code>. */
-    private static final String version;
+    private static final String VERSION;
 
     /**
      * The virtual machine <em>major</em> version.  For example, with a <code>version</code> of
      * <code>1.5.6_10</code>, this would be <code>1.5</code>
      */
-    private static final int majorVersion;
+    private static final int MAJOR_VERSION;
 
     /**
      * Static code initialization block that sets the
@@ -81,25 +81,25 @@ public abstract class JavaEnvironment {
      * upon initialization.
      */
     static {
-        version = System.getProperty("java.version");
+        VERSION = System.getProperty("java.version");
         // version String should look like "1.4.2_10"
 
 // NOTE:   JDK 1.9 will be versioned differently '9' and/or 9.x.x
 // https://blogs.oracle.com/java-platform-group/entry/a_new_jdk_9_version
 
-        if (version.contains("1.8.")) {
-            majorVersion = JAVA_18;
-        } else if (version.contains("1.7.")) {
-            majorVersion = JAVA_17;
-        } else if (version.contains("1.6.")) {
-            majorVersion = JAVA_16;
-        } else if (version.contains("1.5.")) {
-            majorVersion = JAVA_15;
-        } else if (version.contains("1.4.")) {
-            majorVersion = JAVA_14;
+        if (VERSION.contains("1.8.")) {
+            MAJOR_VERSION = JAVA_18;
+        } else if (VERSION.contains("1.7.")) {
+            MAJOR_VERSION = JAVA_17;
+        } else if (VERSION.contains("1.6.")) {
+            MAJOR_VERSION = JAVA_16;
+        } else if (VERSION.contains("1.5.")) {
+            MAJOR_VERSION = JAVA_15;
+        } else if (VERSION.contains("1.4.")) {
+            MAJOR_VERSION = JAVA_14;
         } else {
             // else leave 1.3 as default (it's either 1.3 or unknown)
-            majorVersion = JAVA_13;
+            MAJOR_VERSION = JAVA_13;
         }
     }
 
@@ -112,7 +112,7 @@ public abstract class JavaEnvironment {
      * @see System#getProperty(String)
      */
     public static String getVersion() {
-        return version;
+        return VERSION;
     }
 
     /**
@@ -128,7 +128,7 @@ public abstract class JavaEnvironment {
      * @see #JAVA_18
      */
     public static int getMajorVersion() {
-        return majorVersion;
+        return MAJOR_VERSION;
     }
 
     /**

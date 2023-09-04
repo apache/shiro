@@ -41,7 +41,7 @@ import java.util.Arrays;
  */
 public class SimpleCredentialsMatcher extends CodecSupport implements CredentialsMatcher {
 
-    private static final Logger log = LoggerFactory.getLogger(SimpleCredentialsMatcher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCredentialsMatcher.class);
 
     /**
      * Returns the {@code token}'s credentials.
@@ -92,15 +92,15 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * @return {@code true} if the {@code tokenCredentials} are equal to the {@code accountCredentials}.
      */
     protected boolean equals(Object tokenCredentials, Object accountCredentials) {
-        if (log.isDebugEnabled()) {
-            log.debug("Performing credentials equality check for tokenCredentials of type [" +
-                    tokenCredentials.getClass().getName() + " and accountCredentials of type [" +
-                    accountCredentials.getClass().getName() + "]");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Performing credentials equality check for tokenCredentials of type ["
+                    + tokenCredentials.getClass().getName() + " and accountCredentials of type ["
+                    + accountCredentials.getClass().getName() + "]");
         }
         if (isByteSource(tokenCredentials) && isByteSource(accountCredentials)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Both credentials arguments can be easily converted to byte arrays.  Performing " +
-                        "array equals comparison");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Both credentials arguments can be easily converted to byte arrays.  Performing "
+                        + "array equals comparison");
             }
             byte[] tokenBytes = toBytes(tokenCredentials);
             byte[] accountBytes = toBytes(accountCredentials);

@@ -39,13 +39,12 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
     private boolean stopAfterFirstSuccess;
 
-    public void setStopAfterFirstSuccess (boolean stopAfterFirstSuccess ) {
-
-        this.stopAfterFirstSuccess  = stopAfterFirstSuccess ;
+    public void setStopAfterFirstSuccess(boolean stopAfterFirstSuccess) {
+        this.stopAfterFirstSuccess = stopAfterFirstSuccess;
     }
 
     public boolean getStopAfterFirstSuccess() {
-        return stopAfterFirstSuccess ;
+        return stopAfterFirstSuccess;
     }
 
     /**
@@ -58,8 +57,8 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
 
     /**
-     * Throws ShortCircuitIterationException if stopAfterFirstSuccess is set and authentication is 
-     * successful with a previously consulted realm. 
+     * Throws ShortCircuitIterationException if stopAfterFirstSuccess is set and authentication is
+     * successful with a previously consulted realm.
      * Returns the <code>aggregate</code> method argument, without modification
      * otherwise.
      */
@@ -69,8 +68,6 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
         }
         return aggregate;
     }
-
-    
 
     private static boolean isEmpty(PrincipalCollection pc) {
         return pc == null || pc.isEmpty();

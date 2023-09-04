@@ -22,9 +22,9 @@ import java.util.Collection;
 
 /**
  * Represents a source of information for IP restrictions (see IpFilter)
- * @since 2.0 
+ * @since 2.0
  */
-public interface IpSource {
+interface IpSource {
 
     /**
      * Returns a set of strings representing IP address representing
@@ -32,12 +32,13 @@ public interface IpSource {
      * access should be allowed (if and only if the IP is not included
      * in the list of denied IPs)
      */
-    public Collection<String> getAuthorizedIps();
+    Collection<String> getAuthorizedIps();
 
     /**
      * Returns a set of strings representing IP address representing
      * IPv4 or IPv6 ranges / CIDRs. e.g. 192.168.0.0/16 from which
      * access should be denied.
      */
-    public Collection<String> getDeniedIps();
+    Collection<String> getDeniedIps();
+
 }

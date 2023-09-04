@@ -47,9 +47,9 @@ import static java.util.Objects.requireNonNull;
  */
 public abstract class AbstractCryptHash implements Hash, Serializable {
 
-    private static final long serialVersionUID = 2483214646921027859L;
-
     protected static final Pattern DELIMITER = Pattern.compile("\\$");
+
+    private static final long serialVersionUID = 2483214646921027859L;
 
     private final String algorithmName;
     private final byte[] hashedData;

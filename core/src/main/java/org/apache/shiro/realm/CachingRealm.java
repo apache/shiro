@@ -47,9 +47,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware, LogoutAware {
 
-    private static final Logger log = LoggerFactory.getLogger(CachingRealm.class);
-
-    //TODO - complete JavaDoc
+    private static final Logger LOGGER = LoggerFactory.getLogger(CachingRealm.class);
 
     private static final AtomicInteger INSTANCE_COUNT = new AtomicInteger();
 
@@ -168,7 +166,7 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
     protected void clearCache(PrincipalCollection principals) {
         if (!isEmpty(principals)) {
             doClearCache(principals);
-            log.trace("Cleared cache entries for account with principals [{}]", principals);
+            LOGGER.trace("Cleared cache entries for account with principals [{}]", principals);
         }
     }
 

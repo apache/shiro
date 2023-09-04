@@ -59,10 +59,10 @@ public class SubjectThreadState implements ThreadState {
         this.subject = subject;
 
         SecurityManager securityManager = null;
-        if ( subject instanceof DelegatingSubject) {
-            securityManager = ((DelegatingSubject)subject).getSecurityManager();
+        if (subject instanceof DelegatingSubject) {
+            securityManager = ((DelegatingSubject) subject).getSecurityManager();
         }
-        if ( securityManager == null) {
+        if (securityManager == null) {
             securityManager = ThreadContext.getSecurityManager();
         }
         this.securityManager = securityManager;
@@ -88,7 +88,7 @@ public class SubjectThreadState implements ThreadState {
      */
     public void bind() {
         SecurityManager securityManager = this.securityManager;
-        if ( securityManager == null ) {
+        if (securityManager == null) {
             //try just in case the constructor didn't find one at the time:
             securityManager = ThreadContext.getSecurityManager();
         }

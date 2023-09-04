@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
 class AopAllianceMethodInvocationAdapter implements org.apache.shiro.aop.MethodInvocation {
     private final MethodInvocation mi;
 
-    public AopAllianceMethodInvocationAdapter(MethodInvocation mi) {
+    AopAllianceMethodInvocationAdapter(MethodInvocation mi) {
         this.mi = mi;
     }
 

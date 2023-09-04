@@ -74,7 +74,7 @@ import java.util.concurrent.Callable;
  */
 public abstract class AbstractShiroFilter extends OncePerRequestFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractShiroFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractShiroFilter.class);
 
     private static final String STATIC_INIT_PARAM_NAME = "staticSecurityManagerEnabled";
 
@@ -129,7 +129,8 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      *
      *
      * @return {@code true} if the constructed {@link #getSecurityManager() securityManager} reference should be bound
-     *         to static memory (via {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}),
+     *         to static memory (via {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager)
+     *          setSecurityManager}),
      *         {@code false} otherwise.
      * @since 1.2
      * @see <a href="https://issues.apache.org/jira/browse/SHIRO-287">SHIRO-287</a>
@@ -145,8 +146,8 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * The default value is {@code false}.
      *
      * @param staticSecurityManagerEnabled if the constructed {@link #getSecurityManager() securityManager} reference
-     *                                       should be bound to static memory (via
-     *                                       {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}).
+     *           should be bound to static memory (via
+     *           {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}).
      * @since 1.2
      * @see <a href="https://issues.apache.org/jira/browse/SHIRO-287">SHIRO-287</a>
      */
@@ -193,7 +194,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
     private void ensureSecurityManager() {
         WebSecurityManager securityManager = getSecurityManager();
         if (securityManager == null) {
-            log.info("No SecurityManager configured.  Creating default.");
+            LOGGER.info("No SecurityManager configured.  Creating default.");
             securityManager = createDefaultSecurityManager();
             setSecurityManager(securityManager);
         }
@@ -278,8 +279,8 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
     @SuppressWarnings({"UnusedDeclaration"})
     protected ServletResponse prepareServletResponse(ServletRequest request, ServletResponse response, FilterChain chain) {
         ServletResponse toUse = response;
-        if (!isHttpSessions() && (request instanceof ShiroHttpServletRequest) &&
-                (response instanceof HttpServletResponse)) {
+        if (!isHttpSessions() && (request instanceof ShiroHttpServletRequest)
+                && (response instanceof HttpServletResponse)) {
             //the ShiroHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
             //using Shiro sessions (i.e. not simple HttpSession based sessions):
             toUse = wrapServletResponse((HttpServletResponse) response, (ShiroHttpServletRequest) request);
@@ -313,7 +314,8 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      */
     @SuppressWarnings({"UnusedDeclaration"})
     protected void updateSessionLastAccessTime(ServletRequest request, ServletResponse response) {
-        if (!isHttpSessions()) { //'native' sessions
+        //'native' sessions
+        if (!isHttpSessions()) {
             Subject subject = SecurityUtils.getSubject();
             //Subject should never _ever_ be null, but just in case:
             if (subject != null) {
@@ -322,8 +324,8 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
                     try {
                         session.touch();
                     } catch (Throwable t) {
-                        log.error("session.touch() method invocation has failed.  Unable to update " +
-                                "the corresponding session's last access time based on the incoming request.", t);
+                        LOGGER.error("session.touch() method invocation has failed.  Unable to update "
+                                + "the corresponding session's last access time based on the incoming request.", t);
                     }
                 }
             }
@@ -417,16 +419,16 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
 
         FilterChainResolver resolver = getFilterChainResolver();
         if (resolver == null) {
-            log.debug("No FilterChainResolver configured.  Returning original FilterChain.");
+            LOGGER.debug("No FilterChainResolver configured.  Returning original FilterChain.");
             return origChain;
         }
 
         FilterChain resolved = resolver.getChain(request, response, origChain);
         if (resolved != null) {
-            log.trace("Resolved a configured FilterChain for the current request.");
+            LOGGER.trace("Resolved a configured FilterChain for the current request.");
             chain = resolved;
         } else {
-            log.trace("No FilterChain configured for the current request.  Using the default.");
+            LOGGER.trace("No FilterChain configured for the current request.  Using the default.");
         }
 
         return chain;
@@ -436,7 +438,8 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * Executes a {@link FilterChain} for the given request.
      * <p/>
      * This implementation first delegates to
-     * <code>{@link #getExecutionChain(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain) getExecutionChain}</code>
+     * <code>{@link #getExecutionChain(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
+     *                                                                      getExecutionChain}</code>
      * to allow the application's Shiro configuration to determine exactly how the chain should execute.  The resulting
      * value from that call is then executed directly by calling the returned {@code FilterChain}'s
      * {@link FilterChain#doFilter doFilter} method.  That is:

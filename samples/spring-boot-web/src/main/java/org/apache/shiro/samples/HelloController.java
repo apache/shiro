@@ -47,8 +47,7 @@ public class HelloController {
             Collection<Map> principalMaps = subject.getPrincipals().byType(Map.class);
             if (CollectionUtils.isEmpty(principalMaps)) {
                 name = subject.getPrincipal().toString();
-            }
-            else {
+            } else {
                 name = (String) principalMaps.iterator().next().get("username");
             }
         }

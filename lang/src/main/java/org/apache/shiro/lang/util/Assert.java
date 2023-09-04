@@ -185,8 +185,8 @@ public abstract class Assert {
      * @param message the exception message to use if the assertion fails
      */
     public static void doesNotContain(String textToSearch, String substring, String message) {
-        if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) &&
-                textToSearch.indexOf(substring) != -1) {
+        if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring)
+                && textToSearch.contains(substring)) {
             throw new IllegalArgumentException(message);
         }
     }
@@ -336,9 +336,9 @@ public abstract class Assert {
     public static void isInstanceOf(Class type, Object obj, String message) {
         notNull(type, "Type to check against must not be null");
         if (!type.isInstance(obj)) {
-            throw new IllegalArgumentException(message +
-                    "Object of class [" + (obj != null ? obj.getClass().getName() : "null") +
-                    "] must be an instance of " + type);
+            throw new IllegalArgumentException(message
+                       + "Object of class [" + (obj != null ? obj.getClass().getName() : "null")
+                       + "] must be an instance of " + type);
         }
     }
 

@@ -20,9 +20,9 @@
  * {@link java.util.concurrent.Executor Executor}, {@link java.util.concurrent.ExecutorService ExecutorService},
  * and {@link java.util.concurrent.ScheduledExecutorService ScheduledExecutorService} implementations for transparent
  * {@link org.apache.shiro.subject.Subject Subject} association with threads in an asynchronous execution environment.
- * 
- * @see SubjectAwareExecutor
- * @see SubjectAwareExecutorService
- * @see SubjectAwareScheduledExecutorService
+ *
+ * @see org.apache.shiro.concurrent.SubjectAwareExecutor
+ * @see org.apache.shiro.concurrent.SubjectAwareExecutorService
+ * @see org.apache.shiro.concurrent.SubjectAwareScheduledExecutorService
  */
 package org.apache.shiro.concurrent;

@@ -18,7 +18,11 @@
  */
 package org.apache.shiro.guice.web;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -30,7 +34,7 @@ class SimpleFilterChain implements FilterChain {
 
     private boolean originalCalled = false;
 
-    public SimpleFilterChain(FilterChain originalChain, Iterator<? extends Filter> chain) {
+    SimpleFilterChain(FilterChain originalChain, Iterator<? extends Filter> chain) {
         this.originalChain = originalChain;
         this.chain = chain;
     }

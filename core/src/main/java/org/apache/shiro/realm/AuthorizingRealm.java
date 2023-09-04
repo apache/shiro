@@ -19,8 +19,16 @@
 package org.apache.shiro.realm;
 
 import org.apache.shiro.authc.credential.CredentialsMatcher;
-import org.apache.shiro.authz.*;
-import org.apache.shiro.authz.permission.*;
+import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.Authorizer;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.authz.permission.PermissionResolver;
+import org.apache.shiro.authz.permission.PermissionResolverAware;
+import org.apache.shiro.authz.permission.RolePermissionResolver;
+import org.apache.shiro.authz.permission.RolePermissionResolverAware;
+import org.apache.shiro.authz.permission.WildcardPermissionResolver;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -30,9 +38,15 @@ import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-
 
 /**
  * An {@code AuthorizingRealm} extends the {@code AuthenticatingRealm}'s capabilities by adding Authorization
@@ -56,12 +70,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class AuthorizingRealm extends AuthenticatingRealm
         implements Authorizer, Initializable, PermissionResolverAware, RolePermissionResolverAware {
 
-    //TODO - complete JavaDoc
-
     /*-------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
-    private static final Logger log = LoggerFactory.getLogger(AuthorizingRealm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizingRealm.class);
 
     /**
      * The default suffix appended to the realm name for caching AuthorizationInfo instances.
@@ -102,8 +114,12 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
 
     public AuthorizingRealm(CacheManager cacheManager, CredentialsMatcher matcher) {
         super();
-        if (cacheManager != null) setCacheManager(cacheManager);
-        if (matcher != null) setCredentialsMatcher(matcher);
+        if (cacheManager != null) {
+            setCacheManager(cacheManager);
+        }
+        if (matcher != null) {
+            setCredentialsMatcher(matcher);
+        }
 
         this.authorizationCachingEnabled = true;
         this.permissionResolver = new WildcardPermissionResolver();
@@ -179,7 +195,9 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
     }
 
     public void setPermissionResolver(PermissionResolver permissionResolver) {
-        if (permissionResolver == null) throw new IllegalArgumentException("Null PermissionResolver is not allowed");
+        if (permissionResolver == null) {
+            throw new IllegalArgumentException("Null PermissionResolver is not allowed");
+        }
         this.permissionResolver = permissionResolver;
     }
 
@@ -231,23 +249,23 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
 
         if (this.authorizationCache == null) {
 
-            if (log.isDebugEnabled()) {
-                log.debug("No authorizationCache instance set.  Checking for a cacheManager...");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("No authorizationCache instance set.  Checking for a cacheManager...");
             }
 
             CacheManager cacheManager = getCacheManager();
 
             if (cacheManager != null) {
                 String cacheName = getAuthorizationCacheName();
-                if (log.isDebugEnabled()) {
-                    log.debug("CacheManager [" + cacheManager + "] has been configured.  Building " +
-                            "authorization cache named [" + cacheName + "]");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("CacheManager [" + cacheManager + "] has been configured.  Building "
+                            + "authorization cache named [" + cacheName + "]");
                 }
                 this.authorizationCache = cacheManager.getCache(cacheName);
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("No cache or cacheManager properties have been set.  Authorization cache cannot " +
-                            "be obtained.");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("No cache or cacheManager properties have been set.  Authorization cache cannot "
+                            + "be obtained.");
                 }
             }
         }
@@ -306,7 +324,7 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
      * @param principals the corresponding Subject's identifying principals with which to look up the Subject's
      *                   {@code AuthorizationInfo}.
      * @return the authorization information for the account associated with the specified {@code principals},
-     *         or {@code null} if no account could be found.
+     * or {@code null} if no account could be found.
      */
     protected AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals) {
 
@@ -316,22 +334,22 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
 
         AuthorizationInfo info = null;
 
-        if (log.isTraceEnabled()) {
-            log.trace("Retrieving AuthorizationInfo for principals [" + principals + "]");
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Retrieving AuthorizationInfo for principals [" + principals + "]");
         }
 
         Cache<Object, AuthorizationInfo> cache = getAvailableAuthorizationCache();
         if (cache != null) {
-            if (log.isTraceEnabled()) {
-                log.trace("Attempting to retrieve the AuthorizationInfo from cache.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Attempting to retrieve the AuthorizationInfo from cache.");
             }
             Object key = getAuthorizationCacheKey(principals);
             info = cache.get(key);
-            if (log.isTraceEnabled()) {
+            if (LOGGER.isTraceEnabled()) {
                 if (info == null) {
-                    log.trace("No AuthorizationInfo found in cache for principals [" + principals + "]");
+                    LOGGER.trace("No AuthorizationInfo found in cache for principals [" + principals + "]");
                 } else {
-                    log.trace("AuthorizationInfo found in cache for principals [" + principals + "]");
+                    LOGGER.trace("AuthorizationInfo found in cache for principals [" + principals + "]");
                 }
             }
         }
@@ -342,8 +360,8 @@ public abstract class AuthorizingRealm extends AuthenticatingRealm
             info = doGetAuthorizationInfo(principals);
             // If the info is not null and the cache has been created, then cache the authorization info.
             if (info != null && cache != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Caching authorization info for principals: [" + principals + "].");
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Caching authorization info for principals: [" + principals + "].");
                 }
                 Object key = getAuthorizationCacheKey(principals);
                 cache.put(key, info);

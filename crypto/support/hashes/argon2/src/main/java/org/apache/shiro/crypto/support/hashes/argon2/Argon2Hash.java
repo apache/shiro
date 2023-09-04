@@ -59,9 +59,16 @@ import static java.util.Objects.requireNonNull;
  * @since 2.0
  */
 class Argon2Hash extends AbstractCryptHash {
-    private static final long serialVersionUID = 2647354947284558921L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(Argon2Hash.class);
+    /**
+     * Number of default lanes, p=4 is the default recommendation, taken from draft-irtf-cfrg-argon2-13, 4.2.
+     */
+    public static final int DEFAULT_PARALLELISM = 4;
+
+    /**
+     * 256 bits tag size is the default recommendation, taken from draft-irtf-cfrg-argon2-13, 4.2.
+     */
+    public static final int DEFAULT_OUTPUT_LENGTH_BITS = 256;
 
     public static final String DEFAULT_ALGORITHM_NAME = "argon2id";
 
@@ -77,20 +84,13 @@ class Argon2Hash extends AbstractCryptHash {
      */
     public static final int DEFAULT_MEMORY_KIB = 64 * 1024;
 
+    private static final long serialVersionUID = 2647354947284558921L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(Argon2Hash.class);
+
     private static final Set<String> ALGORITHMS_ARGON2 = new HashSet<>(Arrays.asList("argon2id", "argon2i", "argon2d"));
 
     private static final Pattern DELIMITER_COMMA = Pattern.compile(",");
-
-    /**
-     * Number of default lanes, p=4 is the default recommendation, taken from draft-irtf-cfrg-argon2-13, 4.2.
-     */
-    public static final int DEFAULT_PARALLELISM = 4;
-
-    /**
-     * 256 bits tag size is the default recommendation, taken from draft-irtf-cfrg-argon2-13, 4.2.
-     */
-    public static final int DEFAULT_OUTPUT_LENGTH_BITS = 256;
-
 
     /**
      * 128 bits of salt is the recommended salt length, taken from draft-irtf-cfrg-argon2-13, 4.2.
@@ -105,7 +105,7 @@ class Argon2Hash extends AbstractCryptHash {
 
     private final int parallelism;
 
-    public Argon2Hash(String algorithmName, int argonVersion, byte[] hashedData, ByteSource salt, int iterations, int memoryAsKB, int parallelism) {
+    Argon2Hash(String algorithmName, int argonVersion, byte[] hashedData, ByteSource salt, int iterations, int memoryAsKB, int parallelism) {
         super(algorithmName, hashedData, salt);
         this.argonVersion = argonVersion;
         this.iterations = iterations;
@@ -195,7 +195,8 @@ class Argon2Hash extends AbstractCryptHash {
     }
 
     public static Argon2Hash generate(String algorithmName, ByteSource source, ByteSource salt, int iterations) {
-        return generate(algorithmName, DEFAULT_ALGORITHM_VERSION, source, salt, iterations, DEFAULT_MEMORY_KIB, DEFAULT_PARALLELISM, DEFAULT_OUTPUT_LENGTH_BITS);
+        return generate(algorithmName, DEFAULT_ALGORITHM_VERSION, source, salt, iterations,
+                            DEFAULT_MEMORY_KIB, DEFAULT_PARALLELISM, DEFAULT_OUTPUT_LENGTH_BITS);
     }
 
     public static Argon2Hash generate(
@@ -247,8 +248,8 @@ class Argon2Hash extends AbstractCryptHash {
         if (!ALGORITHMS_ARGON2.contains(getAlgorithmName())) {
             final String message = String.format(
                     Locale.ENGLISH,
-                    "Given algorithm name [%s] not valid for argon2. " +
-                            "Valid algorithms: [%s].",
+                    "Given algorithm name [%s] not valid for argon2. "
+                            + "Valid algorithms: [%s].",
                     getAlgorithmName(),
                     ALGORITHMS_ARGON2
             );

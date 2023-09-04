@@ -41,7 +41,7 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
     /**
      * The static logger available to this class only
      */
-    private static final Logger log = LoggerFactory.getLogger(AdviceFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdviceFilter.class);
 
     /**
      * Returns {@code true} if the filter chain should be allowed to continue, {@code false} otherwise.
@@ -129,8 +129,8 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
         try {
 
             boolean continueChain = preHandle(request, response);
-            if (log.isTraceEnabled()) {
-                log.trace("Invoked preHandle method.  Continuing chain?: [" + continueChain + "]");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Invoked preHandle method.  Continuing chain?: [" + continueChain + "]");
             }
 
             if (continueChain) {
@@ -138,8 +138,8 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
             }
 
             postHandle(request, response);
-            if (log.isTraceEnabled()) {
-                log.trace("Successfully invoked postHandle method");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Successfully invoked postHandle method");
             }
 
         } catch (Exception e) {
@@ -170,15 +170,15 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
         Exception exception = existing;
         try {
             afterCompletion(request, response, exception);
-            if (log.isTraceEnabled()) {
-                log.trace("Successfully invoked afterCompletion method.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Successfully invoked afterCompletion method.");
             }
         } catch (Exception e) {
             if (exception == null) {
                 exception = e;
             } else {
-                log.debug("afterCompletion implementation threw an exception.  This will be ignored to " +
-                        "allow the original source exception to be propagated.", e);
+                LOGGER.debug("afterCompletion implementation threw an exception.  This will be ignored to "
+                        + "allow the original source exception to be propagated.", e);
             }
         }
         if (exception != null) {
@@ -187,11 +187,11 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
             } else if (exception instanceof IOException) {
                 throw (IOException) exception;
             } else {
-                if (log.isDebugEnabled()) {
-                    String msg = "Filter execution resulted in an unexpected Exception " +
-                            "(not IOException or ServletException as the Filter API recommends).  " +
-                            "Wrapping in ServletException and propagating.";
-                    log.debug(msg);
+                if (LOGGER.isDebugEnabled()) {
+                    String msg = "Filter execution resulted in an unexpected Exception "
+                            + "(not IOException or ServletException as the Filter API recommends).  "
+                            + "Wrapping in ServletException and propagating.";
+                    LOGGER.debug(msg);
                 }
                 throw new ServletException(exception);
             }

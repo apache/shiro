@@ -144,7 +144,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     protected void applyEventBusToSessionManager() {
         EventBus eventBus = getEventBus();
         if (eventBus != null && this.sessionManager instanceof EventBusAware) {
-            ((EventBusAware)this.sessionManager).setEventBus(eventBus);
+            ((EventBusAware) this.sessionManager).setEventBus(eventBus);
         }
     }
 

@@ -19,7 +19,15 @@
 package org.apache.shiro.lang.util;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 
 /**
  * <p>Simple utility class for String operations useful across the framework.
@@ -29,9 +37,7 @@ import java.util.*;
  *
  * @since 0.9
  */
-public class StringUtils {
-
-    //TODO - complete JavaDoc
+public final class StringUtils {
 
     /**
      * Constant representing the empty string, equal to &quot;&quot;
@@ -47,6 +53,8 @@ public class StringUtils {
      * Constant representing the default quote character (double quote), equal to '&quot;'</code>
      */
     public static final char DEFAULT_QUOTE_CHAR = '"';
+
+    private StringUtils() {  }
 
     /**
      * Check whether the given String has actual text.
@@ -295,8 +303,8 @@ public class StringUtils {
             //fallback to checking for an equals sign
             split = line.split("=", 2);
             if (split.length != 2) {
-                String msg = "Unable to determine Key/Value pair from line [" + line + "].  There is no space from " +
-                        "which the split location could be determined.";
+                String msg = "Unable to determine Key/Value pair from line [" + line + "].  There is no space from "
+                                 + "which the split location could be determined.";
                 throw new ParseException(msg, 0);
             }
 
@@ -326,10 +334,10 @@ public class StringUtils {
      * Splits a string using the {@link #DEFAULT_DELIMITER_CHAR} (which is {@value #DEFAULT_DELIMITER_CHAR}).
      * This method also recognizes quoting using the {@link #DEFAULT_QUOTE_CHAR}
      * (which is {@value #DEFAULT_QUOTE_CHAR}), but does not retain them.
-     * 
+     *
      * <p>This is equivalent of calling {@link #split(String, char, char, char, boolean, boolean)} with
      * {@code line, DEFAULT_DELIMITER_CHAR, DEFAULT_QUOTE_CHAR, DEFAULT_QUOTE_CHAR, false, true}.</p>
-     * 
+     *
      * @param line the line to split using the {@link #DEFAULT_DELIMITER_CHAR}.
      * @return the split line, split tokens do not contain quotes and are trimmed.
      * @see #split(String, char, char, char, boolean, boolean)
@@ -356,7 +364,8 @@ public class StringUtils {
      * <p/>
      * This method's implementation is very loosely based (with significant modifications) on
      * <a href="http://blogs.bytecode.com.au/glen">Glen Smith</a>'s open-source
-     * <a href="http://opencsv.svn.sourceforge.net/viewvc/opencsv/trunk/src/au/com/bytecode/opencsv/CSVReader.java?&view=markup">CSVReader.java</a>
+     * <a href="http://opencsv.svn.sourceforge.net/viewvc/opencsv/trunk/src/au/com/bytecode/opencsv/CSVReader.java
+     *                                                                  ?&view=markup">CSVReader.java</a>
      * file.
      * <p/>
      * That file is Apache 2.0 licensed as well, making Glen's code a great starting point for us to modify to
@@ -387,9 +396,12 @@ public class StringUtils {
             if (c == beginQuoteChar) {
                 // this gets complex... the quote may end a quoted block, or escape another quote.
                 // do a 1-char lookahead:
-                if (inQuotes  // we are in quotes, therefore there can be escaped quotes in here.
-                        && line.length() > (i + 1)  // there is indeed another character to check.
-                        && line.charAt(i + 1) == beginQuoteChar) { // ..and that char. is a quote also.
+                // we are in quotes, therefore there can be escaped quotes in here.
+                if (inQuotes
+                        // there is indeed another character to check.
+                        && line.length() > (i + 1)
+                        // ..and that char. is a quote also.
+                        && line.charAt(i + 1) == beginQuoteChar) {
                     // we have two quote chars in a row == one quote char, so consume them both and
                     // put one on the token. we do *not* exit the quoted text.
                     sb.append(line.charAt(i + 1));
@@ -411,7 +423,8 @@ public class StringUtils {
                     s = s.trim();
                 }
                 tokens.add(s);
-                sb = new StringBuilder(); // start work on next token
+                // start work on next token
+                sb = new StringBuilder();
             } else {
                 sb.append(c);
             }
@@ -454,7 +467,8 @@ public class StringUtils {
         }
 
         // two or more elements
-        StringBuilder buf = new StringBuilder(256); // Java default is 16, probably too small
+        // Java default is 16, probably too small
+        StringBuilder buf = new StringBuilder(256);
         if (first != null) {
             buf.append(first);
         }

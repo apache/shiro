@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.mgt;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -68,7 +69,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     /**
      * private inner log instance.
      */
-    private static final Logger log = LoggerFactory.getLogger(AbstractRememberMeManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRememberMeManager.class);
 
     /**
      * Serializer to use for converting PrincipalCollection instances to/from byte arrays
@@ -273,15 +274,16 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return true if remember me services should be performed as a result of the successful authentication attempt.
      */
     protected boolean isRememberMe(AuthenticationToken token) {
-        return token != null && (token instanceof RememberMeAuthenticationToken) &&
-                ((RememberMeAuthenticationToken) token).isRememberMe();
+        return Objects.nonNull(token) && (token instanceof RememberMeAuthenticationToken)
+                && ((RememberMeAuthenticationToken) token).isRememberMe();
     }
 
     /**
      * Reacts to the successful login attempt by first always {@link #forgetIdentity(Subject) forgetting} any previously
      * stored identity.  Then if the {@code token}
      * {@link #isRememberMe(org.apache.shiro.authc.AuthenticationToken) is a RememberMe} token, the associated identity
-     * will be {@link #rememberIdentity(org.apache.shiro.subject.Subject, org.apache.shiro.authc.AuthenticationToken, org.apache.shiro.authc.AuthenticationInfo) remembered}
+     * will be {@link #rememberIdentity(org.apache.shiro.subject.Subject, org.apache.shiro.authc.AuthenticationToken,
+     *      org.apache.shiro.authc.AuthenticationInfo) remembered}
      * for later retrieval during a new user session.
      *
      * @param subject the subject for which the principals are being remembered.
@@ -296,9 +298,9 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         if (isRememberMe(token)) {
             rememberIdentity(subject, token, info);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("AuthenticationToken did not indicate RememberMe is requested.  " +
-                        "RememberMe functionality will not be executed for corresponding account.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("AuthenticationToken did not indicate RememberMe is requested.  "
+                        + "RememberMe functionality will not be executed for corresponding account.");
             }
         }
     }
@@ -453,13 +455,13 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      */
     protected PrincipalCollection onRememberedPrincipalFailure(RuntimeException e, SubjectContext context) {
 
-        if (log.isWarnEnabled()) {
-            String message = "There was a failure while trying to retrieve remembered principals.  This could be due to a " +
-                    "configuration problem or corrupted principals.  This could also be due to a recently " +
-                    "changed encryption key, if you are using a shiro.ini file, this property would be " +
-                    "'securityManager.rememberMeManager.cipherKey' see: http://shiro.apache.org/web.html#Web-RememberMeServices. " +
-                    "The remembered identity will be forgotten and not used for this request.";
-            log.warn(message);
+        if (LOGGER.isWarnEnabled()) {
+            String message = "There was a failure while trying to retrieve remembered principals.  This could be due to a "
+                    + "configuration problem or corrupted principals.  This could also be due to a recently "
+                    + "changed encryption key, if you are using a shiro.ini file, this property would be "
+                    + "'securityManager.rememberMeManager.cipherKey' see: http://shiro.apache.org/web.html#Web-RememberMeServices. "
+                    + "The remembered identity will be forgotten and not used for this request.";
+            LOGGER.warn(message);
         }
         forgetIdentity(context);
         //propagate - security manager implementation will handle and warn appropriately

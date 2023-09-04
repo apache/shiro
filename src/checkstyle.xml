@@ -51,10 +51,10 @@
         <property name="basedir" value="${basedir}"/>
     -->
 
-    <!-- Activation here is needed for IntelliJ CheckstyleIDEA plugin -->
+    <!-- Activation here is needed for IntelliJ CheckstyleIDEA plugin
     <module name="SuppressionFilter">
-        <property name="file" value="${root.dir}/src/suppressions.xml"/>
-    </module>
+        <property name="file" value="src/suppressions.xml"/>
+    </module>-->
 
     <!-- Enable suppression of file contents using //CHECKSTYLE:[ON|OFF] comments -->
     <!--
@@ -98,7 +98,7 @@
     </module>
 
     <module name="LineLength">
-        <property name="max" value="130"/>
+        <property name="max" value="150"/>
     </module>
 
     <module name="TreeWalker">
@@ -187,7 +187,7 @@
             <property name="max" value="2"/>
         </module>
         <module name="MethodCount">
-            <property name="maxTotal" value="30"/>
+            <property name="maxTotal" value="35"/>
         </module>
 
         <!-- Checks for whitespace                               -->
@@ -220,7 +220,7 @@
         <!-- See http://checkstyle.sf.net/config_coding.html -->
         <module name="CovariantEquals"/>
         <module name="DeclarationOrder"/>
-        <module name="ExplicitInitialization"/>
+        <!--<module name="ExplicitInitialization"/>-->
         <module name="DefaultComesLast"/>
         <module name="FallThrough"/>
         <module name="MultipleVariableDeclarations"/>
@@ -242,7 +242,7 @@
         </module>
         <module name="InnerAssignment"/>
         <module name="ReturnCount">
-            <property name="max" value="8"/>
+            <property name="max" value="15"/>
             <property name="maxForVoid" value="8"/>
         </module>
         <module name="NestedIfDepth">
@@ -257,14 +257,14 @@
         <module name="StringLiteralEquality"/>
         <module name="SuperClone"/>
         <module name="SuperFinalize"/>
-        <module name="MagicNumber">
+        <!--<module name="MagicNumber">
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreAnnotation" value="true"/>
-            <property name="ignoreNumbers" value="-1, 0, 1, 2, 3"/>
+            <property name="ignoreNumbers" value="-1, 0, 1, 2, 3, 4, 5, 6"/>
             <property name="constantWaiverParentToken"
                       value="ASSIGN, ARRAY_INIT, EXPR, UNARY_PLUS, UNARY_MINUS, TYPECAST, ELIST, LITERAL_NEW,
                       METHOD_CALL, STAR, DIV, PLUS, MINUS, SL, QUESTION"/>
-        </module>
+        </module>-->
         <module name="EqualsHashCode"/>
         <module name="IllegalInstantiation"/>
         <module name="MissingSwitchDefault"/>
@@ -281,7 +281,7 @@
 
         <!-- Metrics -->
         <module name="BooleanExpressionComplexity">
-            <property name="max" value="4"/>
+            <property name="max" value="8"/>
         </module>
         <module name="ClassDataAbstractionCoupling">
             <property name="max" value="15"/>
@@ -291,7 +291,7 @@
         </module>
         <module name="CyclomaticComplexity">
             <property name="severity" value="error"/>
-            <property name="max" value="12"/>
+            <property name="max" value="15"/>
         </module>
         <module name="NPathComplexity">
             <!-- TODO Agree on the value

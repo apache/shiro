@@ -21,7 +21,11 @@ package org.apache.shiro.web.servlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -37,7 +41,7 @@ public class ProxiedFilterChain implements FilterChain {
 
     //TODO - complete JavaDoc
 
-    private static final Logger log = LoggerFactory.getLogger(ProxiedFilterChain.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProxiedFilterChain.class);
 
     private FilterChain orig;
     private List<Filter> filters;
@@ -55,13 +59,13 @@ public class ProxiedFilterChain implements FilterChain {
     public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
         if (this.filters == null || this.filters.size() == this.index) {
             //we've reached the end of the wrapped chain, so invoke the original one:
-            if (log.isTraceEnabled()) {
-                log.trace("Invoking original filter chain.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Invoking original filter chain.");
             }
             this.orig.doFilter(request, response);
         } else {
-            if (log.isTraceEnabled()) {
-                log.trace("Invoking wrapped filter at index [" + this.index + "]");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Invoking wrapped filter at index [" + this.index + "]");
             }
             this.filters.get(this.index++).doFilter(request, response, this);
         }

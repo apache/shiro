@@ -51,7 +51,8 @@ import org.apache.shiro.authc.AuthenticationToken;
  * practically any application environment.
  *
  * <p>Most users will not implement the <tt>Realm</tt> interface directly, but will extend one of the subclasses,
- * {@link org.apache.shiro.realm.AuthenticatingRealm AuthenticatingRealm} or {@link org.apache.shiro.realm.AuthorizingRealm}, greatly reducing the effort required
+ * {@link org.apache.shiro.realm.AuthenticatingRealm AuthenticatingRealm} or
+ * {@link org.apache.shiro.realm.AuthorizingRealm}, greatly reducing the effort required
  * to implement a <tt>Realm</tt> from scratch.</p>
  *
  * @see org.apache.shiro.realm.CachingRealm CachingRealm

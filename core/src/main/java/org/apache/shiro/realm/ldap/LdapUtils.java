@@ -40,7 +40,10 @@ public final class LdapUtils {
     /**
      * Private internal log instance.
      */
-    private static final Logger log = LoggerFactory.getLogger(LdapUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LdapUtils.class);
+
+    private LdapUtils() {
+    }
 
     /**
      * Closes an LDAP context, logging any errors, but not throwing
@@ -54,7 +57,7 @@ public final class LdapUtils {
                 ctx.close();
             }
         } catch (NamingException e) {
-            log.error("Exception while closing LDAP context. ", e);
+            LOGGER.error("Exception while closing LDAP context. ", e);
         }
     }
 
@@ -81,16 +84,18 @@ public final class LdapUtils {
         return values;
     }
 
-    //added based on SHIRO-127, per Emmanuel's comment [1]
-    // [1] https://issues.apache.org/jira/browse/SHIRO-127?focusedCommentId=12891380&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#action_12891380
-
+    /**
+     * added based on SHIRO-127, per Emmanuel's comment [1]
+     * [1] <a href="https://issues.apache.org/jira/browse/SHIRO-127?focusedCommentId=12891380&"
+     *           + "page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#action_12891380" />
+     */
     public static void closeEnumeration(NamingEnumeration ne) {
         try {
             if (ne != null) {
                 ne.close();
             }
         } catch (NamingException e) {
-            log.error("Exception while closing NamingEnumeration: ", e);
+            LOGGER.error("Exception while closing NamingEnumeration: ", e);
         }
     }
 

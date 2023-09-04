@@ -168,8 +168,9 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
     public void checkRoles(PrincipalCollection principals, Collection<String> roles) throws AuthorizationException {
         this.authorizer.checkRoles(principals, roles);
     }
-    
+
     public void checkRoles(PrincipalCollection principals, String... roles) throws AuthorizationException {
         this.authorizer.checkRoles(principals, roles);
-    }    
+    }
+
 }

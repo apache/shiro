@@ -26,7 +26,8 @@ import org.apache.shiro.subject.support.DelegatingSubject;
 
 
 /**
- * Default {@link SubjectFactory SubjectFactory} implementation that creates {@link org.apache.shiro.subject.support.DelegatingSubject DelegatingSubject}
+ * Default {@link SubjectFactory SubjectFactory} implementation that creates
+ *  {@link org.apache.shiro.subject.support.DelegatingSubject DelegatingSubject}
  * instances.
  *
  * @since 1.0

@@ -44,21 +44,21 @@ public class SignupController {
         this.userService = userService;
     }
 
-    @RequestMapping(value="/signup",method= RequestMethod.GET)
+    @RequestMapping(value = "/signup", method = RequestMethod.GET)
     public String showSignupForm(Model model, @ModelAttribute SignupCommand command) {
         return "signup";
     }
 
-    @RequestMapping(value="/signup",method= RequestMethod.POST)
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public String showSignupForm(Model model, @ModelAttribute SignupCommand command, BindingResult errors) {
         signupValidator.validate(command, errors);
 
-        if( errors.hasErrors() ) {
+        if (errors.hasErrors()) {
             return showSignupForm(model, command);
         }
 
         // Create the user
-        userService.createUser( command.getUsername(), command.getEmail(), command.getPassword() );
+        userService.createUser(command.getUsername(), command.getEmail(), command.getPassword());
 
         // Login the newly created user
         SecurityUtils.getSubject().login(new UsernamePasswordToken(command.getUsername(), command.getPassword()));

@@ -48,7 +48,7 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
     /**
      * Private internal class log instance.
      */
-    private static final Logger log = LoggerFactory.getLogger(LifecycleBeanPostProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LifecycleBeanPostProcessor.class);
 
     /**
      * Order value of this BeanPostProcessor.
@@ -82,8 +82,8 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
     public Object postProcessBeforeInitialization(Object object, String name) throws BeansException {
         if (object instanceof Initializable) {
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Initializing bean [" + name + "]...");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Initializing bean [" + name + "]...");
                 }
 
                 ((Initializable) object).init();
@@ -114,8 +114,8 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
     public void postProcessBeforeDestruction(Object object, String name) throws BeansException {
         if (object instanceof Destroyable) {
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Destroying bean [" + name + "]...");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Destroying bean [" + name + "]...");
                 }
 
                 ((Destroyable) object).destroy();

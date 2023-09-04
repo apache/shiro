@@ -24,11 +24,19 @@ import org.apache.shiro.cache.CacheException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 
 /**
  * Shiro {@link org.apache.shiro.cache.Cache} implementation that wraps an {@link net.sf.ehcache.Ehcache} instance.
  *
+ * @param <K> K
+ * @param <V> V
  * @since 0.2
  */
 public class EhCache<K, V> implements Cache<K, V> {
@@ -36,7 +44,7 @@ public class EhCache<K, V> implements Cache<K, V> {
     /**
      * Private internal log instance.
      */
-    private static final Logger log = LoggerFactory.getLogger(EhCache.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EhCache.class);
 
     /**
      * The wrapped Ehcache instance.
@@ -63,16 +71,16 @@ public class EhCache<K, V> implements Cache<K, V> {
      */
     public V get(K key) throws CacheException {
         try {
-            if (log.isTraceEnabled()) {
-                log.trace("Getting object from cache [" + cache.getName() + "] for key [" + key + "]");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Getting object from cache [" + cache.getName() + "] for key [" + key + "]");
             }
             if (key == null) {
                 return null;
             } else {
                 Element element = cache.get(key);
                 if (element == null) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Element for [" + key + "] is null.");
+                    if (LOGGER.isTraceEnabled()) {
+                        LOGGER.trace("Element for [" + key + "] is null.");
                     }
                     return null;
                 } else {
@@ -92,8 +100,8 @@ public class EhCache<K, V> implements Cache<K, V> {
      * @param value the value.
      */
     public V put(K key, V value) throws CacheException {
-        if (log.isTraceEnabled()) {
-            log.trace("Putting object in cache [" + cache.getName() + "] for key [" + key + "]");
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Putting object in cache [" + cache.getName() + "] for key [" + key + "]");
         }
         try {
             V previous = get(key);
@@ -113,8 +121,8 @@ public class EhCache<K, V> implements Cache<K, V> {
      * @param key the key of the element to remove
      */
     public V remove(K key) throws CacheException {
-        if (log.isTraceEnabled()) {
-            log.trace("Removing object from cache [" + cache.getName() + "] for key [" + key + "]");
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Removing object from cache [" + cache.getName() + "] for key [" + key + "]");
         }
         try {
             V previous = get(key);
@@ -129,8 +137,8 @@ public class EhCache<K, V> implements Cache<K, V> {
      * Removes all elements in the cache, but leaves the cache in a useable state.
      */
     public void clear() throws CacheException {
-        if (log.isTraceEnabled()) {
-            log.trace("Clearing all objects from cache [" + cache.getName() + "]");
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Clearing all objects from cache [" + cache.getName() + "]");
         }
         try {
             cache.removeAll();
@@ -187,13 +195,12 @@ public class EhCache<K, V> implements Cache<K, V> {
      * number is unknown or cannot be calculated.
      *
      * @return the size (in bytes) that this EhCache is using in memory (RAM), or <code>-1</code> if that
-     *         number is unknown or cannot be calculated.
+     * number is unknown or cannot be calculated.
      */
     public long getMemoryUsage() {
         try {
             return cache.calculateInMemorySize();
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             return -1;
         }
     }
@@ -203,13 +210,12 @@ public class EhCache<K, V> implements Cache<K, V> {
      * that number is unknown or cannot be calculated.
      *
      * @return the size (in bytes) that this EhCache's memory store is using (RAM), or <code>-1</code> if
-     *         that number is unknown or cannot be calculated.
+     * that number is unknown or cannot be calculated.
      */
     public long getMemoryStoreSize() {
         try {
             return cache.getMemoryStoreSize();
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             throw new CacheException(t);
         }
     }
@@ -219,7 +225,7 @@ public class EhCache<K, V> implements Cache<K, V> {
      * that number is unknown or cannot be calculated.
      *
      * @return the size (in bytes) that this EhCache's disk store is consuming or <code>-1</code> if
-     *         that number is unknown or cannot be calculated.
+     * that number is unknown or cannot be calculated.
      */
     public long getDiskStoreSize() {
         try {

@@ -72,7 +72,7 @@ public class SimpleHashProvider implements HashSpi {
 
         private final Random random;
 
-        public SimpleHashFactory(Random random) {
+        SimpleHashFactory(Random random) {
             this.random = random;
         }
 
@@ -129,7 +129,8 @@ public class SimpleHashProvider implements HashSpi {
                     .orElse(null);
         }
 
-        private SimpleHash createSimpleHash(String algorithmName, ByteSource source, int iterations, ByteSource publicSalt, ByteSource salt) {
+        private SimpleHash createSimpleHash(String algorithmName, ByteSource source,
+                                            int iterations, ByteSource publicSalt, ByteSource salt) {
             Hash computed = new SimpleHash(algorithmName, source, salt, iterations);
 
             SimpleHash result = new SimpleHash(algorithmName);

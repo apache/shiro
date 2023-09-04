@@ -39,7 +39,9 @@ class WebGuiceEnvironment implements WebEnvironment {
     private ShiroFilterConfiguration filterConfiguration;
 
     @Inject
-    WebGuiceEnvironment(FilterChainResolver filterChainResolver, @Named(ShiroWebModule.NAME) ServletContext servletContext, WebSecurityManager securityManager, ShiroFilterConfiguration filterConfiguration) {
+    WebGuiceEnvironment(FilterChainResolver filterChainResolver,
+                        @Named(ShiroWebModule.NAME) ServletContext servletContext,
+                        WebSecurityManager securityManager, ShiroFilterConfiguration filterConfiguration) {
         this.filterChainResolver = filterChainResolver;
         this.servletContext = servletContext;
         this.securityManager = securityManager;

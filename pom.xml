@@ -132,8 +132,7 @@
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
 
         <!-- checkstyle -->
-        <checkstyle.configLocation>${root.dir}/src/checkstyle.xml</checkstyle.configLocation>
-        <checkstyle.supressionsLocation>${root.dir}/src/suppressions.xml</checkstyle.supressionsLocation>
+        <root.dir>${basedir}</root.dir>
     </properties>
 
     <modules>
@@ -1754,6 +1753,30 @@
                                     <goal>aggregate</goal>
                                 </goals>
                                 <inherited>false</inherited>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <configuration>
+                            <configLocation>src/checkstyle.xml</configLocation>
+                            <suppressionsLocation>src/suppressions.xml</suppressionsLocation>
+                            <encoding>UTF-8</encoding>
+                            <consoleOutput>true</consoleOutput>
+                            <failsOnError>true</failsOnError>
+                            <linkXRef>false</linkXRef>
+                            <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                            <excludes>**/Quickstart.java,**/QuickstartGuice.java,**/QuickstartShiroModule.java</excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>validate</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>

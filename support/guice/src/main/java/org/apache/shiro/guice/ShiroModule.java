@@ -66,7 +66,8 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
     private final Logger log = LoggerFactory.getLogger(ShiroModule.class);
 
-	private Set<Destroyable> destroyables = Collections.newSetFromMap(new WeakHashMap<Destroyable, Boolean>());
+    private final Set<Destroyable> destroyables = Collections.newSetFromMap(new WeakHashMap<Destroyable, Boolean>());
+
     public void configure() {
         // setup security manager
         bindSecurityManager(bind(SecurityManager.class));
@@ -136,7 +137,8 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         try {
             bind.toConstructor(DefaultSecurityManager.class.getConstructor(Collection.class)).asEagerSingleton();
         } catch (NoSuchMethodException e) {
-            throw new ConfigurationException("This really shouldn't happen.  Either something has changed in Shiro, or there's a bug in " + ShiroModule.class.getSimpleName(), e);
+            throw new ConfigurationException("This really shouldn't happen.  Either something has changed in Shiro, or there's a bug in "
+                    + ShiroModule.class.getSimpleName(), e);
         }
     }
 
@@ -164,8 +166,9 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
     /**
      * Binds a key to use for injecting setters in shiro classes.
+     *
      * @param typeLiteral the bean property type
-     * @param key the key to use to satisfy the bean property dependency
+     * @param key         the key to use to satisfy the bean property dependency
      * @param <T>
      */
     protected final <T> void bindBeanType(TypeLiteral<T> typeLiteral, Key<? extends T> key) {
@@ -174,6 +177,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
     /**
      * Binds the EventBus.  Override this method in order to provide your own {@link EventBus} binding.
+     *
      * @param bind
      * @since 1.4
      */
@@ -191,8 +195,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         for (Destroyable destroyable : destroyables) {
             try {
                 destroyable.destroy();
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 log.warn("Error destroying component class: " + destroyable.getClass(), e);
             }
         }
@@ -202,7 +205,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         this.destroyables.add(destroyable);
     }
 
-    private class SubscribedEventTypeListener implements TypeListener {
+    private final class SubscribedEventTypeListener implements TypeListener {
         @Override
         public <I> void hear(TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
 
@@ -210,7 +213,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
             List<Method> methods = ClassUtils.getAnnotatedMethods(typeLiteral.getRawType(), Subscribe.class);
             if (methods != null && !methods.isEmpty()) {
-                typeEncounter.register( new InjectionListener<I>() {
+                typeEncounter.register(new InjectionListener<I>() {
                     @Override
                     public void afterInjection(Object o) {
                         eventBusProvider.get().register(o);
@@ -220,17 +223,17 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         }
     }
 
-    private class EventBusAwareTypeListener implements TypeListener {
+    private final class EventBusAwareTypeListener implements TypeListener {
         @Override
         public <I> void hear(TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
 
             final Provider<EventBus> eventBusProvider = typeEncounter.getProvider(EventBus.class);
 
             if (EventBusAware.class.isAssignableFrom(typeLiteral.getRawType())) {
-                typeEncounter.register( new InjectionListener<I>() {
+                typeEncounter.register(new InjectionListener<I>() {
                     @Override
                     public void afterInjection(Object o) {
-                        ((EventBusAware)o).setEventBus(eventBusProvider.get());
+                        ((EventBusAware) o).setEventBus(eventBusProvider.get());
                     }
                 });
             }

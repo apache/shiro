@@ -27,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -47,8 +48,7 @@ public class HelloController {
             Collection<Map> principalMaps = subject.getPrincipals().byType(Map.class);
             if (CollectionUtils.isEmpty(principalMaps)) {
                 name = subject.getPrincipal().toString();
-            }
-            else {
+            } else {
                 name = (String) principalMaps.iterator().next().get("username");
             }
         }

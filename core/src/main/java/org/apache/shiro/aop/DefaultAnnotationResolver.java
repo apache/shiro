@@ -41,7 +41,8 @@ import java.lang.reflect.Method;
 public class DefaultAnnotationResolver implements AnnotationResolver {
 
     /**
-     * Returns {@code methodInvocation.}{@link org.apache.shiro.aop.MethodInvocation#getMethod() getMethod()}.{@link Method#getAnnotation(Class) getAnnotation(clazz)}.
+     * Returns {@code methodInvocation.}{@link org.apache.shiro.aop.MethodInvocation#getMethod() getMethod()}.
+     *          {@link Method#getAnnotation(Class) getAnnotation(clazz)}.
      *
      * @param mi    the intercepted method to be invoked.
      * @param clazz the annotation class to use to find an annotation instance on the method.
@@ -59,7 +60,7 @@ public class DefaultAnnotationResolver implements AnnotationResolver {
 
         }
         Annotation annotation = m.getAnnotation(clazz);
-        if (annotation == null ) {
+        if (annotation == null) {
             Object miThis = mi.getThis();
             //SHIRO-473 - miThis could be null for static methods, just return null
             annotation = miThis != null ? miThis.getClass().getAnnotation(clazz) : null;

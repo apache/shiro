@@ -55,9 +55,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class MemorySessionDAO extends AbstractSessionDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(MemorySessionDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MemorySessionDAO.class);
 
-    private ConcurrentMap<Serializable, Session> sessions;
+    private final ConcurrentMap<Serializable, Session> sessions;
 
     public MemorySessionDAO() {
         this.sessions = new ConcurrentHashMap<Serializable, Session>();

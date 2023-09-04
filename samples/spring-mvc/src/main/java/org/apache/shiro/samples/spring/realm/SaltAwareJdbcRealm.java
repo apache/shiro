@@ -18,7 +18,13 @@
  */
 package org.apache.shiro.samples.spring.realm;
 
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.util.JdbcUtils;
@@ -36,7 +42,7 @@ import java.sql.SQLException;
  */
 public class SaltAwareJdbcRealm extends JdbcRealm {
 
-    private static final Logger log = LoggerFactory.getLogger(SaltAwareJdbcRealm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SaltAwareJdbcRealm.class);
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
@@ -72,8 +78,8 @@ public class SaltAwareJdbcRealm extends JdbcRealm {
 
         } catch (SQLException e) {
             final String message = "There was a SQL error while authenticating user [" + username + "]";
-            if (log.isErrorEnabled()) {
-                log.error(message, e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error(message, e);
             }
 
             // Rethrow any SQL errors as an authentication exception

@@ -66,15 +66,25 @@ public class AnnotationAuthorizationFilter implements ContainerRequestFilter {
 
     private static AuthorizingAnnotationHandler createHandler(Annotation annotation) {
         Class<?> t = annotation.annotationType();
-        if (RequiresPermissions.class.equals(t)) return new PermissionAnnotationHandler();
-        else if (RequiresRoles.class.equals(t)) return new RoleAnnotationHandler();
-        else if (RequiresUser.class.equals(t)) return new UserAnnotationHandler();
-        else if (RequiresGuest.class.equals(t)) return new GuestAnnotationHandler();
-        else if (RequiresAuthentication.class.equals(t)) return new AuthenticatedAnnotationHandler();
-        else if (RolesAllowed.class.equals(t)) return new RolesAllowedAnnotationHandler();
-        else if (PermitAll.class.equals(t)) return new PermitAllAnnotationHandler();
-        else if (DenyAll.class.equals(t)) return new DenyAllAnnotationHandler();
-        else throw new IllegalArgumentException("Cannot create a handler for the unknown for annotation " + t);
+        if (RequiresPermissions.class.equals(t)) {
+            return new PermissionAnnotationHandler();
+        } else if (RequiresRoles.class.equals(t)) {
+            return new RoleAnnotationHandler();
+        } else if (RequiresUser.class.equals(t)) {
+            return new UserAnnotationHandler();
+        } else if (RequiresGuest.class.equals(t)) {
+            return new GuestAnnotationHandler();
+        } else if (RequiresAuthentication.class.equals(t)) {
+            return new AuthenticatedAnnotationHandler();
+        } else if (RolesAllowed.class.equals(t)) {
+            return new RolesAllowedAnnotationHandler();
+        } else if (PermitAll.class.equals(t)) {
+            return new PermitAllAnnotationHandler();
+        } else if (DenyAll.class.equals(t)) {
+            return new DenyAllAnnotationHandler();
+        } else {
+            throw new IllegalArgumentException("Cannot create a handler for the unknown for annotation " + t);
+        }
     }
 
     @Override

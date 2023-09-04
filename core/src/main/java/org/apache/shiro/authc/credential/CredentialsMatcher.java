@@ -21,7 +21,6 @@ package org.apache.shiro.authc.credential;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
-
 /**
  * Interface implemented by classes that can determine if an AuthenticationToken's provided
  * credentials matches a corresponding account's credentials stored in the system.

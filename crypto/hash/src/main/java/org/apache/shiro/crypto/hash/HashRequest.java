@@ -94,11 +94,11 @@ public interface HashRequest {
      * @see SimpleHashRequest
      * @since 1.2
      */
-    public static class Builder {
+    class Builder {
 
         private ByteSource source;
         private ByteSource salt = SimpleByteSource.empty();
-        private Map<String, Object> parameters = new ConcurrentHashMap<>();
+        private final Map<String, Object> parameters = new ConcurrentHashMap<>();
         private String algorithmName;
 
         /**

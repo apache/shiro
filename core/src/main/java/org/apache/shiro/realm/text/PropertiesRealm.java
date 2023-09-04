@@ -96,10 +96,10 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     /*-------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private static final Logger log = LoggerFactory.getLogger(PropertiesRealm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesRealm.class);
 
-    protected ExecutorService scheduler = null;
-    protected boolean useXmlFormat = false;
+    protected ExecutorService scheduler;
+    protected boolean useXmlFormat;
     protected String resourcePath = DEFAULT_RESOURCE_PATH;
     protected long fileLastModified;
     protected int reloadIntervalSeconds = DEFAULT_RELOAD_INTERVAL_SECONDS;
@@ -176,8 +176,8 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
                 scheduler.shutdown();
             }
         } catch (Exception e) {
-            if (log.isInfoEnabled()) {
-                log.info("Unable to cleanly shutdown Scheduler.  Ignoring (shutting down)...", e);
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Unable to cleanly shutdown Scheduler.  Ignoring (shutting down)...", e);
             }
         } finally {
             scheduler = null;
@@ -195,20 +195,20 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
         try {
             reloadPropertiesIfNecessary();
         } catch (Exception e) {
-            if (log.isErrorEnabled()) {
-                log.error("Error while reloading property files for realm.", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Error while reloading property files for realm.", e);
             }
         }
     }
 
     private void loadProperties() {
         if (resourcePath == null || resourcePath.length() == 0) {
-            throw new IllegalStateException("The resourcePath property is not set.  " +
-                    "It must be set prior to this realm being initialized.");
+            throw new IllegalStateException("The resourcePath property is not set.  "
+                    + "It must be set prior to this realm being initialized.");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Loading user security information from file [" + resourcePath + "]...");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Loading user security information from file [" + resourcePath + "]...");
         }
 
         Properties properties = loadProperties(resourcePath);
@@ -221,30 +221,30 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
         InputStream is = null;
         try {
 
-            if (log.isDebugEnabled()) {
-                log.debug("Opening input stream for path [" + resourcePath + "]...");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Opening input stream for path [" + resourcePath + "]...");
             }
 
             is = ResourceUtils.getInputStreamForPath(resourcePath);
             if (useXmlFormat) {
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Loading properties from path [" + resourcePath + "] in XML format...");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Loading properties from path [" + resourcePath + "] in XML format...");
                 }
 
                 props.loadFromXML(is);
             } else {
 
-                if (log.isDebugEnabled()) {
-                    log.debug("Loading properties from path [" + resourcePath + "]...");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Loading properties from path [" + resourcePath + "]...");
                 }
 
                 props.load(is);
             }
 
         } catch (IOException e) {
-            throw new ShiroException("Error reading properties path [" + resourcePath + "].  " +
-                    "Initializing of the realm from this file failed.", e);
+            throw new ShiroException("Error reading properties path [" + resourcePath + "].  "
+                    + "Initializing of the realm from this file failed.", e);
         } finally {
             ResourceUtils.close(is);
         }
@@ -280,12 +280,12 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     @SuppressWarnings("unchecked")
     private void restart() {
         if (resourcePath == null || resourcePath.length() == 0) {
-            throw new IllegalStateException("The resourcePath property is not set.  " +
-                    "It must be set prior to this realm being initialized.");
+            throw new IllegalStateException("The resourcePath property is not set.  "
+                    + "It must be set prior to this realm being initialized.");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Loading user security information from file [" + resourcePath + "]...");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Loading user security information from file [" + resourcePath + "]...");
         }
 
         try {
@@ -308,8 +308,8 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
 
             String key = propNames.nextElement().trim();
             String value = properties.getProperty(key).trim();
-            if (log.isTraceEnabled()) {
-                log.trace("Processing properties line - key: [" + key + "], value: [" + value + "].");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Processing properties line - key: [" + key + "], value: [" + value + "].");
             }
 
             if (isUsername(key)) {
@@ -319,8 +319,8 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
                 String rolename = getRolename(key);
                 roleDefs.append(rolename).append(" = ").append(value).append("\n");
             } else {
-                String msg = "Encountered unexpected key/value pair.  All keys must be prefixed with either '" +
-                        USERNAME_PREFIX + "' or '" + ROLENAME_PREFIX + "'.";
+                String msg = "Encountered unexpected key/value pair.  All keys must be prefixed with either '"
+                        + USERNAME_PREFIX + "' or '" + ROLENAME_PREFIX + "'.";
                 throw new IllegalStateException(msg);
             }
         }

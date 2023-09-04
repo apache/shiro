@@ -95,8 +95,10 @@ public interface AuthenticationStrategy {
      * @throws AuthenticationException an exception thrown by the Strategy implementation if it wishes the login process
      *                                 for the associated subject (user) to stop immediately.
      */
-    AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo, Throwable t)
-            throws AuthenticationException;
+    AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token,
+                                    AuthenticationInfo singleRealmInfo,
+                                    AuthenticationInfo aggregateInfo, Throwable t)
+                                    throws AuthenticationException;
 
     /**
      * Method invoked by the ModularAuthenticator signifying that all of its configured Realms have been consulted

@@ -90,7 +90,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
     protected static final String SIMPLE_AUTHENTICATION_MECHANISM_NAME = "simple";
     protected static final String DEFAULT_REFERRAL = "follow";
 
-    private static final Logger log = LoggerFactory.getLogger(JndiLdapContextFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JndiLdapContextFactory.class);
 
     /*-------------------------------------------
      |    I N S T A N C E   V A R I A B L E S   |
@@ -134,7 +134,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      *
      * @param authenticationMechanism the type of LDAP authentication to perform.
      * @see <a href="http://download-llnw.oracle.com/javase/tutorial/jndi/ldap/auth_mechs.html">
-     *      http://download-llnw.oracle.com/javase/tutorial/jndi/ldap/auth_mechs.html</a>
+     * http://download-llnw.oracle.com/javase/tutorial/jndi/ldap/auth_mechs.html</a>
      */
     public void setAuthenticationMechanism(String authenticationMechanism) {
         setEnvironmentProperty(Context.SECURITY_AUTHENTICATION, authenticationMechanism);
@@ -154,7 +154,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      *
      * @return the type of LDAP authentication mechanism to use when connecting to the LDAP server.
      * @see <a href="http://download-llnw.oracle.com/javase/tutorial/jndi/ldap/auth_mechs.html">
-     *      http://download-llnw.oracle.com/javase/tutorial/jndi/ldap/auth_mechs.html</a>
+     * http://download-llnw.oracle.com/javase/tutorial/jndi/ldap/auth_mechs.html</a>
      */
     public String getAuthenticationMechanism() {
         return (String) getEnvironmentProperty(Context.SECURITY_AUTHENTICATION);
@@ -353,7 +353,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      * checks.
      *
      * @return the password of the {@link #setSystemUsername(String) systemUsername} that will be used when creating an
-     *         LDAP connection used for authorization queries.
+     * LDAP connection used for authorization queries.
      */
     public String getSystemPassword() {
         return this.systemPassword;
@@ -413,7 +413,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      *
      * @param principal the principal under which the connection will be made
      * @return {@code true} if LDAP connection pooling should be used when acquiring a connection based on the specified
-     *         account principal, {@code false} otherwise.
+     * account principal, {@code false} otherwise.
      */
     protected boolean isPoolingConnections(Object principal) {
         return isPoolingEnabled() && principal != null && principal.equals(getSystemUsername());
@@ -468,9 +468,9 @@ public class JndiLdapContextFactory implements LdapContextFactory {
             env.put(SUN_CONNECTION_POOLING_PROPERTY, "true");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing LDAP context using URL [{}] and principal [{}] with pooling {}",
-                    new Object[]{url, principal, (pooling ? "enabled" : "disabled")});
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Initializing LDAP context using URL [{}] and principal [{}] with pooling {}",
+                    new Object[] {url, principal, (pooling ? "enabled" : "disabled")});
         }
 
         // validate the config before creating the context
@@ -505,26 +505,25 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      * @throws AuthenticationException if a configuration problem is detected
      */
     protected void validateAuthenticationInfo(Hashtable<String, Object> environment)
-        throws AuthenticationException
-    {
+            throws AuthenticationException {
         // validate when using Simple auth both principal and credentials are set
-        if(SIMPLE_AUTHENTICATION_MECHANISM_NAME.equals(environment.get(Context.SECURITY_AUTHENTICATION))) {
+        if (SIMPLE_AUTHENTICATION_MECHANISM_NAME.equals(environment.get(Context.SECURITY_AUTHENTICATION))) {
 
             // only validate credentials if we have a non-empty principal
-            if( environment.get(Context.SECURITY_PRINCIPAL) != null &&
-                StringUtils.hasText( String.valueOf( environment.get(Context.SECURITY_PRINCIPAL) ))) {
+            if (environment.get(Context.SECURITY_PRINCIPAL) != null
+                    && StringUtils.hasText(String.valueOf(environment.get(Context.SECURITY_PRINCIPAL)))) {
 
                 Object credentials = environment.get(Context.SECURITY_CREDENTIALS);
 
                 // from the FAQ, we need to check for empty credentials:
                 // http://docs.oracle.com/javase/tutorial/jndi/ldap/faq.html
-                if( credentials == null ||
-                    (credentials instanceof byte[] && ((byte[])credentials).length <= 0) || // empty byte[]
-                    (credentials instanceof char[] && ((char[])credentials).length <= 0) || // empty char[]
-                    (String.class.isInstance(credentials) && !StringUtils.hasText(String.valueOf(credentials)))) {
+                if (credentials == null
+                        || (credentials instanceof byte[] && ((byte[]) credentials).length <= 0)
+                        || (credentials instanceof char[] && ((char[]) credentials).length <= 0)
+                        || (String.class.isInstance(credentials) && !StringUtils.hasText(String.valueOf(credentials)))) {
 
                     throw new javax.naming.AuthenticationException("LDAP Simple authentication requires both a "
-                                                                       + "principal and credentials.");
+                            + "principal and credentials.");
                 }
             }
         }

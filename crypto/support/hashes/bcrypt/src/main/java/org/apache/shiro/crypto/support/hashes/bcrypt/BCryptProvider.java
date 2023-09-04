@@ -61,7 +61,7 @@ public class BCryptProvider implements HashSpi {
 
         private final SecureRandom random;
 
-        public BCryptHashFactory(Random random) {
+        BCryptHashFactory(Random random) {
             if (!(random instanceof SecureRandom)) {
                 throw new IllegalArgumentException("Only SecureRandom instances are supported at the moment!");
             }
@@ -132,9 +132,20 @@ public class BCryptProvider implements HashSpi {
     }
 
     public static final class Parameters {
+
+        /**
+         * Set BCryptHash algorithm name to default.
+         */
         public static final String DEFAULT_ALGORITHM_NAME = BCryptHash.DEFAULT_ALGORITHM_NAME;
 
+        /**
+         * BCrypt salt param.
+         */
         public static final String PARAMETER_SALT = "BCrypt.salt";
+
+        /**
+         * BCrypt cost param.
+         */
         public static final String PARAMETER_COST = "BCrypt.cost";
 
         private Parameters() {

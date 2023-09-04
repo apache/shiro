@@ -47,11 +47,6 @@ import java.io.IOException;
 public abstract class OncePerRequestFilter extends NameableFilter {
 
     /**
-     * Private internal log instance.
-     */
-    private static final Logger log = LoggerFactory.getLogger(OncePerRequestFilter.class);
-
-    /**
      * Suffix that gets appended to the filter name for the "already filtered" request attribute.
      *
      * @see #getAlreadyFilteredAttributeName
@@ -59,11 +54,17 @@ public abstract class OncePerRequestFilter extends NameableFilter {
     public static final String ALREADY_FILTERED_SUFFIX = ".FILTERED";
 
     /**
+     * Private internal log instance.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(OncePerRequestFilter.class);
+
+    /**
      * Determines generally if this filter should execute or let requests fall through to the next chain element.
+     * most filters wish to execute when configured, so default to true
      *
      * @see #isEnabled()
      */
-    private boolean enabled = true; //most filters wish to execute when configured, so default to true
+    private boolean enabled = true;
 
     /**
      * Determines if the filter's once per request functionality is enabled, defaults to false. It is recommended
@@ -105,6 +106,7 @@ public abstract class OncePerRequestFilter extends NameableFilter {
     /**
      * Returns {@code true} if this filter should only execute once per request. If set to {@code false} this filter
      * will execute each time it is invoked.
+     *
      * @return {@code true} if this filter should only execute once per request.
      * @since 1.10
      */
@@ -115,7 +117,7 @@ public abstract class OncePerRequestFilter extends NameableFilter {
     /**
      * Sets whether this filter executes once per request or for every invocation of the filter. It is recommended
      * to leave this disabled if you are using a {@link javax.servlet.RequestDispatcher RequestDispatcher} to forward
-     * or include request (JSP tags, programmatically, or via a framework). 
+     * or include request (JSP tags, programmatically, or via a framework).
      *
      * @param filterOncePerRequest Whether this filter executes once per request.
      * @since 1.10
@@ -136,18 +138,18 @@ public abstract class OncePerRequestFilter extends NameableFilter {
     public final void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String alreadyFilteredAttributeName = getAlreadyFilteredAttributeName();
-        if ( request.getAttribute(alreadyFilteredAttributeName) != null && filterOncePerRequest) {
-            log.trace("Filter '{}' already executed.  Proceeding without invoking this filter.", getName());
+        if (request.getAttribute(alreadyFilteredAttributeName) != null && filterOncePerRequest) {
+            LOGGER.trace("Filter '{}' already executed.  Proceeding without invoking this filter.", getName());
             filterChain.doFilter(request, response);
-        } else //noinspection deprecation
-            if (/* added in 1.2: */ !isEnabled(request, response) ||
-                /* retain backwards compatibility: */ shouldNotFilter(request) ) {
-            log.debug("Filter '{}' is not enabled for the current request.  Proceeding without invoking this filter.",
+            //noinspection deprecation
+        } else if (/* added in 1.2: */ !isEnabled(request, response)
+                ||    /* retain backwards compatibility: */ shouldNotFilter(request)) {
+            LOGGER.debug("Filter '{}' is not enabled for the current request.  Proceeding without invoking this filter.",
                     getName());
             filterChain.doFilter(request, response);
         } else {
             // Do invoke this filter...
-            log.trace("Filter '{}' not yet executed.  Executing now.", getName());
+            LOGGER.trace("Filter '{}' not yet executed.  Executing now.", getName());
             request.setAttribute(alreadyFilteredAttributeName, Boolean.TRUE);
 
             try {
@@ -175,11 +177,11 @@ public abstract class OncePerRequestFilter extends NameableFilter {
      * PathMatchingFilter.isEnabled(request,response,path,pathSpecificConfig)}
      * method if you want to make your enable/disable decision based on any path-specific configuration.
      *
-     * @param request the incoming servlet request
+     * @param request  the incoming servlet request
      * @param response the outbound servlet response
      * @return {@code true} if this filter should filter the specified request, {@code false} if it should let the
      * request/response pass through immediately to the next element in the {@code FilterChain}.
-     * @throws IOException in the case of any IO error
+     * @throws IOException      in the case of any IO error
      * @throws ServletException in the case of any error
      * @see org.apache.shiro.web.filter.PathMatchingFilter#isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String, Object)
      * @since 1.2

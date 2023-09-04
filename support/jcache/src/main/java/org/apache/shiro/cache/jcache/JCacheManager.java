@@ -49,6 +49,7 @@ import java.util.stream.StreamSupport;
  * <p/>
  * This implementation requires a JCache implementation available on the classpath.
  * <p/>
+ *
  * @since 1.9
  */
 public class JCacheManager implements CacheManager, Initializable, Destroyable {
@@ -56,7 +57,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
     /**
      * This class's private log instance.
      */
-    private static final Logger log = LoggerFactory.getLogger(JCacheManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JCacheManager.class);
 
     private javax.cache.CacheManager jCacheManager;
 
@@ -77,11 +78,11 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
             synchronized (this) {
                 cache = ensureCacheManager().getCache(name);
                 if (cache == null) {
-                    log.debug("Cache with name '{}' does not yet exist.  Creating now.", name);
+                    LOGGER.debug("Cache with name '{}' does not yet exist.  Creating now.", name);
                     cache = ensureCacheManager().createCache(name, new MutableConfiguration<>());
-                    log.debug("Added JCache named [{}]", name);
+                    LOGGER.debug("Added JCache named [{}]", name);
                 } else {
-                    log.debug("Using existing JCache named [{}]", cache.getName());
+                    LOGGER.debug("Using existing JCache named [{}]", cache.getName());
                 }
             }
         }
@@ -100,8 +101,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
      * something not desirable for Shiro sessions), this class manages an internal default configuration for
      * this case.
      *
-     * @throws org.apache.shiro.cache.CacheException
-     *          if there are any CacheExceptions thrown by JCache.
+     * @throws org.apache.shiro.cache.CacheException if there are any CacheExceptions thrown by JCache.
      */
     public final void init() throws CacheException {
         ensureCacheManager();
@@ -110,7 +110,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
     private javax.cache.CacheManager ensureCacheManager() {
         try {
             if (this.jCacheManager == null) {
-                log.debug("cacheManager property not set.  Constructing CacheManager instance... ");
+                LOGGER.debug("cacheManager property not set.  Constructing CacheManager instance... ");
                 CachingProvider cachingProvider = Caching.getCachingProvider();
 
                 if (StringUtils.hasText(cacheConfig)) {
@@ -126,7 +126,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
                 }
 
                 cacheManagerImplicitlyCreated = true;
-                log.debug("implicit cacheManager created successfully.");
+                LOGGER.debug("implicit cacheManager created successfully.");
             }
             return this.jCacheManager;
         } catch (Exception e) {
@@ -146,7 +146,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
             try {
                 jCacheManager.close();
             } catch (Throwable t) {
-                    log.warn("Unable to cleanly shutdown implicitly created CacheManager instance. Ignoring (shutting down)...", t);
+                LOGGER.warn("Unable to cleanly shutdown implicitly created CacheManager instance. Ignoring (shutting down)...", t);
             } finally {
                 this.jCacheManager = null;
                 this.cacheManagerImplicitlyCreated = false;
@@ -170,13 +170,14 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
         this.jCacheManager = jCacheManager;
     }
 
-    static class JCache<K,V> implements Cache<K,V> {
+    static class JCache<K, V> implements Cache<K, V> {
 
-        private final javax.cache.Cache<K,V> cache;
+        private final javax.cache.Cache<K, V> cache;
 
-        JCache(javax.cache.Cache<K,V> cache) {
+        JCache(javax.cache.Cache<K, V> cache) {
             this.cache = cache;
         }
+
         /**
          * Gets a value of an element which matches the given key.
          *
@@ -186,13 +187,13 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
         @Override
         public V get(K key) throws CacheException {
             try {
-                log.trace("Getting object from cache [{}] for key [{}]", cache.getName(), key);
+                LOGGER.trace("Getting object from cache [{}] for key [{}]", cache.getName(), key);
                 if (key == null) {
                     return null;
                 } else {
                     V element = cache.get(key);
                     if (element == null) {
-                        log.trace("Element for [{}] is null.", key);
+                        LOGGER.trace("Element for [{}] is null.", key);
                         return null;
                     } else {
                         return element;
@@ -210,7 +211,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
          * @param value the value.
          */
         public V put(K key, V value) throws CacheException {
-            log.trace("Putting object in cache [{}] for key [{}]", cache.getName(), key);
+            LOGGER.trace("Putting object in cache [{}] for key [{}]", cache.getName(), key);
             try {
                 V previous = get(key);
                 cache.put(key, value);
@@ -228,7 +229,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
          * @param key the key of the element to remove
          */
         public V remove(K key) throws CacheException {
-            log.trace("Removing object from cache [{}] for key [{}]", cache.getName(), key);
+            LOGGER.trace("Removing object from cache [{}] for key [{}]", cache.getName(), key);
             try {
                 return cache.getAndRemove(key);
             } catch (Throwable t) {
@@ -240,7 +241,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
          * Removes all elements in the cache, but leaves the cache in a useable state.
          */
         public void clear() throws CacheException {
-            log.trace("Clearing all objects from cache [{}]", cache.getName());
+            LOGGER.trace("Clearing all objects from cache [{}]", cache.getName());
             try {
                 cache.removeAll();
             } catch (Throwable t) {

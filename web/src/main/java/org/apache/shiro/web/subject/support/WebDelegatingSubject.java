@@ -86,7 +86,7 @@ public class WebDelegatingSubject extends DelegatingSubject implements WebSubjec
     @Override
     protected boolean isSessionCreationEnabled() {
         boolean enabled = super.isSessionCreationEnabled();
-        return enabled && WebUtils._isSessionCreationEnabled(this);
+        return enabled && WebUtils.isSessionCreationEnabled(this);
     }
 
     @Override

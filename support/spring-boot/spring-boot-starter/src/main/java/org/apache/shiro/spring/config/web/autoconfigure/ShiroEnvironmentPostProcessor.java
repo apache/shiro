@@ -26,9 +26,12 @@ import org.springframework.core.env.MapPropertySource;
 import java.util.Collections;
 
 class ShiroEnvironmentPostProcessor implements EnvironmentPostProcessor {
+
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         // force the use of the ant path matcher
-        environment.getPropertySources().addFirst(new MapPropertySource("shiro", Collections.singletonMap("spring.mvc.pathmatch.matching-strategy", "ant_path_matcher")));
+        environment.getPropertySources()
+                .addFirst(new MapPropertySource("shiro",
+                        Collections.singletonMap("spring.mvc.pathmatch.matching-strategy", "ant_path_matcher")));
     }
 }

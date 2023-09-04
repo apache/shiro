@@ -117,9 +117,9 @@ public abstract class SecurityUtils {
             securityManager = SecurityUtils.securityManager;
         }
         if (securityManager == null) {
-            String msg = "No SecurityManager accessible to the calling code, either bound to the " +
-                    ThreadContext.class.getName() + " or as a vm static singleton.  This is an invalid application " +
-                    "configuration.";
+            String msg = "No SecurityManager accessible to the calling code, either bound to the "
+                    + ThreadContext.class.getName() + " or as a vm static singleton.  This is an invalid application "
+                    + "configuration.";
             throw new UnavailableSecurityManagerException(msg);
         }
         return securityManager;

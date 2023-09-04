@@ -26,7 +26,7 @@ class GuiceEnvironment implements Environment {
     private SecurityManager securityManager;
 
     @Inject
-    public GuiceEnvironment(SecurityManager securityManager) {
+    GuiceEnvironment(SecurityManager securityManager) {
         this.securityManager = securityManager;
     }
 

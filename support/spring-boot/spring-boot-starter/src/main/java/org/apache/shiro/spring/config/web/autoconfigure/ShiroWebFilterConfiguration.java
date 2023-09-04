@@ -39,7 +39,13 @@ import java.util.List;
 @ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
 public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfiguration {
 
+    /**
+     * registration bean name key.
+     */
     public static final String REGISTRATION_BEAN_NAME = "filterShiroFilterRegistrationBean";
+    /**
+     * shiro filter name key.
+     */
     public static final String FILTER_NAME = "shiroFilter";
 
     @Bean

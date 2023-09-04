@@ -35,19 +35,17 @@ import org.slf4j.LoggerFactory;
  */
 public class NotAuthenticatedTag extends SecureTag {
 
-    //TODO - complete JavaDoc
-
-    private static final Logger log = LoggerFactory.getLogger(NotAuthenticatedTag.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotAuthenticatedTag.class);
 
     public int onDoStartTag() throws JspException {
         if (getSubject() == null || !getSubject().isAuthenticated()) {
-            if (log.isTraceEnabled()) {
-                log.trace("Subject does not exist or is not authenticated.  Tag body will be evaluated.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Subject does not exist or is not authenticated.  Tag body will be evaluated.");
             }
             return TagSupport.EVAL_BODY_INCLUDE;
         } else {
-            if (log.isTraceEnabled()) {
-                log.trace("Subject exists and is authenticated.  Tag body will not be evaluated.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Subject exists and is authenticated.  Tag body will not be evaluated.");
             }
             return TagSupport.SKIP_BODY;
         }

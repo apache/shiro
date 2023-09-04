@@ -26,7 +26,7 @@ import java.util.Map;
 class PathMatchingFilterProvider<T extends PathMatchingFilter> extends AbstractInjectionProvider<T> {
     private Map<String, String> pathConfigs;
 
-    public PathMatchingFilterProvider(Key<T> key, Map<String, String> pathConfigs) {
+    PathMatchingFilterProvider(Key<T> key, Map<String, String> pathConfigs) {
         super(key);
         this.pathConfigs = pathConfigs;
     }

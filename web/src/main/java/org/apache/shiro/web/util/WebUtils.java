@@ -48,17 +48,12 @@ import java.util.Map;
  *
  * @since 0.9
  */
-public class WebUtils {
-
-    //TODO - complete JavaDoc
-
-    private static final Logger log = LoggerFactory.getLogger(WebUtils.class);
+public final class WebUtils {
 
     public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_SHIRO_THREAD_CONTEXT_KEY";
     public static final String SERVLET_RESPONSE_KEY = ServletResponse.class.getName() + "_SHIRO_THREAD_CONTEXT_KEY";
 
     public static final String ALLOW_BACKSLASH = "org.apache.shiro.web.ALLOW_BACKSLASH";
-    private static boolean IS_ALLOW_BACKSLASH = Boolean.getBoolean(ALLOW_BACKSLASH);
 
     /**
      * {@link org.apache.shiro.session.Session Session} key used to save a request and later restore it, for example when redirecting to a
@@ -96,6 +91,13 @@ public class WebUtils {
      */
     public static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
 
+    private static boolean isAllowBackslash = Boolean.getBoolean(ALLOW_BACKSLASH);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
+
+    private WebUtils() {
+    }
+
     /**
      * Return the path within the web application for the given request.
      * Detects include request URL if called within a RequestDispatcher include.
@@ -126,7 +128,8 @@ public class WebUtils {
      *
      * @param request current HTTP request
      * @return the request URI
-     * @deprecated use getPathWithinApplication() to get the path minus the context path, or call HttpServletRequest.getRequestURI() directly from your code.
+     * @deprecated use getPathWithinApplication() to get the path minus the context path,
+     *      or call HttpServletRequest.getRequestURI() directly from your code.
      */
     @Deprecated
     public static String getRequestUri(HttpServletRequest request) {
@@ -166,7 +169,7 @@ public class WebUtils {
      * @return normalized path
      */
     public static String normalize(String path) {
-        return normalize(path, IS_ALLOW_BACKSLASH);
+        return normalize(path, isAllowBackslash);
     }
 
     /**
@@ -183,50 +186,56 @@ public class WebUtils {
      */
     private static String normalize(String path, boolean replaceBackSlash) {
 
-        if (path == null)
+        if (path == null) {
             return null;
+        }
 
         // Create a place for the normalized path
         String normalized = path;
 
-        if (replaceBackSlash && normalized.indexOf('\\') >= 0)
+        if (replaceBackSlash && normalized.indexOf('\\') >= 0) {
             normalized = normalized.replace('\\', '/');
+        }
 
-        if (normalized.equals("/."))
+        if (normalized.equals("/.")) {
             return "/";
+        }
 
         // Add a leading "/" if necessary
-        if (!normalized.startsWith("/"))
+        if (!normalized.startsWith("/")) {
             normalized = "/" + normalized;
+        }
 
         // Resolve occurrences of "//" in the normalized path
         while (true) {
             int index = normalized.indexOf("//");
-            if (index < 0)
+            if (index < 0) {
                 break;
-            normalized = normalized.substring(0, index) +
-                    normalized.substring(index + 1);
+            }
+            normalized = normalized.substring(0, index) + normalized.substring(index + 1);
         }
 
         // Resolve occurrences of "/./" in the normalized path
         while (true) {
             int index = normalized.indexOf("/./");
-            if (index < 0)
+            if (index < 0) {
                 break;
-            normalized = normalized.substring(0, index) +
-                    normalized.substring(index + 2);
+            }
+            normalized = normalized.substring(0, index) + normalized.substring(index + 2);
         }
 
         // Resolve occurrences of "/../" in the normalized path
         while (true) {
             int index = normalized.indexOf("/../");
-            if (index < 0)
+            if (index < 0) {
                 break;
-            if (index == 0)
-                return (null);  // Trying to go outside our context
+            }
+            if (index == 0) {
+                // Trying to go outside our context
+                return (null);
+            }
             int index2 = normalized.lastIndexOf('/', index - 1);
-            normalized = normalized.substring(0, index2) +
-                    normalized.substring(index + 3);
+            normalized = normalized.substring(0, index2) + normalized.substring(index + 3);
         }
 
         // Return the normalized path that we have completed
@@ -364,9 +373,9 @@ public class WebUtils {
         try {
             return URLDecoder.decode(source, enc);
         } catch (UnsupportedEncodingException ex) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not decode request string [" + Encode.forHtml(source) + "] with encoding '" + Encode.forHtml(enc) +
-                        "': falling back to platform default encoding; exception message: " + ex.getMessage());
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Could not decode request string [" + Encode.forHtml(source) + "] with encoding '" + Encode.forHtml(enc)
+                        + "': falling back to platform default encoding; exception message: " + ex.getMessage());
             }
             return URLDecoder.decode(source);
         }
@@ -465,14 +474,15 @@ public class WebUtils {
      * @param requestPairSource a {@link RequestPairSource} instance, almost always a
      *                          {@link org.apache.shiro.web.subject.WebSubject WebSubject} instance.
      * @return {@code true} if a session is allowed to be created for a subject-associated request, {@code false}
-     *         otherwise.
+     * otherwise.
      */
-    public static boolean _isSessionCreationEnabled(Object requestPairSource) {
+    public static boolean isSessionCreationEnabled(Object requestPairSource) {
         if (requestPairSource instanceof RequestPairSource) {
             RequestPairSource source = (RequestPairSource) requestPairSource;
-            return _isSessionCreationEnabled(source.getServletRequest());
+            return isSessionCreationEnabled(source.getServletRequest());
         }
-        return true; //by default
+        //by default
+        return true;
     }
 
     /**
@@ -484,16 +494,17 @@ public class WebUtils {
      *
      * @param request incoming servlet request.
      * @return {@code true} if a session is allowed to be created for a subject-associated request, {@code false}
-     *         otherwise.
+     * otherwise.
      */
-    public static boolean _isSessionCreationEnabled(ServletRequest request) {
+    public static boolean isSessionCreationEnabled(ServletRequest request) {
         if (request != null) {
             Object val = request.getAttribute(DefaultSubjectContext.SESSION_CREATION_ENABLED);
             if (val != null && val instanceof Boolean) {
                 return (Boolean) val;
             }
         }
-        return true; //by default
+        //by default
+        return true;
     }
 
     /**
@@ -539,7 +550,8 @@ public class WebUtils {
      * @param http10Compatible whether to stay compatible with HTTP 1.0 clients.
      * @throws java.io.IOException if thrown by response methods.
      */
-    public static void issueRedirect(ServletRequest request, ServletResponse response, String url, Map queryParams, boolean contextRelative, boolean http10Compatible) throws IOException {
+    public static void issueRedirect(ServletRequest request, ServletResponse response, String url, Map queryParams, boolean contextRelative,
+                                     boolean http10Compatible) throws IOException {
         RedirectView view = new RedirectView(url, contextRelative, http10Compatible);
         view.renderMergedOutputModel(queryParams, toHttp(request), toHttp(response));
     }
@@ -567,7 +579,8 @@ public class WebUtils {
      * @param queryParams a map of parameters that should be set as request parameters for the new request.
      * @throws java.io.IOException if thrown by response methods.
      */
-    public static void issueRedirect(ServletRequest request, ServletResponse response, String url, Map queryParams) throws IOException {
+    public static void issueRedirect(ServletRequest request,
+                                     ServletResponse response, String url, Map queryParams) throws IOException {
         issueRedirect(request, response, url, queryParams, true, true);
     }
 
@@ -582,7 +595,9 @@ public class WebUtils {
      * @param contextRelative true if the URL is relative to the servlet context path, or false if the URL is absolute.
      * @throws java.io.IOException if thrown by response methods.
      */
-    public static void issueRedirect(ServletRequest request, ServletResponse response, String url, Map queryParams, boolean contextRelative) throws IOException {
+    public static void issueRedirect(ServletRequest request,
+                                     ServletResponse response, String url, Map queryParams, boolean contextRelative)
+            throws IOException {
         issueRedirect(request, response, url, queryParams, contextRelative, true);
     }
 
@@ -598,14 +613,14 @@ public class WebUtils {
      */
     public static boolean isTrue(ServletRequest request, String paramName) {
         String value = getCleanParam(request, paramName);
-        return value != null &&
-                (value.equalsIgnoreCase("true") ||
-                        value.equalsIgnoreCase("t") ||
-                        value.equalsIgnoreCase("1") ||
-                        value.equalsIgnoreCase("enabled") ||
-                        value.equalsIgnoreCase("y") ||
-                        value.equalsIgnoreCase("yes") ||
-                        value.equalsIgnoreCase("on"));
+        return value != null
+                && (value.equalsIgnoreCase("true")
+                || value.equalsIgnoreCase("t")
+                || value.equalsIgnoreCase("1")
+                || value.equalsIgnoreCase("enabled")
+                || value.equalsIgnoreCase("y")
+                || value.equalsIgnoreCase("yes")
+                || value.equalsIgnoreCase("on"));
     }
 
     /**
@@ -682,16 +697,16 @@ public class WebUtils {
         }
 
         if (successUrl == null) {
-            throw new IllegalStateException("Success URL not available via saved request or via the " +
-                    "successUrlFallback method parameter. One of these must be non-null for " +
-                    "issueSuccessRedirect() to work.");
+            throw new IllegalStateException("Success URL not available via saved request or via the "
+                    + "successUrlFallback method parameter. One of these must be non-null for "
+                    + "issueSuccessRedirect() to work.");
         }
 
         WebUtils.issueRedirect(request, response, successUrl, null, contextRelative);
     }
 
-    public static boolean isAllowBackslash(){
-        return IS_ALLOW_BACKSLASH;
+    public static boolean isAllowBackslash() {
+        return isAllowBackslash;
     }
 
     /**
@@ -699,8 +714,8 @@ public class WebUtils {
      * If relevant system property is modified ,this method needs to be called to take effect.
      * There is a property <code>org.apache.shiro.web.ALLOW_BACKSLASH</code> that needs attention.
      */
-    public static void reloadSystemProperties(){
-        IS_ALLOW_BACKSLASH = Boolean.getBoolean(ALLOW_BACKSLASH);
+    public static void reloadSystemProperties() {
+        isAllowBackslash = Boolean.getBoolean(ALLOW_BACKSLASH);
     }
 
 }

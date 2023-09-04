@@ -17,9 +17,9 @@
  * under the License.
  */
 /**
- * Concepts used to represent Shiro's aggregate state in an application.  An {@link Environment} instance represents
+ * Concepts used to represent Shiro's aggregate state in an application.  An {@link org.apache.shiro.env.Environment} instance represents
  * everything Shiro needs to function in an application.
  *
- * @see Environment
+ * @see org.apache.shiro.env.Environment
  */
 package org.apache.shiro.env;
