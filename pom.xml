@@ -533,32 +533,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>3.3.0</version>
-                    <configuration>
-                        <configLocation>${checkstyle.configLocation}</configLocation>
-                        <suppressionsLocation>${checkstyle.supressionsLocation}</suppressionsLocation>
-                        <linkXRef>true</linkXRef>
-                        <consoleOutput>true</consoleOutput>
-                        <failsOnError>true</failsOnError>
-                        <failOnViolation>true</failOnViolation>
-                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                        <enableRulesSummary>true</enableRulesSummary>
-                        <propertyExpansion>root.dir=${root.dir}</propertyExpansion>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>checkstyle</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.puppycrawl.tools</groupId>
-                            <artifactId>checkstyle</artifactId>
-                            <version>10.12.3</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -569,6 +543,28 @@
                 <executions>
                     <execution>
                         <id>rat-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>src/checkstyle.xml</configLocation>
+                    <suppressionsLocation>src/suppressions.xml</suppressionsLocation>
+                    <linkXRef>true</linkXRef>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <linkXRef>false</linkXRef>
+                    <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                    <excludes>**/Quickstart.java,**/QuickstartGuice.java,**/QuickstartShiroModule.java</excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -1753,30 +1749,6 @@
                                     <goal>aggregate</goal>
                                 </goals>
                                 <inherited>false</inherited>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>3.1.2</version>
-                        <configuration>
-                            <configLocation>src/checkstyle.xml</configLocation>
-                            <suppressionsLocation>src/suppressions.xml</suppressionsLocation>
-                            <encoding>UTF-8</encoding>
-                            <consoleOutput>true</consoleOutput>
-                            <failsOnError>true</failsOnError>
-                            <linkXRef>false</linkXRef>
-                            <includeTestSourceDirectory>false</includeTestSourceDirectory>
-                            <excludes>**/Quickstart.java,**/QuickstartGuice.java,**/QuickstartShiroModule.java</excludes>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>validate</id>
-                                <phase>validate</phase>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>
