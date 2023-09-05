@@ -20,6 +20,7 @@
 <!-- See https://github.com/hazelcast/hazelcast/blob/master/checkstyle/suppressions.xml for examples -->
 <suppressions>
     <!-- do not require package-info.java -->
+    <suppress checks="JavadocStyle" files="org[\\/]apache[\\/]shiro[\\/]*"/>
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]ee[\\/]*"/>
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]samples[\\/]*"/>
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]testing[\\/]*"/>
