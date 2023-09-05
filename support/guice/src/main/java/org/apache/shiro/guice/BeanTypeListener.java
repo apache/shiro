@@ -54,19 +54,19 @@ class BeanTypeListener implements TypeListener {
     public static final Package SHIRO_GUICE_PACKAGE = ShiroModule.class.getPackage();
     public static final Package SHIRO_PACKAGE = SecurityUtils.class.getPackage();
 
-    public static final Matcher<TypeLiteral> MATCHER = ShiroMatchers.typeLiteral(classMatcher);
-
-    static final Key<?> MAP_KEY = Key.get(Types.mapOf(TypeLiteral.class, BeanTypeKey.class), Names.named(BEAN_TYPE_MAP_NAME));
-
-    private static Matcher<Class> shiroMatcher = Matchers.inSubpackage(SHIRO_PACKAGE.getName());
-    private static Matcher<Class> shiroGuiceMatcher = Matchers.inSubpackage(SHIRO_GUICE_PACKAGE.getName());
-
-    private static Matcher<Class> classMatcher = ShiroMatchers.anyPackage.and(shiroMatcher.and(Matchers.not(shiroGuiceMatcher)));
 
     /**
      * @since 1.4
      */
-    private static final String BEAN_TYPE_MAP_NAME = "__SHIRO_BEAN_TYPES__";
+    public static final String BEAN_TYPE_MAP_NAME = "__SHIRO_BEAN_TYPES__";
+
+    static final Key<?> MAP_KEY = Key.get(Types.mapOf(TypeLiteral.class, BeanTypeKey.class), Names.named(BEAN_TYPE_MAP_NAME));
+
+    static Matcher<Class> shiroMatcher = Matchers.inSubpackage(SHIRO_PACKAGE.getName());
+    static Matcher<Class> shiroGuiceMatcher = Matchers.inSubpackage(SHIRO_GUICE_PACKAGE.getName());
+    static Matcher<Class> classMatcher = ShiroMatchers.anyPackage.and(shiroMatcher.and(Matchers.not(shiroGuiceMatcher)));
+
+    static final Matcher<TypeLiteral> MATCHER = ShiroMatchers.typeLiteral(classMatcher);
 
     private static final Set<Class<?>> WRAPPER_TYPES = new HashSet<Class<?>>(Arrays.asList(
             Byte.class,
