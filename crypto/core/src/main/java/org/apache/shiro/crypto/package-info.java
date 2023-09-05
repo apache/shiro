@@ -17,4 +17,7 @@
  * under the License.
  */
 
+/**
+ * shiro crypto package.
+ */
 package org.apache.shiro.crypto;
