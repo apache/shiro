@@ -67,6 +67,7 @@ import org.slf4j.LoggerFactory;
  *
  * @since 0.9
  */
+@SuppressWarnings("checkstyle:MethodCount")
 public class ReflectionBuilder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionBuilder.class);

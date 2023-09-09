@@ -33,6 +33,7 @@ import java.io.UnsupportedEncodingException;
  *
  * @since 0.9
  */
+@SuppressWarnings("checkstyle:BooleanExpressionComplexity")
 public abstract class CodecSupport {
 
     /**

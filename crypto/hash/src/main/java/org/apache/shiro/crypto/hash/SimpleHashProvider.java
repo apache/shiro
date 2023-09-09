@@ -113,6 +113,7 @@ public class SimpleHashProvider implements HashSpi {
             }
 
             // generate salt if absent from the request.
+            @SuppressWarnings("checkstyle:MagicNumber")
             byte[] ps = new byte[16];
             random.nextBytes(ps);
 
@@ -204,7 +205,8 @@ public class SimpleHashProvider implements HashSpi {
         /**
          * A secret part added to the salt. Sometimes also referred to as {@literal "Pepper"}.
          *
-         * <p>For more information, see <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">Pepper (cryptography) on Wikipedia</a>.</p>
+         * <p>For more information, see <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">
+         *     Pepper (cryptography) on Wikipedia</a>.</p>
          */
         public static final String PARAMETER_SECRET_SALT = "SimpleHash.secretSalt";
 

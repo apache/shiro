@@ -37,6 +37,7 @@ import java.util.StringTokenizer;
  *
  * @since 0.9
  */
+@SuppressWarnings("checkstyle:CyclomaticComplexity")
 public final class StringUtils {
 
     /**
@@ -468,6 +469,7 @@ public final class StringUtils {
 
         // two or more elements
         // Java default is 16, probably too small
+        @SuppressWarnings("checkstyle:MagicNumber")
         StringBuilder buf = new StringBuilder(256);
         if (first != null) {
             buf.append(first);

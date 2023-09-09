@@ -23,6 +23,13 @@
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]ee[\\/]*"/>
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]testing[\\/]*"/>
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]cdi[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]spring[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]guice[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]web[\\/]jaxrs[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]lang[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]tools[\\/]hasher[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]config[\\/]ogdl[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]cache[\\/]ehcache[\\/]*"/>
 
     <suppress checks="ConstantName" lines="41-44" files="com[\\/]flowlogix[\\/]shiro[\\/]ee[\\/]filters[\\/]CryptoSupport"/>
 </suppressions>

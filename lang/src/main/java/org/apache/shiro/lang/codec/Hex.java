@@ -32,6 +32,7 @@ package org.apache.shiro.lang.codec;
  * @see <a href="http://en.wikipedia.org/wiki/Hexadecimal">Wikipedia: Hexadecimal</a>
  * @since 0.9
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public final class Hex {
 
     /**

@@ -67,7 +67,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
      * Indicates if the CacheManager instance was implicitly/automatically created by this instance, indicating that
      * it should be automatically cleaned up as well on shutdown.
      */
-    private boolean cacheManagerImplicitlyCreated = false;
+    private boolean cacheManagerImplicitlyCreated;
 
     @Override
     public <K, V> Cache<K, V> getCache(String name) throws CacheException {
@@ -146,7 +146,8 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
             try {
                 jCacheManager.close();
             } catch (Throwable t) {
-                LOGGER.warn("Unable to cleanly shutdown implicitly created CacheManager instance. Ignoring (shutting down)...", t);
+                LOGGER.warn("Unable to cleanly shutdown implicitly created CacheManager instance. "
+                        + "Ignoring (shutting down)...", t);
             } finally {
                 this.jCacheManager = null;
                 this.cacheManagerImplicitlyCreated = false;

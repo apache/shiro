@@ -122,7 +122,8 @@ import org.apache.shiro.lang.util.StringUtils;
  * </ul>
  * <p/>
  * These attributes have the same meaning as the {@code mode}, {@code blockSize}, and {@code paddingScheme} attributes
- * described above, but they are applied during streaming method invocations only ({@link #encrypt(java.io.InputStream, java.io.OutputStream, byte[])}
+ * described above, but they are applied during streaming method invocations only
+ * ({@link #encrypt(java.io.InputStream, java.io.OutputStream, byte[])}
  * and {@link #decrypt(java.io.InputStream, java.io.OutputStream, byte[])}).
  *
  * @see BlowfishCipherService

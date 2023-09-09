@@ -52,9 +52,10 @@ public class SimpleHashRequest implements HashRequest {
      * Creates a new SimpleHashRequest instance.
      *
      * @param algorithmName the name of the hash algorithm to use.  This is often null as the
-     *                      {@link HashService} implementation is usually configured with an appropriate algorithm name, but this
-     *                      can be non-null if the hash service's algorithm should be overridden with a specific one for the duration
-     *                      of the request.
+     *                      {@link HashService} implementation is usually configured with an
+     *                      appropriate algorithm name, but this can be non-null
+     *                      if the hash service's algorithm should be overridden with a
+     *                      specific one for the duration of the request.
      * @param source        the source to be hashed
      * @param salt          any public salt which should be used when computing the hash
      * @param parameters    e.g. the number of hash iterations to execute or other parameters.

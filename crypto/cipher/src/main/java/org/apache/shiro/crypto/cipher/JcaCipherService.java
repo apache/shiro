@@ -67,6 +67,7 @@ import java.security.spec.AlgorithmParameterSpec;
  *
  * @since 1.0
  */
+@SuppressWarnings("checkstyle:MethodCount")
 public abstract class JcaCipherService implements CipherService {
 
     /**

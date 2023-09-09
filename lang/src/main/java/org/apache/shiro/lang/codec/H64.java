@@ -45,6 +45,7 @@ import java.io.IOException;
  *
  * @since 1.2
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public final class H64 {
 
     private static final byte FF = (byte) 0xff;

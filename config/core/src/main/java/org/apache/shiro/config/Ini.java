@@ -44,6 +44,7 @@ import java.util.Set;
  *
  * @since 1.0
  */
+@SuppressWarnings({"checkstyle:MethodCount", "checkstyle:CyclomaticComplexity"})
 public final class Ini implements Map<String, Ini.Section> {
 
     /**

@@ -44,6 +44,7 @@ import java.util.Arrays;
  *
  * @since 1.0
  */
+@SuppressWarnings("checkstyle:BooleanExpressionComplexity")
 public class SimpleByteSource implements ByteSource {
 
     private final byte[] bytes;

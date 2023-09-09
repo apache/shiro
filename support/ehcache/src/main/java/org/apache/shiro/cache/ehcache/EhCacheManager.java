@@ -62,7 +62,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * Indicates if the CacheManager instance was implicitly/automatically created by this instance, indicating that
      * it should be automatically cleaned up as well on shutdown.
      */
-    private boolean cacheManagerImplicitlyCreated = false;
+    private boolean cacheManagerImplicitlyCreated;
 
     /**
      * Classpath file location of the ehcache CacheManager config file.

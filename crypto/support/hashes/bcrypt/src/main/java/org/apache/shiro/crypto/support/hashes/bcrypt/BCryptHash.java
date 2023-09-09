@@ -82,6 +82,7 @@ class BCryptHash extends AbstractCryptHash {
         checkValidCost(this.cost);
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     public static int checkValidCost(final int cost) {
         if (cost < 4 || cost > 31) {
             final String message = String.format(

@@ -99,7 +99,8 @@ public class Argon2HashProvider implements HashSpi {
                     .flatMap(algoV -> intOrEmpty(algoV, Parameters.PARAMETER_PARALLELISM))
                     .orElse(Parameters.DEFAULT_PARALLELISM);
 
-            final int outputLengthBits = Optional.ofNullable(hashRequest.getParameters().get(Parameters.PARAMETER_OUTPUT_LENGTH_BITS))
+            final int outputLengthBits = Optional.ofNullable(hashRequest.getParameters()
+                            .get(Parameters.PARAMETER_OUTPUT_LENGTH_BITS))
                     .flatMap(algoV -> intOrEmpty(algoV, Parameters.PARAMETER_OUTPUT_LENGTH_BITS))
                     .orElse(Parameters.DEFAULT_OUTPUT_LENGTH_BITS);
 
@@ -123,6 +124,7 @@ public class Argon2HashProvider implements HashSpi {
                     .orElseGet(() -> Argon2Hash.createSalt(random));
         }
 
+        @SuppressWarnings("checkstyle:MagicNumber")
         private Optional<ByteSource> lengthValidOrEmpty(ByteSource bytes) {
             if (bytes.getBytes().length != 16) {
                 return Optional.empty();
@@ -131,6 +133,7 @@ public class Argon2HashProvider implements HashSpi {
             return Optional.of(bytes);
         }
 
+        @SuppressWarnings("checkstyle:MagicNumber")
         private Optional<Integer> intOrEmpty(Object maybeInt, String parameterName) {
             try {
                 return Optional.of(Integer.parseInt((String) maybeInt, 10));

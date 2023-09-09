@@ -77,7 +77,7 @@ public class HazelcastCacheManager implements CacheManager, Initializable, Destr
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastCacheManager.class);
 
-    private boolean implicitlyCreated = false;
+    private boolean implicitlyCreated;
     private HazelcastInstance hazelcastInstance;
     private Config config;
 

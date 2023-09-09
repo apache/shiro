@@ -96,6 +96,7 @@ public class BCryptProvider implements HashSpi {
 
             String costStr = optCostStr.orElseThrow(NoSuchElementException::new);
             try {
+                @SuppressWarnings("checkstyle:MagicNumber")
                 int cost = Integer.parseInt(costStr, 10);
                 BCryptHash.checkValidCost(cost);
                 return cost;

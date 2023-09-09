@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.Objects.requireNonNull;
 
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * The Argon2 key derivation function (KDF) is a modern algorithm to shade and hash passwords.
  *
@@ -123,6 +124,7 @@ class Argon2Hash extends AbstractCryptHash {
         return createSalt(new SecureRandom());
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     public static ByteSource createSalt(SecureRandom random) {
         return new SimpleByteSource(random.generateSeed(SALT_LENGTH_BITS / 8));
     }
@@ -237,6 +239,7 @@ class Argon2Hash extends AbstractCryptHash {
         final Argon2BytesGenerator gen = new Argon2BytesGenerator();
         gen.init(parameters);
 
+        @SuppressWarnings("checkstyle:MagicNumber")
         final byte[] hash = new byte[outputLengthBits / 8];
         gen.generateBytes(source.getBytes(), hash);
 
@@ -277,6 +280,7 @@ class Argon2Hash extends AbstractCryptHash {
     @Override
     public boolean matchesPassword(ByteSource plaintextBytes) {
         try {
+            @SuppressWarnings("checkstyle:MagicNumber")
             Argon2Hash compare = generate(
                     this.getAlgorithmName(),
                     this.argonVersion,
@@ -296,6 +300,7 @@ class Argon2Hash extends AbstractCryptHash {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:MagicNumber")
     public int getSaltLength() {
         return SALT_LENGTH_BITS / 8;
     }
