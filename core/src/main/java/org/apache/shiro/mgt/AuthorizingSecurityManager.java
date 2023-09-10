@@ -145,6 +145,7 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
         this.authorizer.checkPermissions(principals, permissions);
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     public void checkPermissions(PrincipalCollection principals, Collection<Permission> permissions) throws AuthorizationException {
         this.authorizer.checkPermissions(principals, permissions);
     }

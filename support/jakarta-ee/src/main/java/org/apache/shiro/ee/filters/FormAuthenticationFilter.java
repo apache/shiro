@@ -14,17 +14,23 @@
 package org.apache.shiro.ee.filters;
 
 import java.util.function.Supplier;
+
 import org.apache.shiro.ee.filters.AuthenticationFilterDelegate.MethodsFromFilter;
+
 import static org.apache.shiro.ee.filters.FormResubmitSupport.redirectToSaved;
+
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+
 import lombok.experimental.Delegate;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.WebUtils;
+
 import static org.omnifaces.facesviews.FacesViews.FACES_VIEWS_ORIGINAL_SERVLET_PATH;
 
 /**
@@ -51,7 +57,7 @@ public class FormAuthenticationFilter extends org.apache.shiro.web.filter.authc.
 
         @Override
         public boolean onLoginFailure(AuthenticationToken token, AuthenticationException e,
-                ServletRequest request, ServletResponse response) {
+                                      ServletRequest request, ServletResponse response) {
             return FormAuthenticationFilter.super.onLoginFailure(token, e, request, response);
         }
 
@@ -64,7 +70,9 @@ public class FormAuthenticationFilter extends org.apache.shiro.web.filter.authc.
         public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
             return FormAuthenticationFilter.super.preHandle(request, response);
         }
-    };
+    }
+
+    ;
 
     public FormAuthenticationFilter() {
         delegate = new AuthenticationFilterDelegate(new Methods());
@@ -72,7 +80,7 @@ public class FormAuthenticationFilter extends org.apache.shiro.web.filter.authc.
 
     @Override
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
-            ServletResponse response) throws Exception {
+                                     ServletResponse response) throws Exception {
         if (request instanceof HttpServletRequest) {
             FallbackPredicate loginFallbackType = (FallbackPredicate) request.getAttribute(LOGIN_PREDICATE_ATTR_NAME);
             redirectToSaved(WebUtils.toHttp(request), WebUtils.toHttp(response), loginFallbackType, "");

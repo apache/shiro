@@ -71,6 +71,7 @@ public abstract class OncePerRequestFilter extends NameableFilter {
      * to leave this disabled if you are using a {@link javax.servlet.RequestDispatcher RequestDispatcher} to forward
      * or include request (JSP tags, programmatically, or via a framework).
      */
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     private boolean filterOncePerRequest = false;
 
     /**
@@ -173,8 +174,6 @@ public abstract class OncePerRequestFilter extends NameableFilter {
      * <p/>
      * <b>Helpful Hint:</b> if your subclass extends {@link org.apache.shiro.web.filter.PathMatchingFilter PathMatchingFilter},
      * you may wish to instead override the
-     * {@link org.apache.shiro.web.filter.PathMatchingFilter#isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String, Object)
-     * PathMatchingFilter.isEnabled(request,response,path,pathSpecificConfig)}
      * method if you want to make your enable/disable decision based on any path-specific configuration.
      *
      * @param request  the incoming servlet request
@@ -183,7 +182,6 @@ public abstract class OncePerRequestFilter extends NameableFilter {
      * request/response pass through immediately to the next element in the {@code FilterChain}.
      * @throws IOException      in the case of any IO error
      * @throws ServletException in the case of any error
-     * @see org.apache.shiro.web.filter.PathMatchingFilter#isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String, Object)
      * @since 1.2
      */
     @SuppressWarnings({"UnusedParameters"})

@@ -35,7 +35,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createStrictControl;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.same;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 
@@ -44,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * that I can see.  We determine that the resolver has created it correctly by observing it's behavior.
  */
 public class SimpleFilterChainResolverTest {
+    @SuppressWarnings("checkstyle:LineLength")
     @Test
     void testGetChain() throws Exception {
         // test that it uses the pattern matcher - check
@@ -68,9 +72,9 @@ public class SimpleFilterChainResolverTest {
         final Key<? extends Filter> key3a = Key.get(Filter.class, Names.named("key3a"));
         final Key<? extends Filter> key3b = Key.get(Filter.class, Names.named("key3b"));
 
-        chainMap.put(chainOne, new Key[]{key1a, key1b});
-        chainMap.put(chainTwo, new Key[]{key2a, key2b});
-        chainMap.put(chainThree, new Key[]{key3a, key3b});
+        chainMap.put(chainOne, new Key[] {key1a, key1b});
+        chainMap.put(chainTwo, new Key[] {key2a, key2b});
+        chainMap.put(chainThree, new Key[] {key3a, key3b});
 
         PatternMatcher patternMatcher = ctrl.createMock(PatternMatcher.class);
         ServletRequest request = ctrl.createMock(HttpServletRequest.class);
@@ -88,9 +92,9 @@ public class SimpleFilterChainResolverTest {
         Filter filter2a = ctrl.createMock(Filter.class);
         Filter filter2b = ctrl.createMock(Filter.class);
 
-        expect((Filter)injector.getInstance(key2a)).andReturn(filter2a);
+        expect((Filter) injector.getInstance(key2a)).andReturn(filter2a);
         filter2a.doFilter(same(request), same(response), anyObject(FilterChain.class));
-        expect((Filter)injector.getInstance(key2b)).andReturn(filter2b);
+        expect((Filter) injector.getInstance(key2b)).andReturn(filter2b);
         filter2b.doFilter(same(request), same(response), anyObject(FilterChain.class));
         originalChain.doFilter(request, response);
 

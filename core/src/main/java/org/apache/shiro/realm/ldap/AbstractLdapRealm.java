@@ -228,6 +228,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
      * @return an {@link AuthenticationInfo} instance containing information retrieved from the LDAP server.
      * @throws NamingException if any LDAP errors occur during the search.
      */
+    @SuppressWarnings("checkstyle:LineLength")
     protected abstract AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory)
             throws NamingException;
 
@@ -242,6 +243,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
      * @return an {@link AuthorizationInfo} instance containing information retrieved from the LDAP server.
      * @throws NamingException if any LDAP errors occur during the search.
      */
+    @SuppressWarnings("checkstyle:LineLength")
     protected abstract AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principal, LdapContextFactory ldapContextFactory)
             throws NamingException;
 

@@ -24,6 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Requires the current Subject to have been authenticated <em>during their current session</em> for the annotated
  * class/instance/method to be accessed or invoked.  This is <em>more</em> restrictive than the
@@ -38,7 +39,6 @@ import java.lang.annotation.Target;
  *
  * @see RequiresUser
  * @see RequiresGuest
- *
  * @since 0.9.0
  */
 @Target({ElementType.TYPE, ElementType.METHOD})

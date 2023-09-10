@@ -87,13 +87,12 @@ public class HazelcastCacheManager implements CacheManager, Initializable, Destr
      * {@link HazelcastInstance#getMap(String) hazelcastInstance.getMap(name)}.
      *
      * @param name the name of the cache to acquire.
-     * @param <K> the type of map key
-     * @param <V> the type of map value
+     * @param <K>  the type of map key
+     * @param <V>  the type of map value
      * @return a {@link MapCache} instance representing the named Hazelcast-managed {@link com.hazelcast.core.IMap IMap}.
      * @throws CacheException
      * @see HazelcastInstance#getMap(String)
      * @see #ensureHazelcastInstance()
-     *
      */
     public <K, V> Cache<K, V> getCache(String name) throws CacheException {
         //returned map is a ConcurrentMap
@@ -159,8 +158,8 @@ public class HazelcastCacheManager implements CacheManager, Initializable, Destr
      * {@link #setHazelcastInstance(com.hazelcast.core.HazelcastInstance) setHazelcastInstance}.
      *
      * @return {@code true} if this {@code HazelcastCacheManager} instance implicitly created the backing
-     *         {@code HazelcastInstance}, or {@code false} if one was externally provided via
-     *         {@link #setHazelcastInstance(com.hazelcast.core.HazelcastInstance) setHazelcastInstance}.
+     * {@code HazelcastInstance}, or {@code false} if one was externally provided via
+     * {@link #setHazelcastInstance(com.hazelcast.core.HazelcastInstance) setHazelcastInstance}.
      */
     protected final boolean isImplicitlyCreated() {
         return this.implicitlyCreated;
@@ -195,7 +194,7 @@ public class HazelcastCacheManager implements CacheManager, Initializable, Destr
      * instances will be acquired to create {@link MapCache} instances.
      *
      * @return the {@code HazelcastInstance} from which named {@link java.util.concurrent.ConcurrentMap ConcurrentMap}
-     *         instances will be acquired to create {@link MapCache} instances.
+     * instances will be acquired to create {@link MapCache} instances.
      */
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
@@ -220,9 +219,9 @@ public class HazelcastCacheManager implements CacheManager, Initializable, Destr
      * mechanisms</a> will be used.
      *
      * @return the Hazelcast {@code Config} object to use to create a backing {@code HazelcastInstance} if one is not
-     *         {@link #setHazelcastInstance(com.hazelcast.core.HazelcastInstance) supplied}, or {@code null} if the
-     *         default <a href="http://www.hazelcast.com/docs/2.5/manual/multi_html/ch12.html">Hazelcast configuration
-     *         mechanisms</a> will be used.
+     * {@link #setHazelcastInstance(com.hazelcast.core.HazelcastInstance) supplied}, or {@code null} if the
+     * default <a href="http://www.hazelcast.com/docs/2.5/manual/multi_html/ch12.html">Hazelcast configuration
+     * mechanisms</a> will be used.
      * @see Hazelcast#newHazelcastInstance(com.hazelcast.config.Config)
      */
     public Config getConfig() {

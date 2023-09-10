@@ -75,6 +75,7 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
      * @param mi the method invocation that the remote invocation should be based on.
      * @return a remote invocation object containing the current session ID as an attribute.
      */
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity"})
     public RemoteInvocation createRemoteInvocation(MethodInvocation mi) {
 
         Serializable sessionId = null;

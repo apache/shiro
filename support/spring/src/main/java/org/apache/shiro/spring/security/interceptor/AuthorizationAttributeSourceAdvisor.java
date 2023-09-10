@@ -48,6 +48,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
                     RequiresUser.class, RequiresGuest.class, RequiresAuthentication.class
             };
 
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     protected SecurityManager securityManager = null;
 
     /**

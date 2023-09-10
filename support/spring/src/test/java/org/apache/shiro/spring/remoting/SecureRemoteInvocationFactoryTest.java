@@ -31,13 +31,15 @@ import org.springframework.remoting.support.RemoteInvocation;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * //TODO - Class JavaDoc!
- *
  */
 public class SecureRemoteInvocationFactoryTest {
 

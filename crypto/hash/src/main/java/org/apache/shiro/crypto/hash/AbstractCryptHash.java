@@ -70,8 +70,8 @@ public abstract class AbstractCryptHash implements Hash, Serializable {
      * <p>Other required parameters must be stored by the implementation.</p>
      *
      * @param algorithmName internal algorithm name, e.g. {@code 2y} for bcrypt and {@code argon2id} for argon2.
-     * @param hashedData the hashed data as a byte array. Does not include the salt or other parameters.
-     * @param salt the salt which was used when generating the hash.
+     * @param hashedData    the hashed data as a byte array. Does not include the salt or other parameters.
+     * @param salt          the salt which was used when generating the hash.
      * @throws IllegalArgumentException if the salt is not the same size as {@link #getSaltLength()}.
      */
     public AbstractCryptHash(final String algorithmName, final byte[] hashedData, final ByteSource salt) {
@@ -100,7 +100,7 @@ public abstract class AbstractCryptHash implements Hash, Serializable {
 
     /**
      * Default check method for a valid salt. Can be overridden, because multiple salt lengths could be valid.
-     *
+     * <p>
      * By default, this method checks if the number of bytes in the salt
      * are equal to the int returned by {@link #getSaltLength()}.
      *
@@ -227,6 +227,7 @@ public abstract class AbstractCryptHash implements Hash, Serializable {
      *
      * <p>Implementations should not override this method, as different algorithms produce different output formats
      * and require different parameters.</p>
+     *
      * @return a hashcode from the {@link #formatToCryptString() formatted output}.
      */
     @Override

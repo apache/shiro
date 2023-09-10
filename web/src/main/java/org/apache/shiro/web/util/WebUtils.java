@@ -48,6 +48,7 @@ import java.util.Map;
  *
  * @since 0.9
  */
+@SuppressWarnings({"checkstyle:MethodCount", "checkstyle:JavadocVariable"})
 public final class WebUtils {
 
     public static final String SERVLET_REQUEST_KEY = ServletRequest.class.getName() + "_SHIRO_THREAD_CONTEXT_KEY";
@@ -55,6 +56,7 @@ public final class WebUtils {
 
     public static final String ALLOW_BACKSLASH = "org.apache.shiro.web.ALLOW_BACKSLASH";
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * {@link org.apache.shiro.session.Session Session} key used to save a request and later restore it, for example when redirecting to a
      * requested page after login, equal to {@code shiroSavedRequest}.
@@ -129,7 +131,7 @@ public final class WebUtils {
      * @param request current HTTP request
      * @return the request URI
      * @deprecated use getPathWithinApplication() to get the path minus the context path,
-     *      or call HttpServletRequest.getRequestURI() directly from your code.
+     * or call HttpServletRequest.getRequestURI() directly from your code.
      */
     @Deprecated
     public static String getRequestUri(HttpServletRequest request) {
@@ -184,6 +186,7 @@ public final class WebUtils {
      * @param replaceBackSlash Should '\\' be replaced with '/'
      * @return normalized path
      */
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity"})
     private static String normalize(String path, boolean replaceBackSlash) {
 
         if (path == null) {
@@ -367,7 +370,7 @@ public final class WebUtils {
      * @see java.net.URLDecoder#decode(String, String)
      * @see java.net.URLDecoder#decode(String)
      */
-    @SuppressWarnings({"deprecation"})
+    @SuppressWarnings({"deprecation", "checkstyle:LineLength"})
     public static String decodeRequestString(HttpServletRequest request, String source) {
         String enc = determineEncoding(request);
         try {
@@ -550,6 +553,7 @@ public final class WebUtils {
      * @param http10Compatible whether to stay compatible with HTTP 1.0 clients.
      * @throws java.io.IOException if thrown by response methods.
      */
+    @SuppressWarnings("checkstyle:LineLength")
     public static void issueRedirect(ServletRequest request, ServletResponse response, String url, Map queryParams, boolean contextRelative,
                                      boolean http10Compatible) throws IOException {
         RedirectView view = new RedirectView(url, contextRelative, http10Compatible);
@@ -611,6 +615,7 @@ public final class WebUtils {
      * @param paramName @return true if the param value is considered true or false if it isn't.
      * @return true if the given parameter is considered "true" - false otherwise.
      */
+    @SuppressWarnings("checkstyle:BooleanExpressionComplexity")
     public static boolean isTrue(ServletRequest request, String paramName) {
         String value = getCleanParam(request, paramName);
         return value != null

@@ -36,6 +36,7 @@ import java.util.Collection;
  */
 public abstract class AbstractAuthenticationStrategy implements AuthenticationStrategy {
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Simply returns <code>new {@link org.apache.shiro.authc.SimpleAuthenticationInfo SimpleAuthenticationInfo}();</code>, which supports
      * aggregating account data across realms.
@@ -44,6 +45,7 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
         return new SimpleAuthenticationInfo();
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Simply returns the <code>aggregate</code> method argument, without modification.
      */
@@ -93,6 +95,7 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
         }
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Simply returns the <code>aggregate</code> argument without modification.  Can be overridden for custom behavior.
      */

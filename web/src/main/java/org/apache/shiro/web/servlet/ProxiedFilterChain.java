@@ -45,6 +45,7 @@ public class ProxiedFilterChain implements FilterChain {
 
     private FilterChain orig;
     private List<Filter> filters;
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     private int index = 0;
 
     public ProxiedFilterChain(FilterChain orig, List<Filter> filters) {

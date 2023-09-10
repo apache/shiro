@@ -66,14 +66,14 @@ public final class ResourceUtils {
      *
      * @param resourcePath the resource path to check
      * @return {@code true} if the resource path is not null and starts with one of the recognized
-     *         resource prefixes, {@code false} otherwise.
+     * resource prefixes, {@code false} otherwise.
      * @since 0.9
      */
     @SuppressWarnings({"UnusedDeclaration"})
     public static boolean hasResourcePrefix(String resourcePath) {
         return resourcePath != null
-                   && (resourcePath.startsWith(CLASSPATH_PREFIX)
-                           || resourcePath.startsWith(URL_PREFIX) || resourcePath.startsWith(FILE_PREFIX));
+                && (resourcePath.startsWith(CLASSPATH_PREFIX)
+                || resourcePath.startsWith(URL_PREFIX) || resourcePath.startsWith(FILE_PREFIX));
     }
 
     /**

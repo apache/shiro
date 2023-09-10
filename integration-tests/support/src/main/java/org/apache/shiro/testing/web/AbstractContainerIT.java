@@ -59,6 +59,7 @@ import static org.eclipse.jetty.util.resource.Resource.newResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings({"checkstyle:ClassDataAbstractionCoupling", "checkstyle:LineLength"})
 public abstract class AbstractContainerIT {
 
     protected static final File TEST_KEYSTORE_PATH = setupKeyStore();
@@ -70,6 +71,7 @@ public abstract class AbstractContainerIT {
 
     protected final WebClient webClient = new WebClient();
 
+    @SuppressWarnings("checkstyle:AnonInnerLength")
     @BeforeAll
     public static void startContainer() throws Exception {
 
@@ -83,6 +85,7 @@ public abstract class AbstractContainerIT {
              * Overriding with contents of this pull request, to make fragment scanning work.
              * <a href="https://github.com/mjeanroy/junit-servers/pull/3"></a>
              */
+            @SuppressWarnings("checkstyle:LineLength")
             protected WebAppContext createdWebAppContext() throws Exception {
                 final String path = configuration.getPath();
                 final String webapp = configuration.getWebapp();
@@ -95,7 +98,7 @@ public abstract class AbstractContainerIT {
                 // Useful for WebXmlConfiguration
                 ctx.setBaseResource(newResource(webapp));
 
-                ctx.setConfigurations(new Configuration[]{
+                ctx.setConfigurations(new Configuration[] {
                         new WebInfConfiguration(),
                         new WebXmlConfiguration(),
                         new AnnotationConfiguration(),

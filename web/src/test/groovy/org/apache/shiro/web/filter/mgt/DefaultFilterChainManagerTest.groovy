@@ -111,14 +111,14 @@ class DefaultFilterChainManagerTest {
         assertEquals "roles", pair[0]
         assertEquals '"guest", "admin"', pair[1]
     }
-    
+
     //SHIRO-205
     @Test
     void testFilterChainConfigWithNestedCommas() {
         def chain = "a, b[c], d[e, f], g[h, i, j], k"
 
         String[] tokens = manager.splitChainDefinition(chain);
-        
+
         assertNotNull tokens
         assertEquals 5, tokens.length
         assertEquals "a", tokens[0]

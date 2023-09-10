@@ -20,6 +20,7 @@ package org.apache.shiro.authz.aop;
 
 import org.apache.shiro.aop.AnnotationResolver;
 
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresPermissions RequiresPermissions} annotation is declared, and if so, performs
  * a permission check to see if the calling <code>Subject</code> is allowed to call the method.

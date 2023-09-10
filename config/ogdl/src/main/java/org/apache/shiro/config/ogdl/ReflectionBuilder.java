@@ -399,8 +399,8 @@ public class ReflectionBuilder {
                 }
             } catch (Exception e) {
                 String msg = "Error retrieving property descriptor for instance "
-                         + "of type [" + instance.getClass().getName() + "] "
-                         + "while setting property [" + property + "]";
+                        + "of type [" + instance.getClass().getName() + "] "
+                        + "while setting property [" + property + "]";
                 throw new ConfigurationException(msg, e);
             }
         }
@@ -624,7 +624,7 @@ public class ReflectionBuilder {
         //check if the value is the actual literal string 'null' (expected to be wrapped in quotes):
         if ("\"null\"".equals(stringValue)) {
             return NULL_VALUE_TOKEN;
-        //or the actual literal string of two quotes '""' (expected to be wrapped in quotes):
+            //or the actual literal string of two quotes '""' (expected to be wrapped in quotes):
         } else if ("\"\"\"\"".equals(stringValue)) {
             return EMPTY_STRING_VALUE_TOKEN;
         } else {
@@ -896,6 +896,7 @@ public class ReflectionBuilder {
 
         /**
          * BeanConfiguration instance representing the global 'shiro.' properties
+         *
          * @return boolean
          */
         public boolean isGlobalConfig() {

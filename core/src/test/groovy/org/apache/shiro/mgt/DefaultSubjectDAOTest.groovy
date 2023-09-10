@@ -115,7 +115,7 @@ class DefaultSubjectDAOTest {
         expect(subject.getSession(false)).andReturn null
 
         //turn off session storage:
-        ((DefaultSessionStorageEvaluator)dao.sessionStorageEvaluator).sessionStorageEnabled = false
+        ((DefaultSessionStorageEvaluator) dao.sessionStorageEvaluator).sessionStorageEnabled = false
 
         replay subject
 

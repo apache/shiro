@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.web.config;
 
-import org.apache.shiro.SecurityUtils;
-
 /**
  * Configuration for Shiro's root level servlet filter.
  *
@@ -34,6 +32,7 @@ public class ShiroFilterConfiguration {
     /**
      * Returns {@code true} if the filter should only execute once per request. If set to {@code false} the filter
      * will execute each time it is invoked.
+     *
      * @return {@code true} if this filter should only execute once per request.
      */
     public boolean isFilterOncePerRequest() {
@@ -51,6 +50,7 @@ public class ShiroFilterConfiguration {
         this.filterOncePerRequest = filterOncePerRequest;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Returns {@code true} if the constructed {@link SecurityManager SecurityManager} associated with the filter
      * should be bound to static memory (via
@@ -61,15 +61,16 @@ public class ShiroFilterConfiguration {
      * <p/>
      *
      * @return {@code true} if the constructed {@link SecurityManager SecurityManager} associated with the filter should be bound
-     *         to static memory (via {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager)
-     *         setSecurityManager}),
-     *         {@code false} otherwise.
+     * to static memory (via {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager)
+     * setSecurityManager}),
+     * {@code false} otherwise.
      * @see <a href="https://issues.apache.org/jira/browse/SHIRO-287">SHIRO-287</a>
      */
     public boolean isStaticSecurityManagerEnabled() {
         return staticSecurityManagerEnabled;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Sets if the constructed {@link SecurityManager SecurityManager} associated with the filter should be bound
      * to static memory (via {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}).
@@ -77,8 +78,8 @@ public class ShiroFilterConfiguration {
      * The default value is {@code false}.
      *
      * @param staticSecurityManagerEnabled if the constructed {@link SecurityManager SecurityManager} associated with the filter
-     *    should be bound to static memory (via
-     *    {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}).
+     *                                     should be bound to static memory (via
+     *                                     {@code SecurityUtils.}{@link SecurityUtils#setSecurityManager(org.apache.shiro.mgt.SecurityManager) setSecurityManager}).
      * @see <a href="https://issues.apache.org/jira/browse/SHIRO-287">SHIRO-287</a>
      */
     public ShiroFilterConfiguration setStaticSecurityManagerEnabled(boolean staticSecurityManagerEnabled) {

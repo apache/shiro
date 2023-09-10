@@ -53,7 +53,7 @@
 
     <!-- Activation here is needed for IntelliJ CheckstyleIDEA plugin -->
     <module name="SuppressionFilter">
-        <property name="file" value="${root.dir}/src/suppressions.xml"/>
+        <property name="file" value="src/suppressions.xml"/>
     </module>
 
     <!-- Enable suppression of file contents using //CHECKSTYLE:[ON|OFF] comments -->
@@ -71,7 +71,7 @@
     <!-- Checks whether files end with a new line.                        -->
     <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
     <module name="NewlineAtEndOfFile">
-        <property name="lineSeparator" value="system"/>
+        <property name="lineSeparator" value="lf"/>
     </module>
 
     <!-- Checks that property files contain the same keys.         -->

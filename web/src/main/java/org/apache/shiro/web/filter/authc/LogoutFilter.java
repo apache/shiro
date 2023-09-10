@@ -59,8 +59,10 @@ public class LogoutFilter extends AdviceFilter {
      * out while typing in an address bar.  If <code>postOnlyLogout</code> is <code>true</code>. Only POST requests will cause
      * a logout to occur.
      */
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     private boolean postOnlyLogout = false;
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Acquires the currently executing {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) subject},
      * a potentially Subject or request-specific
@@ -113,7 +115,7 @@ public class LogoutFilter extends AdviceFilter {
     /**
      * Issues an HTTP redirect to the specified URL after subject logout.  This implementation simply calls
      * {@code WebUtils.}{@link WebUtils#issueRedirect(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String)
-     *      issueRedirect(request,response,redirectUrl)}.
+     * issueRedirect(request,response,redirectUrl)}.
      *
      * @param request     the incoming Servlet request
      * @param response    the outgoing Servlet response
@@ -124,6 +126,7 @@ public class LogoutFilter extends AdviceFilter {
         WebUtils.issueRedirect(request, response, redirectUrl);
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Returns the redirect URL to send the user after logout.  This default implementation ignores the arguments and
      * returns the static configured {@link #getRedirectUrl() redirectUrl} property, but this method may be overridden

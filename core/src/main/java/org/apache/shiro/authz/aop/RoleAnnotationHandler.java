@@ -25,6 +25,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresRoles RequiresRoles} annotation is declared, and if so, performs
  * a role check to see if the calling <code>Subject</code> is allowed to proceed.
@@ -41,6 +42,7 @@ public class RoleAnnotationHandler extends AuthorizingAnnotationHandler {
         super(RequiresRoles.class);
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Ensures that the calling <code>Subject</code> has the Annotation's specified roles, and if not, throws an
      * <code>AuthorizingException</code> indicating that access is denied.

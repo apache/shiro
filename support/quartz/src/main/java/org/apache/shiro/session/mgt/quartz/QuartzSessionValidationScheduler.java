@@ -36,7 +36,7 @@ import org.apache.shiro.session.mgt.ValidatingSessionManager;
 
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
-
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * An implementation of the {@link org.apache.shiro.session.mgt.SessionValidationScheduler SessionValidationScheduler} that uses Quartz to schedule a
  * job to call {@link org.apache.shiro.session.mgt.ValidatingSessionManager#validateSessions()} on
@@ -73,8 +73,10 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
      */
     private Scheduler scheduler;
 
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     private boolean schedulerImplicitlyCreated = false;
 
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     private boolean enabled = false;
 
     /**
@@ -192,6 +194,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         }
     }
 
+    @SuppressWarnings("checkstyle:NPathComplexity")
     public void disableSessionValidation() {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Stopping Quartz session validation job...");

@@ -32,6 +32,7 @@ import java.util.Map;
  *
  * @since 1.0
  */
+@SuppressWarnings("checkstyle:JavadocVariable")
 public class HostFilter extends AuthorizationFilter {
 
     /**

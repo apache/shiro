@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Spring Boot Application that show the usage of a user login, checking permissions, and annotation protected methods.
  * NOPMD
+ *
  * @see QuickStart
  * @see SimpleService
  */
@@ -47,6 +48,7 @@ public class CliApp {
 
     /**
      * Example hard coded Realm bean.
+     *
      * @return hard coded Realm bean
      */
     @Bean

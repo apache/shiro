@@ -18,28 +18,28 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-  <html xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:of="http://omnifaces.org/functions"
       xmlns:h="http://xmlns.jcp.org/jsf/html">
-    <h:head>
-        <title>Exception Page</title>
-    </h:head>
-    <h:body>
-        <div id="exception">Exception happened</div>
-        <p/>
-        <ul>
-            <li>Date/time: #{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}</li>
-            <li>User agent: #{header['user-agent']}</li>
-            <li>User IP: #{request.remoteAddr}</li>
-            <li>Request URI: #{requestScope['javax.servlet.error.request_uri']}</li>
-            <li>Ajax request: #{facesContext.partialViewContext.ajaxRequest ? 'Yes' : 'No'}</li>
-            <li>Status code: #{requestScope['javax.servlet.error.status_code']}</li>
-            <li id="exceptionType">Exception type: #{requestScope['javax.servlet.error.exception_type']}</li>
-            <li>Exception message: #{requestScope['javax.servlet.error.message']}</li>
-            <li>Exception UUID: #{requestScope['org.omnifaces.exception_uuid']}</li>
-            <li>Stack trace:
-                <pre>#{of:printStackTrace(requestScope['javax.servlet.error.exception'])}</pre>
-            </li>
-        </ul>
-    </h:body>
+<h:head>
+    <title>Exception Page</title>
+</h:head>
+<h:body>
+    <div id="exception">Exception happened</div>
+    <p/>
+    <ul>
+        <li>Date/time: #{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}</li>
+        <li>User agent: #{header['user-agent']}</li>
+        <li>User IP: #{request.remoteAddr}</li>
+        <li>Request URI: #{requestScope['javax.servlet.error.request_uri']}</li>
+        <li>Ajax request: #{facesContext.partialViewContext.ajaxRequest ? 'Yes' : 'No'}</li>
+        <li>Status code: #{requestScope['javax.servlet.error.status_code']}</li>
+        <li id="exceptionType">Exception type: #{requestScope['javax.servlet.error.exception_type']}</li>
+        <li>Exception message: #{requestScope['javax.servlet.error.message']}</li>
+        <li>Exception UUID: #{requestScope['org.omnifaces.exception_uuid']}</li>
+        <li>Stack trace:
+            <pre>#{of:printStackTrace(requestScope['javax.servlet.error.exception'])}</pre>
+        </li>
+    </ul>
+</h:body>
 </html>

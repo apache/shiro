@@ -27,7 +27,6 @@ import org.apache.shiro.lang.util.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Simple Quickstart application showing how to use Shiro's API.
  *

@@ -68,7 +68,7 @@ class ShiroWebConfigurationTest extends AbstractJUnit4SpringContextTests {
         assertNotNull shiroFilterFactoryBean
         assertThat shiroFilterFactoryBean.filters, anEmptyMap()
 
-        assertSame(((DefaultSecurityManager)securityManager).getEventBus(), eventBus)
+        assertSame(((DefaultSecurityManager) securityManager).getEventBus(), eventBus)
 
         def defaultSecurityManager = (DefaultSecurityManager) securityManager
         def authorizer = (ModularRealmAuthorizer) defaultSecurityManager.getAuthorizer();

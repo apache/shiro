@@ -17,5 +17,6 @@
  * under the License.
  */
 /**
- * Support for acquiring Realms from JNDI, particularly useful for configuring Shiro in JEE or EJB environments. */
+ * Support for acquiring Realms from JNDI, particularly useful for configuring Shiro in JEE or EJB environments.
+ */
 package org.apache.shiro.realm.jndi;

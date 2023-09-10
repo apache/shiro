@@ -18,44 +18,42 @@
  */
 package org.apache.shiro.samples.spring;
 
-import javax.sql.DataSource;
-
+import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.sql.DataSource;
 
-import org.apache.shiro.crypto.hash.Sha256Hash;
-
+@SuppressWarnings({"checkstyle:LineLength", "checkstyle:ExplicitInitialization"})
 /**
  * A data populator that creates a set of security tables and test data that can be used by the
  * Shiro Spring sample application to demonstrate the use of the {@link org.apache.shiro.realm.jdbc.JdbcRealm}
  * The tables created by this class follow the default table and column names that {@link org.apache.shiro.realm.jdbc.JdbcRealm} uses.
- *
  */
 public class BootstrapDataPopulator implements InitializingBean {
 
     private static final String CREATE_TABLES = "create table users (\n"
-                + "    username varchar(255) primary key,\n"
-                + "    password varchar(255) not null\n"
-                + ");\n"
-                + "\n"
-                + "create table roles (\n"
-                + "    role_name varchar(255) primary key\n"
-                + ");\n"
-                + "\n"
-                + "create table user_roles (\n"
-                + "    username varchar(255) not null,\n"
-                + "    role_name varchar(255) not null,\n"
-                + "    constraint user_roles_uq unique ( username, role_name )\n"
-                + ");\n"
-                + "\n"
-                + "create table roles_permissions (\n"
-                + "    role_name varchar(255) not null,\n"
-                + "    permission varchar(255) not null,\n"
-                + "    primary key (role_name, permission)\n"
-                + ");";
+            + "    username varchar(255) primary key,\n"
+            + "    password varchar(255) not null\n"
+            + ");\n"
+            + "\n"
+            + "create table roles (\n"
+            + "    role_name varchar(255) primary key\n"
+            + ");\n"
+            + "\n"
+            + "create table user_roles (\n"
+            + "    username varchar(255) not null,\n"
+            + "    role_name varchar(255) not null,\n"
+            + "    constraint user_roles_uq unique ( username, role_name )\n"
+            + ");\n"
+            + "\n"
+            + "create table roles_permissions (\n"
+            + "    role_name varchar(255) not null,\n"
+            + "    permission varchar(255) not null,\n"
+            + "    primary key (role_name, permission)\n"
+            + ");";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BootstrapDataPopulator.class);
 
@@ -82,7 +80,7 @@ public class BootstrapDataPopulator implements InitializingBean {
         LOGGER.debug("Created user1.");
 
         //password is 'user2' SHA hashed and base64 encoded:
-        query = "insert into users values ( 'user2', '"  + new Sha256Hash("user2", "user2").toBase64() + "' )";
+        query = "insert into users values ( 'user2', '" + new Sha256Hash("user2", "user2").toBase64() + "' )";
         jdbcTemplate.execute(query);
         LOGGER.debug("Created user2.");
 

@@ -145,6 +145,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         }
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Extension point to allow subclasses to provide an {@link Ini} configuration that will be merged into the
      * users configuration.  The users configuration will override anything set here.
@@ -332,6 +333,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         };
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Converts the specified file path to an {@link Ini} instance.
      * <p/>

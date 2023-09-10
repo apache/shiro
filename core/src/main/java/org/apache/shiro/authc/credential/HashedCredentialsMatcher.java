@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -36,7 +36,7 @@ import static java.util.Objects.requireNonNull;
  * before being compared to those in the {@code AuthenticationInfo} from the data store.
  * <p/>
  * Credential hashing is one of the most common security techniques when safeguarding a user's private credentials
- * (passwords, keys, etc).  Most developers never want to store their users' credentials in plain form, viewable by
+ * (passwords, keys, etc.).  Most developers never want to store their users' credentials in plain form, viewable by
  * anyone, so they often hash the users' credentials before they are saved in the data store.
  * <p/>
  * This class (and its subclasses) function as follows:
@@ -55,7 +55,7 @@ import static java.util.Objects.requireNonNull;
  * &quot;Why add salt?&quot; and 6 "Hardening against the attacker's attack").</p>
  * <h4>Real World Case Study</h4>
  * In April 2010, some public Atlassian Jira and Confluence
- * installations (Apache Software Foundation, Codehaus, etc) were the target of account attacks and user accounts
+ * installations (Apache Software Foundation, Codehaus, etc.) were the target of account attacks and user accounts
  * were compromised.  The reason?  Jira and Confluence at the time did not salt user passwords and attackers were
  * able to use dictionary attacks to compromise user accounts (Atlassian has since
  * <a href="http://blogs.atlassian.com/news/2010/04/oh_man_what_a_day_an_update_on_our_security_breach.html">
@@ -71,7 +71,7 @@ import static java.util.Objects.requireNonNull;
  * {@link #getSalt(org.apache.shiro.authc.AuthenticationToken) getSalt(AuthenticationToken)} method.  This however
  * could constitute a security hole since ideally salts should never be obtained based on what a user can submit.
  * User-submitted salt mechanisms are <em>much</em> more susceptible to dictionary attacks and <b>SHOULD NOT</b> be
- * used in secure systems.  Instead salts should ideally be a secure randomly-generated number that is generated when
+ * used in secure systems.  Instead, salts should ideally be a secure randomly-generated number that is generated when
  * the user account is created.  The secure number should never be disseminated to the user and always kept private
  * by the application.
  * <h4>Shiro 1.1</h4>
@@ -212,6 +212,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
         this.storedCredentialsHexEncoded = storedCredentialsHexEncoded;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Returns {@code true} if a submitted {@code AuthenticationToken}'s credentials should be salted when hashing,
      * {@code false} if it should not be salted.
@@ -241,13 +242,13 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
     }
 
     /**
-     * Sets whether or not to salt a submitted {@code AuthenticationToken}'s credentials when hashing.
+     * Sets whether to salt a submitted {@code AuthenticationToken}'s credentials when hashing.
      * <p/>
      * If enabled, the salt used will be obtained via the {@link #getSalt(org.apache.shiro.authc.AuthenticationToken) getCredentialsSalt} method.
      * </p>
      * The default value is {@code false}.
      *
-     * @param hashSalted whether or not to salt a submitted {@code AuthenticationToken}'s credentials when hashing.
+     * @param hashSalted whether to salt a submitted {@code AuthenticationToken}'s credentials when hashing.
      * @deprecated since Shiro 1.1.  Hash salting is now expected to be based on if the {@link AuthenticationInfo}
      * returned from the {@code Realm} is a {@link SaltedAuthenticationInfo} instance and its
      * {@link org.apache.shiro.authc.SaltedAuthenticationInfo#getCredentialsSalt() getCredentialsSalt()} method returns a non-null value.
@@ -298,11 +299,12 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
         }
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Returns a salt value used to hash the token's credentials.
      * <p/>
      * This default implementation merely returns {@code token.getPrincipal()}, effectively using the user's
-     * identity (username, user id, etc) as the salt, a most common technique.  If you wish to provide the
+     * identity (username, user id, etc.) as the salt, a most common technique.  If you wish to provide the
      * authentication token's salt another way, you may override this method.
      *
      * @param token the AuthenticationToken submitted during the authentication attempt.
@@ -449,6 +451,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
         return new SimpleHash(hashAlgorithmName, credentials, requireNonNull(salt, "salt cannot be null."), hashIterations);
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Returns a new, <em>uninitialized</em> instance, without its byte array set.  Used as a utility method in the
      * {@link SimpleCredentialsMatcher#getCredentials(org.apache.shiro.authc.AuthenticationInfo) getCredentials(AuthenticationInfo)} implementation.

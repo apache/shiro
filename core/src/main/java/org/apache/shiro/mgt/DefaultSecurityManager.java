@@ -72,6 +72,7 @@ import java.util.Collection;
  *
  * @since 0.2
  */
+@SuppressWarnings("checkstyle:MethodCount")
 public class DefaultSecurityManager extends SessionsSecurityManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSecurityManager.class);
@@ -118,6 +119,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         return subjectFactory;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Sets the {@code SubjectFactory} responsible for creating {@link Subject} instances exposed to the application.
      *
@@ -133,7 +135,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * implementation is a {@link DefaultSubjectDAO}.
      *
      * @return the {@code SubjectDAO} responsible for persisting Subject state, typically used after login or when an
-     *         Subject identity is discovered (e.g. after RememberMe services).
+     * Subject identity is discovered (e.g. after RememberMe services).
      * @see DefaultSubjectDAO
      * @since 1.2
      */
@@ -174,7 +176,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @param info     the {@code AuthenticationInfo} of a newly authenticated user.
      * @param existing the existing {@code Subject} instance that initiated the authentication attempt
      * @return the {@code Subject} instance that represents the context and session data for the newly
-     *         authenticated subject.
+     * authenticated subject.
      */
     protected Subject createSubject(AuthenticationToken token, AuthenticationInfo info, Subject existing) {
         SubjectContext context = createSubjectContext();

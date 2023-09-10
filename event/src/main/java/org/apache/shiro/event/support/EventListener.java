@@ -34,13 +34,13 @@ package org.apache.shiro.event.support;
  *
  * @see SingleArgumentMethodEventListener
  * @see AnnotationEventListenerResolver
- *
  * @since 1.3
  */
 public interface EventListener {
 
     /**
      * Returns {@code true} if the listener instance can process the specified event object, {@code false} otherwise.
+     *
      * @param event the event object to test
      * @return {@code true} if the listener instance can process the specified event object, {@code false} otherwise.
      */

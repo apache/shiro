@@ -33,13 +33,14 @@ import static jakarta.ws.rs.core.MediaType.TEXT_HTML_TYPE;
 
 public class WebContainerTest extends JakartaAbstractContainerIT {
 
+    @SuppressWarnings({"checkstyle:LineLength", "checkstyle:MagicNumber"})
     @Test
     public void logIn() {
         final Client client = ClientBuilder.newClient();
 
         try {
             Cookie jsessionid;
-            try (final Response loginPage = client.target(getBaseUri())
+            try (Response loginPage = client.target(getBaseUri())
                     .path("/login.jsp")
                     .request(TEXT_HTML_TYPE)
                     .get()) {
@@ -49,7 +50,7 @@ public class WebContainerTest extends JakartaAbstractContainerIT {
 
             Assertions.assertNotNull(jsessionid);
             URI location;
-            try (final Response loginAction = client.target(getBaseUri())
+            try (Response loginAction = client.target(getBaseUri())
                     .path("/login.jsp")
                     .request(APPLICATION_FORM_URLENCODED)
                     .cookie(jsessionid)

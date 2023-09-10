@@ -95,7 +95,8 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * Returns the context path within the application based on the specified <code>request</code>.
      * <p/>
      * This implementation merely delegates to
-     * {@link WebUtils#getPathWithinApplication(javax.servlet.http.HttpServletRequest) WebUtils.getPathWithinApplication(request)},
+     * {@link WebUtils#getPathWithinApplication(javax.servlet.http.HttpServletRequest)
+     *      WebUtils.getPathWithinApplication(request)},
      * but can be overridden by subclasses for custom logic.
      *
      * @param request the incoming <code>ServletRequest</code>
@@ -105,6 +106,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
         return WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Returns <code>true</code> if the incoming <code>request</code> matches the specified <code>path</code> pattern,
      * <code>false</code> otherwise.
@@ -118,7 +120,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * @param path    the configured url pattern to check the incoming request against.
      * @param request the incoming ServletRequest
      * @return <code>true</code> if the incoming <code>request</code> matches the specified <code>path</code> pattern,
-     *         <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      */
     protected boolean pathsMatch(String path, ServletRequest request) {
         String requestURI = getPathWithinApplication(request);
@@ -128,11 +130,11 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
 
         if (!match) {
             if (requestURI != null && !DEFAULT_PATH_SEPARATOR.equals(requestURI)
-                && requestURI.endsWith(DEFAULT_PATH_SEPARATOR)) {
+                    && requestURI.endsWith(DEFAULT_PATH_SEPARATOR)) {
                 requestURI = requestURI.substring(0, requestURI.length() - 1);
             }
             if (path != null && !DEFAULT_PATH_SEPARATOR.equals(path)
-                && path.endsWith(DEFAULT_PATH_SEPARATOR)) {
+                    && path.endsWith(DEFAULT_PATH_SEPARATOR)) {
                 path = path.substring(0, path.length() - 1);
             }
             LOGGER.trace("Attempting to match pattern '{}' with current requestURI '{}'...", path, Encode.forHtml(requestURI));
@@ -153,7 +155,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * @param pattern the pattern to match against
      * @param path    the value to match with the specified <code>pattern</code>
      * @return <code>true</code> if the <code>path</code> matches the specified <code>pattern</code> string,
-     *         <code>false</code> otherwise.
+     * <code>false</code> otherwise.
      */
     protected boolean pathsMatch(String pattern, String path) {
         boolean matches = pathMatcher.matches(pattern, path);
@@ -177,7 +179,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * @param request  the incoming ServletRequest
      * @param response the outgoing ServletResponse
      * @return {@code true} if the filter chain is allowed to continue to execute, {@code false} if a subclass has
-     *         handled the request explicitly.
+     * handled the request explicitly.
      * @throws Exception if an error occurs
      */
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
@@ -216,7 +218,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
         if (isEnabled(request, response, path, pathConfig)) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Filter '{}' is enabled for the current request under path '{}' with config [{}].  "
-                        + "Delegating to subclass implementation for 'onPreHandle' check.",
+                                + "Delegating to subclass implementation for 'onPreHandle' check.",
                         getName(), path, pathConfig);
             }
             //The filter is enabled for this specific request, so delegate to subclass implementations
@@ -226,7 +228,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Filter '{}' is disabled for the current request under path '{}' with config [{}].  "
-                    + "The next element in the FilterChain will be called immediately.",
+                            + "The next element in the FilterChain will be called immediately.",
                     getName(), path, pathConfig);
         }
         //This filter is disabled for this specific request,
@@ -243,7 +245,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * @param response    the outgoing ServletResponse
      * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings.
      * @return {@code true} if the request should be able to continue, {@code false} if the filter will
-     *         handle the response directly.
+     * handle the response directly.
      * @throws Exception if an error occurs
      * @see #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String, Object)
      */
@@ -251,6 +253,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
         return true;
     }
 
+    @SuppressWarnings({"UnusedParameters", "checkstyle:LineLength"})
     /**
      * Path-matching version of the parent class's
      * {@link #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method, but additionally allows
@@ -267,11 +270,10 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * @param path        the path matched for the incoming servlet request that has been configured with the given {@code mappedValue}.
      * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings for the given {@code path}.
      * @return {@code true} if this filter should filter the specified request, {@code false} if it should let the
-     *         request/response pass through immediately to the next element in the {@code FilterChain}.
+     * request/response pass through immediately to the next element in the {@code FilterChain}.
      * @throws Exception in the case of any error
      * @since 1.2
      */
-    @SuppressWarnings({"UnusedParameters"})
     protected boolean isEnabled(ServletRequest request, ServletResponse response, String path, Object mappedValue)
             throws Exception {
         return isEnabled(request, response);

@@ -53,6 +53,7 @@ public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
         return rpAnnotation.value();
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Ensures that the calling <code>Subject</code> has the Annotation's specified permissions, and if not, throws an
      * <code>AuthorizingException</code> indicating access is denied.

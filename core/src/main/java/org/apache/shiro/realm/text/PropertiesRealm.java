@@ -184,6 +184,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
         }
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     protected void startReloadThread() {
         if (this.reloadIntervalSeconds > 0) {
             this.scheduler = Executors.newSingleThreadScheduledExecutor();

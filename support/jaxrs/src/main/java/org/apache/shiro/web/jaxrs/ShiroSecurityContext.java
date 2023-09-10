@@ -86,6 +86,8 @@ public class ShiroSecurityContext implements SecurityContext {
      * Java Principal wrapper around any Shiro Principal object.s
      */
     private class ObjectPrincipal implements Principal {
+
+        @SuppressWarnings("checkstyle:ExplicitInitialization")
         private Object object = null;
 
         ObjectPrincipal(Object object) {

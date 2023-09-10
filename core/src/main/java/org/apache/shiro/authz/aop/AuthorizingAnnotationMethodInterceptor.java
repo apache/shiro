@@ -59,7 +59,7 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
      *
      * @param methodInvocation the method invocation to check for authorization prior to allowing it to proceed/execute.
      * @return the return value from the method invocation
-     *      (the value of {@link org.apache.shiro.aop.MethodInvocation#proceed() MethodInvocation.proceed()}).
+     * (the value of {@link org.apache.shiro.aop.MethodInvocation#proceed() MethodInvocation.proceed()}).
      * @throws org.apache.shiro.authz.AuthorizationException if the <code>MethodInvocation</code> is not allowed to proceed.
      * @throws Throwable                                     if any other error occurs.
      */
@@ -68,6 +68,7 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
         return methodInvocation.proceed();
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Ensures the calling Subject is authorized to execute the specified <code>MethodInvocation</code>.
      * <p/>

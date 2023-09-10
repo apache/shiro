@@ -47,6 +47,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SampleRealm extends AuthorizingRealm {
 
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     protected UserDAO userDAO = null;
 
     public SampleRealm() {

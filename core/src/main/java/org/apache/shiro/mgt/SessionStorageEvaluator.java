@@ -54,8 +54,8 @@ public interface SessionStorageEvaluator {
      *
      * @param subject the {@code Subject} for which session state persistence may be enabled
      * @return {@code true} if the specified {@code Subject}'s
-     *         {@link org.apache.shiro.subject.Subject#getSession() session} may be used to persist that Subject's
-     *         state, {@code false} otherwise.
+     * {@link org.apache.shiro.subject.Subject#getSession() session} may be used to persist that Subject's
+     * state, {@code false} otherwise.
      * @see Subject#getSession()
      * @see Subject#getSession(boolean)
      */

@@ -44,7 +44,7 @@ public abstract class CodecSupport {
     /**
      * Converts the specified character array to a byte array using the Shiro's preferred encoding (UTF-8).
      * <p/>
-     * This is a convenience method equivalent to calling the {@link #toBytes(String,String)} method with a
+     * This is a convenience method equivalent to calling the {@link #toBytes(String, String)} method with a
      * a wrapping String and {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING}, i.e.
      * <p/>
      * <code>toBytes( new String(chars), {@link CodecSupport#PREFERRED_ENCODING PREFERRED_ENCODING} );</code>
@@ -59,7 +59,7 @@ public abstract class CodecSupport {
     /**
      * Converts the specified character array into a byte array using the specified character encoding.
      * <p/>
-     * This is a convenience method equivalent to calling the {@link #toBytes(String,String)} method with a
+     * This is a convenience method equivalent to calling the {@link #toBytes(String, String)} method with a
      * a wrapping String and the specified encoding, i.e.
      * <p/>
      * <code>toBytes( new String(chars), encoding );</code>
@@ -99,7 +99,7 @@ public abstract class CodecSupport {
             return source.getBytes(encoding);
         } catch (UnsupportedEncodingException e) {
             String msg = "Unable to convert source [" + source + "] to byte array using "
-                             + "encoding '" + encoding + "'";
+                    + "encoding '" + encoding + "'";
             throw new CodecException(msg, e);
         }
     }
@@ -151,7 +151,7 @@ public abstract class CodecSupport {
      * Converts the specified byte array to a character array using the specified character encoding.
      * <p/>
      * Effectively calls <code>{@link #toString(byte[], String) toString(bytes,encoding)}
-     *                                      .{@link String#toCharArray() toCharArray()};</code>
+     * .{@link String#toCharArray() toCharArray()};</code>
      *
      * @param bytes    the byte array to convert to a String
      * @param encoding the character encoding used to encode the bytes.
@@ -179,12 +179,12 @@ public abstract class CodecSupport {
      *
      * @param o the object to test to see if it can be easily converted to a byte array
      * @return {@code true} if the specified object can be easily converted to bytes by instances of this class,
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      * @since 1.0
      */
     protected boolean isByteSource(Object o) {
         return o instanceof byte[] || o instanceof char[] || o instanceof String
-                   || o instanceof ByteSource || o instanceof File || o instanceof InputStream;
+                || o instanceof ByteSource || o instanceof File || o instanceof InputStream;
     }
 
     /**
@@ -307,12 +307,12 @@ public abstract class CodecSupport {
      */
     protected byte[] objectToBytes(Object o) {
         String msg = "The " + getClass().getName() + " implementation only supports conversion to "
-                 + "byte[] if the source is of type byte[], char[], String, " + ByteSource.class.getName()
-                 + " File or InputStream.  The instance provided as a method "
-                 + "argument is of type [" + o.getClass().getName() + "].  If you would like to convert "
-                 + "this argument type to a byte[], you can 1) convert the argument to one of the supported types "
-                 + "yourself and then use that as the method argument or 2) subclass " + getClass().getName()
-                 + "and override the objectToBytes(Object o) method.";
+                + "byte[] if the source is of type byte[], char[], String, " + ByteSource.class.getName()
+                + " File or InputStream.  The instance provided as a method "
+                + "argument is of type [" + o.getClass().getName() + "].  If you would like to convert "
+                + "this argument type to a byte[], you can 1) convert the argument to one of the supported types "
+                + "yourself and then use that as the method argument or 2) subclass " + getClass().getName()
+                + "and override the objectToBytes(Object o) method.";
         throw new CodecException(msg);
     }
 

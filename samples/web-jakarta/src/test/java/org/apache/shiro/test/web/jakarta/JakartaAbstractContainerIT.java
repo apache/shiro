@@ -31,6 +31,7 @@ public abstract class JakartaAbstractContainerIT {
 
     protected static Meecrowave meecrowave;
 
+    @SuppressWarnings("checkstyle:LineLength")
     @BeforeAll
     public static void startContainer() {
         final File root = new File(getWarDir());

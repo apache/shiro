@@ -48,8 +48,9 @@ import java.util.concurrent.locks.ReentrantLock;
  * continued modifications.
  * <p/>
  * This implementation is thread-safe and usable in concurrent environments.
- * @param <K>   K
- * @param <V>   V
+ *
+ * @param <K> K
+ * @param <V> V
  * @since 1.0
  */
 public class SoftHashMap<K, V> implements Map<K, V> {
@@ -122,7 +123,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
      * size of {@link #DEFAULT_RETENTION_SIZE DEFAULT_RETENTION_SIZE} (100 entries).
      *
      * @param source the backing map to populate this {@code SoftHashMap}
-     * @see #SoftHashMap(java.util.Map,int)
+     * @see #SoftHashMap(java.util.Map, int)
      */
     public SoftHashMap(Map<K, V> source) {
         this(DEFAULT_RETENTION_SIZE);

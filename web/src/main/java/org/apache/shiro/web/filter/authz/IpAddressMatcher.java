@@ -27,7 +27,7 @@ import java.util.Arrays;
  * IPv4 address will never match a request which returns an IPv6 address, and vice-versa.
  *
  * @see <a href="https://github.com/spring-projects/spring-security/blob/master/web/src/main/java/
- *          org/springframework/security/web/util/matcher/IpAddressMatcher.java">Original Spring Security version</a>
+ * org/springframework/security/web/util/matcher/IpAddressMatcher.java">Original Spring Security version</a>
  * @since 2.0
  */
 public final class IpAddressMatcher {
@@ -52,6 +52,7 @@ public final class IpAddressMatcher {
         requiredAddress = parseAddress(ipAddress);
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     public boolean matches(String address) {
         InetAddress remoteAddress = parseAddress(address);
 

@@ -21,7 +21,7 @@ permissions:
   contents: read
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch: { }
   push:
     branches: [ main, '1.11.x', '1.10.x', '1.9.x' ]
   pull_request:

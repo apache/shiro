@@ -32,31 +32,36 @@ public class RecordingBeanListener {
     private List<DestroyedBeanEvent> destroyedEvents = new ArrayList<DestroyedBeanEvent>();
     private List<BeanEvent> unhandledEvents = new ArrayList<BeanEvent>();
 
-    @SuppressWarnings("UnusedDeclaration") //used via reflection
+    @SuppressWarnings("UnusedDeclaration")
+    //used via reflection
     @Subscribe
     public void onUnhandledBeanEvent(BeanEvent beanEvent) {
         this.unhandledEvents.add(beanEvent);
     }
 
-    @SuppressWarnings("UnusedDeclaration") //used via reflection
+    @SuppressWarnings("UnusedDeclaration")
+    //used via reflection
     @Subscribe
     public void onInstantiatedBeanEvent(InstantiatedBeanEvent beanEvent) {
         this.instantiateEvents.add(beanEvent);
     }
 
-    @SuppressWarnings("UnusedDeclaration") //used via reflection
+    @SuppressWarnings("UnusedDeclaration")
+    //used via reflection
     @Subscribe
     public void onConfiguredBeanEvent(ConfiguredBeanEvent beanEvent) {
         this.configuredEvents.add(beanEvent);
     }
 
-    @SuppressWarnings("UnusedDeclaration") //used via reflection
+    @SuppressWarnings("UnusedDeclaration")
+    //used via reflection
     @Subscribe
     public void onInitializedBeanEvent(InitializedBeanEvent beanEvent) {
         this.initializedEvents.add(beanEvent);
     }
 
-    @SuppressWarnings("UnusedDeclaration") //used via reflection
+    @SuppressWarnings("UnusedDeclaration")
+    //used via reflection
     @Subscribe
     public void onDestroyedBeanEvent(DestroyedBeanEvent beanEvent) {
         this.destroyedEvents.add(beanEvent);

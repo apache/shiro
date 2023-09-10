@@ -72,7 +72,8 @@ public class SecurityManagerTestSupport {
     /**
      * Associates the {@code consumer} with the {@code subject} and executes. If an exeception was thrown by the
      * consumer, it is re-thrown by this method.
-     * @param subject The subject to bind to the current thread.
+     *
+     * @param subject  The subject to bind to the current thread.
      * @param consumer The block of code to run under the context of the subject.
      * @throws Exception propagates any exception thrown by the consumer.
      */

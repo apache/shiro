@@ -87,7 +87,7 @@ public final class LdapUtils {
     /**
      * added based on SHIRO-127, per Emmanuel's comment [1]
      * [1] <a href="https://issues.apache.org/jira/browse/SHIRO-127?focusedCommentId=12891380&"
-     *           + "page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#action_12891380" />
+     * + "page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#action_12891380" />
      */
     public static void closeEnumeration(NamingEnumeration ne) {
         try {

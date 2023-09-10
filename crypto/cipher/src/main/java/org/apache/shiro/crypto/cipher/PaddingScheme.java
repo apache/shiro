@@ -156,7 +156,7 @@ public enum PaddingScheme {
      * {@code transformation string}.
      *
      * @return the actual string name to use when building the {@link javax.crypto.Cipher Cipher}
-     *         {@code transformation string}.
+     * {@code transformation string}.
      * @see javax.crypto.Cipher#getInstance(String)
      */
     public String getTransformationName() {

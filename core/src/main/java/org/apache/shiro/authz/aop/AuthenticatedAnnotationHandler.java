@@ -40,6 +40,7 @@ public class AuthenticatedAnnotationHandler extends AuthorizingAnnotationHandler
         super(RequiresAuthentication.class);
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Ensures that the calling <code>Subject</code> is authenticated, and if not, throws an
      * {@link org.apache.shiro.authz.UnauthenticatedException UnauthenticatedException} indicating the method is not allowed to be executed.

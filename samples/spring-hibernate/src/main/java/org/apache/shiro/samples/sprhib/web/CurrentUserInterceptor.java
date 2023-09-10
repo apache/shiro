@@ -43,6 +43,7 @@ public class CurrentUserInterceptor extends HandlerInterceptorAdapter {
         this.userService = userService;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     @Override
     public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView)
             throws Exception {

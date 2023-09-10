@@ -14,12 +14,14 @@
 package org.apache.shiro.ee.cdi;
 
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getNativeSessionManager;
+
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.CDI;
+
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.UnavailableSecurityManagerException;

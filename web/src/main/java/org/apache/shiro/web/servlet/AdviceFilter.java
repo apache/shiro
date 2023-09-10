@@ -62,7 +62,8 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
      * Allows 'post' advice logic to be called, but only if no exception occurs during filter chain execution.  That
      * is, if {@link #executeChain executeChain} throws an exception, this method will never be called.  Be aware of
      * this when implementing logic.  Most resource 'cleanup' behavior is often done in the
-     * {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) afterCompletion(request,response,exception)}
+     * {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception)
+     *      afterCompletion(request,response,exception)}
      * implementation, which is guaranteed to be called for every request, even when the chain processing throws
      * an Exception.
      * <p/>
@@ -151,7 +152,8 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
 
     /**
      * Executes cleanup logic in the {@code finally} code block in the
-     * {@link #doFilterInternal(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain) doFilterInternal}
+     * {@link #doFilterInternal(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
+     *      doFilterInternal(request, response, filterChain)}
      * implementation.
      * <p/>
      * This implementation specifically calls

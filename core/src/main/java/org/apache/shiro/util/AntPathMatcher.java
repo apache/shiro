@@ -105,7 +105,6 @@ public class AntPathMatcher implements PatternMatcher {
         return doMatch(pattern, path, false);
     }
 
-
     /**
      * Actually match the given <code>path</code> against the given <code>pattern</code>.
      *
@@ -116,6 +115,8 @@ public class AntPathMatcher implements PatternMatcher {
      * @return <code>true</code> if the supplied <code>path</code> matched,
      * <code>false</code> if it didn't
      */
+    @SuppressWarnings({"checkstyle:ReturnCount", "checkstyle:CyclomaticComplexity",
+            "checkstyle:NPathComplexity", "checkstyle:MethodLength"})
     protected boolean doMatch(String pattern, String path, boolean fullMatch) {
         if (path == null || path.startsWith(this.pathSeparator) != pattern.startsWith(this.pathSeparator)) {
             return false;
@@ -253,6 +254,8 @@ public class AntPathMatcher implements PatternMatcher {
      * @return <code>true</code> if the string matches against the
      * pattern, or <code>false</code> otherwise.
      */
+    @SuppressWarnings({"checkstyle:ReturnCount", "checkstyle:CyclomaticComplexity",
+            "checkstyle:NPathComplexity", "checkstyle:MethodLength"})
     private boolean matchStrings(String pattern, String str) {
         char[] patArr = pattern.toCharArray();
         char[] strArr = str.toCharArray();

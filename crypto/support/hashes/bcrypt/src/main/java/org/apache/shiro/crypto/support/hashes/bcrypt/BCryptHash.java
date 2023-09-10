@@ -181,9 +181,9 @@ class BCryptHash extends AbstractCryptHash {
     public boolean matchesPassword(ByteSource plaintextBytes) {
         try {
             final String cryptString = OpenBSDBCrypt.generate(this.getAlgorithmName(),
-                        plaintextBytes.getBytes(),
-                        this.getSalt().getBytes(),
-                        this.getCost());
+                    plaintextBytes.getBytes(),
+                    this.getSalt().getBytes(),
+                    this.getCost());
             BCryptHash other = fromString(cryptString);
 
             return this.equals(other);

@@ -39,6 +39,7 @@ public class RolesAllowedAnnotationHandler extends AuthorizingAnnotationHandler 
         super(RolesAllowed.class);
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Ensures that the calling <code>Subject</code> has one of the Annotation's specified roles, and if not, throws an
      * <code>AuthorizingException</code> indicating that access is denied.

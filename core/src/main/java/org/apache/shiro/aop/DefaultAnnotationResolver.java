@@ -42,12 +42,12 @@ public class DefaultAnnotationResolver implements AnnotationResolver {
 
     /**
      * Returns {@code methodInvocation.}{@link org.apache.shiro.aop.MethodInvocation#getMethod() getMethod()}.
-     *          {@link Method#getAnnotation(Class) getAnnotation(clazz)}.
+     * {@link Method#getAnnotation(Class) getAnnotation(clazz)}.
      *
      * @param mi    the intercepted method to be invoked.
      * @param clazz the annotation class to use to find an annotation instance on the method.
      * @return the discovered annotation or {@code null} if an annotation instance could not be
-     *         found.
+     * found.
      */
     public Annotation getAnnotation(MethodInvocation mi, Class<? extends Annotation> clazz) {
         if (mi == null) {

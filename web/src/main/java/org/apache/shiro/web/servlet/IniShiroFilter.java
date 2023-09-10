@@ -109,9 +109,19 @@ import java.util.Map;
 @Deprecated
 public class IniShiroFilter extends AbstractShiroFilter {
 
-    public static final String CONFIG_INIT_PARAM_NAME = "config";
-    public static final String CONFIG_PATH_INIT_PARAM_NAME = "configPath";
+    /**
+     * ini config param name.
+     */
+    public static final String CONFIG_INI_PARAM_NAME = "config";
 
+    /**
+     * ini config path param name.
+     */
+    public static final String CONFIG_PATH_INI_PARAM_NAME = "configPath";
+
+    /**
+     * default web ini resource path.
+     */
     public static final String DEFAULT_WEB_INI_RESOURCE_PATH = "/WEB-INF/shiro.ini";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IniShiroFilter.class);
@@ -132,8 +142,8 @@ public class IniShiroFilter extends AbstractShiroFilter {
      * container at startup.
      *
      * @return the actual INI configuration text to use to build the {@link SecurityManager} and
-     *         {@link FilterChainResolver} used by the web application or {@code null} if the
-     *         {@link #getConfigPath() configPath} should be used to load a fallback INI source.
+     * {@link FilterChainResolver} used by the web application or {@code null} if the
+     * {@link #getConfigPath() configPath} should be used to load a fallback INI source.
      */
     public String getConfig() {
         return this.config;
@@ -164,7 +174,7 @@ public class IniShiroFilter extends AbstractShiroFilter {
      * container at startup.
      *
      * @return the config path to be used to load a .ini file for configuration if a configuration is
-     *         not specified via the {@link #getConfig() config} attribute.
+     * not specified via the {@link #getConfig() config} attribute.
      */
     public String getConfigPath() {
         return configPath;
@@ -191,11 +201,11 @@ public class IniShiroFilter extends AbstractShiroFilter {
     }
 
     protected void applyInitParams() throws Exception {
-        String config = getInitParam(CONFIG_INIT_PARAM_NAME);
+        String config = getInitParam(CONFIG_INI_PARAM_NAME);
         if (config != null) {
             setConfig(config);
         }
-        String configPath = getInitParam(CONFIG_PATH_INIT_PARAM_NAME);
+        String configPath = getInitParam(CONFIG_PATH_INI_PARAM_NAME);
         if (configPath != null) {
             setConfigPath(configPath);
         }
@@ -211,16 +221,16 @@ public class IniShiroFilter extends AbstractShiroFilter {
         }
         //added for SHIRO-178:
         if (CollectionUtils.isEmpty(ini)) {
-            LOGGER.info("Null or empty configuration specified via '" + CONFIG_INIT_PARAM_NAME + "' or '"
-                    + CONFIG_PATH_INIT_PARAM_NAME + "' filter parameters.  Trying the default "
+            LOGGER.info("Null or empty configuration specified via '" + CONFIG_INI_PARAM_NAME + "' or '"
+                    + CONFIG_PATH_INI_PARAM_NAME + "' filter parameters.  Trying the default "
                     + DEFAULT_WEB_INI_RESOURCE_PATH + " file.");
             ini = getServletContextIniResource(DEFAULT_WEB_INI_RESOURCE_PATH);
         }
         //although the preferred default is /WEB-INF/shiro.ini per SHIRO-178, keep this
         //for backwards compatibility:
         if (CollectionUtils.isEmpty(ini)) {
-            LOGGER.info("Null or empty configuration specified via '" + CONFIG_INIT_PARAM_NAME + "' or '"
-                    + CONFIG_PATH_INIT_PARAM_NAME + "' filter parameters.  Trying the default "
+            LOGGER.info("Null or empty configuration specified via '" + CONFIG_INI_PARAM_NAME + "' or '"
+                    + CONFIG_PATH_INI_PARAM_NAME + "' filter parameters.  Trying the default "
                     + IniFactorySupport.DEFAULT_INI_RESOURCE_PATH + " file.");
             ini = IniFactorySupport.loadDefaultClassPathIni();
         }
@@ -302,7 +312,7 @@ public class IniShiroFilter extends AbstractShiroFilter {
      *
      * @param servletContextPath the servlet context resource path of the INI file to load
      * @return the INI instance reflecting the specified servlet context resource path or {@code null} if no
-     *         resource was found.
+     * resource was found.
      * @since 1.2
      */
     protected Ini getServletContextIniResource(String servletContextPath) {

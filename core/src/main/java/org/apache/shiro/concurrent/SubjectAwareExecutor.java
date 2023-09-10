@@ -95,7 +95,7 @@ public class SubjectAwareExecutor implements Executor {
      * {@code SecurityUtils}.{@link SecurityUtils#getSubject() getSubject()}.
      *
      * @return the currently Subject instance that should be associated with Runnable or Callable instances before
-     *         being dispatched to the target {@code Executor} instance.
+     * being dispatched to the target {@code Executor} instance.
      */
     protected Subject getSubject() {
         return SecurityUtils.getSubject();

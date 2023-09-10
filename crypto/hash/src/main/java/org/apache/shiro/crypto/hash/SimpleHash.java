@@ -110,16 +110,16 @@ public class SimpleHash extends AbstractHash {
      * <p/>
      * Please see the
      * {@link #SimpleHash(String algorithmName, Object source, Object salt, int numIterations)
- *              SimpleHashHash(algorithmName, Object,Object,int)}
+     * SimpleHashHash(algorithmName, Object,Object,int)}
      * constructor for the types of Objects that may be passed into this constructor, as well as how to support further
      * types.
      *
      * @param algorithmName the {@link java.security.MessageDigest MessageDigest} algorithm name to use when
      *                      performing the hash.
      * @param source        the object to be hashed.
-     * @throws org.apache.shiro.lang.codec.CodecException
-     *                                   if the specified {@code source} cannot be converted into a byte array (byte[]).
-     * @throws UnknownAlgorithmException if the {@code algorithmName} is not available.
+     * @throws org.apache.shiro.lang.codec.CodecException if the specified {@code source} cannot be converted
+     *                                                    into a byte array (byte[]).
+     * @throws UnknownAlgorithmException                  if the {@code algorithmName} is not available.
      */
     public SimpleHash(String algorithmName, Object source) throws CodecException, UnknownAlgorithmException {
         //noinspection NullableProblems
@@ -134,7 +134,7 @@ public class SimpleHash extends AbstractHash {
      * <p/>
      * Please see the
      * {@link #SimpleHash(String algorithmName, Object source, Object salt, int numIterations)
-     *              SimpleHashHash(algorithmName, Object,Object,int)}
+     * SimpleHashHash(algorithmName, Object,Object,int)}
      * constructor for the types of Objects that may be passed into this constructor, as well as how to support further
      * types.
      *
@@ -157,7 +157,7 @@ public class SimpleHash extends AbstractHash {
      * <p/>
      * Please see the
      * {@link #SimpleHash(String algorithmName, Object source, Object salt, int numIterations)
-     *              SimpleHashHash(algorithmName, Object,Object,int)}
+     * SimpleHashHash(algorithmName, Object,Object,int)}
      * constructor for the types of Objects that may be passed into this constructor, as well as how to support further
      * types.
      *
@@ -460,7 +460,7 @@ public class SimpleHash extends AbstractHash {
      *
      * @param o the object (Hash) to check for equality.
      * @return {@code true} if the specified object is a Hash and its {@link #getBytes byte array} is identical to
-     *         this Hash's byte array, {@code false} otherwise.
+     * this Hash's byte array, {@code false} otherwise.
      */
     @Override
     public boolean equals(Object o) {

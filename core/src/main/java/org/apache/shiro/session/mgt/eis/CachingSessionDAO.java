@@ -120,7 +120,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * {@code CacheManager} using the {@link #getActiveSessionsCacheName() activeSessionsCacheName}.
      *
      * @return the cache instance to use for storing active sessions or {@code null} if the {@code Cache} instance
-     *         should be retrieved from the
+     * should be retrieved from the
      */
     public Cache<Serializable, Session> getActiveSessionsCache() {
         return this.activeSessions;
@@ -162,7 +162,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * cacheManager.getCache(name);</pre>
      *
      * @return a cache instance used to store active sessions, or {@code null} if the {@code CacheManager} has
-     *         not been set.
+     * not been set.
      */
     protected Cache<Serializable, Session> createActiveSessionsCache() {
         Cache<Serializable, Session> cache = null;
@@ -192,7 +192,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      *
      * @param sessionId the id of the cached session to acquire.
      * @return the cached session with the corresponding {@code sessionId}, or {@code null} if the session
-     *         does not exist or is not cached.
+     * does not exist or is not cached.
      */
     protected Session getCachedSession(Serializable sessionId) {
         Session cached = null;

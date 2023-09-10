@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Requires the requesting user to be {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated} for the
  * request to continue, and if they're not, requires the user to login via the HTTP "Authentication" header (e.g. BASIC, Bearer, etc.)

@@ -115,13 +115,13 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * (via {@link #getCredentials(AuthenticationToken) getCredentials(token)})
      * and then the {@code account}'s credentials
      * (via {@link #getCredentials(org.apache.shiro.authc.AuthenticationInfo) getCredentials(account)}) and then passes both of
-     * them to the {@link #equals(Object,Object) equals(tokenCredentials, accountCredentials)} method for equality
+     * them to the {@link #equals(Object, Object) equals(tokenCredentials, accountCredentials)} method for equality
      * comparison.
      *
      * @param token the {@code AuthenticationToken} submitted during the authentication attempt.
      * @param info  the {@code AuthenticationInfo} stored in the system matching the token principal.
      * @return {@code true} if the provided token credentials are equal to the stored account credentials,
-     *         {@code false} otherwise
+     * {@code false} otherwise
      */
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         Object tokenCredentials = getCredentials(token);

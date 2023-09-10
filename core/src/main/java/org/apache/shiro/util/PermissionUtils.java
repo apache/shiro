@@ -51,6 +51,7 @@ public final class PermissionUtils {
         return null;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     public static Set<Permission> resolvePermissions(Collection<String> permissionStrings, PermissionResolver permissionResolver) {
         Set<Permission> permissions = new LinkedHashSet<>(permissionStrings.size());
         for (String permissionString : permissionStrings) {

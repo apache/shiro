@@ -18,53 +18,53 @@
   ~ under the License.
   -->
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  status="info"
-  strict="true"
-  xmlns="http://logging.apache.org/log4j/2.0/config"
-  xsi:schemaLocation="http://logging.apache.org/log4j/2.0/config
+               status="info"
+               strict="true"
+               xmlns="http://logging.apache.org/log4j/2.0/config"
+               xsi:schemaLocation="http://logging.apache.org/log4j/2.0/config
            https://raw.githubusercontent.com/apache/logging-log4j2/log4j-2.8.2/log4j-core/src/main/resources/Log4j-config.xsd">
-  <Properties>
-    <Property name="pattern">[%d][%highlight{%-5level}][%15.15t][%30.30logger] %msg%n</Property>
-  </Properties>
-  <Appenders>
-    <Console name="stdout" target="SYSTEM_OUT">
-      <PatternLayout pattern="${pattern}" />
-      <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="ACCEPT" />
-    </Console>
-    <Console name="stderr" target="SYSTEM_ERR">
-      <PatternLayout pattern="${pattern}" />
-      <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
-    </Console>
-  </Appenders>
-  <Loggers>
-    <Logger
-      name="com.zaxxer.hikari.HikariDataSource"
-      level="WARN"
-      additivity="false"
-    />
-    <Logger
-      name="com.hazelcast"
-      level="error"
-      additivity="false"
-    />
+    <Properties>
+        <Property name="pattern">[%d][%highlight{%-5level}][%15.15t][%30.30logger] %msg%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="stdout" target="SYSTEM_OUT">
+            <PatternLayout pattern="${pattern}"/>
+            <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="ACCEPT"/>
+        </Console>
+        <Console name="stderr" target="SYSTEM_ERR">
+            <PatternLayout pattern="${pattern}"/>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger
+                name="com.zaxxer.hikari.HikariDataSource"
+                level="WARN"
+                additivity="false"
+        />
+        <Logger
+                name="com.hazelcast"
+                level="error"
+                additivity="false"
+        />
 
-    <Logger
-      name="org.apache.webbeans.corespi.scanner.AbstractMetaDataDiscovery"
-      level="ERROR"
-      additivity="false"
-    />
+        <Logger
+                name="org.apache.webbeans.corespi.scanner.AbstractMetaDataDiscovery"
+                level="ERROR"
+                additivity="false"
+        />
 
-    <Logger name="org.apache.shiro"
-            level="info"
-            additivity="false"
-            />
-    <Logger name="org.apache.shiro.testing.meecrowave.jaxrs"
-            level="info"
-            additivity="false"
-    />
-    <Root level="warn">
-      <AppenderRef ref="stdout" />
-      <AppenderRef ref="stderr" />
-    </Root>
-  </Loggers>
+        <Logger name="org.apache.shiro"
+                level="info"
+                additivity="false"
+        />
+        <Logger name="org.apache.shiro.testing.meecrowave.jaxrs"
+                level="info"
+                additivity="false"
+        />
+        <Root level="warn">
+            <AppenderRef ref="stdout"/>
+            <AppenderRef ref="stderr"/>
+        </Root>
+    </Loggers>
 </Configuration>

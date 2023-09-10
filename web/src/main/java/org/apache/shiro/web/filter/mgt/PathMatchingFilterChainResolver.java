@@ -32,9 +32,10 @@ import javax.servlet.ServletResponse;
 
 /**
  * A {@code FilterChainResolver} that resolves {@link FilterChain}s based on url path
- * matching, as determined by a configurable {@link #setPathMatcher(org.apache.shiro.lang.util.PatternMatcher) PathMatcher}.
+ * matching, as determined by a configurable {@link #setPathMatcher(PatternMatcher) PathMatcher}.
  * <p/>
- * This implementation functions by consulting a {@link org.apache.shiro.web.filter.mgt.FilterChainManager} for all configured filter chains (keyed
+ * This implementation functions by consulting a {@link org.apache.shiro.web.filter.mgt.FilterChainManager}
+ * for all configured filter chains (keyed
  * by configured path pattern).  If an incoming Request path matches one of the configured path patterns (via
  * the {@code PathMatcher}, the corresponding configured {@code FilterChain} is returned.
  *
@@ -63,7 +64,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
     /**
      * Returns the {@code PatternMatcher} used when determining if an incoming request's path
      * matches a configured filter chain.  Unless overridden, the
-     * default implementation is an {@link org.apache.shiro.lang.util.AntPathMatcher AntPathMatcher}.
+     * default implementation is an {@link AntPathMatcher AntPathMatcher}.
      *
      * @return the {@code PatternMatcher} used when determining if an incoming request's path
      * matches a configured filter chain.
@@ -75,7 +76,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
     /**
      * Sets the {@code PatternMatcher} used when determining if an incoming request's path
      * matches a configured filter chain.  Unless overridden, the
-     * default implementation is an {@link org.apache.shiro.lang.util.AntPathMatcher AntPathMatcher}.
+     * default implementation is an {@link AntPathMatcher AntPathMatcher}.
      *
      * @param pathMatcher the {@code PatternMatcher} used when determining if an incoming request's path
      *                    matches a configured filter chain.
@@ -93,6 +94,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
         this.filterChainManager = filterChainManager;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     public FilterChain getChain(ServletRequest request, ServletResponse response, FilterChain originalChain) {
         FilterChainManager filterChainManager = getFilterChainManager();
         if (!filterChainManager.hasChains()) {
@@ -139,7 +141,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      * <p/>
      * Simply delegates to
      * <b><code>{@link #getPathMatcher() getPathMatcher()}.
-     * {@link org.apache.shiro.lang.util.PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>.
+     * {@link PatternMatcher#matches(String, String) matches(pattern,path)}</code></b>.
      * Subclass implementers should think carefully before overriding this method, as typically a custom
      * {@code PathMatcher} should be configured for custom path matching behavior instead.  Favor OO composition
      * rather than inheritance to limit your exposure to Shiro implementation details which may change over time.
@@ -157,7 +159,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
     /**
      * Merely returns
      * <code>WebUtils.{@link org.apache.shiro.web.util.WebUtils#getPathWithinApplication(javax.servlet.http.HttpServletRequest)
-     *                      getPathWithinApplication(request)}</code>
+     * getPathWithinApplication(request)}</code>
      * and can be overridden by subclasses for custom request-to-application-path resolution behavior.
      *
      * @param request the incoming {@code ServletRequest}

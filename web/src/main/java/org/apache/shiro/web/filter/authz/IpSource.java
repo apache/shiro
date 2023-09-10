@@ -22,6 +22,7 @@ import java.util.Collection;
 
 /**
  * Represents a source of information for IP restrictions (see IpFilter)
+ *
  * @since 2.0
  */
 interface IpSource {

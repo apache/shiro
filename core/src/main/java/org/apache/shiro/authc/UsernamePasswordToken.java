@@ -279,7 +279,7 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
      * <p>(Shiro's default Authenticator allows <tt>null</tt> hosts to support localhost and proxy server environments).</p>
      *
      * @return the host from where the authentication attempt occurs, or <tt>null</tt> if it is unknown or
-     *         explicitly omitted.
+     * explicitly omitted.
      * @since 1.0
      */
     public String getHost() {
@@ -305,7 +305,7 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
      * across sessions, <tt>false</tt> otherwise.  Unless overridden, this value is <tt>false</tt> by default.
      *
      * @return <tt>true</tt> if the submitting user wishes their identity (principal(s)) to be remembered
-     *         across sessions, <tt>false</tt> otherwise (<tt>false</tt> by default).
+     * across sessions, <tt>false</tt> otherwise (<tt>false</tt> by default).
      * @since 0.9
      */
     public boolean isRememberMe() {
@@ -352,7 +352,7 @@ public class UsernamePasswordToken implements HostAuthenticationToken, RememberM
      * that might be widely viewable).
      *
      * @return the String representation of the <tt>UsernamePasswordToken</tt>, omitting
-     *         the password.
+     * the password.
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();

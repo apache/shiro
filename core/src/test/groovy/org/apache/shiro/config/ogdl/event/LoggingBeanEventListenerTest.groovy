@@ -32,7 +32,7 @@ class LoggingBeanEventListenerTest {
     @Test
     void testMisnamedBeanEventClass() {
 
-        def m = [foo: 'bar'] as Map<String,Object>
+        def m = [foo: 'bar'] as Map<String, Object>
         Object o = new Object()
         BeanEvent evt = new MisnamedBean('baz', o, m)
 

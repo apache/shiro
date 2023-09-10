@@ -3,7 +3,9 @@ Contributing to Apache Shiro
 
 Summary
 -------
-This document covers how to contribute to the Apache Shiro project. These instructions assume you have a GitHub.com account, so if you don't have one you will have to create one. Your proposed code changes will be published to your own fork of the Apache Shiro project and you will submit a Pull Request for your changes to be added.
+This document covers how to contribute to the Apache Shiro project. These instructions assume you have a GitHub.com
+account, so if you don't have one you will have to create one. Your proposed code changes will be published to your own
+fork of the Apache Shiro project and you will submit a Pull Request for your changes to be added.
 
 _Lets get started!!!_
 
@@ -15,7 +17,8 @@ In your browser, navigate to: [https://github.com/apache/shiro](https://github.c
 
 Fork the repository by clicking on the 'Fork' button on the top right hand side.  
 The fork will happen and you will be taken to your own fork of the repository.  
-Copy the Git repository URL by clicking on the clipboard next to the URL on the right hand side of the page under '**HTTPS** clone URL'.  
+Copy the Git repository URL by clicking on the clipboard next to the URL on the right hand side of the page under '*
+*HTTPS** clone URL'.  
 You will paste this URL when doing the following `git clone` command.
 
 On your computer, follow these steps to setup a local repository for working on Apache Shiro:
@@ -29,15 +32,18 @@ $ git fetch upstream
 $ git rebase upstream/main
 ```
 
-
 Making changes
 --------------
 
-It is important that you create a new branch to make changes on and that you do not change the `main` branch (other than to rebase in changes from `upstream/main`).  
-In this example I will assume you will be making your changes to a branch called `feature_x`.  This `feature_x` branch will be created on your local repository and
-will be pushed to your forked repository on GitHub.  Once this branch is on your fork you will create a Pull Request for the changes to be added to the Apache Shiro project.
+It is important that you create a new branch to make changes on and that you do not change the `main` branch (other than
+to rebase in changes from `upstream/main`).  
+In this example I will assume you will be making your changes to a branch called `feature_x`. This `feature_x` branch
+will be created on your local repository and
+will be pushed to your forked repository on GitHub. Once this branch is on your fork you will create a Pull Request for
+the changes to be added to the Apache Shiro project.
 
-It is best practice to create a new branch each time you want to contribute to the project and only track the changes for that pull request in this branch.
+It is best practice to create a new branch each time you want to contribute to the project and only track the changes
+for that pull request in this branch.
 
 ``` bash
 $ git checkout -b feature_x
@@ -47,16 +53,20 @@ $ git add .
 $ git commit -a -m "descriptive commit message for your changes"
 ```
 
-> The `-b` specifies that you want to create a new branch called `feature_x`.  You only specify `-b` the first time you checkout because you are creating a new branch.  
+> The `-b` specifies that you want to create a new branch called `feature_x`. You only specify `-b` the first time you
+> checkout because you are creating a new branch.  
 > Once the `feature_x` branch exists, you can later switch to it with only `git checkout feature_x`.
 
 
 Rebase `feature_x` to include updates from `upstream/main`
 ------------------------------------------------------------
 
-It is important that you maintain an up-to-date `main` branch in your local repository.  This is done by rebasing in the code changes from `upstream/main` 
-(the official Apache Shiro project repository) into your local repository.  You will want to do this before you start working on a feature as well as right 
-before you submit your changes as a pull request.  I recommend you do this process periodically while you work to make sure you are working off the most recent project code.
+It is important that you maintain an up-to-date `main` branch in your local repository. This is done by rebasing in the
+code changes from `upstream/main`
+(the official Apache Shiro project repository) into your local repository. You will want to do this before you start
+working on a feature as well as right
+before you submit your changes as a pull request. I recommend you do this process periodically while you work to make
+sure you are working off the most recent project code.
 
 This process will do the following:
 
@@ -78,10 +88,12 @@ $ git rebase main
 Make a GitHub Pull Request to contribute your changes
 -----------------------------------------------------
 
-When you are happy with your changes and you are ready to contribute them, you will create a Pull Request on GitHub to do so.  This is done by pushing your local changes 
+When you are happy with your changes and you are ready to contribute them, you will create a Pull Request on GitHub to
+do so. This is done by pushing your local changes
 to your forked repository (default remote name is `origin`) and then initiating a pull request on GitHub.
 
-> **IMPORTANT:** Make sure you have rebased your `feature_x` branch to include the latest code from `upstream/main` _before_ you do this.
+> **IMPORTANT:** Make sure you have rebased your `feature_x` branch to include the latest code from `upstream/main`
+_before_ you do this.
 
 ``` bash
 $ git push origin main
@@ -92,22 +104,27 @@ Now that the `feature_x` branch has been pushed to your GitHub repository, you c
 
 To initiate the pull request, do the following:
 
-1. In your browser, navigate to your forked repository: [https://github.com/YOUR_ACCOUNT/shiro](https://github.com/YOUR_ACCOUNT/shiro)
-2. Click the new button called '**Compare & pull request**' that showed up just above the main area in your forked repository
+1. In your browser, navigate to your forked
+   repository: [https://github.com/YOUR_ACCOUNT/shiro](https://github.com/YOUR_ACCOUNT/shiro)
+2. Click the new button called '**Compare & pull request**' that showed up just above the main area in your forked
+   repository
 3. Validate the pull request will be into the upstream `main` and will be from your `feature_x` branch
 4. Enter a detailed description of the work you have done and then click '**Send pull request**'
 
-If you are requested to make modifications to your proposed changes, make the changes locally on your `feature_x` branch, re-push the `feature_x` branch to your fork.  
+If you are requested to make modifications to your proposed changes, make the changes locally on your `feature_x`
+branch, re-push the `feature_x` branch to your fork.  
 The existing pull request should automatically pick up the change and update accordingly.
 
 
 Cleaning up after a successful pull request
 -------------------------------------------
 
-Once the `feature_x` branch has been committed into the `upstream/main` branch, your local `feature_x` branch and the `origin/feature_x` branch are no longer needed. 
+Once the `feature_x` branch has been committed into the `upstream/main` branch, your local `feature_x` branch and
+the `origin/feature_x` branch are no longer needed.
 If you want to make additional changes, restart the process with a new branch.
 
-> **IMPORTANT:** Make sure that your changes are in `upstream/main` before you delete your `feature_x` and `origin/feature_x` branches!
+> **IMPORTANT:** Make sure that your changes are in `upstream/main` before you delete your `feature_x`
+> and `origin/feature_x` branches!
 
 You can delete these deprecated branches with the following:
 

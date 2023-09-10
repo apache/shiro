@@ -29,6 +29,7 @@ import org.apache.shiro.web.subject.support.WebDelegatingSubject;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+
 import org.apache.shiro.web.subject.WebSubject;
 
 /**
@@ -71,7 +72,7 @@ public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
 
     /**
      * @deprecated since 1.2 - override {@link #createSubject(org.apache.shiro.subject.SubjectContext)} directly if you
-     *             need to instantiate a custom {@link Subject} class.
+     * need to instantiate a custom {@link Subject} class.
      */
     @Deprecated
     protected Subject newSubjectInstance(PrincipalCollection principals, boolean authenticated,

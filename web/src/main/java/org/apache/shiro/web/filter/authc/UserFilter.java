@@ -18,11 +18,11 @@
  */
 package org.apache.shiro.web.filter.authc;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 /**
  * Filter that allows access to resources if the accessor is a known user, which is defined as
@@ -56,6 +56,7 @@ public class UserFilter extends AccessControlFilter {
         }
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * This default implementation simply calls
      * {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse) saveRequestAndRedirectToLogin}

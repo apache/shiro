@@ -18,15 +18,18 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** @since 1.0 */
+/**
+ * @since 1.0
+ */
 public class HostFilterTest {
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testPrivateClassC() {
         Pattern p = Pattern.compile(HostFilter.PRIVATE_CLASS_C_REGEX);
@@ -42,6 +45,7 @@ public class HostFilterTest {
         }
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testPrivateClassB() {
         Pattern p = Pattern.compile(HostFilter.PRIVATE_CLASS_B_REGEX);

@@ -14,10 +14,12 @@
 package org.apache.shiro.ee.filters;
 
 import static org.apache.shiro.ee.filters.FormResubmitSupport.hasFacesContext;
+
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.omnifaces.util.Faces;
@@ -27,9 +29,11 @@ import org.omnifaces.util.Faces;
  * depending on whether in Faces production mode or not
  */
 public class SslFilter extends org.apache.shiro.web.filter.authz.SslFilter {
-    @Getter @Setter
+    @Getter
+    @Setter
     private boolean enablePortFilter = true;
-    @Getter @Setter
+    @Getter
+    @Setter
     private boolean alwaysEnabled;
     private final boolean enabled = computeEnabled();
 
@@ -41,7 +45,7 @@ public class SslFilter extends org.apache.shiro.web.filter.authz.SslFilter {
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         if (!enablePortFilter) {
-            mappedValue = new String[] { Integer.toString(request.getServerPort()) };
+            mappedValue = new String[] {Integer.toString(request.getServerPort())};
         }
         return super.isAccessAllowed(request, response, mappedValue);
     }

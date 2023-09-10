@@ -75,24 +75,24 @@ public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
     }
 
     /* (non-Javadoc)
-    * @see org.apache.shiro.aop.MethodInvocation#getArguments()
-    */
+     * @see org.apache.shiro.aop.MethodInvocation#getArguments()
+     */
 
     public Object[] getArguments() {
         return someArguments;
     }
 
     /* (non-Javadoc)
-    * @see org.apache.shiro.aop.MethodInvocation#getMethod()
-    */
+     * @see org.apache.shiro.aop.MethodInvocation#getMethod()
+     */
 
     public Method getMethod() {
         return method;
     }
 
     /* (non-Javadoc)
-    * @see org.apache.shiro.aop.MethodInvocation#proceed()
-    */
+     * @see org.apache.shiro.aop.MethodInvocation#proceed()
+     */
 
     public Object proceed() throws Throwable {
         // Do nothing since this adapts a before advice

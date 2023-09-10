@@ -140,7 +140,7 @@ public interface PasswordService {
      *                           {@link #encryptPassword(Object) encryptPassword} method (typically
      *                           when the account is created or the account's password is reset).
      * @return {@code true} if the {@code submittedPlaintext} password matches the existing {@code saved} password,
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      * @see ByteSource.Util#isCompatible(Object)
      */
     boolean passwordsMatch(Object submittedPlaintext, String encrypted);

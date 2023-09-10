@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.authz.aop;
 
-import org.apache.shiro.subject.Subject;
 import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.jupiter.api.Test;
 

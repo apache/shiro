@@ -102,7 +102,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * lazily create a CacheManager if one is not already provided.
      *
      * @return the resource location of the config file used to initialize the wrapped
-     *         EhCache CacheManager instance.
+     * EhCache CacheManager instance.
      */
     public String getCacheManagerConfigFile() {
         return this.cacheManagerConfigFile;
@@ -190,8 +190,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * something not desirable for Shiro sessions), this class manages an internal default configuration for
      * this case.
      *
-     * @throws org.apache.shiro.cache.CacheException
-     *          if there are any CacheExceptions thrown by EhCache.
+     * @throws org.apache.shiro.cache.CacheException if there are any CacheExceptions thrown by EhCache.
      * @see net.sf.ehcache.CacheManager#create
      */
     public final void init() throws CacheException {

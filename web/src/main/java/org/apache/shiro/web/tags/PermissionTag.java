@@ -26,8 +26,7 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public abstract class PermissionTag extends SecureTag {
 
-    //TODO - complete JavaDoc
-
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     private String name = null;
 
     public PermissionTag() {

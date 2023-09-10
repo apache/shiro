@@ -196,7 +196,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      * @param info the <code>AuthenticationInfo</code> to add into this instance.
      */
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "checkstyle:NPathComplexity"})
     public void merge(AuthenticationInfo info) {
         if (info == null || info.getPrincipals() == null || info.getPrincipals().isEmpty()) {
             return;

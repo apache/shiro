@@ -15,6 +15,7 @@ package org.apache.shiro.testing.jakarta.ee;
 
 import java.io.Serializable;
 import javax.enterprise.inject.Vetoed;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

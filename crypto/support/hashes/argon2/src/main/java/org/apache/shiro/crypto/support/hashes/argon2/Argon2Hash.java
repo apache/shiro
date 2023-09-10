@@ -198,7 +198,7 @@ class Argon2Hash extends AbstractCryptHash {
 
     public static Argon2Hash generate(String algorithmName, ByteSource source, ByteSource salt, int iterations) {
         return generate(algorithmName, DEFAULT_ALGORITHM_VERSION, source, salt, iterations,
-                            DEFAULT_MEMORY_KIB, DEFAULT_PARALLELISM, DEFAULT_OUTPUT_LENGTH_BITS);
+                DEFAULT_MEMORY_KIB, DEFAULT_PARALLELISM, DEFAULT_OUTPUT_LENGTH_BITS);
     }
 
     public static Argon2Hash generate(
@@ -239,8 +239,7 @@ class Argon2Hash extends AbstractCryptHash {
         final Argon2BytesGenerator gen = new Argon2BytesGenerator();
         gen.init(parameters);
 
-        @SuppressWarnings("checkstyle:MagicNumber")
-        final byte[] hash = new byte[outputLengthBits / 8];
+        @SuppressWarnings("checkstyle:MagicNumber") final byte[] hash = new byte[outputLengthBits / 8];
         gen.generateBytes(source.getBytes(), hash);
 
         return new Argon2Hash(algorithmName, argonVersion, hash, new SimpleByteSource(salt), iterations, memoryAsKB, parallelism);

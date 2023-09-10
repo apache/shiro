@@ -20,7 +20,7 @@
 <additionalHeaders>
     <xml_style>
         <firstLine><![CDATA[<!--]]></firstLine>
-        <beforeEachLine>  ~ </beforeEachLine>
+        <beforeEachLine>~</beforeEachLine>
         <endLine><![CDATA[  -->]]></endLine>
         <!--<afterEachLine><![CDATA[]]></afterEachLine>-->
         <skipLine><![CDATA[^<\?xml.*>$]]></skipLine>
@@ -32,8 +32,8 @@
     </xml_style>
     <javadoc_style>
         <firstLine>/*</firstLine>
-        <beforeEachLine> * </beforeEachLine>
-        <endLine> */</endLine>
+        <beforeEachLine>*</beforeEachLine>
+        <endLine>*/</endLine>
         <!--<afterEachLine></afterEachLine>-->
         <!--skipLine></skipLine-->
         <firstLineDetectionPattern>(\s|\t)*/\*.*$</firstLineDetectionPattern>
@@ -44,7 +44,7 @@
     </javadoc_style>
     <dynascript_style>
         <firstLine><![CDATA[<%--EOL]]></firstLine>
-        <beforeEachLine>  ~ </beforeEachLine>
+        <beforeEachLine>~</beforeEachLine>
         <endLine><![CDATA[EOL  --%>]]></endLine>
         <firstLineDetectionPattern><![CDATA[(\s|\t)*<%--.*$]]></firstLineDetectionPattern>
         <lastLineDetectionPattern><![CDATA[.*--%>(\s|\t)*$]]></lastLineDetectionPattern>

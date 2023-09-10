@@ -135,7 +135,7 @@ public final class CollectionUtils {
         Collections.addAll(deque, elements);
         return deque;
     }*/
-
+    @SuppressWarnings("checkstyle:MagicNumber")
     static int computeListCapacity(int arraySize) {
         return (int) Math.min(5L + arraySize + (arraySize / 10), Integer.MAX_VALUE);
     }

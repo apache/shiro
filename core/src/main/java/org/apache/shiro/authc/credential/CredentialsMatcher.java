@@ -43,10 +43,10 @@ public interface CredentialsMatcher {
      * Returns {@code true} if the provided token credentials match the stored account credentials,
      * {@code false} otherwise.
      *
-     * @param token   the {@code AuthenticationToken} submitted during the authentication attempt
-     * @param info the {@code AuthenticationInfo} stored in the system.
+     * @param token the {@code AuthenticationToken} submitted during the authentication attempt
+     * @param info  the {@code AuthenticationInfo} stored in the system.
      * @return {@code true} if the provided token credentials match the stored account credentials,
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info);
 

@@ -24,7 +24,7 @@ import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.annotation.RequiresGuest;
 
-
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresGuest RequiresGuest} annotation
  * is declared, and if so, ensures the calling <code>Subject</code> does <em>not</em>
@@ -38,7 +38,7 @@ public class GuestAnnotationHandler extends AuthorizingAnnotationHandler {
 
     /**
      * Default no-argument constructor that ensures this interceptor looks for
-     *
+     * <p>
      * {@link org.apache.shiro.authz.annotation.RequiresGuest RequiresGuest} annotations in a method
      * declaration.
      */
@@ -53,14 +53,13 @@ public class GuestAnnotationHandler extends AuthorizingAnnotationHandler {
      * <code>AuthorizingException</code> will be thrown indicating that execution is not allowed to continue.
      *
      * @param a the annotation to check for one or more roles
-     * @throws org.apache.shiro.authz.AuthorizationException
-     *          if the calling <code>Subject</code> is not a &quot;guest&quot;.
+     * @throws org.apache.shiro.authz.AuthorizationException if the calling <code>Subject</code> is not a &quot;guest&quot;.
      */
     public void assertAuthorized(Annotation a) throws AuthorizationException {
         if (a instanceof RequiresGuest && getSubject().getPrincipal() != null) {
             throw new UnauthenticatedException("Attempting to perform a guest-only operation.  The current Subject is "
-                   + "not a guest (they have been authenticated or remembered from a previous login).  Access "
-                   + "denied.");
+                    + "not a guest (they have been authenticated or remembered from a previous login).  Access "
+                    + "denied.");
         }
     }
 }

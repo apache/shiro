@@ -14,6 +14,7 @@
 package org.apache.shiro.ee.cdi;
 
 import static org.apache.shiro.ee.cdi.ShiroScopeContext.isWebContainerSessions;
+
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import javax.enterprise.context.SessionScoped;
@@ -21,25 +22,32 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.CDI;
 import javax.faces.view.ViewScoped;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.junit.jupiter.api.AfterEach;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
+
 import static org.mockito.ArgumentMatchers.any;
+
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**

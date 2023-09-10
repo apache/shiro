@@ -33,10 +33,10 @@ public interface AnnotationResolver {
      * of that type could be found. First checks the invoked method itself and if not found,
      * then the class for the existence of the same annotation.
      *
-     * @param mi the intercepted method to be invoked.
+     * @param mi    the intercepted method to be invoked.
      * @param clazz the annotation class of the annotation to find.
      * @return the method's annotation of the specified type or {@code null} if no annotation of
-     *         that type could be found.
+     * that type could be found.
      */
     Annotation getAnnotation(MethodInvocation mi, Class<? extends Annotation> clazz);
 }

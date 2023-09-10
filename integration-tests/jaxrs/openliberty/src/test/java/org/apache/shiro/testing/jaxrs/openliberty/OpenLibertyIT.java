@@ -26,6 +26,7 @@ import java.net.URI;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OpenLibertyIT extends AbstractShiroJaxRsIT {
+    @SuppressWarnings("checkstyle:LineLength")
     @Override
     protected URI getBaseUri() {
         return URI.create("http://localhost:" + System.getProperty("http.port") + "/" + System.getProperty("app.context.root") + "/api");

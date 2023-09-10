@@ -23,6 +23,7 @@ import javax.enterprise.context.Dependent;
 import javax.servlet.DispatcherType;
 import javax.servlet.annotation.WebFilter;
 
+@SuppressWarnings("checkstyle:LineLength")
 @Dependent
 @WebFilter(
         asyncSupported = true,

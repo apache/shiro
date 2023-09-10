@@ -35,7 +35,9 @@
     </error-page>
     <context-param>
         <param-name>org.omnifaces.EXCEPTION_TYPES_TO_IGNORE_IN_LOGGING</param-name>
-        <param-value>javax.faces.application.ViewExpiredException, java.nio.channels.ClosedByInterruptException, java.sql.SQLException</param-value>
+        <param-value>javax.faces.application.ViewExpiredException, java.nio.channels.ClosedByInterruptException,
+            java.sql.SQLException
+        </param-value>
     </context-param>
     <context-param>
         <!-- 1 year cache, effects production mode only -->

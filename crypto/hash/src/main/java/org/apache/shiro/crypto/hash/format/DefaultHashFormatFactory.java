@@ -20,6 +20,7 @@ package org.apache.shiro.crypto.hash.format;
 
 import java.util.Iterator;
 import java.util.stream.Stream;
+
 import org.apache.shiro.lang.util.ClassUtils;
 import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.lang.util.UnknownClassException;
@@ -293,7 +294,7 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
         clazz = lookupHashFormatClass(test);
 
         final Iterator<String> iterator = Stream.of(
-        pkg + "." + token,
+                pkg + "." + token,
                 pkg + "." + StringUtils.uppercaseFirstChar(token) + "Format",
                 pkg + "." + token + "Format",
                 pkg + "." + StringUtils.uppercaseFirstChar(token) + "HashFormat",
@@ -327,7 +328,7 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
     protected final void assertHashFormatImpl(Class clazz) {
         if (!HashFormat.class.isAssignableFrom(clazz) || clazz.isInterface()) {
             throw new IllegalArgumentException("Discovered class [" + clazz.getName() + "] is not a "
-                                                   + HashFormat.class.getName() + " implementation.");
+                    + HashFormat.class.getName() + " implementation.");
         }
 
     }

@@ -14,8 +14,10 @@
 package org.apache.shiro.ee.filters;
 
 import org.apache.shiro.ee.filters.AuthenticationFilterDelegate.MethodsFromFilter;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
@@ -43,7 +45,7 @@ public class PassThruAuthenticationFilter extends org.apache.shiro.web.filter.au
 
         @Override
         public boolean onLoginFailure(AuthenticationToken token, AuthenticationException e,
-                ServletRequest request, ServletResponse response) {
+                                      ServletRequest request, ServletResponse response) {
             throw new UnsupportedOperationException();
         }
 
@@ -56,7 +58,9 @@ public class PassThruAuthenticationFilter extends org.apache.shiro.web.filter.au
         public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
             return PassThruAuthenticationFilter.super.preHandle(request, response);
         }
-    };
+    }
+
+    ;
 
     public PassThruAuthenticationFilter() {
         delegate = new AuthenticationFilterDelegate(new Methods());

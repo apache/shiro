@@ -45,6 +45,7 @@ public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AllSuccessfulStrategy.class);
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Because all realms in this strategy must complete successfully, this implementation ensures that the given
      * <code>Realm</code> {@link org.apache.shiro.realm.Realm#supports(org.apache.shiro.authc.AuthenticationToken) supports} the given
@@ -52,7 +53,8 @@ public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {
      * {@link UnsupportedTokenException UnsupportedTokenException} to end the authentication
      * process immediately. If the realm does support the token, the <code>info</code> argument is returned immediately.
      */
-    public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
+    public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token,
+                                            AuthenticationInfo info) throws AuthenticationException {
         if (!realm.supports(token)) {
             String msg = "Realm [" + realm + "] of type [" + realm.getClass().getName() + "] does not support "
                     + " the submitted AuthenticationToken [" + token + "].  The [" + getClass().getName()
@@ -74,6 +76,7 @@ public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {
      * realm did in fact authenticate successfully</li>
      * </ol>
      */
+    @SuppressWarnings("checkstyle:LineLength")
     public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo info, AuthenticationInfo aggregate, Throwable t)
             throws AuthenticationException {
         if (t != null) {

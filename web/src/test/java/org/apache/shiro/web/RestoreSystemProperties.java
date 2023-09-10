@@ -26,10 +26,11 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Wrapper that will restore System properties after test methods.
- *
- * Based on: https://github.com/stefanbirkner/system-rules/blob/master/src/main/java/org/junit/contrib/java/lang/system/RestoreSystemProperties.java
+ * <p>
+ * Based on: <a href="https://github.com/stefanbirkner/system-rules/blob/master/src/main/java/org/junit/contrib/java/lang/system/RestoreSystemProperties.java">...</a>
  */
 public class RestoreSystemProperties implements Closeable {
 

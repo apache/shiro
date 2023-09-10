@@ -132,8 +132,8 @@ public final class AccountTransaction {
     }
 
     /* (non-Javadoc)
-    * @see java.lang.Object#toString()
-    */
+     * @see java.lang.Object#toString()
+     */
 
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).

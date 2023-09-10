@@ -17,35 +17,38 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-  <html xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:jsf="http://xmlns.jcp.org/jsf"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
-    <h:head>
-        <title>Please Log In</title>
-        <f:view transient="true"/>
-    </h:head>
-    <h:body>
-        Please Log In
+<h:head>
+    <title>Please Log In</title>
+    <f:view transient="true"/>
+</h:head>
+<h:body>
+    Please Log In
+    <p/>
+    <h:form prependId="false" id="form">
+        Username:
+        <h:inputText id="username" p:autofocus="true" title="Username: " required="true"/>
         <p/>
-        <h:form prependId="false" id="form">
-            Username: <h:inputText id="username" p:autofocus="true" title="Username: " required="true" />
-            <p/>
-            Password: <h:inputText id="password" title="Password: " required="true"/>
-            <p/>
-            Remember Me: <h:selectBooleanCheckbox id="rememberMe" title="Remember Me: "/>
-            <p/>
-            <h:commandButton id="login" value="Login ..." action="#{authc.login}"/>
-            <h:commandButton id="login2" value="Login (non-JSF) ..."/>
-        </h:form>
+        Password:
+        <h:inputText id="password" title="Password: " required="true"/>
         <p/>
-        <div jsf:rendered="#{authc.sessionExpired}" style="color: red;" id="sessionExpiredMessage">
-            Your Session Has Expired
-        </div>
-        <div jsf:rendered="#{authc.loginFailure}" id="loginFailureMessage">
-            Login Failed
-        </div>
-        <h:messages id="messages"/>
-    </h:body>
+        Remember Me:
+        <h:selectBooleanCheckbox id="rememberMe" title="Remember Me: "/>
+        <p/>
+        <h:commandButton id="login" value="Login ..." action="#{authc.login}"/>
+        <h:commandButton id="login2" value="Login (non-JSF) ..."/>
+    </h:form>
+    <p/>
+    <div jsf:rendered="#{authc.sessionExpired}" style="color: red;" id="sessionExpiredMessage">
+        Your Session Has Expired
+    </div>
+    <div jsf:rendered="#{authc.loginFailure}" id="loginFailureMessage">
+        Login Failed
+    </div>
+    <h:messages id="messages"/>
+</h:body>
 </html>

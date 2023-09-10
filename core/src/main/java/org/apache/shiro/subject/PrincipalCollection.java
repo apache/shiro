@@ -100,7 +100,7 @@ public interface PrincipalCollection extends Iterable, Serializable {
      *
      * @param type the type of the principals that should be returned.
      * @return a Collection of principals that are assignable from the specified type, or
-     *         an empty Collection if no principals of this type are associated.
+     * an empty Collection if no principals of this type are associated.
      */
     <T> Collection<T> byType(Class<T> type);
 
@@ -132,7 +132,7 @@ public interface PrincipalCollection extends Iterable, Serializable {
      *
      * @param realmName the name of the Realm from which the principals were retrieved.
      * @return the Subject's principals from the specified Realm only as a Collection or an empty Collection if there
-     *         are not any principals from that realm.
+     * are not any principals from that realm.
      */
     Collection fromRealm(String realmName);
 

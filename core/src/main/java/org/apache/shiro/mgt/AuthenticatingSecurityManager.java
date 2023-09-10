@@ -65,7 +65,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * {@link org.apache.shiro.authc.pam.ModularRealmAuthenticator ModularRealmAuthenticator}.
      *
      * @return the delegate <code>Authenticator</code> instance that this SecurityManager uses to perform all
-     *         authentication operations.
+     * authentication operations.
      */
     public Authenticator getAuthenticator() {
         return authenticator;

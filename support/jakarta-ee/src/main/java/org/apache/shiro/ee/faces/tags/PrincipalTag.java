@@ -23,6 +23,7 @@ import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -44,17 +45,20 @@ public class PrincipalTag extends SecureComponent {
     /**
      * The type of principal to be retrieved, or null if the default principal should be used.
      */
-    @Getter @Setter
+    @Getter
+    @Setter
     private String type;
     /**
      * The property name to retrieve of the principal, or null if the <tt>toString()</tt> value should be used.
      */
-    @Getter @Setter
+    @Getter
+    @Setter
     private String property;
     /**
      * The default value that should be displayed if the user is not authenticated, or no principal is found.
      */
-    @Getter @Setter
+    @Getter
+    @Setter
     private String defaultValue;
 
     private Object[] values;

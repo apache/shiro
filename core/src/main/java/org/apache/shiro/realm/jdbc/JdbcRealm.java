@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Realm that allows authentication and authorization via JDBC calls.  The default queries suggest a potential schema
  * for retrieving the user's password for authentication, and querying for a user's roles and permissions.  The
@@ -76,6 +76,7 @@ public class JdbcRealm extends AuthorizingRealm {
     /**
      * The default query used to retrieve account data for the user when {@link #saltStyle} is COLUMN.
      */
+    @SuppressWarnings("checkstyle:LineLength")
     protected static final String DEFAULT_SALTED_AUTHENTICATION_QUERY = "select password, password_salt from users where username = ?";
 
     /**
@@ -285,6 +286,7 @@ public class JdbcRealm extends AuthorizingRealm {
         return info;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     private String[] getPasswordForUser(Connection conn, String username) throws SQLException {
 
         String[] result;

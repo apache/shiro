@@ -102,6 +102,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         return this.permissionResolver;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Sets the specified {@link PermissionResolver PermissionResolver} on <em>all</em> of the wrapped realms that
      * implement the {@link org.apache.shiro.authz.permission.PermissionResolverAware PermissionResolverAware} interface.
@@ -155,6 +156,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         return this.rolePermissionResolver;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Sets the specified {@link RolePermissionResolver RolePermissionResolver} on <em>all</em> of the wrapped realms that
      * implement the {@link org.apache.shiro.authz.permission.RolePermissionResolverAware PermissionResolverAware} interface.
@@ -354,6 +356,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         }
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * If !{@link #isPermitted(org.apache.shiro.subject.PrincipalCollection, Permission) isPermitted(permission)} for
      * <em>all</em> the given Permissions, throws
@@ -430,6 +433,7 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         }
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Calls {@link #checkRoles(PrincipalCollection principals, String... roles) checkRoles(PrincipalCollection principals, String... roles) }.
      */

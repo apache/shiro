@@ -34,13 +34,14 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import({ShiroBeanConfiguration.class,
-         ShiroConfiguration.class,
-         ShiroAnnotationProcessorConfiguration.class})
+        ShiroConfiguration.class,
+        ShiroAnnotationProcessorConfiguration.class})
 @ComponentScan("org.apache.shiro.samples.spring")
 public class CliApp {
 
     /**
      * Example hard coded Realm bean.
+     *
      * @return hard coded Realm bean
      */
     @Bean

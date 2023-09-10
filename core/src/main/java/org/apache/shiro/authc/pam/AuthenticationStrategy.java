@@ -56,8 +56,10 @@ public interface AuthenticationStrategy {
      * @return an empty AuthenticationInfo object that will populated with data from multiple realms.
      * @throws AuthenticationException if the strategy implementation does not wish the Authentication attempt to execute.
      */
+    @SuppressWarnings("checkstyle:LineLength")
     AuthenticationInfo beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token) throws AuthenticationException;
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Method invoked by the ModularAuthenticator just prior to the realm being consulted for account data,
      * allowing pre-authentication-attempt logic for that realm only.
@@ -70,13 +72,13 @@ public interface AuthenticationStrategy {
      * @param token     the {@code AuthenticationToken} submitted for the subject attempting system log-in.
      * @param aggregate the aggregated AuthenticationInfo object being used across the multi-realm authentication attempt
      * @return the AuthenticationInfo object that will be presented to further realms in the authentication process - returning
-     *         the {@code aggregate} method argument is the normal case if no special action needs to be taken.
-     * @throws org.apache.shiro.authc.AuthenticationException
-     *          an exception thrown by the Strategy implementation if it wishes the login
-     *          process for the associated subject (user) to stop immediately.
+     * the {@code aggregate} method argument is the normal case if no special action needs to be taken.
+     * @throws org.apache.shiro.authc.AuthenticationException an exception thrown by the Strategy implementation if it wishes the login
+     *                                                        process for the associated subject (user) to stop immediately.
      */
     AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException;
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Method invoked by the ModularAuthenticator just after the given realm has been consulted for authentication,
      * allowing post-authentication-attempt logic for that realm only.
@@ -91,15 +93,16 @@ public interface AuthenticationStrategy {
      * @param aggregateInfo   the aggregate info representing all realms in a multi-realm environment.
      * @param t               the Throwable thrown by the Realm during the attempt, or {@code null} if the method returned normally.
      * @return the AuthenticationInfo object that will be presented to further realms in the authentication process - returning
-     *         the {@code aggregateAccount} method argument is the normal case if no special action needs to be taken.
+     * the {@code aggregateAccount} method argument is the normal case if no special action needs to be taken.
      * @throws AuthenticationException an exception thrown by the Strategy implementation if it wishes the login process
      *                                 for the associated subject (user) to stop immediately.
      */
     AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token,
                                     AuthenticationInfo singleRealmInfo,
                                     AuthenticationInfo aggregateInfo, Throwable t)
-                                    throws AuthenticationException;
+            throws AuthenticationException;
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Method invoked by the ModularAuthenticator signifying that all of its configured Realms have been consulted
      * for account data, allowing post-processing after all realms have completed.

@@ -254,6 +254,7 @@ public interface Authorizer {
      */
     void checkRoles(PrincipalCollection subjectPrincipal, Collection<String> roleIdentifiers) throws AuthorizationException;
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Same as {@link #checkRoles(org.apache.shiro.subject.PrincipalCollection, java.util.Collection)
      * checkRoles(PrincipalCollection subjectPrincipal, Collection&lt;String&gt; roleIdentifiers)} but doesn't require a collection

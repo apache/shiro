@@ -91,6 +91,7 @@ public class SaltAwareJdbcRealm extends JdbcRealm {
         return info;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     private String getPasswordForUser(Connection conn, String username) throws SQLException {
 
         PreparedStatement ps = null;

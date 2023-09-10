@@ -328,6 +328,7 @@ public abstract class ThreadContext {
         return (Subject) remove(SUBJECT_KEY);
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     private static final class InheritableThreadLocalMap<T extends Map<Object, Object>> extends InheritableThreadLocal<Map<Object, Object>> {
 
         /**

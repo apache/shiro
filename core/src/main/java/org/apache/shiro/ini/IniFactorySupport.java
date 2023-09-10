@@ -31,6 +31,7 @@ import java.util.Map;
 /**
  * Base support class for {@link Factory} implementations that generate their instance(s) based on
  * {@link Ini} configuration.
+ *
  * @param <T> T
  * @since 1.0
  * @deprecated use Shiro's {@code Environment} mechanisms instead.
@@ -165,6 +166,7 @@ public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
 
     /**
      * create instance.
+     *
      * @param ini ini
      * @return T
      */
@@ -172,6 +174,7 @@ public abstract class IniFactorySupport<T> extends AbstractFactory<T> {
 
     /**
      * create default instance.
+     *
      * @return T
      */
     protected abstract T createDefaultInstance();

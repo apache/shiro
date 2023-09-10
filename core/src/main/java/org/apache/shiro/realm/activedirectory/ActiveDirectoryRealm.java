@@ -88,7 +88,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
     |               M E T H O D S               |
     ============================================*/
 
-
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Builds an {@link AuthenticationInfo} object by querying the active directory LDAP context for the
      * specified username.  This method binds to the LDAP server using the provided username and password -
@@ -159,6 +159,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         return new SimpleAuthorizationInfo(roleNames);
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     protected Set<String> getRoleNamesForUser(String username, LdapContext ldapContext) throws NamingException {
         Set<String> roleNames;
         roleNames = new LinkedHashSet<String>();
@@ -171,7 +172,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             userPrincipalName += principalSuffix;
         }
 
-        Object[] searchArguments = new Object[]{userPrincipalName};
+        Object[] searchArguments = new Object[] {userPrincipalName};
 
         NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchArguments, searchControls);
 

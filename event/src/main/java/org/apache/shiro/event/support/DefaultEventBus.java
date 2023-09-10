@@ -61,12 +61,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * </ol>
  * After registering the component, when when an event of a respective type is published, the component's
  * {@code Subscribe}-annotated method(s) will be invoked as expected.
- *
+ * <p>
  * This design (and its constituent helper components) was largely influenced by
  * Guava's <a href="http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/EventBus.html">EventBus</a>
  * concept, although no code was shared/imported (even though Guava is Apache 2.0 licensed and could have
  * been used).
- *
+ * <p>
  * This implementation is thread-safe and may be used concurrently.
  *
  * @since 1.3

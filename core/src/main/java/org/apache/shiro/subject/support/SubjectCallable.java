@@ -44,7 +44,7 @@ import java.util.concurrent.Callable;
  * invocations. It also guarantees that the running thread remains 'clean' in any thread-pooled environments.
  *
  * <h3>Usage</h3>
- *
+ * <p>
  * This is typically considered a support class and is not often directly referenced.  Most people prefer to use
  * the {@code Subject.}{@link Subject#associateWith(Callable) associateWith} method, which will automatically return
  * an instance of this class.

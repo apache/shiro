@@ -37,8 +37,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.UUID;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for the {@link CookieRememberMeManager} implementation.
@@ -91,6 +100,7 @@ class CookieRememberMeManagerTest {
     }
 
     // SHIRO-183
+    @SuppressWarnings("checkstyle:LineLength")
     @Test
     void getRememberedSerializedIdentityReturnsNullForDeletedCookie() {
         HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
@@ -101,7 +111,7 @@ class CookieRememberMeManagerTest {
 
         expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
 
-        Cookie[] cookies = new Cookie[]{
+        Cookie[] cookies = new Cookie[] {
                 new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, org.apache.shiro.web.servlet.Cookie.DELETED_COOKIE_VALUE)
         };
 
@@ -126,15 +136,15 @@ class CookieRememberMeManagerTest {
 
         //The following base64 string was determined from the log output of the above 'onSuccessfulLogin' test.
         //This will have to change any time the PrincipalCollection implementation changes:
-        final String userPCAesBase64 = "0o6DCfePYTjK4q579qzUFEfkeGRvbBOdKHp2y8/nGAltt1Vz8uW0Z8igeO" +
-                "Tq/yBmcw25f3Q0ui/Leg3x0iQZWhw9Bbu0mFHmHsGxEd6mPwtUpSegIjyX5c/kZpqnb7QLdajPWiczX8P" +
-                "Oc2Eku5+8ye1u38Y8uKlklHxcYCPh0pRiDSBxfjPsLaDfOpGbmPjZd4SVg68i/++TvUjqBNJyb+pDix3f" +
-                "PeuPvReWGcE50iovezVZrEfDOAQ0cZYW35ShypMWOmE9yZnb+p8++StDyAUegryyuIa4pjuRzfMh9D+sN" +
-                "F9tm/EnDC1VCer2S/a0AGlWAQiM7jrWt1sNinZcKIrvShaWI21tONJt8WhozNS2H72lk4p92rfLNHeglT" +
-                "xObxIYxLfTI9KiToSe1nYmpQmbBO8x1wWDkWBG//EqRvhgbIfQVqJp12T0fJC1nFuZuVhw/ZanaAZGDk8" +
-                "7aLMiw3T6FBZtWaspgvfH+0TJrTD8Ra386ekNXNN8JW8=";
+        final String userPCAesBase64 = "0o6DCfePYTjK4q579qzUFEfkeGRvbBOdKHp2y8/nGAltt1Vz8uW0Z8igeO"
+                 + "Tq/yBmcw25f3Q0ui/Leg3x0iQZWhw9Bbu0mFHmHsGxEd6mPwtUpSegIjyX5c/kZpqnb7QLdajPWiczX8P"
+                 + "Oc2Eku5+8ye1u38Y8uKlklHxcYCPh0pRiDSBxfjPsLaDfOpGbmPjZd4SVg68i/++TvUjqBNJyb+pDix3f"
+                 + "PeuPvReWGcE50iovezVZrEfDOAQ0cZYW35ShypMWOmE9yZnb+p8++StDyAUegryyuIa4pjuRzfMh9D+sN"
+                 + "F9tm/EnDC1VCer2S/a0AGlWAQiM7jrWt1sNinZcKIrvShaWI21tONJt8WhozNS2H72lk4p92rfLNHeglT"
+                 + "xObxIYxLfTI9KiToSe1nYmpQmbBO8x1wWDkWBG//EqRvhgbIfQVqJp12T0fJC1nFuZuVhw/ZanaAZGDk8"
+                 + "7aLMiw3T6FBZtWaspgvfH+0TJrTD8Ra386ekNXNN8JW8=";
 
-        Cookie[] cookies = new Cookie[]{
+        Cookie[] cookies = new Cookie[] {
                 new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
         };
 
@@ -147,9 +157,9 @@ class CookieRememberMeManagerTest {
 
         verify(mockRequest);
 
-        assertTrue(collection != null);
+        assertNotNull(collection);
         //noinspection ConstantConditions
-        assertTrue(collection.iterator().next().equals("user"));
+        assertEquals("user", collection.iterator().next());
     }
 
     @Test
@@ -167,15 +177,15 @@ class CookieRememberMeManagerTest {
 
             //The following base64 string was determined from the log output of the above 'onSuccessfulLogin' test.
             //This will have to change any time the PrincipalCollection implementation changes:
-            final String userPCAesBase64 = "0o6DCfePYTjK4q579qzUFEfkeGRvbBOdKHp2y8/nGAltt1Vz8uW0Z8igeO" +
-                    "Tq/yBmcw25f3Q0ui/Leg3x0iQZWhw9Bbu0mFHmHsGxEd6mPwtUpSegIjyX5c/kZpqnb7QLdajPWiczX8P" +
-                    "Oc2Eku5+8ye1u38Y8uKlklHxcYCPh0pRiDSBxfjPsLaDfOpGbmPjZd4SVg68i/++TvUjqBNJyb+pDix3f" +
-                    "PeuPvReWGcE50iovezVZrEfDOAQ0cZYW35ShypMWOmE9yZnb+p8++StDyAUegryyuIa4pjuRzfMh9D+sN" +
-                    "F9tm/EnDC1VCer2S/a0AGlWAQiM7jrWt1sNinZcKIrvShaWI21tONJt8WhozNS2H72lk4p92rfLNHeglT" +
-                    "xObxIYxLfTI9KiToSe1nYmpQmbBO8x1wWDkWBG//EqRvhgbIfQVqJp12T0fJC1nFuZuVhw/ZanaAZGDk8" +
-                    "7aLMiw3T6FBZtWaspgvfH+0TJrTD8Ra386ekNXNN8JW8=";
+            final String userPCAesBase64 = "0o6DCfePYTjK4q579qzUFEfkeGRvbBOdKHp2y8/nGAltt1Vz8uW0Z8igeO"
+                     + "Tq/yBmcw25f3Q0ui/Leg3x0iQZWhw9Bbu0mFHmHsGxEd6mPwtUpSegIjyX5c/kZpqnb7QLdajPWiczX8P"
+                     + "Oc2Eku5+8ye1u38Y8uKlklHxcYCPh0pRiDSBxfjPsLaDfOpGbmPjZd4SVg68i/++TvUjqBNJyb+pDix3f"
+                     + "PeuPvReWGcE50iovezVZrEfDOAQ0cZYW35ShypMWOmE9yZnb+p8++StDyAUegryyuIa4pjuRzfMh9D+sN"
+                     + "F9tm/EnDC1VCer2S/a0AGlWAQiM7jrWt1sNinZcKIrvShaWI21tONJt8WhozNS2H72lk4p92rfLNHeglT"
+                     + "xObxIYxLfTI9KiToSe1nYmpQmbBO8x1wWDkWBG//EqRvhgbIfQVqJp12T0fJC1nFuZuVhw/ZanaAZGDk8"
+                     + "7aLMiw3T6FBZtWaspgvfH+0TJrTD8Ra386ekNXNN8JW8=";
 
-            Cookie[] cookies = new Cookie[]{
+            Cookie[] cookies = new Cookie[] {
                     new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
             };
 
@@ -192,6 +202,7 @@ class CookieRememberMeManagerTest {
 
     // SHIRO-69
 
+    @SuppressWarnings({"checkstyle:MethodName", "checkstyle:LineLength"})
     @Test
     void getRememberedPrincipalsDecryptionError_whenWrongCookieValue() {
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
@@ -205,7 +216,7 @@ class CookieRememberMeManagerTest {
 
         // Simulate a bad return value here (valid Base64 does not contain key)
         String userPCAesBase64 = "garbage";
-        Cookie[] cookies = new Cookie[]{
+        Cookie[] cookies = new Cookie[] {
                 new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
         };
 
@@ -216,6 +227,7 @@ class CookieRememberMeManagerTest {
         assertThrows(CryptoException.class, () -> mgr.getRememberedPrincipals(context), "CryptoException should be thrown on invalid cookies");
     }
 
+    @SuppressWarnings("checkstyle:MethodName")
     @Test
     void getRememberedPrincipalsDecryptionError_whenInvalidBase64() {
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
@@ -229,7 +241,7 @@ class CookieRememberMeManagerTest {
 
         // Simulate a bad return value here (not valid Base64)
         String userPCAesBase64 = "InvalidBase64";
-        Cookie[] cookies = new Cookie[]{
+        Cookie[] cookies = new Cookie[] {
                 new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
         };
 
@@ -279,7 +291,7 @@ class CookieRememberMeManagerTest {
         context.setServletResponse(mockResponse);
 
         CookieRememberMeManager mgr = new CookieRememberMeManager();
-        Cookie[] cookies = new Cookie[]{
+        Cookie[] cookies = new Cookie[] {
                 new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, UUID.randomUUID().toString() + "%%ldapRealm")
         };
 
@@ -295,6 +307,7 @@ class CookieRememberMeManagerTest {
         assertNull(rememberedSerializedIdentity, "should ignore invalid cookie values");
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void ensurePaddingShouldAddEnoughEquals() {
         CookieRememberMeManager mgr = new CookieRememberMeManager();

@@ -90,6 +90,7 @@ public class BearerHttpAuthenticationFilter extends HttpAuthenticationFilter {
         String token = prinCred[0] != null ? prinCred[0] : "";
         return createBearerToken(token, request);
     }
+
     @Override
     protected String[] getPrincipalsAndCredentials(String scheme, String token) {
         return new String[] {token};

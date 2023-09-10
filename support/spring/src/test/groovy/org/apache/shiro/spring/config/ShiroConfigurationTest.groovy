@@ -58,7 +58,7 @@ class ShiroConfigurationTest extends AbstractJUnit4SpringContextTests {
         assertThat securityManager.realms, allOf(hasSize(1), hasItem(instanceOf(TextConfigurationRealm)))
         assertNull securityManager.cacheManager
 
-        assertSame(((DefaultSecurityManager)securityManager).getEventBus(), eventBus)
+        assertSame(((DefaultSecurityManager) securityManager).getEventBus(), eventBus)
 
         def defaultSecurityManager = (DefaultSecurityManager) securityManager
         def authorizer = (ModularRealmAuthorizer) defaultSecurityManager.getAuthorizer();

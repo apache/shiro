@@ -100,7 +100,7 @@ public interface WebSubject extends Subject, RequestPairSource {
          * pair.
          *
          * @return a new instance of a {@link DefaultWebSubjectContext DefaultWebSubjectContext} to account for the
-         *         additional request/response pair.
+         * additional request/response pair.
          */
         @Override
         protected SubjectContext newSubjectContextInstance() {

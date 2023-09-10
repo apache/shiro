@@ -40,6 +40,7 @@ import java.util.TimeZone;
  *
  * @since 1.0
  */
+@SuppressWarnings({"checkstyle:MethodCount", "checkstyle:LineLength", "checkstyle:ParameterNumber"})
 public class SimpleCookie implements Cookie {
 
     /**
@@ -389,10 +390,10 @@ public class SimpleCookie implements Cookie {
     /**
      * Check whether the given {@code cookiePath} matches the {@code requestPath}
      *
-     * @param cookiePath cookiePath
+     * @param cookiePath  cookiePath
      * @param requestPath requestPath
-     * @see <a href="https://tools.ietf.org/html/rfc6265#section-5.1.4">RFC 6265, Section 5.1.4 "Paths and Path-Match"</a>
      * @return boolean
+     * @see <a href="https://tools.ietf.org/html/rfc6265#section-5.1.4">RFC 6265, Section 5.1.4 "Paths and Path-Match"</a>
      */
     private boolean pathMatches(String cookiePath, String requestPath) {
         if (!requestPath.startsWith(cookiePath)) {

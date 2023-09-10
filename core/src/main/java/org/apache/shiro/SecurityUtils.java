@@ -107,9 +107,8 @@ public abstract class SecurityUtils {
      * to calling code in an application. If it is not, it is likely due to a Shiro configuration problem.
      *
      * @return the SecurityManager accessible to the calling code.
-     * @throws UnavailableSecurityManagerException
-     *          if there is no {@code SecurityManager} instance available to the
-     *          calling code, which typically indicates an invalid application configuration.
+     * @throws UnavailableSecurityManagerException if there is no {@code SecurityManager} instance available to the
+     *                                             calling code, which typically indicates an invalid application configuration.
      */
     public static SecurityManager getSecurityManager() throws UnavailableSecurityManagerException {
         SecurityManager securityManager = ThreadContext.getSecurityManager();

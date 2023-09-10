@@ -61,12 +61,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * you are of course free to subclass the {@link AuthenticatingRealm AuthenticatingRealm} directly instead and
  * implement the remaining Realm interface methods directly.  You might do this if you want have better control
  * over how the Role and Permission checks occur for your specific data source.  However, using AuthorizationInfo
- * (and its default implementation {@link org.apache.shiro.authz.SimpleAuthorizationInfo SimpleAuthorizationInfo}) is sufficient in the large
+ * (and its default implementation {@link org.apache.shiro.authz.SimpleAuthorizationInfo SimpleAuthorizationInfo})
+ * is sufficient in the large
  * majority of Realm cases.
  *
  * @see org.apache.shiro.authz.SimpleAuthorizationInfo
  * @since 0.2
  */
+@SuppressWarnings({"checkstyle:MethodCount", "checkstyle:LineLength"})
 public abstract class AuthorizingRealm extends AuthenticatingRealm
         implements Authorizer, Initializable, PermissionResolverAware, RolePermissionResolverAware {
 

@@ -18,15 +18,15 @@
  */
 package org.apache.shiro.web.tags;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspTagException;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>Tag used to print out the String value of a user's default principal,
@@ -166,7 +166,7 @@ public class PrincipalTag extends SecureTag {
         return principal;
     }
 
-
+    @SuppressWarnings("checkstyle:LineLength")
     private String getPrincipalProperty(Object principal, String property) throws JspTagException {
         String strValue = null;
 

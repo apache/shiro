@@ -23,7 +23,8 @@
 
     <feature name="shiro-core" version="${project.version}">
         <bundle dependency="true">mvn:commons-beanutils/commons-beanutils/${commons.beanutils.version}</bundle>
-        <bundle dependency="true">mvn:org.apache.commons/commons-configuration2/${commons.configuration2.version}</bundle>
+        <bundle dependency="true">mvn:org.apache.commons/commons-configuration2/${commons.configuration2.version}
+        </bundle>
         <bundle dependency="true">mvn:commons-collections/commons-collections/${commons.collection.version}</bundle>
         <bundle dependency="true">mvn:org.apache.commons/commons-text/${commons.text.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-lang/${project.version}</bundle>
@@ -48,7 +49,9 @@
 
     <feature name="shiro-aspectj" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
-        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aspectj/${aspectj.bundle.version}</bundle>
+        <bundle dependency="true">
+            mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aspectj/${aspectj.bundle.version}
+        </bundle>
         <bundle>mvn:org.apache.shiro/shiro-aspectj/${project.version}</bundle>
     </feature>
 
@@ -60,7 +63,9 @@
 
     <feature name="shiro-ehcache" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
-        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/${ehcache.bundle.version}</bundle>
+        <bundle dependency="true">
+            mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/${ehcache.bundle.version}
+        </bundle>
         <bundle>mvn:org.apache.shiro/shiro-ehcache/${project.version}</bundle>
     </feature>
 
@@ -87,9 +92,13 @@
     <feature name="shiro-quartz" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
         <bundle dependency="true">mvn:commons-collections/commons-collections/${commons.collections.version}</bundle>
-        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}</bundle>
+        <bundle dependency="true">
+            mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}
+        </bundle>
         <bundle dependency="true">mvn:com.zaxxer/HikariCP-java7/${hikaricp-version}</bundle>
-        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/${quartz.bundle.version}</bundle>
+        <bundle dependency="true">
+            mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/${quartz.bundle.version}
+        </bundle>
         <bundle>mvn:org.apache.shiro/shiro-quartz/${project.version}</bundle>
     </feature>
 

@@ -43,6 +43,7 @@ import java.io.IOException;
  *
  * @since 1.0
  */
+@SuppressWarnings("checkstyle:JavadocVariable")
 public class PortFilter extends AuthorizationFilter {
 
     public static final int DEFAULT_HTTP_PORT = 80;

@@ -64,6 +64,7 @@ import static java.util.Collections.emptyMap;
  *
  * @since 1.2
  */
+@SuppressWarnings("checkstyle:LineLength")
 public final class Hasher {
 
     private static final Logger LOG = LoggerFactory.getLogger(Hasher.class);
@@ -116,6 +117,7 @@ public final class Hasher {
     private Hasher() {
     }
 
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:MethodLength", "checkstyle:NPathComplexity", "checkstyle:MagicNumber"})
     public static void main(String[] args) {
         CommandLineParser parser = new DefaultParser();
 
@@ -319,6 +321,7 @@ public final class Hasher {
         }
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     private static ByteSource getSalt(String saltString, String saltBytesString, boolean generateSalt, int generatedSaltSize) {
 
         if (saltString != null) {
@@ -376,6 +379,7 @@ public final class Hasher {
         }
     }
 
+    @SuppressWarnings("checkstyle:MethodLength")
     private static void printHelp(Options options, Exception e, boolean debug) {
         HelpFormatter help = new HelpFormatter();
         String command = "java -jar shiro-tools-hasher-<version>.jar [options] [<value>]";

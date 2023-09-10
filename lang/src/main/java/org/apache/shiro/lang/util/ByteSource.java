@@ -41,7 +41,7 @@ public interface ByteSource {
      * underlying wrapped byte array.
      *
      * @return the <a href="http://en.wikipedia.org/wiki/Hexadecimal">Hex</a>-formatted String representation of the
-     *         underlying wrapped byte array.
+     * underlying wrapped byte array.
      */
     String toHex();
 
@@ -50,7 +50,7 @@ public interface ByteSource {
      * underlying wrapped byte array.
      *
      * @return the <a href="http://en.wikipedia.org/wiki/Base64">Base 64</a>-formatted String representation of the
-     *         underlying wrapped byte array.
+     * underlying wrapped byte array.
      */
     String toBase64();
 
@@ -59,7 +59,7 @@ public interface ByteSource {
      * otherwise.
      *
      * @return {@code true} if the underlying wrapped byte array is null or empty (zero length), {@code false}
-     *         otherwise.
+     * otherwise.
      * @since 1.2
      */
     boolean isEmpty();
@@ -72,7 +72,8 @@ public interface ByteSource {
      */
     final class Util {
 
-        private Util() {  }
+        private Util() {
+        }
 
         /**
          * Returns a new {@code ByteSource} instance representing the specified byte array.
@@ -141,12 +142,12 @@ public interface ByteSource {
          * the {@link ByteSource.Util}'s default heuristics, {@code false} otherwise.
          * <p/>
          * This implementation merely returns {@link SimpleByteSource}
-         *                              .{@link SimpleByteSource#isCompatible(Object) isCompatible(source)}.
+         * .{@link SimpleByteSource#isCompatible(Object) isCompatible(source)}.
          *
          * @param source the object to test to see if it can be easily converted to ByteSource instances using default
          *               heuristics.
          * @return {@code true} if the specified object can be easily represented as a {@code ByteSource} using
-         *         the {@link ByteSource.Util}'s default heuristics, {@code false} otherwise.
+         * the {@link ByteSource.Util}'s default heuristics, {@code false} otherwise.
          */
         public static boolean isCompatible(Object source) {
             return SimpleByteSource.isCompatible(source);
@@ -168,8 +169,8 @@ public interface ByteSource {
             }
             if (!isCompatible(source)) {
                 String msg = "Unable to heuristically acquire bytes for object of type ["
-                                 + source.getClass().getName() + "].  If this type is indeed a byte-backed data type, you might "
-                                 + "want to write your own ByteSource implementation to extract its bytes explicitly.";
+                        + source.getClass().getName() + "].  If this type is indeed a byte-backed data type, you might "
+                        + "want to write your own ByteSource implementation to extract its bytes explicitly.";
                 throw new IllegalArgumentException(msg);
             }
             if (source instanceof byte[]) {
@@ -186,8 +187,8 @@ public interface ByteSource {
                 return bytes((InputStream) source);
             } else {
                 throw new IllegalStateException("Encountered unexpected byte source.  This is a bug - please notify "
-                                + "the Shiro developer list asap (the isCompatible implementation does not reflect this "
-                                + "method's implementation).");
+                        + "the Shiro developer list asap (the isCompatible implementation does not reflect this "
+                        + "method's implementation).");
             }
         }
     }

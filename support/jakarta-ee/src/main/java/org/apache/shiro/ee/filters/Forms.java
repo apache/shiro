@@ -19,11 +19,13 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.FORM_IS_RESUBMITTE
 import static org.apache.shiro.ee.filters.FormResubmitSupport.SESSION_EXPIRED_PARAMETER;
 import static org.apache.shiro.ee.filters.LogoutFilter.LOGOUT_PREDICATE_ATTR_NAME;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResumbitDisabled;
+
 import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -31,8 +33,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+
 import static org.apache.shiro.web.filter.authc.FormAuthenticationFilter.DEFAULT_ERROR_KEY_ATTRIBUTE_NAME;
 import static org.omnifaces.exceptionhandler.ViewExpiredExceptionHandler.wasViewExpired;
+
 import org.omnifaces.util.Faces;
 
 /**
@@ -147,6 +151,7 @@ public class Forms {
 
     /**
      * manually login, used via {@link PassThruAuthenticationFilter}
+     *
      * @param username
      * @param password
      * @param rememberMe
@@ -181,6 +186,7 @@ public class Forms {
 
     /**
      * Faces variant
+     *
      * @param useFallback
      * @param fallbackPath
      */
@@ -197,7 +203,7 @@ public class Forms {
      * @param fallbackPath
      */
     public static void logout(HttpServletRequest request, HttpServletResponse response,
-            FallbackPredicate useFallback, String fallbackPath) {
+                              FallbackPredicate useFallback, String fallbackPath) {
         if (!Boolean.TRUE.toString().equals(request.getHeader(FORM_IS_RESUBMITTED))) {
             SecurityUtils.getSubject().logout();
             FormResubmitSupport.redirectToView(request, response, useFallback, fallbackPath);

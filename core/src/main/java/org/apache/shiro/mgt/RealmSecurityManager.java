@@ -147,6 +147,7 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         }
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Simply calls {@link #applyCacheManagerToRealms() applyCacheManagerToRealms()} to allow the
      * newly set {@link org.apache.shiro.cache.CacheManager CacheManager} to be propagated to the internal collection of <code>Realm</code>

@@ -110,7 +110,7 @@ public final class Ini implements Map<String, Ini.Section> {
      * are all empty, {@code false} otherwise.
      *
      * @return {@code true} if no sections have been configured, or if there are sections, but the sections themselves
-     *         are all empty, {@code false} otherwise.
+     * are all empty, {@code false} otherwise.
      */
     public boolean isEmpty() {
         Collection<Section> sections = this.sections.values();
@@ -129,7 +129,7 @@ public final class Ini implements Map<String, Ini.Section> {
      * no sections.
      *
      * @return the names of all sections managed by this {@code Ini} instance or an empty collection if there are
-     *         no sections.
+     * no sections.
      */
     public Set<String> getSectionNames() {
         return Collections.unmodifiableSet(sections.keySet());
@@ -140,7 +140,7 @@ public final class Ini implements Map<String, Ini.Section> {
      * no sections.
      *
      * @return the sections managed by this {@code Ini} instance or an empty collection if there are
-     *         no sections.
+     * no sections.
      */
     public Collection<Section> getSections() {
         return Collections.unmodifiableCollection(sections.values());
@@ -231,7 +231,7 @@ public final class Ini implements Map<String, Ini.Section> {
      * @param propertyName the name of the property to add
      * @param defaultValue the default value to return if the section or property do not exist.
      * @return the value of the specified section property, or the {@code defaultValue} if the section or
-     *         property do not exist.
+     * property do not exist.
      */
     public String getSectionProperty(String sectionName, String propertyName, String defaultValue) {
         String value = getSectionProperty(sectionName, propertyName);
@@ -337,7 +337,7 @@ public final class Ini implements Map<String, Ini.Section> {
      * [section2]
      * key2 = value2
      * </code> </pre>
-     *
+     * <p>
      * To be merged:
      * <pre>
      * <code>[section1]
@@ -346,7 +346,7 @@ public final class Ini implements Map<String, Ini.Section> {
      * [section2]
      * key2 = new value
      * </code> </pre>
-     *
+     * <p>
      * Result:
      * <pre>
      * <code>[section1]
@@ -621,7 +621,7 @@ public final class Ini implements Map<String, Ini.Section> {
 
             LOGGER.trace("Discovered key/value pair: {} = {}", key, value);
 
-            return new String[]{key, value};
+            return new String[] {key, value};
         }
 
         private static Map<String, String> toMapProps(String content) {

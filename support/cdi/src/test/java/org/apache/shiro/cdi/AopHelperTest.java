@@ -16,15 +16,19 @@ package org.apache.shiro.cdi;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import javax.validation.constraints.NotNull;
+
 import lombok.SneakyThrows;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.authz.aop.AuthenticatedAnnotationHandler;
 import org.apache.shiro.authz.aop.UserAnnotationHandler;
 import org.apache.shiro.cdi.AopHelper.SecurityInterceptor;
+
 import static org.apache.shiro.cdi.AopHelper.autorizationAnnotationClasses;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.times;
@@ -39,13 +43,15 @@ class AopHelperTest {
     @RequiresUser
     static class Annotated {
         @RequiresAuthentication
-        public void method() { }
+        public void method() {
+        }
     }
 
     @ShiroSecureAnnotation
     public class NotAnnotated {
         @NotNull
-        public void method() { }
+        public void method() {
+        }
     }
 
     @SneakyThrows

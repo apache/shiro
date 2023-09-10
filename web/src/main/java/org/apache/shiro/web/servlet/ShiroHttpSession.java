@@ -42,10 +42,12 @@ import java.util.Set;
  *
  * @since 0.2
  */
+@SuppressWarnings({"checkstyle:ExplicitInitialization", "checkstyle:MagicNumber"})
 public class ShiroHttpSession implements HttpSession {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * default session id name.
+     */
     public static final String DEFAULT_SESSION_ID_NAME = "JSESSIONID";
 
     private static final Enumeration EMPTY_ENUMERATION = new Enumeration() {
@@ -120,7 +122,7 @@ public class ShiroHttpSession implements HttpSession {
 
     public int getMaxInactiveInterval() {
         try {
-            return (new Long(getSession().getTimeout() / 1000)).intValue();
+            return (Long.valueOf(getSession().getTimeout() / 1000)).intValue();
         } catch (InvalidSessionException e) {
             throw new IllegalStateException(e);
         }

@@ -57,6 +57,7 @@ public @interface RequiresPermissions {
 
     /**
      * The logical operation for the permission checks in case multiple roles are specified. AND is the default
+     *
      * @since 1.1.0
      */
     Logical logical() default Logical.AND;

@@ -70,9 +70,15 @@ public final class H64 {
             //any remaining bytes:
             short s = toShort(bytes[offset + i]);
             switch (i) {
-                case 1: val |= s << (2 << 2); break;
-                case 2: val |= s << ((2 << 2) * 2); break;
-                case 3: val |= s << ((2 << 2) * 3); break;
+                case 1:
+                    val |= s << (2 << 2);
+                    break;
+                case 2:
+                    val |= s << ((2 << 2) * 2);
+                    break;
+                case 3:
+                    val |= s << ((2 << 2) * 3);
+                    break;
                 default:
             }
         }

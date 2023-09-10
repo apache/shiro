@@ -15,30 +15,38 @@ package org.apache.shiro.testing.jakarta.ee;
 
 import com.flowlogix.util.ShrinkWrapManipulator;
 import com.flowlogix.util.ShrinkWrapManipulator.Action;
+
 import static com.flowlogix.util.ShrinkWrapManipulator.getContextParamValue;
 import static org.apache.shiro.testing.jakarta.ee.Deployments.standardActions;
 import static org.apache.shiro.testing.jakarta.ee.Deployments.isClientStateSavingIntegrationTest;
 import static org.apache.shiro.testing.jakarta.ee.Deployments.isShiroNativeSessionsIntegrationTest;
+
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import static org.apache.shiro.web.servlet.ShiroHttpSession.DEFAULT_SESSION_ID_NAME;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
+
 import static org.jboss.arquillian.graphene.Graphene.guardAjax;
 import static org.jboss.arquillian.graphene.Graphene.guardHttp;
 import static org.jboss.arquillian.graphene.Graphene.waitForHttp;
 import static org.jboss.arquillian.graphene.Graphene.waitGui;
+
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.archive.importer.MavenImporter;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

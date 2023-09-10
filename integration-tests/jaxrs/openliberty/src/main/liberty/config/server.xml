@@ -31,14 +31,14 @@
     <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
     <httpEndpoint id="defaultHttpEndpoint"
                   httpPort="${default.http.port}"
-                  httpsPort="${default.https.port}" />
+                  httpsPort="${default.https.port}"/>
 
     <cdi12 enableImplicitBeanArchives="false"/>
     <webContainer skipMetaInfResourcesProcessing="true"/>
     <config updateTrigger="disabled"/>
 
     <!-- Default SSL configuration enables trust for default certificates from the Java runtime -->
-    <ssl id="defaultSSLConfig" trustDefaultCerts="true" />
+    <ssl id="defaultSSLConfig" trustDefaultCerts="true"/>
 
-    <webApplication location="${app.filename}.war" contextRoot="${app.context.root}" />
+    <webApplication location="${app.filename}.war" contextRoot="${app.context.root}"/>
 </server>

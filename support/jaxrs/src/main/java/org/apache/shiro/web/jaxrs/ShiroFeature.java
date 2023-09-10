@@ -29,7 +29,7 @@ import javax.ws.rs.ext.Provider;
 /**
  * Shiro JAX-RS feature which includes {@link UnauthorizedExceptionExceptionMapper}, {@link SubjectPrincipalRequestFilter}, and
  * {@link ShiroAnnotationFilterFeature}.
- *
+ * <p>
  * Typically a JAX-RS {@link Application} class will include this Feature class in the
  * classes returned from {@link Application#getClasses()} method, for example:
  * <blockquote><pre>

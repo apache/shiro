@@ -51,7 +51,7 @@ class Shiro1CryptFormatTest {
         String formatted = format.format(hash);
 
         String expected =
-            Shiro1CryptFormat.MCF_PREFIX + alg + '$' + iterations + '$' + salt.toBase64() + '$' + hash.toBase64()
+                Shiro1CryptFormat.MCF_PREFIX + alg + '$' + iterations + '$' + salt.toBase64() + '$' + hash.toBase64()
 
         assertNotNull formatted
         assertEquals expected, formatted

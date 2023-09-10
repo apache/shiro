@@ -69,6 +69,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *
  * @since 0.1
  */
+@SuppressWarnings("checkstyle:MethodCount")
 public class DelegatingSubject implements Subject {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DelegatingSubject.class);
@@ -529,12 +530,12 @@ public class DelegatingSubject implements Subject {
     @Override
     public String toString() {
         return new StringJoiner(", ", "DelegatingSubject{", "}")
-            .add("principals=" + principals)
-            .add("authenticated=" + authenticated)
-            .add("host='******")
-            .add("session='******'")
-            .add("sessionCreationEnabled=" + sessionCreationEnabled)
-            .add("securityManager=" + securityManager)
-            .toString();
+                .add("principals=" + principals)
+                .add("authenticated=" + authenticated)
+                .add("host='******")
+                .add("session='******'")
+                .add("sessionCreationEnabled=" + sessionCreationEnabled)
+                .add("securityManager=" + securityManager)
+                .toString();
     }
 }

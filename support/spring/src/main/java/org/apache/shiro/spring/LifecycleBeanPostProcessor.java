@@ -137,6 +137,7 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
 
     /**
      * Return true only if <code>bean</code> implements Destroyable.
+     *
      * @param bean bean to check if requires destruction.
      * @return true only if <code>bean</code> implements Destroyable.
      * @since 1.4

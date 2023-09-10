@@ -504,6 +504,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      * @param environment the JNDI environment settings to be validated
      * @throws AuthenticationException if a configuration problem is detected
      */
+    @SuppressWarnings({"checkstyle:LineLength", "checkstyle:BooleanExpressionComplexity"})
     protected void validateAuthenticationInfo(Hashtable<String, Object> environment)
             throws AuthenticationException {
         // validate when using Simple auth both principal and credentials are set

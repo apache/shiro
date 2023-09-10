@@ -25,10 +25,12 @@ import org.apache.shiro.web.util.WebUtils;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * A request filter that blocks malicious requests. Invalid request will respond with a 400 response code.
  * <p>
@@ -42,7 +44,7 @@ import java.util.List;
  * </ul>
  *
  * @see <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/web/firewall/StrictHttpFirewall.html">
- *          This class was inspired by Spring Security StrictHttpFirewall</a>
+ * This class was inspired by Spring Security StrictHttpFirewall</a>
  * @since 1.6
  */
 public class InvalidRequestFilter extends AccessControlFilter {
@@ -85,7 +87,7 @@ public class InvalidRequestFilter extends AccessControlFilter {
 
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        WebUtils.toHttp(response).sendError(400, "Invalid request");
+        WebUtils.toHttp(response).sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request");
         return false;
     }
 

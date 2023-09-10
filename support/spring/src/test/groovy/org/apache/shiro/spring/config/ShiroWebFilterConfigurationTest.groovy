@@ -96,7 +96,8 @@ class ShiroWebFilterConfigurationTest extends AbstractJUnit4SpringContextTests {
         void init(FilterConfig filterConfig) throws ServletException {}
 
         @Override
-        void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {}
+        void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        }
 
         @Override
         void destroy() {}

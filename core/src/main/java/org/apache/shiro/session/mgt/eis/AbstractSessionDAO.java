@@ -65,7 +65,7 @@ public abstract class AbstractSessionDAO implements SessionDAO {
      * is a {@link JavaUuidSessionIdGenerator}.
      *
      * @return the {@code SessionIdGenerator} used by the {@link #generateSessionId(org.apache.shiro.session.Session)}
-     *         method.
+     * method.
      */
     public SessionIdGenerator getSessionIdGenerator() {
         return sessionIdGenerator;
@@ -151,7 +151,7 @@ public abstract class AbstractSessionDAO implements SessionDAO {
      *
      * @param session the Session instance to persist to the EIS.
      * @return the id of the session created in the EIS (i.e. this is almost always a primary key and should be the
-     *         value returned from {@link org.apache.shiro.session.Session#getId() Session.getId()}.
+     * value returned from {@link org.apache.shiro.session.Session#getId() Session.getId()}.
      */
     protected abstract Serializable doCreate(Session session);
 
@@ -178,7 +178,7 @@ public abstract class AbstractSessionDAO implements SessionDAO {
      *
      * @param sessionId the id of the <tt>Session</tt> to retrieve.
      * @return the Session in the EIS identified by <tt>sessionId</tt> or {@code null} if a
-     *         session with that ID could not be found.
+     * session with that ID could not be found.
      */
     protected abstract Session doReadSession(Serializable sessionId);
 

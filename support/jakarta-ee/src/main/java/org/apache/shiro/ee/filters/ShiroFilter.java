@@ -21,6 +21,7 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.isPostRequest;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.resubmitSavedForm;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.DONT_ADD_ANY_MORE_COOKIES;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isShiroEEDisabled;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
@@ -37,19 +38,24 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
+
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
+
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
+
 import static org.apache.shiro.web.filter.authz.SslFilter.HTTPS_SCHEME;
+
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
@@ -63,17 +69,17 @@ import org.omnifaces.util.Servlets;
  * this has sideffects of trying to log in to remote EJBs with the credentials from Shiro,
  * which isn't what this meant to do, as it's meant to just transfer Shiro credentials
  * to remote EJB call site.
- *
+ * <p>
  * Thus, force null EJB principal for the web session,
  * as the real principal comes from the EjbSecurityFilter's doAs() call
- *
+ * <p>
  * Also handles X-Forwarded-Proto support
  */
 @Slf4j
 @WebFilter(filterName = "ShiroFilter", urlPatterns = "/*",
-        dispatcherTypes = { DispatcherType.ERROR, DispatcherType.FORWARD,
-            DispatcherType.INCLUDE, DispatcherType.REQUEST,
-            DispatcherType.ASYNC }, asyncSupported = true)
+        dispatcherTypes = {DispatcherType.ERROR, DispatcherType.FORWARD,
+                DispatcherType.INCLUDE, DispatcherType.REQUEST,
+                DispatcherType.ASYNC}, asyncSupported = true)
 public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
     private static final String X_FORWARDED_PROTO = "X-Forwarded-Proto";
     private static final Pattern HTTP_TO_HTTPS = Pattern.compile("^\\s*http(.*)");
@@ -123,7 +129,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
         private boolean createHttpButNeedHttps() {
             return !HTTPS_SCHEME.equalsIgnoreCase(super.getScheme())
                     && HTTPS_SCHEME.equalsIgnoreCase(WebUtils.toHttp(getRequest())
-                            .getHeader(X_FORWARDED_PROTO));
+                    .getHeader(X_FORWARDED_PROTO));
         }
 
         private StringBuffer rewriteHttpToHttps() {
@@ -218,7 +224,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
     @SneakyThrows
     @SuppressWarnings("LineLength")
     protected void executeChain(ServletRequest request, ServletResponse response,
-            FilterChain origChain) throws IOException, ServletException {
+                                FilterChain origChain) throws IOException, ServletException {
         if (isShiroEEDisabled(getServletContext())) {
             origChain.doFilter(request, response);
         } else if (Boolean.TRUE.equals(request.getAttribute(FORM_IS_RESUBMITTED)) && isPostRequest(request)) {
@@ -230,9 +236,9 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             var httpRequest = WebUtils.toHttp(request);
             boolean rememberedAjaxResubmit = "partial/ajax".equals(httpRequest.getHeader("Faces-Request"));
             Optional.ofNullable(resubmitSavedForm(postData,
-                    Servlets.getRequestURLWithQueryString(httpRequest),
-                    WebUtils.toHttp(request), WebUtils.toHttp(response),
-                    request.getServletContext(), rememberedAjaxResubmit))
+                            Servlets.getRequestURLWithQueryString(httpRequest),
+                            WebUtils.toHttp(request), WebUtils.toHttp(response),
+                            request.getServletContext(), rememberedAjaxResubmit))
                     .ifPresent(url -> sendRedirect(response, url));
         } else {
             // See https://stackoverflow.com/questions/7643484/how-to-get-rid-of-warning-pwc4011-unable-to-set-request-character-encoding-to

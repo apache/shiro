@@ -17,27 +17,29 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-  <html xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:shiro="http://shiro.apache.org/tags">
-    <h:head>
-        <title>Tags Test Page</title>
-    </h:head>
-    <h:body>
-        <span id="guestTag"><shiro:guest>Guest Content</shiro:guest></span>
-        <span id="userTag"><shiro:user>User Content</shiro:user></span>
-        <span id="authenticatedTag"><shiro:authenticated>Authenticated Content</shiro:authenticated></span>
-        <span id="notAuthenticatedTag"><shiro:notAuthenticated>Not Authenticated Content</shiro:notAuthenticated></span>
-        <span id="principalTag"><shiro:principal/></span>
-        <span id="principalTagByType"><shiro:principal type="java.lang.Integer"/></span>
-        <span id="principalTagByProperty"><shiro:principal property="userName"
-                                          type="org.apache.shiro.testing.jakarta.ee.PropertyPrincipal"/></span>
-        <span id="hasRegularRoleTag"><shiro:hasRole name="regular">Regular Role</shiro:hasRole></span>
-        <span id="lacksAdminRoleTag"><shiro:lacksRole name="admin">Lacks Admin Role</shiro:lacksRole></span>
-        <span id="hasAnyRoleTag"><shiro:hasAnyRoles name="regular, admin">Has Some Role</shiro:hasAnyRoles></span>
-        <span id="hasAnyPermissionTag"><shiro:hasAnyPermission name="pages:write, pages:read">Has Some Permission</shiro:hasAnyPermission></span>
-        <span id="hasPermissionTag"><shiro:hasPermission name="pages:read">Has Permission</shiro:hasPermission></span>
-        <span id="lacksPermissionTag"><shiro:lacksPermission name="pages:write">Lacks Permission</shiro:lacksPermission></span>
-        <span id="rememberedTag"><shiro:remembered name="pages:write">Remembered</shiro:remembered></span>
-    </h:body>
+<h:head>
+    <title>Tags Test Page</title>
+</h:head>
+<h:body>
+    <span id="guestTag"><shiro:guest>Guest Content</shiro:guest></span>
+    <span id="userTag"><shiro:user>User Content</shiro:user></span>
+    <span id="authenticatedTag"><shiro:authenticated>Authenticated Content</shiro:authenticated></span>
+    <span id="notAuthenticatedTag"><shiro:notAuthenticated>Not Authenticated Content</shiro:notAuthenticated></span>
+    <span id="principalTag"><shiro:principal/></span>
+    <span id="principalTagByType"><shiro:principal type="java.lang.Integer"/></span>
+    <span id="principalTagByProperty"><shiro:principal property="userName"
+                                                       type="org.apache.shiro.testing.jakarta.ee.PropertyPrincipal"/></span>
+    <span id="hasRegularRoleTag"><shiro:hasRole name="regular">Regular Role</shiro:hasRole></span>
+    <span id="lacksAdminRoleTag"><shiro:lacksRole name="admin">Lacks Admin Role</shiro:lacksRole></span>
+    <span id="hasAnyRoleTag"><shiro:hasAnyRoles name="regular, admin">Has Some Role</shiro:hasAnyRoles></span>
+    <span id="hasAnyPermissionTag"><shiro:hasAnyPermission
+            name="pages:write, pages:read">Has Some Permission</shiro:hasAnyPermission></span>
+    <span id="hasPermissionTag"><shiro:hasPermission name="pages:read">Has Permission</shiro:hasPermission></span>
+    <span id="lacksPermissionTag"><shiro:lacksPermission
+            name="pages:write">Lacks Permission</shiro:lacksPermission></span>
+    <span id="rememberedTag"><shiro:remembered name="pages:write">Remembered</shiro:remembered></span>
+</h:body>
 </html>

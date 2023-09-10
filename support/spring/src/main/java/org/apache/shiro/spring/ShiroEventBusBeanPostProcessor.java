@@ -28,6 +28,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 
 import java.util.List;
 
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Spring {@link BeanPostProcessor} that detects, {@link EventBusAware} and classes containing {@link Subscribe @Subscribe} methods.
  * Any classes implementing EventBusAware will have the setEventBus() method called with the <code>eventBus</code>. Any

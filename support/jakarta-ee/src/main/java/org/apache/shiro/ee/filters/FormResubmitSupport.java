@@ -13,6 +13,53 @@
  */
 package org.apache.shiro.ee.filters;
 
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
+import org.apache.shiro.ee.filters.ShiroFilter.WrappedSecurityManager;
+import org.apache.shiro.mgt.AbstractRememberMeManager;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.mgt.SessionsSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.apache.shiro.web.util.WebUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
+import org.omnifaces.util.Faces;
+import org.omnifaces.util.Servlets;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.CookieManager;
+import java.net.HttpCookie;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static java.util.function.Predicate.not;
+import static javax.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
+import static javax.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.CONTENT_TYPE;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.COOKIE;
@@ -29,54 +76,9 @@ import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.cookieStrea
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.deleteCookie;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getCookieAge;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getSessionCookieName;
-import java.util.Collections;
-import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
-import org.apache.shiro.ee.filters.ShiroFilter.WrappedSecurityManager;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResumbitDisabled;
-import java.io.IOException;
-import java.net.CookieManager;
-import java.net.HttpCookie;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-import java.util.UUID;
-import static java.util.function.Predicate.not;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import static javax.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
-import static javax.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
-import org.apache.shiro.mgt.AbstractRememberMeManager;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.mgt.SessionsSecurityManager;
-import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
-import org.apache.shiro.web.util.WebUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
-import org.omnifaces.util.Faces;
-import org.omnifaces.util.Servlets;
 
 /**
  * supporting methods for {@link Forms}
@@ -123,7 +125,8 @@ public class FormResubmitSupport {
     }
 
     @RequiredArgsConstructor
-    @EqualsAndHashCode @ToString
+    @EqualsAndHashCode
+    @ToString
     @SuppressWarnings("VisibilityModifier")
     static class PartialAjaxResult {
         public final String result;
@@ -234,15 +237,16 @@ public class FormResubmitSupport {
     /**
      * Redirects the user to saved request after login, if available
      * Resumbits the form that caused the logout upon successfull login.Form resumnission supports JSF and Ajax forms
+     *
      * @param request
      * @param response
      * @param useFallbackPath predicate whether to use fall back path
      * @param fallbackPath
-     * @param resubmit if true, attempt to resubmit the form that was unsubmitted prior to logout
+     * @param resubmit        if true, attempt to resubmit the form that was unsubmitted prior to logout
      */
     @SneakyThrows({IOException.class, URISyntaxException.class, InterruptedException.class})
     static void redirectToSaved(HttpServletRequest request, HttpServletResponse response,
-            FallbackPredicate useFallbackPath, String fallbackPath, boolean resubmit) {
+                                FallbackPredicate useFallbackPath, String fallbackPath, boolean resubmit) {
         String savedRequest = Servlets.getRequestCookie(request, WebUtils.SAVED_REQUEST_KEY);
         if (savedRequest != null) {
             doRedirectToSaved(request, response, savedRequest, resubmit);
@@ -261,14 +265,15 @@ public class FormResubmitSupport {
      * @param fallbackPath
      */
     static void redirectToSaved(HttpServletRequest request, HttpServletResponse response,
-            FallbackPredicate useFallbackPath, String fallbackPath) {
+                                FallbackPredicate useFallbackPath, String fallbackPath) {
         redirectToSaved(request, response, useFallbackPath, fallbackPath,
                 !isFormResumbitDisabled(request.getServletContext()));
     }
 
 
     private static void doRedirectToSaved(HttpServletRequest request, HttpServletResponse response,
-            @NonNull String savedRequest, boolean resubmit) throws IOException, URISyntaxException, InterruptedException {
+                                          @NonNull String savedRequest, boolean resubmit)
+            throws IOException, URISyntaxException, InterruptedException {
         deleteCookie(response, request.getServletContext(), WebUtils.SAVED_REQUEST_KEY);
         String savedFormDataKey = Servlets.getRequestCookie(request, SHIRO_FORM_DATA_KEY);
         boolean doRedirectAtEnd = true;
@@ -276,7 +281,7 @@ public class FormResubmitSupport {
             String formData = getSavedFormDataFromKey(savedFormDataKey);
             if (formData != null) {
                 Optional.ofNullable(resubmitSavedForm(formData, savedRequest,
-                        request, response, request.getServletContext(), false))
+                                request, response, request.getServletContext(), false))
                         .ifPresent(path -> doFacesRedirect(request, response, path));
                 doRedirectAtEnd = false;
             } else {
@@ -307,7 +312,7 @@ public class FormResubmitSupport {
      */
     @SneakyThrows
     static void redirectToView(HttpServletRequest request, HttpServletResponse response,
-            FallbackPredicate useFallbackPath, String fallbackPath) {
+                               FallbackPredicate useFallbackPath, String fallbackPath) {
         boolean useFallback = useFallbackPath.useFallback(request.getRequestURI(), request);
         String referer = getReferer(request);
         String redirectPath = Servlets.getRequestURLWithQueryString(request);
@@ -334,7 +339,7 @@ public class FormResubmitSupport {
      * @param paramValues
      */
     private static void doFacesRedirect(HttpServletRequest request, HttpServletResponse response,
-            String path, Object... paramValues) {
+                                        String path, Object... paramValues) {
         if (hasFacesContext()) {
             Faces.redirect(path, paramValues);
         } else {
@@ -356,8 +361,8 @@ public class FormResubmitSupport {
     }
 
     static String resubmitSavedForm(@NonNull String savedFormData, @NonNull String savedRequest,
-            HttpServletRequest originalRequest, HttpServletResponse originalResponse,
-            ServletContext servletContext, boolean rememberedAjaxResubmit)
+                                    HttpServletRequest originalRequest, HttpServletResponse originalResponse,
+                                    ServletContext servletContext, boolean rememberedAjaxResubmit)
             throws InterruptedException, URISyntaxException, IOException {
         if (log.isDebugEnabled()) {
             log.debug("saved form data: {}", savedFormData);
@@ -419,8 +424,9 @@ public class FormResubmitSupport {
         return response;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     private static PartialAjaxResult parseFormData(String savedFormData, URI savedRequest,
-            HttpClient client, ServletContext servletContext) throws IOException, InterruptedException {
+                                                   HttpClient client, ServletContext servletContext) throws IOException, InterruptedException {
         boolean isStateless = true;
         if (!isJSFClientStateSavingMethod(servletContext)) {
             String decodedFormData = URLDecoder.decode(savedFormData, StandardCharsets.UTF_8);
@@ -432,11 +438,11 @@ public class FormResubmitSupport {
         return noJSFAjaxRequests(savedFormData, isStateless);
     }
 
-    @SuppressWarnings("fallthrough")
+    @SuppressWarnings({"fallthrough", "checkstyle:LineLength"})
     private static String processResubmitResponse(HttpResponse<String> response,
-            HttpServletRequest originalRequest, HttpServletResponse originalResponse,
-            HttpHeaders headers, String savedRequest, ServletContext servletContext,
-            boolean isPartialAjaxRequest, boolean rememberedAjaxResubmit) throws IOException {
+                                                  HttpServletRequest originalRequest, HttpServletResponse originalResponse,
+                                                  HttpHeaders headers, String savedRequest, ServletContext servletContext,
+                                                  boolean isPartialAjaxRequest, boolean rememberedAjaxResubmit) throws IOException {
         switch (response.statusCode()) {
             case FOUND:
                 if (rememberedAjaxResubmit) {
@@ -477,7 +483,7 @@ public class FormResubmitSupport {
     }
 
     private static HttpClient buildHttpClient(URI savedRequest, ServletContext servletContext,
-            HttpServletRequest originalRequest) throws URISyntaxException {
+                                              HttpServletRequest originalRequest) throws URISyntaxException {
         CookieManager cookieManager = new CookieManager();
         var session = SecurityUtils.getSubject().getSession();
         var sessionCookieName = getSessionCookieName(servletContext, SecurityUtils.getSecurityManager());

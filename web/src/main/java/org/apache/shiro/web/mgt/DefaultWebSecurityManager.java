@@ -57,8 +57,10 @@ import java.util.function.Supplier;
  */
 public class DefaultWebSecurityManager extends DefaultSecurityManager implements WebSecurityManager {
 
+    @SuppressWarnings("checkstyle:JavadocVariable")
     @Deprecated
     public static final String HTTP_SESSION_MODE = "http";
+    @SuppressWarnings("checkstyle:JavadocVariable")
     @Deprecated
     public static final String NATIVE_SESSION_MODE = "native";
 

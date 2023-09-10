@@ -30,23 +30,23 @@
     </appender>
 
     <logger name="org.springframework" warn="warn" additivity="false">
-        <appender-ref ref="Console" />
+        <appender-ref ref="Console"/>
     </logger>
     <logger name="org.apache" warn="warn" additivity="false">
-        <appender-ref ref="Console" />
+        <appender-ref ref="Console"/>
     </logger>
     <logger name="net.sf.ehcache" warn="warn" additivity="false">
-        <appender-ref ref="Console" />
+        <appender-ref ref="Console"/>
     </logger>
     <logger name="org.apache.shiro" warn="warn" additivity="false">
-        <appender-ref ref="Console" />
+        <appender-ref ref="Console"/>
     </logger>
     <logger name="org.apache.shiro.util.ThreadContext" warn="warn" additivity="false">
-        <appender-ref ref="Console" />
+        <appender-ref ref="Console"/>
     </logger>
 
     <root level="error">
-        <appender-ref ref="Console" />
+        <appender-ref ref="Console"/>
     </root>
 
 </configuration>

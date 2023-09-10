@@ -23,9 +23,9 @@ import org.apache.shiro.session.mgt.SessionManager;
 /**
  * {@link SessionManager} specific to web-enabled applications.
  *
- * @since 1.2
  * @see ServletContainerSessionManager
  * @see DefaultWebSessionManager
+ * @since 1.2
  */
 public interface WebSessionManager extends SessionManager {
 
@@ -39,7 +39,7 @@ public interface WebSessionManager extends SessionManager {
      * - like distributed caching - in a container-independent manner).
      *
      * @return {@code true} if session management and storage is managed by the underlying Servlet container or
-     *         {@code false} if managed by Shiro directly (called 'native' sessions).
+     * {@code false} if managed by Shiro directly (called 'native' sessions).
      */
     boolean isServletContainerSessions();
 }

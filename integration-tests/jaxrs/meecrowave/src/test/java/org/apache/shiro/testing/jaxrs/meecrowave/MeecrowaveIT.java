@@ -35,7 +35,7 @@ public class MeecrowaveIT extends AbstractShiroJaxRsIT {
     private Meecrowave.Builder config;
 
     @Override
-    protected URI getBaseUri()  {
+    protected URI getBaseUri() {
         return URI.create("http://localhost:" + config.getHttpPort() + "/api");
     }
 

@@ -24,9 +24,11 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
     <factory>
-        <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory</exception-handler-factory>
+        <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory
+        </exception-handler-factory>
         <!-- order is important, the following line needs to appear last -->
-        <exception-handler-factory>org.omnifaces.exceptionhandler.ViewExpiredExceptionHandlerFactory</exception-handler-factory>
+        <exception-handler-factory>org.omnifaces.exceptionhandler.ViewExpiredExceptionHandlerFactory
+        </exception-handler-factory>
     </factory>
     <application>
         <resource-handler>org.omnifaces.resourcehandler.VersionedResourceHandler</resource-handler>

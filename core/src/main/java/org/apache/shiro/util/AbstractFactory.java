@@ -22,6 +22,7 @@ import org.apache.shiro.lang.util.Factory;
 
 /**
  * AbstractFactory.
+ *
  * @param <T> T
  * @since 1.0
  */

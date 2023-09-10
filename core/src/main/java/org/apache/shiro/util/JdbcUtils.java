@@ -37,7 +37,9 @@ import org.slf4j.LoggerFactory;
  */
 public final class JdbcUtils {
 
-    /** Private internal log instance. */
+    /**
+     * Private internal log instance.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcUtils.class);
 
     /**

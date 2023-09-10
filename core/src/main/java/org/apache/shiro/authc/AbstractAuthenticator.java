@@ -95,7 +95,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * attempts.
      *
      * @return the {@link AuthenticationListener AuthenticationListener}s that should be notified during authentication
-     *         attempts.
+     * attempts.
      */
     @SuppressWarnings({"UnusedDeclaration"})
     public Collection<AuthenticationListener> getAuthenticationListeners() {
@@ -252,7 +252,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      *
      * @param token the authentication token encapsulating the user's login information.
      * @return an {@code AuthenticationInfo} object encapsulating the user's account information
-     *         important to Shiro.
+     * important to Shiro.
      * @throws AuthenticationException if there is a problem logging in the user.
      */
     protected abstract AuthenticationInfo doAuthenticate(AuthenticationToken token)

@@ -74,7 +74,7 @@ public abstract class AbstractFilter extends ServletContextSupport implements Fi
      *
      * @param paramName the name of the {@code init-param}
      * @return the value for the named {@code init-param}, or {@code null} if there was no {@code init-param}
-     *         specified by that name.
+     * specified by that name.
      */
     protected String getInitParam(String paramName) {
         FilterConfig config = getFilterConfig();

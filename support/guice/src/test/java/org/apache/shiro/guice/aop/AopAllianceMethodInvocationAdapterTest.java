@@ -23,7 +23,10 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**

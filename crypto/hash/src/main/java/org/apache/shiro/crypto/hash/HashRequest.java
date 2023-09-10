@@ -54,7 +54,7 @@ public interface HashRequest {
      * strategy for a request, even if the request did not specify one.
      *
      * @return a salt to be used by the {@link HashService} during hash computation, or {@code null} if no salt is
-     *         provided as part of the request.
+     * provided as part of the request.
      */
     Optional<ByteSource> getSalt();
 

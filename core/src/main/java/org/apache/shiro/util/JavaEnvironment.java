@@ -66,7 +66,9 @@ public abstract class JavaEnvironment {
      */
     public static final int JAVA_18 = 5;
 
-    /** The virtual machine version, i.e. <code>System.getProperty("java.version");</code>. */
+    /**
+     * The virtual machine version, i.e. <code>System.getProperty("java.version");</code>.
+     */
     private static final String VERSION;
 
     /**
@@ -171,7 +173,6 @@ public abstract class JavaEnvironment {
      * @see #JAVA_16
      * @see #JAVA_17
      * @see #JAVA_18
-     *
      * @since 1.2
      */
     public static boolean isAtLeastVersion16() {

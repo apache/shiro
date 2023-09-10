@@ -26,14 +26,17 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.authz.aop.AuthenticatedAnnotationHandler;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
+import org.apache.shiro.authz.aop.DenyAllAnnotationHandler;
 import org.apache.shiro.authz.aop.GuestAnnotationHandler;
 import org.apache.shiro.authz.aop.PermissionAnnotationHandler;
-import org.apache.shiro.authz.aop.RoleAnnotationHandler;
-import org.apache.shiro.authz.aop.UserAnnotationHandler;
-import org.apache.shiro.authz.aop.DenyAllAnnotationHandler;
 import org.apache.shiro.authz.aop.PermitAllAnnotationHandler;
+import org.apache.shiro.authz.aop.RoleAnnotationHandler;
 import org.apache.shiro.authz.aop.RolesAllowedAnnotationHandler;
+import org.apache.shiro.authz.aop.UserAnnotationHandler;
 
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import java.io.IOException;
@@ -42,9 +45,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
 
 /**
  * A filter that grants or denies access to a JAX-RS resource based on the Shiro annotations on it.
@@ -56,6 +56,7 @@ public class AnnotationAuthorizationFilter implements ContainerRequestFilter {
 
     private final Map<AuthorizingAnnotationHandler, Annotation> authzChecks;
 
+    @SuppressWarnings("checkstyle:LineLength")
     public AnnotationAuthorizationFilter(Collection<Annotation> authzSpecs) {
         Map<AuthorizingAnnotationHandler, Annotation> authChecks = new HashMap<AuthorizingAnnotationHandler, Annotation>(authzSpecs.size());
         for (Annotation authSpec : authzSpecs) {

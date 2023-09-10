@@ -17,7 +17,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.shiro.integrationtests</groupId>
     <artifactId>shiro-its-jakarta-ee</artifactId>
@@ -385,7 +386,8 @@
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <commandlineArgs>create-domain --nopassword --checkports=false
-                                --portbase ${payara.portbase} ${domain.name}</commandlineArgs>
+                                --portbase ${payara.portbase} ${domain.name}
+                            </commandlineArgs>
                             <skip>${create-domain-skip}</skip>
                         </configuration>
                         <goals>
@@ -398,9 +400,12 @@
                         <configuration>
                             <executable>sed</executable>
                             <commandlineArgs>-i ${mac-backup-file} -e 's/jvm-options>\[17|/jvm-options>\[16|/g'
-                                -e 's/property name="HZ_LISTENER_PORT" value="5900/property name="HZ_LISTENER_PORT" value="5920/g'
-                                -e 's/hazelcast-runtime-configuration start-port="5900/hazelcast-runtime-configuration start-port="5920/g'
-                                ${project.build.directory}/dependency/payara5/glassfish/domains/${domain.name}/config/domain.xml</commandlineArgs>
+                                -e 's/property name="HZ_LISTENER_PORT" value="5900/property name="HZ_LISTENER_PORT"
+                                value="5920/g'
+                                -e 's/hazelcast-runtime-configuration start-port="5900/hazelcast-runtime-configuration
+                                start-port="5920/g'
+                                ${project.build.directory}/dependency/payara5/glassfish/domains/${domain.name}/config/domain.xml
+                            </commandlineArgs>
                             <skip>${unix-sed-skip}</skip>
                         </configuration>
                         <goals>
@@ -436,7 +441,9 @@
                         <id>payara-config-tmpdir</id>
                         <phase>pre-integration-test</phase>
                         <configuration>
-                            <commandlineArgs>-p ${payara.adminport} create-system-properties java.io.tmpdir=${project.build.directory}/payara_tmp</commandlineArgs>
+                            <commandlineArgs>-p ${payara.adminport} create-system-properties
+                                java.io.tmpdir=${project.build.directory}/payara_tmp
+                            </commandlineArgs>
                             <skip>${payara.restart.skip}</skip>
                         </configuration>
                         <goals>

@@ -148,6 +148,7 @@ public class WildcardPermission implements Permission, Serializable {
         setParts(wildcardString, DEFAULT_CASE_SENSITIVE);
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     protected void setParts(String wildcardString, boolean caseSensitive) {
         wildcardString = StringUtils.clean(wildcardString);
 

@@ -82,8 +82,8 @@ public class SecureBankService implements BankService {
     }
 
     /* (non-Javadoc)
-    * @see com.connectif.trilogy.root.security.BankService#createNewAccount(java.lang.String)
-    */
+     * @see com.connectif.trilogy.root.security.BankService#createNewAccount(java.lang.String)
+     */
 
     @RequiresPermissions("bankAccount:create")
     public long createNewAccount(String anOwnerName) {
@@ -102,8 +102,8 @@ public class SecureBankService implements BankService {
     }
 
     /* (non-Javadoc)
-    * @see com.connectif.trilogy.root.security.BankService#searchAccountIdsByOwner(java.lang.String)
-    */
+     * @see com.connectif.trilogy.root.security.BankService#searchAccountIdsByOwner(java.lang.String)
+     */
 
     public long[] searchAccountIdsByOwner(String anOwnerName) {
         assertServiceState();
@@ -129,8 +129,8 @@ public class SecureBankService implements BankService {
     }
 
     /* (non-Javadoc)
-    * @see com.connectif.trilogy.root.security.BankService#getOwnerOf(long)
-    */
+     * @see com.connectif.trilogy.root.security.BankService#getOwnerOf(long)
+     */
 
     @RequiresPermissions("bankAccount:read")
     public String getOwnerOf(long anAccountId) throws AccountNotFoundException {
@@ -142,8 +142,8 @@ public class SecureBankService implements BankService {
     }
 
     /* (non-Javadoc)
-    * @see com.connectif.trilogy.root.security.BankService#getBalanceOf(long)
-    */
+     * @see com.connectif.trilogy.root.security.BankService#getBalanceOf(long)
+     */
 
     @RequiresPermissions("bankAccount:read")
     public double getBalanceOf(long anAccountId) throws AccountNotFoundException {
@@ -155,8 +155,8 @@ public class SecureBankService implements BankService {
     }
 
     /* (non-Javadoc)
-    * @see com.connectif.trilogy.root.security.BankService#depositInto(long, double)
-    */
+     * @see com.connectif.trilogy.root.security.BankService#depositInto(long, double)
+     */
 
     @RequiresPermissions("bankAccount:operate")
     public double depositInto(long anAccountId, double anAmount) throws AccountNotFoundException, InactiveAccountException {
@@ -180,9 +180,10 @@ public class SecureBankService implements BankService {
     }
 
     /* (non-Javadoc)
-    * @see com.connectif.trilogy.root.security.BankService#withdrawFrom(long, double)
-    */
+     * @see com.connectif.trilogy.root.security.BankService#withdrawFrom(long, double)
+     */
 
+    @SuppressWarnings("checkstyle:LineLength")
     @RequiresPermissions("bankAccount:operate")
     public double withdrawFrom(long anAccountId, double anAmount) throws AccountNotFoundException, NotEnoughFundsException, InactiveAccountException {
         assertServiceState();
@@ -200,8 +201,8 @@ public class SecureBankService implements BankService {
     }
 
     /* (non-Javadoc)
-    * @see com.connectif.trilogy.root.security.BankService#getTxHistoryFor(long)
-    */
+     * @see com.connectif.trilogy.root.security.BankService#getTxHistoryFor(long)
+     */
 
     @RequiresPermissions("bankAccount:read")
     public TxLog[] getTxHistoryFor(long anAccountId) throws AccountNotFoundException {
@@ -226,8 +227,8 @@ public class SecureBankService implements BankService {
     }
 
     /* (non-Javadoc)
-    * @see com.connectif.trilogy.root.security.BankService#closeAccount(long)
-    */
+     * @see com.connectif.trilogy.root.security.BankService#closeAccount(long)
+     */
 
     @RequiresPermissions("bankAccount:close")
     public double closeAccount(long anAccountId) throws AccountNotFoundException, InactiveAccountException {
@@ -255,8 +256,8 @@ public class SecureBankService implements BankService {
     }
 
     /* (non-Javadoc)
-    * @see com.connectif.trilogy.root.security.BankService#isAccountActive(long)
-    */
+     * @see com.connectif.trilogy.root.security.BankService#isAccountActive(long)
+     */
 
     @RequiresPermissions("bankAccount:read")
     public boolean isAccountActive(long anAccountId) throws AccountNotFoundException {

@@ -36,15 +36,16 @@ import static java.util.stream.Collectors.toSet;
 /**
  * Creates a hash provider for salt (+pepper) and Hash-based KDFs, i.e. where the algorithm name
  * is a SHA algorithm or similar.
+ *
  * @since 2.0
  */
 public class SimpleHashProvider implements HashSpi {
 
-    private static final Set<String> IMPLEMENTED_ALGORITHMS = Arrays.stream(new String[]{
-            Sha256Hash.ALGORITHM_NAME,
-            Sha384Hash.ALGORITHM_NAME,
-            Sha512Hash.ALGORITHM_NAME
-    })
+    private static final Set<String> IMPLEMENTED_ALGORITHMS = Arrays.stream(new String[] {
+                    Sha256Hash.ALGORITHM_NAME,
+                    Sha384Hash.ALGORITHM_NAME,
+                    Sha512Hash.ALGORITHM_NAME
+            })
             .collect(toSet());
 
     @Override
@@ -206,7 +207,7 @@ public class SimpleHashProvider implements HashSpi {
          * A secret part added to the salt. Sometimes also referred to as {@literal "Pepper"}.
          *
          * <p>For more information, see <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">
-         *     Pepper (cryptography) on Wikipedia</a>.</p>
+         * Pepper (cryptography) on Wikipedia</a>.</p>
          */
         public static final String PARAMETER_SECRET_SALT = "SimpleHash.secretSalt";
 

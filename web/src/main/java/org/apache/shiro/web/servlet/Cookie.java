@@ -49,7 +49,7 @@ public interface Cookie {
 
     /**
      * The SameSite attribute of the Set-Cookie HTTP response header allows you to declare
-     *      if your cookie should be restricted to a first-party or same-site context.
+     * if your cookie should be restricted to a first-party or same-site context.
      */
     enum SameSiteOptions {
         /**

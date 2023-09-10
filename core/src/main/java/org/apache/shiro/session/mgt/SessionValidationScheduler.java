@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.session.mgt;
 
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Interface that should be implemented by classes that can control validating sessions on a regular
  * basis.  This interface is used as a delegate for session validation by the {@link org.apache.shiro.session.mgt.DefaultSessionManager}

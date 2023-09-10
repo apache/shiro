@@ -28,7 +28,13 @@ import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletContext;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.and;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -43,6 +49,7 @@ public class WebGuiceEnvironmentTest {
         }
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     @Test
     void testConstructor() {
         WebSecurityManager securityManager = createMock(WebSecurityManager.class);
@@ -51,7 +58,8 @@ public class WebGuiceEnvironmentTest {
         ShiroFilterConfiguration filterConfiguration = createMock(ShiroFilterConfiguration.class);
 
         Capture<WebGuiceEnvironment> capture = Capture.newInstance();
-        servletContext.setAttribute(eq(EnvironmentLoaderListener.ENVIRONMENT_ATTRIBUTE_KEY), and(anyObject(WebGuiceEnvironment.class), capture(capture)));
+        servletContext.setAttribute(eq(EnvironmentLoaderListener.ENVIRONMENT_ATTRIBUTE_KEY),
+                and(anyObject(WebGuiceEnvironment.class), capture(capture)));
 
         replay(servletContext, securityManager, filterChainResolver);
 

@@ -93,6 +93,7 @@ public class AesCipherService extends DefaultBlockCipherService {
      * {@code AES/GCM/NoPadding}.
      * <p/>
      * <b>NOTE:</b> As of Java 14, setting a streaming padding for the above example will throw a NoSuchAlgorithmException
+     *
      * @see <a href="https://www.oracle.com/java/technologies/javase/14-relnote-issues.html#JDK-8180392">JDK-8180392</a>
      */
     public AesCipherService() {
@@ -107,7 +108,7 @@ public class AesCipherService extends DefaultBlockCipherService {
     protected AlgorithmParameterSpec createParameterSpec(byte[] iv, boolean streaming) {
 
         if ((streaming && OperationMode.GCM.name().equals(getStreamingModeName()))
-        || (!streaming && OperationMode.GCM.name().equals(getModeName()))) {
+                || (!streaming && OperationMode.GCM.name().equals(getModeName()))) {
             return new GCMParameterSpec(getKeySize(), iv);
         }
 

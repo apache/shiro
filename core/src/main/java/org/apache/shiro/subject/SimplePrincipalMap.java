@@ -102,7 +102,7 @@ public class SimplePrincipalMap implements PrincipalMap {
 
     public Set<String> keySet() {
         return CollectionUtils.isEmpty(this.combinedPrincipals) ? Collections.<String>emptySet()
-                 : Collections.unmodifiableSet(this.combinedPrincipals.keySet());
+                : Collections.unmodifiableSet(this.combinedPrincipals.keySet());
     }
 
     public Collection<Object> values() {

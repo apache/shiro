@@ -104,7 +104,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
      * some other means (cron, quartz, etc.).
      *
      * @return {@code true} if sessions should be automatically deleted after they are discovered to be invalid,
-     *         {@code false} if invalid sessions will be manually deleted by some process external to Shiro's control.
+     * {@code false} if invalid sessions will be manually deleted by some process external to Shiro's control.
      * @since 1.0
      */
     public boolean isDeleteInvalidSessions() {

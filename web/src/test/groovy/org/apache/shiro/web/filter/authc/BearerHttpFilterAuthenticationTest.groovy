@@ -100,15 +100,15 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
 
         verify(request, response)
     }
-    
+
     @Test
     void httpMethodDoesNotRequireAuthentication() throws Exception {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
-        
+
         HttpServletRequest request = createMock(HttpServletRequest.class)
         expect(request.getMethod()).andReturn("GET")
         replay(request)
-        
+
         HttpServletResponse response = createMock(HttpServletResponse.class)
         replay(response)
 
@@ -119,15 +119,15 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         })
         verify(request, response)
     }
-    
+
     @Test
     void httpMethodRequiresAuthentication() throws Exception {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
-        
+
         HttpServletRequest request = mockRequest("valid-token", "localhost", {
             expect(it.getMethod()).andReturn("POST")
         })
-        
+
         HttpServletResponse response = mockResponse()
 
         runWithSubject({

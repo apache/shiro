@@ -44,6 +44,7 @@ public class SampleShiroServletModule extends ShiroWebModule {
         this.servletContext = servletContext;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     @Override
     protected void configureShiroWeb() {
         bindConstant().annotatedWith(Names.named("shiro.loginUrl")).to("/login.jsp");

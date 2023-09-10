@@ -123,16 +123,16 @@ public class SimpleByteSource implements ByteSource {
      *
      * @param o the object to test to see if it can be easily converted to bytes by instances of this class.
      * @return {@code true} if the specified object can be easily converted to bytes by instances of this class,
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      * @since 1.2
      */
     public static boolean isCompatible(Object o) {
         return o instanceof byte[] || o instanceof char[] || o instanceof String
-                   || o instanceof ByteSource || o instanceof File || o instanceof InputStream;
+                || o instanceof ByteSource || o instanceof File || o instanceof InputStream;
     }
 
     public static ByteSource empty() {
-        return new SimpleByteSource(new byte[]{});
+        return new SimpleByteSource(new byte[] {});
     }
 
     @Override

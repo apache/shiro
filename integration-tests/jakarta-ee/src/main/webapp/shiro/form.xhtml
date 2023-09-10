@@ -17,47 +17,48 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-  <html xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://xmlns.jcp.org/jsf/passthrough"
       xmlns:h="http://xmlns.jcp.org/jsf/html">
-    <h:head>
-        <title>Form Page</title>
-    </h:head>
-    <h:body>
-        <h:form id="firstForm">
-            First Name:
-            <h:inputText id="firstName" title="First Name" p:autofocus="true" value="#{formBean.firstName}"/>
-            <p/>
-            Last Name:
-            <h:inputText id="lastName" title="Last Name" value="#{formBean.lastName}"/>
-            <p/>
-            <h:commandButton id="submitFirst" value="Submit ..." action="#{formBean.submit}"/>
-        </h:form>
-        <h:form id="secondForm">
-            Address:
-            <h:inputText id="address" value="#{formBean.address}"/>
-            <p/>
-            City:
-            <h:inputText id="city" value="#{formBean.city}"/>
-            <p/>
-            <h:commandButton id="submitSecond" value="Submit ..." action="#{formBean.submit2}">
-                <f:ajax execute="@form" render="@form"/>
-            </h:commandButton>
-            <p>
-                <input type="button" id="invalidate" value="Invalidate session via Servlet"
-                       onclick="invalidateSession('#{request.contextPath}/invalidatesession')" />
-                <h:commandButton value="Logout..." action="#{authc.logout}"/>
-            </p>
-            <h:messages id="messages"/>
-        </h:form>
-        <h:outputLink id="logoutFiaFilter" value="#{request.contextPath}/shiro/auth/logout">Logout (via filter)</h:outputLink>
-    </h:body>
-    <script type="text/javascript">
-        const invalidateSession = async (path) => {
-            const response = await fetch(path);
-            const strresp = await response.text();
-            alert('Session invalidated!');
-        };
-    </script>
+<h:head>
+    <title>Form Page</title>
+</h:head>
+<h:body>
+    <h:form id="firstForm">
+        First Name:
+        <h:inputText id="firstName" title="First Name" p:autofocus="true" value="#{formBean.firstName}"/>
+        <p/>
+        Last Name:
+        <h:inputText id="lastName" title="Last Name" value="#{formBean.lastName}"/>
+        <p/>
+        <h:commandButton id="submitFirst" value="Submit ..." action="#{formBean.submit}"/>
+    </h:form>
+    <h:form id="secondForm">
+        Address:
+        <h:inputText id="address" value="#{formBean.address}"/>
+        <p/>
+        City:
+        <h:inputText id="city" value="#{formBean.city}"/>
+        <p/>
+        <h:commandButton id="submitSecond" value="Submit ..." action="#{formBean.submit2}">
+            <f:ajax execute="@form" render="@form"/>
+        </h:commandButton>
+        <p>
+            <input type="button" id="invalidate" value="Invalidate session via Servlet"
+                   onclick="invalidateSession('#{request.contextPath}/invalidatesession')"/>
+            <h:commandButton value="Logout..." action="#{authc.logout}"/>
+        </p>
+        <h:messages id="messages"/>
+    </h:form>
+    <h:outputLink id="logoutFiaFilter" value="#{request.contextPath}/shiro/auth/logout">Logout (via filter)
+    </h:outputLink>
+</h:body>
+<script type="text/javascript">
+    const invalidateSession = async (path) => {
+        const response = await fetch(path);
+        const strresp = await response.text();
+        alert('Session invalidated!');
+    };
+</script>
 </html>

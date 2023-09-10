@@ -22,14 +22,13 @@ import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.text.TextConfigurationRealm;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 public class RealmTestConfiguration {
 
     @Bean
 //    @DependsOn("lifecycleBeanPostProcessor")
-    @SuppressWarnings("Duplicates")
+    @SuppressWarnings({"Duplicates", "checkstyle:OperatorWrap"})
     Realm getTextConfigurationRealm() {
 
         TextConfigurationRealm realm = new TextConfigurationRealm();

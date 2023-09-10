@@ -28,6 +28,7 @@ import java.io.ObjectOutputStream;
 
 /**
  * Serializer implementation that uses the default JVM serialization mechanism (Object Input/Output Streams).
+ *
  * @param <T> the type of target.
  * @since 0.9
  */
@@ -57,8 +58,8 @@ public class DefaultSerializer<T> implements Serializer<T> {
             return baos.toByteArray();
         } catch (IOException e) {
             String msg = "Unable to serialize object [" + o + "].  "
-                             + "In order for the DefaultSerializer to serialize this object, "
-                             + " the [" + o.getClass().getName() + "] class must implement java.io.Serializable.";
+                    + "In order for the DefaultSerializer to serialize this object, "
+                    + " the [" + o.getClass().getName() + "] class must implement java.io.Serializable.";
             throw new SerializationException(msg, e);
         }
     }

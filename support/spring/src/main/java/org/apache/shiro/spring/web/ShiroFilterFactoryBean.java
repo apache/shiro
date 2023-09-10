@@ -110,7 +110,7 @@ import java.util.Map;
  * <li>{@link #setSuccessUrl(String)}</li>
  * <li>{@link #setUnauthorizedUrl(String)}</li>
  * </ul>
- *
+ * <p>
  * Then at startup, any values specified via these 3 properties will be applied to all configured
  * Filter instances so you don't have to specify them individually on each filter instance.  To ensure your own custom
  * filters benefit from this convenience, your filter implementation should subclass one of the 3 mentioned
@@ -193,7 +193,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * is {@code null}.
      *
      * @return the application's login URL to be assigned to all acquired Filters that subclass
-     *         {@link AccessControlFilter} or {@code null} if no value should be assigned globally.
+     * {@link AccessControlFilter} or {@code null} if no value should be assigned globally.
      * @see #setLoginUrl
      */
     public String getLoginUrl() {
@@ -225,7 +225,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * is {@code null}.
      *
      * @return the application's after-login success URL to be assigned to all acquired Filters that subclass
-     *         {@link AuthenticationFilter} or {@code null} if no value should be assigned globally.
+     * {@link AuthenticationFilter} or {@code null} if no value should be assigned globally.
      * @see #setSuccessUrl
      */
     public String getSuccessUrl() {
@@ -257,7 +257,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * is {@code null}.
      *
      * @return the application's after-login success URL to be assigned to all acquired Filters that subclass
-     *         {@link AuthenticationFilter} or {@code null} if no value should be assigned globally.
+     * {@link AuthenticationFilter} or {@code null} if no value should be assigned globally.
      * @see #setSuccessUrl
      */
     public String getUnauthorizedUrl() {
@@ -322,7 +322,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * path expression) and the map value is the comma-delimited string chain definition.
      *
      * @return he chainName-to-chainDefinition map of chain definitions to use for creating filter chains intercepted
-     *         by the Shiro Filter.
+     * by the Shiro Filter.
      */
     public Map<String, String> getFilterChainDefinitionMap() {
         return filterChainDefinitionMap;
@@ -345,7 +345,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * A convenience method that sets the {@link #setFilterChainDefinitionMap(java.util.Map) filterChainDefinitionMap}
      * property by accepting a {@link java.util.Properties Properties}-compatible string (multi-line key/value pairs).
      * Each key/value pair must conform to the format defined by the
-     * {@link FilterChainManager#createChain(String,String)} JavaDoc - each property key is an ant URL
+     * {@link FilterChainManager#createChain(String, String)} JavaDoc - each property key is an ant URL
      * path expression and the value is the comma-delimited chain definition.
      *
      * @param definitions a {@link java.util.Properties Properties}-compatible string (multi-line key/value pairs)
@@ -367,6 +367,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     /**
      * Sets the list of filters that will be executed against every request.
      * Defaults to the {@link InvalidRequestFilter} which will block known invalid request attacks.
+     *
      * @param globalFilters the list of filters to execute before specific path filters.
      */
     public void setGlobalFilters(List<String> globalFilters) {

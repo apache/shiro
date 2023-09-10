@@ -32,6 +32,7 @@ class SimpleFilterChain implements FilterChain {
     private final FilterChain originalChain;
     private final Iterator<? extends Filter> chain;
 
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     private boolean originalCalled = false;
 
     SimpleFilterChain(FilterChain originalChain, Iterator<? extends Filter> chain) {
@@ -51,6 +52,7 @@ class SimpleFilterChain implements FilterChain {
 
     /**
      * Exposed for testing, not part of public API.
+     *
      * @return an Iterator of filters.
      */
     Iterator<? extends Filter> getFilters() {

@@ -53,7 +53,7 @@ public abstract class AbstractShiroJaxRsIT {
 
 
     @Test
-    public void testGetUsersUnauthenticated()  {
+    public void testGetUsersUnauthenticated() {
         final WebTarget usersTarget = client.target(getBaseUri()).path("troopers");
         final Response usersResponse = usersTarget.request(MediaType.APPLICATION_JSON_TYPE)
                 .buildGet()
@@ -61,6 +61,7 @@ public abstract class AbstractShiroJaxRsIT {
         assertEquals(Status.UNAUTHORIZED.getStatusCode(), usersResponse.getStatus());
     }
 
+    @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:LineLength"})
     @Test
     public void testGetUsersBasicAuthenticated() {
         final WebTarget usersTarget = client.target(getBaseUri()).path("troopers");

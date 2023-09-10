@@ -18,6 +18,35 @@
  */
 package org.apache.shiro.guice;
 
+import com.google.inject.Key;
+import com.google.inject.PrivateModule;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
+import com.google.inject.binder.AnnotatedBindingBuilder;
+import com.google.inject.binder.LinkedBindingBuilder;
+import com.google.inject.matcher.Matchers;
+import com.google.inject.multibindings.Multibinder;
+import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
+import com.google.inject.util.Types;
+import org.apache.shiro.config.ConfigurationException;
+import org.apache.shiro.env.Environment;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.EventBusAware;
+import org.apache.shiro.event.Subscribe;
+import org.apache.shiro.event.support.DefaultEventBus;
+import org.apache.shiro.lang.util.ClassUtils;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.session.mgt.SessionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PreDestroy;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,38 +54,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import javax.annotation.PreDestroy;
-
-import com.google.inject.Provider;
-import com.google.inject.matcher.Matchers;
-import com.google.inject.spi.InjectionListener;
-import com.google.inject.spi.TypeEncounter;
-import com.google.inject.spi.TypeListener;
-import org.apache.shiro.config.ConfigurationException;
-import org.apache.shiro.env.Environment;
-import org.apache.shiro.event.EventBus;
-import org.apache.shiro.event.EventBusAware;
-import org.apache.shiro.event.Subscribe;
-import org.apache.shiro.event.support.DefaultEventBus;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.realm.Realm;
-import org.apache.shiro.session.mgt.DefaultSessionManager;
-import org.apache.shiro.session.mgt.SessionManager;
-import org.apache.shiro.lang.util.ClassUtils;
-import org.apache.shiro.lang.util.Destroyable;
-
-import com.google.inject.Key;
-import com.google.inject.PrivateModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.binder.AnnotatedBindingBuilder;
-import com.google.inject.binder.LinkedBindingBuilder;
-import com.google.inject.multibindings.Multibinder;
-import com.google.inject.util.Types;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Sets up Shiro lifecycles within Guice, enables the injecting of Shiro objects, and binds a default
  * {@link org.apache.shiro.mgt.SecurityManager} and {@link org.apache.shiro.session.mgt.SessionManager}.  At least one realm must be added by using

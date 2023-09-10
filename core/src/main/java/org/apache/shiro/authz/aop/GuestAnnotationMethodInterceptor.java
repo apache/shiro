@@ -20,6 +20,7 @@ package org.apache.shiro.authz.aop;
 
 import org.apache.shiro.aop.AnnotationResolver;
 
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresGuest RequiresGuest} annotation
  * is declared, and if so, ensures the calling <code>Subject</code> does <em>not</em>

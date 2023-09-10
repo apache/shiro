@@ -42,7 +42,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -78,17 +83,17 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
     @Test
     void checkSessionManagerDeterminesContainerSessionMode() {
-		sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
-		WebSessionManager sessionManager = mock(WebSessionManager.class);
+        sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
+        WebSessionManager sessionManager = mock(WebSessionManager.class);
 
-		when(sessionManager.isServletContainerSessions()).thenReturn(true);
+        when(sessionManager.isServletContainerSessions()).thenReturn(true);
 
-		sm.setSessionManager(sessionManager);
+        sm.setSessionManager(sessionManager);
 
-		assertTrue(sm.isHttpSessionMode(), "The set SessionManager is not being used to determine isHttpSessionMode.");
+        assertTrue(sm.isHttpSessionMode(), "The set SessionManager is not being used to determine isHttpSessionMode.");
 
-		verify(sessionManager).isServletContainerSessions();
-	}
+        verify(sessionManager).isServletContainerSessions();
+    }
 
     @Test
     void shiroSessionModeInit() {
@@ -123,6 +128,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         assertEquals("lonestarr", subject.getPrincipal());
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testSessionTimeout() {
         shiroSessionModeInit();
@@ -184,7 +190,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         mockRequest = mock(HttpServletRequest.class);
         mockResponse = mock(HttpServletResponse.class);
         //now simulate the cookie going with the request and the Subject should be acquired based on that:
-        Cookie[] cookies = new Cookie[]{new Cookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME, sessionId.toString())};
+        Cookie[] cookies = new Cookie[] {new Cookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME, sessionId.toString())};
         when(mockRequest.getCookies()).thenReturn(cookies);
         when(mockRequest.getParameter(any(String.class))).thenReturn(null);
 
@@ -207,7 +213,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
         WebIniSecurityManagerFactory factory = new WebIniSecurityManagerFactory(ini);
 
-        WebSecurityManager securityManager = (WebSecurityManager)factory.getInstance();
+        WebSecurityManager securityManager = (WebSecurityManager) factory.getInstance();
 
         PrincipalCollection principals = new SimplePrincipalCollection("user1", "iniRealm");
         Subject subject = new Subject.Builder(securityManager).principals(principals).buildSubject();

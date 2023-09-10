@@ -79,7 +79,7 @@ public interface Permission {
      *
      * @param p the permission to check for behavior/functionality comparison.
      * @return {@code true} if this current instance <em>implies</em> all the functionality and/or resource access
-     *         described by the specified {@code Permission} argument, {@code false} otherwise.
+     * described by the specified {@code Permission} argument, {@code false} otherwise.
      */
     boolean implies(Permission p);
 }

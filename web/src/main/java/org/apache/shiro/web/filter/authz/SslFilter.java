@@ -58,6 +58,7 @@ import javax.servlet.http.HttpServletResponse;
  * @see <a href="https://tools.ietf.org/html/rfc6797">HTTP Strict Transport Security (HSTS)</a>
  * @since 1.0
  */
+@SuppressWarnings("checkstyle:JavadocVariable")
 public class SslFilter extends PortFilter {
 
     public static final int DEFAULT_HTTPS_PORT = 443;
@@ -87,6 +88,7 @@ public class SslFilter extends PortFilter {
         }
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Retains the parent method's port-matching behavior but additionally guarantees that the
      * {@code ServletRequest.}{@link javax.servlet.ServletRequest#isSecure() isSecure()}.  If the port does not match or
@@ -112,6 +114,7 @@ public class SslFilter extends PortFilter {
      * @param request  the incoming {@code ServletRequest}
      * @param response the outgoing {@code ServletResponse}
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Override
     protected void postHandle(ServletRequest request, ServletResponse response) {
         if (hsts.isEnabled()) {

@@ -21,6 +21,7 @@ package org.apache.shiro.authc.credential;
 import org.apache.shiro.authc.AuthenticationInfo;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;

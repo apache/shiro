@@ -21,6 +21,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.cdi.annotations.NoSessionCreation;
@@ -37,7 +38,8 @@ import org.apache.shiro.subject.Subject;
 @Dependent
 @Slf4j
 public class ShiroComponentProducer {
-    interface SerializableSupplier<T> extends Supplier<T>, Serializable { }
+    interface SerializableSupplier<T> extends Supplier<T>, Serializable {
+    }
 
     @Produces
     public static SecurityManager getSecurityManager() {

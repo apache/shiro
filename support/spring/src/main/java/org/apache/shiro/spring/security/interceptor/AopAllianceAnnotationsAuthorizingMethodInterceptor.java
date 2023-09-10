@@ -59,6 +59,7 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
 
         setMethodInterceptors(interceptors);
     }
+
     /**
      * Creates a {@link MethodInvocation MethodInvocation} that wraps an
      * {@link org.aopalliance.intercept.MethodInvocation org.aopalliance.intercept.MethodInvocation} instance,
@@ -94,6 +95,7 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
         };
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Simply casts the method argument to an
      * {@link org.aopalliance.intercept.MethodInvocation org.aopalliance.intercept.MethodInvocation} and then
@@ -101,7 +103,7 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
      *
      * @param aopAllianceMethodInvocation the {@link org.aopalliance.intercept.MethodInvocation org.aopalliance.intercept.MethodInvocation}
      * @return the {@link org.aopalliance.intercept.MethodInvocation#proceed()
-     *          org.aopalliance.intercept.MethodInvocation.proceed()} method call result.
+     * org.aopalliance.intercept.MethodInvocation.proceed()} method call result.
      * @throws Throwable if the underlying AOP Alliance <code>proceed()</code> call throws a <code>Throwable</code>.
      */
     protected Object continueInvocation(Object aopAllianceMethodInvocation) throws Throwable {

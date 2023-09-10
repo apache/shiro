@@ -48,6 +48,7 @@ public class SampleShiroNativeSessionsServletModule extends ShiroWebModule {
         this.servletContext = servletContext;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     @Override
     protected void configureShiroWeb() {
         bindConstant().annotatedWith(Names.named("shiro.loginUrl")).to("/login.jsp");
@@ -70,6 +71,7 @@ public class SampleShiroNativeSessionsServletModule extends ShiroWebModule {
         return Ini.fromResourcePath("url:" + iniUrl.toExternalForm());
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Override
     protected void bindSessionManager(AnnotatedBindingBuilder<SessionManager> bind) {
         bind.to(DefaultWebSessionManager.class);

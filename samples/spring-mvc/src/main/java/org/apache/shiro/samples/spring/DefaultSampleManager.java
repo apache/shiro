@@ -59,6 +59,7 @@ public class DefaultSampleManager implements SampleManager {
     |               M E T H O D S               |
     ============================================*/
 
+    @SuppressWarnings("checkstyle:LineLength")
     public String getValue() {
         String value = null;
 
@@ -74,6 +75,7 @@ public class DefaultSampleManager implements SampleManager {
         return value;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     public void setValue(String newValue) {
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();

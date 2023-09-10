@@ -77,10 +77,11 @@ public interface HashSpi {
          * should use default parameters where applicable.</p>
          * <p>If the hash requests’ salt is missing or empty, the implementation should create a salt
          * with a default size.</p>
+         *
          * @param hashRequest the request to build a Hash from.
          * @return a generated Hash according to the specs.
          * @throws IllegalArgumentException if any of the parameters is outside of valid boundaries (algorithm-specific)
-         * or if the given algorithm is not applicable for this {@link HashFactory}.
+         *                                  or if the given algorithm is not applicable for this {@link HashFactory}.
          */
         Hash generate(HashRequest hashRequest);
     }

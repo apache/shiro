@@ -22,7 +22,6 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.test.SecurityManagerTestSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +38,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Test case for {@link BasicHttpAuthenticationFilter}.
+ *
  * @since 1.0
  */
 public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
@@ -130,7 +130,7 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
             verify(request).getRemoteHost();
         });
     }
-    
+
     @Test
     public void httpMethodDoesNotRequireAuthentication() {
         testFilter = new BasicHttpAuthenticationFilter();
@@ -141,11 +141,11 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         runWithSubject(subject -> {
-            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"POST", "PUT", "DELETE"});
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[] {"POST", "PUT", "DELETE"});
             assertTrue(accessAllowed, "Access not allowed for GET");
         });
     }
-    
+
     @Test
     public void httpMethodRequiresAuthentication() {
         testFilter = new BasicHttpAuthenticationFilter();
@@ -158,11 +158,11 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         runWithSubject(subject -> {
-            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"POST", "PUT", "DELETE"});
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[] {"POST", "PUT", "DELETE"});
             assertFalse(accessAllowed, "Access allowed for POST");
         });
     }
-    
+
     @Test
     public void httpMethodsAreCaseInsensitive() {
         testFilter = new BasicHttpAuthenticationFilter();
@@ -175,15 +175,15 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
         HttpServletResponse response = mock(HttpServletResponse.class);
 
         runWithSubject(subject -> {
-            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"POST", "put", "delete"});
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[] {"POST", "put", "delete"});
             assertTrue(accessAllowed, "Access not allowed for GET");
 
             when(request.getMethod()).then(args -> "post");
-            accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"post", "put", "delete"});
+            accessAllowed = testFilter.isAccessAllowed(request, response, new String[] {"post", "put", "delete"});
             assertFalse(accessAllowed, "Access allowed for POST");
         });
     }
-    
+
     @Test
     public void allHttpMethodsRequireAuthenticationIfNoneConfigured() {
         testFilter = new BasicHttpAuthenticationFilter();
@@ -204,7 +204,7 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
             assertFalse(accessAllowed, "Access allowed for POST");
         });
     }
-    
+
     @Test
     public void allHttpMethodsRequireAuthenticationIfNullConfig() {
         testFilter = new BasicHttpAuthenticationFilter();
@@ -243,7 +243,8 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
         runWithSubject(subject -> {
             String[] mappedValue = {"permissive"};
             boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue);
-            assertFalse(accessAllowed, "Access allowed for GET"); // login attempt should always be false
+            // login attempt should always be false
+            assertFalse(accessAllowed, "Access allowed for GET");
         });
     }
 
@@ -264,13 +265,15 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
 
             String[] mappedValue = {"permissive"};
             boolean accessAllowed = testFilter.isAccessAllowed(request, response, mappedValue);
-            assertTrue(accessAllowed, "Access should be allowed for GET"); // non-login attempt, return true
+            // non-login attempt, return true
+            assertTrue(accessAllowed, "Access should be allowed for GET");
         });
     }
 
     /**
      * @since 1.4
      */
+    @SuppressWarnings("checkstyle:LineLength")
     @Test
     public void httpMethodRequiresAuthenticationWithPermissive() throws Exception {
         runWithSubject(subject -> {
@@ -283,12 +286,12 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
 
             HttpServletResponse response = mock(HttpServletResponse.class);
 
-            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"permissive", "POST", "PUT", "DELETE"});
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[] {"permissive", "POST", "PUT", "DELETE"});
             assertFalse(accessAllowed, "Access allowed for POST");
         });
     }
 
     private String createAuthorizationHeader(String username, String password) {
-    	return "Basic " + new String(Base64.encode((username + ":" + password).getBytes()));
+        return "Basic " + new String(Base64.encode((username + ":" + password).getBytes()));
     }
 }

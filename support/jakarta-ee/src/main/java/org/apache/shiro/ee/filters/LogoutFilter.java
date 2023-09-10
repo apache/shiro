@@ -14,11 +14,15 @@
 package org.apache.shiro.ee.filters;
 
 import org.apache.shiro.ee.filters.AuthenticationFilterDelegate.MethodsFromFilter;
+
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getReferer;
+
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+
 import lombok.experimental.Delegate;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -56,7 +60,7 @@ public class LogoutFilter extends org.apache.shiro.web.filter.authc.LogoutFilter
 
         @Override
         public boolean onLoginFailure(AuthenticationToken token, AuthenticationException e,
-                ServletRequest request, ServletResponse response) {
+                                      ServletRequest request, ServletResponse response) {
             throw new UnsupportedOperationException();
         }
     }

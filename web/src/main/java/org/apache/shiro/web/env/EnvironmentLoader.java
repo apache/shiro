@@ -237,6 +237,7 @@ public class EnvironmentLoader {
         return IniWebEnvironment.class;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Return the WebEnvironment implementation class to use, based on the order of:
      * <ul>

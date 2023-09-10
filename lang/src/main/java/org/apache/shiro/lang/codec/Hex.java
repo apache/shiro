@@ -91,7 +91,7 @@ public final class Hex {
      *
      * @param array An array of character bytes containing hexadecimal digits
      * @return A byte array containing binary data decoded from
-     *         the supplied byte array (representing characters).
+     * the supplied byte array (representing characters).
      * @throws IllegalArgumentException Thrown if an odd number of characters is supplied
      *                                  to this function
      * @see #decode(char[])
@@ -122,7 +122,7 @@ public final class Hex {
      *
      * @param data An array of characters containing hexadecimal digits
      * @return A byte array containing binary data decoded from
-     *         the supplied char array.
+     * the supplied char array.
      * @throws IllegalArgumentException if an odd number or illegal of characters
      *                                  is supplied
      */

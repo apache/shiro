@@ -15,6 +15,7 @@ package org.apache.shiro.ee.filters;
 
 import static org.apache.shiro.ee.cdi.ShiroScopeContext.isWebContainerSessions;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getNativeSessionManager;
+
 import java.net.HttpCookie;
 import java.time.Duration;
 import java.util.List;
@@ -25,10 +26,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+
 import static org.apache.shiro.web.servlet.ShiroHttpSession.DEFAULT_SESSION_ID_NAME;
 
 /**
@@ -41,7 +44,7 @@ public class FormResubmitSupportCookies {
     static final String DONT_ADD_ANY_MORE_COOKIES = "org.apache.shiro.no-more-cookies";
 
     static void addCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
-            @NonNull String cokieName, @NonNull String cookieValue, int maxAge) {
+                          @NonNull String cokieName, @NonNull String cookieValue, int maxAge) {
         var cookie = new Cookie(cokieName, cookieValue);
         cookie.setPath(servletContext.getContextPath());
         cookie.setMaxAge(maxAge);
@@ -49,7 +52,7 @@ public class FormResubmitSupportCookies {
     }
 
     static void deleteCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
-            @NonNull String cokieName) {
+                             @NonNull String cokieName) {
         var cookieToDelete = new Cookie(cokieName, "tbd");
         cookieToDelete.setPath(servletContext.getContextPath());
         cookieToDelete.setMaxAge(0);

@@ -49,6 +49,7 @@ public final class ClassUtils {
      */
     private static final HashMap<String, Class<?>> PRIM_CLASSES
             = new HashMap<>(8, 1.0F);
+
     static {
         PRIM_CLASSES.put("boolean", boolean.class);
         PRIM_CLASSES.put("byte", byte.class);
@@ -104,7 +105,7 @@ public final class ClassUtils {
      *
      * @param name the name of the resource to acquire from the classloader(s).
      * @return the InputStream of the resource found, or <code>null</code> if the resource cannot be found from any
-     *         of the three mentioned ClassLoaders.
+     * of the three mentioned ClassLoaders.
      * @since 0.9
      */
     public static InputStream getResourceAsStream(String name) {
@@ -114,7 +115,7 @@ public final class ClassUtils {
         if (is == null) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Resource [" + name + "] was not found via the thread context ClassLoader.  Trying the "
-                              + "current ClassLoader...");
+                        + "current ClassLoader...");
             }
             is = CLASS_CL_ACCESSOR.getResourceStream(name);
         }
@@ -122,14 +123,14 @@ public final class ClassUtils {
         if (is == null) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Resource [" + name + "] was not found via the current class loader.  Trying the "
-                              + "system/application ClassLoader...");
+                        + "system/application ClassLoader...");
             }
             is = SYSTEM_CL_ACCESSOR.getResourceStream(name);
         }
 
         if (is == null && LOGGER.isTraceEnabled()) {
             LOGGER.trace("Resource [" + name + "] was not found via the thread context, current, or "
-                          + "system/application ClassLoaders.  All heuristics have been exhausted.  Returning null.");
+                    + "system/application ClassLoaders.  All heuristics have been exhausted.  Returning null.");
         }
 
         return is;
@@ -154,7 +155,7 @@ public final class ClassUtils {
         if (clazz == null) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Unable to load class named [" + fqcn
-                              + "] from the thread context ClassLoader.  Trying the current ClassLoader...");
+                        + "] from the thread context ClassLoader.  Trying the current ClassLoader...");
             }
             clazz = CLASS_CL_ACCESSOR.loadClass(fqcn);
         }
@@ -162,7 +163,7 @@ public final class ClassUtils {
         if (clazz == null) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Unable to load class named [" + fqcn + "] from the current ClassLoader.  "
-                              + "Trying the system/application ClassLoader...");
+                        + "Trying the system/application ClassLoader...");
             }
             clazz = SYSTEM_CL_ACCESSOR.loadClass(fqcn);
         }
@@ -174,7 +175,7 @@ public final class ClassUtils {
 
         if (clazz == null) {
             String msg = "Unable to load class named [" + fqcn + "] from the thread context, current, or "
-                             + "system/application ClassLoaders.  All heuristics have been exhausted.  Class could not be found.";
+                    + "system/application ClassLoaders.  All heuristics have been exhausted.  Class could not be found.";
             throw new UnknownClassException(msg);
         }
 
@@ -238,7 +239,6 @@ public final class ClassUtils {
     }
 
     /**
-     *
      * @param type
      * @param annotation
      * @return
@@ -265,6 +265,7 @@ public final class ClassUtils {
      */
     private interface ClassLoaderAccessor {
         Class loadClass(String fqcn);
+
         InputStream getResourceStream(String name);
     }
 

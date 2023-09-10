@@ -21,7 +21,6 @@ package org.apache.shiro.web.filter.authz;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -46,11 +45,12 @@ public class AuthorizationFilterTest extends SecurityManagerTestSupport {
         //log in the user using the account provided by the superclass for tests:
         runWithSubject(subject -> {
             subject.login(new UsernamePasswordToken("test", "test"));
-        
+
             AuthorizationFilter filter = new AuthorizationFilter() {
                 @Override
                 protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-                    return false; //for this test case
+                    //for this test case
+                    return false;
                 }
             };
 
@@ -77,7 +77,8 @@ public class AuthorizationFilterTest extends SecurityManagerTestSupport {
             AuthorizationFilter filter = new AuthorizationFilter() {
                 @Override
                 protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-                    return false; //for this test case
+                    //for this test case
+                    return false;
                 }
             };
             filter.setUnauthorizedUrl(unauthorizedUrl);

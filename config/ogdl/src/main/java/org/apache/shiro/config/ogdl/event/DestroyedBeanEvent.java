@@ -23,11 +23,11 @@ import java.util.Map;
 /**
  * Event triggered when a configured bean has been destroyed.
  *
- * @since 1.3
  * @see org.apache.shiro.lang.util.Destroyable Destroyable
  * @see InstantiatedBeanEvent
  * @see ConfiguredBeanEvent
  * @see InitializedBeanEvent
+ * @since 1.3
  */
 public class DestroyedBeanEvent extends BeanEvent {
 

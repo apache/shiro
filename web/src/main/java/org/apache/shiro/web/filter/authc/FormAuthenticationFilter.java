@@ -20,7 +20,6 @@ package org.apache.shiro.web.filter.authc;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * Requires the requesting user to be authenticated for the request to continue, and if they are not, forces the user
  * to login via by redirecting them to the {@link #setLoginUrl(String) loginUrl} you configure.
@@ -135,6 +134,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
         return rememberMeParam;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Sets the request parameter name to look for when acquiring the rememberMe boolean value.  Unless overridden
      * by calling this method, the default is <code>rememberMe</code>.

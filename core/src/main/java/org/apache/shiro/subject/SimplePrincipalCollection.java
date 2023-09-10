@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -236,7 +237,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         }
         if (o instanceof SimplePrincipalCollection) {
             SimplePrincipalCollection other = (SimplePrincipalCollection) o;
-            return this.realmPrincipals != null ? this.realmPrincipals.equals(other.realmPrincipals) : other.realmPrincipals == null;
+            return Objects.equals(this.realmPrincipals, other.realmPrincipals);
         }
         return false;
     }

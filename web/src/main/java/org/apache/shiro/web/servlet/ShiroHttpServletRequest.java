@@ -39,9 +39,8 @@ import java.security.Principal;
  *
  * @since 0.2
  */
+@SuppressWarnings({"checkstyle:JavadocVariable", "checkstyle:LineLength"})
 public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
-
-    //TODO - complete JavaDoc
 
     //The following 7 constants support the Shiro's implementation of the Servlet Specification
     public static final String COOKIE_SESSION_ID_SOURCE = "cookie";
@@ -53,8 +52,10 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
     public static final String IDENTITY_REMOVED_KEY = ShiroHttpServletRequest.class.getName() + "_IDENTITY_REMOVED_KEY";
     public static final String SESSION_ID_URL_REWRITING_ENABLED = ShiroHttpServletRequest.class.getName() + "_SESSION_ID_URL_REWRITING_ENABLED";
 
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     protected ServletContext servletContext = null;
 
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     protected HttpSession session = null;
     protected boolean httpSessions = true;
 

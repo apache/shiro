@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.spring.config.web.autoconfigure;
 
-import javax.servlet.DispatcherType;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.AbstractShiroWebFilterConfiguration;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
@@ -29,6 +28,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.DispatcherType;
 import java.util.List;
 
 /**
@@ -55,6 +55,7 @@ public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfigura
         return super.shiroFilterFactoryBean();
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     @Bean(name = REGISTRATION_BEAN_NAME)
     @ConditionalOnMissingBean(name = REGISTRATION_BEAN_NAME)
     protected FilterRegistrationBean<AbstractShiroFilter> filterShiroFilterRegistrationBean() throws Exception {

@@ -21,6 +21,7 @@ package org.apache.shiro.web.filter.authc;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+@SuppressWarnings("checkstyle:LineLength")
 /**
  * An authentication filter that redirects the user to the login page when they are trying to access
  * a protected resource.  However, if the user is trying to access the login page, the filter lets

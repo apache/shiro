@@ -31,6 +31,7 @@ import javax.inject.Inject;
  * {@link ShiroWebModule#bindGuiceFilter(com.google.inject.Binder) bindGuiceFilter}.
  */
 public class GuiceShiroFilter extends AbstractShiroFilter {
+    @SuppressWarnings("checkstyle:LineLength")
     @Inject
     GuiceShiroFilter(WebSecurityManager webSecurityManager, FilterChainResolver filterChainResolver, ShiroFilterConfiguration filterConfiguration) {
         this.setSecurityManager(webSecurityManager);

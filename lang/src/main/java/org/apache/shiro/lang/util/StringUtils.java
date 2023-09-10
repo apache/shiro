@@ -55,7 +55,8 @@ public final class StringUtils {
      */
     public static final char DEFAULT_QUOTE_CHAR = '"';
 
-    private StringUtils() {  }
+    private StringUtils() {
+    }
 
     /**
      * Check whether the given String has actual text.
@@ -72,7 +73,7 @@ public final class StringUtils {
      *
      * @param str the String to check (may be <code>null</code>)
      * @return <code>true</code> if the String is not <code>null</code>, its length is
-     *         greater than 0, and it does not contain whitespace only
+     * greater than 0, and it does not contain whitespace only
      * @see java.lang.Character#isWhitespace
      */
     public static boolean hasText(String str) {
@@ -251,7 +252,7 @@ public final class StringUtils {
      *                          (only applies to tokens that are empty after trimming; StringTokenizer
      *                          will not consider subsequent delimiters as token in the first place).
      * @return an array of the tokens (<code>null</code> if the input String
-     *         was <code>null</code>)
+     * was <code>null</code>)
      * @see java.util.StringTokenizer
      * @see java.lang.String#trim()
      */
@@ -284,7 +285,7 @@ public final class StringUtils {
      *
      * @param collection the Collection to copy
      * @return the String array (<code>null</code> if the passed-in
-     *         Collection was <code>null</code>)
+     * Collection was <code>null</code>)
      */
     @SuppressWarnings({"unchecked"})
     public static String[] toStringArray(Collection collection) {
@@ -305,7 +306,7 @@ public final class StringUtils {
             split = line.split("=", 2);
             if (split.length != 2) {
                 String msg = "Unable to determine Key/Value pair from line [" + line + "].  There is no space from "
-                                 + "which the split location could be determined.";
+                        + "which the split location could be determined.";
                 throw new ParseException(msg, 0);
             }
 
@@ -366,7 +367,7 @@ public final class StringUtils {
      * This method's implementation is very loosely based (with significant modifications) on
      * <a href="http://blogs.bytecode.com.au/glen">Glen Smith</a>'s open-source
      * <a href="http://opencsv.svn.sourceforge.net/viewvc/opencsv/trunk/src/au/com/bytecode/opencsv/CSVReader.java
-     *                                                                  ?&view=markup">CSVReader.java</a>
+     * ?&view=markup">CSVReader.java</a>
      * file.
      * <p/>
      * That file is Apache 2.0 licensed as well, making Glen's code a great starting point for us to modify to
@@ -508,6 +509,7 @@ public final class StringUtils {
 
     /**
      * Returns the input argument, but ensures the first character is capitalized (if possible).
+     *
      * @param in the string to uppercase the first character.
      * @return the input argument, but with the first character capitalized (if possible).
      * @since 1.2

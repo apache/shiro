@@ -36,6 +36,7 @@ public class SampleShiroGuiceBootstrap extends GuiceServletContextListener {
         super.contextInitialized(servletContextEvent);
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     @Override
     protected Injector getInjector() {
 //        return Guice.createInjector(new SampleShiroServletModule(servletContext), ShiroWebModule.guiceFilterModule());

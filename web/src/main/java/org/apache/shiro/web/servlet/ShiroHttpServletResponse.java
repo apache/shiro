@@ -163,6 +163,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         return doIsEncodeable(hreq, session, location);
     }
 
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity", "checkstyle:MagicNumber"})
     private boolean doIsEncodeable(HttpServletRequest hreq, HttpSession session, String location) {
         // Is this a valid absolute URL?
         URL url;
@@ -227,6 +228,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      * @throws IllegalArgumentException if a MalformedURLException is
      *                                  thrown when converting the relative URL to an absolute one
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     private String toAbsolute(String location) {
 
         if (location == null) {

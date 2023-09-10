@@ -205,7 +205,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
      * @param configuredPerms any url-specific permissions mapped to this filter in the URL rules mappings.
      * @param action          the application-friendly action (verb) resolved based on the HTTP Method name.
      * @return a collection of String permissions with which to perform a permission check to determine if the filter
-     *         will allow the request to continue.
+     * will allow the request to continue.
      */
     protected String[] buildPermissions(HttpServletRequest request, String[] configuredPerms, String action) {
         return buildPermissions(configuredPerms, action);
@@ -265,6 +265,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
         return mappedPerms;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Resolves an 'application friendly' action verb based on the {@code HttpServletRequest}'s method, appends that
      * action to each configured permission (the {@code mappedValue} argument is a {@code String[]} array), and
@@ -276,8 +277,8 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
      * @param response    the outbound {@code ServletResponse}
      * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings.
      * @return {@code true} if the request should proceed through the filter normally, {@code false} if the
-     *         request should be processed by this filter's
-     *         {@link #onAccessDenied(ServletRequest,ServletResponse,Object)} method instead.
+     * request should be processed by this filter's
+     * {@link #onAccessDenied(ServletRequest, ServletResponse, Object)} method instead.
      * @throws IOException
      */
     @Override

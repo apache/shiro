@@ -51,6 +51,7 @@ public class AtLeastOneSuccessfulStrategy extends AbstractAuthenticationStrategy
      * is not <code>null</code>, and if either is <code>null</code>, throws an AuthenticationException to indicate
      * that none of the realms authenticated successfully.
      */
+    @SuppressWarnings("checkstyle:LineLength")
     public AuthenticationInfo afterAllAttempts(AuthenticationToken token, AuthenticationInfo aggregate) throws AuthenticationException {
         //we know if one or more were able to successfully authenticate if the aggregated account object does not
         //contain null or empty data:

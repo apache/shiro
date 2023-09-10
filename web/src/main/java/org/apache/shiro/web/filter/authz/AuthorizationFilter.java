@@ -54,12 +54,13 @@ public abstract class AuthorizationFilter extends AccessControlFilter {
      * if you would like to show the user a 'nice' page in the event of unauthorized access.
      *
      * @return the URL to which users should be redirected if they are denied access to an underlying path or resource,
-     *         or {@code null} if a raw {@link HttpServletResponse#SC_UNAUTHORIZED} response should be issued (401 Unauthorized).
+     * or {@code null} if a raw {@link HttpServletResponse#SC_UNAUTHORIZED} response should be issued (401 Unauthorized).
      */
     public String getUnauthorizedUrl() {
         return unauthorizedUrl;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Sets the URL to which users should be redirected if they are denied access to an underlying path or resource.
      * <p/>

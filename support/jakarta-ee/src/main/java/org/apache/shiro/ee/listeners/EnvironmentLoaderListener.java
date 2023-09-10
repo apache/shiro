@@ -17,8 +17,11 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
 import static javax.servlet.SessionTrackingMode.COOKIE;
+
 import javax.servlet.annotation.WebListener;
+
 import org.apache.shiro.web.env.EnvironmentLoader;
 import org.apache.shiro.web.env.WebEnvironment;
 

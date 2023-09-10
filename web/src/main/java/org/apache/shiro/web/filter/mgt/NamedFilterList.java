@@ -44,7 +44,7 @@ public interface NamedFilterList extends List<Filter> {
      *
      * @param filterChain the {@code FilterChain} instance to execute after this list's {@code Filter}s have executed.
      * @return a new {@code FilterChain} instance that will first execute this list's {@code Filter}s (in list order)
-     *         and end with the execution of the given {@code filterChain} instance.
+     * and end with the execution of the given {@code filterChain} instance.
      */
     FilterChain proxy(FilterChain filterChain);
 }

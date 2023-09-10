@@ -17,7 +17,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- pick up Apache distributionManagement for releasing (snapshots, releases, etc.): -->
@@ -327,7 +328,7 @@
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
                     <configuration>
-                    		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
+                        <!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                         <excludes>
                             <exclude>**/.externalToolBuilders/*</exclude>
                             <exclude>**/infinitest.filters</exclude>
@@ -430,7 +431,8 @@
                         </oldVersion>
                         <parameter>
                             <onlyModified>true</onlyModified>
-                            <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
+                            <breakBuildOnBinaryIncompatibleModifications>true
+                            </breakBuildOnBinaryIncompatibleModifications>
                             <breakBuildBasedOnSemanticVersioning>true</breakBuildBasedOnSemanticVersioning>
                             <postAnalysisScript>${root.dir}/src/japicmp/postAnalysisScript.groovy</postAnalysisScript>
                         </parameter>
@@ -479,7 +481,8 @@
                                 <shadedClassifierName>jakarta</shadedClassifierName>
                                 <createDependencyReducedPom>false</createDependencyReducedPom>
                                 <transformers>
-                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                    <transformer
+                                            implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 </transformers>
                                 <artifactSet>
                                     <includes>
@@ -543,6 +546,7 @@
                         <failOnViolation>true</failOnViolation>
                         <includeTestSourceDirectory>true</includeTestSourceDirectory>
                         <enableRulesSummary>true</enableRulesSummary>
+                        <excludes>**/Quickstart.java,**/QuickstartGuice.java,**/QuickstartShiroModule.java</excludes>
                         <propertyExpansion>root.dir=${root.dir}</propertyExpansion>
                     </configuration>
                     <executions>
@@ -744,7 +748,9 @@
                     </doapOptions>
 
                     <asfExtOptions>
-                        <charter>The mission of the Apache Shiro project is to create and maintain an easy to use authentication and authorization framework.</charter>
+                        <charter>The mission of the Apache Shiro project is to create and maintain an easy to use
+                            authentication and authorization framework.
+                        </charter>
 
                         <!-- Default values -->
                         <pmc>${project.url}</pmc>
@@ -1463,7 +1469,9 @@
                         <link>https://docs.spring.io/spring/docs/2.5.x/javadoc-api/</link>
                         <link>https://junit.org/junit4/javadoc/4.12/</link>
                         <link>https://easymock.org/api/</link>
-                        <link>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}/org/mockito/Mockito.html</link>
+                        <link>
+                            https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}/org/mockito/Mockito.html
+                        </link>
                         <link>https://www.quartz-scheduler.org/api/1.8.6/</link>
                     </links>
                     <!-- Don't include the sample apps - they're not part of Shiro's API: -->
@@ -1529,7 +1537,7 @@
                 <!-- only run at the root -->
                 <inherited>false</inherited>
                 <configuration>
-                		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
+                    <!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                     <excludes>
                         <exclude>**/.externalToolBuilders/*</exclude>
                         <exclude>**/infinitest.filters</exclude>
@@ -1792,18 +1800,18 @@
                 <plugins>
                     <!-- TODO: re-enable after first 2.0 release -->
                     <!-- it's a 2.0 release breaking changes are expected -->
-<!--                    <plugin>-->
-<!--                        <groupId>com.github.siom79.japicmp</groupId>-->
-<!--                        <artifactId>japicmp-maven-plugin</artifactId>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <id>japicmp</id>-->
-<!--                                <goals>-->
-<!--                                    <goal>cmp</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                    </plugin>-->
+                    <!--                    <plugin>-->
+                    <!--                        <groupId>com.github.siom79.japicmp</groupId>-->
+                    <!--                        <artifactId>japicmp-maven-plugin</artifactId>-->
+                    <!--                        <executions>-->
+                    <!--                            <execution>-->
+                    <!--                                <id>japicmp</id>-->
+                    <!--                                <goals>-->
+                    <!--                                    <goal>cmp</goal>-->
+                    <!--                                </goals>-->
+                    <!--                            </execution>-->
+                    <!--                        </executions>-->
+                    <!--                    </plugin>-->
                 </plugins>
             </build>
         </profile>
@@ -1829,8 +1837,8 @@
             </build>
         </profile>
     </profiles>
-<!--Disable snapshot repositories because they download snapshots
-    instead of using the current build in CI 'mvn verify' steps-->
+    <!--Disable snapshot repositories because they download snapshots
+        instead of using the current build in CI 'mvn verify' steps-->
     <repositories>
         <repository>
             <id>apache.snapshots</id>

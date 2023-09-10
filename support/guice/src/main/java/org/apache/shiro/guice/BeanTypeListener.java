@@ -18,16 +18,6 @@
  */
 package org.apache.shiro.guice;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.inject.Binder;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
@@ -42,10 +32,19 @@ import com.google.inject.name.Names;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.google.inject.util.Types;
-
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.SuppressPropertiesBeanIntrospector;
 import org.apache.shiro.SecurityUtils;
+
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * TypeListener that injects setter methods on Shiro objects.
@@ -88,6 +87,7 @@ class BeanTypeListener implements TypeListener {
                 SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     public <I> void hear(TypeLiteral<I> type, final TypeEncounter<I> encounter) {
         PropertyDescriptor[] propertyDescriptors = beanUtilsBean.getPropertyUtils().getPropertyDescriptors(type.getRawType());
         final Map<PropertyDescriptor, Key<?>> propertyDependencies = new HashMap<PropertyDescriptor, Key<?>>(propertyDescriptors.length);
@@ -143,6 +143,7 @@ class BeanTypeListener implements TypeListener {
         }
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     private static boolean requiresName(Type propertyType) {
         if (propertyType instanceof Class) {
             Class<?> aClass = (Class<?>) propertyType;

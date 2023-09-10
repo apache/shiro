@@ -20,6 +20,7 @@ package org.apache.shiro.mgt;
 
 import java.util.Objects;
 import java.util.function.Supplier;
+
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -79,7 +80,8 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     /**
      * Cipher to use for encrypting/decrypting serialized byte arrays for added security
      */
-    private CipherService cipherService = new AesCipherService();;
+    private CipherService cipherService = new AesCipherService();
+    ;
 
     /**
      * Cipher encryption key to use with the Cipher when encrypting data
@@ -118,7 +120,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * {@link org.apache.shiro.lang.io.DefaultSerializer}.
      *
      * @return the {@code Serializer} used to serialize and deserialize {@link PrincipalCollection} instances for
-     *         persistent remember me storage.
+     * persistent remember me storage.
      */
     public Serializer<PrincipalCollection> getSerializer() {
         return serializer;
@@ -144,7 +146,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * Unless overridden by the {@link #setCipherService} method, the default instance is an {@link AesCipherService}.
      *
      * @return the {@code Cipher} to use for encrypting and decrypting serialized identity data to prevent easy
-     *         inspection of Subject identity data
+     * inspection of Subject identity data
      */
     public CipherService getCipherService() {
         return cipherService;
@@ -283,7 +285,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * stored identity.  Then if the {@code token}
      * {@link #isRememberMe(org.apache.shiro.authc.AuthenticationToken) is a RememberMe} token, the associated identity
      * will be {@link #rememberIdentity(org.apache.shiro.subject.Subject, org.apache.shiro.authc.AuthenticationToken,
-     *      org.apache.shiro.authc.AuthenticationInfo) remembered}
+     * org.apache.shiro.authc.AuthenticationInfo) remembered}
      * for later retrieval during a new user session.
      *
      * @param subject the subject for which the principals are being remembered.
@@ -416,7 +418,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      *                       is being used to construct a {@link Subject} instance.  To be used to assist with data
      *                       lookup.
      * @return the previously persisted serialized identity, or {@code null} if there is no available data for the
-     *         Subject.
+     * Subject.
      */
     protected abstract byte[] getRememberedSerializedIdentity(SubjectContext subjectContext);
 
@@ -453,6 +455,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      *                is being used to construct a {@link Subject} instance.
      * @return nothing - the original {@code RuntimeException} is propagated in all cases.
      */
+    @SuppressWarnings("checkstyle:LineLength")
     protected PrincipalCollection onRememberedPrincipalFailure(RuntimeException e, SubjectContext context) {
 
         if (LOGGER.isWarnEnabled()) {

@@ -36,7 +36,7 @@ package org.apache.shiro.crypto.support.hashes.bcrypt;
  * @since 2.0
  */
 @SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:BooleanExpressionComplexity",
-"checkstyle:NPathComplexity", "checkstyle:CyclomaticComplexity"})
+        "checkstyle:NPathComplexity", "checkstyle:CyclomaticComplexity"})
 interface OpenBSDBase64 {
 
 
@@ -53,7 +53,7 @@ interface OpenBSDBase64 {
      * decodes the raw bytes from it.
      *
      * @param utf8EncodedRadix64String from a string get it with
-     *        <code>"m0CrhHm10qJ3lXRY.5zDGO".getBytes(StandardCharsets.UTF8)</code>
+     *                                 <code>"m0CrhHm10qJ3lXRY.5zDGO".getBytes(StandardCharsets.UTF8)</code>
      * @return the raw bytes encoded by this utf-8 radix4 string
      */
     byte[] decode(byte[] utf8EncodedRadix64String);
@@ -75,7 +75,7 @@ interface OpenBSDBase64 {
                 26, 27, -1, -1, -1, -1, -1, -1, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
                 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53};
 
-        private static final byte[] MAP = new byte[]{
+        private static final byte[] MAP = new byte[] {
                 '.', '/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
                 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
                 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',

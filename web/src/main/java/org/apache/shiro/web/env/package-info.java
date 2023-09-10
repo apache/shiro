@@ -19,7 +19,7 @@
 /**
  * Web-specific {@link org.apache.shiro.env.Environment Environment} implementation and support.  The most important
  * components are the {@link org.apache.shiro.web.env.EnvironmentLoader}
- *      and {@link org.apache.shiro.web.env.EnvironmentLoaderListener}, which are used in conjunction
+ * and {@link org.apache.shiro.web.env.EnvironmentLoaderListener}, which are used in conjunction
  * with the {@link org.apache.shiro.web.servlet.ShiroFilter ShiroFilter} to enable Shiro in a web application.
  *
  * @see org.apache.shiro.web.env.EnvironmentLoaderListener

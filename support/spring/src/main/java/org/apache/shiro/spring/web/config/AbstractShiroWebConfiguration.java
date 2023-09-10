@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Value;
 /**
  * @since 1.4.0
  */
+@SuppressWarnings("checkstyle:LineLength")
 public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
 
     @Value("#{ @environment['shiro.sessionManager.sessionIdCookieEnabled'] ?: true }")
@@ -51,7 +52,6 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
 
 
     // Session Cookie info
-
     @Value("#{ @environment['shiro.sessionManager.cookie.name'] ?: T(org.apache.shiro.web.servlet.ShiroHttpSession).DEFAULT_SESSION_ID_NAME }")
     protected String sessionIdCookieName;
 

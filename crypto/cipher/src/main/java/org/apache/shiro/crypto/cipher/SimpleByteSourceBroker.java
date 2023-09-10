@@ -23,6 +23,7 @@ import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.Destroyable;
 
 import java.io.IOException;
+
 import org.apache.shiro.lang.util.ByteSourceWrapper;
 import org.apache.shiro.lang.util.ByteUtils;
 

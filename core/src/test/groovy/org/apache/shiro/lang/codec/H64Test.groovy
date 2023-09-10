@@ -36,7 +36,7 @@ class H64Test {
     public void testDefault() {
         byte[] orig = new SecureRandomNumberGenerator().nextBytes(6).bytes
 
-        LOG.trace("bytes: $orig");;
+        LOG.trace("bytes: $orig"); ;
 
         String encoded = H64.encodeToString(orig)
         LOG.trace("encoded: $encoded");

@@ -18,16 +18,18 @@
  */
 package org.apache.shiro.guice.web;
 
-
-import javax.servlet.Filter;
-import javax.servlet.ServletContext;
-
+import com.google.inject.Binder;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
+import com.google.inject.binder.AnnotatedBindingBuilder;
+import com.google.inject.name.Names;
+import com.google.inject.servlet.ServletModule;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.env.Environment;
 import org.apache.shiro.guice.ShiroModule;
+import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
-import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.InvalidRequestFilter;
 import org.apache.shiro.web.filter.PathMatchingFilter;
@@ -49,13 +51,8 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 
-import com.google.inject.Binder;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import com.google.inject.binder.AnnotatedBindingBuilder;
-import com.google.inject.name.Names;
-import com.google.inject.servlet.ServletModule;
-
+import javax.servlet.Filter;
+import javax.servlet.ServletContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,6 +62,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings({"UnusedDeclaration", "checkstyle:JavadocVariable", "checkstyle:LineLength"})
 /**
  * Sets up Shiro lifecycles within Guice, enables the injecting of Shiro objects, and binds a default
  * {@link org.apache.shiro.web.mgt.WebSecurityManager},
@@ -75,7 +73,6 @@ import java.util.Map;
  * Also provides for the configuring of filter chains and binds a {@link org.apache.shiro.web.filter.mgt.FilterChainResolver} with that information.
  */
 public abstract class ShiroWebModule extends ShiroModule {
-    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<AnonymousFilter> ANON = Key.get(AnonymousFilter.class);
     @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<FormAuthenticationFilter> AUTHC = Key.get(FormAuthenticationFilter.class);

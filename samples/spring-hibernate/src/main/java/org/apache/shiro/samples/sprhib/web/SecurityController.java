@@ -41,6 +41,7 @@ public class SecurityController {
         return "login";
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(Model model, @ModelAttribute LoginCommand command, BindingResult errors) {
         loginValidator.validate(command, errors);

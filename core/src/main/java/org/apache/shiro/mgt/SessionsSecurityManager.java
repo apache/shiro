@@ -97,6 +97,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         return this.sessionManager;
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     /**
      * Calls {@link org.apache.shiro.mgt.AuthorizingSecurityManager#afterCacheManagerSet() super.afterCacheManagerSet()} and then immediately calls
      * {@link #applyCacheManagerToSessionManager() applyCacheManagerToSessionManager()} to ensure the

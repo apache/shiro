@@ -192,7 +192,7 @@ public abstract class JcaCipherService implements CipherService {
     public void setInitializationVectorSize(int initializationVectorSize) throws IllegalArgumentException {
         if (initializationVectorSize % BITS_PER_BYTE != 0) {
             String msg = "Initialization vector sizes are specified in bits, but must be a multiple of 8 so they "
-                     + "can be easily represented as a byte array.";
+                    + "can be easily represented as a byte array.";
             throw new IllegalArgumentException(msg);
         }
         this.initializationVectorSize = initializationVectorSize;
@@ -210,7 +210,7 @@ public abstract class JcaCipherService implements CipherService {
      * Default size is {@code 512} bytes.
      *
      * @return the size of the internal buffer used to transfer data from one stream to another during stream
-     *         operations
+     * operations
      */
     public int getStreamingBufferSize() {
         return streamingBufferSize;
@@ -235,7 +235,7 @@ public abstract class JcaCipherService implements CipherService {
      * algorithm needs one, the JDK {@code SHA1PRNG} instance will be used by default.
      *
      * @return a source of randomness for encryption operations.  If one is not configured, and the underlying
-     *         algorithm needs one, the JDK {@code SHA1PRNG} instance will be used by default.
+     * algorithm needs one, the JDK {@code SHA1PRNG} instance will be used by default.
      */
     public SecureRandom getSecureRandom() {
         return secureRandom;
@@ -257,7 +257,7 @@ public abstract class JcaCipherService implements CipherService {
             return java.security.SecureRandom.getInstance(RANDOM_NUM_GENERATOR_ALGORITHM_NAME);
         } catch (java.security.NoSuchAlgorithmException e) {
             LOGGER.debug("The SecureRandom SHA1PRNG algorithm is not available on the current platform.  Using the "
-                     + "platform's default SecureRandom algorithm.", e);
+                    + "platform's default SecureRandom algorithm.", e);
             return new java.security.SecureRandom();
         }
     }
@@ -278,7 +278,7 @@ public abstract class JcaCipherService implements CipherService {
      *
      * @param streaming if the transformation string is going to be used for a Cipher for stream-based encryption or not.
      * @return the transformation string to use with the {@link javax.crypto.Cipher#getInstance} invocation when
-     *         creating a new {@code Cipher} instance.
+     * creating a new {@code Cipher} instance.
      */
     protected String getTransformationString(boolean streaming) {
         return getAlgorithmName();
@@ -288,8 +288,8 @@ public abstract class JcaCipherService implements CipherService {
         int size = getInitializationVectorSize();
         if (size <= 0) {
             String msg = "initializationVectorSize property must be greater than zero.  This number is "
-                     + "typically set in the " + CipherService.class.getSimpleName() + " subclass constructor.  "
-                     + "Also check your configuration to ensure that if you are setting a value, it is positive.";
+                    + "typically set in the " + CipherService.class.getSimpleName() + " subclass constructor.  "
+                    + "Also check your configuration to ensure that if you are setting a value, it is positive.";
             throw new IllegalStateException(msg);
         }
         if (size % BITS_PER_BYTE != 0) {
@@ -310,7 +310,7 @@ public abstract class JcaCipherService implements CipherService {
             ivBytes = generateInitializationVector(false);
             if (ivBytes == null || ivBytes.length == 0) {
                 throw new IllegalStateException("Initialization vector generation is enabled - generated vector "
-                                    + "cannot be null or empty.");
+                        + "cannot be null or empty.");
             }
         }
         return encrypt(plaintext, key, ivBytes, generate);
@@ -341,7 +341,7 @@ public abstract class JcaCipherService implements CipherService {
 
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Incoming plaintext of size " + (plaintext != null ? plaintext.length : 0) + ".  Ciphertext "
-                + "byte array is size " + (output != null ? output.length : 0));
+                    + "byte array is size " + (output != null ? output.length : 0));
         }
 
         return ByteSource.Util.bytes(output);
@@ -392,7 +392,7 @@ public abstract class JcaCipherService implements CipherService {
     private ByteSource decryptInternal(byte[] ciphertext, byte[] key, byte[] iv) throws CryptoException {
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace("Attempting to decrypt incoming byte array of length "
-                  + (ciphertext != null ? ciphertext.length : 0));
+                    + (ciphertext != null ? ciphertext.length : 0));
         }
         byte[] decrypted = crypt(ciphertext, key, iv, javax.crypto.Cipher.DECRYPT_MODE);
         return decrypted == null ? null : ByteSource.Util.bytes(decrypted);
@@ -415,9 +415,9 @@ public abstract class JcaCipherService implements CipherService {
             return javax.crypto.Cipher.getInstance(transformationString);
         } catch (Exception e) {
             String msg = "Unable to acquire a Java JCA Cipher instance using "
-                     + javax.crypto.Cipher.class.getName() + ".getInstance( \"" + transformationString + "\" ). "
-                     + getAlgorithmName() + " under this configuration is required for the "
-                     + getClass().getName() + " instance to function.";
+                    + javax.crypto.Cipher.class.getName() + ".getInstance( \"" + transformationString + "\" ). "
+                    + getAlgorithmName() + " under this configuration is required for the "
+                    + getClass().getName() + " instance to function.";
             throw new CryptoException(msg, e);
         }
     }
@@ -511,7 +511,7 @@ public abstract class JcaCipherService implements CipherService {
             iv = generateInitializationVector(true);
             if (iv == null || iv.length == 0) {
                 throw new IllegalStateException("Initialization vector generation is enabled - generated vector "
-                                                    + "cannot be null or empty.");
+                        + "cannot be null or empty.");
             }
         }
         encrypt(in, out, key, iv, generate);
@@ -555,7 +555,7 @@ public abstract class JcaCipherService implements CipherService {
 
             if (read != ivByteSize) {
                 throw new CryptoException("Unable to read initialization vector bytes from the InputStream.  "
-                         + "This is required when initialization vectors are autogenerated during an encryption operation.");
+                        + "This is required when initialization vectors are autogenerated during an encryption operation.");
             }
         }
 

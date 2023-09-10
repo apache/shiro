@@ -63,6 +63,7 @@ public class ManageUsersController {
         return "editUser";
     }
 
+    @SuppressWarnings("checkstyle:LineLength")
     @RequestMapping(value = "/editUser", method = RequestMethod.POST)
     @RequiresPermissions("user:edit")
     public String editUser(Model model, @RequestParam Long userId, @ModelAttribute EditUserCommand command, BindingResult errors) {

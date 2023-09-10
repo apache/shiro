@@ -17,53 +17,57 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-  <html xmlns="http://www.w3.org/1999/xhtml"
+<html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:jsf="http://xmlns.jcp.org/jsf"
       xmlns:h="http://xmlns.jcp.org/jsf/html">
-    <h:head>
-        <title>Many Beans Unprotected</title>
-    </h:head>
-    <h:body>
-        Using Web Sessions: <h:outputText id='usingWebSessions' value="#{unprotectedFacade.usingWebSessions}"/>
+<h:head>
+    <title>Many Beans Unprotected</title>
+</h:head>
+<h:body>
+    Using Web Sessions:
+    <h:outputText id='usingWebSessions' value="#{unprotectedFacade.usingWebSessions}"/>
+    <p/>
+    <h:form id="form">
+        <h:commandButton id="facesViewScoped" value="Call Faces View Scoped"
+                         action="#{unprotectedFacade.callFacesViewScoped()}">
+            <f:ajax execute="@form" render="@form"/>
+        </h:commandButton>
+        <h:commandButton id="omniViewScoped" value="Call Omni View Scoped"
+                         action="#{unprotectedFacade.callOmniViewScoped()}">
+            <f:ajax execute="@form" render="@form"/>
+        </h:commandButton>
+        <h:commandButton id="sessionScoped" value="Session Scoped" action="#{unprotectedFacade.callSessionScoped()}">
+            <f:ajax execute="@form" render="@form"/>
+        </h:commandButton>
+        <h:commandButton id="stateless" value="Stateless Bean" action="#{unprotectedFacade.callStatelessBean()}">
+            <f:ajax execute="@form" render="@form"/>
+        </h:commandButton>
+        <h:commandButton id="unprotected" value="Unprotected Method"
+                         action="#{unprotectedFacade.callUnprotectedMethod()}">
+            <f:ajax execute="@form" render="@form"/>
+        </h:commandButton>
+        <h:commandButton id="protected" value="Protected Method" action="#{unprotectedFacade.callProtectedMethod()}">
+            <f:ajax execute="@form" render="@form"/>
+        </h:commandButton>
         <p/>
-        <h:form id="form">
-            <h:commandButton id="facesViewScoped" value="Call Faces View Scoped" action="#{unprotectedFacade.callFacesViewScoped()}">
-                <f:ajax execute="@form" render="@form"/>
-            </h:commandButton>
-            <h:commandButton id="omniViewScoped" value="Call Omni View Scoped" action="#{unprotectedFacade.callOmniViewScoped()}">
-                <f:ajax execute="@form" render="@form"/>
-            </h:commandButton>
-            <h:commandButton id="sessionScoped" value="Session Scoped" action="#{unprotectedFacade.callSessionScoped()}">
-                <f:ajax execute="@form" render="@form"/>
-            </h:commandButton>
-            <h:commandButton id="stateless" value="Stateless Bean" action="#{unprotectedFacade.callStatelessBean()}">
-                <f:ajax execute="@form" render="@form"/>
-            </h:commandButton>
-            <h:commandButton id="unprotected" value="Unprotected Method" action="#{unprotectedFacade.callUnprotectedMethod()}">
-                <f:ajax execute="@form" render="@form"/>
-            </h:commandButton>
-            <h:commandButton id="protected" value="Protected Method" action="#{unprotectedFacade.callProtectedMethod()}">
-                <f:ajax execute="@form" render="@form"/>
-            </h:commandButton>
-            <p/>
-            <h:commandButton id="logout" value="Logout..." action="#{logoutBean.logout}"/>
-            <h:messages id="messages"/>
-            <h:outputText escape="false" value="#{unprotectedFacade.statistics}"/>
-            <div jsf:rendered="#{forms.sessionExpired}" style="color: red;" id="sessionExpiredMessage">
-                Your Session Has Expired
-            </div>
-        </h:form>
-        <input type="button" id="logoutservlet" value="Logout via Servlet"
-               onclick="invalidateSession('#{request.contextPath}/logoutservlet', 'Logged out!')" />
-        <input type="button" id="invalidate" value="Invalidate Session"
-               onclick="invalidateSession('#{request.contextPath}/invalidatesession', 'Session invalidated!')" />
-    </h:body>
-    <script type="text/javascript">
-        const invalidateSession = async (path, alertText) => {
-            const response = await fetch(path);
-            const strresp = await response.text();
-            alert(alertText);
-        };
-    </script>
+        <h:commandButton id="logout" value="Logout..." action="#{logoutBean.logout}"/>
+        <h:messages id="messages"/>
+        <h:outputText escape="false" value="#{unprotectedFacade.statistics}"/>
+        <div jsf:rendered="#{forms.sessionExpired}" style="color: red;" id="sessionExpiredMessage">
+            Your Session Has Expired
+        </div>
+    </h:form>
+    <input type="button" id="logoutservlet" value="Logout via Servlet"
+           onclick="invalidateSession('#{request.contextPath}/logoutservlet', 'Logged out!')"/>
+    <input type="button" id="invalidate" value="Invalidate Session"
+           onclick="invalidateSession('#{request.contextPath}/invalidatesession', 'Session invalidated!')"/>
+</h:body>
+<script type="text/javascript">
+    const invalidateSession = async (path, alertText) => {
+        const response = await fetch(path);
+        const strresp = await response.text();
+        alert(alertText);
+    };
+</script>
 </html>

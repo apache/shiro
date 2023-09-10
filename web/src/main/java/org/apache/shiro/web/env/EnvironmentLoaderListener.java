@@ -41,7 +41,6 @@ import javax.servlet.ServletContextListener;
  * {@link org.apache.shiro.web.servlet.ShiroFilter ShiroFilter} to ensure security operations for web requests.  Please
  * see the {@link org.apache.shiro.web.servlet.ShiroFilter ShiroFilter} JavaDoc for more.
  *
- *
  * @see EnvironmentLoader
  * @see org.apache.shiro.web.servlet.ShiroFilter ShiroFilter
  * @since 1.2

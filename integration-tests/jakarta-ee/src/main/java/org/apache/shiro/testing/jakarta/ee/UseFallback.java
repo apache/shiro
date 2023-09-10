@@ -15,7 +15,9 @@ package org.apache.shiro.testing.jakarta.ee;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
+
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**

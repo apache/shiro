@@ -43,6 +43,7 @@ public class HttpServletSession implements Session {
     private static final String HOST_SESSION_KEY = HttpServletSession.class.getName() + ".HOST_SESSION_KEY";
     private static final String TOUCH_OBJECT_SESSION_KEY = HttpServletSession.class.getName() + ".TOUCH_OBJECT_SESSION_KEY";
 
+    @SuppressWarnings("checkstyle:ExplicitInitialization")
     private HttpSession httpSession = null;
 
     public HttpServletSession(HttpSession httpSession, String host) {
@@ -73,6 +74,7 @@ public class HttpServletSession implements Session {
         return new Date(httpSession.getLastAccessedTime());
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     public long getTimeout() throws InvalidSessionException {
         try {
             return httpSession.getMaxInactiveInterval() * 1000L;
@@ -81,6 +83,7 @@ public class HttpServletSession implements Session {
         }
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
         try {
             int timeout = (int) (maxIdleTimeInMillis / 1000);

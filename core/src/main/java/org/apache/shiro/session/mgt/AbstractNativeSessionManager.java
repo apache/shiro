@@ -42,6 +42,7 @@ import java.util.Date;
  *
  * @since 1.0
  */
+@SuppressWarnings({"checkstyle:MethodCount", "checkstyle:LineLength"})
 public abstract class AbstractNativeSessionManager extends AbstractSessionManager implements NativeSessionManager, EventBusAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSessionManager.class);
@@ -112,11 +113,10 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
      * @param context the initialization data that can be used by the implementation or underlying
      *                {@link SessionFactory} when instantiating the internal {@code Session} instance.
      * @return the new {@code Session} instance.
-     * @throws org.apache.shiro.authz.HostUnauthorizedException
-     *                                if the system access control policy restricts access based
-     *                                on client location/IP and the specified hostAddress hasn't been enabled.
-     * @throws AuthorizationException if the system access control policy does not allow the currently executing
-     *                                caller to start sessions.
+     * @throws org.apache.shiro.authz.HostUnauthorizedException if the system access control policy restricts access based
+     *                                                          on client location/IP and the specified hostAddress hasn't been enabled.
+     * @throws AuthorizationException                           if the system access control policy does not allow the currently executing
+     *                                                          caller to start sessions.
      */
     protected abstract Session createSession(SessionContext context) throws AuthorizationException;
 

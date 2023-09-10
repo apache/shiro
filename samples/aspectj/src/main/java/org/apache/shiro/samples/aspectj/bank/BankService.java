@@ -20,6 +20,7 @@ package org.apache.shiro.samples.aspectj.bank;
 
 import java.util.Date;
 
+@SuppressWarnings("checkstyle:LineLength")
 public interface BankService {
 
     long[] searchAccountIdsByOwner(String anOwnerName);

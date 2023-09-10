@@ -171,22 +171,22 @@ public class Argon2HashProvider implements HashSpi {
         public static final int DEFAULT_ALGORITHM_VERSION = Argon2Hash.DEFAULT_ALGORITHM_VERSION;
 
         /**
-         *  Default iterations.
+         * Default iterations.
          */
         public static final int DEFAULT_ITERATIONS = Argon2Hash.DEFAULT_ITERATIONS;
 
         /**
-         *  Default memory kib.
+         * Default memory kib.
          */
         public static final int DEFAULT_MEMORY_KIB = Argon2Hash.DEFAULT_MEMORY_KIB;
 
         /**
-         *  Default parallelism number.
+         * Default parallelism number.
          */
         public static final int DEFAULT_PARALLELISM = Argon2Hash.DEFAULT_PARALLELISM;
 
         /**
-         *  Default output length bits.
+         * Default output length bits.
          */
         public static final int DEFAULT_OUTPUT_LENGTH_BITS = Argon2Hash.DEFAULT_OUTPUT_LENGTH_BITS;
 
@@ -223,12 +223,12 @@ public class Argon2HashProvider implements HashSpi {
         public static final String PARAMETER_ITERATIONS = "Argon2.iterations";
 
         /**
-         *  Argon2 parameter memory kib.
+         * Argon2 parameter memory kib.
          */
         public static final String PARAMETER_MEMORY_KIB = "Argon2.memoryKib";
 
         /**
-         *  Argon2 parameter parallelism.
+         * Argon2 parameter parallelism.
          */
         public static final String PARAMETER_PARALLELISM = "Argon2.parallelism";
 

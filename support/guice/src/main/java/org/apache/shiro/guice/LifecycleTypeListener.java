@@ -27,6 +27,7 @@ import org.apache.shiro.lang.util.Destroyable;
 import org.apache.shiro.lang.util.Initializable;
 
 
+@SuppressWarnings("checkstyle:LineLength")
 class LifecycleTypeListener implements TypeListener {
     public static final Matcher<TypeLiteral> MATCHER = InitializableInjectionListener.MATCHER.or(DestroyableInjectionListener.MATCHER);
     private DestroyableInjectionListener.DestroyableRegistry registry;

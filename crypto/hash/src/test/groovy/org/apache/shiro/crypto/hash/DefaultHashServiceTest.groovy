@@ -51,7 +51,7 @@ class DefaultHashServiceTest {
 
     @Test
     void testRequestWithEmptySource() {
-        def source = ByteSource.Util.bytes((byte[])null)
+        def source = ByteSource.Util.bytes((byte[]) null)
         def request = new HashRequest.Builder().setSource(source).build()
         def service = createSha256Service()
         assertNull service.computeHash(request)

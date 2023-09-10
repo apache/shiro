@@ -140,6 +140,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
     /**
      * Implemented by subclasses, this specifies the {@link MessageDigest MessageDigest} algorithm name
      * to use when performing the hash.
+     *
      * @return the {@link MessageDigest MessageDigest} algorithm name to use when performing the hash.
      */
     @Override
@@ -278,7 +279,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @param o the object (Hash) to check for equality.
      * @return {@code true} if the specified object is a Hash and its {@link #getBytes byte array} is identical to
-     *         this Hash's byte array, {@code false} otherwise.
+     * this Hash's byte array, {@code false} otherwise.
      */
     @Override
     public boolean equals(Object o) {

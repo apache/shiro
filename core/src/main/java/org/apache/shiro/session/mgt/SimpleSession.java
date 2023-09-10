@@ -43,6 +43,7 @@ import java.util.Map;
  *
  * @since 0.1
  */
+@SuppressWarnings("checkstyle:MethodCount")
 public class SimpleSession implements ValidatingSession, Serializable {
 
     protected static final long MILLIS_PER_SECOND = 1000;
@@ -378,6 +379,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
      * @return true if all the attributes, except the id, are equal to this object's attributes.
      * @since 1.0
      */
+    @SuppressWarnings({"checkstyle:BooleanExpressionComplexity", "checkstyle:MethodCount", "checkstyle:LineLength"})
     protected boolean onEquals(SimpleSession ss) {
         return (getStartTimestamp() != null ? getStartTimestamp().equals(ss.getStartTimestamp()) : ss.getStartTimestamp() == null)
                 && (getStopTimestamp() != null ? getStopTimestamp().equals(ss.getStopTimestamp()) : ss.getStopTimestamp() == null)
@@ -436,6 +438,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
      * @throws IOException if any of this object's fields cannot be written to the stream.
      * @since 1.0
      */
+    @SuppressWarnings("checkstyle:NPathComplexity")
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         short alteredFieldsBitMask = getAlteredFieldsBitMask();
@@ -474,7 +477,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
      * @throws ClassNotFoundException if a required class needed for instantiation is not available in the present JVM
      * @since 1.0
      */
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({"unchecked", "checkstyle:NPathComplexity"})
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         short bitMask = in.readShort();
@@ -513,6 +516,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
      * @return a bit mask used during serialization indicating which fields have been serialized.
      * @since 1.0
      */
+    @SuppressWarnings("checkstyle:NPathComplexity")
     private short getAlteredFieldsBitMask() {
         int bitMask = 0;
         bitMask = id != null ? bitMask | ID_BIT_MASK : bitMask;
