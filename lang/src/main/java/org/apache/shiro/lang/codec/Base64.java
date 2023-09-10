@@ -39,7 +39,6 @@ package org.apache.shiro.lang.codec;
 public final class Base64 {
 
     private Base64() {
-
     }
 
     /**
