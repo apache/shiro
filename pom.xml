@@ -547,6 +547,7 @@
                         <includeTestSourceDirectory>true</includeTestSourceDirectory>
                         <enableRulesSummary>true</enableRulesSummary>
                         <excludes>**/Quickstart.java,**/QuickstartGuice.java,**/QuickstartShiroModule.java</excludes>
+                        <resourceExcludes>test-keystore.jks,test-keystore.pem</resourceExcludes>
                         <propertyExpansion>root.dir=${root.dir}</propertyExpansion>
                     </configuration>
                     <executions>
