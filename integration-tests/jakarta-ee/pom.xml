@@ -402,7 +402,7 @@
                             <commandlineArgs>-i ${mac-backup-file} -e 's/jvm-options>\[17|/jvm-options>\[16|/g'
                                 -e 's/property name="HZ_LISTENER_PORT" value="5900/property name="HZ_LISTENER_PORT" value="5920/g'
                                 -e 's/hazelcast-runtime-configuration start-port="5900/hazelcast-runtime-configuration start-port="5920/g'
-                                ${project.build.directory}/dependency/payara5/glassfish/domains/${domain.name}/config/domain.xml</commandlineArgs>
+                                ${project.build.directory}/dependency/payara5/glassfish/domains/${domain.name}/config/domain.xml
                             </commandlineArgs>
                             <skip>${unix-sed-skip}</skip>
                         </configuration>
