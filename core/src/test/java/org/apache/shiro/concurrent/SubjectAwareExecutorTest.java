@@ -27,7 +27,7 @@ import java.util.concurrent.Executor;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Mockito.verify;
 
 /**
  * Test cases for the {@link SubjectAwareExecutor} implementation.

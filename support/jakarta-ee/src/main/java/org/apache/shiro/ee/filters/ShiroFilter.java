@@ -66,7 +66,7 @@ import org.omnifaces.util.Servlets;
 
 /**
  * Stops JEE server from interpreting Shiro principal as direct EJB principal,
- * this has sideffects of trying to log in to remote EJBs with the credentials from Shiro,
+ * this has error effects of trying to log in to remote EJBs with the credentials from Shiro,
  * which isn't what this meant to do, as it's meant to just transfer Shiro credentials
  * to remote EJB call site.
  * <p>

@@ -13,26 +13,24 @@
  */
 package org.apache.shiro.cdi;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-import javax.validation.constraints.NotNull;
-
 import lombok.SneakyThrows;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.authz.aop.AuthenticatedAnnotationHandler;
 import org.apache.shiro.authz.aop.UserAnnotationHandler;
 import org.apache.shiro.cdi.AopHelper.SecurityInterceptor;
+import org.junit.jupiter.api.Test;
+
+import javax.validation.constraints.NotNull;
+import java.lang.annotation.Annotation;
+import java.util.List;
 
 import static org.apache.shiro.cdi.AopHelper.autorizationAnnotationClasses;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.times;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Mockito.verify;
 
 /**
  * AOP Helper unit test

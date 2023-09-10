@@ -59,7 +59,7 @@ public class AnnotatedTypeWrapper<T> implements AnnotatedType<T> {
 
     @Override
     public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
-        return annotations.stream().anyMatch(annotation -> annotationType.isInstance(annotation));
+        return annotations.stream().anyMatch(annotationType::isInstance);
     }
 
     private void addToBuilder(Stream.Builder<Annotation> builder, Annotation ann) {

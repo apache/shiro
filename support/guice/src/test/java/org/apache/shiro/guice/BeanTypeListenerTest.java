@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**

@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
