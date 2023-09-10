@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.easymock.EasyMock.verify;
 import static org.mockito.Mockito.when;
 
 /**

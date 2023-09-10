@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.easymock.EasyMock.verify;
 import static org.mockito.Mockito.when;
 
 public class ShiroHttpServletRequestTest {

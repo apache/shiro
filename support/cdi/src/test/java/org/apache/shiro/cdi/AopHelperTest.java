@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.easymock.EasyMock.verify;
 
 /**
  * AOP Helper unit test
