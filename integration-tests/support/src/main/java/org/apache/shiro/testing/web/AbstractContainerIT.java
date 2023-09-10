@@ -172,6 +172,7 @@ public abstract class AbstractContainerIT {
             }
         });
 
+        assert warFiles != null;
         assertEquals(1, warFiles.length, "Expected only one war file in target directory, run 'mvn clean' and try again");
 
         return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
