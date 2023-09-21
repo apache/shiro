@@ -33,7 +33,7 @@ import java.util.Collections;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 import org.apache.shiro.ee.filters.ShiroFilter.WrappedSecurityManager;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
-import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResumbitDisabled;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.HttpCookie;
@@ -233,7 +233,7 @@ public class FormResubmitSupport {
 
     /**
      * Redirects the user to saved request after login, if available
-     * Resumbits the form that caused the logout upon successfull login.Form resumnission supports JSF and Ajax forms
+     * Resubmits the form that caused the logout upon successfull login.Form resumnission supports JSF and Ajax forms
      * @param request
      * @param response
      * @param useFallbackPath predicate whether to use fall back path
@@ -263,7 +263,7 @@ public class FormResubmitSupport {
     static void redirectToSaved(HttpServletRequest request, HttpServletResponse response,
             FallbackPredicate useFallbackPath, String fallbackPath) {
         redirectToSaved(request, response, useFallbackPath, fallbackPath,
-                !isFormResumbitDisabled(request.getServletContext()));
+                !isFormResubmitDisabled(request.getServletContext()));
     }
 
 

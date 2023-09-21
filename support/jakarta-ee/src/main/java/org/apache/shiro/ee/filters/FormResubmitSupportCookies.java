@@ -29,6 +29,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.ee.listeners.EnvironmentLoaderListener;
 import static org.apache.shiro.web.servlet.ShiroHttpSession.DEFAULT_SESSION_ID_NAME;
 
 /**
@@ -41,18 +42,24 @@ public class FormResubmitSupportCookies {
     static final String DONT_ADD_ANY_MORE_COOKIES = "org.apache.shiro.no-more-cookies";
 
     static void addCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
-            @NonNull String cokieName, @NonNull String cookieValue, int maxAge) {
-        var cookie = new Cookie(cokieName, cookieValue);
+            @NonNull String cookieName, @NonNull String cookieValue, int maxAge) {
+        var cookie = new Cookie(cookieName, cookieValue);
         cookie.setPath(servletContext.getContextPath());
         cookie.setMaxAge(maxAge);
+        if (EnvironmentLoaderListener.isFormResubmitSecureCookies(servletContext)) {
+            cookie.setSecure(true);
+        }
         response.addCookie(cookie);
     }
 
     static void deleteCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
-            @NonNull String cokieName) {
-        var cookieToDelete = new Cookie(cokieName, "tbd");
+            @NonNull String cookieName) {
+        var cookieToDelete = new Cookie(cookieName, "tbd");
         cookieToDelete.setPath(servletContext.getContextPath());
         cookieToDelete.setMaxAge(0);
+        if (EnvironmentLoaderListener.isFormResubmitSecureCookies(servletContext)) {
+            cookieToDelete.setSecure(true);
+        }
         response.addCookie(cookieToDelete);
     }
 
