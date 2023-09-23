@@ -37,6 +37,8 @@
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
         <arquillian.version>1.7.1.Final</arquillian.version>
+        <arquillian.drone.version>2.5.6</arquillian.drone.version>
+        <arquillian.graphene.version>2.5.4</arquillian.graphene.version>
         <failsafe.argLine>
             --add-opens java.base/java.lang=ALL-UNNAMED
             --add-opens java.base/java.net=ALL-UNNAMED
@@ -138,12 +140,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
-            <version>${mockito-inline.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>${slf4j.version}</version>
@@ -185,7 +181,7 @@
         <dependency>
             <groupId>org.jboss.arquillian.graphene</groupId>
             <artifactId>graphene-webdriver</artifactId>
-            <version>2.5.4</version>
+            <version>${arquillian.graphene.version}</version>
             <scope>test</scope>
             <type>pom</type>
         </dependency>
@@ -203,7 +199,7 @@
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-drone-bom</artifactId>
-                <version>2.5.6</version>
+                <version>${arquillian.drone.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -219,6 +215,18 @@
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <annotationProcessorPath>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </annotationProcessorPath>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
             </plugin>
