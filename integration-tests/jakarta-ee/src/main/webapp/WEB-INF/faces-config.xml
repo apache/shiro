@@ -30,5 +30,6 @@
     </factory>
     <application>
         <resource-handler>org.omnifaces.resourcehandler.VersionedResourceHandler</resource-handler>
+        <resource-handler>org.omnifaces.resourcehandler.UnmappedResourceHandler</resource-handler>
     </application>
 </faces-config>

@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.net.CookieManager;
 import java.net.HttpCookie;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
@@ -240,7 +239,7 @@ public class FormResubmitSupport {
      * @param fallbackPath
      * @param resubmit if true, attempt to resubmit the form that was unsubmitted prior to logout
      */
-    @SneakyThrows({IOException.class, URISyntaxException.class, InterruptedException.class})
+    @SneakyThrows({IOException.class, InterruptedException.class})
     static void redirectToSaved(HttpServletRequest request, HttpServletResponse response,
             FallbackPredicate useFallbackPath, String fallbackPath, boolean resubmit) {
         String savedRequest = Servlets.getRequestCookie(request, WebUtils.SAVED_REQUEST_KEY);
@@ -268,7 +267,7 @@ public class FormResubmitSupport {
 
 
     private static void doRedirectToSaved(HttpServletRequest request, HttpServletResponse response,
-            @NonNull String savedRequest, boolean resubmit) throws IOException, URISyntaxException, InterruptedException {
+            @NonNull String savedRequest, boolean resubmit) throws IOException, InterruptedException {
         deleteCookie(response, request.getServletContext(), WebUtils.SAVED_REQUEST_KEY);
         String savedFormDataKey = Servlets.getRequestCookie(request, SHIRO_FORM_DATA_KEY);
         boolean doRedirectAtEnd = true;
@@ -358,7 +357,7 @@ public class FormResubmitSupport {
     static String resubmitSavedForm(@NonNull String savedFormData, @NonNull String savedRequest,
             HttpServletRequest originalRequest, HttpServletResponse originalResponse,
             ServletContext servletContext, boolean rememberedAjaxResubmit)
-            throws InterruptedException, URISyntaxException, IOException {
+            throws InterruptedException, IOException {
         if (log.isDebugEnabled()) {
             log.debug("saved form data: {}", savedFormData);
             log.debug("Set Cookie Headers: {}", originalResponse.getHeaders(SET_COOKIE));
@@ -477,7 +476,7 @@ public class FormResubmitSupport {
     }
 
     private static HttpClient buildHttpClient(URI savedRequest, ServletContext servletContext,
-            HttpServletRequest originalRequest) throws URISyntaxException {
+            HttpServletRequest originalRequest) {
         CookieManager cookieManager = new CookieManager();
         var session = SecurityUtils.getSubject().getSession();
         var sessionCookieName = getSessionCookieName(servletContext, SecurityUtils.getSecurityManager());
