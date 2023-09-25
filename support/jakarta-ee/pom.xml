@@ -71,7 +71,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.3</version>
+            <version>3.14.4</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
