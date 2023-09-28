@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * A request filter that blocks malicious requests. Invalid request will respond with a 400 response code.
@@ -61,6 +62,12 @@ public class InvalidRequestFilter extends AccessControlFilter {
 
     private boolean blockTraversal = true;
 
+    private boolean blockEncodedPeriod = true;
+
+    private boolean blockEncodedForwardSlash = true;
+
+    private boolean blockRewriteTraversal = true;
+
     @Override
     protected boolean isAccessAllowed(ServletRequest req, ServletResponse response, Object mappedValue) throws Exception {
         HttpServletRequest request = WebUtils.toHttp(req);
@@ -74,8 +81,10 @@ public class InvalidRequestFilter extends AccessControlFilter {
         return !StringUtils.hasText(uri)
                || ( !containsSemicolon(uri)
                  && !containsBackslash(uri)
-                 && !containsNonAsciiCharacters(uri))
-                 && !containsTraversal(uri);
+                 && !containsNonAsciiCharacters(uri)
+                 && !containsTraversal(uri)
+                 && !containsEncodedPeriods(uri)
+                 && !containsEncodedForwardSlash(uri));
     }
 
     @Override
@@ -118,9 +127,22 @@ public class InvalidRequestFilter extends AccessControlFilter {
 
     private boolean containsTraversal(String uri) {
         if (isBlockTraversal()) {
-            return !(isNormalized(uri)
-                    && PERIOD.stream().noneMatch(uri::contains)
-                    && FORWARDSLASH.stream().noneMatch(uri::contains));
+            return !isNormalized(uri)
+                || (isBlockRewriteTraversal() && Stream.of("/..;", "/.;").anyMatch(uri::contains));
+        }
+        return false;
+    }
+
+    private boolean containsEncodedPeriods(String uri) {
+        if (isBlockEncodedPeriod()) {
+            return PERIOD.stream().anyMatch(uri::contains);
+        }
+        return false;
+    }
+
+    private boolean containsEncodedForwardSlash(String uri) {
+        if (isBlockEncodedForwardSlash()) {
+            return FORWARDSLASH.stream().anyMatch(uri::contains);
         }
         return false;
     }
@@ -179,5 +201,29 @@ public class InvalidRequestFilter extends AccessControlFilter {
 
     public void setBlockTraversal(boolean blockTraversal) {
         this.blockTraversal = blockTraversal;
+    }
+
+    public boolean isBlockEncodedPeriod() {
+        return blockEncodedPeriod;
+    }
+
+    public void setBlockEncodedPeriod(boolean blockEncodedPeriod) {
+        this.blockEncodedPeriod = blockEncodedPeriod;
+    }
+
+    public boolean isBlockEncodedForwardSlash() {
+        return blockEncodedForwardSlash;
+    }
+
+    public void setBlockEncodedForwardSlash(boolean blockEncodedForwardSlash) {
+        this.blockEncodedForwardSlash = blockEncodedForwardSlash;
+    }
+
+    public boolean isBlockRewriteTraversal() {
+        return blockRewriteTraversal;
+    }
+
+    public void setBlockRewriteTraversal(boolean blockRewriteTraversal) {
+        this.blockRewriteTraversal = blockRewriteTraversal;
     }
 }
