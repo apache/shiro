@@ -23,9 +23,9 @@ permissions:
 on:
   workflow_dispatch: {}
   push:
-    branches: [ main, '1.11.x', '1.10.x', '1.9.x' ]
+    branches: [ main, '1.12.x', '1.11.x', '1.10.x' ]
   pull_request:
-    branches: [ main, '1.11.x', '1.10.x', '1.9.x' ]
+    branches: [ main, '1.12.x', '1.11.x', '1.10.x' ]
 
 jobs:
   build:
@@ -55,23 +55,22 @@ jobs:
     strategy:
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest', 'macOS-latest' ]
-        jdk: [ 11, 17, 19 ]
+        jdk: [ 11, 17, 21 ]
         dist: [ 'temurin', 'adopt-openj9', 'zulu' ]
         exclude:
           # was already built
           - os: 'ubuntu-latest'
             jdk: 11
             dist: 'temurin'
-          # exclude some builds, because MacOs builds have fewer resources available.
-          # excludes java 16 on macOS.
-          - os: 'macOS-latest'
-            jdk: 16
           # exclude temurin on MacOS. zulu (also hotspot) and OpenJ9 are sufficient.
           - os: 'macOS-latest'
             dist: 'temurin'
-          # no OpenJ9 19
+          # no Temurin 21
+          - dist: 'temurin'
+            jdk: 21
+          # no OpenJ9 21
           - dist: adopt-openj9
-            jdk: 19
+            jdk: 21
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
@@ -87,13 +86,13 @@ jobs:
           distribution: ${{ matrix.dist }}
 
       - name: Build with Maven (Linux)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && matrix.jdk <= 17
         run: >-
           mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
           -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build with Maven (non-Linux)
-        if: matrix.os != 'ubuntu-latest'
+      - name: Build with Maven (non-Linux or JDK > 17)
+        if: matrix.os != 'ubuntu-latest' || matrix.jdk > 17
         run: >-
           mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
           -Pskip_jakarta_ee_tests
