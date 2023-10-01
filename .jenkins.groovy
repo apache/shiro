@@ -17,7 +17,7 @@
  * under the License.
  */
 
-def deployableBranch = env.BRANCH_NAME ==~ /(1.7.x|1.8.x|1.9.x|main)/
+def deployableBranch = env.BRANCH_NAME ==~ /(1.12.x|1.11.x|1.10.x|main)/
 
 pipeline {
 
@@ -36,7 +36,7 @@ pipeline {
                     axis {
                         // https://cwiki.apache.org/confluence/display/INFRA/JDK+Installation+Matrix
                         name 'MATRIX_JDK'
-                        values 'jdk_11_latest', 'jdk_17_latest', 'jdk_19_latest'
+                        values 'jdk_11_latest', 'jdk_17_latest', 'jdk_21_latest'
                     }
                     // Additional axes, like OS and maven version can be configured here.
                 }
