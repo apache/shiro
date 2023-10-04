@@ -446,6 +446,8 @@
                         <target>${maven.compiler.release}</target>
                         <complianceLevel>${maven.compiler.release}</complianceLevel>
                         <showWeaveInfo>true</showWeaveInfo>
+                        <!-- Fix for https://github.com/apache/shiro/issues/1100 -->
+                        <forceAjcCompile>true</forceAjcCompile>
                     </configuration>
                     <executions>
                         <execution>
