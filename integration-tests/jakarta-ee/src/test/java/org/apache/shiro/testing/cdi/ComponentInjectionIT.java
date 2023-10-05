@@ -119,6 +119,10 @@ public class ComponentInjectionIT {
                 .addAsResource("META-INF/beans.xml")
                 .addAsResource(new StringAsset("org.apache.shiro.cdi.ShiroSecurityExtension"),
                         jakartify("META-INF/services/javax.enterprise.inject.spi.Extension"))
+                .addAsResource("META-INF/services/org.slf4j.spi.SLF4JServiceProvider")
+                .addAsWebInfResource(new StringAsset(
+                        "<payara-web-app><class-loader delegate=\"false\"/></payara-web-app>"),
+                        "payara-web.xml")
                 .addPackages(true, "org.apache.shiro")
                 .addPackages(true, "org.apache.commons")
                 .deletePackages(true, "org.apache.shiro.testing")
