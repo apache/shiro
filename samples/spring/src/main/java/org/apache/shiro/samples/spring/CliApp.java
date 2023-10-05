@@ -34,23 +34,22 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import({ShiroBeanConfiguration.class,
-         ShiroConfiguration.class,
-         ShiroAnnotationProcessorConfiguration.class})
+        ShiroConfiguration.class,
+        ShiroAnnotationProcessorConfiguration.class})
 @ComponentScan("org.apache.shiro.samples.spring")
 public class CliApp {
 
     /**
      * Example hard coded Realm bean.
+     *
      * @return hard coded Realm bean
      */
     @Bean
     public Realm realm() {
         TextConfigurationRealm realm = new TextConfigurationRealm();
-        realm.setUserDefinitions("joe.coder=password,user\n" +
-                                 "jill.coder=password,admin");
+        realm.setUserDefinitions("joe.coder=password,user\n jill.coder=password,admin");
 
-        realm.setRoleDefinitions("admin=read,write\n" +
-                                 "user=read");
+        realm.setRoleDefinitions("admin=read,write\n user=read");
         realm.setCachingEnabled(true);
         return realm;
     }

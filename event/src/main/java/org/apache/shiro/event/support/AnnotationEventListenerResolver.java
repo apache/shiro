@@ -51,7 +51,7 @@ public class AnnotationEventListenerResolver implements EventListenerResolver {
      *
      * @param instance the instance to inspect for annotated event handler methods.
      * @return a new collection of {@link EventListener} instances, each instance corresponding to an annotated
-     *         method discovered on the specified {@code instance} argument.
+     * method discovered on the specified {@code instance} argument.
      */
     public List<EventListener> getEventListeners(Object instance) {
         if (instance == null) {
@@ -77,7 +77,7 @@ public class AnnotationEventListenerResolver implements EventListenerResolver {
      * defaults to {@link Subscribe}.
      *
      * @return the type of annotation that indicates a method that should be represented as an {@link EventListener},
-     *         defaults to {@link Subscribe}.
+     * defaults to {@link Subscribe}.
      */
     public Class<? extends Annotation> getAnnotationClass() {
         return annotationClass;

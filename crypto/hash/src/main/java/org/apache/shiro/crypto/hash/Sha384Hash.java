@@ -35,8 +35,9 @@ import org.apache.shiro.lang.codec.Hex;
  */
 public class Sha384Hash extends SimpleHash {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * Sha384 algorithm name.
+     */
     public static final String ALGORITHM_NAME = "SHA-384";
 
     public Sha384Hash() {

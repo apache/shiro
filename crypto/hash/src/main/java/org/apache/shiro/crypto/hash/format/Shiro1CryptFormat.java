@@ -83,12 +83,18 @@ import org.apache.shiro.lang.util.StringUtils;
  *
  * @see ModularCryptFormat
  * @see ParsableHashFormat
- *
  * @since 1.2
  */
 public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat {
 
+    /**
+     * shiro1 crypt id.
+     */
     public static final String ID = "shiro1";
+
+    /**
+     * shiro1 crypt format prefix
+     */
     public static final String MCF_PREFIX = TOKEN_DELIMITER + ID + TOKEN_DELIMITER;
 
     public Shiro1CryptFormat() {
@@ -108,7 +114,11 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         String algorithmName = hash.getAlgorithmName();
         ByteSource salt = hash.getSalt();
         int iterations = hash.getIterations();
-        StringBuilder sb = new StringBuilder(MCF_PREFIX).append(algorithmName).append(TOKEN_DELIMITER).append(iterations).append(TOKEN_DELIMITER);
+        StringBuilder sb = new StringBuilder(MCF_PREFIX)
+                .append(algorithmName)
+                .append(TOKEN_DELIMITER)
+                .append(iterations)
+                .append(TOKEN_DELIMITER);
 
         if (salt != null) {
             sb.append(salt.toBase64());

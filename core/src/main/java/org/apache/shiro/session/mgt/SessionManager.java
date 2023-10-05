@@ -53,7 +53,7 @@ public interface SessionManager {
      *
      * @param key the Session key to use to look-up the Session
      * @return the {@code Session} instance corresponding to the given lookup key or {@code null} if no session
-     *         could be acquired.
+     * could be acquired.
      * @throws SessionException if a session was found but it was invalid (stopped/expired).
      * @since 1.0
      */

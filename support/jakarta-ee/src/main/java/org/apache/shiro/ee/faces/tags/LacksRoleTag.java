@@ -16,6 +16,7 @@ package org.apache.shiro.ee.faces.tags;
 import javax.faces.view.facelets.TagConfig;
 
 /**
+ *
  */
 public class LacksRoleTag extends PermissionTagHandler {
     public LacksRoleTag(TagConfig config) {

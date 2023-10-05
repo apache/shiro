@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class SimpleRole implements Serializable {
 
-    protected String name = null;
+    protected String name;
     protected Set<Permission> permissions;
 
     public SimpleRole() {

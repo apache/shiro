@@ -27,9 +27,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class NonIniWebSecurityManagerTest extends AbstractWebSecurityManagerTest {
-    
+
     private DefaultWebSecurityManager sm;
-    
+
     @BeforeEach
     public void setup() {
         sm = new DefaultWebSecurityManager();
@@ -49,11 +49,11 @@ public class NonIniWebSecurityManagerTest extends AbstractWebSecurityManagerTest
      * Test for SHIRO-646: Unable to login a DelegatingSubject on a DefaultWebSecurityManager.
      */
     @Test
-    void testLoginNonWebSubject(){
+    void testLoginNonWebSubject() {
         Subject.Builder builder = new Subject.Builder(sm);
         Subject subject = builder.buildSubject();
         subject.login(new UsernamePasswordToken("lonestarr", "vespa"));
-        
+
     }
-    
+
 }

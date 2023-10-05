@@ -34,7 +34,7 @@ class CompositeBean {
     Map<String, CompositeBean> compositeBeanMap;
     CompositeBean[] compositeBeanArray;
 
-    public CompositeBean(){}
+    public CompositeBean() {}
 
     public CompositeBean(String name) {
         this.name = name

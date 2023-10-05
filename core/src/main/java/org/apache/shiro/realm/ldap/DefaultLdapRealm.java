@@ -78,12 +78,11 @@ import javax.naming.ldap.LdapContext;
  * properties as necessary.
  *
  * @see JndiLdapContextFactory
- *
  * @since 1.3
  */
 public class DefaultLdapRealm extends AuthorizingRealm {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultLdapRealm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapRealm.class);
 
     //The zero index currently means nothing, but could be utilized in the future for other substitution techniques.
     private static final String USERDN_SUBSTITUTION_TOKEN = "{0}";
@@ -126,7 +125,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * occurs before the {@link #USERDN_SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
      *
      * @return the the User DN prefix to use when building a runtime User DN value or {@code null} if no
-     *         {@link #getUserDnTemplate() userDnTemplate} has been configured.
+     * {@link #getUserDnTemplate() userDnTemplate} has been configured.
      */
     protected String getUserDnPrefix() {
         return userDnPrefix;
@@ -138,7 +137,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * occurs after the {@link #USERDN_SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
      *
      * @return the User DN suffix to use when building a runtime User DN value or {@code null} if no
-     *         {@link #getUserDnTemplate() userDnTemplate} has been configured.
+     * {@link #getUserDnTemplate() userDnTemplate} has been configured.
      */
     protected String getUserDnSuffix() {
         return userDnSuffix;
@@ -176,7 +175,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * @param template the User Distinguished Name template to use for runtime substitution
      * @throws IllegalArgumentException if the template is null, empty, or does not contain the
      *                                  {@code {0}} substitution token.
-     * @see LdapContextFactory#getLdapContext(Object,Object)
+     * @see LdapContextFactory#getLdapContext(Object, Object)
      */
     public void setUserDnTemplate(String template) throws IllegalArgumentException {
         if (!StringUtils.hasText(template)) {
@@ -185,15 +184,15 @@ public class DefaultLdapRealm extends AuthorizingRealm {
         }
         int index = template.indexOf(USERDN_SUBSTITUTION_TOKEN);
         if (index < 0) {
-            String msg = "User DN template must contain the '" +
-                    USERDN_SUBSTITUTION_TOKEN + "' replacement token to understand where to " +
-                    "insert the runtime authentication principal.";
+            String msg = "User DN template must contain the '"
+                    + USERDN_SUBSTITUTION_TOKEN + "' replacement token to understand where to "
+                    + "insert the runtime authentication principal.";
             throw new IllegalArgumentException(msg);
         }
         String prefix = template.substring(0, index);
         String suffix = template.substring(prefix.length() + USERDN_SUBSTITUTION_TOKEN.length());
-        if (log.isDebugEnabled()) {
-            log.debug("Determined user DN prefix [{}] and suffix [{}]", prefix, suffix);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Determined user DN prefix [{}] and suffix [{}]", prefix, suffix);
         }
         this.userDnPrefix = prefix;
         this.userDnSuffix = suffix;
@@ -231,9 +230,9 @@ public class DefaultLdapRealm extends AuthorizingRealm {
         String prefix = getUserDnPrefix();
         String suffix = getUserDnSuffix();
         if (prefix == null && suffix == null) {
-            log.debug("userDnTemplate property has not been configured, indicating the submitted " +
-                    "AuthenticationToken's principal is the same as the User DN.  Returning the method argument " +
-                    "as is.");
+            LOGGER.debug("userDnTemplate property has not been configured, indicating the submitted "
+                    + "AuthenticationToken's principal is the same as the User DN.  Returning the method argument "
+                    + "as is.");
             return principal;
         }
 
@@ -269,7 +268,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * instance.
      *
      * @return the LdapContextFactory instance used to acquire connections to the LDAP directory during
-     *         authentication attempts and authorization queries
+     * authentication attempts and authorization queries
      */
     public LdapContextFactory getContextFactory() {
         return this.contextFactory;
@@ -350,7 +349,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * {@link AuthenticationToken#getCredentials() credentials}.  If the connection opens successfully, the
      * authentication attempt is immediately considered successful and a new
      * {@link AuthenticationInfo} instance is
-     * {@link #createAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken, Object, Object, javax.naming.ldap.LdapContext) created}
+     * {@link #createAuthenticationInfo(AuthenticationToken, Object, Object, LdapContext) created}
      * and returned.  If the connection cannot be opened, either because LDAP authentication failed or some other
      * JNDI problem, an {@link NamingException} will be thrown.
      *
@@ -366,7 +365,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
         Object principal = token.getPrincipal();
         Object credentials = token.getCredentials();
 
-        log.debug("Authenticating user '{}' through LDAP", principal);
+        LOGGER.debug("Authenticating user '{}' through LDAP", principal);
 
         principal = getLdapPrincipal(token);
 
@@ -418,7 +417,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * {@link AuthorizationInfo} object by querying the LDAP context for the
      * specified principal.</p>
      *
-     * @param principals          the principals of the Subject whose AuthenticationInfo should be queried from the LDAP server.
+     * @param principals         the principals of the Subject whose AuthenticationInfo should be queried from the LDAP server.
      * @param ldapContextFactory factory used to retrieve LDAP connections.
      * @return an {@link AuthorizationInfo} instance containing information retrieved from the LDAP server.
      * @throws NamingException if any LDAP errors occur during the search.

@@ -14,11 +14,14 @@
 package org.apache.shiro.ee.listeners;
 
 import java.nio.charset.StandardCharsets;
+
 import org.apache.shiro.ee.filters.FormAuthenticationFilter;
 import org.apache.shiro.ee.filters.LogoutFilter;
 import org.apache.shiro.ee.filters.SslFilter;
+
 import java.util.Map;
 import javax.servlet.Filter;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cdi.annotations.CipherKeySupplier;
 import org.apache.shiro.config.Ini;
@@ -30,6 +33,7 @@ import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.omnifaces.util.Beans;
 import org.omnifaces.util.Lazy;
+
 import static org.omnifaces.util.Utils.isBlank;
 
 /**

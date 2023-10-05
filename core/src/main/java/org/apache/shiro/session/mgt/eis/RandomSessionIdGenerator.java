@@ -33,7 +33,7 @@ import java.util.Random;
  */
 public class RandomSessionIdGenerator implements SessionIdGenerator {
 
-    private static final Logger log = LoggerFactory.getLogger(RandomSessionIdGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RandomSessionIdGenerator.class);
 
     private static final String RANDOM_NUM_GENERATOR_ALGORITHM_NAME = "SHA1PRNG";
     private Random random;
@@ -42,8 +42,8 @@ public class RandomSessionIdGenerator implements SessionIdGenerator {
         try {
             this.random = java.security.SecureRandom.getInstance(RANDOM_NUM_GENERATOR_ALGORITHM_NAME);
         } catch (java.security.NoSuchAlgorithmException e) {
-            log.debug("The SecureRandom SHA1PRNG algorithm is not available on the current platform.  Using the " +
-                    "platform's default SecureRandom algorithm.", e);
+            LOGGER.debug("The SecureRandom SHA1PRNG algorithm is not available on the current platform.  Using the "
+                    + "platform's default SecureRandom algorithm.", e);
             this.random = new java.security.SecureRandom();
         }
     }

@@ -37,7 +37,7 @@ import java.util.Comparator;
  * &#64;Subscribe
  * public void onEvent(B b) { ... }
  * </pre>
- *
+ * <p>
  * The {@code onEvent(B b)} method will be invoked on the subscriber and the
  * {@code onEvent(A a)} method will <em>not</em> be invoked.  This is to prevent multiple dispatching of a single event
  * to the same consumer.

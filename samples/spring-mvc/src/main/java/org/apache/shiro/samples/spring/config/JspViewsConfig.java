@@ -39,7 +39,7 @@ public class JspViewsConfig implements WebMvcConfigurer {
 
     @Bean
     @Order(1)
-    public ViewResolver getViewResolver(){
+    public ViewResolver getViewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setViewClass(JstlView.class);
         resolver.setPrefix("/WEB-INF/resources/");

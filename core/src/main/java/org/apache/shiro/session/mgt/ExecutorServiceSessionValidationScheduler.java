@@ -39,13 +39,15 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
 
     //TODO - complete JavaDoc
 
-    /** Private internal log instance. */
-    private static final Logger log = LoggerFactory.getLogger(ExecutorServiceSessionValidationScheduler.class);
+    /**
+     * Private internal log instance.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecutorServiceSessionValidationScheduler.class);
 
     ValidatingSessionManager sessionManager;
     private ScheduledExecutorService service;
     private long sessionValidationInterval = DefaultSessionManager.DEFAULT_SESSION_VALIDATION_INTERVAL;
-    private boolean enabled = false;
+    private boolean enabled;
     private String threadNamePrefix = "SessionValidationThread-";
 
     public ExecutorServiceSessionValidationScheduler() {
@@ -85,47 +87,47 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
     }
 
     /**
-     * Creates a single thread {@link ScheduledExecutorService} to validate sessions at fixed intervals 
+     * Creates a single thread {@link ScheduledExecutorService} to validate sessions at fixed intervals
      * and enables this scheduler. The executor is created as a daemon thread to allow JVM to shut down
      */
     //TODO Implement an integration test to test for jvm exit as part of the standalone example
     // (so we don't have to change the unit test execution model for the core module)
     public void enableSessionValidation() {
-        if (this.sessionValidationInterval > 0l) {
-            this.service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {  
-	            private final AtomicInteger count = new AtomicInteger(1);
+        if (this.sessionValidationInterval > 0L) {
+            this.service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+                private final AtomicInteger count = new AtomicInteger(1);
 
-	            public Thread newThread(Runnable r) {  
-	                Thread thread = new Thread(r);  
-	                thread.setDaemon(true);  
-	                thread.setName(threadNamePrefix + count.getAndIncrement());
-	                return thread;  
-	            }  
-            });                  
+                public Thread newThread(Runnable r) {
+                    Thread thread = new Thread(r);
+                    thread.setDaemon(true);
+                    thread.setName(threadNamePrefix + count.getAndIncrement());
+                    return thread;
+                }
+            });
             this.service.scheduleAtFixedRate(this, sessionValidationInterval,
-                sessionValidationInterval, TimeUnit.MILLISECONDS);
+                    sessionValidationInterval, TimeUnit.MILLISECONDS);
         }
         this.enabled = true;
     }
 
     public void run() {
-        if (log.isDebugEnabled()) {
-            log.debug("Executing session validation...");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Executing session validation...");
         }
         Thread.currentThread().setUncaughtExceptionHandler((t, e) -> {
-            log.error("Error while validating the session, the thread will be stopped and session validation disabled", e);
+            LOGGER.error("Error while validating the session, the thread will be stopped and session validation disabled", e);
             this.disableSessionValidation();
         });
         long startTime = System.currentTimeMillis();
         try {
             this.sessionManager.validateSessions();
         } catch (RuntimeException e) {
-            log.error("Error while validating the session", e);
+            LOGGER.error("Error while validating the session", e);
             //we don't stop the thread
         }
         long stopTime = System.currentTimeMillis();
-        if (log.isDebugEnabled()) {
-            log.debug("Session validation completed successfully in " + (stopTime - startTime) + " milliseconds.");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Session validation completed successfully in " + (stopTime - startTime) + " milliseconds.");
         }
     }
 

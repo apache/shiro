@@ -31,15 +31,15 @@ import javax.servlet.http.HttpServletResponse;
  * The {@link #getPort() port} property defaults to {@code 443} and also additionally guarantees that the
  * request scheme is always 'https' (except for port 80, which retains the 'http' scheme).
  * <p/>
- * In addition the filter allows enabling HTTP Strict Transport Security (HSTS).
+ * In addition, the filter allows enabling HTTP Strict Transport Security (HSTS).
  * This feature is opt-in and disabled by default. If enabled HSTS
- * will prevent <b>any</b> communications from being sent over HTTP to the 
+ * will prevent <b>any</b> communications from being sent over HTTP to the
  * specified domain and will instead send all communications over HTTPS.
  * </p>
- * The {@link #getMaxAge() maxAge} property defaults {@code 31536000}, and 
+ * The {@link #getMaxAge() maxAge} property defaults {@code 31536000}, and
  * {@link #isIncludeSubDomains includeSubDomains} is {@code false}.
  * </p>
- * <b>Warning:</b> Use this setting with care and only if you plan to enable 
+ * <b>Warning:</b> Use this setting with care and only if you plan to enable
  * SSL on every path.
  * </p>
  * Example configs:
@@ -54,14 +54,16 @@ import javax.servlet.http.HttpServletResponse;
  * [urls]
  * /** = ssl
  * </pre>
- * @since 1.0
+ *
  * @see <a href="https://tools.ietf.org/html/rfc6797">HTTP Strict Transport Security (HSTS)</a>
+ * @since 1.0
  */
+@SuppressWarnings("checkstyle:JavadocVariable")
 public class SslFilter extends PortFilter {
 
     public static final int DEFAULT_HTTPS_PORT = 443;
     public static final String HTTPS_SCHEME = "https";
-    
+
     private HSTS hsts;
 
     public SslFilter() {
@@ -88,12 +90,13 @@ public class SslFilter extends PortFilter {
 
     /**
      * Retains the parent method's port-matching behavior but additionally guarantees that the
-     *{@code ServletRequest.}{@link javax.servlet.ServletRequest#isSecure() isSecure()}.  If the port does not match or
+     * {@code ServletRequest.}{@link javax.servlet.ServletRequest#isSecure() isSecure()}.  If the port does not match or
      * the request is not secure, access is denied.
      *
      * @param request     the incoming {@code ServletRequest}
      * @param response    the outgoing {@code ServletResponse} - ignored in this implementation
-     * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings - ignored by this implementation.
+     * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings
+     *                    - ignored by this implementation.
      * @return {@code true} if the request is received on an expected SSL port and the
      * {@code request.}{@link javax.servlet.ServletRequest#isSecure() isSecure()}, {@code false} otherwise.
      * @throws Exception if the call to {@code super.isAccessAllowed} throws an exception.
@@ -107,39 +110,42 @@ public class SslFilter extends PortFilter {
     /**
      * If HTTP Strict Transport Security (HSTS) is enabled the HTTP header
      * will be written, otherwise this method does nothing.
-     * @param request the incoming {@code ServletRequest}
+     *
+     * @param request  the incoming {@code ServletRequest}
      * @param response the outgoing {@code ServletResponse}
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Override
-    protected void postHandle(ServletRequest request, ServletResponse response)  {
+    protected void postHandle(ServletRequest request, ServletResponse response) {
         if (hsts.isEnabled()) {
             StringBuilder directives = new StringBuilder(64)
                     .append("max-age=").append(hsts.getMaxAge());
-            
+
             if (hsts.isIncludeSubDomains()) {
                 directives.append("; includeSubDomains");
             }
-            
+
             HttpServletResponse resp = (HttpServletResponse) response;
             resp.addHeader(HSTS.HTTP_HEADER, directives.toString());
         }
     }
-    
+
     /**
      * Helper class for HTTP Strict Transport Security (HSTS)
      */
     public class HSTS {
-        
+
         public static final String HTTP_HEADER = "Strict-Transport-Security";
-        
+
         public static final boolean DEFAULT_ENABLED = false;
-        public static final int DEFAULT_MAX_AGE = 31536000; // approx. one year in seconds
+        // approx. one year in seconds
+        public static final int DEFAULT_MAX_AGE = 31536000;
         public static final boolean DEFAULT_INCLUDE_SUB_DOMAINS = false;
-        
+
         private boolean enabled;
         private int maxAge;
         private boolean includeSubDomains;
-        
+
         public HSTS() {
             this.enabled = DEFAULT_ENABLED;
             this.maxAge = DEFAULT_MAX_AGE;

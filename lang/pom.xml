@@ -18,7 +18,8 @@
   ~ under the License.
   -->
 <!--suppress osmorcNonOsgiMavenDependency -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.apache.shiro</groupId>
@@ -31,7 +32,7 @@
     <name>Apache Shiro :: Lang</name>
     <description>
         The lang module encapsulates only language-specific utilities that are used by various
-        other modules.  It exists to augment what we would have liked to see in the JDK but does not exist.
+        other modules. It exists to augment what we would have liked to see in the JDK but does not exist.
     </description>
     <packaging>bundle</packaging>
     <properties>

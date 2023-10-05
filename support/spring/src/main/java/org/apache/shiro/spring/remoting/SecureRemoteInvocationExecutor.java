@@ -51,7 +51,7 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private static final Logger log = LoggerFactory.getLogger(SecureRemoteInvocationExecutor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecureRemoteInvocationExecutor.class);
 
     /**
      * The SecurityManager used to retrieve realms that should be associated with the
@@ -93,10 +93,10 @@ public class SecureRemoteInvocationExecutor extends DefaultRemoteInvocationExecu
             if (sessionId != null) {
                 builder.sessionId(sessionId);
             } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("RemoteInvocation did not contain a Shiro Session id attribute under " +
-                            "key [" + SecureRemoteInvocationFactory.SESSION_ID_KEY + "].  A Subject based " +
-                            "on an existing Session will not be available during the method invocation.");
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("RemoteInvocation did not contain a Shiro Session id attribute under "
+                            + "key [" + SecureRemoteInvocationFactory.SESSION_ID_KEY + "].  A Subject based "
+                            + "on an existing Session will not be available during the method invocation.");
                 }
             }
 

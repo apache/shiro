@@ -20,13 +20,12 @@ package org.apache.shiro.authc.pam;
 
 import org.apache.shiro.authc.AuthenticationException;
 
-
 /**
  * Exception thrown during the authentication process using
- * {@link org.apache.shiro.authc.pam.FirstSuccessfulStrategy}, with 
- * <code>stopAfterFirstSuccess</code> set.  
- * This is a signal to short circuit the authentication from proceeding 
- * with subsequent {@link org.apache.shiro.realm.Realm Realm}s 
+ * {@link org.apache.shiro.authc.pam.FirstSuccessfulStrategy}, with
+ * <code>stopAfterFirstSuccess</code> set.
+ * This is a signal to short circuit the authentication from proceeding
+ * with subsequent {@link org.apache.shiro.realm.Realm Realm}s
  * after a first successful authentication.
  *
  * @see org.apache.shiro.authc.pam.AuthenticationStrategy

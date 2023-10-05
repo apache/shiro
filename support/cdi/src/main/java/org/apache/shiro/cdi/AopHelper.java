@@ -25,6 +25,7 @@ import java.util.concurrent.Callable;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -57,14 +58,15 @@ class AopHelper {
     @SuppressWarnings("ConstantName")
     static final Map<Class<? extends Annotation>, Callable<AuthorizingAnnotationHandler>> autorizationAnnotationClasses
             = Map.of(
-                    RequiresPermissions.class, PermissionAnnotationHandler::new,
-                    RequiresRoles.class, RoleAnnotationHandler::new,
-                    RequiresUser.class, UserAnnotationHandler::new,
-                    RequiresGuest.class, GuestAnnotationHandler::new,
-                    RequiresAuthentication.class, AuthenticatedAnnotationHandler::new,
-                    RolesAllowed.class, RolesAllowedAnnotationHandler::new,
-                    PermitAll.class, PermitAllAnnotationHandler::new,
-                    DenyAll.class, DenyAllAnnotationHandler::new);
+            RequiresPermissions.class, PermissionAnnotationHandler::new,
+            RequiresRoles.class, RoleAnnotationHandler::new,
+            RequiresUser.class, UserAnnotationHandler::new,
+            RequiresGuest.class, GuestAnnotationHandler::new,
+            RequiresAuthentication.class, AuthenticatedAnnotationHandler::new,
+            RolesAllowed.class, RolesAllowedAnnotationHandler::new,
+            PermitAll.class, PermitAllAnnotationHandler::new,
+            DenyAll.class, DenyAllAnnotationHandler::new);
+
     /**
      * Create list of
      * {@link SecurityInterceptor}
@@ -119,6 +121,7 @@ class AopHelper {
      * Rule under which determined the fate of the class contains annotation.
      * <p/>
      * All public and protected methods.
+     *
      * @param modifiers
      * @return
      */
@@ -140,7 +143,7 @@ class AopHelper {
          * Initialize {@link #handler} field use annotation.
          *
          * @param annotation annotation for create handler and use during
-         * {@link #intercept()} invocation.
+         *                   {@link #intercept()} invocation.
          */
         SecurityInterceptor(Annotation annotation) {
             this.annotation = annotation;

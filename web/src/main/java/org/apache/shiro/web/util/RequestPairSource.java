@@ -39,7 +39,7 @@ public interface RequestPairSource {
      * {@link #getServletRequest() servletRequest}.
      *
      * @return the outgoing {@link ServletResponse ServletResponse} paired with the incoming
-     *         {@link #getServletRequest() servletRequest}.
+     * {@link #getServletRequest() servletRequest}.
      */
     ServletResponse getServletResponse();
 }

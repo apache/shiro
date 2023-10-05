@@ -33,8 +33,8 @@ public class AllowAllCredentialsMatcher implements CredentialsMatcher {
     /**
      * Returns <code>true</code> <em>always</em> no matter what the method arguments are.
      *
-     * @param token   the token submitted for authentication.
-     * @param info    the account being verified for access
+     * @param token the token submitted for authentication.
+     * @param info  the account being verified for access
      * @return <code>true</code> <em>always</em>.
      */
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {

@@ -56,7 +56,7 @@ public class SubjectAwareExecutorServiceTest extends SecurityManagerTestSupport 
         });
     }
 
-    private static class DummyFuture<V> implements Future<V> {
+    private static final class DummyFuture<V> implements Future<V> {
 
         @Override
         public boolean cancel(boolean b) {

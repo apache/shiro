@@ -104,7 +104,7 @@ public interface Session {
      * if the host is unknown.
      *
      * @return the host name or IP string of the host that originated this session, or {@code null}
-     *         if the host address is unknown.
+     * if the host address is unknown.
      */
     String getHost();
 
@@ -149,7 +149,8 @@ public interface Session {
      * It is common for a {@code Subject} implementation to retain authentication state in the
      * {@code Session}.  If the session
      * is explicitly stopped by application code by calling this method directly, it could clear out any
-     * authentication state that might exist, thereby effectively removing the &quot;authenticated&quot; state of the {@code Subject}.
+     * authentication state that might exist, thereby effectively removing
+     *      the &quot;authenticated&quot; state of the {@code Subject}.
      * <p/>
      * As such, you might consider {@link org.apache.shiro.subject.Subject#logout logging-out} the 'owning'
      * {@code Subject} instead of manually calling this method, as a log out is expected to stop the
@@ -164,7 +165,7 @@ public interface Session {
      * attributes, this returns an empty collection.
      *
      * @return the keys of all attributes stored under this session, or an empty collection if
-     *         there are no session attributes.
+     * there are no session attributes.
      * @throws InvalidSessionException if this session has stopped or expired prior to calling this method.
      * @since 0.2
      */
@@ -176,7 +177,7 @@ public interface Session {
      *
      * @param key the unique name of the object bound to this session
      * @return the object bound under the specified {@code key} name or {@code null} if there is
-     *         no object bound under that name.
+     * no object bound under that name.
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
      *                                 this method.
      */
@@ -202,7 +203,7 @@ public interface Session {
      *
      * @param key the name uniquely identifying the object to remove
      * @return the object removed or {@code null} if there was no object bound under the name
-     *         {@code key}.
+     * {@code key}.
      * @throws InvalidSessionException if this session has stopped or expired prior to calling
      *                                 this method.
      */

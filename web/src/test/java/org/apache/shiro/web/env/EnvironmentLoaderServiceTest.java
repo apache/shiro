@@ -109,7 +109,8 @@ public class EnvironmentLoaderServiceTest {
     void loadFromInitParamTest() throws Exception {
 
         ServletContext servletContext = EasyMock.mock(ServletContext.class);
-        expect(servletContext.getInitParameter(EnvironmentLoader.ENVIRONMENT_CLASS_PARAM)).andReturn(WebEnvironmentStub.class.getName());
+        expect(servletContext.getInitParameter(EnvironmentLoader.ENVIRONMENT_CLASS_PARAM))
+                    .andReturn(WebEnvironmentStub.class.getName());
         expect(servletContext.getInitParameter("shiroConfigLocations")).andReturn(null);
 
         EasyMock.replay(servletContext);

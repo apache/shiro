@@ -30,7 +30,7 @@ import org.springframework.context.annotation.DependsOn;
  * @since 1.4.0
  */
 @Configuration
-public class ShiroAnnotationProcessorConfiguration extends AbstractShiroAnnotationProcessorConfiguration{
+public class ShiroAnnotationProcessorConfiguration extends AbstractShiroAnnotationProcessorConfiguration {
 
     @Bean
     @DependsOn("lifecycleBeanPostProcessor")

@@ -34,7 +34,7 @@ public interface LdapContextFactory {
      * anonymously if no system account is configured.
      *
      * @return a {@code LdapContext} bound by the system account, or bound anonymously if no system account
-     *         is configured.
+     * is configured.
      * @throws javax.naming.NamingException if there is an error creating the context.
      */
     LdapContext getSystemLdapContext() throws NamingException;
@@ -59,5 +59,5 @@ public interface LdapContextFactory {
      * @since 1.1
      */
     LdapContext getLdapContext(Object principal, Object credentials) throws NamingException;
-    
+
 }

@@ -22,34 +22,35 @@ import java.util.Date;
 
 public interface BankService {
 
-    public long[] searchAccountIdsByOwner(String anOwnerName);
+    long[] searchAccountIdsByOwner(String anOwnerName);
 
-    public long createNewAccount(String anOwnerName);
+    long createNewAccount(String anOwnerName);
 
-    public double getBalanceOf(long anAccountId) throws AccountNotFoundException;
+    double getBalanceOf(long anAccountId) throws AccountNotFoundException;
 
-    public String getOwnerOf(long anAccountId) throws AccountNotFoundException;
+    String getOwnerOf(long anAccountId) throws AccountNotFoundException;
 
-    public double depositInto(long anAccountId, double anAmount) throws AccountNotFoundException, InactiveAccountException;
+    double depositInto(long anAccountId, double anAmount) throws AccountNotFoundException, InactiveAccountException;
 
-    public double withdrawFrom(long anAccountId, double anAmount) throws AccountNotFoundException, NotEnoughFundsException, InactiveAccountException;
+    double withdrawFrom(long anAccountId, double anAmount)
+            throws AccountNotFoundException, NotEnoughFundsException, InactiveAccountException;
 
-    public TxLog[] getTxHistoryFor(long anAccountId) throws AccountNotFoundException;
+    TxLog[] getTxHistoryFor(long anAccountId) throws AccountNotFoundException;
 
-    public double closeAccount(long anAccountId) throws AccountNotFoundException, InactiveAccountException;
+    double closeAccount(long anAccountId) throws AccountNotFoundException, InactiveAccountException;
 
-    public boolean isAccountActive(long anAccountId) throws AccountNotFoundException;
+    boolean isAccountActive(long anAccountId) throws AccountNotFoundException;
 
-    public static class TxLog {
-        private Date _creationDate;
-        private double _amount;
-        private String _madeBy;
+    class TxLog {
+        private Date creationDate;
+        private double amount;
+        private String madeBy;
 
         public TxLog(Date aCreationDate, double aAmount, String aMadeBy) {
             super();
-            _creationDate = aCreationDate;
-            _amount = aAmount;
-            _madeBy = aMadeBy;
+            creationDate = aCreationDate;
+            amount = aAmount;
+            madeBy = aMadeBy;
         }
 
         /**
@@ -58,7 +59,7 @@ public interface BankService {
          * @return The creationDate value.
          */
         public Date getCreationDate() {
-            return _creationDate;
+            return creationDate;
         }
 
         /**
@@ -67,7 +68,7 @@ public interface BankService {
          * @return The amount value.
          */
         public double getAmount() {
-            return _amount;
+            return amount;
         }
 
         /**
@@ -76,7 +77,7 @@ public interface BankService {
          * @return The madeBy value.
          */
         public String getMadeBy() {
-            return _madeBy;
+            return madeBy;
         }
     }
 

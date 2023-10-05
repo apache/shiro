@@ -29,12 +29,13 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import java.util.List;
 
 /**
- * Spring {@link BeanPostProcessor} that detects, {@link EventBusAware} and classes containing {@link Subscribe @Subscribe} methods.
- * Any classes implementing EventBusAware will have the setEventBus() method called with the <code>eventBus</code>. Any
- * classes discovered with methods that are annotated with @Subscribe will be automatically registered with the EventBus.
+ * Spring {@link BeanPostProcessor} that detects, {@link EventBusAware} and classes containing
+ * {@link Subscribe @Subscribe} methods. Any classes implementing EventBusAware will have the setEventBus() method
+ * called with the <code>eventBus</code>. Any classes discovered with methods that are annotated
+ * with @Subscribe will be automatically registered with the EventBus.
  *
- * <p><strong>NOTE:</strong> in a Spring environment implementing EventBusAware is not necessary, as you can just inject the EventBus with
- * {@link org.springframework.beans.factory.annotation.Autowire @Autowire}.</p>
+ * <p><strong>NOTE:</strong> in a Spring environment implementing EventBusAware is not necessary,
+ * as you can just inject the EventBus with {@link org.springframework.beans.factory.annotation.Autowire @Autowire}.</p>
  *
  * @see EventBusAware
  * @see Subscribe
@@ -42,7 +43,7 @@ import java.util.List;
  */
 public class ShiroEventBusBeanPostProcessor implements BeanPostProcessor {
 
-    final private EventBus eventBus;
+    private final EventBus eventBus;
 
     public ShiroEventBusBeanPostProcessor(EventBus eventBus) {
         this.eventBus = eventBus;
@@ -57,8 +58,7 @@ public class ShiroEventBusBeanPostProcessor implements BeanPostProcessor {
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof EventBusAware) {
             ((EventBusAware) bean).setEventBus(eventBus);
-        }
-        else if (isEventSubscriber(bean)) {
+        } else if (isEventSubscriber(bean)) {
             eventBus.register(bean);
         }
 

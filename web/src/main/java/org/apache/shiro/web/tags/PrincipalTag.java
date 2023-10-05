@@ -18,15 +18,15 @@
  */
 package org.apache.shiro.web.tags;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspTagException;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>Tag used to print out the String value of a user's default principal,
@@ -53,7 +53,7 @@ public class PrincipalTag extends SecureTag {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private static final Logger log = LoggerFactory.getLogger(PrincipalTag.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalTag.class);
 
     /**
      * The type of principal to be retrieved, or null if the default principal should be used.
@@ -159,13 +159,12 @@ public class PrincipalTag extends SecureTag {
             Class cls = Class.forName(type);
             principal = getSubject().getPrincipals().oneByType(cls);
         } catch (ClassNotFoundException e) {
-            if (log.isErrorEnabled()) {
-                log.error("Unable to find class for name [" + type + "]");
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Unable to find class for name [" + type + "]");
             }
         }
         return principal;
     }
-
 
     private String getPrincipalProperty(Object principal, String property) throws JspTagException {
         String strValue = null;
@@ -185,17 +184,19 @@ public class PrincipalTag extends SecureTag {
             }
 
             if (!foundProperty) {
-                final String message = "Property [" + property + "] not found in principal of type [" + principal.getClass().getName() + "]";
-                if (log.isErrorEnabled()) {
-                    log.error(message);
+                final String message = "Property [" + property + "] not found in principal of type ["
+                        + principal.getClass().getName() + "]";
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error(message);
                 }
                 throw new JspTagException(message);
             }
 
         } catch (Exception e) {
-            final String message = "Error reading property [" + property + "] from principal of type [" + principal.getClass().getName() + "]";
-            if (log.isErrorEnabled()) {
-                log.error(message, e);
+            final String message = "Error reading property [" + property + "] from principal of type ["
+                    + principal.getClass().getName() + "]";
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error(message, e);
             }
             throw new JspTagException(message, e);
         }

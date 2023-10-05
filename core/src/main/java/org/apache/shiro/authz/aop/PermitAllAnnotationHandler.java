@@ -44,5 +44,6 @@ public class PermitAllAnnotationHandler extends AuthorizingAnnotationHandler {
      * @param a the annotation to check for one or more roles
      */
     @Override
-    public void assertAuthorized(Annotation a) { }
+    public void assertAuthorized(Annotation a) {
+    }
 }

@@ -46,7 +46,7 @@ public interface RealmFactory {
      * {@link java.util.Iterator Iterator} determines the order in which Realms are used.
      *
      * @return the <code>Collection</code> of Realms that the application's <code>SecurityManager</code> will use
-     *         for security data access.
+     * for security data access.
      */
     Collection<Realm> getRealms();
 

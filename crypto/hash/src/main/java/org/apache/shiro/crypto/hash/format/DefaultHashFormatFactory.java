@@ -18,6 +18,9 @@
  */
 package org.apache.shiro.crypto.hash.format;
 
+import java.util.Iterator;
+import java.util.stream.Stream;
+
 import org.apache.shiro.lang.util.ClassUtils;
 import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.lang.util.UnknownClassException;
@@ -36,9 +39,11 @@ import java.util.Set;
  */
 public class DefaultHashFormatFactory implements HashFormatFactory {
 
-    private Map<String, String> formatClassNames; //id - to - fully qualified class name
+    //id - to - fully qualified class name
+    private Map<String, String> formatClassNames;
 
-    private Set<String> searchPackages; //packages to search for HashFormat implementations
+    //packages to search for HashFormat implementations
+    private Set<String> searchPackages;
 
     public DefaultHashFormatFactory() {
         this.searchPackages = new HashSet<String>();
@@ -279,51 +284,30 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
      * @param token       the string token from which a class name will be heuristically determined.
      * @return the discovered HashFormat class implementation or {@code null} if no class could be heuristically determined.
      */
-    protected Class getHashFormatClass(String packageName, String token) {
+    protected Class<?> getHashFormatClass(String packageName, String token) {
         String test = token;
-        Class clazz = null;
+        Class<?> clazz;
         String pkg = packageName == null ? "" : packageName;
 
         //1. Assume the arg is a fully qualified class name in the classpath:
         clazz = lookupHashFormatClass(test);
 
-        if (clazz == null) {
-            test = pkg + "." + token;
-            clazz = lookupHashFormatClass(test);
+        final Iterator<String> iterator = Stream.of(
+                pkg + "." + token,
+                pkg + "." + StringUtils.uppercaseFirstChar(token) + "Format",
+                pkg + "." + token + "Format",
+                pkg + "." + StringUtils.uppercaseFirstChar(token) + "HashFormat",
+                pkg + "." + token + "HashFormat",
+                pkg + "." + StringUtils.uppercaseFirstChar(token) + "CryptFormat",
+                pkg + "." + token + "CryptFormat").iterator();
+
+        while (clazz == null && iterator.hasNext()) {
+            clazz = lookupHashFormatClass(iterator.next());
         }
 
         if (clazz == null) {
-            test = pkg + "." + StringUtils.uppercaseFirstChar(token) + "Format";
-            clazz = lookupHashFormatClass(test);
-        }
-
-        if (clazz == null) {
-            test = pkg + "." + token + "Format";
-            clazz = lookupHashFormatClass(test);
-        }
-
-        if (clazz == null) {
-            test = pkg + "." + StringUtils.uppercaseFirstChar(token) + "HashFormat";
-            clazz = lookupHashFormatClass(test);
-        }
-
-        if (clazz == null) {
-            test = pkg + "." + token + "HashFormat";
-            clazz = lookupHashFormatClass(test);
-        }
-
-        if (clazz == null) {
-            test = pkg + "." + StringUtils.uppercaseFirstChar(token) + "CryptFormat";
-            clazz = lookupHashFormatClass(test);
-        }
-
-        if (clazz == null) {
-            test = pkg + "." + token + "CryptFormat";
-            clazz = lookupHashFormatClass(test);
-        }
-
-        if (clazz == null) {
-            return null; //ran out of options
+            //ran out of options
+            return null;
         }
 
         assertHashFormatImpl(clazz);
@@ -331,7 +315,7 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
         return clazz;
     }
 
-    protected Class lookupHashFormatClass(String name) {
+    protected Class<?> lookupHashFormatClass(String name) {
         try {
             return ClassUtils.forName(name);
         } catch (UnknownClassException ignored) {
@@ -342,8 +326,8 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
 
     protected final void assertHashFormatImpl(Class clazz) {
         if (!HashFormat.class.isAssignableFrom(clazz) || clazz.isInterface()) {
-            throw new IllegalArgumentException("Discovered class [" + clazz.getName() + "] is not a " +
-                    HashFormat.class.getName() + " implementation.");
+            throw new IllegalArgumentException("Discovered class [" + clazz.getName() + "] is not a "
+                    + HashFormat.class.getName() + " implementation.");
         }
 
     }

@@ -56,7 +56,7 @@ public interface HashService {
      * Computes a hash based on the given request.
      *
      * <h3>Salt Notice</h3>
-     *
+     * <p>
      * If a salt accompanies the return value
      * (i.e. <code>returnedHash.{@link org.apache.shiro.crypto.hash.Hash#getSalt() getSalt()} != null</code>), this
      * same exact salt <b><em>MUST</em></b> be presented back to the {@code HashService} if hash

@@ -72,8 +72,7 @@ public class QuickStart {
         try {
             // but not this one!
             simpleService.writeRestrictedCall();
-        }
-        catch (AuthorizationException e) {
+        } catch (AuthorizationException e) {
             log.info("Subject was NOT allowed to execute method 'writeRestrictedCall'");
         }
 

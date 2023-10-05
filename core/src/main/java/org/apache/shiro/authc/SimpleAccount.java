@@ -81,7 +81,8 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * @param realmName   the name of the realm that accesses this account data
      */
     public SimpleAccount(Object principal, Object credentials, String realmName) {
-        this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal : new SimplePrincipalCollection(principal, realmName), credentials);
+        this(principal instanceof PrincipalCollection
+                ? (PrincipalCollection) principal : new SimplePrincipalCollection(principal, realmName), credentials);
     }
 
     /**
@@ -96,7 +97,8 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * @since 1.1
      */
     public SimpleAccount(Object principal, Object hashedCredentials, ByteSource credentialsSalt, String realmName) {
-        this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal : new SimplePrincipalCollection(principal, realmName),
+        this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal
+                        : new SimplePrincipalCollection(principal, realmName),
                 hashedCredentials, credentialsSalt);
     }
 
@@ -162,7 +164,8 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * @param roleNames   the names of the roles assigned to this account.
      * @param permissions the permissions assigned to this account directly (not those assigned to any of the realms).
      */
-    public SimpleAccount(Object principal, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
+    public SimpleAccount(Object principal, Object credentials, String realmName,
+                         Set<String> roleNames, Set<Permission> permissions) {
         this.authcInfo = new SimpleAuthenticationInfo(new SimplePrincipalCollection(principal, realmName), credentials);
         this.authzInfo = new SimpleAuthorizationInfo(roleNames);
         this.authzInfo.setObjectPermissions(permissions);
@@ -179,7 +182,9 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * @param roleNames   the names of the roles assigned to this account.
      * @param permissions the permissions assigned to this account directly (not those assigned to any of the realms).
      */
-    public SimpleAccount(Collection principals, Object credentials, String realmName, Set<String> roleNames, Set<Permission> permissions) {
+
+    public SimpleAccount(Collection principals, Object credentials, String realmName,
+                         Set<String> roleNames, Set<Permission> permissions) {
         this.authcInfo = new SimpleAuthenticationInfo(new SimplePrincipalCollection(principals, realmName), credentials);
         this.authzInfo = new SimpleAuthorizationInfo(roleNames);
         this.authzInfo.setObjectPermissions(permissions);
@@ -253,7 +258,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * was used or credentials were not hashed at all.
      *
      * @return the salt used to hash this Account's credentials (e.g. for password hashing), or {@code null} if no salt
-     *         was used or credentials were not hashed at all.
+     * was used or credentials were not hashed at all.
      * @since 1.1
      */
     public ByteSource getCredentialsSalt() {
@@ -467,7 +472,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      *
      * @param o the object to test for equality.
      * @return <code>true</code> if the specified object is also a {@link SimpleAccount SimpleAccount} and its
-     *         {@link #getPrincipals() principals} are equal to this object's <code>principals</code>, <code>false</code> otherwise.
+     * {@link #getPrincipals() principals} are equal to this object's <code>principals</code>, <code>false</code> otherwise.
      */
     public boolean equals(Object o) {
         if (o == this) {

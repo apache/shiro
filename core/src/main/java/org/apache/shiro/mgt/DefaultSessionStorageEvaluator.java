@@ -73,7 +73,7 @@ public class DefaultSessionStorageEvaluator implements SessionStorageEvaluator {
      * authenticate on every request).
      *
      * @return {@code true} if any Subject's {@code Session} may be used to persist that {@code Subject}'s state,
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     public boolean isSessionStorageEnabled() {
         return sessionStorageEnabled;

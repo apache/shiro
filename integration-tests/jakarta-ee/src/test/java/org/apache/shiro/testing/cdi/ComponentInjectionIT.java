@@ -14,10 +14,13 @@
 package org.apache.shiro.testing.cdi;
 
 import javax.inject.Inject;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+
 import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
+
 import org.apache.shiro.testing.jakarta.ee.PropertyPrincipal;
 import org.apache.shiro.testing.jaxrs.NoIniJaxRsIT;
 import org.apache.shiro.testing.jaxrs.TestApplication;
@@ -34,7 +37,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+
 import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

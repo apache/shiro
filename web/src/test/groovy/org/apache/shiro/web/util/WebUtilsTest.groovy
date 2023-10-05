@@ -174,14 +174,14 @@ public class WebUtilsTest {
         doTestGetPathWithinApplication("/foobar", "//", "/foobar/");
         doTestGetPathWithinApplication("/foobar", "//extra", "/foobar/extra");
         doTestGetPathWithinApplication("/foobar", "//extra///", "/foobar/extra/");
-        doTestGetPathWithinApplication("/foo bar", "/path info" ,"/foo bar/path info");
+        doTestGetPathWithinApplication("/foo bar", "/path info", "/foo bar/path info");
     }
 
     @Test
     void testGetRequestURI() {
         doTestGetRequestURI("/foobar", "/foobar")
-        doTestGetRequestURI( "/foobar/", "/foobar/")
-        doTestGetRequestURI("",  "/");
+        doTestGetRequestURI("/foobar/", "/foobar/")
+        doTestGetRequestURI("", "/");
         doTestGetRequestURI("foobar", "/foobar");
         doTestGetRequestURI("//foobar", "/foobar");
         doTestGetRequestURI("//foobar///", "/foobar/");
@@ -198,45 +198,45 @@ public class WebUtilsTest {
 
     @Test
     void testNormalize() {
-        doNormalizeTest"/foobar", "/foobar"
+        doNormalizeTest "/foobar", "/foobar"
         doNormalizeTest "/foobar/", "/foobar/"
-        doNormalizeTest"", "/"
-        doNormalizeTest"foobar", "/foobar"
-        doNormalizeTest"//foobar", "/foobar"
-        doNormalizeTest"//foobar///", "/foobar/"
-        doNormalizeTest"/context-path/foobar", "/context-path/foobar"
-        doNormalizeTest"/context-path/foobar/", "/context-path/foobar/"
-        doNormalizeTest"//context-path/foobar", "/context-path/foobar"
-        doNormalizeTest"//context-path//foobar" ,"/context-path/foobar"
-        doNormalizeTest"//context-path/remove-one/remove-two/../../././/foobar", "/context-path/foobar"
-        doNormalizeTest"//context-path//../../././/foobar", null
-        doNormalizeTest"/context path/foobar", "/context path/foobar"
+        doNormalizeTest "", "/"
+        doNormalizeTest "foobar", "/foobar"
+        doNormalizeTest "//foobar", "/foobar"
+        doNormalizeTest "//foobar///", "/foobar/"
+        doNormalizeTest "/context-path/foobar", "/context-path/foobar"
+        doNormalizeTest "/context-path/foobar/", "/context-path/foobar/"
+        doNormalizeTest "//context-path/foobar", "/context-path/foobar"
+        doNormalizeTest "//context-path//foobar", "/context-path/foobar"
+        doNormalizeTest "//context-path/remove-one/remove-two/../../././/foobar", "/context-path/foobar"
+        doNormalizeTest "//context-path//../../././/foobar", null
+        doNormalizeTest "/context path/foobar", "/context path/foobar"
 
-        doNormalizeTest"/context path/\\foobar", "/context path/\\foobar"
-        doNormalizeTest"//context-path\\..\\../.\\.\\foobar", "/context-path\\..\\../.\\.\\foobar"
-        doNormalizeTest"//context-path\\..\\..\\.\\.\\foobar", "/context-path\\..\\..\\.\\.\\foobar"
-        doNormalizeTest"\\context-path\\..\\foobar", "/\\context-path\\..\\foobar"
+        doNormalizeTest "/context path/\\foobar", "/context path/\\foobar"
+        doNormalizeTest "//context-path\\..\\../.\\.\\foobar", "/context-path\\..\\../.\\.\\foobar"
+        doNormalizeTest "//context-path\\..\\..\\.\\.\\foobar", "/context-path\\..\\..\\.\\.\\foobar"
+        doNormalizeTest "\\context-path\\..\\foobar", "/\\context-path\\..\\foobar"
     }
 
     @Test
     void testNormalize_allowBackslashes() {
         RestoreSystemProperties.withProperties(["org.apache.shiro.web.ALLOW_BACKSLASH": "true"]) {
-            doNormalizeTest"/foobar", "/foobar"
+            doNormalizeTest "/foobar", "/foobar"
             doNormalizeTest "/foobar/", "/foobar/"
-            doNormalizeTest"", "/"
-            doNormalizeTest"foobar", "/foobar"
-            doNormalizeTest"//foobar", "/foobar"
-            doNormalizeTest"//foobar///", "/foobar/"
-            doNormalizeTest"/context-path/foobar", "/context-path/foobar"
-            doNormalizeTest"/context-path/foobar/", "/context-path/foobar/"
-            doNormalizeTest"//context-path/foobar", "/context-path/foobar"
-            doNormalizeTest"//context-path//foobar" ,"/context-path/foobar"
-            doNormalizeTest"//context-path/remove-one/remove-two/../../././/foobar", "/context-path/foobar"
-            doNormalizeTest"//context-path//../../././/foobar", null
-            doNormalizeTest"/context path/foobar", "/context path/foobar"
-            doNormalizeTest"/context path/\\foobar", "/context path/foobar"
-            doNormalizeTest"//context-path\\..\\..\\.\\.\\foobar", null
-            doNormalizeTest"\\context-path\\..\\foobar", "/foobar"
+            doNormalizeTest "", "/"
+            doNormalizeTest "foobar", "/foobar"
+            doNormalizeTest "//foobar", "/foobar"
+            doNormalizeTest "//foobar///", "/foobar/"
+            doNormalizeTest "/context-path/foobar", "/context-path/foobar"
+            doNormalizeTest "/context-path/foobar/", "/context-path/foobar/"
+            doNormalizeTest "//context-path/foobar", "/context-path/foobar"
+            doNormalizeTest "//context-path//foobar", "/context-path/foobar"
+            doNormalizeTest "//context-path/remove-one/remove-two/../../././/foobar", "/context-path/foobar"
+            doNormalizeTest "//context-path//../../././/foobar", null
+            doNormalizeTest "/context path/foobar", "/context path/foobar"
+            doNormalizeTest "/context path/\\foobar", "/context path/foobar"
+            doNormalizeTest "//context-path\\..\\..\\.\\.\\foobar", null
+            doNormalizeTest "\\context-path\\..\\foobar", "/foobar"
 
         }
     }

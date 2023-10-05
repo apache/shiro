@@ -40,13 +40,13 @@ import java.util.Date;
  */
 public class DefaultSessionManager extends AbstractValidatingSessionManager implements CacheManagerAware {
 
-    //TODO - complete JavaDoc
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSessionManager.class);
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultSessionManager.class);
+    //todo - move SessionDAO up to AbstractValidatingSessionManager?
+    protected SessionDAO sessionDAO;
+
 
     private SessionFactory sessionFactory;
-
-    protected SessionDAO sessionDAO;  //todo - move SessionDAO up to AbstractValidatingSessionManager?
 
     private CacheManager cacheManager;
 
@@ -104,7 +104,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
      * some other means (cron, quartz, etc.).
      *
      * @return {@code true} if sessions should be automatically deleted after they are discovered to be invalid,
-     *         {@code false} if invalid sessions will be manually deleted by some process external to Shiro's control.
+     * {@code false} if invalid sessions will be manually deleted by some process external to Shiro's control.
      * @since 1.0
      */
     public boolean isDeleteInvalidSessions() {
@@ -152,8 +152,8 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     protected Session doCreateSession(SessionContext context) {
         Session s = newSessionInstance(context);
-        if (log.isTraceEnabled()) {
-            log.trace("Creating session for host {}", s.getHost());
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Creating session for host {}", s.getHost());
         }
         create(s);
         return s;
@@ -171,8 +171,8 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
      * @param session the Session instance to persist to the underlying EIS.
      */
     protected void create(Session session) {
-        if (log.isDebugEnabled()) {
-            log.debug("Creating new EIS record for new session instance [" + session + "]");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Creating new EIS record for new session instance [" + session + "]");
         }
         sessionDAO.create(session);
     }
@@ -215,8 +215,8 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
     protected Session retrieveSession(SessionKey sessionKey) throws UnknownSessionException {
         Serializable sessionId = getSessionId(sessionKey);
         if (sessionId == null) {
-            log.debug("Unable to resolve session ID from SessionKey [{}].  Returning null to indicate a " +
-                    "session could not be found.", sessionKey);
+            LOGGER.debug("Unable to resolve session ID from SessionKey [{}].  Returning null to indicate a "
+                    + "session could not be found.", sessionKey);
             return null;
         }
         Session s = retrieveSessionFromDataSource(sessionId);

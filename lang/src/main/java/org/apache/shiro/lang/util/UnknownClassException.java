@@ -27,8 +27,7 @@ import org.apache.shiro.lang.ShiroException;
  *
  * @since 0.1
  */
-public class UnknownClassException extends ShiroException
-{
+public class UnknownClassException extends ShiroException {
 
     /**
      * Creates a new UnknownClassException.

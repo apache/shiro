@@ -21,10 +21,10 @@ package org.apache.shiro.samples.guice;
 import com.google.inject.Provides;
 import com.google.inject.binder.AnnotatedBindingBuilder;
 import com.google.inject.name.Names;
-import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.guice.web.ShiroWebModule;
+import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
@@ -60,7 +60,10 @@ public class SampleShiroNativeSessionsServletModule extends ShiroWebModule {
         this.addFilterChain("/login.jsp", AUTHC);
         this.addFilterChain("/logout", LOGOUT);
         this.addFilterChain("/account/**", AUTHC);
-        this.addFilterChain("/remoting/**", filterConfig(AUTHC), filterConfig(ROLES, "b2bClient"), filterConfig(PERMS, "remote:invoke:lan,wan"));
+        this.addFilterChain("/remoting/**",
+                filterConfig(AUTHC),
+                filterConfig(ROLES, "b2bClient"),
+                filterConfig(PERMS, "remote:invoke:lan,wan"));
     }
 
     @Provides
@@ -70,6 +73,7 @@ public class SampleShiroNativeSessionsServletModule extends ShiroWebModule {
         return Ini.fromResourcePath("url:" + iniUrl.toExternalForm());
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Override
     protected void bindSessionManager(AnnotatedBindingBuilder<SessionManager> bind) {
         bind.to(DefaultWebSessionManager.class);
@@ -80,23 +84,19 @@ public class SampleShiroNativeSessionsServletModule extends ShiroWebModule {
     }
 
     @Override
-    protected void bindWebSecurityManager(AnnotatedBindingBuilder<? super WebSecurityManager> bind)
-    {
-        try
-        {
-            String cipherKey = loadShiroIni().getSectionProperty( "main", "securityManager.rememberMeManager.cipherKey" );
+    protected void bindWebSecurityManager(AnnotatedBindingBuilder<? super WebSecurityManager> bind) {
+        try {
+            String cipherKey = loadShiroIni().getSectionProperty("main", "securityManager.rememberMeManager.cipherKey");
 
             DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
             CookieRememberMeManager rememberMeManager = new CookieRememberMeManager();
-            rememberMeManager.setCipherKey( Base64.decode( cipherKey ) );
+            rememberMeManager.setCipherKey(Base64.decode(cipherKey));
             securityManager.setRememberMeManager(rememberMeManager);
             bind.toInstance(securityManager);
-        }
-        catch ( MalformedURLException e )
-        {
+        } catch (MalformedURLException e) {
             // for now just throw, you could just call
             // super.bindWebSecurityManager(bind) if you do not need rememberMe functionality
-            throw new ConfigurationException( "securityManager.rememberMeManager.cipherKey must be set in shiro.ini." );
+            throw new ConfigurationException("securityManager.rememberMeManager.cipherKey must be set in shiro.ini.");
         }
     }
 }

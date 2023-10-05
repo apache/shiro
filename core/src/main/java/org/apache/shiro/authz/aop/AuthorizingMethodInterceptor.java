@@ -42,6 +42,7 @@ public abstract class AuthorizingMethodInterceptor extends MethodInterceptorSupp
     /**
      * Asserts that the specified MethodInvocation is allowed to continue by performing any necessary authorization
      * (access control) checks first.
+     *
      * @param methodInvocation the <code>MethodInvocation</code> to invoke.
      * @throws AuthorizationException if the <code>methodInvocation</code> should not be allowed to continue/execute.
      */

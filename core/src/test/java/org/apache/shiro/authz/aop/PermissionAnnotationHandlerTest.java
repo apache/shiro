@@ -42,7 +42,7 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
         Annotation requiresPermissionAnnotation = new RequiresPermissions() {
             @Override
             public String[] value() {
-                return new String[]{"test:test"};
+                return new String[] {"test:test"};
             }
 
             @Override
@@ -50,10 +50,10 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
                 return RequiresPermissions.class;
             }
 
-	    @Override
-        public Logical logical() {
-		return Logical.AND;
-	    }
+            @Override
+            public Logical logical() {
+                return Logical.AND;
+            }
         };
 
         runWithSubject(subject -> {
@@ -70,18 +70,18 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
         Annotation requiresPermissionAnnotation = new RequiresPermissions() {
             @Override
             public String[] value() {
-                return new String[]{"test:test", "test2:test2"};
+                return new String[] {"test:test", "test2:test2"};
             }
 
             @Override
             public Class<? extends Annotation> annotationType() {
                 return RequiresPermissions.class;
             }
-            
-	    @Override
-        public Logical logical() {
-		return Logical.AND;
-	    }
+
+            @Override
+            public Logical logical() {
+                return Logical.AND;
+            }
         };
 
         runWithSubject(subject -> {

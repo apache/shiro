@@ -20,13 +20,13 @@ package org.apache.shiro.authc;
 
 
 /**
- * A {@link AuthenticationToken} that contains an a Bearer token or API key, typically received via an HTTP {@code Authorization} header. This
- * class also implements the {@link org.apache.shiro.authc.HostAuthenticationToken HostAuthenticationToken} interface to retain the host name
- * or IP address location from where the authentication attempt is occurring.
+ * A {@link AuthenticationToken} that contains a Bearer token or API key, typically received via an HTTP
+ * {@code Authorization} header. This class also implements the
+ * {@link org.apache.shiro.authc.HostAuthenticationToken HostAuthenticationToken} interface to
+ * retain the host name or IP address location from where the authentication attempt is occurring.
  *
  * @see <a href="https://tools.ietf.org/html/rfc2617">RFC 2617</a>
  * @see <a href="https://tools.ietf.org/html/rfc6750#section-2.1">OAuth2 Authorization Request Header Field</a>
- *
  * @since 1.5
  */
 public class BearerToken implements HostAuthenticationToken {

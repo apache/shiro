@@ -28,7 +28,7 @@ class InitializableBean implements Initializable {
 
     private volatile boolean initialized = false;
 
-    public InitializableBean(){}
+    public InitializableBean() {}
 
     public void init() throws ShiroException {
         initialized = true;

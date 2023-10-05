@@ -14,6 +14,7 @@
 package org.apache.shiro.testing.jakarta.ee.servlets;
 
 import org.apache.shiro.testing.logcapture.LogCapture;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +24,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
 /**

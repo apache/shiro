@@ -27,7 +27,10 @@
 <body>
 
 <div id="bigbox">
-    <div class="title clearfix"><div style="float: left">Apache Shiro Sample App - Manage Users</div><div class="info" >Logged in as ${currentUser.username} (<a href="<c:url value="/s/logout"/>">Logout</a>)</div></div>
+    <div class="title clearfix">
+        <div style="float: left">Apache Shiro Sample App - Manage Users</div>
+        <div class="info">Logged in as ${currentUser.username} (<a href="<c:url value="/s/logout"/>">Logout</a>)</div>
+    </div>
 
 
     <div class="content">
@@ -39,12 +42,14 @@
                 <th>Actions</th>
             </tr>
             <c:forEach var="user" items="${users}">
-            <tr>
-                <td>${user.username}</td>
-                <td>${user.email}</td>
-                <td><a href="<c:url value="/s/editUser?userId=${user.id}"/>">Edit</a><c:if test="${user.id ne 1}">&nbsp;|&nbsp;<a href="<c:url value="/s/deleteUser?userId=${user.id}"/>">Delete</a></c:if>
-                </td>
-            </tr>
+                <tr>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td><a href="<c:url value="/s/editUser?userId=${user.id}"/>">Edit</a><c:if
+                            test="${user.id ne 1}">&nbsp;|&nbsp;<a href="<c:url
+                            value="/s/deleteUser?userId=${user.id}"/>">Delete</a></c:if>
+                    </td>
+                </tr>
             </c:forEach>
         </table>
 

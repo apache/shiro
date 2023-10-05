@@ -18,7 +18,12 @@
  */
 package org.apache.shiro.authc.pam;
 
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AbstractAuthenticator;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.LogoutAware;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
@@ -63,10 +68,7 @@ import java.util.Collection;
  */
 public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
-    /*--------------------------------------------
-    |             C O N S T A N T S             |
-    ============================================*/
-    private static final Logger log = LoggerFactory.getLogger(ModularRealmAuthenticator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModularRealmAuthenticator.class);
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -156,8 +158,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
     protected void assertRealmsConfigured() throws IllegalStateException {
         Collection<Realm> realms = getRealms();
         if (CollectionUtils.isEmpty(realms)) {
-            String msg = "Configuration error:  No realms have been configured!  One or more realms must be " +
-                    "present to execute an authentication attempt.";
+            String msg = "Configuration error:  No realms have been configured!  One or more realms must be "
+                    + "present to execute an authentication attempt.";
             throw new IllegalStateException(msg);
         }
     }
@@ -172,15 +174,15 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      */
     protected AuthenticationInfo doSingleRealmAuthentication(Realm realm, AuthenticationToken token) {
         if (!realm.supports(token)) {
-            String msg = "Realm [" + realm + "] does not support authentication token [" +
-                    token + "].  Please ensure that the appropriate Realm implementation is " +
-                    "configured correctly or that the realm accepts AuthenticationTokens of this type.";
+            String msg = "Realm [" + realm + "] does not support authentication token ["
+                    + token + "].  Please ensure that the appropriate Realm implementation is "
+                    + "configured correctly or that the realm accepts AuthenticationTokens of this type.";
             throw new UnsupportedTokenException(msg);
         }
         AuthenticationInfo info = realm.getAuthenticationInfo(token);
         if (info == null) {
-            String msg = "Realm [" + realm + "] was unable to find account data for the " +
-                    "submitted AuthenticationToken [" + token + "].";
+            String msg = "Realm [" + realm + "] was unable to find account data for the "
+                    + "submitted AuthenticationToken [" + token + "].";
             throw new UnknownAccountException(msg);
         }
         return info;
@@ -193,7 +195,7 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
      * @param realms the multiple realms configured on this Authenticator instance.
      * @param token  the submitted AuthenticationToken representing the subject's (user's) log-in principals and credentials.
      * @return an aggregated AuthenticationInfo instance representing account data across all the successfully
-     *         consulted realms.
+     * consulted realms.
      */
     protected AuthenticationInfo doMultiRealmAuthentication(Collection<Realm> realms, AuthenticationToken token) {
 
@@ -201,8 +203,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
 
         AuthenticationInfo aggregate = strategy.beforeAllAttempts(realms, token);
 
-        if (log.isTraceEnabled()) {
-            log.trace("Iterating through {} realms for PAM authentication", realms.size());
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Iterating through {} realms for PAM authentication", realms.size());
         }
 
         for (Realm realm : realms) {
@@ -210,14 +212,14 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
             try {
                 aggregate = strategy.beforeAttempt(realm, token, aggregate);
             } catch (ShortCircuitIterationException shortCircuitSignal) {
-                // Break from continuing with subsequent realms on receiving 
+                // Break from continuing with subsequent realms on receiving
                 // short circuit signal from strategy
                 break;
             }
 
             if (realm.supports(token)) {
 
-                log.trace("Attempting to authenticate token [{}] using realm [{}]", token, realm);
+                LOGGER.trace("Attempting to authenticate token [{}] using realm [{}]", token, realm);
 
                 AuthenticationInfo info = null;
                 Throwable t = null;
@@ -225,16 +227,16 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                     info = realm.getAuthenticationInfo(token);
                 } catch (Throwable throwable) {
                     t = throwable;
-                    if (log.isDebugEnabled()) {
+                    if (LOGGER.isDebugEnabled()) {
                         String msg = "Realm [" + realm + "] threw an exception during a multi-realm authentication attempt:";
-                        log.debug(msg, t);
+                        LOGGER.debug(msg, t);
                     }
                 }
 
                 aggregate = strategy.afterAttempt(realm, token, info, aggregate, t);
 
             } else {
-                log.debug("Realm [{}] does not support token {}.  Skipping realm.", realm, token);
+                LOGGER.debug("Realm [{}] does not support token {}.  Skipping realm.", realm, token);
             }
         }
 

@@ -42,9 +42,11 @@ import org.apache.shiro.authz.Permission;
  * Although this happens to be the Shiro default, you are of course free to provide custom
  * String-to-Permission conversion by providing Shiro components any instance of this interface.
  *
- * @see org.apache.shiro.authz.ModularRealmAuthorizer#setPermissionResolver(PermissionResolver) ModularRealmAuthorizer.setPermissionResolver
- * @see org.apache.shiro.realm.AuthorizingRealm#setPermissionResolver(PermissionResolver) AuthorizingRealm.setPermissionResolver
- * @see PermissionResolverAware PermissionResolverAware
+ * @see org.apache.shiro.authz.ModularRealmAuthorizer#setPermissionResolver(PermissionResolver)
+ *                                                   ModularRealmAuthorizer.setPermissionResolver
+ * @see org.apache.shiro.realm.AuthorizingRealm#setPermissionResolver(PermissionResolver)
+ *                                                   AuthorizingRealm.setPermissionResolver
+ * @see PermissionResolverAware                      PermissionResolverAware
  * @since 0.9
  */
 public interface PermissionResolver {
@@ -54,8 +56,7 @@ public interface PermissionResolver {
      *
      * @param permissionString the String representation of a permission.
      * @return A Permission object that can be used internally to determine a subject's permissions.
-     * @throws InvalidPermissionStringException
-     *          if the permission string is not valid for this resolver.
+     * @throws InvalidPermissionStringException if the permission string is not valid for this resolver.
      */
     Permission resolvePermission(String permissionString);
 

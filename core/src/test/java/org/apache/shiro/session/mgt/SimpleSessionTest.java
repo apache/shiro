@@ -20,7 +20,11 @@ package org.apache.shiro.session.mgt;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

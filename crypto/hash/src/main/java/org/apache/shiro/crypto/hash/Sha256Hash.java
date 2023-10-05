@@ -34,8 +34,9 @@ import org.apache.shiro.lang.codec.Hex;
  */
 public class Sha256Hash extends SimpleHash {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * Sha256 algorithm name.
+     */
     public static final String ALGORITHM_NAME = "SHA-256";
 
     public Sha256Hash() {

@@ -54,7 +54,7 @@ public abstract class AuthorizationFilter extends AccessControlFilter {
      * if you would like to show the user a 'nice' page in the event of unauthorized access.
      *
      * @return the URL to which users should be redirected if they are denied access to an underlying path or resource,
-     *         or {@code null} if a raw {@link HttpServletResponse#SC_UNAUTHORIZED} response should be issued (401 Unauthorized).
+     * or {@code null} if a raw {@link HttpServletResponse#SC_UNAUTHORIZED} response should be issued (401 Unauthorized).
      */
     public String getUnauthorizedUrl() {
         return unauthorizedUrl;
@@ -71,8 +71,8 @@ public abstract class AuthorizationFilter extends AccessControlFilter {
      * unauthorized access.
      *
      * @param unauthorizedUrl the URL to which users should be redirected if they are denied access to an underlying
-     *                        path or resource, or {@code null} to a ensure raw {@link HttpServletResponse#SC_UNAUTHORIZED} response is
-     *                        issued (401 Unauthorized).
+     *                        path or resource, or {@code null} to an ensure raw
+     *                        {@link HttpServletResponse#SC_UNAUTHORIZED} response is issued (401 Unauthorized).
      */
     public void setUnauthorizedUrl(String unauthorizedUrl) {
         this.unauthorizedUrl = unauthorizedUrl;
@@ -106,7 +106,7 @@ public abstract class AuthorizationFilter extends AccessControlFilter {
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {
 
         Subject subject = getSubject(request, response);
-        // If the subject isn't identified, redirect to login URL
+        // If the subject isn't identified, redirect to the login URL
         if (subject.getPrincipal() == null) {
             saveRequestAndRedirectToLogin(request, response);
         } else {

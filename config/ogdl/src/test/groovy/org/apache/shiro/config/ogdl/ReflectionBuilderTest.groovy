@@ -134,7 +134,7 @@ class ReflectionBuilderTest {
 
     @Test
     void testWithConfiguredNullValue() {
-        Map<String,Object> defaults = new LinkedHashMap<String,Object>();
+        Map<String, Object> defaults = new LinkedHashMap<String, Object>();
         CompositeBean cBean = new CompositeBean();
         cBean.setSimpleBean(new SimpleBean());
         defaults.put("compositeBean", cBean);
@@ -296,7 +296,7 @@ class ReflectionBuilderTest {
         def set = [new SimpleBean('foo'), new SimpleBean('bar')] as Set
 
         def defs = [
-                compositeBean: 'org.apache.shiro.config.ogdl.CompositeBean',
+                compositeBean                : 'org.apache.shiro.config.ogdl.CompositeBean',
                 'compositeBean.simpleBeanSet': '$set'
         ]
 
@@ -337,7 +337,7 @@ class ReflectionBuilderTest {
         List list = [new SimpleBean('foo'), new SimpleBean('bar')] as List
 
         def defs = [
-                compositeBean: 'org.apache.shiro.config.ogdl.CompositeBean',
+                compositeBean                 : 'org.apache.shiro.config.ogdl.CompositeBean',
                 'compositeBean.simpleBeanList': '$list'
         ]
 
@@ -378,7 +378,7 @@ class ReflectionBuilderTest {
         def c = [new SimpleBean('foo'), new SimpleBean('bar')]
 
         def defs = [
-                compositeBean: 'org.apache.shiro.config.ogdl.CompositeBean',
+                compositeBean                       : 'org.apache.shiro.config.ogdl.CompositeBean',
                 'compositeBean.simpleBeanCollection': '$collection'
         ]
 
@@ -391,7 +391,7 @@ class ReflectionBuilderTest {
         assertNotNull(simpleBeans);
         assertSame c, simpleBeans
         assertEquals(2, simpleBeans.size());
-        def i  = simpleBeans.iterator()
+        def i = simpleBeans.iterator()
         assertEquals 'foo', i.next().name
         assertEquals 'bar', i.next().name
     }
@@ -463,7 +463,7 @@ class ReflectionBuilderTest {
         def map = ['foo': new SimpleBean('foo'), 'bar': new SimpleBean('bar')]
 
         def defs = [
-                compositeBean: 'org.apache.shiro.config.ogdl.CompositeBean',
+                compositeBean                : 'org.apache.shiro.config.ogdl.CompositeBean',
                 'compositeBean.simpleBeanMap': '$map'
         ]
 
@@ -718,8 +718,8 @@ class ReflectionBuilderTest {
     }
 
     void checkType(String instanceName, List<? extends BeanEvent> events, String name, Class<?> expectedType) {
-        for(BeanEvent event: events) {
-            if(event.getBeanName().equals(name)) {
+        for (BeanEvent event : events) {
+            if (event.getBeanName().equals(name)) {
                 assertTrue(
                         expectedType.isInstance(event.getBean()),
                         "Notification for bean " + name + " did not provide an instance of " + expectedType

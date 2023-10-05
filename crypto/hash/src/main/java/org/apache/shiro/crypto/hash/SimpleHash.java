@@ -75,12 +75,12 @@ public class SimpleHash extends AbstractHash {
     /**
      * Cached value of the {@link #toHex() toHex()} call so multiple calls won't incur repeated overhead.
      */
-    private transient String hexEncoded = null;
+    private transient String hexEncoded;
 
     /**
      * Cached value of the {@link #toBase64() toBase64()} call so multiple calls won't incur repeated overhead.
      */
-    private transient String base64Encoded = null;
+    private transient String base64Encoded;
 
     /**
      * Creates an new instance with only its {@code algorithmName} set - no hashing is performed.
@@ -109,16 +109,17 @@ public class SimpleHash extends AbstractHash {
      * This is a convenience constructor that merely executes <code>this( algorithmName, source, null, 1);</code>.
      * <p/>
      * Please see the
-     * {@link #SimpleHash(String algorithmName, Object source, Object salt, int numIterations) SimpleHashHash(algorithmName, Object,Object,int)}
+     * {@link #SimpleHash(String algorithmName, Object source, Object salt, int numIterations)
+     * SimpleHashHash(algorithmName, Object,Object,int)}
      * constructor for the types of Objects that may be passed into this constructor, as well as how to support further
      * types.
      *
      * @param algorithmName the {@link java.security.MessageDigest MessageDigest} algorithm name to use when
      *                      performing the hash.
      * @param source        the object to be hashed.
-     * @throws org.apache.shiro.lang.codec.CodecException
-     *                                   if the specified {@code source} cannot be converted into a byte array (byte[]).
-     * @throws UnknownAlgorithmException if the {@code algorithmName} is not available.
+     * @throws org.apache.shiro.lang.codec.CodecException if the specified {@code source} cannot be converted
+     *                                                    into a byte array (byte[]).
+     * @throws UnknownAlgorithmException                  if the {@code algorithmName} is not available.
      */
     public SimpleHash(String algorithmName, Object source) throws CodecException, UnknownAlgorithmException {
         //noinspection NullableProblems
@@ -132,7 +133,8 @@ public class SimpleHash extends AbstractHash {
      * It is a convenience constructor that merely executes <code>this( algorithmName, source, salt, 1);</code>.
      * <p/>
      * Please see the
-     * {@link #SimpleHash(String algorithmName, Object source, Object salt, int numIterations) SimpleHashHash(algorithmName, Object,Object,int)}
+     * {@link #SimpleHash(String algorithmName, Object source, Object salt, int numIterations)
+     * SimpleHashHash(algorithmName, Object,Object,int)}
      * constructor for the types of Objects that may be passed into this constructor, as well as how to support further
      * types.
      *
@@ -154,7 +156,8 @@ public class SimpleHash extends AbstractHash {
      * It is a convenience constructor that merely executes <code>this( algorithmName, source, salt, 1);</code>.
      * <p/>
      * Please see the
-     * {@link #SimpleHash(String algorithmName, Object source, Object salt, int numIterations) SimpleHashHash(algorithmName, Object,Object,int)}
+     * {@link #SimpleHash(String algorithmName, Object source, Object salt, int numIterations)
+     * SimpleHashHash(algorithmName, Object,Object,int)}
      * constructor for the types of Objects that may be passed into this constructor, as well as how to support further
      * types.
      *
@@ -391,7 +394,8 @@ public class SimpleHash extends AbstractHash {
             digest.update(salt);
         }
         byte[] hashed = digest.digest(bytes);
-        int iterations = hashIterations - 1; //already hashed once above
+        //already hashed once above
+        int iterations = hashIterations - 1;
         //iterate remaining number:
         for (int i = 0; i < iterations; i++) {
             digest.reset();
@@ -456,7 +460,7 @@ public class SimpleHash extends AbstractHash {
      *
      * @param o the object (Hash) to check for equality.
      * @return {@code true} if the specified object is a Hash and its {@link #getBytes byte array} is identical to
-     *         this Hash's byte array, {@code false} otherwise.
+     * this Hash's byte array, {@code false} otherwise.
      */
     @Override
     public boolean equals(Object o) {

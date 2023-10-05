@@ -14,6 +14,7 @@
 package org.apache.shiro.testing.jakarta.ee;
 
 import javax.ejb.Stateless;
+
 import org.apache.shiro.authz.annotation.RequiresUser;
 
 /**

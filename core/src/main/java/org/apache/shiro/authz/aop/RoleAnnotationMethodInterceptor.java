@@ -35,7 +35,7 @@ public class RoleAnnotationMethodInterceptor extends AuthorizingAnnotationMethod
      * {@link RequiresRoles RequiresRoles} annotations in a method declaration.
      */
     public RoleAnnotationMethodInterceptor() {
-        super( new RoleAnnotationHandler() );
+        super(new RoleAnnotationHandler());
     }
 
     /**

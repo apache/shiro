@@ -45,11 +45,17 @@ import java.io.Serializable;
  */
 public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(SecureRemoteInvocationFactory.class);
-
+    /**
+     * session id key.
+     */
     public static final String SESSION_ID_KEY = SecureRemoteInvocationFactory.class.getName() + ".SESSION_ID_KEY";
+
+    /**
+     * host key.
+     */
     public static final String HOST_KEY = SecureRemoteInvocationFactory.class.getName() + ".HOST_KEY";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecureRemoteInvocationFactory.class);
     private static final String SESSION_ID_SYSTEM_PROPERTY_NAME = "shiro.session.id";
 
     private String sessionId;
@@ -69,6 +75,7 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
      * @param mi the method invocation that the remote invocation should be based on.
      * @return a remote invocation object containing the current session ID as an attribute.
      */
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity"})
     public RemoteInvocation createRemoteInvocation(MethodInvocation mi) {
 
         Serializable sessionId = null;
@@ -89,12 +96,14 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
         }
 
         //tried the delegate. Use the injected session id if given
-        if (sessionId == null) sessionId = this.sessionId;
+        if (sessionId == null) {
+            sessionId = this.sessionId;
+        }
 
         // If sessionId is null, only then try the Subject:
         if (sessionId == null) {
             try {
-                // HACK Check if can get the securityManager - this'll cause an exception if it's not set 
+                // HACK Check if can get the securityManager - this'll cause an exception if it's not set
                 SecurityUtils.getSecurityManager();
                 if (!sessionManagerMethodInvocation) {
                     Subject subject = SecurityUtils.getSubject();
@@ -104,22 +113,21 @@ public class SecureRemoteInvocationFactory extends DefaultRemoteInvocationFactor
                         host = session.getHost();
                     }
                 }
-            }
-            catch (Exception e) {
-                log.trace("No security manager set. Trying next to get session id from system property");
+            } catch (Exception e) {
+                LOGGER.trace("No security manager set. Trying next to get session id from system property");
             }
         }
         //No call to the sessionManager, and the Subject doesn't have a session.  Try a system property
         //as a last result:
         if (sessionId == null) {
-            if (log.isTraceEnabled()) {
-                log.trace("No Session found for the currently executing subject via subject.getSession(false).  " +
-                        "Attempting to revert back to the 'shiro.session.id' system property...");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("No Session found for the currently executing subject via subject.getSession(false).  "
+                        + "Attempting to revert back to the 'shiro.session.id' system property...");
             }
             sessionId = System.getProperty(SESSION_ID_SYSTEM_PROPERTY_NAME);
-            if (sessionId == null && log.isTraceEnabled()) {
-                log.trace("No 'shiro.session.id' system property found.  Heuristics have been exhausted; " +
-                        "RemoteInvocation will not contain a sessionId.");
+            if (sessionId == null && LOGGER.isTraceEnabled()) {
+                LOGGER.trace("No 'shiro.session.id' system property found.  Heuristics have been exhausted; "
+                        + "RemoteInvocation will not contain a sessionId.");
             }
         }
 

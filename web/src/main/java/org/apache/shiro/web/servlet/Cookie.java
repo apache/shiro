@@ -34,23 +34,24 @@ public interface Cookie {
     /**
      * The value of deleted cookie (with the maxAge 0).
      */
-    public static final String DELETED_COOKIE_VALUE = "deleteMe";
+    String DELETED_COOKIE_VALUE = "deleteMe";
 
 
     /**
      * The number of seconds in one year (= 60 * 60 * 24 * 365).
      */
-    public static final int ONE_YEAR = 60 * 60 * 24 * 365;
+    int ONE_YEAR = 60 * 60 * 24 * 365;
 
     /**
      * Root path to use when the path hasn't been set and request context root is empty or null.
      */
-    public static final String ROOT_PATH = "/";
+    String ROOT_PATH = "/";
 
     /**
-     * The SameSite attribute of the Set-Cookie HTTP response header allows you to declare if your cookie should be restricted to a first-party or same-site context.
+     * The SameSite attribute of the Set-Cookie HTTP response header allows you to declare
+     * if your cookie should be restricted to a first-party or same-site context.
      */
-    public enum SameSiteOptions {
+    enum SameSiteOptions {
         /**
          * Cookies will be sent in all contexts, i.e sending cross-origin is allowed.
          *

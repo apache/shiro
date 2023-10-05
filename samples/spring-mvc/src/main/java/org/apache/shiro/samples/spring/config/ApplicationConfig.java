@@ -19,7 +19,6 @@
 package org.apache.shiro.samples.spring.config;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.samples.spring.BootstrapDataPopulator;
@@ -42,8 +41,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
-import static org.apache.shiro.web.filter.mgt.DefaultFilter.anon;
-
 /**
  * Application bean definitions.
  */
@@ -61,13 +58,14 @@ public class ApplicationConfig {
 
 
     /**
-     *Populates the sample database with sample users and roles.
+     * Populates the sample database with sample users and roles.
+     *
      * @param dataSource
      * @return
      */
     @Bean
     protected BootstrapDataPopulator bootstrapDataPopulator(DataSource dataSource) {
-        BootstrapDataPopulator populator =new BootstrapDataPopulator();
+        BootstrapDataPopulator populator = new BootstrapDataPopulator();
         populator.setDataSource(dataSource);
         return populator;
     }
@@ -77,6 +75,7 @@ public class ApplicationConfig {
      * Used by the SecurityManager to access security data (users, roles, etc.).
      * Many other realm implementations can be used too (PropertiesRealm,
      * LdapRealm, etc.
+     *
      * @param dataSource
      * @return
      */
@@ -100,7 +99,6 @@ public class ApplicationConfig {
      * Let's use some enterprise caching support for better performance.  You can replace this with any enterprise
      * caching framework implementation that you like (Terracotta+Ehcache, Coherence, GigaSpaces, etc
      *
-     *
      * @return
      */
     @Bean
@@ -123,6 +121,7 @@ public class ApplicationConfig {
     /**
      * Secure Spring remoting:  Ensure any Spring Remoting method invocations can be associated
      * with a Subject for security checks.
+     *
      * @param securityManager
      * @return
      */
@@ -138,6 +137,7 @@ public class ApplicationConfig {
 
     /**
      * Simulated business-tier "Manager", not Shiro related, just an example
+     *
      * @return
      */
     @Bean
@@ -147,6 +147,7 @@ public class ApplicationConfig {
 
     /**
      * Sample RDBMS data source that would exist in any application - not Shiro related.
+     *
      * @return
      */
     @Bean
@@ -171,8 +172,10 @@ public class ApplicationConfig {
         chainDefinition.addPathDefinition("/logo.png", "anon");
         chainDefinition.addPathDefinition("/shiro.css", "anon");
         chainDefinition.addPathDefinition("/s/login", "anon");
-        chainDefinition.addPathDefinition("/*.jar", "anon"); //allow WebStart to pull the jars for the swing app
-        chainDefinition.addPathDefinition("/remoting/**", "anon"); // protected using SecureRemoteInvocationExecutor
+        //allow WebStart to pull the jars for the swing app
+        chainDefinition.addPathDefinition("/*.jar", "anon");
+        // protected using SecureRemoteInvocationExecutor
+        chainDefinition.addPathDefinition("/remoting/**", "anon");
         chainDefinition.addPathDefinition("/**", "authc");
 
 

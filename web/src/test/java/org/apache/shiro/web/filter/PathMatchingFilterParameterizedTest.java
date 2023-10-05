@@ -46,10 +46,10 @@ public class PathMatchingFilterParameterizedTest {
     private static final String CONTEXT_PATH = "/";
     private static final String DISABLED_PATH = CONTEXT_PATH + "disabled";
 
+    private String pattern;
+    private HttpServletRequest request;
+    private boolean shouldMatch;
     private PathMatchingFilter filter;
-    public String pattern;
-    public HttpServletRequest request;
-    public boolean shouldMatch;
 
     /**
      * Tests the following assumptions:
@@ -64,24 +64,25 @@ public class PathMatchingFilterParameterizedTest {
     public static Object[][] generateParameters() {
 
         return Stream.of(
-                new Object[]{ "/foo/*", createRequest("/foo/"), true },
-                new Object[]{ "/foo*", createRequest("/foo/"), true },
-                new Object[]{ "/foo", createRequest("/foo/"), true },
+                        new Object[] {"/foo/*", createRequest("/foo/"), true},
+                        new Object[] {"/foo*", createRequest("/foo/"), true},
+                        new Object[] {"/foo", createRequest("/foo/"), true},
 
-                new Object[]{ "/foo/*", createRequest("/foo/bar"), true },
-                new Object[]{ "/foo*", createRequest("/foo/bar"), false },
-                new Object[]{ "/foo", createRequest("/foo/bar"), false },
+                        new Object[] {"/foo/*", createRequest("/foo/bar"), true},
+                        new Object[] {"/foo*", createRequest("/foo/bar"), false},
+                        new Object[] {"/foo", createRequest("/foo/bar"), false},
 
-                new Object[]{ "/foo", createRequest("/foo"), true },
-                new Object[]{ "/foo/*", createRequest("/foo"), false },
-                new Object[]{ "/foo/*", createRequest("/foo "), false },
-                new Object[]{ "/foo/*", createRequest("/foo /"), false },
-                new Object[]{ "/foo/*", createRequest("/foo%20"), false }, // already URL decoded, encoded would have been %2520
-                new Object[]{ "/foo/*", createRequest("/foo%20/"), false },
-                new Object[]{ "/foo/*", createRequest("/foo/%20/"), true },
-                new Object[]{ "/foo/*", createRequest("/foo/ /"), true }
-            )
-            .toArray(Object[][]::new);
+                        new Object[] {"/foo", createRequest("/foo"), true},
+                        new Object[] {"/foo/*", createRequest("/foo"), false},
+                        new Object[] {"/foo/*", createRequest("/foo "), false},
+                        new Object[] {"/foo/*", createRequest("/foo /"), false},
+                        // already URL decoded, encoded would have been %2520
+                        new Object[] {"/foo/*", createRequest("/foo%20"), false},
+                        new Object[] {"/foo/*", createRequest("/foo%20/"), false},
+                        new Object[] {"/foo/*", createRequest("/foo/%20/"), true},
+                        new Object[] {"/foo/*", createRequest("/foo/ /"), true}
+                )
+                .toArray(Object[][]::new);
     }
 
     public static HttpServletRequest createRequest(String requestUri) {
@@ -105,11 +106,13 @@ public class PathMatchingFilterParameterizedTest {
     }
 
     private PathMatchingFilter createTestInstance() {
-        final String NAME = "pathMatchingFilter";
+        final String name = "pathMatchingFilter";
 
         PathMatchingFilter filter = new PathMatchingFilter() {
+
             @Override
-            protected boolean isEnabled(ServletRequest request, ServletResponse response, String path, Object mappedValue) throws Exception {
+            protected boolean isEnabled(ServletRequest request, ServletResponse response,
+                                        String path, Object mappedValue) throws Exception {
                 return !path.equals(DISABLED_PATH);
             }
 
@@ -124,7 +127,7 @@ public class PathMatchingFilterParameterizedTest {
                 return false;
             }
         };
-        filter.setName(NAME);
+        filter.setName(name);
 
         return filter;
     }
@@ -135,7 +138,9 @@ public class PathMatchingFilterParameterizedTest {
         initPathMatchingFilterParameterizedTest(pattern, request, shouldMatch);
         LOG.debug("Input pattern: [{}], input path: [{}].", this.pattern, this.request.getPathInfo());
         boolean matchEnabled = filter.pathsMatch(this.pattern, this.request);
-        assertEquals(this.shouldMatch, matchEnabled, "PathMatch can match URL end with multi Separator, ["+ this.pattern + "] - [" + this.request.getPathInfo() + "]");
+        assertEquals(this.shouldMatch, matchEnabled,
+                "PathMatch can match URL end with multi Separator, ["
+                        + this.pattern + "] - [" + this.request.getPathInfo() + "]");
         verify(request);
     }
 

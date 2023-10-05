@@ -22,7 +22,6 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 /**
  * Extends the secure dummy service and makes it some access more restrictive.
- *
  */
 public class RestrictedDummyService extends SecuredDummyService {
 

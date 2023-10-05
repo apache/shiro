@@ -16,6 +16,7 @@ package org.apache.shiro.ee.faces.tags;
 import javax.faces.view.facelets.TagConfig;
 
 /**
+ *
  */
 public class HasRoleTag extends PermissionTagHandler {
     public HasRoleTag(TagConfig config) {

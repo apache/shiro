@@ -30,13 +30,16 @@ package org.apache.shiro.lang.codec;
  * great work they've done, but also didn't want to force every Shiro user to depend on the commons-codec.jar
  * <p/>
  * As per the Apache 2.0 license, the original copyright notice and all author and copyright information have
- * remained in tact.
+ * remained intact.
  *
  * @see <a href="http://en.wikipedia.org/wiki/Base64">Wikipedia: Base 64</a>
  * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
  * @since 0.9
  */
-public class Base64 {
+public final class Base64 {
+
+    private Base64() {
+    }
 
     /**
      * Base64 encodes the specified byte array and then encodes it as a String using Shiro's preferred character

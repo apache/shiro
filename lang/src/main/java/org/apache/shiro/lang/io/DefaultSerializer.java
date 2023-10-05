@@ -18,11 +18,18 @@
  */
 package org.apache.shiro.lang.io;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * Serializer implementation that uses the default JVM serialization mechanism (Object Input/Output Streams).
  *
+ * @param <T> the type of target.
  * @since 0.9
  */
 public class DefaultSerializer<T> implements Serializer<T> {
@@ -50,9 +57,9 @@ public class DefaultSerializer<T> implements Serializer<T> {
             baos.flush();
             return baos.toByteArray();
         } catch (IOException e) {
-            String msg = "Unable to serialize object [" + o + "].  " +
-                    "In order for the DefaultSerializer to serialize this object, the [" + o.getClass().getName() + "] " +
-                    "class must implement java.io.Serializable.";
+            String msg = "Unable to serialize object [" + o + "].  "
+                    + "In order for the DefaultSerializer to serialize this object, "
+                    + " the [" + o.getClass().getName() + "] class must implement java.io.Serializable.";
             throw new SerializationException(msg, e);
         }
     }

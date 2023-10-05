@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.spring.config.web.autoconfigure;
 
-import javax.servlet.DispatcherType;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.AbstractShiroWebFilterConfiguration;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
@@ -29,6 +28,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.DispatcherType;
 import java.util.List;
 
 /**
@@ -39,7 +39,13 @@ import java.util.List;
 @ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
 public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfiguration {
 
+    /**
+     * registration bean name key.
+     */
     public static final String REGISTRATION_BEAN_NAME = "filterShiroFilterRegistrationBean";
+    /**
+     * shiro filter name key.
+     */
     public static final String FILTER_NAME = "shiroFilter";
 
     @Bean
@@ -54,7 +60,8 @@ public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfigura
     protected FilterRegistrationBean<AbstractShiroFilter> filterShiroFilterRegistrationBean() throws Exception {
 
         FilterRegistrationBean<AbstractShiroFilter> filterRegistrationBean = new FilterRegistrationBean<>();
-        filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR);
+        filterRegistrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.FORWARD,
+                                                  DispatcherType.INCLUDE, DispatcherType.ERROR);
         filterRegistrationBean.setFilter((AbstractShiroFilter) shiroFilterFactoryBean().getObject());
         filterRegistrationBean.setName(FILTER_NAME);
         filterRegistrationBean.setOrder(1);

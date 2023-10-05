@@ -79,7 +79,7 @@ public interface SessionContext extends Map<String, Object> {
      * {@code Session} host.
      *
      * @return the originating host name or IP address (as a String) from where the {@code Subject} is initiating the
-     *         {@code Session}.
+     * {@code Session}.
      * @see #setHost(String) setHost(String)
      */
     String getHost();

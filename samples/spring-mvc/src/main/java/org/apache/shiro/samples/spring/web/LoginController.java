@@ -38,13 +38,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/s/login")
 public class LoginController {
 
-    private static transient final Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 
-    private static String loginView = "login";
+    private static String loginview = "login";
 
     @RequestMapping(method = RequestMethod.GET)
     protected String view() {
-        return loginView;
+        return loginview;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -57,10 +57,10 @@ public class LoginController {
         try {
             SecurityUtils.getSubject().login(token);
         } catch (AuthenticationException e) {
-            log.debug("Error authenticating.", e);
+            LOGGER.debug("Error authenticating.", e);
             model.addAttribute("errorInvalidLogin", "The username or password was not correct.");
 
-            return loginView;
+            return loginview;
         }
 
         return "redirect:/s/index";

@@ -33,7 +33,7 @@ public class RegExPatternMatcher implements PatternMatcher {
 
     private static final int CASE_INSENSITIVE = DEFAULT | Pattern.CASE_INSENSITIVE;
 
-    private boolean caseInsensitive = false;
+    private boolean caseInsensitive;
 
     /**
      * Simple implementation that merely uses the default pattern comparison logic provided by the
@@ -43,6 +43,7 @@ public class RegExPatternMatcher implements PatternMatcher {
      * Pattern p = Pattern.compile(pattern, Pattern.DOTALL);
      * Matcher m = p.matcher(source);
      * return m.matches();</pre>
+     *
      * @param pattern the pattern to match against
      * @param source  the source to match
      * @return {@code true} if the source matches the required pattern, {@code false} otherwise.
@@ -58,6 +59,7 @@ public class RegExPatternMatcher implements PatternMatcher {
 
     /**
      * Returns true if regex match should be case-insensitive.
+     *
      * @return true if regex match should be case-insensitive.
      */
     public boolean isCaseInsensitive() {
@@ -66,6 +68,7 @@ public class RegExPatternMatcher implements PatternMatcher {
 
     /**
      * Adds the Pattern.CASE_INSENSITIVE flag when compiling patterns.
+     *
      * @param caseInsensitive true if patterns should match case-insensitive.
      */
     public void setCaseInsensitive(boolean caseInsensitive) {

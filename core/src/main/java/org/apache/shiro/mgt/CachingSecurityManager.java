@@ -46,6 +46,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
 
     /**
      * The EventBus to use to use to publish and receive events of interest during Shiro's lifecycle.
+     *
      * @since 1.3
      */
     private EventBus eventBus;
@@ -111,7 +112,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * eventBus is available.
      *
      * @param eventBus the EventBus used by this {@code SecurityManager} and potentially any of its
-     *                     children components.
+     *                 children components.
      * @since 1.3
      */
     public void setEventBus(EventBus eventBus) {
@@ -124,7 +125,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      */
     protected void applyEventBusToCacheManager() {
         if (this.eventBus != null && this.cacheManager != null && this.cacheManager instanceof EventBusAware) {
-            ((EventBusAware)this.cacheManager).setEventBus(this.eventBus);
+            ((EventBusAware) this.cacheManager).setEventBus(this.eventBus);
         }
     }
 

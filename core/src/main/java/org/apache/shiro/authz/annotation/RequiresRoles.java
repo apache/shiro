@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Requires the currently executing {@link org.apache.shiro.subject.Subject Subject} to have all of the 
+ * Requires the currently executing {@link org.apache.shiro.subject.Subject Subject} to have all of the
  * specified roles. If they do not have the role(s), the method will not be executed and
  * an {@link org.apache.shiro.authz.AuthorizationException AuthorizationException} is thrown.
  * <p/>
@@ -61,10 +61,11 @@ public @interface RequiresRoles {
      * invocation to be allowed.
      */
     String[] value();
-    
+
     /**
      * The logical operation for the permission check in case multiple roles are specified. AND is the default
+     *
      * @since 1.1.0
      */
-    Logical logical() default Logical.AND; 
+    Logical logical() default Logical.AND;
 }

@@ -44,11 +44,13 @@ import org.slf4j.LoggerFactory;
  */
 public class JndiTemplate {
 
-    private static final Logger log = LoggerFactory.getLogger(JndiTemplate.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JndiTemplate.class);
 
     private Properties environment;
 
-    /** Create a new JndiTemplate instance. */
+    /**
+     * Create a new JndiTemplate instance.
+     */
     public JndiTemplate() {
     }
 
@@ -91,12 +93,11 @@ public class JndiTemplate {
         Context ctx = createInitialContext();
         try {
             return contextCallback.doInContext(ctx);
-        }
-        finally {
+        } finally {
             try {
                 ctx.close();
             } catch (NamingException ex) {
-                log.debug("Could not close JNDI InitialContext", ex);
+                LOGGER.debug("Could not close JNDI InitialContext", ex);
             }
         }
     }
@@ -115,7 +116,7 @@ public class JndiTemplate {
         Hashtable icEnv = null;
         if (env != null) {
             icEnv = new Hashtable(env.size());
-            for (Enumeration en = env.propertyNames(); en.hasMoreElements();) {
+            for (Enumeration en = env.propertyNames(); en.hasMoreElements(); ) {
                 String key = (String) en.nextElement();
                 icEnv.put(key, env.getProperty(key));
             }
@@ -128,12 +129,12 @@ public class JndiTemplate {
      *
      * @param name the JNDI name of the object
      * @return object found (cannot be <code>null</code>; if a not so well-behaved
-     *         JNDI implementations returns null, a NamingException gets thrown)
+     * JNDI implementations returns null, a NamingException gets thrown)
      * @throws NamingException if there is no object with the given
      *                         name bound to JNDI
      */
     public Object lookup(final String name) throws NamingException {
-        log.debug("Looking up JNDI object with name '{}'", name);
+        LOGGER.debug("Looking up JNDI object with name '{}'", name);
         return execute(new JndiCallback() {
             public Object doInContext(Context ctx) throws NamingException {
                 Object located = ctx.lookup(name);
@@ -155,16 +156,16 @@ public class JndiTemplate {
      *                     if the value is <code>Object.class</code>, this method will succeed whatever
      *                     the class of the returned instance.
      * @return object found (cannot be <code>null</code>; if a not so well-behaved
-     *         JNDI implementations returns null, a NamingException gets thrown)
+     * JNDI implementations returns null, a NamingException gets thrown)
      * @throws NamingException if there is no object with the given
      *                         name bound to JNDI
      */
     public Object lookup(String name, Class requiredType) throws NamingException {
         Object jndiObject = lookup(name);
         if (requiredType != null && !requiredType.isInstance(jndiObject)) {
-            String msg = "Jndi object acquired under name '" + name + "' is of type [" +
-                    jndiObject.getClass().getName() + "] and not assignable to the required type [" +
-                    requiredType.getName() + "].";
+            String msg = "Jndi object acquired under name '" + name + "' is of type ["
+                    + jndiObject.getClass().getName() + "] and not assignable to the required type ["
+                    + requiredType.getName() + "].";
             throw new NamingException(msg);
         }
         return jndiObject;
@@ -178,7 +179,7 @@ public class JndiTemplate {
      * @throws NamingException thrown by JNDI, mostly name already bound
      */
     public void bind(final String name, final Object object) throws NamingException {
-        log.debug("Binding JNDI object with name '{}'", name);
+        LOGGER.debug("Binding JNDI object with name '{}'", name);
         execute(new JndiCallback() {
             public Object doInContext(Context ctx) throws NamingException {
                 ctx.bind(name, object);
@@ -196,7 +197,7 @@ public class JndiTemplate {
      * @throws NamingException thrown by JNDI
      */
     public void rebind(final String name, final Object object) throws NamingException {
-        log.debug("Rebinding JNDI object with name '{}'", name);
+        LOGGER.debug("Rebinding JNDI object with name '{}'", name);
         execute(new JndiCallback() {
             public Object doInContext(Context ctx) throws NamingException {
                 ctx.rebind(name, object);
@@ -212,7 +213,7 @@ public class JndiTemplate {
      * @throws NamingException thrown by JNDI, mostly name not found
      */
     public void unbind(final String name) throws NamingException {
-        log.debug("Unbinding JNDI object with name '{}'", name);
+        LOGGER.debug("Unbinding JNDI object with name '{}'", name);
         execute(new JndiCallback() {
             public Object doInContext(Context ctx) throws NamingException {
                 ctx.unbind(name);

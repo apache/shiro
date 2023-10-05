@@ -26,7 +26,8 @@ import org.apache.shiro.aop.AnnotationResolver;
  * {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated} <b><em>or</em></b> remembered via remember
  * me services before invoking the method.
  * <p>
- * This annotation essentially ensures that <code>subject.{@link org.apache.shiro.subject.Subject#getPrincipal() getPrincipal()} != null</code>.
+ * This annotation essentially ensures that <code>subject.
+ * {@link org.apache.shiro.subject.Subject#getPrincipal() getPrincipal()} != null</code>.
  *
  * @since 0.9.0
  */
@@ -34,16 +35,15 @@ public class UserAnnotationMethodInterceptor extends AuthorizingAnnotationMethod
 
     /**
      * Default no-argument constructor that ensures this interceptor looks for
-     *
+     * <p>
      * {@link org.apache.shiro.authz.annotation.RequiresUser RequiresUser} annotations in a method
      * declaration.
      */
     public UserAnnotationMethodInterceptor() {
-        super( new UserAnnotationHandler() );
+        super(new UserAnnotationHandler());
     }
 
     /**
-     *
      * @param resolver
      * @since 1.1
      */

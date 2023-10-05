@@ -14,20 +14,26 @@
 package org.apache.shiro.testing.jakarta.ee;
 
 import java.net.URL;
+
 import static org.apache.shiro.ee.util.JakartaTransformer.isJakarta;
 import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_DEV_MODE;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
+
 import static org.jboss.arquillian.graphene.Graphene.guardAjax;
 import static org.jboss.arquillian.graphene.Graphene.guardHttp;
 import static org.jboss.arquillian.graphene.Graphene.waitGui;
+
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -117,7 +123,7 @@ public class ShiroBeansIT {
         webDriver.get(baseURL + "lastException");
         String exceptionText = webDriver.findElement(By.tagName("body")).getText();
         assertTrue(exceptionText
-                .startsWith(jakartify("WARNING: javax.ejb.EJBException: Attempting to perform a user-only operation")),
+                        .startsWith(jakartify("WARNING: javax.ejb.EJBException: Attempting to perform a user-only operation")),
                 String.format("capturing correct warning from the server: %s", exceptionText));
     }
 
@@ -149,7 +155,7 @@ public class ShiroBeansIT {
     }
 
     private void exersizeViewAndSessionScoped(WebElement elem, String createStatistic, String destroyStatistic,
-            boolean isBrokenDestructor) {
+                                              boolean isBrokenDestructor) {
         webDriver.get(baseURL + "shiro/auth/loginform");
         login();
 

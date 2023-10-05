@@ -28,12 +28,15 @@ package org.apache.shiro.crypto.support.hashes.bcrypt;
  *
  * <blockquote>
  * Unix stores password hashes computed with crypt in the /etc/passwd file using radix-64 encoding called B64. It uses a
- * mostly-alphanumeric set of characters, plus . and /. Its 64-character set is "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
+ * mostly-alphanumeric set of characters, plus . and /.
+ * Its 64-character set is "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".
  * Padding is not used.
  * </blockquote>
  *
  * @since 2.0
  */
+@SuppressWarnings({"checkstyle:MagicNumber", "checkstyle:BooleanExpressionComplexity",
+        "checkstyle:NPathComplexity", "checkstyle:CyclomaticComplexity"})
 interface OpenBSDBase64 {
 
 
@@ -46,9 +49,11 @@ interface OpenBSDBase64 {
     byte[] encode(byte[] rawBytes);
 
     /**
-     * From a UTF-8 encoded string representing radix64 encoded data as byte array, decodes the raw bytes from it.
+     * From a UTF-8 encoded string representing radix64 encoded data as byte array,
+     * decodes the raw bytes from it.
      *
-     * @param utf8EncodedRadix64String from a string get it with <code>"m0CrhHm10qJ3lXRY.5zDGO".getBytes(StandardCharsets.UTF8)</code>
+     * @param utf8EncodedRadix64String from a string get it with
+     *                                 <code>"m0CrhHm10qJ3lXRY.5zDGO".getBytes(StandardCharsets.UTF8)</code>
      * @return the raw bytes encoded by this utf-8 radix4 string
      */
     byte[] decode(byte[] utf8EncodedRadix64String);
@@ -70,7 +75,7 @@ interface OpenBSDBase64 {
                 26, 27, -1, -1, -1, -1, -1, -1, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
                 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53};
 
-        private static final byte[] MAP = new byte[]{
+        private static final byte[] MAP = new byte[] {
                 '.', '/', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
                 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
                 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
@@ -172,6 +177,7 @@ interface OpenBSDBase64 {
                     out[index++] = map[((in[end] & 0x03) << 4) | ((in[end + 1] & 0xff) >> 4)];
                     out[index] = map[((in[end + 1] & 0x0f) << 2)];
                     break;
+                default:
             }
             return out;
         }

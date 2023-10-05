@@ -45,19 +45,20 @@ import java.util.Collection;
  * /another/path/** = localLan
  * </pre>
  *
- * @since 2.0 
+ * @since 2.0
  */
 public class IpFilter extends AuthorizationFilter {
 
-    private static IpSource DEFAULT_IP_SOURCE = new IpSource() {
-            public Collection<String> getAuthorizedIps() {
-                return Collections.emptySet();
-            }
-            public Collection<String> getDeniedIps() {
-                return Collections.emptySet();
-            }
-        };
-    
+    private static final IpSource DEFAULT_IP_SOURCE = new IpSource() {
+        public Collection<String> getAuthorizedIps() {
+            return Collections.emptySet();
+        }
+
+        public Collection<String> getDeniedIps() {
+            return Collections.emptySet();
+        }
+    };
+
     private IpSource ipSource = DEFAULT_IP_SOURCE;
 
     private List<IpAddressMatcher> authorizedIpMatchers = Collections.emptyList();

@@ -34,7 +34,7 @@ public interface WebSecurityManager extends SecurityManager {
      * method indicates whether the security manager is using the HTTP session or not.
      *
      * @return <code>true</code> if the security manager is using the HTTP session; otherwise,
-     *         <code>false</code>.
+     * <code>false</code>.
      */
     boolean isHttpSessionMode();
 }

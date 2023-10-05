@@ -78,7 +78,7 @@ public class DefaultHashService implements ConfigurableHashService {
      *
      * @param request the request to process
      * @return the response containing the result of the hash computation, as well as any hash salt used that should be
-     *         exposed to the caller.
+     * exposed to the caller.
      */
     @Override
     public Hash computeHash(HashRequest request) {

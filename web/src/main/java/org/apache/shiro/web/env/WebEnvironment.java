@@ -37,7 +37,7 @@ public interface WebEnvironment extends Environment {
      * is not available.
      *
      * @return the web application's {@code FilterChainResolver} if one has been configured or {@code null} if one
-     *         is not available.
+     * is not available.
      */
     FilterChainResolver getFilterChainResolver();
 

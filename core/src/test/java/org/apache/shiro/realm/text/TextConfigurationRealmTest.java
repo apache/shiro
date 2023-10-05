@@ -26,8 +26,11 @@ import org.junit.jupiter.api.Test;
 import java.text.ParseException;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+@SuppressWarnings("checkstyle:MagicNumber")
 public class TextConfigurationRealmTest {
 
     private TestRealm realm;
@@ -55,9 +58,9 @@ public class TextConfigurationRealmTest {
              */
             public void test(Thread runnable) throws InterruptedException {
                 // Obtain the realm's locks
-                USERS_LOCK.writeLock().lock();
+                usersLock.writeLock().lock();
                 try {
-                    ROLES_LOCK.writeLock().lock();
+                    rolesLock.writeLock().lock();
                     try {
                         // Any read threads attempting to obtain the realms lock will block
                         runnable.start();
@@ -66,10 +69,10 @@ public class TextConfigurationRealmTest {
                         realm.onInit();
 
                     } finally {
-                        ROLES_LOCK.writeLock().unlock();
+                        rolesLock.writeLock().unlock();
                     }
                 } finally {
-                    USERS_LOCK.writeLock().unlock();
+                    usersLock.writeLock().unlock();
                 }
             }
         };
@@ -90,7 +93,7 @@ public class TextConfigurationRealmTest {
     }
 
     /*
-     * Tests that roles and account can't be tested while the realm is being loaded. 
+     * Tests that roles and account can't be tested while the realm is being loaded.
      */
     @Test
     void testRoleAndUserAccount() throws InterruptedException {
@@ -104,7 +107,7 @@ public class TextConfigurationRealmTest {
     }
 
     /*
-     * Tests that roles can't be read while the realm is being loaded. 
+     * Tests that roles can't be read while the realm is being loaded.
      */
     @Test
     void testHasRole() throws InterruptedException {
@@ -114,14 +117,14 @@ public class TextConfigurationRealmTest {
                 PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
                 assertTrue(realm.hasRole(principalCollection, "role2"),
                         "principal doesn't have role when it should");
-                assertTrue(realm.hasAllRoles(principalCollection, Arrays.asList(new String[]{"role1", "role2"})),
+                assertTrue(realm.hasAllRoles(principalCollection, Arrays.asList(new String[] {"role1", "role2"})),
                         "principal doesn't have all roles when it should");
             }
         });
     }
 
     /*
-     * Tests that roles can't be checked while the realm is being loaded. 
+     * Tests that roles can't be checked while the realm is being loaded.
      */
     @Test
     void testCheckRole() throws InterruptedException {
@@ -130,7 +133,7 @@ public class TextConfigurationRealmTest {
             public void run() {
                 PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
                 try {
-                    realm.checkRoles(principalCollection, new String[]{"role1", "role2"});
+                    realm.checkRoles(principalCollection, new String[] {"role1", "role2"});
                 } catch (AuthorizationException ae) {
                     fail("principal doesn't have all roles when it should");
                 }
@@ -139,7 +142,7 @@ public class TextConfigurationRealmTest {
     }
 
     /*
-     * Tests that a principal's permissions can't be checked while the realm is being loaded. 
+     * Tests that a principal's permissions can't be checked while the realm is being loaded.
      */
     @Test
     void testCheckPermission() throws InterruptedException {
@@ -149,7 +152,7 @@ public class TextConfigurationRealmTest {
                 PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
                 try {
                     realm.checkPermission(principalCollection, "role1_permission1");
-                    realm.checkPermissions(principalCollection, new String[]{"role1_permission1", "role2_permission2"});
+                    realm.checkPermissions(principalCollection, new String[] {"role1_permission1", "role2_permission2"});
                 } catch (AuthorizationException ae) {
                     fail("principal doesn't have permission when it should");
                 }
@@ -158,17 +161,21 @@ public class TextConfigurationRealmTest {
     }
 
     /*
-     * Tests that a principal's permissions can't be checked while the realm is being loaded. 
+     * Tests that a principal's permissions can't be checked while the realm is being loaded.
      */
     @Test
     void testIsPermitted() throws InterruptedException {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
+
             public void run() {
                 PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
-                assertTrue(realm.isPermitted(principalCollection, "role1_permission1"), "permission not permitted when it should be");
-                assertTrue(realm.isPermittedAll(principalCollection, new String[]{"role1_permission1", "role2_permission2"}),
+                assertTrue(realm.isPermitted(principalCollection,
+                        "role1_permission1"),
                         "permission not permitted when it should be");
+                assertTrue(realm.isPermittedAll(principalCollection,
+                                "role1_permission1", "role2_permission2"),
+                                "permission not permitted when it should be");
             }
         });
     }
@@ -182,14 +189,14 @@ public class TextConfigurationRealmTest {
             public void test(Thread runnable) throws InterruptedException {
                 // While the realm's lock is held by this thread role definitions cannot be processed
                 // Obtain the realm's locks
-                ROLES_LOCK.writeLock().lock();
+                rolesLock.writeLock().lock();
                 try {
                     runnable.start();
                     Thread.sleep(500);
                     // No role until lock is released and role definitions are processed
                     assertFalse(realm.roleExists("role1"), "role exists when it shouldn't");
                 } finally {
-                    ROLES_LOCK.writeLock().unlock();
+                    rolesLock.writeLock().unlock();
                 }
             }
         };
@@ -220,14 +227,14 @@ public class TextConfigurationRealmTest {
             public void test(Thread runnable) throws InterruptedException {
                 // While the realm's lock is held by this thread user definitions cannot be processed
                 // Obtain the realm's locks
-                USERS_LOCK.writeLock().lock();
+                usersLock.writeLock().lock();
                 try {
                     runnable.start();
                     Thread.sleep(500);
                     // No account until lock is released and user definitions are processed
                     assertFalse(realm.accountExists("user1"), "account exists when it shouldn't");
                 } finally {
-                    USERS_LOCK.writeLock().unlock();
+                    usersLock.writeLock().unlock();
                 }
             }
         };
@@ -255,7 +262,7 @@ public class TextConfigurationRealmTest {
         private Runnable test;
         private volatile AssertionError ae;
 
-        public TestThread(Runnable test) {
+        TestThread(Runnable test) {
             this.test = test;
         }
 
@@ -268,15 +275,17 @@ public class TextConfigurationRealmTest {
         }
 
         public void test() {
-            if (ae != null)
+            if (ae != null) {
                 throw ae;
+            }
         }
     }
 
     /*
      * Provides an additional method that has access to the realm's lock for mutual exclusion.
      */
-    private abstract class TestRealm extends TextConfigurationRealm {
-        abstract public void test(Thread runnable) throws InterruptedException;
+    private abstract static class TestRealm extends TextConfigurationRealm {
+
+        public abstract void test(Thread runnable) throws InterruptedException;
     }
 }

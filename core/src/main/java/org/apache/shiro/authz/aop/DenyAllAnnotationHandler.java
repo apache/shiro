@@ -35,7 +35,7 @@ public class DenyAllAnnotationHandler extends AuthorizingAnnotationHandler {
 
     /**
      * Default no-argument constructor that ensures this interceptor looks for
-     *
+     * <p>
      * {@link org.apache.shiro.authz.annotation.RequiresGuest RequiresGuest} annotations in a method
      * declaration.
      */

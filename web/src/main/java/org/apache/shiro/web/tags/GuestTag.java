@@ -36,21 +36,19 @@ import org.slf4j.LoggerFactory;
  */
 public class GuestTag extends SecureTag {
 
-    //TODO - complete JavaDoc
-
-    private static final Logger log = LoggerFactory.getLogger(GuestTag.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GuestTag.class);
 
     public int onDoStartTag() throws JspException {
         if (getSubject() == null || getSubject().getPrincipal() == null) {
-            if (log.isTraceEnabled()) {
-                log.trace("Subject does not exist or does not have a known identity (aka 'principal').  " +
-                        "Tag body will be evaluated.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Subject does not exist or does not have a known identity (aka 'principal').  "
+                        + "Tag body will be evaluated.");
             }
             return TagSupport.EVAL_BODY_INCLUDE;
         } else {
-            if (log.isTraceEnabled()) {
-                log.trace("Subject exists or has a known identity (aka 'principal').  " +
-                        "Tag body will not be evaluated.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Subject exists or has a known identity (aka 'principal').  "
+                        + " Tag body will not be evaluated.");
             }
             return TagSupport.SKIP_BODY;
         }

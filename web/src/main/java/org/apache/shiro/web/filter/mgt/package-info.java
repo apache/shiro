@@ -20,7 +20,7 @@
  * The filter 'mgt' (management) package contains components used in managing Filters that are available for
  * filter chain construction, the filter chains themselves, as well as resolving filter chains based by name.
  *
- * @see FilterChainManager
- * @see FilterChainResolver
+ * @see org.apache.shiro.web.filter.mgt.FilterChainManager
+ * @see org.apache.shiro.web.filter.mgt.FilterChainResolver
  */
 package org.apache.shiro.web.filter.mgt;

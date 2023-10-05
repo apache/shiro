@@ -54,7 +54,7 @@ public interface HashRequest {
      * strategy for a request, even if the request did not specify one.
      *
      * @return a salt to be used by the {@link HashService} during hash computation, or {@code null} if no salt is
-     *         provided as part of the request.
+     * provided as part of the request.
      */
     Optional<ByteSource> getSalt();
 
@@ -94,11 +94,11 @@ public interface HashRequest {
      * @see SimpleHashRequest
      * @since 1.2
      */
-    public static class Builder {
+    class Builder {
 
         private ByteSource source;
         private ByteSource salt = SimpleByteSource.empty();
-        private Map<String, Object> parameters = new ConcurrentHashMap<>();
+        private final Map<String, Object> parameters = new ConcurrentHashMap<>();
         private String algorithmName;
 
         /**

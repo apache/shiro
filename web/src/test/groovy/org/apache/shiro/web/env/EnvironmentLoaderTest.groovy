@@ -31,7 +31,7 @@ import javax.servlet.ServletContext
 
 /**
  * Unit tests for the {@link EnvironmentLoaderTest} implementation.
- * 
+ *
  * @since 1.3
  */
 class EnvironmentLoaderTest {
@@ -62,7 +62,8 @@ class EnvironmentLoaderTest {
         // This class is loaded via ClassUtils.newInstance()
         expect(servletContext.getInitParameter(EnvironmentLoader.ENVIRONMENT_CLASS_PARAM)).andReturn(MockWebEnvironment.class.getName());
         servletContext.setAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY), capture(environmentObjectCapture));
-        expect(servletContext.getAttribute(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY)).andReturn(null); // the first time it will be null
+        expect(servletContext.getAttribute(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY)).andReturn(null);
+        // the first time it will be null
         // after that use what was passed to the setAttribute method
         expect(servletContext.getAttribute(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY)).andAnswer(new IAnswer<Object>() {
             @Override

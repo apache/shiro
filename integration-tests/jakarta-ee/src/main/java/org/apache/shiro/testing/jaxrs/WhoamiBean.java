@@ -15,6 +15,7 @@ package org.apache.shiro.testing.jaxrs;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.subject.Subject;
 

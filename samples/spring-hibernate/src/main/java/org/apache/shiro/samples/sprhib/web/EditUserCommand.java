@@ -66,11 +66,11 @@ public class EditUserCommand {
     }
 
     public void updateUser(User user) {
-        Assert.isTrue( userId.equals( user.getId() ), "User ID of command must match the user being updated." );
-        user.setUsername( getUsername() );
-        user.setEmail( getEmail() );
-        if( StringUtils.hasText(getPassword()) ) {
-            user.setPassword( new Sha256Hash(getPassword()).toHex() );
+        Assert.isTrue(userId.equals(user.getId()), "User ID of command must match the user being updated.");
+        user.setUsername(getUsername());
+        user.setEmail(getEmail());
+        if (StringUtils.hasText(getPassword())) {
+            user.setPassword(new Sha256Hash(getPassword()).toHex());
         }
     }
 }

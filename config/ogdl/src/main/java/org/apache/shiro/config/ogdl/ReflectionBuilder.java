@@ -67,11 +67,10 @@ import org.slf4j.LoggerFactory;
  *
  * @since 0.9
  */
+@SuppressWarnings("checkstyle:MethodCount")
 public class ReflectionBuilder {
 
-    //TODO - complete JavaDoc
-
-    private static final Logger log = LoggerFactory.getLogger(ReflectionBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionBuilder.class);
 
     private static final String OBJECT_REFERENCE_BEGIN_TOKEN = "$";
     private static final String ESCAPED_OBJECT_REFERENCE_BEGIN_TOKEN = "\\$";
@@ -90,6 +89,7 @@ public class ReflectionBuilder {
 
     /**
      * Interpolation allows for ${key} substitution of values.
+     *
      * @since 1.4
      */
     private Interpolator interpolator;
@@ -98,6 +98,7 @@ public class ReflectionBuilder {
      * @since 1.3
      */
     private EventBus eventBus;
+
     /**
      * Keeps track of event subscribers that were automatically registered by this ReflectionBuilder during
      * object construction.  This is used in case a new EventBus is discovered during object graph
@@ -106,19 +107,12 @@ public class ReflectionBuilder {
      *
      * @since 1.3
      */
-    private final Map<String,Object> registeredEventSubscribers;
+    private final Map<String, Object> registeredEventSubscribers;
 
     /**
      * @since 1.4
      */
     private final BeanUtilsBean beanUtilsBean;
-
-    //@since 1.3
-    private Map<String,Object> createDefaultObjectMap() {
-        Map<String,Object> map = new LinkedHashMap<String, Object>();
-        map.put(EVENT_BUS_NAME, new DefaultEventBus());
-        return map;
-    }
 
     private Function<String, ?> alternateObjectSupplier = name -> null;
 
@@ -133,9 +127,9 @@ public class ReflectionBuilder {
         beanUtilsBean = new BeanUtilsBean(new ConvertUtilsBean() {
             @Override
             public Object convert(String value, Class clazz) {
-                if (clazz.isEnum()){
+                if (clazz.isEnum()) {
                     return Enum.valueOf(clazz, value);
-                }else{
+                } else {
                     return super.convert(value, clazz);
                 }
             }
@@ -146,17 +140,24 @@ public class ReflectionBuilder {
         this.interpolator = createInterpolator();
 
         this.objects = createDefaultObjectMap();
-        this.registeredEventSubscribers = new LinkedHashMap<String,Object>();
+        this.registeredEventSubscribers = new LinkedHashMap<>();
         apply(defaults);
     }
 
     private void apply(Map<String, ?> objects) {
-        if(!isEmpty(objects)) {
+        if (!isEmpty(objects)) {
             this.objects.putAll(objects);
         }
         EventBus found = findEventBus(this.objects);
         Assert.notNull(found, "An " + EventBus.class.getName() + " instance must be present in the object defaults");
         enableEvents(found);
+    }
+
+    //@since 1.3
+    private Map<String, Object> createDefaultObjectMap() {
+        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        map.put(EVENT_BUS_NAME, new DefaultEventBus());
+        return map;
     }
 
     public Map<String, ?> getObjects() {
@@ -183,7 +184,7 @@ public class ReflectionBuilder {
 
         this.eventBus = eventBus;
 
-        for(Map.Entry<String,Object> entry : this.objects.entrySet()) {
+        for (Map.Entry<String, Object> entry : this.objects.entrySet()) {
             enableEventsIfNecessary(entry.getValue(), entry.getKey());
         }
     }
@@ -213,6 +214,7 @@ public class ReflectionBuilder {
 
     /**
      * Plug in another way to get objects into configuration, ex: CDI
+     *
      * @param alternateObjectSupplier not null (empty lambda ok)
      * @since 2.0
      */
@@ -221,7 +223,7 @@ public class ReflectionBuilder {
     }
 
     //@since 1.3
-    protected EventBus findEventBus(Map<String,?> objects) {
+    protected EventBus findEventBus(Map<String, ?> objects) {
 
         if (isEmpty(objects)) {
             return null;
@@ -229,14 +231,14 @@ public class ReflectionBuilder {
 
         //prefer a named object first:
         Object value = objects.get(EVENT_BUS_NAME);
-        if (value != null && value instanceof EventBus) {
-            return (EventBus)value;
+        if (value instanceof EventBus) {
+            return (EventBus) value;
         }
 
         //couldn't find a named 'eventBus' EventBus object.  Try to find the first typed value we can:
-        for( Object v : objects.values()) {
+        for (Object v : objects.values()) {
             if (v instanceof EventBus) {
-                return (EventBus)v;
+                return (EventBus) v;
             }
         }
 
@@ -245,7 +247,7 @@ public class ReflectionBuilder {
 
     private boolean applyEventBusIfNecessary(Object value) {
         if (value instanceof EventBusAware) {
-            ((EventBusAware)value).setEventBus(this.eventBus);
+            ((EventBusAware) value).setEventBus(this.eventBus);
             return true;
         }
         return false;
@@ -294,9 +296,11 @@ public class ReflectionBuilder {
                 String rhs = interpolator.interpolate(entry.getValue());
 
                 String beanId = parseBeanId(lhs);
-                if (beanId != null) { //a beanId could be parsed, so the line is a bean instance definition
+                //a beanId could be parsed, so the line is a bean instance definition
+                if (beanId != null) {
                     processor.add(new InstantiationStatement(beanId, rhs));
-                } else { //the line must be a property configuration
+                    //the line must be a property configuration
+                } else {
                     processor.add(new AssignmentStatement(lhs, rhs));
                 }
             }
@@ -319,19 +323,21 @@ public class ReflectionBuilder {
         final Map<String, Object> immutableObjects = Collections.unmodifiableMap(objects);
 
         //destroy objects in the opposite order they were initialized:
-        List<Map.Entry<String,?>> entries = new ArrayList<Map.Entry<String,?>>(objects.entrySet());
+        List<Map.Entry<String, ?>> entries = new ArrayList<Map.Entry<String, ?>>(objects.entrySet());
         Collections.reverse(entries);
 
-        for(Map.Entry<String, ?> entry: entries) {
+        for (Map.Entry<String, ?> entry : entries) {
             String id = entry.getKey();
             Object bean = entry.getValue();
 
             //don't destroy the eventbus until the end - we need it to still be 'alive' while publishing destroy events:
-            if (bean != this.eventBus) { //memory equality check (not .equals) on purpose
+            //memory equality check (not .equals) on purpose
+            if (bean != this.eventBus) {
                 LifecycleUtils.destroy(bean);
                 BeanEvent event = new DestroyedBeanEvent(id, bean, immutableObjects);
                 eventBus.publish(event);
-                this.eventBus.unregister(bean); //bean is now destroyed - it should not receive any other events
+                //bean is now destroyed - it should not receive any other events
+                this.eventBus.unregister(bean);
             }
         }
         //only now destroy the event bus:
@@ -342,11 +348,12 @@ public class ReflectionBuilder {
 
         Object currentInstance = objects.get(name);
         if (currentInstance != null) {
-            log.info("An instance with name '{}' already exists.  " +
-                    "Redefining this object as a new instance of type {}", name, value);
+            LOGGER.info("An instance with name '{}' already exists.  "
+                    + "Redefining this object as a new instance of type {}", name, value);
         }
 
-        Object instance;//name with no property, assume right hand side of equals sign is the class name:
+        //name with no property, assume right hand side of equals sign is the class name:
+        Object instance;
         try {
             instance = ClassUtils.newInstance(value);
             if (instance instanceof Nameable) {
@@ -378,8 +385,8 @@ public class ReflectionBuilder {
             }
 
         } else {
-            throw new IllegalArgumentException("All property keys must contain a '.' character. " +
-                    "(e.g. myBean.property = value)  These should already be separated out by buildObjects().");
+            throw new IllegalArgumentException("All property keys must contain a '.' character. "
+                    + "(e.g. myBean.property = value)  These should already be separated out by buildObjects().");
         }
     }
 
@@ -391,9 +398,9 @@ public class ReflectionBuilder {
                     applyProperty(instance, property, value);
                 }
             } catch (Exception e) {
-                String msg = "Error retrieving property descriptor for instance " +
-                        "of type [" + instance.getClass().getName() + "] " +
-                        "while setting property [" + property + "]";
+                String msg = "Error retrieving property descriptor for instance "
+                        + "of type [" + instance.getClass().getName() + "] "
+                        + "while setting property [" + property + "]";
                 throw new ConfigurationException(msg, e);
             }
         }
@@ -402,14 +409,14 @@ public class ReflectionBuilder {
     protected void applySingleProperty(Map objects, String name, String property, String value) {
         Object instance = objects.get(name);
         if (property.equals("class")) {
-            throw new IllegalArgumentException("Property keys should not contain 'class' properties since these " +
-                    "should already be separated out by buildObjects().");
+            throw new IllegalArgumentException("Property keys should not contain 'class' properties since these "
+                    + "should already be separated out by buildObjects().");
 
         } else if (instance == null) {
-            String msg = "Configuration error.  Specified object [" + name + "] with property [" +
-                    property + "] without first defining that object's class.  Please first " +
-                    "specify the class property first, e.g. myObject = fully_qualified_class_name " +
-                    "and then define additional properties.";
+            String msg = "Configuration error.  Specified object [" + name + "] with property ["
+                    + property + "] without first defining that object's class.  Please first "
+                    + "specify the class property first, e.g. myObject = fully_qualified_class_name "
+                    + "and then define additional properties.";
             throw new IllegalArgumentException(msg);
 
         } else {
@@ -428,9 +435,9 @@ public class ReflectionBuilder {
     protected Object getReferencedObject(String id) {
         Object o = objects != null && !objects.isEmpty() ? objects.get(id) : null;
         if (o == null) {
-            String msg = "The object with id [" + id + "] has not yet been defined and therefore cannot be " +
-                    "referenced.  Please ensure objects are defined in the order in which they should be " +
-                    "created and made available for future reference.";
+            String msg = "The object with id [" + id + "] has not yet been defined and therefore cannot be "
+                    + "referenced.  Please ensure objects are defined in the order in which they should be "
+                    + "created and made available for future reference.";
             throw new UnresolveableReferenceException(msg);
         }
         return o;
@@ -445,7 +452,7 @@ public class ReflectionBuilder {
 
     protected Object resolveReference(String reference) {
         String id = getId(reference);
-        log.debug("Encountered object reference '{}'.  Looking up object with id '{}'", reference, id);
+        LOGGER.debug("Encountered object reference '{}'.  Looking up object with id '{}'", reference, id);
         final Object referencedObject = getReferencedObject(id);
         if (referencedObject instanceof Factory) {
             return ((Factory) referencedObject).getInstance();
@@ -460,8 +467,8 @@ public class ReflectionBuilder {
         try {
             PropertyDescriptor descriptor = beanUtilsBean.getPropertyUtils().getPropertyDescriptor(object, propertyName);
             if (descriptor == null) {
-                String msg = "Property '" + propertyName + "' does not exist for object of " +
-                        "type " + object.getClass().getName() + ".";
+                String msg = "Property '" + propertyName + "' does not exist for object of "
+                        + "type " + object.getClass().getName() + ".";
                 throw new ConfigurationException(msg);
             }
             Class propertyClazz = descriptor.getPropertyType();
@@ -485,7 +492,7 @@ public class ReflectionBuilder {
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
             if (reference instanceof Set) {
-                return (Set)reference;
+                return (Set) reference;
             }
         }
 
@@ -511,7 +518,7 @@ public class ReflectionBuilder {
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
             if (reference instanceof Map) {
-                return (Map)reference;
+                return (Map) reference;
             }
         }
 
@@ -519,9 +526,9 @@ public class ReflectionBuilder {
         for (String token : tokens) {
             String[] kvPair = StringUtils.split(token, MAP_KEY_VALUE_DELIMITER);
             if (kvPair == null || kvPair.length != 2) {
-                String msg = "Map property value [" + sValue + "] contained key-value pair token [" +
-                        token + "] that does not properly split to a single key and pair.  This must be the " +
-                        "case for all map entries.";
+                String msg = "Map property value [" + sValue + "] contained key-value pair token ["
+                        + token + "] that does not properly split to a single key and pair.  This must be the "
+                        + "case for all map entries.";
                 throw new ConfigurationException(msg);
             }
             mapTokens.put(kvPair[0], kvPair[1]);
@@ -549,7 +556,7 @@ public class ReflectionBuilder {
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
             if (reference instanceof Collection) {
-                return (Collection)reference;
+                return (Collection) reference;
             }
         }
 
@@ -572,7 +579,7 @@ public class ReflectionBuilder {
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
             if (reference instanceof List) {
-                return (List)reference;
+                return (List) reference;
             }
         }
 
@@ -615,11 +622,10 @@ public class ReflectionBuilder {
             return null;
         }
         //check if the value is the actual literal string 'null' (expected to be wrapped in quotes):
-        if (stringValue.equals("\"null\"")) {
+        if ("\"null\"".equals(stringValue)) {
             return NULL_VALUE_TOKEN;
-        }
-        //or the actual literal string of two quotes '""' (expected to be wrapped in quotes):
-        else if (stringValue.equals("\"\"\"\"")) {
+            //or the actual literal string of two quotes '""' (expected to be wrapped in quotes):
+        } else if ("\"\"\"\"".equals(stringValue)) {
             return EMPTY_STRING_VALUE_TOKEN;
         } else {
             return stringValue;
@@ -641,11 +647,11 @@ public class ReflectionBuilder {
             //find the end of the map reference:
             mapEnd = propertyPath.indexOf(MAP_PROPERTY_END_TOKEN, mapBegin);
             //find the token in between the [ and the ] (the map/array key or index):
-            keyString = propertyPath.substring(mapBegin+1, mapEnd);
+            keyString = propertyPath.substring(mapBegin + 1, mapEnd);
 
             //find out if there is more path reference to follow.  If not, we're at a terminal of the OGNL expression
-            if (propertyPath.length() > (mapEnd+1)) {
-                remaining = propertyPath.substring(mapEnd+1);
+            if (propertyPath.length() > (mapEnd + 1)) {
+                remaining = propertyPath.substring(mapEnd + 1);
                 if (remaining.startsWith(".")) {
                     remaining = StringUtils.clean(remaining.substring(1));
                 }
@@ -660,7 +666,7 @@ public class ReflectionBuilder {
             } else {
                 //we're assigning a map or array entry.  Check to see which we should call:
                 if (isTypedProperty(object, mapPropertyPath, Map.class)) {
-                    Map map = (Map)getProperty(object, mapPropertyPath);
+                    Map map = (Map) getProperty(object, mapPropertyPath);
                     Object mapKey = resolveValue(keyString);
                     //noinspection unchecked
                     map.put(mapKey, value);
@@ -675,7 +681,7 @@ public class ReflectionBuilder {
             //recursively call this method with the remaining property path
             Object referencedValue = null;
             if (isTypedProperty(object, mapPropertyPath, Map.class)) {
-                Map map = (Map)getProperty(object, mapPropertyPath);
+                Map map = (Map) getProperty(object, mapPropertyPath);
                 Object mapKey = resolveValue(keyString);
                 referencedValue = map.get(mapKey);
             } else {
@@ -685,8 +691,8 @@ public class ReflectionBuilder {
             }
 
             if (referencedValue == null) {
-                throw new ConfigurationException("Referenced map/array value '" + mapPropertyPath + "[" +
-                keyString + "]' does not exist.");
+                throw new ConfigurationException("Referenced map/array value '" + mapPropertyPath + "["
+                        + keyString + "]' does not exist.");
             }
 
             applyProperty(referencedValue, remaining, value);
@@ -695,18 +701,18 @@ public class ReflectionBuilder {
 
     private void setProperty(Object object, String propertyPath, Object value) {
         try {
-            if (log.isTraceEnabled()) {
-                log.trace("Applying property [{}] value [{}] on object of type [{}]",
-                        new Object[]{propertyPath, value, object.getClass().getName()});
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Applying property [{}] value [{}] on object of type [{}]",
+                        new Object[] {propertyPath, value, object.getClass().getName()});
             }
             beanUtilsBean.setProperty(object, propertyPath, value);
         } catch (Exception e) {
-            String msg = "Unable to set property '" + propertyPath + "' with value [" + value + "] on object " +
-                    "of type " + (object != null ? object.getClass().getName() : null) + ".  If " +
-                    "'" + value + "' is a reference to another (previously defined) object, prefix it with " +
-                    "'" + OBJECT_REFERENCE_BEGIN_TOKEN + "' to indicate that the referenced " +
-                    "object should be used as the actual value.  " +
-                    "For example, " + OBJECT_REFERENCE_BEGIN_TOKEN + value;
+            String msg = "Unable to set property '" + propertyPath + "' with value [" + value + "] on object "
+                    + "of type " + (object != null ? object.getClass().getName() : null) + ".  If "
+                    + "'" + value + "' is a reference to another (previously defined) object, prefix it with "
+                    + "'" + OBJECT_REFERENCE_BEGIN_TOKEN + "' to indicate that the referenced "
+                    + "object should be used as the actual value.  "
+                    + "For example, " + OBJECT_REFERENCE_BEGIN_TOKEN + value;
             throw new ConfigurationException(msg, e);
         }
     }
@@ -782,31 +788,32 @@ public class ReflectionBuilder {
 
     /**
      * Sets the {@link Interpolator} used when evaluating the right side of the expressions.
+     *
      * @since 1.4
      */
     public void setInterpolator(Interpolator interpolator) {
         this.interpolator = interpolator;
     }
 
-    private class BeanConfigurationProcessor {
+    private final class BeanConfigurationProcessor {
 
         private final List<Statement> statements = new ArrayList<Statement>();
         private final List<BeanConfiguration> beanConfigurations = new ArrayList<BeanConfiguration>();
 
         public void add(Statement statement) {
-
-            statements.add(statement); //we execute bean configuration statements in the order they are declared.
+            //we execute bean configuration statements in the order they are declared.
+            statements.add(statement);
 
             if (statement instanceof InstantiationStatement) {
-                InstantiationStatement is = (InstantiationStatement)statement;
+                InstantiationStatement is = (InstantiationStatement) statement;
                 beanConfigurations.add(new BeanConfiguration(is));
             } else {
-                AssignmentStatement as = (AssignmentStatement)statement;
+                AssignmentStatement as = (AssignmentStatement) statement;
                 //statements always apply to the most recently defined bean configuration with the same name, so we
                 //have to traverse the configuration list starting at the end (most recent elements are appended):
                 boolean addedToConfig = false;
                 String beanName = as.getRootBeanName();
-                for( int i = beanConfigurations.size()-1; i >= 0; i--) {
+                for (int i = beanConfigurations.size() - 1; i >= 0; i--) {
                     BeanConfiguration mostRecent = beanConfigurations.get(i);
                     String mostRecentBeanName = mostRecent.getBeanName();
                     if (beanName.equals(mostRecentBeanName)) {
@@ -828,17 +835,18 @@ public class ReflectionBuilder {
 
         public void execute() {
 
-            for( Statement statement : statements) {
+            for (Statement statement : statements) {
 
                 statement.execute();
 
                 BeanConfiguration bd = statement.getBeanConfiguration();
 
-                if (bd.isExecuted()) { //bean is fully configured, no more statements to execute for it:
+                //bean is fully configured, no more statements to execute for it:
+                if (bd.isExecuted()) {
 
                     //bean configured overrides the 'eventBus' bean - replace the existing eventBus with the one configured:
                     if (bd.getBeanName().equals(EVENT_BUS_NAME)) {
-                        EventBus eventBus = (EventBus)bd.getBean();
+                        EventBus eventBus = (EventBus) bd.getBean();
                         enableEvents(eventBus);
                     }
 
@@ -863,7 +871,7 @@ public class ReflectionBuilder {
         }
     }
 
-    private class BeanConfiguration {
+    private final class BeanConfiguration {
 
         private final InstantiationStatement instantiationStatement;
         private final List<AssignmentStatement> assignments = new ArrayList<AssignmentStatement>();
@@ -886,7 +894,12 @@ public class ReflectionBuilder {
             return this.beanName;
         }
 
-        public boolean isGlobalConfig() { //BeanConfiguration instance representing the global 'shiro.' properties
+        /**
+         * BeanConfiguration instance representing the global 'shiro.' properties
+         *
+         * @return boolean
+         */
+        public boolean isGlobalConfig() {
             // (we should remove this concept).
             return GLOBAL_PROPERTY_PREFIX.equals(getBeanName());
         }
@@ -912,6 +925,7 @@ public class ReflectionBuilder {
 
         /**
          * Returns true if all configuration statements have been executed.
+         *
          * @return true if all configuration statements have been executed.
          */
         public boolean isExecuted() {
@@ -983,7 +997,7 @@ public class ReflectionBuilder {
         }
     }
 
-    private class InstantiationStatement extends Statement {
+    private final class InstantiationStatement extends Statement {
 
         private InstantiationStatement(String lhs, String rhs) {
             super(lhs, rhs);
@@ -1008,7 +1022,7 @@ public class ReflectionBuilder {
         }
     }
 
-    private class AssignmentStatement extends Statement {
+    private final class AssignmentStatement extends Statement {
 
         private final String rootBeanName;
 

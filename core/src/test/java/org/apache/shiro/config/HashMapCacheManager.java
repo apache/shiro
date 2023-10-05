@@ -31,6 +31,7 @@ import java.util.HashMap;
  *
  * @since 1.0
  */
+@SuppressWarnings("checkstyle:JavadocType")
 public class HashMapCacheManager<K, V> extends AbstractCacheManager {
 
     @Override

@@ -21,8 +21,9 @@ package org.apache.shiro.authz.aop;
 import org.apache.shiro.aop.AnnotationResolver;
 
 /**
- * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresPermissions RequiresPermissions} annotation is declared, and if so, performs
- * a permission check to see if the calling <code>Subject</code> is allowed to call the method.
+ * Checks to see if a @{@link org.apache.shiro.authz.annotation.RequiresPermissions RequiresPermissions} annotation is declared,
+ * and if so, performs a permission check to see if the calling <code>Subject</code> is allowed to call the method.
+ *
  * @since 0.9
  */
 public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotationMethodInterceptor {
@@ -37,7 +38,7 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
      * {@link org.apache.shiro.authz.annotation.RequiresPermissions RequiresPermissions} annotations in a method declaration.
      */
     public PermissionAnnotationMethodInterceptor() {
-        super( new PermissionAnnotationHandler() );
+        super(new PermissionAnnotationHandler());
     }
 
     /**
@@ -45,7 +46,7 @@ public class PermissionAnnotationMethodInterceptor extends AuthorizingAnnotation
      * @since 1.1
      */
     public PermissionAnnotationMethodInterceptor(AnnotationResolver resolver) {
-        super( new PermissionAnnotationHandler(), resolver);
+        super(new PermissionAnnotationHandler(), resolver);
     }
 
     /*

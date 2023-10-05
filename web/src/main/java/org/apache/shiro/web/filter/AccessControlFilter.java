@@ -100,32 +100,33 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
     /**
      * Returns <code>true</code> if the request is allowed to proceed through the filter normally, or <code>false</code>
      * if the request should be handled by the
-     * {@link #onAccessDenied(ServletRequest,ServletResponse,Object) onAccessDenied(request,response,mappedValue)}
+     * {@link #onAccessDenied(ServletRequest, ServletResponse, Object) onAccessDenied(request,response,mappedValue)}
      * method instead.
      *
      * @param request     the incoming <code>ServletRequest</code>
      * @param response    the outgoing <code>ServletResponse</code>
      * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings.
      * @return <code>true</code> if the request should proceed through the filter normally, <code>false</code> if the
-     *         request should be processed by this filter's
-     *         {@link #onAccessDenied(ServletRequest,ServletResponse,Object)} method instead.
+     * request should be processed by this filter's
+     * {@link #onAccessDenied(ServletRequest, ServletResponse, Object)} method instead.
      * @throws Exception if an error occurs during processing.
      */
-    protected abstract boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception;
+    protected abstract boolean isAccessAllowed(ServletRequest request, ServletResponse response,
+                                               Object mappedValue) throws Exception;
 
     /**
      * Processes requests where the subject was denied access as determined by the
      * {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed}
      * method, retaining the {@code mappedValue} that was used during configuration.
      * <p/>
-     * This method immediately delegates to {@link #onAccessDenied(ServletRequest,ServletResponse)} as a
+     * This method immediately delegates to {@link #onAccessDenied(ServletRequest, ServletResponse)} as a
      * convenience in that most post-denial behavior does not need the mapped config again.
      *
      * @param request     the incoming <code>ServletRequest</code>
      * @param response    the outgoing <code>ServletResponse</code>
      * @param mappedValue the config specified for the filter in the matching request's filter chain.
      * @return <code>true</code> if the request should continue to be processed; false if the subclass will
-     *         handle/render the response directly.
+     * handle/render the response directly.
      * @throws Exception if there is an error processing the request.
      * @since 1.0
      */
@@ -141,21 +142,21 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * @param request  the incoming <code>ServletRequest</code>
      * @param response the outgoing <code>ServletResponse</code>
      * @return <code>true</code> if the request should continue to be processed; false if the subclass will
-     *         handle/render the response directly.
+     * handle/render the response directly.
      * @throws Exception if there is an error processing the request.
      */
     protected abstract boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception;
 
     /**
      * Returns <code>true</code> if
-     * {@link #isAccessAllowed(ServletRequest,ServletResponse,Object) isAccessAllowed(Request,Response,Object)},
+     * {@link #isAccessAllowed(ServletRequest, ServletResponse, Object) isAccessAllowed(Request,Response,Object)},
      * otherwise returns the result of
-     * {@link #onAccessDenied(ServletRequest,ServletResponse,Object) onAccessDenied(Request,Response,Object)}.
+     * {@link #onAccessDenied(ServletRequest, ServletResponse, Object) onAccessDenied(Request,Response,Object)}.
      *
      * @return <code>true</code> if
-     *         {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed},
-     *         otherwise returns the result of
-     *         {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse) onAccessDenied}.
+     * {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed},
+     * otherwise returns the result of
+     * {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse) onAccessDenied}.
      * @throws Exception if an error occurs.
      */
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
@@ -177,11 +178,12 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
         return pathsMatch(getLoginUrl(), request);
     }
 
+
     /**
      * Convenience method for subclasses to use when a login redirect is required.
      * <p/>
      * This implementation simply calls {@link #saveRequest(javax.servlet.ServletRequest) saveRequest(request)}
-     * and then {@link #redirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse) redirectToLogin(request,response)}.
+     * and then {@link #redirectToLogin(ServletRequest, ServletResponse) redirectToLogin(request,response)}.
      *
      * @param request  the incoming <code>ServletRequest</code>
      * @param response the outgoing <code>ServletResponse</code>

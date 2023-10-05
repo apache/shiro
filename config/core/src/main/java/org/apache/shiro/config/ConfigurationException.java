@@ -26,8 +26,7 @@ import org.apache.shiro.lang.ShiroException;
  *
  * @since 0.9
  */
-public class ConfigurationException extends ShiroException
-{
+public class ConfigurationException extends ShiroException {
 
     /**
      * Creates a new ConfigurationException.
