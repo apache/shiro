@@ -14,6 +14,7 @@
 package org.apache.shiro.testing.jakarta.ee;
 
 import javax.enterprise.inject.Model;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,8 @@ import org.omnifaces.util.Messages;
  * form's backing bean
  */
 @Model
-@Getter @Setter
+@Getter
+@Setter
 @Slf4j
 public class FormBean {
     private String firstName;

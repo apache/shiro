@@ -27,10 +27,12 @@ import java.security.spec.AlgorithmParameterSpec;
  * The AES algorithm can support key sizes of {@code 128}, {@code 192} and {@code 256} bits<b>*</b>.  This implementation
  * defaults to 128 bits.
  * <p/>
- * Note that this class retains changes the parent class's default {@link OperationMode#CBC CBC} mode to {@link OperationMode#GCM GCM} of operation
- * instead of the typical JDK default of {@link OperationMode#ECB ECB}.  {@code ECB} should not be used in
- * security-sensitive environments because {@code ECB} does not allow for initialization vectors, which are
- * considered necessary for strong encryption.  See the {@link DefaultBlockCipherService parent class}'s JavaDoc and the
+ * Note that this class retains changes the parent class's default
+ * {@link OperationMode#CBC CBC} modeto {@link OperationMode#GCM GCM} of operation
+ * instead of the typical JDK default of {@link OperationMode#ECB ECB}.
+ * {@code ECB} should not be used in security-sensitive environments because {@code ECB}
+ * does not allow for initialization vectors, which are considered necessary for strong encryption.
+ * See the {@link DefaultBlockCipherService parent class}'s JavaDoc and the
  * {@link JcaCipherService JcaCipherService} JavaDoc for more on why the JDK default should not be used and is not
  * used in this implementation.
  * <p/>
@@ -91,6 +93,7 @@ public class AesCipherService extends DefaultBlockCipherService {
      * {@code AES/GCM/NoPadding}.
      * <p/>
      * <b>NOTE:</b> As of Java 14, setting a streaming padding for the above example will throw a NoSuchAlgorithmException
+     *
      * @see <a href="https://www.oracle.com/java/technologies/javase/14-relnote-issues.html#JDK-8180392">JDK-8180392</a>
      */
     public AesCipherService() {
@@ -105,7 +108,7 @@ public class AesCipherService extends DefaultBlockCipherService {
     protected AlgorithmParameterSpec createParameterSpec(byte[] iv, boolean streaming) {
 
         if ((streaming && OperationMode.GCM.name().equals(getStreamingModeName()))
-        || (!streaming && OperationMode.GCM.name().equals(getModeName()))) {
+                || (!streaming && OperationMode.GCM.name().equals(getModeName()))) {
             return new GCMParameterSpec(getKeySize(), iv);
         }
 

@@ -20,17 +20,22 @@ import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.spi.AnnotatedType;
+
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+
 import static org.mockito.Mockito.when;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -44,17 +49,21 @@ class AnnotatedTypeWrapperTest {
     @RequiresAuthentication
     @RequiresGuest
     @RequiresPermissions("hello")
-    private final class Annotated { }
+    private final class Annotated {
+    }
 
     @ShiroSecureAnnotation
-    private final class ShiroSecureAnnotated { }
+    private final class ShiroSecureAnnotated {
+    }
 
     @Stateless
-    private final class StatelessAnnotated { }
+    private final class StatelessAnnotated {
+    }
 
     @SessionScoped
     @SuppressWarnings("serial")
-    private static final class SessionScopedAnnotated implements Serializable { }
+    private static final class SessionScopedAnnotated implements Serializable {
+    }
 
     @Test
     void noAnnotations() {
@@ -104,16 +113,16 @@ class AnnotatedTypeWrapperTest {
     void badLambdaArgument() {
         assertThrows(IllegalArgumentException.class,
                 () -> new AnnotatedTypeWrapper<>(annotatedType, true,
-                Set.of(() -> SessionScoped.class),
-                Set.of(() -> RequiresGuest.class)));
+                        Set.of(() -> SessionScoped.class),
+                        Set.of(() -> RequiresGuest.class)));
         assertThrows(IllegalArgumentException.class,
                 () -> new AnnotatedTypeWrapper<>(annotatedType, true,
-                Set.of(() -> RequiresGuest.class),
-                Set.of()));
+                        Set.of(() -> RequiresGuest.class),
+                        Set.of()));
         assertThrows(IllegalArgumentException.class,
                 () -> new AnnotatedTypeWrapper<>(annotatedType, true,
-                Set.of(),
-                Set.of(() -> RequiresGuest.class)));
+                        Set.of(),
+                        Set.of(() -> RequiresGuest.class)));
     }
 
     @Test

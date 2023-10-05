@@ -62,8 +62,8 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
     /**
      * Will call 'processDefinitions' on startup.
      *
-     * @since 1.2
      * @see <a href="https://issues.apache.org/jira/browse/SHIRO-223">SHIRO-223</a>
+     * @since 1.2
      */
     @Override
     protected void onInit() {
@@ -148,7 +148,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         if (roleDefs == null || roleDefs.isEmpty()) {
             return;
         }
-        for (Map.Entry<String,String> entry : roleDefs.entrySet()) {
+        for (Map.Entry<String, String> entry : roleDefs.entrySet()) {
             String rolename = entry.getKey();
             String value = entry.getValue();
 
@@ -178,7 +178,7 @@ public class TextConfigurationRealm extends SimpleAccountRealm {
         if (userDefs == null || userDefs.isEmpty()) {
             return;
         }
-        for (Map.Entry<String,String> entry : userDefs.entrySet()) {
+        for (Map.Entry<String, String> entry : userDefs.entrySet()) {
             String username = entry.getKey();
             String value = entry.getValue();
 

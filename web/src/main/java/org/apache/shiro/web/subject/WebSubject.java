@@ -55,7 +55,7 @@ public interface WebSubject extends Subject, RequestPairSource {
      * additionally ensures that the Servlet request/response pair that is triggering the Subject instance's creation
      * is retained for use by internal Shiro components as necessary.
      */
-    public static class Builder extends Subject.Builder {
+    class Builder extends Subject.Builder {
 
         /**
          * Constructs a new {@code Web.Builder} instance using the {@link SecurityManager SecurityManager} obtained by
@@ -100,7 +100,7 @@ public interface WebSubject extends Subject, RequestPairSource {
          * pair.
          *
          * @return a new instance of a {@link DefaultWebSubjectContext DefaultWebSubjectContext} to account for the
-         *         additional request/response pair.
+         * additional request/response pair.
          */
         @Override
         protected SubjectContext newSubjectContextInstance() {
@@ -147,9 +147,9 @@ public interface WebSubject extends Subject, RequestPairSource {
         public WebSubject buildWebSubject() {
             Subject subject = super.buildSubject();
             if (!(subject instanceof WebSubject)) {
-                String msg = "Subject implementation returned from the SecurityManager was not a " +
-                        WebSubject.class.getName() + " implementation.  Please ensure a Web-enabled SecurityManager " +
-                        "has been configured and made available to this builder.";
+                String msg = "Subject implementation returned from the SecurityManager was not a "
+                        + WebSubject.class.getName() + " implementation.  Please ensure a Web-enabled SecurityManager "
+                        + "has been configured and made available to this builder.";
                 throw new IllegalStateException(msg);
             }
             return (WebSubject) subject;

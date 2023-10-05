@@ -22,10 +22,11 @@ import javax.inject.Scope;
 /**
  * {@code @org.omnifaces.cdi.ViewScoped} interface that works with Shiro sessions
  * Primarily for plugging into Shiro destruction pipeline
- *
+ * <p>
  * This is an internal class and should not be used by applications
  */
 @Scope
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
-@interface ShiroOmniViewScoped { }
+@interface ShiroOmniViewScoped {
+}

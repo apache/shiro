@@ -45,10 +45,16 @@ import java.util.Map;
  */
 public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChainResolver> {
 
+    /**
+     * filters key.
+     */
     public static final String FILTERS = "filters";
+    /**
+     * urls key.
+     */
     public static final String URLS = "urls";
 
-    private static transient final Logger log = LoggerFactory.getLogger(IniFilterChainResolverFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IniFilterChainResolverFactory.class);
 
     private FilterConfig filterConfig;
 
@@ -107,9 +113,9 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         Ini.Section section = ini.getSection(FILTERS);
 
         if (!CollectionUtils.isEmpty(section)) {
-            String msg = "The [{}] section has been deprecated and will be removed in a future release!  Please " +
-                    "move all object configuration (filters and all other objects) to the [{}] section.";
-            log.warn(msg, FILTERS, IniSecurityManagerFactory.MAIN_SECTION_NAME);
+            String msg = "The [{}] section has been deprecated and will be removed in a future release!  Please "
+                    + "move all object configuration (filters and all other objects) to the [{}] section.";
+            LOGGER.warn(msg, FILTERS, IniSecurityManagerFactory.MAIN_SECTION_NAME);
         }
 
         Map<String, Object> defaults = new LinkedHashMap<String, Object>();
@@ -141,12 +147,14 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         createChains(section, manager);
 
         // create the default chain, to match anything the path matching would have missed
-        manager.createDefaultChain("/**"); // TODO this assumes ANT path matching
+        // TODO this assumes ANT path matching
+        manager.createDefaultChain("/**");
     }
 
     protected void registerFilters(Map<String, Filter> filters, FilterChainManager manager) {
         if (!CollectionUtils.isEmpty(filters)) {
-            boolean init = getFilterConfig() != null; //only call filter.init if there is a FilterConfig available
+            //only call filter.init if there is a FilterConfig available
+            boolean init = getFilterConfig() != null;
             for (Map.Entry<String, Filter> entry : filters.entrySet()) {
                 String name = entry.getKey();
                 Filter filter = entry.getValue();
@@ -162,7 +170,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         if (!CollectionUtils.isEmpty(section)) {
             ReflectionBuilder builder = new ReflectionBuilder(defaults);
             Map<String, ?> built = builder.buildObjects(section);
-            Map<String,Filter> sectionFilters = extractFilters(built);
+            Map<String, Filter> sectionFilters = extractFilters(built);
 
             if (CollectionUtils.isEmpty(filters)) {
                 filters = sectionFilters;
@@ -193,14 +201,14 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     protected void createChains(Map<String, String> urls, FilterChainManager manager) {
         if (CollectionUtils.isEmpty(urls)) {
-            if (log.isDebugEnabled()) {
-                log.debug("No urls to process.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("No urls to process.");
             }
             return;
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Before url processing.");
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Before url processing.");
         }
 
         for (Map.Entry<String, String> entry : urls.entrySet()) {

@@ -30,8 +30,12 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 /**
  * Tests for the {@link JndiLdapContextFactory} class.
@@ -219,7 +223,6 @@ public class JndiLdapContextFactoryTest {
             factory.getLdapContext("jcoder", null);
         });
     }
-
 
 
 }

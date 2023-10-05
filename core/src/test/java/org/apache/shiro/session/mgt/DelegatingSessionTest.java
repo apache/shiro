@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 public class DelegatingSessionTest {
 
-    DelegatingSession session = null;
-    DefaultSessionManager sm = null;
+    DelegatingSession session;
+    DefaultSessionManager sm;
 
     @BeforeEach
     public void setup() {
@@ -58,6 +58,7 @@ public class DelegatingSessionTest {
         }
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testTimeout() {
         Serializable origId = session.getId();

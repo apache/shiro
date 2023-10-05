@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("checkstyle:MagicNumber")
 public class ExecutorServiceSessionValidationSchedulerTest {
 
     ExecutorServiceSessionValidationScheduler executorServiceSessionValidationScheduler;
@@ -96,7 +97,7 @@ public class ExecutorServiceSessionValidationSchedulerTest {
         executorServiceSessionValidationScheduler.disableSessionValidation();
     }
 
-    private class FakeDefaultSessionManager extends DefaultSessionManager {
+    private static final class FakeDefaultSessionManager extends DefaultSessionManager {
         public void validateSessions() throws RuntimeException {
             throw new RuntimeException("Session test exception");
         }

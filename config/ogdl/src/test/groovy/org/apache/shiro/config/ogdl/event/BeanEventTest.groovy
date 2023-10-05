@@ -31,7 +31,7 @@ class BeanEventTest {
     @Test
     void testDefault() {
 
-        def m = [foo: 'bar'] as Map<String,Object>
+        def m = [foo: 'bar'] as Map<String, Object>
         Object o = new Object()
         BeanEvent evt = new MyBeanEvent('baz', o, m)
 

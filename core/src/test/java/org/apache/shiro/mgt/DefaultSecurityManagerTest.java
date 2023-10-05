@@ -36,15 +36,19 @@ import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @since 0.2
  */
 public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
 
-    DefaultSecurityManager sm = null;
+    DefaultSecurityManager sm;
 
     @BeforeEach
     public void setup() {
@@ -71,7 +75,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
         subject.login(token);
         assertTrue(subject.isAuthenticated());
-        assertTrue("guest".equals(subject.getPrincipal()));
+        assertEquals("guest", subject.getPrincipal());
         assertTrue(subject.hasRole("guest"));
 
         Session session = subject.getSession();
@@ -89,11 +93,11 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
      * Test that validates functionality for issue
      * <a href="https://issues.apache.org/jira/browse/JSEC-46">JSEC-46</a>
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testAutoCreateSessionAfterInvalidation() {
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
-        Serializable origSessionId = session.getId();
 
         String key = "foo";
         String value1 = "bar";
@@ -126,7 +130,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
         subject.login(token);
         assertTrue(subject.isAuthenticated());
-        assertTrue("guest".equals(subject.getPrincipal()));
+        assertEquals("guest", subject.getPrincipal());
         assertTrue(subject.hasRole("guest"));
 
         Session session = subject.getSession();
@@ -143,11 +147,11 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
 
         subject.login(new UsernamePasswordToken("lonestarr", "vespa"));
         assertTrue(subject.isAuthenticated());
-        assertTrue("lonestarr".equals(subject.getPrincipal()));
+        assertEquals("lonestarr", subject.getPrincipal());
         assertTrue(subject.hasRole("goodguy"));
 
         assertNotNull(subject.getSession());
-        assertFalse(firstSessionId.equals(subject.getSession().getId()));
+        assertNotEquals(firstSessionId, subject.getSession().getId());
 
         subject.logout();
 
@@ -176,7 +180,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
 
         // Specify sm to use and build subject with
         DelegatingSubject subject =
-            (DelegatingSubject)(new Subject.Builder(sm)).buildSubject();
+                (DelegatingSubject) (new Subject.Builder(sm)).buildSubject();
 
         // Login and verify specified sm is used and no error thrown
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");

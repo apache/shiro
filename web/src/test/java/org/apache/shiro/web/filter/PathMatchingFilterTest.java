@@ -25,7 +25,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -50,11 +53,13 @@ public class PathMatchingFilterTest {
     }
 
     private PathMatchingFilter createTestInstance() {
-        final String NAME = "pathMatchingFilter";
+        final String name = "pathMatchingFilter";
 
         PathMatchingFilter filter = new PathMatchingFilter() {
+
             @Override
-            protected boolean isEnabled(ServletRequest request, ServletResponse response, String path, Object mappedValue) throws Exception {
+            protected boolean isEnabled(ServletRequest request, ServletResponse response,
+                                        String path, Object mappedValue) throws Exception {
                 return !path.equals(DISABLED_PATH);
             }
 
@@ -69,7 +74,7 @@ public class PathMatchingFilterTest {
                 return false;
             }
         };
-        filter.setName(NAME);
+        filter.setName(name);
 
         return filter;
     }

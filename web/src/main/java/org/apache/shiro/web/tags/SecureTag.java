@@ -32,9 +32,7 @@ import org.apache.shiro.subject.Subject;
  */
 public abstract class SecureTag extends TagSupport {
 
-    //TODO - complete JavaDoc
-
-    private static final Logger log = LoggerFactory.getLogger(SecureTag.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecureTag.class);
 
     public SecureTag() {
     }

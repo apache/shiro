@@ -34,7 +34,6 @@ import org.apache.shiro.lang.util.ByteSource;
  * more information on hashing credentials with salts.
  *
  * @see org.apache.shiro.authc.credential.HashedCredentialsMatcher
- *
  * @since 1.1
  */
 public interface SaltedAuthenticationInfo extends AuthenticationInfo {

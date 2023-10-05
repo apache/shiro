@@ -35,6 +35,7 @@ class PermissionUtilsTest {
 
     private static final PermissionResolver RESOLVER = new WildcardPermissionResolver(true);
 
+    @SuppressWarnings("checkstyle:MethodName")
     @Test
     void SHIRO_902_quoted_permissions() {
         // given

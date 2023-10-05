@@ -75,7 +75,7 @@ class AbstractShiroFilterTest {
 
         replay securityManager, filterConfig, servletContext
 
-        AbstractShiroFilter filter = new AbstractShiroFilter(){}
+        AbstractShiroFilter filter = new AbstractShiroFilter() {}
         filter.securityManager = securityManager
 
         try {

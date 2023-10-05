@@ -38,7 +38,7 @@ public class AspectjAnnotationsAuthorizingMethodInterceptor extends AnnotationsA
     /**
      * This class's private log instance.
      */
-    private static final Logger log = LoggerFactory.getLogger(AspectjAnnotationsAuthorizingMethodInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AspectjAnnotationsAuthorizingMethodInterceptor.class);
 
     /**
      * Performs the method interception of the before advice at the specified joint point.
@@ -47,12 +47,15 @@ public class AspectjAnnotationsAuthorizingMethodInterceptor extends AnnotationsA
      * @throws Throwable If an error occurs performing the method invocation.
      */
     protected void performBeforeInterception(JoinPoint aJoinPoint) throws Throwable {
-        if (log.isTraceEnabled()) log.trace("#### Invoking a method decorated with a Shiro annotation" +
-                "\n\tkind       : " + aJoinPoint.getKind() +
-                "\n\tjoinPoint  : " + aJoinPoint +
-                "\n\tannotations: " + Arrays.toString(((MethodSignature) aJoinPoint.getSignature()).getMethod().getAnnotations()) +
-                "\n\ttarget     : " + aJoinPoint.getTarget()
-        );
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("#### Invoking a method decorated with a Shiro annotation"
+                    + "\n\tkind       : " + aJoinPoint.getKind()
+                    + "\n\tjoinPoint  : " + aJoinPoint
+                    + "\n\tannotations: "
+                        + Arrays.toString(((MethodSignature) aJoinPoint.getSignature()).getMethod().getAnnotations())
+                    + "\n\ttarget     : " + aJoinPoint.getTarget()
+            );
+        }
 
         // 1. Adapt the join point into a method invocation
         BeforeAdviceMethodInvocationAdapter mi = BeforeAdviceMethodInvocationAdapter.createFrom(aJoinPoint);

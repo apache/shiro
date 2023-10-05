@@ -18,18 +18,18 @@
   ~ under the License.
   -->
 <!DOCTYPE hibernate-configuration PUBLIC
-  "-//Hibernate/Hibernate Configuration DTD//EN"
-  "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 
 <!-- This file is largely provided for IDE/tool support, and is NOT used at runtime -->
 
 <hibernate-configuration>
-  <session-factory>
-    <!-- DB schema will be updated if needed -->
-    <property name="hbm2ddl.auto">update</property>
+    <session-factory>
+        <!-- DB schema will be updated if needed -->
+        <property name="hbm2ddl.auto">update</property>
 
-    <mapping class="org.apache.shiro.samples.sprhib.model.Role"/>
-    <mapping class="org.apache.shiro.samples.sprhib.model.User"/>
+        <mapping class="org.apache.shiro.samples.sprhib.model.Role"/>
+        <mapping class="org.apache.shiro.samples.sprhib.model.User"/>
 
-  </session-factory>
+    </session-factory>
 </hibernate-configuration>

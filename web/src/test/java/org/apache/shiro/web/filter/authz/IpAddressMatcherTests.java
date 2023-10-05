@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * @since 2.0 
+ * @since 2.0
  */
 public class IpAddressMatcherTests {
     final IpAddressMatcher v6matcher = new IpAddressMatcher("fe80::21f:5bff:fe33:bd68");
@@ -66,10 +66,10 @@ public class IpAddressMatcherTests {
     @Test
     void zeroMaskMatchesAnything() throws Exception {
         IpAddressMatcher matcher = new IpAddressMatcher("0.0.0.0/0");
-        
+
         assertTrue(matcher.matches("123.4.5.6"));
         assertTrue(matcher.matches("192.168.0.159"));
-        
+
         matcher = new IpAddressMatcher("192.168.0.159/0");
         assertTrue(matcher.matches("123.4.5.6"));
         assertTrue(matcher.matches("192.168.0.159"));

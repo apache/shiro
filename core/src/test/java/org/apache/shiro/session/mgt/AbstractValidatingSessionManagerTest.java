@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for the {@link org.apache.shiro.session.mgt.AbstractValidatingSessionManager} class.
@@ -51,8 +51,8 @@ public class AbstractValidatingSessionManagerTest {
         final SimpleSession invalidSession = new SimpleSession();
         //set to a time in the past:
         Calendar cal = Calendar.getInstance();
-        Long expiredTimeout = AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT + 1;
-        cal.add(Calendar.MILLISECOND, -(expiredTimeout.intValue()) );
+        long expiredTimeout = AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT + 1;
+        cal.add(Calendar.MILLISECOND, -((int) expiredTimeout));
         Date past = cal.getTime();
         invalidSession.setStartTimestamp(past);
         invalidSession.setLastAccessTime(past);
@@ -89,7 +89,7 @@ public class AbstractValidatingSessionManagerTest {
 
         sessionManager.setSessionListeners(Arrays.asList(sessionListener));
         sessionManager.validateSessions();
-        
+
         assertEquals(1, expirationCount.intValue());
     }
 

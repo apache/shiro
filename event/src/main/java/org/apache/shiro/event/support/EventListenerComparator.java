@@ -52,12 +52,13 @@ public class EventListenerComparator implements Comparator<EventListener> {
             return 0;
         } else {
             if (a instanceof TypedEventListener) {
-                TypedEventListener ta = (TypedEventListener)a;
+                TypedEventListener ta = (TypedEventListener) a;
                 if (b instanceof TypedEventListener) {
-                    TypedEventListener tb = (TypedEventListener)b;
+                    TypedEventListener tb = (TypedEventListener) b;
                     return EVENT_CLASS_COMPARATOR.compare(ta.getEventType(), tb.getEventType());
                 } else {
-                    return -1; //TypedEventListeners are 'less than' (higher priority) than non typed
+                    //TypedEventListeners are 'less than' (higher priority) than non typed
+                    return -1;
                 }
             } else {
                 if (b instanceof TypedEventListener) {

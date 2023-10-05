@@ -33,7 +33,7 @@ import java.util.Collection;
  */
 public abstract class LifecycleUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(LifecycleUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LifecycleUtils.class);
 
     public static void init(Object o) throws ShiroException {
         if (o instanceof Initializable) {
@@ -66,7 +66,7 @@ public abstract class LifecycleUtils {
         if (o instanceof Destroyable) {
             destroy((Destroyable) o);
         } else if (o instanceof Collection) {
-            destroy((Collection)o);
+            destroy((Collection) o);
         }
     }
 
@@ -75,9 +75,9 @@ public abstract class LifecycleUtils {
             try {
                 d.destroy();
             } catch (Throwable t) {
-                if (log.isDebugEnabled()) {
+                if (LOGGER.isDebugEnabled()) {
                     String msg = "Unable to cleanly destroy instance [" + d + "] of type [" + d.getClass().getName() + "].";
-                    log.debug(msg, t);
+                    LOGGER.debug(msg, t);
                 }
             }
         }

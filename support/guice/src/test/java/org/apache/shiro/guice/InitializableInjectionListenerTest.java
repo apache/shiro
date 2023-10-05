@@ -21,7 +21,10 @@ package org.apache.shiro.guice;
 import org.apache.shiro.lang.util.Initializable;
 import org.junit.jupiter.api.Test;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
 
 public class InitializableInjectionListenerTest {
     @Test

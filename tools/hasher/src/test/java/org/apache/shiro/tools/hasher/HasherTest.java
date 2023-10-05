@@ -54,7 +54,7 @@ public class HasherTest {
     public void setUpOutput(TestInfo testInfo) {
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
         Configuration configuration = loggerContext.getConfiguration();
-        ((Logger)loggerContext.getLogger(Hasher.class)).setLevel(Level.INFO);
+        ((Logger) loggerContext.getLogger(Hasher.class)).setLevel(Level.INFO);
         LoggerConfig rootLoggerConfig = configuration.getLoggerConfig("");
         rootLoggerConfig.getAppenders().clear();
 

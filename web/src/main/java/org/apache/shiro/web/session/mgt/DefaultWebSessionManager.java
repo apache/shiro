@@ -47,7 +47,7 @@ import java.io.Serializable;
  */
 public class DefaultWebSessionManager extends DefaultSessionManager implements WebSessionManager {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultWebSessionManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultWebSessionManager.class);
 
     private Cookie sessionIdCookie;
     private boolean sessionIdCookieEnabled;
@@ -55,7 +55,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
     public DefaultWebSessionManager() {
         Cookie cookie = new SimpleCookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
-        cookie.setHttpOnly(true); //more secure, protects against XSS attacks
+        //more secure, protects against XSS attacks
+        cookie.setHttpOnly(true);
         this.sessionIdCookie = cookie;
         this.sessionIdCookieEnabled = true;
         this.sessionIdUrlRewritingEnabled = false;
@@ -98,7 +99,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         String idString = currentId.toString();
         cookie.setValue(idString);
         cookie.saveTo(request, response);
-        log.trace("Set session ID cookie for session with id {}", idString);
+        LOGGER.trace("Set session ID cookie for session with id {}", idString);
     }
 
     private void removeSessionIdCookie(HttpServletRequest request, HttpServletResponse response) {
@@ -107,11 +108,11 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
 
     private String getSessionIdCookieValue(ServletRequest request, ServletResponse response) {
         if (!isSessionIdCookieEnabled()) {
-            log.debug("Session ID cookie is disabled - session id will not be acquired from a request cookie.");
+            LOGGER.debug("Session ID cookie is disabled - session id will not be acquired from a request cookie.");
             return null;
         }
         if (!(request instanceof HttpServletRequest)) {
-            log.debug("Current request is not an HttpServletRequest - cannot get session ID cookie.  Returning null.");
+            LOGGER.debug("Current request is not an HttpServletRequest - cannot get session ID cookie.  Returning null.");
             return null;
         }
         HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -169,44 +170,48 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         if (!(servletRequest instanceof HttpServletRequest)) {
             return null;
         }
-        HttpServletRequest request = (HttpServletRequest)servletRequest;
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
         String uri = request.getRequestURI();
         if (uri == null) {
             return null;
         }
 
         int queryStartIndex = uri.indexOf('?');
-        if (queryStartIndex >= 0) { //get rid of the query string
+        //get rid of the query string
+        if (queryStartIndex >= 0) {
             uri = uri.substring(0, queryStartIndex);
         }
 
-        int index = uri.indexOf(';'); //now check for path segment parameters:
+        //now check for path segment parameters:
+        int index = uri.indexOf(';');
         if (index < 0) {
             //no path segment params - return:
             return null;
         }
 
         //there are path segment params, let's get the last one that may exist:
+        final String token = paramName + "=";
 
-        final String TOKEN = paramName + "=";
-
-        uri = uri.substring(index+1); //uri now contains only the path segment params
+        //uri now contains only the path segment params
+        uri = uri.substring(index + 1);
 
         //we only care about the last JSESSIONID param:
-        index = uri.lastIndexOf(TOKEN);
+        index = uri.lastIndexOf(token);
         if (index < 0) {
             //no segment param:
             return null;
         }
 
-        uri = uri.substring(index + TOKEN.length());
+        uri = uri.substring(index + token.length());
 
-        index = uri.indexOf(';'); //strip off any remaining segment params:
-        if(index >= 0) {
+        //strip off any remaining segment params:
+        index = uri.indexOf(';');
+        if (index >= 0) {
             uri = uri.substring(0, index);
         }
 
-        return uri; //what remains is the value
+        //what remains is the value
+        return uri;
     }
 
     //since 1.2.1
@@ -249,8 +254,8 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         super.onStart(session, context);
 
         if (!WebUtils.isHttp(context)) {
-            log.debug("SessionContext argument is not HTTP compatible or does not have an HTTP request/response " +
-                    "pair. No session ID cookie will be set.");
+            LOGGER.debug("SessionContext argument is not HTTP compatible or does not have an HTTP request/response "
+                    + "pair. No session ID cookie will be set.");
             return;
 
         }
@@ -261,7 +266,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             Serializable sessionId = session.getId();
             storeSessionId(sessionId, request, response);
         } else {
-            log.debug("Session ID cookie is disabled.  No cookie has been set for new session with id {}", session.getId());
+            LOGGER.debug("Session ID cookie is disabled.  No cookie has been set for new session with id {}", session.getId());
         }
 
         request.removeAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE);
@@ -301,11 +306,11 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             request.removeAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_IS_VALID);
         }
         if (WebUtils.isHttp(key)) {
-            log.debug("Referenced session was invalid.  Removing session ID cookie.");
+            LOGGER.debug("Referenced session was invalid.  Removing session ID cookie.");
             removeSessionIdCookie(WebUtils.getHttpRequest(key), WebUtils.getHttpResponse(key));
         } else {
-            log.debug("SessionKey argument is not HTTP compatible or does not have an HTTP request/response " +
-                    "pair. Session ID cookie will not be removed due to invalidated session.");
+            LOGGER.debug("SessionKey argument is not HTTP compatible or does not have an HTTP request/response "
+                    + "pair. Session ID cookie will not be removed due to invalidated session.");
         }
     }
 
@@ -315,11 +320,11 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         if (WebUtils.isHttp(key)) {
             HttpServletRequest request = WebUtils.getHttpRequest(key);
             HttpServletResponse response = WebUtils.getHttpResponse(key);
-            log.debug("Session has been stopped (subject logout or explicit stop).  Removing session ID cookie.");
+            LOGGER.debug("Session has been stopped (subject logout or explicit stop).  Removing session ID cookie.");
             removeSessionIdCookie(request, response);
         } else {
-            log.debug("SessionKey argument is not HTTP compatible or does not have an HTTP request/response " +
-                    "pair. Session ID cookie will not be removed due to stopped session.");
+            LOGGER.debug("SessionKey argument is not HTTP compatible or does not have an HTTP request/response "
+                    + "pair. Session ID cookie will not be removed due to stopped session.");
         }
     }
 

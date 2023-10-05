@@ -30,6 +30,7 @@ import java.lang.annotation.Annotation;
  * @since 2.0
  */
 public class RolesAllowedAnnotationHandler extends AuthorizingAnnotationHandler {
+
     /**
      * Default no-argument constructor that ensures this handler looks for
      * {@link org.apache.shiro.authz.annotation.RequiresRoles RequiresRoles} annotations.
@@ -43,13 +44,14 @@ public class RolesAllowedAnnotationHandler extends AuthorizingAnnotationHandler 
      * <code>AuthorizingException</code> indicating that access is denied.
      *
      * @param a the RolesAllowed annotation to use to check for one or more roles
-     * @throws org.apache.shiro.authz.AuthorizationException
-     *          if the calling <code>Subject</code> does not have the role necessary to
-     *          proceed.
+     * @throws org.apache.shiro.authz.AuthorizationException if the calling <code>Subject</code> does not have the role
+     *                                                       necessary to proceed.
      */
     @Override
     public void assertAuthorized(Annotation a) throws AuthorizationException {
-        if (!(a instanceof RolesAllowed)) return;
+        if (!(a instanceof RolesAllowed)) {
+            return;
+        }
 
         RolesAllowed raAnnotation = (RolesAllowed) a;
         String[] roles = raAnnotation.value();
@@ -63,8 +65,14 @@ public class RolesAllowedAnnotationHandler extends AuthorizingAnnotationHandler 
 
         // Avoid processing exceptions unnecessarily - "delay" throwing the exception by calling hasRole first
         boolean hasAtLeastOneRole = false;
-        for (String role : roles) if (getSubject().hasRole(role)) hasAtLeastOneRole = true;
+        for (String role : roles) {
+            if (getSubject().hasRole(role)) {
+                hasAtLeastOneRole = true;
+            }
+        }
         // Cause the exception if none of the role match, note that the exception message will be a bit misleading
-        if (!hasAtLeastOneRole) getSubject().checkRole(roles[0]);
+        if (!hasAtLeastOneRole) {
+            getSubject().checkRole(roles[0]);
+        }
     }
 }

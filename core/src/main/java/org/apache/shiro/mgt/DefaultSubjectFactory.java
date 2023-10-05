@@ -26,7 +26,8 @@ import org.apache.shiro.subject.support.DelegatingSubject;
 
 
 /**
- * Default {@link SubjectFactory SubjectFactory} implementation that creates {@link org.apache.shiro.subject.support.DelegatingSubject DelegatingSubject}
+ * Default {@link SubjectFactory SubjectFactory} implementation that creates
+ * {@link org.apache.shiro.subject.support.DelegatingSubject DelegatingSubject}
  * instances.
  *
  * @since 1.0
@@ -49,7 +50,7 @@ public class DefaultSubjectFactory implements SubjectFactory {
 
     /**
      * @deprecated since 1.2 - override {@link #createSubject(org.apache.shiro.subject.SubjectContext)} directly if you
-     *             need to instantiate a custom {@link Subject} class.
+     * need to instantiate a custom {@link Subject} class.
      */
     @Deprecated
     protected Subject newSubjectInstance(PrincipalCollection principals, boolean authenticated, String host,

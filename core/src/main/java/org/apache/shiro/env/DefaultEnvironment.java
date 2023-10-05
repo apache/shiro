@@ -73,13 +73,13 @@ public class DefaultEnvironment implements NamedObjectEnvironment, Destroyable {
      * {@link #lookupSecurityManager()} method is provided as an alternative.
      *
      * @return the application's {@code SecurityManager} instance accessible in the backing map using the
-     *         {@link #getSecurityManagerName() securityManagerName} property as the lookup key.
+     * {@link #getSecurityManagerName() securityManagerName} property as the lookup key.
      */
     public SecurityManager getSecurityManager() throws IllegalStateException {
         SecurityManager securityManager = lookupSecurityManager();
         if (securityManager == null) {
-            throw new IllegalStateException("No SecurityManager found in Environment.  This is an invalid " +
-                    "environment state.");
+            throw new IllegalStateException("No SecurityManager found in Environment.  This is an invalid "
+                    + "environment state.");
         }
         return securityManager;
     }
@@ -107,7 +107,7 @@ public class DefaultEnvironment implements NamedObjectEnvironment, Destroyable {
      * instance.  Unless set otherwise, the default is {@code securityManager}.
      *
      * @return the name of the {@link SecurityManager} instance in the backing map.  Used as a key to lookup the
-     *         instance.
+     * instance.
      */
     public String getSecurityManagerName() {
         return securityManagerName;
@@ -129,7 +129,7 @@ public class DefaultEnvironment implements NamedObjectEnvironment, Destroyable {
      *
      * @return the live (modifiable) internal objects collection.
      */
-    public Map<String,Object> getObjects() {
+    public Map<String, Object> getObjects() {
         return this.objects;
     }
 
@@ -147,10 +147,11 @@ public class DefaultEnvironment implements NamedObjectEnvironment, Destroyable {
             return null;
         }
         if (!requiredType.isInstance(o)) {
-            String msg = "Object named '" + name + "' (of type [" + o.getClass().getName() + "]) is not of required type [" + requiredType.getName() + "].";
+            String msg = "Object named '" + name + "' (of type [" + o.getClass().getName() + "]) is not of required type ["
+                    + requiredType.getName() + "].";
             throw new RequiredTypeException(msg);
         }
-        return (T)o;
+        return (T) o;
     }
 
     public void setObject(String name, Object instance) {

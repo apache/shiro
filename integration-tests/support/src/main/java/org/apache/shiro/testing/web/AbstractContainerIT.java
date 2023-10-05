@@ -59,7 +59,11 @@ import static org.eclipse.jetty.util.resource.Resource.newResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 public abstract class AbstractContainerIT {
+
+    protected static final File TEST_KEYSTORE_PATH = setupKeyStore();
+    protected static final String TEST_KEYSTORE_PASSWORD = "password";
 
     protected static EmbeddedJetty jetty;
 
@@ -67,9 +71,7 @@ public abstract class AbstractContainerIT {
 
     protected final WebClient webClient = new WebClient();
 
-    protected static final File TEST_KEYSTORE_PATH = setupKeyStore();
-    protected static final String TEST_KEYSTORE_PASSWORD = "password";
-
+    @SuppressWarnings("checkstyle:AnonInnerLength")
     @BeforeAll
     public static void startContainer() throws Exception {
 
@@ -81,8 +83,9 @@ public abstract class AbstractContainerIT {
 
             /**
              * Overriding with contents of this pull request, to make fragment scanning work.
-             * https://github.com/mjeanroy/junit-servers/pull/3
+             * <a href="https://github.com/mjeanroy/junit-servers/pull/3"></a>
              */
+            @SuppressWarnings("checkstyle:LineLength")
             protected WebAppContext createdWebAppContext() throws Exception {
                 final String path = configuration.getPath();
                 final String webapp = configuration.getWebapp();
@@ -95,7 +98,7 @@ public abstract class AbstractContainerIT {
                 // Useful for WebXmlConfiguration
                 ctx.setBaseResource(newResource(webapp));
 
-                ctx.setConfigurations(new Configuration[]{
+                ctx.setConfigurations(new Configuration[] {
                         new WebInfConfiguration(),
                         new WebXmlConfiguration(),
                         new AnnotationConfiguration(),
@@ -169,12 +172,14 @@ public abstract class AbstractContainerIT {
             }
         });
 
+        assert warFiles != null;
         assertEquals(1, warFiles.length, "Expected only one war file in target directory, run 'mvn clean' and try again");
 
         return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
     }
 
-    protected static String getBasicAuthorizationHeaderValue(String username, String password) throws UnsupportedEncodingException {
+    protected static String getBasicAuthorizationHeaderValue(String username, String password)
+            throws UnsupportedEncodingException {
         String authorizationHeader = username + ":" + password;
         byte[] valueBytes;
         valueBytes = authorizationHeader.getBytes("UTF-8");

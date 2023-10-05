@@ -37,8 +37,7 @@ public class ContainerIntegrationIT extends AbstractContainerIT {
         final HtmlPage homePage = webClient.getPage(getBaseUri());
         try {
             homePage.getAnchorByHref("/logout").click();
-        }
-        catch (ElementNotFoundException e) {
+        } catch (ElementNotFoundException e) {
             //Ignore
         }
     }

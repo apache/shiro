@@ -19,7 +19,7 @@
 package org.apache.shiro.samples.sprhib.web;
 
 /**
- * Command binding object for signing up for a new account. 
+ * Command binding object for signing up for a new account.
  */
 public class SignupCommand {
 

@@ -119,13 +119,13 @@ class IniFilterChainResolverFactoryTest {
         factory = new IniFilterChainResolverFactory(ini)
         FilterConfig config = createNiceMockFilterConfig()
         factory.setFilterConfig(config)
-        
+
         replay config
-        
+
         FilterChainResolver resolver = factory.getInstance();
-        
+
         assertNotNull resolver
-        
+
         verify config
     }
 
@@ -144,7 +144,7 @@ class IniFilterChainResolverFactoryTest {
         def defaults = ['filter': new FormAuthenticationFilter()]
 
         def extractedFilters = factory.getFilters(null, defaults)
-        
+
         assertNotNull extractedFilters
         assertEquals 1, extractedFilters.size()
         assertTrue extractedFilters['filter'] instanceof FormAuthenticationFilter
@@ -194,7 +194,8 @@ class IniFilterChainResolverFactoryTest {
         FilterChainResolver resolver = factory.getInstance()
         assertNotNull resolver
 
-        def invalidRequestFilter = resolver.filterChainManager.getChain("/index.html").get(0) // this will be the invalidRequest filter
+        def invalidRequestFilter = resolver.filterChainManager.getChain("/index.html").get(0)
+        // this will be the invalidRequest filter
 
         assertThat(invalidRequestFilter, Matchers.instanceOf(InvalidRequestFilter))
         assertThat("blockSemicolon should be false", invalidRequestFilter.blockBackslash)

@@ -28,7 +28,6 @@ import org.apache.shiro.crypto.hash.Hash;
  * (like Unix Crypt(3)) only support one way conversion and therefore wouldn't implement this interface.
  *
  * @see Shiro1CryptFormat
- *
  * @since 1.2
  */
 public interface ParsableHashFormat extends HashFormat {

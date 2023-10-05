@@ -64,7 +64,7 @@ public class ShiroSpringAutoConfigurationTest {
         assertNotNull eventBus
         assertTrue(eventBus.registry.containsKey(subscribedListener))
         assertSame(eventBusAwareObject.getEventBus(), eventBus)
-        assertSame(((DefaultSecurityManager)securityManager).getEventBus(), eventBus)
+        assertSame(((DefaultSecurityManager) securityManager).getEventBus(), eventBus)
 
         // now lets do a couple quick permission tests to make sure everything has been initialized correctly.
         Subject joeCoder = new Subject.Builder(securityManager).buildSubject()

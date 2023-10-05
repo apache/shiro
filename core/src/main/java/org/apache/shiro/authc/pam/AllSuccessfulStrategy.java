@@ -40,22 +40,26 @@ import org.apache.shiro.realm.Realm;
  */
 public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {
 
-    /** Private class log instance. */
-    private static final Logger log = LoggerFactory.getLogger(AllSuccessfulStrategy.class);
+    /**
+     * Private class log instance.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(AllSuccessfulStrategy.class);
 
     /**
      * Because all realms in this strategy must complete successfully, this implementation ensures that the given
-     * <code>Realm</code> {@link org.apache.shiro.realm.Realm#supports(org.apache.shiro.authc.AuthenticationToken) supports} the given
+     * <code>Realm</code> {@link org.apache.shiro.realm.Realm#supports(org.apache.shiro.authc.AuthenticationToken) supports}
+     * the given
      * <code>token</code> argument.  If it does not, this method throws an
      * {@link UnsupportedTokenException UnsupportedTokenException} to end the authentication
      * process immediately. If the realm does support the token, the <code>info</code> argument is returned immediately.
      */
-    public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
+    public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token,
+                                            AuthenticationInfo info) throws AuthenticationException {
         if (!realm.supports(token)) {
-            String msg = "Realm [" + realm + "] of type [" + realm.getClass().getName() + "] does not support " +
-                    " the submitted AuthenticationToken [" + token + "].  The [" + getClass().getName() +
-                    "] implementation requires all configured realm(s) to support and be able to process the submitted " +
-                    "AuthenticationToken.";
+            String msg = "Realm [" + realm + "] of type [" + realm.getClass().getName() + "] does not support "
+                    + " the submitted AuthenticationToken [" + token + "].  The [" + getClass().getName()
+                    + "] implementation requires all configured realm(s) to support and be able to process the submitted "
+                    + "AuthenticationToken.";
             throw new UnsupportedTokenException(msg);
         }
 
@@ -72,28 +76,29 @@ public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {
      * realm did in fact authenticate successfully</li>
      * </ol>
      */
-    public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo info, AuthenticationInfo aggregate, Throwable t)
+    public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token,
+                                           AuthenticationInfo info, AuthenticationInfo aggregate, Throwable t)
             throws AuthenticationException {
         if (t != null) {
             if (t instanceof AuthenticationException) {
                 //propagate:
                 throw ((AuthenticationException) t);
             } else {
-                String msg = "Unable to acquire account data from realm [" + realm + "].  The [" +
-                        getClass().getName() + " implementation requires all configured realm(s) to operate successfully " +
-                        "for a successful authentication.";
+                String msg = "Unable to acquire account data from realm [" + realm + "].  The ["
+                        + getClass().getName() + " implementation requires all configured realm(s) to operate successfully "
+                        + "for a successful authentication.";
                 throw new AuthenticationException(msg, t);
             }
         }
         if (info == null) {
-            String msg = "Realm [" + realm + "] could not find any associated account data for the submitted " +
-                    "AuthenticationToken [" + token + "].  The [" + getClass().getName() + "] implementation requires " +
-                    "all configured realm(s) to acquire valid account data for a submitted token during the " +
-                    "log-in process.";
+            String msg = "Realm [" + realm + "] could not find any associated account data for the submitted "
+                    + "AuthenticationToken [" + token + "].  The [" + getClass().getName() + "] implementation requires "
+                    + "all configured realm(s) to acquire valid account data for a submitted token during the "
+                    + "log-in process.";
             throw new UnknownAccountException(msg);
         }
 
-        log.debug("Account successfully authenticated using realm [{}]", realm);
+        LOGGER.debug("Account successfully authenticated using realm [{}]", realm);
 
         // If non-null account is returned, then the realm was able to authenticate the
         // user - so merge the account with any accumulated before:

@@ -23,8 +23,12 @@ import org.junit.jupiter.api.Test;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Tests for the {@link PortFilter} class.
@@ -65,6 +69,7 @@ public class PortFilterTest {
      *
      * @throws Exception if there is a test failure
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testConfiguredPort() throws Exception {
         int port = 8080;

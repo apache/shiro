@@ -20,7 +20,14 @@ package org.apache.shiro.lang.util;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.ReentrantLock;
@@ -29,7 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * A <code><em>Soft</em>HashMap</code> is a memory-constrained map that stores its <em>values</em> in
  * {@link SoftReference SoftReference}s.  (Contrast this with the JDK's
- * {@link WeakHashMap WeakHashMap}, which uses weak references for its <em>keys</em>, which is of little value if you
+ * {@link java.util.WeakHashMap WeakHashMap}, which uses weak references for its <em>keys</em>, which is of little value if you
  * want the cache to auto-resize itself based on memory constraints).
  * <p/>
  * Having the values wrapped by soft references allows the cache to automatically reduce its size based on memory
@@ -42,6 +49,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * <p/>
  * This implementation is thread-safe and usable in concurrent environments.
  *
+ * @param <K> K
+ * @param <V> V
  * @since 1.0
  */
 public class SoftHashMap<K, V> implements Map<K, V> {
@@ -60,12 +69,13 @@ public class SoftHashMap<K, V> implements Map<K, V> {
      * The number of strong references to hold internally, that is, the number of instances to prevent
      * from being garbage collected automatically (unlike other soft references).
      */
-    private final int RETENTION_SIZE;
+    private final int retentionSize;
 
     /**
      * The FIFO list of strong references (not to be garbage collected), order of last access.
      */
-    private final Queue<V> strongReferences; //guarded by 'strongReferencesLock'
+    //guarded by 'strongReferencesLock'
+    private final Queue<V> strongReferences;
     private final ReentrantLock strongReferencesLock;
 
     /**
@@ -101,7 +111,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
     @SuppressWarnings({"unchecked"})
     public SoftHashMap(int retentionSize) {
         super();
-        RETENTION_SIZE = Math.max(0, retentionSize);
+        this.retentionSize = Math.max(0, retentionSize);
         queue = new ReferenceQueue<V>();
         strongReferencesLock = new ReentrantLock();
         map = new ConcurrentHashMap<K, SoftValue<V, K>>();
@@ -113,7 +123,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
      * size of {@link #DEFAULT_RETENTION_SIZE DEFAULT_RETENTION_SIZE} (100 entries).
      *
      * @param source the backing map to populate this {@code SoftHashMap}
-     * @see #SoftHashMap(Map,int)
+     * @see #SoftHashMap(java.util.Map, int)
      */
     public SoftHashMap(Map<K, V> source) {
         this(DEFAULT_RETENTION_SIZE);
@@ -177,7 +187,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
 
     private void trimStrongReferencesIfNecessary() {
         //trim the strong ref queue if necessary:
-        while (strongReferences.size() > RETENTION_SIZE) {
+        while (strongReferences.size() > retentionSize) {
             strongReferences.poll();
         }
     }
@@ -186,11 +196,12 @@ public class SoftHashMap<K, V> implements Map<K, V> {
      * Traverses the ReferenceQueue and removes garbage-collected SoftValue objects from the backing map
      * by looking them up using the SoftValue.key data member.
      */
+    @SuppressWarnings({"unchecked", "SuspiciousMethodCalls"})
     private void processQueue() {
         SoftValue sv;
         while ((sv = (SoftValue) queue.poll()) != null) {
-            //noinspection SuspiciousMethodCalls
-            map.remove(sv.key); // we can access private data!
+            // we can access private data!
+            map.remove(sv.key);
         }
     }
 
@@ -229,7 +240,6 @@ public class SoftHashMap<K, V> implements Map<K, V> {
         processQueue();
         Collection<K> keys = map.keySet();
         if (keys.isEmpty()) {
-            //noinspection unchecked
             return Collections.EMPTY_SET;
         }
         Collection<V> values = new ArrayList<V>(keys.size());
@@ -246,7 +256,8 @@ public class SoftHashMap<K, V> implements Map<K, V> {
      * Creates a new entry, but wraps the value in a SoftValue instance to enable auto garbage collection.
      */
     public V put(K key, V value) {
-        processQueue(); // throw out garbage collected values first
+        // throw out garbage collected values first
+        processQueue();
         SoftValue<V, K> sv = new SoftValue<V, K>(value, key, queue);
         SoftValue<V, K> previous = map.put(key, sv);
         addToStrongReferences(value);
@@ -254,7 +265,8 @@ public class SoftHashMap<K, V> implements Map<K, V> {
     }
 
     public V remove(Object key) {
-        processQueue(); // throw out garbage collected values first
+        // throw out garbage collected values first
+        processQueue();
         SoftValue<V, K> raw = map.remove(key);
         return raw != null ? raw.get() : null;
     }
@@ -266,17 +278,20 @@ public class SoftHashMap<K, V> implements Map<K, V> {
         } finally {
             strongReferencesLock.unlock();
         }
-        processQueue(); // throw out garbage collected values
+        // throw out garbage collected values
+        processQueue();
         map.clear();
     }
 
     public int size() {
-        processQueue(); // throw out garbage collected values first
+        // throw out garbage collected values first
+        processQueue();
         return map.size();
     }
 
     public Set<Map.Entry<K, V>> entrySet() {
-        processQueue(); // throw out garbage collected values first
+        // throw out garbage collected values first
+        processQueue();
         Collection<K> keys = map.keySet();
         if (keys.isEmpty()) {
             //noinspection unchecked
@@ -298,7 +313,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
      * not only the value but also the key to make it easier to find
      * the entry in the HashMap after it's been garbage collected.
      */
-    private static class SoftValue<V, K> extends SoftReference<V> {
+    private static final class SoftValue<V, K> extends SoftReference<V> {
 
         private final K key;
 

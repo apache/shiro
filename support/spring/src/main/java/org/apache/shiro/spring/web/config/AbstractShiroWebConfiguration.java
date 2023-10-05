@@ -49,13 +49,13 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
     @Value("#{ @environment['shiro.userNativeSessionManager'] ?: false }")
     protected boolean useNativeSessionManager;
 
-
     // Session Cookie info
-
-    @Value("#{ @environment['shiro.sessionManager.cookie.name'] ?: T(org.apache.shiro.web.servlet.ShiroHttpSession).DEFAULT_SESSION_ID_NAME }")
+    @Value("#{ @environment['shiro.sessionManager.cookie.name'] ?:"
+            + " T(org.apache.shiro.web.servlet.ShiroHttpSession).DEFAULT_SESSION_ID_NAME }")
     protected String sessionIdCookieName;
 
-    @Value("#{ @environment['shiro.sessionManager.cookie.maxAge'] ?: T(org.apache.shiro.web.servlet.SimpleCookie).DEFAULT_MAX_AGE }")
+    @Value("#{ @environment['shiro.sessionManager.cookie.maxAge'] ?:"
+            + " T(org.apache.shiro.web.servlet.SimpleCookie).DEFAULT_MAX_AGE }")
     protected int sessionIdCookieMaxAge;
 
     @Value("#{ @environment['shiro.sessionManager.cookie.domain'] ?: null }")
@@ -67,13 +67,15 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
     @Value("#{ @environment['shiro.sessionManager.cookie.secure'] ?: false }")
     protected boolean sessionIdCookieSecure;
 
-    @Value("#{ @environment['shiro.sessionManager.cookie.sameSite'] ?: T(org.apache.shiro.web.servlet.Cookie.SameSiteOptions).LAX  }")
+    @Value("#{ @environment['shiro.sessionManager.cookie.sameSite'] ?:"
+            + " T(org.apache.shiro.web.servlet.Cookie.SameSiteOptions).LAX  }")
     protected Cookie.SameSiteOptions sessionIdCookieSameSite;
 
 
     // RememberMe Cookie info
 
-    @Value("#{ @environment['shiro.rememberMeManager.cookie.name'] ?: T(org.apache.shiro.web.mgt.CookieRememberMeManager).DEFAULT_REMEMBER_ME_COOKIE_NAME }")
+    @Value("#{ @environment['shiro.rememberMeManager.cookie.name'] ?:"
+            + " T(org.apache.shiro.web.mgt.CookieRememberMeManager).DEFAULT_REMEMBER_ME_COOKIE_NAME }")
     protected String rememberMeCookieName;
 
     @Value("#{ @environment['shiro.rememberMeManager.cookie.maxAge'] ?: T(org.apache.shiro.web.servlet.Cookie).ONE_YEAR }")
@@ -88,7 +90,8 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
     @Value("#{ @environment['shiro.rememberMeManager.cookie.secure'] ?: false }")
     protected boolean rememberMeCookieSecure;
 
-    @Value("#{ @environment['shiro.rememberMeManager.cookie.sameSite'] ?: T(org.apache.shiro.web.servlet.Cookie.SameSiteOptions).LAX }")
+    @Value("#{ @environment['shiro.rememberMeManager.cookie.sameSite'] ?:"
+            + " T(org.apache.shiro.web.servlet.Cookie.SameSiteOptions).LAX }")
     protected Cookie.SameSiteOptions rememberMeSameSite;
 
 
@@ -129,7 +132,8 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
         return buildCookie(name, maxAge, path, domain, secure, Cookie.SameSiteOptions.LAX);
     }
 
-    protected Cookie buildCookie(String name, int maxAge, String path, String domain, boolean secure, Cookie.SameSiteOptions sameSiteOption) {
+    protected Cookie buildCookie(String name, int maxAge, String path, String domain,
+                                 boolean secure, Cookie.SameSiteOptions sameSiteOption) {
         Cookie cookie = new SimpleCookie(name);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);

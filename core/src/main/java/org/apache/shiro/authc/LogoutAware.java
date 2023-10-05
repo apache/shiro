@@ -37,5 +37,5 @@ public interface LogoutAware {
      *
      * @param principals the identifying principals of the Subject logging out.
      */
-    public void onLogout(PrincipalCollection principals);
+    void onLogout(PrincipalCollection principals);
 }

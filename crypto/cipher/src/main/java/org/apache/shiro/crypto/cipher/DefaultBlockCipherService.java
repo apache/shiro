@@ -122,7 +122,8 @@ import org.apache.shiro.lang.util.StringUtils;
  * </ul>
  * <p/>
  * These attributes have the same meaning as the {@code mode}, {@code blockSize}, and {@code paddingScheme} attributes
- * described above, but they are applied during streaming method invocations only ({@link #encrypt(java.io.InputStream, java.io.OutputStream, byte[])}
+ * described above, but they are applied during streaming method invocations only
+ * ({@link #encrypt(java.io.InputStream, java.io.OutputStream, byte[])}
  * and {@link #decrypt(java.io.InputStream, java.io.OutputStream, byte[])}).
  *
  * @see BlowfishCipherService
@@ -135,18 +136,30 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
     private static final int DEFAULT_BLOCK_SIZE = 0;
 
     private static final String TRANSFORMATION_STRING_DELIMITER = "/";
-    private static final int DEFAULT_STREAMING_BLOCK_SIZE = 8; //8 bits (1 byte)
+    //8 bits (1 byte)
+    private static final int DEFAULT_STREAMING_BLOCK_SIZE = 8;
 
     private String modeName;
-    private int blockSize; //size in bits (not bytes) - i.e. a blockSize of 8 equals 1 byte. negative or zero value = use system default
+
+    /**
+     * size in bits (not bytes) - i.e. a blockSize of 8 equals 1 byte. negative or zero value = use system default
+     */
+    private int blockSize;
     private String paddingSchemeName;
 
     private String streamingModeName;
     private int streamingBlockSize;
     private String streamingPaddingSchemeName;
 
-    private String transformationString; //cached value - rebuilt whenever any of its constituent parts change
-    private String streamingTransformationString; //cached value - rebuilt whenever any of its constituent parts change
+    /**
+     * cached value - rebuilt whenever any of its constituent parts change.
+     */
+    private String transformationString;
+
+    /**
+     * cached value - rebuilt whenever any of its constituent parts change.
+     */
+    private String streamingTransformationString;
 
 
     /**
@@ -166,7 +179,8 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
 
         this.modeName = OperationMode.CBC.name();
         this.paddingSchemeName = PaddingScheme.PKCS5.getTransformationName();
-        this.blockSize = DEFAULT_BLOCK_SIZE; //0 = use the JCA provider's default
+        //0 = use the JCA provider's default
+        this.blockSize = DEFAULT_BLOCK_SIZE;
 
         this.streamingModeName = OperationMode.CBC.name();
         this.streamingPaddingSchemeName = PaddingScheme.PKCS5.getTransformationName();
@@ -186,8 +200,8 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
      * The default value is {@code null} to retain the JCA Provider default.
      *
      * @return the cipher operation mode name (as a String) to be used when constructing the
-     *         {@link javax.crypto.Cipher Cipher} transformation string, or {@code null} if the JCA Provider default
-     *         mode for the specified {@link #getAlgorithmName() algorithm} should be used.
+     * {@link javax.crypto.Cipher Cipher} transformation string, or {@code null} if the JCA Provider default
+     * mode for the specified {@link #getAlgorithmName() algorithm} should be used.
      */
     public String getModeName() {
         return modeName;
@@ -256,8 +270,8 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
      * The default value is {@code null} to retain the JCA Provider default.
      *
      * @return the padding scheme name (as a String) to be used when constructing the
-     *         {@link javax.crypto.Cipher Cipher} transformation string, or {@code null} if the JCA Provider default
-     *         padding scheme for the specified {@link #getAlgorithmName() algorithm} should be used.
+     * {@link javax.crypto.Cipher Cipher} transformation string, or {@code null} if the JCA Provider default
+     * padding scheme for the specified {@link #getAlgorithmName() algorithm} should be used.
      */
     public String getPaddingSchemeName() {
         return paddingSchemeName;
@@ -328,8 +342,8 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
      * The default value is {@code 0} which retains the JCA Provider default.
      *
      * @return the block cipher block size to be used when constructing the
-     *         {@link javax.crypto.Cipher Cipher} transformation string, or {@code 0} if the JCA Provider default
-     *         block size for the specified {@link #getAlgorithmName() algorithm} should be used.
+     * {@link javax.crypto.Cipher Cipher} transformation string, or {@code 0} if the JCA Provider default
+     * block size for the specified {@link #getAlgorithmName() algorithm} should be used.
      */
     public int getBlockSize() {
         return blockSize;
@@ -376,9 +390,9 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
     }
 
     private boolean isModeStreamingCompatible(String modeName) {
-        return modeName != null &&
-                !modeName.equalsIgnoreCase(OperationMode.ECB.name()) &&
-                !modeName.equalsIgnoreCase(OperationMode.NONE.name());
+        return modeName != null
+                && !modeName.equalsIgnoreCase(OperationMode.ECB.name())
+                && !modeName.equalsIgnoreCase(OperationMode.NONE.name());
     }
 
     /**
@@ -483,12 +497,12 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
      *
      * @param modeName the raw text name of the mode of operation
      * @return {@code true} if the specified cipher operation mode name supports initialization vectors,
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     private boolean isModeInitializationVectorCompatible(String modeName) {
-        return modeName != null &&
-                !modeName.equalsIgnoreCase(OperationMode.ECB.name()) &&
-                !modeName.equalsIgnoreCase(OperationMode.NONE.name());
+        return modeName != null
+                && !modeName.equalsIgnoreCase(OperationMode.ECB.name())
+                && !modeName.equalsIgnoreCase(OperationMode.NONE.name());
     }
 
     /**
@@ -500,7 +514,7 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
      *
      * @param streaming whether or not streaming is being performed
      * @return {@code true} if streaming or a value computed based on if the currently configured mode is compatible
-     *         with initialization vectors.
+     * with initialization vectors.
      */
     @Override
     protected boolean isGenerateInitializationVectors(boolean streaming) {
@@ -512,17 +526,17 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
         if (streaming) {
             String streamingModeName = getStreamingModeName();
             if (!isModeInitializationVectorCompatible(streamingModeName)) {
-                String msg = "streamingMode attribute value [" + streamingModeName + "] does not support " +
-                        "Initialization Vectors.  Ensure the streamingMode value represents an operation mode " +
-                        "that is compatible with initialization vectors.";
+                String msg = "streamingMode attribute value [" + streamingModeName + "] does not support "
+                        + "Initialization Vectors.  Ensure the streamingMode value represents an operation mode "
+                        + "that is compatible with initialization vectors.";
                 throw new IllegalStateException(msg);
             }
         } else {
             String modeName = getModeName();
             if (!isModeInitializationVectorCompatible(modeName)) {
-                String msg = "mode attribute value [" + modeName + "] does not support " +
-                        "Initialization Vectors.  Ensure the mode value represents an operation mode " +
-                        "that is compatible with initialization vectors.";
+                String msg = "mode attribute value [" + modeName + "] does not support "
+                        + "Initialization Vectors.  Ensure the mode value represents an operation mode "
+                        + "that is compatible with initialization vectors.";
                 throw new IllegalStateException(msg);
             }
         }

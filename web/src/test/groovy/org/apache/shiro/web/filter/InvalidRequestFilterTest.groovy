@@ -130,6 +130,7 @@ class InvalidRequestFilterTest {
         assertPathAllowed(filter, "/something", "/\u0019something")
         assertPathAllowed(filter, "/something", "/something", "/\u0019")
     }
+
     @Test
     void testFilterAllowsSemicolon() {
         InvalidRequestFilter filter = new InvalidRequestFilter()

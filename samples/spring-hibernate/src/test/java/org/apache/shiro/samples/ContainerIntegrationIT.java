@@ -27,6 +27,7 @@ import org.htmlunit.html.HtmlInput;
 import org.htmlunit.html.HtmlPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 
 
@@ -40,8 +41,7 @@ public class ContainerIntegrationIT extends AbstractContainerIT {
         final HtmlPage homePage = webClient.getPage(getBaseUri());
         try {
             homePage.getAnchorByHref("/s/logout").click();
-        }
-        catch (ElementNotFoundException e) {
+        } catch (ElementNotFoundException e) {
             //Ignore
         }
     }

@@ -18,7 +18,8 @@
   ~ under the License.
   -->
 <!--suppress osmorcNonOsgiMavenDependency -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -36,7 +37,7 @@
         <module.name>samples.spring.boot3.web</module.name>
         <spring-boot3.version>3.1.2</spring-boot3.version>
         <spring-boot.version>${spring-boot3.version}</spring-boot.version>
-<!--    below versions are not necessary in "real" applications -->
+        <!--    below versions are not necessary in "real" applications -->
         <spring.version>6.0.11</spring.version>
     </properties>
 
@@ -79,7 +80,7 @@
             <optional>true</optional>
         </dependency>
 
-<!--    below dependencies may not be necessary in "real" applications -->
+        <!--    below dependencies may not be necessary in "real" applications -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>

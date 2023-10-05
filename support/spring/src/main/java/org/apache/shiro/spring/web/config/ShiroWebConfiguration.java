@@ -21,7 +21,11 @@ package org.apache.shiro.spring.web.config;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.pam.AuthenticationStrategy;
 import org.apache.shiro.authz.Authorizer;
-import org.apache.shiro.mgt.*;
+import org.apache.shiro.mgt.RememberMeManager;
+import org.apache.shiro.mgt.SessionStorageEvaluator;
+import org.apache.shiro.mgt.SessionsSecurityManager;
+import org.apache.shiro.mgt.SubjectDAO;
+import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
@@ -30,7 +34,6 @@ import org.apache.shiro.spring.web.ShiroUrlPathHelper;
 import org.apache.shiro.web.servlet.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 import java.util.List;
 

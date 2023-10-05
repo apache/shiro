@@ -37,11 +37,11 @@ public class EditUserValidator implements Validator {
     }
 
     public void validate(Object o, Errors errors) {
-        EditUserCommand command = (EditUserCommand)o;
+        EditUserCommand command = (EditUserCommand) o;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "error.username.empty", "Please specify a username.");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "error.email.empty", "Please specify an email address.");
-        if( StringUtils.hasText( command.getEmail() ) && !Pattern.matches( SIMPLE_EMAIL_REGEX, command.getEmail().toUpperCase() ) ) {
-            errors.rejectValue( "email", "error.email.invalid", "Please enter a valid email address." );
+        if (StringUtils.hasText(command.getEmail()) && !Pattern.matches(SIMPLE_EMAIL_REGEX, command.getEmail().toUpperCase())) {
+            errors.rejectValue("email", "error.email.invalid", "Please enter a valid email address.");
         }
     }
 

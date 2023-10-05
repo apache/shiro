@@ -17,93 +17,94 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.apache.shiro.integrationtests</groupId>
-		<artifactId>shiro-integration-tests</artifactId>
-		<version>2.0.0-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>org.apache.shiro.integrationtests</groupId>
+        <artifactId>shiro-integration-tests</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
 
-	<artifactId>shiro-its-guice4</artifactId>
-	<name>Apache Shiro :: ITs :: Guice 4</name>
-	<packaging>war</packaging>
+    <artifactId>shiro-its-guice4</artifactId>
+    <name>Apache Shiro :: ITs :: Guice 4</name>
+    <packaging>war</packaging>
 
-	<build>
-	    <plugins>
-			<plugin>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<dependenciesToScan>
-						<dependency>org.apache.shiro:shiro-guice</dependency>
-					</dependenciesToScan>
-				</configuration>
-			</plugin>
-	    </plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <dependenciesToScan>
+                        <dependency>org.apache.shiro:shiro-guice</dependency>
+                    </dependenciesToScan>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-	<dependencies>
-	    <dependency>
-		<groupId>org.apache.taglibs</groupId>
-		<artifactId>taglibs-standard-spec</artifactId>
-		<scope>compile</scope>
-	    </dependency>
-	    <dependency>
-		<groupId>org.apache.taglibs</groupId>
-		<artifactId>taglibs-standard-impl</artifactId>
-		<scope>compile</scope>
-	    </dependency>
-	    <dependency>
-	        <groupId>javax.servlet</groupId>
-	        <artifactId>javax.servlet-api</artifactId>
-	        <scope>provided</scope>
-	    </dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-slf4j2-impl</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-core</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-	    <dependency>
-	        <groupId>org.apache.shiro</groupId>
-	        <artifactId>shiro-core</artifactId>
-	    </dependency>
-	    <dependency>
-	        <groupId>org.apache.shiro</groupId>
-	        <artifactId>shiro-web</artifactId>
-	    </dependency>
-		<dependency>
-		    <groupId>org.apache.shiro</groupId>
-		    <artifactId>shiro-guice</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.inject.extensions</groupId>
-			<artifactId>guice-servlet</artifactId>
-		</dependency>
-	    <dependency>
-	        <groupId>org.slf4j</groupId>
-	        <artifactId>jcl-over-slf4j</artifactId>
-	        <scope>runtime</scope>
-	    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.taglibs</groupId>
+            <artifactId>taglibs-standard-spec</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.taglibs</groupId>
+            <artifactId>taglibs-standard-impl</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-guice</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-guice</artifactId>
-			<version>${project.version}</version>
-			<classifier>tests</classifier>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-guice</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
@@ -127,30 +128,30 @@
             <artifactId>shiro-its-support</artifactId>
             <scope>test</scope>
         </dependency>
-	</dependencies>
+    </dependencies>
 
-	<profiles>
-		<profile>
-			<id>jdk16</id>
-			<activation>
-				<jdk>[16,)</jdk>
-			</activation>
-			<properties>
-				<!-- needed by guice until it is compatible with jdk16+. -->
-				<surefire.argLine>--illegal-access=permit</surefire.argLine>
-				<failsafe.argLine>--illegal-access=permit</failsafe.argLine>
-			</properties>
-		</profile>
-		<profile>
-			<id>jdk17</id>
-			<activation>
-				<jdk>[17,)</jdk>
-			</activation>
-			<properties>
-				<!-- needed by guice until it is compatible with jdk17+. -->
-				<surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</surefire.argLine>
-				<failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</failsafe.argLine>
-			</properties>
-		</profile>
-	</profiles>
+    <profiles>
+        <profile>
+            <id>jdk16</id>
+            <activation>
+                <jdk>[16,)</jdk>
+            </activation>
+            <properties>
+                <!-- needed by guice until it is compatible with jdk16+. -->
+                <surefire.argLine>--illegal-access=permit</surefire.argLine>
+                <failsafe.argLine>--illegal-access=permit</failsafe.argLine>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk17</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <properties>
+                <!-- needed by guice until it is compatible with jdk17+. -->
+                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</surefire.argLine>
+                <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</failsafe.argLine>
+            </properties>
+        </profile>
+    </profiles>
 </project>

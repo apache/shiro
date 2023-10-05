@@ -23,7 +23,11 @@ import org.apache.shiro.web.servlet.ProxiedFilterChain;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Simple {@code NamedFilterList} implementation that is supported by a backing {@link List} instance and a simple

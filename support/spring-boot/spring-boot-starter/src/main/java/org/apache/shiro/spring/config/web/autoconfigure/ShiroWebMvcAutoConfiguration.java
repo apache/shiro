@@ -31,4 +31,5 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @Import(ShiroRequestMappingConfig.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
-public class ShiroWebMvcAutoConfiguration { }
+public class ShiroWebMvcAutoConfiguration {
+}

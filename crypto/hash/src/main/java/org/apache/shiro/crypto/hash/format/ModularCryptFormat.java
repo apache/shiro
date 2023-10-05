@@ -28,7 +28,10 @@ package org.apache.shiro.crypto.hash.format;
  */
 public interface ModularCryptFormat extends HashFormat {
 
-    public static final String TOKEN_DELIMITER = "$";
+    /**
+     * token delimiter.
+     */
+    String TOKEN_DELIMITER = "$";
 
     /**
      * Returns the Modular Crypt Format identifier that indicates how the formatted String should be parsed.  This id

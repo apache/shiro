@@ -18,28 +18,28 @@
   -->
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <title>Getting Started: Serving Web Content</title>
-        <!--/*/ <th:block th:include="fragments/head :: head"/> /*/-->
-    </head>
-    <body>
-        <div class="container">
-            <h1 th:text="'Hello, ' + ${name} + '!'"/>
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <!--/*/ <th:block th:include="fragments/head :: head"/> /*/-->
+</head>
+<body>
+<div class="container">
+    <h1 th:text="'Hello, ' + ${name} + '!'"/>
 
-            <div th:unless="${subject.authenticated}">
-                <a th:href="@{/login.html}" class="btn btn-primary">Login</a>
-            </div>
-            <div th:if="${subject.authenticated}">
-                <h4 th:text="'Principal: ' + ${subject.principal}"></h4>
-                <form id="logoutForm" th:action="@{/logout}" method="post">
-                    <input type="submit" class="btn btn-danger" value="Logout"/>
-                </form>
-            </div>
+    <div th:unless="${subject.authenticated}">
+        <a th:href="@{/login.html}" class="btn btn-primary">Login</a>
+    </div>
+    <div th:if="${subject.authenticated}">
+        <h4 th:text="'Principal: ' + ${subject.principal}"></h4>
+        <form id="logoutForm" th:action="@{/logout}" method="post">
+            <input type="submit" class="btn btn-danger" value="Logout"/>
+        </form>
+    </div>
 
-            <h4><a th:href="@{/account-info}" class="btn btn-primary">Account info</a>&nbsp;(Requires 'admin' role.)</h4>
+    <h4><a th:href="@{/account-info}" class="btn btn-primary">Account info</a>&nbsp;(Requires 'admin' role.)</h4>
 
-        </div>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-        <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    </body>
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</body>
 </html>

@@ -27,7 +27,10 @@ import javax.servlet.annotation.WebFilter;
 @WebFilter(
         asyncSupported = true,
         urlPatterns = {"/*"},
-        dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE, DispatcherType.ERROR, DispatcherType.ASYNC}
+        dispatcherTypes = {
+                DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.INCLUDE,
+                DispatcherType.ERROR, DispatcherType.ASYNC
+        }
 )
 public class ShiroServletFilter extends org.apache.shiro.web.servlet.ShiroFilter {
 }

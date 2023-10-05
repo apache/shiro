@@ -47,11 +47,11 @@ import java.util.Map;
  *
  * @since 1.2
  */
-public interface PrincipalMap extends PrincipalCollection, Map<String,Object> {
+public interface PrincipalMap extends PrincipalCollection, Map<String, Object> {
 
-    Map<String,Object> getRealmPrincipals(String realmName);
+    Map<String, Object> getRealmPrincipals(String realmName);
 
-    Map<String,Object> setRealmPrincipals(String realmName, Map<String,Object> principals);
+    Map<String, Object> setRealmPrincipals(String realmName, Map<String, Object> principals);
 
     Object setRealmPrincipal(String realmName, String principalName, Object principal);
 

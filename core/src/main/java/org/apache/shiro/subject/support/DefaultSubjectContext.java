@@ -46,6 +46,21 @@ import java.io.Serializable;
  */
 public class DefaultSubjectContext extends MapContext implements SubjectContext {
 
+    /**
+     * session creation enabled key.
+     */
+    public static final String SESSION_CREATION_ENABLED = DefaultSubjectContext.class.getName() + ".SESSION_CREATION_ENABLED";
+
+    /**
+     * The session key that is used to store subject principals.
+     */
+    public static final String PRINCIPALS_SESSION_KEY = DefaultSubjectContext.class.getName() + "_PRINCIPALS_SESSION_KEY";
+
+    /**
+     * The session key that is used to store whether or not the user is authenticated.
+     */
+    public static final String AUTHENTICATED_SESSION_KEY = DefaultSubjectContext.class.getName() + "_AUTHENTICATED_SESSION_KEY";
+
     private static final String SECURITY_MANAGER = DefaultSubjectContext.class.getName() + ".SECURITY_MANAGER";
 
     private static final String SESSION_ID = DefaultSubjectContext.class.getName() + ".SESSION_ID";
@@ -64,19 +79,7 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
 
     private static final String HOST = DefaultSubjectContext.class.getName() + ".HOST";
 
-    public static final String SESSION_CREATION_ENABLED = DefaultSubjectContext.class.getName() + ".SESSION_CREATION_ENABLED";
-
-    /**
-     * The session key that is used to store subject principals.
-     */
-    public static final String PRINCIPALS_SESSION_KEY = DefaultSubjectContext.class.getName() + "_PRINCIPALS_SESSION_KEY";
-
-    /**
-     * The session key that is used to store whether or not the user is authenticated.
-     */
-    public static final String AUTHENTICATED_SESSION_KEY = DefaultSubjectContext.class.getName() + "_AUTHENTICATED_SESSION_KEY";
-
-    private static final transient Logger log = LoggerFactory.getLogger(DefaultSubjectContext.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSubjectContext.class);
 
     public DefaultSubjectContext() {
         super();
@@ -97,15 +100,15 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
     public SecurityManager resolveSecurityManager() {
         SecurityManager securityManager = getSecurityManager();
         if (securityManager == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("No SecurityManager available in subject context map.  " +
-                        "Falling back to SecurityUtils.getSecurityManager() lookup.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("No SecurityManager available in subject context map.  "
+                        + "Falling back to SecurityUtils.getSecurityManager() lookup.");
             }
             try {
                 securityManager = SecurityUtils.getSecurityManager();
             } catch (UnavailableSecurityManagerException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("No SecurityManager available via SecurityUtils.  Heuristics exhausted.", e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("No SecurityManager available via SecurityUtils.  Heuristics exhausted.", e);
                 }
             }
         }

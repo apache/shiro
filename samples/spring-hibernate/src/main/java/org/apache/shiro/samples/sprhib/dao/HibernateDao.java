@@ -37,6 +37,6 @@ public abstract class HibernateDao {
 
     public Session getSession() {
         return sessionFactory.getCurrentSession();
-    }    
+    }
 
 }

@@ -22,15 +22,22 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
-import javax.persistence.*;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.Table;
 import java.util.Set;
 
 /**
  * Model object that represents a security role.
  */
 @Entity
-@Table(name="roles")
-@Cache(usage= CacheConcurrencyStrategy.READ_WRITE)
+@Table(name = "roles")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Role {
 
     private Long id;
@@ -59,9 +66,9 @@ public class Role {
         this.id = id;
     }
 
-    @Basic(optional=false)
-    @Column(length=100)
-    @Index(name="idx_roles_name")
+    @Basic(optional = false)
+    @Column(length = 100)
+    @Index(name = "idx_roles_name")
     public String getName() {
         return name;
     }
@@ -70,8 +77,8 @@ public class Role {
         this.name = name;
     }
 
-    @Basic(optional=false)
-    @Column(length=255)
+    @Basic(optional = false)
+    @Column(length = 255)
     public String getDescription() {
         return description;
     }
@@ -80,9 +87,9 @@ public class Role {
         this.description = description;
     }
 
-    @ElementCollection(targetClass=String.class)
-    @JoinTable(name="roles_permissions")
-    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+    @ElementCollection(targetClass = String.class)
+    @JoinTable(name = "roles_permissions")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public Set<String> getPermissions() {
         return permissions;
     }

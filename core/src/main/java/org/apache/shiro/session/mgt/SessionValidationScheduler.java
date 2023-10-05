@@ -20,7 +20,8 @@ package org.apache.shiro.session.mgt;
 
 /**
  * Interface that should be implemented by classes that can control validating sessions on a regular
- * basis.  This interface is used as a delegate for session validation by the {@link org.apache.shiro.session.mgt.DefaultSessionManager}
+ * basis.  This interface is used as a delegate for session validation
+ * by the {@link org.apache.shiro.session.mgt.DefaultSessionManager}
  *
  * @see org.apache.shiro.session.mgt.DefaultSessionManager#setSessionValidationScheduler(SessionValidationScheduler)
  * @since 0.1

@@ -44,6 +44,7 @@ import java.util.Arrays;
  *
  * @since 1.0
  */
+@SuppressWarnings("checkstyle:BooleanExpressionComplexity")
 public class SimpleByteSource implements ByteSource {
 
     private final byte[] bytes;
@@ -122,16 +123,16 @@ public class SimpleByteSource implements ByteSource {
      *
      * @param o the object to test to see if it can be easily converted to bytes by instances of this class.
      * @return {@code true} if the specified object can be easily converted to bytes by instances of this class,
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      * @since 1.2
      */
     public static boolean isCompatible(Object o) {
-        return o instanceof byte[] || o instanceof char[] || o instanceof String ||
-                o instanceof ByteSource || o instanceof File || o instanceof InputStream;
+        return o instanceof byte[] || o instanceof char[] || o instanceof String
+                || o instanceof ByteSource || o instanceof File || o instanceof InputStream;
     }
 
     public static ByteSource empty() {
-        return new SimpleByteSource(new byte[]{});
+        return new SimpleByteSource(new byte[] {});
     }
 
     @Override
@@ -146,7 +147,7 @@ public class SimpleByteSource implements ByteSource {
 
     @Override
     public String toHex() {
-        if ( this.cachedHex == null ) {
+        if (this.cachedHex == null) {
             this.cachedHex = Hex.encodeToString(getBytes());
         }
         return this.cachedHex;
@@ -154,7 +155,7 @@ public class SimpleByteSource implements ByteSource {
 
     @Override
     public String toBase64() {
-        if ( this.cachedBase64 == null ) {
+        if (this.cachedBase64 == null) {
             this.cachedBase64 = Base64.encodeToString(getBytes());
         }
         return this.cachedBase64;

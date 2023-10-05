@@ -32,11 +32,22 @@ import java.util.Map;
  *
  * @since 1.0
  */
+@SuppressWarnings("checkstyle:JavadocVariable")
 public class HostFilter extends AuthorizationFilter {
 
+    /**
+     * IPV4 quad regex.
+     */
     public static final String IPV4_QUAD_REGEX = "(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2(?:[0-4][0-9]|5[0-5]))";
 
+    /**
+     * IPV4 regex.
+     */
     public static final String IPV4_REGEX = "(?:" + IPV4_QUAD_REGEX + "\\.){3}" + IPV4_QUAD_REGEX + "$";
+
+    /**
+     * IPV4 pattern.
+     */
     public static final Pattern IPV4_PATTERN = Pattern.compile(IPV4_REGEX);
 
     public static final String PRIVATE_CLASS_B_SUBSET = "(?:1[6-9]|2[0-9]|3[0-1])";
@@ -48,7 +59,8 @@ public class HostFilter extends AuthorizationFilter {
 
     public static final String PRIVATE_CLASS_C_REGEX = "192\\.168\\." + IPV4_QUAD_REGEX + "\\." + IPV4_QUAD_REGEX + "$";
 
-    Map<String, String> authorizedIps; //user-configured IP (which can be wildcarded) to constructed regex mapping
+    //user-configured IP (which can be wildcarded) to constructed regex mapping
+    Map<String, String> authorizedIps;
     Map<String, String> deniedIps;
     Map<String, String> authorizedHostnames;
     Map<String, String> deniedHostnames;
@@ -68,11 +80,7 @@ public class HostFilter extends AuthorizationFilter {
 
             if (IPV4_PATTERN.matcher(wildcardsReplaced).matches()) {
                 authorizedIps.put(host, wildcardsReplaced);
-            } else {
-
             }
-
-
         }
 
     }
@@ -101,6 +109,6 @@ public class HostFilter extends AuthorizationFilter {
     }
 
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
-        throw new UnsupportedOperationException("Not yet fully implemented!!!" );
+        throw new UnsupportedOperationException("Not yet fully implemented!!!");
     }
 }

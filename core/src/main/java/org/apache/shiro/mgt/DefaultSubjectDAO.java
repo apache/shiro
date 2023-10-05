@@ -80,7 +80,7 @@ import java.lang.reflect.Field;
  */
 public class DefaultSubjectDAO implements SubjectDAO {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultSubjectDAO.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSubjectDAO.class);
 
     /**
      * Evaluator that determines if a Subject's session may be used to store the Subject's own state.
@@ -112,7 +112,7 @@ public class DefaultSubjectDAO implements SubjectDAO {
      * the Subject's session.  The default instance is a {@link DefaultSessionStorageEvaluator}.
      *
      * @return the {@code SessionStorageEvaluator} that will determine if a {@code Subject}'s state may be persisted in
-     *         the Subject's session.
+     * the Subject's session.
      * @see DefaultSessionStorageEvaluator
      */
     public SessionStorageEvaluator getSessionStorageEvaluator() {
@@ -145,8 +145,8 @@ public class DefaultSubjectDAO implements SubjectDAO {
         if (isSessionStorageEnabled(subject)) {
             saveToSession(subject);
         } else {
-            log.trace("Session storage of subject state for Subject [{}] has been disabled: identity and " +
-                    "authentication state are expected to be initialized on every request or invocation.", subject);
+            LOGGER.trace("Session storage of subject state for Subject [{}] has been disabled: identity and "
+                    + "authentication state are expected to be initialized on every request or invocation.", subject);
         }
 
         return subject;
@@ -191,7 +191,7 @@ public class DefaultSubjectDAO implements SubjectDAO {
             try {
                 Field field = DelegatingSubject.class.getDeclaredField("principals");
                 field.setAccessible(true);
-                currentPrincipals = (PrincipalCollection)field.get(subject);
+                currentPrincipals = (PrincipalCollection) field.get(subject);
             } catch (Exception e) {
                 throw new IllegalStateException("Unable to access DelegatingSubject principals property.", e);
             }

@@ -20,6 +20,7 @@ import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+
 import lombok.Getter;
 import org.apache.shiro.authc.SimpleAccount;
 import org.apache.shiro.mgt.DefaultSecurityManager;

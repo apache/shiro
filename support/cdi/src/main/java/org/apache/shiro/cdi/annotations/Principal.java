@@ -13,25 +13,27 @@
  */
 package org.apache.shiro.cdi.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
+import javax.inject.Qualifier;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import javax.inject.Qualifier;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+
+@SuppressWarnings("checkstyle:JavadocType")
 /**
  * Qualifier for @Injection of Principal object
  * <br>
  * Example:
  * <br>
  * {@code
+ *
  * @Inject
- * @Principal
- * Supplier<UserAccount> account;
+ * @Principal Supplier<UserAccount> account;
  * }
  */
 @Qualifier
@@ -39,4 +41,5 @@ import javax.inject.Qualifier;
 @Inherited
 @Documented
 @Target({METHOD, FIELD, PARAMETER})
-public @interface Principal { }
+public @interface Principal {
+}

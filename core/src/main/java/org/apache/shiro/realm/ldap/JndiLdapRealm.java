@@ -20,10 +20,10 @@ package org.apache.shiro.realm.ldap;
 
 /**
  * This class has been replaced with DefaultLdapRealm.
- * @see DefaultLdapRealm
- * @deprecated Renamed to {@link DefaultLdapRealm}, this class will be removed prior to 2.0
- * @since 1.1
  *
+ * @see DefaultLdapRealm
+ * @since 1.1
+ * @deprecated Renamed to {@link DefaultLdapRealm}, this class will be removed prior to 2.0
  */
 public class JndiLdapRealm extends DefaultLdapRealm {
 

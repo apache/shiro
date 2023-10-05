@@ -36,8 +36,11 @@ import java.io.Serializable;
 import java.util.concurrent.Callable;
 
 import static org.easymock.EasyMock.createNiceMock;
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @since Aug 1, 2008 2:11:17 PM
@@ -158,7 +161,8 @@ public class DelegatingSubjectTest {
         assertTrue(subject.hasRole("role1"));
         assertFalse(subject.hasRole("role2"));
         assertFalse(subject.hasRole("role3"));
-        assertNull(subject.getPreviousPrincipals()); //no previous principals since we haven't called runAs yet
+        //no previous principals since we haven't called runAs yet
+        assertNull(subject.getPreviousPrincipals());
 
         //runAs user2:
         subject.runAs(new SimplePrincipalCollection("user2", IniSecurityManagerFactory.INI_REALM_NAME));
@@ -210,7 +214,8 @@ public class DelegatingSubjectTest {
         assertTrue(subject.hasRole("role1"));
         assertFalse(subject.hasRole("role2"));
         assertFalse(subject.hasRole("role3"));
-        assertNull(subject.getPreviousPrincipals()); //no previous principals in orig state
+        //no previous principals in orig state
+        assertNull(subject.getPreviousPrincipals());
 
         subject.logout();
 

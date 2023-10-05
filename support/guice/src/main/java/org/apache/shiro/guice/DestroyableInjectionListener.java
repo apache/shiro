@@ -34,7 +34,7 @@ class DestroyableInjectionListener<I extends Destroyable> implements InjectionLi
 
     private DestroyableRegistry registry;
 
-    public DestroyableInjectionListener(DestroyableRegistry registry) {
+    DestroyableInjectionListener(DestroyableRegistry registry) {
         this.registry = registry;
     }
 
@@ -42,7 +42,7 @@ class DestroyableInjectionListener<I extends Destroyable> implements InjectionLi
         registry.add(injectee);
     }
 
-    public static interface DestroyableRegistry {
+    public interface DestroyableRegistry {
         void add(Destroyable destroyable);
     }
 }

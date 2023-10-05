@@ -42,7 +42,7 @@ class UnauthorizedExceptionExceptionMapperTest {
         doTest(new UnauthenticatedException("expected test exception."), Response.Status.FORBIDDEN, new UnauthenticatedExceptionExceptionMapper())
     }
 
-    private static void doTest(AuthorizationException exception , Response.StatusType expectedStatus, ExceptionMapper<? extends Throwable> exceptionMapper) {
+    private static void doTest(AuthorizationException exception, Response.StatusType expectedStatus, ExceptionMapper<? extends Throwable> exceptionMapper) {
         final var response = exceptionMapper.toResponse(exception);
         assertEquals(expectedStatus.statusCode, response.status);
     }

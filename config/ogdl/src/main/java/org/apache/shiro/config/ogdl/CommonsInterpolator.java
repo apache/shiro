@@ -55,7 +55,7 @@ import org.apache.commons.configuration2.interpol.SystemPropertiesLookup;
  */
 public class CommonsInterpolator implements Interpolator {
 
-    final private ConfigurationInterpolator interpolator;
+    private final ConfigurationInterpolator interpolator;
 
     public CommonsInterpolator() {
         this.interpolator = new ConfigurationInterpolator();

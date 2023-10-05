@@ -14,16 +14,22 @@
 package org.apache.shiro.testing.jakarta.ee;
 
 import java.net.URL;
+
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_DEV_MODE;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.createDeploymentDev;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
+
 import static org.jboss.arquillian.graphene.Graphene.guardHttp;
+
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -200,7 +206,7 @@ public class FacesTagsIT {
     void hasPermission() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("Has Permission" , hasPermission.getText());
+        assertEquals("Has Permission", hasPermission.getText());
     }
 
     @Test
@@ -208,7 +214,7 @@ public class FacesTagsIT {
     void lacksPermissio() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("Lacks Permission" , lacksPermission.getText());
+        assertEquals("Lacks Permission", lacksPermission.getText());
     }
 
     @Test
@@ -216,7 +222,7 @@ public class FacesTagsIT {
     void remembered() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("" , remembered.getText());
+        assertEquals("", remembered.getText());
     }
 
     private void login() {

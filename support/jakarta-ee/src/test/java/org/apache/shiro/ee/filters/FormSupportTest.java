@@ -14,26 +14,32 @@
 package org.apache.shiro.ee.filters;
 
 import org.apache.shiro.ee.filters.FormResubmitSupport.PartialAjaxResult;
+
 import static org.apache.shiro.ee.filters.FormResubmitSupport.extractJSFNewViewState;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getReferer;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFStatefulForm;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.noJSFAjaxRequests;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
+
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+
 import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+
 import static org.mockito.Mockito.when;
+
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -119,7 +125,7 @@ public class FormSupportTest {
                         jakartify("aaa=bbb&javax.faces.ViewState=-987:-654&hello=bye")));
         assertEquals(jakartify("aaa=bbb&javax.faces.ViewState=-123:-456"),
                 extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"-123:-456\"/>"),
-                       jakartify("aaa=bbb&javax.faces.ViewState=-987:-654")));
+                        jakartify("aaa=bbb&javax.faces.ViewState=-987:-654")));
     }
 
     @Test
@@ -131,15 +137,15 @@ public class FormSupportTest {
                 noJSFAjaxRequests(jakartify("aaa=bbb&javax.faces.ViewState=-123:-456")
                         + jakartify("&javax.faces.partial.ajax=true&hello=bye"), false));
         assertEquals(new PartialAjaxResult("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
-                + jakartify("&javax.faces.ViewState=7709788254588873136:-8052771455757429917")
-                + jakartify("&javax.faces.source=j_idt12:j_idt18")
-                + jakartify("&javax.faces.behavior.event=action"), true, false),
-                noJSFAjaxRequests("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
-                + jakartify("&javax.faces.ViewState=7709788254588873136:-8052771455757429917")
+                        + jakartify("&javax.faces.ViewState=7709788254588873136:-8052771455757429917")
                         + jakartify("&javax.faces.source=j_idt12:j_idt18")
-                + jakartify("&javax.faces.partial.event=click")
+                        + jakartify("&javax.faces.behavior.event=action"), true, false),
+                noJSFAjaxRequests("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
+                        + jakartify("&javax.faces.ViewState=7709788254588873136:-8052771455757429917")
+                        + jakartify("&javax.faces.source=j_idt12:j_idt18")
+                        + jakartify("&javax.faces.partial.event=click")
                         + jakartify("&javax.faces.partial.execute=j_idt12:j_idt18 j_idt12")
-                + jakartify("&javax.faces.partial.render=j_idt12")
+                        + jakartify("&javax.faces.partial.render=j_idt12")
                         + jakartify("&javax.faces.behavior.event=action")
                         + jakartify("&javax.faces.partial.ajax=false"), false));
     }

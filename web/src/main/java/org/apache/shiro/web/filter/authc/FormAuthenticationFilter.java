@@ -30,7 +30,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * Requires the requesting user to be authenticated for the request to continue, and if they are not, forces the user
  * to login via by redirecting them to the {@link #setLoginUrl(String) loginUrl} you configure.
@@ -38,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
  * <p>This filter constructs a {@link UsernamePasswordToken UsernamePasswordToken} with the values found in
  * {@link #setUsernameParam(String) username}, {@link #setPasswordParam(String) password},
  * and {@link #setRememberMeParam(String) rememberMe} request parameters.  It then calls
- * {@link org.apache.shiro.subject.Subject#login(org.apache.shiro.authc.AuthenticationToken) Subject.login(usernamePasswordToken)},
+ * {@link Subject#login(AuthenticationToken) Subject.login(usernamePasswordToken)},
  * effectively automatically performing a login attempt.  Note that the login attempt will only occur when the
  * {@link #isLoginSubmission(javax.servlet.ServletRequest, javax.servlet.ServletResponse) isLoginSubmission(request,response)}
  * is <code>true</code>, which by default occurs when the request is for the {@link #setLoginUrl(String) loginUrl} and
@@ -51,22 +50,34 @@ import javax.servlet.http.HttpServletRequest;
  * <p/>
  * <p>If you would prefer to handle the authentication validation and login in your own code, consider using the
  * {@link PassThruAuthenticationFilter} instead, which allows requests to the
- * {@link #loginUrl} to pass through to your application's code directly.
+ * {@link #setLoginUrl(String) loginUrl} to pass through to your application's code directly.
  *
  * @see PassThruAuthenticationFilter
  * @since 0.9
  */
 public class FormAuthenticationFilter extends AuthenticatingFilter {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * default error key attribute name.
+     */
     public static final String DEFAULT_ERROR_KEY_ATTRIBUTE_NAME = "shiroLoginFailure";
 
+    /**
+     * username param.
+     */
     public static final String DEFAULT_USERNAME_PARAM = "username";
+
+    /**
+     * password param.
+     */
     public static final String DEFAULT_PASSWORD_PARAM = "password";
+
+    /**
+     * rememberMe param.
+     */
     public static final String DEFAULT_REMEMBER_ME_PARAM = "rememberMe";
 
-    private static final Logger log = LoggerFactory.getLogger(FormAuthenticationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FormAuthenticationFilter.class);
 
     private String usernameParam = DEFAULT_USERNAME_PARAM;
     private String passwordParam = DEFAULT_PASSWORD_PARAM;
@@ -85,8 +96,8 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
             this.appliedPaths.remove(previous);
         }
         super.setLoginUrl(loginUrl);
-        if (log.isTraceEnabled()) {
-            log.trace("Adding login url to applied paths.");
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Adding login url to applied paths.");
         }
         this.appliedPaths.put(getLoginUrl(), null);
     }
@@ -128,7 +139,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
      * by calling this method, the default is <code>rememberMe</code>.
      * <p/>
      * RememberMe will be <code>true</code> if the parameter value equals any of those supported by
-     * {@link org.apache.shiro.web.util.WebUtils#isTrue(javax.servlet.ServletRequest, String) WebUtils.isTrue(request,value)}, <code>false</code>
+     * {@link WebUtils#isTrue(ServletRequest, String) WebUtils.isTrue(request,value)}, <code>false</code>
      * otherwise.
      *
      * @param rememberMeParam the name of the request param to check for acquiring the rememberMe boolean value.
@@ -148,23 +159,22 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         if (isLoginRequest(request, response)) {
             if (isLoginSubmission(request, response)) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Login submission detected.  Attempting to execute login.");
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Login submission detected.  Attempting to execute login.");
                 }
                 return executeLogin(request, response);
             } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("Login page view.");
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("Login page view.");
                 }
                 //allow them to see the login page ;)
                 return true;
             }
         } else {
-            if (log.isTraceEnabled()) {
-                log.trace("Attempting to access a path which requires authentication.  Forwarding to the " +
-                        "Authentication url [" + getLoginUrl() + "]");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Attempting to access a path which requires authentication.  Forwarding to the "
+                        + "Authentication url [" + getLoginUrl() + "]");
             }
-
             saveRequestAndRedirectToLogin(request, response);
             return false;
         }
@@ -202,8 +212,8 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
 
     protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e,
                                      ServletRequest request, ServletResponse response) {
-        if (log.isDebugEnabled()) {
-            log.debug( "Authentication exception", e );
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Authentication exception", e);
         }
         setFailureAttribute(request, e);
         //login failed, let request continue back to the login page:

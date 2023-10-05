@@ -61,7 +61,7 @@ public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
     /**
      * This class's private logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(BasicHttpAuthenticationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicHttpAuthenticationFilter.class);
 
 
     public BasicHttpAuthenticationFilter() {
@@ -94,7 +94,7 @@ public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
             return createToken("", "", request, response);
         }
 
-        log.debug("Attempting to execute login with auth header");
+        LOGGER.debug("Attempting to execute login with auth header");
 
         String[] prinCred = getPrincipalsAndCredentials(authorizationHeader, request);
         if (prinCred == null || prinCred.length < 2) {

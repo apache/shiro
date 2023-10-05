@@ -22,7 +22,6 @@ import org.apache.shiro.event.EventBus;
 import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.ShiroEventBusBeanPostProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @since 1.4.0

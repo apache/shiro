@@ -43,7 +43,7 @@ public abstract class NameableFilter extends AbstractFilter implements Nameable 
      * Unless overridden by calling the {@link #setName(String) setName(String)} method, this value defaults to the
      * filter name as specified by the servlet container at start-up:
      * <pre>
-     * this.name = {@link #getFilterConfig() getFilterConfig()}.{@link javax.servlet.FilterConfig#getFilterName() getName()};</pre>
+     * this.name = {@link #getFilterConfig() getFilterConfig()}.{@link FilterConfig#getFilterName() getName()};</pre>
      *
      * @return the filter name, or {@code null} if none available
      * @see javax.servlet.GenericServlet#getServletName()
@@ -66,7 +66,8 @@ public abstract class NameableFilter extends AbstractFilter implements Nameable 
      * Unless overridden by calling this method, this value defaults to the filter name as specified by the
      * servlet container at start-up:
      * <pre>
-     * this.name = {@link #getFilterConfig() getFilterConfig()}.{@link javax.servlet.FilterConfig#getFilterName() getName()};</pre>
+     * this.name = {@link #getFilterConfig() getFilterConfig()}.
+     *     {@link javax.servlet.FilterConfig#getFilterName() getName()};</pre>
      *
      * @param name the name of the filter.
      */
@@ -79,7 +80,7 @@ public abstract class NameableFilter extends AbstractFilter implements Nameable 
      * {@code super.toStringBuilder()} instance.
      *
      * @return a StringBuilder instance to use for appending String data that will eventually be returned from a
-     *         {@code toString()} invocation.
+     * {@code toString()} invocation.
      */
     protected StringBuilder toStringBuilder() {
         String name = getName();

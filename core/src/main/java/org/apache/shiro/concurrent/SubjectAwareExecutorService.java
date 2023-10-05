@@ -23,7 +23,13 @@ import org.apache.shiro.subject.Subject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * {@code ExecutorService} implementation that will automatically first associate any argument
@@ -40,7 +46,8 @@ import java.util.concurrent.*;
  * Consider this code that could be repeated in many places across an application:
  * <pre>
  * {@link Callable Callable} applicationWork = //instantiate or acquire Callable from somewhere
- * {@link Subject Subject} subject = {@link org.apache.shiro.SecurityUtils SecurityUtils}.{@link org.apache.shiro.SecurityUtils#getSubject() getSubject()};
+ * {@link Subject Subject} subject = {@link org.apache.shiro.SecurityUtils SecurityUtils}.
+ * {@link org.apache.shiro.SecurityUtils#getSubject() getSubject()};
  * {@link Callable Callable} work = subject.{@link Subject#associateWith(Callable) associateWith(applicationWork)};
  * {@link ExecutorService anExecutorService}.{@link ExecutorService#submit(Callable) submit(work)};
  * </pre>
@@ -78,8 +85,8 @@ public class SubjectAwareExecutorService extends SubjectAwareExecutor implements
     @Override
     public void setTargetExecutor(Executor targetExecutor) {
         if (!(targetExecutor instanceof ExecutorService)) {
-            String msg = "The " + getClass().getName() + " implementation only accepts " +
-                    ExecutorService.class.getName() + " target instances.";
+            String msg = "The " + getClass().getName() + " implementation only accepts "
+                    + ExecutorService.class.getName() + " target instances.";
             throw new IllegalArgumentException(msg);
         }
         super.setTargetExecutor(targetExecutor);

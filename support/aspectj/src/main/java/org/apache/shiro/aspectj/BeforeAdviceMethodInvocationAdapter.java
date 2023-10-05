@@ -32,9 +32,21 @@ import java.lang.reflect.Method;
  */
 public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
 
-    private Object _object;
-    private Method _method;
-    private Object[] _arguments;
+    private final Object anObject;
+    private final Method method;
+    private final Object[] someArguments;
+
+    /**
+     * Creates a new {@link BeforeAdviceMethodInvocationAdapter} instance.
+     *
+     * @param aMethod       The method to invoke.
+     * @param someArguments The arguments of the method invocation.
+     */
+    public BeforeAdviceMethodInvocationAdapter(Object anObject, Method aMethod, Object[] someArguments) {
+        this.anObject = anObject;
+        this.method = aMethod;
+        this.someArguments = someArguments;
+    }
 
     /**
      * Factory method that creates a new {@link BeforeAdviceMethodInvocationAdapter} instance
@@ -57,41 +69,30 @@ public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
                     aJoinPoint.getArgs());
 
         } else {
-            throw new IllegalArgumentException("The joint point signature is invalid: expected a MethodSignature or an AdviceSignature but was " + aJoinPoint.getSignature());
+            throw new IllegalArgumentException("The joint point signature is invalid: expected a MethodSignature or "
+                    + " an AdviceSignature but was " + aJoinPoint.getSignature());
         }
     }
 
-    /**
-     * Creates a new {@link BeforeAdviceMethodInvocationAdapter} instance.
-     *
-     * @param aMethod       The method to invoke.
-     * @param someArguments The arguments of the method invocation.
-     */
-    public BeforeAdviceMethodInvocationAdapter(Object anObject, Method aMethod, Object[] someArguments) {
-        _object = anObject;
-        _method = aMethod;
-        _arguments = someArguments;
-    }
-
     /* (non-Javadoc)
-    * @see org.apache.shiro.aop.MethodInvocation#getArguments()
-    */
+     * @see org.apache.shiro.aop.MethodInvocation#getArguments()
+     */
 
     public Object[] getArguments() {
-        return _arguments;
+        return someArguments;
     }
 
     /* (non-Javadoc)
-    * @see org.apache.shiro.aop.MethodInvocation#getMethod()
-    */
+     * @see org.apache.shiro.aop.MethodInvocation#getMethod()
+     */
 
     public Method getMethod() {
-        return _method;
+        return method;
     }
 
     /* (non-Javadoc)
-    * @see org.apache.shiro.aop.MethodInvocation#proceed()
-    */
+     * @see org.apache.shiro.aop.MethodInvocation#proceed()
+     */
 
     public Object proceed() throws Throwable {
         // Do nothing since this adapts a before advice
@@ -102,6 +103,6 @@ public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
      * @since 1.0
      */
     public Object getThis() {
-        return _object;
+        return anObject;
     }
 }

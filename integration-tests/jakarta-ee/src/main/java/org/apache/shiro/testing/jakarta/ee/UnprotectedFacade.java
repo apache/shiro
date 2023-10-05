@@ -14,15 +14,20 @@
 package org.apache.shiro.testing.jakarta.ee;
 
 import static org.apache.shiro.ee.cdi.ShiroScopeContext.isWebContainerSessions;
+
 import org.apache.shiro.ee.filters.Forms;
+
 import java.util.Map;
 import javax.ejb.EJBException;
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.UnauthenticatedException;
+
 import static org.omnifaces.util.Exceptions.unwrap;
+
 import org.omnifaces.util.Messages;
 
 /**

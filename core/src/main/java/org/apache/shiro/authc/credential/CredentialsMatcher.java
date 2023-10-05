@@ -21,7 +21,6 @@ package org.apache.shiro.authc.credential;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 
-
 /**
  * Interface implemented by classes that can determine if an AuthenticationToken's provided
  * credentials matches a corresponding account's credentials stored in the system.
@@ -44,10 +43,10 @@ public interface CredentialsMatcher {
      * Returns {@code true} if the provided token credentials match the stored account credentials,
      * {@code false} otherwise.
      *
-     * @param token   the {@code AuthenticationToken} submitted during the authentication attempt
-     * @param info the {@code AuthenticationInfo} stored in the system.
+     * @param token the {@code AuthenticationToken} submitted during the authentication attempt
+     * @param info  the {@code AuthenticationInfo} stored in the system.
      * @return {@code true} if the provided token credentials match the stored account credentials,
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info);
 

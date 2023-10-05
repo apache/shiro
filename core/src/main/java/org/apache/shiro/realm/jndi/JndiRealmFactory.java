@@ -40,7 +40,7 @@ import org.apache.shiro.lang.util.StringUtils;
  */
 public class JndiRealmFactory extends JndiLocator implements RealmFactory {
 
-    Collection<String> jndiNames = null;
+    Collection<String> jndiNames;
 
     /**
      * Returns the JNDI names that will be used to look up Realm(s) from JNDI.
@@ -80,8 +80,8 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
     public void setJndiNames(String commaDelimited) throws IllegalStateException {
         String arg = StringUtils.clean(commaDelimited);
         if (arg == null) {
-            String msg = "One or more comma-delimited jndi names must be specified for the " +
-                    getClass().getName() + " to locate Realms.";
+            String msg = "One or more comma-delimited jndi names must be specified for the "
+                    + getClass().getName() + " to locate Realms.";
             throw new IllegalStateException(msg);
         }
         String[] names = StringUtils.tokenizeToStringArray(arg, ",");
@@ -101,8 +101,8 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
     public Collection<Realm> getRealms() throws IllegalStateException {
         Collection<String> jndiNames = getJndiNames();
         if (jndiNames == null || jndiNames.isEmpty()) {
-            String msg = "One or more jndi names must be specified for the " +
-                    getClass().getName() + " to locate Realms.";
+            String msg = "One or more jndi names must be specified for the "
+                    + getClass().getName() + " to locate Realms.";
             throw new IllegalStateException(msg);
         }
         List<Realm> realms = new ArrayList<Realm>(jndiNames.size());

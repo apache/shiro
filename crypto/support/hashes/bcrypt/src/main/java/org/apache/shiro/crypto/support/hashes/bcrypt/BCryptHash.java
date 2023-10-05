@@ -41,15 +41,15 @@ import static java.util.Collections.unmodifiableSet;
  */
 class BCryptHash extends AbstractCryptHash {
 
-    private static final long serialVersionUID = 6957869292324606101L;
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractCryptHash.class);
-
     public static final String DEFAULT_ALGORITHM_NAME = "2y";
 
     public static final int DEFAULT_COST = 10;
 
     public static final int SALT_LENGTH = 16;
+
+    private static final long serialVersionUID = 6957869292324606101L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractCryptHash.class);
 
     private static final Set<String> ALGORITHMS_BCRYPT = new HashSet<>(Arrays.asList("2", "2a", "2b", "2y"));
 
@@ -57,7 +57,7 @@ class BCryptHash extends AbstractCryptHash {
 
     private final int iterations;
 
-    public BCryptHash(final String version, final byte[] hashedData, final ByteSource salt, final int cost) {
+    BCryptHash(final String version, final byte[] hashedData, final ByteSource salt, final int cost) {
         super(version, hashedData, salt);
         this.cost = cost;
         this.iterations = (int) Math.pow(2, cost);
@@ -69,8 +69,8 @@ class BCryptHash extends AbstractCryptHash {
         if (!ALGORITHMS_BCRYPT.contains(getAlgorithmName())) {
             final String message = String.format(
                     Locale.ENGLISH,
-                    "Given algorithm name [%s] not valid for bcrypt. " +
-                            "Valid algorithms: [%s].",
+                    "Given algorithm name [%s] not valid for bcrypt. "
+                            + "Valid algorithms: [%s].",
                     getAlgorithmName(),
                     ALGORITHMS_BCRYPT
             );
@@ -82,6 +82,7 @@ class BCryptHash extends AbstractCryptHash {
         checkValidCost(this.cost);
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     public static int checkValidCost(final int cost) {
         if (cost < 4 || cost > 31) {
             final String message = String.format(
@@ -179,7 +180,10 @@ class BCryptHash extends AbstractCryptHash {
     @Override
     public boolean matchesPassword(ByteSource plaintextBytes) {
         try {
-            final String cryptString = OpenBSDBCrypt.generate(this.getAlgorithmName(), plaintextBytes.getBytes(), this.getSalt().getBytes(), this.getCost());
+            final String cryptString = OpenBSDBCrypt.generate(this.getAlgorithmName(),
+                    plaintextBytes.getBytes(),
+                    this.getSalt().getBytes(),
+                    this.getCost());
             BCryptHash other = fromString(cryptString);
 
             return this.equals(other);

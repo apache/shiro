@@ -34,8 +34,8 @@ import java.security.Principal;
  */
 public class ShiroSecurityContext implements SecurityContext {
 
-    final private ContainerRequestContext containerRequestContext;
-    final private SecurityContext originalSecurityContext;
+    private final ContainerRequestContext containerRequestContext;
+    private final SecurityContext originalSecurityContext;
 
     public ShiroSecurityContext(ContainerRequestContext containerRequestContext) {
         this.containerRequestContext = containerRequestContext;
@@ -55,8 +55,7 @@ public class ShiroSecurityContext implements SecurityContext {
             if (result == null) {
                 result = new ObjectPrincipal(shiroPrincipals.getPrimaryPrincipal());
             }
-        }
-        else {
+        } else {
             result = originalSecurityContext.getUserPrincipal();
         }
 
@@ -87,9 +86,10 @@ public class ShiroSecurityContext implements SecurityContext {
      * Java Principal wrapper around any Shiro Principal object.s
      */
     private class ObjectPrincipal implements Principal {
-        private Object object = null;
 
-        public ObjectPrincipal(Object object) {
+        private Object object;
+
+        ObjectPrincipal(Object object) {
             this.object = object;
         }
 
@@ -103,8 +103,12 @@ public class ShiroSecurityContext implements SecurityContext {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             ObjectPrincipal that = (ObjectPrincipal) o;
 

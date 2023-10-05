@@ -28,10 +28,19 @@ import org.junit.jupiter.api.Test;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import static org.easymock.EasyMock.createNiceMock;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test case for the {@link SimpleNamedFilterList} implementation.
@@ -71,6 +80,7 @@ public class SimpleNamedFilterListTest {
      * Exists mainly to increase code coverage as the SimpleNamedFilterList
      * implementation is a direct pass through.
      */
+    @SuppressWarnings("checkstyle:MethodLength")
     @Test
     void testListMethods() {
         FilterChain mock = createNiceMock(FilterChain.class);
@@ -88,7 +98,7 @@ public class SimpleNamedFilterListTest {
         list.add(0, singleFilter);
         assertEquals(2, list.size());
         assertTrue(list.get(0) instanceof SslFilter);
-        assertTrue(Arrays.equals(list.toArray(), new Object[]{singleFilter, filter}));
+        assertArrayEquals(list.toArray(), new Object[] {singleFilter, filter});
 
         list.addAll(multipleFilters);
         assertEquals(4, list.size());

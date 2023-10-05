@@ -42,8 +42,14 @@ import org.apache.shiro.lang.util.Destroyable;
 
 import java.util.Collection;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShiroModuleTest {
 
@@ -207,8 +213,8 @@ public class ShiroModuleTest {
     }
 
     /**
-     * @since 1.4
      * @throws Exception
+     * @since 1.4
      */
     @Test
     void testEventListener() throws Exception {
@@ -249,8 +255,8 @@ public class ShiroModuleTest {
     }
 
     /**
-     * @since 1.4
      * @throws Exception
+     * @since 1.4
      */
     @Test
     void testEventBusAware() throws Exception {
@@ -279,10 +285,10 @@ public class ShiroModuleTest {
         MockEventBusAware eventBusAware = injector.getInstance(MockEventBusAware.class);
 
         assertSame(eventBus, eventBusAware.eventBus);
-        assertSame(eventBus, ((DefaultSecurityManager)securityManager).getEventBus());
+        assertSame(eventBus, ((DefaultSecurityManager) securityManager).getEventBus());
     }
 
-    public static interface MockRealm extends Realm {
+    public interface MockRealm extends Realm {
 
     }
 
@@ -303,17 +309,19 @@ public class ShiroModuleTest {
         }
     }
 
-    public static interface MyDestroyable extends Destroyable {
+    public interface MyDestroyable extends Destroyable {
     }
 
     public static class MockEventListener1 {
         @Subscribe
-        public void listenToAllAndDoNothing(Object o) {}
+        public void listenToAllAndDoNothing(Object o) {
+        }
     }
 
     public static class MockEventListener2 {
         @Subscribe
-        public void listenToAllAndDoNothing(Object o) {}
+        public void listenToAllAndDoNothing(Object o) {
+        }
     }
 
     public static class MockEventBusAware implements EventBusAware {

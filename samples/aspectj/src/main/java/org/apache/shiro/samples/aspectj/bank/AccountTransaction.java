@@ -24,25 +24,41 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.sql.Timestamp;
 import java.util.Date;
 
-public class AccountTransaction {
+public final class AccountTransaction {
 
-    private static long _SEQUENCE;
+    private static long sequence;
 
     public enum TransactionType {
+        /**
+         * deposit.
+         */
         DEPOSIT,
+        /**
+         * withdrawal.
+         */
         WITHDRAWAL
     }
 
-    private long _id;
+    private long id;
 
-    private TransactionType _type;
+    private TransactionType type;
 
-    private long _accountId;
+    private long accountId;
 
-    private double _amount;
+    private double amount;
 
-    private String _createdBy;
-    private Date _creationDate;
+    private String createdBy;
+
+    private Date creationDate;
+
+    private AccountTransaction(TransactionType aType, long anAccountId, double anAmount) {
+        id = ++sequence;
+        type = aType;
+        accountId = anAccountId;
+        amount = anAmount;
+        createdBy = "unknown";
+        creationDate = new Date();
+    }
 
     public static AccountTransaction createDepositTx(long anAccountId, double anAmount) {
         return new AccountTransaction(TransactionType.DEPOSIT, anAccountId, anAmount);
@@ -52,22 +68,13 @@ public class AccountTransaction {
         return new AccountTransaction(TransactionType.WITHDRAWAL, anAccountId, anAmount);
     }
 
-    private AccountTransaction(TransactionType aType, long anAccountId, double anAmount) {
-        _id = ++_SEQUENCE;
-        _type = aType;
-        _accountId = anAccountId;
-        _amount = anAmount;
-        _createdBy = "unknown";
-        _creationDate = new Date();
-    }
-
     /**
      * Returns the id attribute.
      *
      * @return The id value.
      */
     public long getId() {
-        return _id;
+        return id;
     }
 
     /**
@@ -76,7 +83,7 @@ public class AccountTransaction {
      * @return The type value.
      */
     public TransactionType getType() {
-        return _type;
+        return type;
     }
 
     /**
@@ -85,7 +92,7 @@ public class AccountTransaction {
      * @return The accountId value.
      */
     public long getAccountId() {
-        return _accountId;
+        return accountId;
     }
 
     /**
@@ -94,7 +101,7 @@ public class AccountTransaction {
      * @return The amount value.
      */
     public double getAmount() {
-        return _amount;
+        return amount;
     }
 
     /**
@@ -103,7 +110,7 @@ public class AccountTransaction {
      * @param aCreatedBy The new value of the createdBy attribute.
      */
     protected void setCreatedBy(String aCreatedBy) {
-        _createdBy = aCreatedBy;
+        createdBy = aCreatedBy;
     }
 
     /**
@@ -112,7 +119,7 @@ public class AccountTransaction {
      * @return The createdBy value.
      */
     public String getCreatedBy() {
-        return _createdBy;
+        return createdBy;
     }
 
     /**
@@ -121,21 +128,21 @@ public class AccountTransaction {
      * @return The creationDate value.
      */
     public Date getCreationDate() {
-        return _creationDate;
+        return creationDate;
     }
 
     /* (non-Javadoc)
-    * @see java.lang.Object#toString()
-    */
+     * @see java.lang.Object#toString()
+     */
 
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
-                append("id", _id).
-                append("type", _type).
-                append("accountId", _accountId).
-                append("amount", _amount).
-                append("createdBy", _createdBy).
-                append("creationDate", new Timestamp(_creationDate.getTime())).
+                append("id", id).
+                append("type", type).
+                append("accountId", accountId).
+                append("amount", amount).
+                append("createdBy", createdBy).
+                append("creationDate", new Timestamp(creationDate.getTime())).
                 toString();
     }
 

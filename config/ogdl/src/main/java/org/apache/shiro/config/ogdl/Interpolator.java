@@ -28,6 +28,7 @@ public interface Interpolator {
 
     /**
      * Interpolates <code>value</code> and returns the result.
+     *
      * @param value the source text
      * @return the String result of the interpolation, or <code>value</code>, if there was not change.
      */

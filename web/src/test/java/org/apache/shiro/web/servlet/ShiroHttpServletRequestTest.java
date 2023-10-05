@@ -49,7 +49,7 @@ public class ShiroHttpServletRequestTest {
         ThreadContext.bind(this.mockSubject);
         this.request = new ShiroHttpServletRequest(mockRequest, mockContext, false);
     }
-    
+
     /**
      * Test asserting <a href="https://issues.apache.org/jira/browse/SHIRO-637">SHIRO-637<a/>.
      */
@@ -69,18 +69,18 @@ public class ShiroHttpServletRequestTest {
             return session2;
         });
         when(mockSubject.getSession(false)).then(args -> {
-           if (counterFalse.getAndIncrement() < 2) {
-               return session1;
-           }
+            if (counterFalse.getAndIncrement() < 2) {
+                return session1;
+            }
 
-           return null;
+            return null;
         });
 
         assertNotNull(request.getSession(true));
         assertNotNull(request.getSession(false));
-        
+
         mockSubject.logout();
-        
+
         assertNull(request.getSession(false));
         assertNotNull(request.getSession(true));
         verify(mockSubject, times(2)).getSession(true);

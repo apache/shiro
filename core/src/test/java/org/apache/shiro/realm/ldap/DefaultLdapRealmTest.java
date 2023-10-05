@@ -27,11 +27,18 @@ import org.junit.jupiter.api.Test;
 
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
-
 import java.util.UUID;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the {@link DefaultLdapRealm} class.
@@ -96,10 +103,11 @@ public class DefaultLdapRealmTest {
 
         Object expectedPrincipal = "uid=jsmith,ou=users,dc=mycompany,dc=com";
 
-        expect(factory.getLdapContext(eq(expectedPrincipal), isA(Object.class))).andReturn(createNiceMock(LdapContext.class));
+        expect(factory.getLdapContext(eq(expectedPrincipal), isA(Object.class)))
+                .andReturn(createNiceMock(LdapContext.class));
         replay(factory);
 
-        realm.getAuthenticationInfo(new UsernamePasswordToken("jsmith", "secret") );
+        realm.getAuthenticationInfo(new UsernamePasswordToken("jsmith", "secret"));
         verify(factory);
     }
 

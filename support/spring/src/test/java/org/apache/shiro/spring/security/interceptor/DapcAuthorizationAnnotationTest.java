@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * All the tests in the parent class are run.  This class only exists to ensure that a
  * DefaultAutoProxyCreator Spring AOP environment exists and enables annotations correctly as
- * documented in the Spring reference manual: 
+ * documented in the Spring reference manual:
  * <a href="http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/aop-api.html#aop-autoproxy">
  * Using the &quot;autoproxy&quot; facility</a>.
  *

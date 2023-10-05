@@ -17,7 +17,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- pick up Apache distributionManagement for releasing (snapshots, releases, etc.): -->
@@ -327,7 +328,7 @@
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
                     <configuration>
-                    		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
+                        <!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                         <excludes>
                             <exclude>**/.externalToolBuilders/*</exclude>
                             <exclude>**/infinitest.filters</exclude>
@@ -482,7 +483,8 @@
                                 <shadedClassifierName>jakarta</shadedClassifierName>
                                 <createDependencyReducedPom>false</createDependencyReducedPom>
                                 <transformers>
-                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                    <transformer
+                                            implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 </transformers>
                                 <artifactSet>
                                     <includes>
@@ -546,6 +548,7 @@
                         <failOnViolation>true</failOnViolation>
                         <includeTestSourceDirectory>true</includeTestSourceDirectory>
                         <enableRulesSummary>true</enableRulesSummary>
+                        <resourceExcludes>test-keystore.jks,test-keystore.pem</resourceExcludes>
                         <propertyExpansion>root.dir=${root.dir}</propertyExpansion>
                     </configuration>
                     <executions>
@@ -599,6 +602,9 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1546,7 +1552,7 @@
                 <!-- only run at the root -->
                 <inherited>false</inherited>
                 <configuration>
-                		<!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
+                    <!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
                     <excludes>
                         <exclude>**/.externalToolBuilders/*</exclude>
                         <exclude>**/infinitest.filters</exclude>
@@ -1810,18 +1816,18 @@
                 <plugins>
                     <!-- TODO: re-enable after first 2.0 release -->
                     <!-- it's a 2.0 release breaking changes are expected -->
-<!--                    <plugin>-->
-<!--                        <groupId>com.github.siom79.japicmp</groupId>-->
-<!--                        <artifactId>japicmp-maven-plugin</artifactId>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <id>japicmp</id>-->
-<!--                                <goals>-->
-<!--                                    <goal>cmp</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                    </plugin>-->
+                    <!--                    <plugin>-->
+                    <!--                        <groupId>com.github.siom79.japicmp</groupId>-->
+                    <!--                        <artifactId>japicmp-maven-plugin</artifactId>-->
+                    <!--                        <executions>-->
+                    <!--                            <execution>-->
+                    <!--                                <id>japicmp</id>-->
+                    <!--                                <goals>-->
+                    <!--                                    <goal>cmp</goal>-->
+                    <!--                                </goals>-->
+                    <!--                            </execution>-->
+                    <!--                        </executions>-->
+                    <!--                    </plugin>-->
                 </plugins>
             </build>
         </profile>
@@ -1847,8 +1853,8 @@
             </build>
         </profile>
     </profiles>
-<!--Disable snapshot repositories because they download snapshots
-    instead of using the current build in CI 'mvn verify' steps-->
+    <!--Disable snapshot repositories because they download snapshots
+        instead of using the current build in CI 'mvn verify' steps-->
     <repositories>
         <repository>
             <id>apache.snapshots</id>

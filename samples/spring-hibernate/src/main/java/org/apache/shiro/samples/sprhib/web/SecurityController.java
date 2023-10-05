@@ -36,27 +36,28 @@ public class SecurityController {
 
     private LoginValidator loginValidator = new LoginValidator();
 
-    @RequestMapping(value="/login",method= RequestMethod.GET)
-    public String showLoginForm(Model model, @ModelAttribute LoginCommand command ) {
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String showLoginForm(Model model, @ModelAttribute LoginCommand command) {
         return "login";
     }
 
-    @RequestMapping(value="/login",method= RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(Model model, @ModelAttribute LoginCommand command, BindingResult errors) {
         loginValidator.validate(command, errors);
 
-        if( errors.hasErrors() ) {
+        if (errors.hasErrors()) {
             return showLoginForm(model, command);
         }
 
-        UsernamePasswordToken token = new UsernamePasswordToken(command.getUsername(), command.getPassword(), command.isRememberMe());
+        UsernamePasswordToken token = new UsernamePasswordToken(command.getUsername(),
+                        command.getPassword(), command.isRememberMe());
         try {
             SecurityUtils.getSubject().login(token);
         } catch (AuthenticationException e) {
-            errors.reject( "error.login.generic", "Invalid username or password.  Please try again." );
+            errors.reject("error.login.generic", "Invalid username or password.  Please try again.");
         }
 
-        if( errors.hasErrors() ) {
+        if (errors.hasErrors()) {
             return showLoginForm(model, command);
         } else {
             return "redirect:/s/home";

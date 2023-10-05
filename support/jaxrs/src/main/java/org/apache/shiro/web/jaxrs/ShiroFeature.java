@@ -29,7 +29,7 @@ import javax.ws.rs.ext.Provider;
 /**
  * Shiro JAX-RS feature which includes {@link UnauthorizedExceptionExceptionMapper}, {@link SubjectPrincipalRequestFilter}, and
  * {@link ShiroAnnotationFilterFeature}.
- *
+ * <p>
  * Typically a JAX-RS {@link Application} class will include this Feature class in the
  * classes returned from {@link Application#getClasses()} method, for example:
  * <blockquote><pre>
@@ -46,9 +46,11 @@ import javax.ws.rs.ext.Provider;
  *         }
  *     }
  * </pre></blockquote>
+ * NOTE: Apache CXF requires this annotation on this feature (jersey and resteasy do not)
+ *
  * @since 1.4
  */
-@Provider // NOTE: Apache CXF requires this annotation on this feature (jersey and resteasy do not)
+@Provider
 public class ShiroFeature implements Feature {
 
     @Override

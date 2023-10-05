@@ -77,7 +77,8 @@ public class OncePerRequestFilterTest {
     @SuppressWarnings({"JavaDoc"})
     @Test
     void testDisabled() throws IOException, ServletException {
-        filter.setEnabled(false); //test disabled
+        //test disabled
+        filter.setEnabled(false);
 
         when(request.getAttribute(ATTR_NAME)).thenReturn(null);
 
@@ -100,9 +101,9 @@ public class OncePerRequestFilterTest {
 
     static class CountingOncePerRequestFilter extends OncePerRequestFilter {
 
-        private int filterCount = 0;
+        private int filterCount;
 
-        public CountingOncePerRequestFilter() {
+        CountingOncePerRequestFilter() {
             this.setName(NAME);
         }
 

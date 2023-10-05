@@ -28,9 +28,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Map;
 
 /**
+ *
  */
 @Controller
 public class RestrictedErrorController implements ErrorController {

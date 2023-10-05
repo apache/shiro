@@ -19,6 +19,7 @@
 package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.config.ConfigurationException;
+import org.apache.shiro.util.AntPathMatcher;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -47,7 +48,7 @@ public interface FilterChainManager {
      *
      * @param chainName the name identifying the filter chain.
      * @return the filter chain identified by the specified {@code chainName} or {@code null} if there is no chain with
-     *         that name.
+     * that name.
      */
     NamedFilterList getChain(String chainName);
 
@@ -74,7 +75,7 @@ public interface FilterChainManager {
      * @param chainName the name of the internal configured filter chain that should 'sit in front' of the specified
      *                  original chain.
      * @return a {@code FilterChain} instance that will execute the named chain and then finally the
-     *         specified {@code original} FilterChain instance.
+     * specified {@code original} FilterChain instance.
      * @throws IllegalArgumentException if there is no configured chain with the given {@code chainName}.
      */
     FilterChain proxy(FilterChain original, String chainName);
@@ -108,7 +109,7 @@ public interface FilterChainManager {
      * <h3>Conventional Use</h3>
      * Because the {@code FilterChainManager} interface does not impose any restrictions on filter chain names,
      * (it expects only Strings), a convenient convention is to make the chain name an actual URL path expression
-     * (such as an {@link org.apache.shiro.lang.util.AntPathMatcher Ant path expression}).  For example:
+     * (such as an {@link AntPathMatcher Ant path expression}).  For example:
      * <p/>
      * <code>createChain(<b><em>path_expression</em></b>, <em>path_specific_filter_chain_definition</em>);</code>
      * This convention can be used by a {@link FilterChainResolver} to inspect request URL paths
@@ -161,15 +162,17 @@ public interface FilterChainManager {
      * @param chainDefinition the string-formatted chain definition used to construct an actual
      *                        {@link NamedFilterList} chain instance.
      * @see FilterChainResolver
-     * @see org.apache.shiro.lang.util.AntPathMatcher AntPathMatcher
+     * @see AntPathMatcher AntPathMatcher
      */
     void createChain(String chainName, String chainDefinition);
 
     /**
-     * Creates a chain that should match any non-matched request paths, typically {@code /**} assuming an {@link AntPathMatcher} I used.
+     * Creates a chain that should match any non-matched request paths,
+     * typically {@code /**} assuming an {@link AntPathMatcher} I used.
+     *
      * @param chainName The name of the chain to create, likely {@code /**}.
+     * @see AntPathMatcher AntPathMatcher
      * @since 1.6
-     * @see org.apache.shiro.lang.util.AntPathMatcher AntPathMatcher
      */
     void createDefaultChain(String chainName);
 
@@ -211,9 +214,9 @@ public interface FilterChainManager {
      * <br>
      * <strong>Filters configured in this list wll apply to ALL requests.</strong>
      *
-     * @param globalFilterNames         the list of filter names to match ALL paths.
-     * @throws ConfigurationException   if one of the filter names is invalid and cannot be loaded from the set of
-     *                                  configured filters {@link #getFilters()}}.
+     * @param globalFilterNames the list of filter names to match ALL paths.
+     * @throws ConfigurationException if one of the filter names is invalid and cannot be loaded from the set of
+     *                                configured filters {@link #getFilters()}}.
      * @since 1.6
      */
     void setGlobalFilters(List<String> globalFilterNames) throws ConfigurationException;

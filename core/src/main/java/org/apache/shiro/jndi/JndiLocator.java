@@ -42,16 +42,16 @@ import org.slf4j.LoggerFactory;
 public class JndiLocator {
 
     /**
-     * Private class log.
-     */
-    private static final Logger log = LoggerFactory.getLogger(JndiLocator.class);
-
-    /**
-     * JNDI prefix used in a J2EE container
+     * JNDI prefix used in a Jakarta EE container
      */
     public static final String CONTAINER_PREFIX = "java:comp/env/";
 
-    private boolean resourceRef = false;
+    /**
+     * Private class log.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(JndiLocator.class);
+
+    private boolean resourceRef;
 
     private JndiTemplate jndiTemplate = new JndiTemplate();
 
@@ -91,7 +91,7 @@ public class JndiLocator {
     }
 
     /**
-     * Set whether the lookup occurs in a J2EE container, i.e. if the prefix
+     * Set whether the lookup occurs in a Jakarta EE container, i.e. if the prefix
      * "java:comp/env/" needs to be added if the JNDI name doesn't already
      * contain it. Default is "false".
      * <p>Note: Will only get applied if no other scheme (e.g. "java:") is given.
@@ -101,7 +101,7 @@ public class JndiLocator {
     }
 
     /**
-     * Return whether the lookup occurs in a J2EE container.
+     * Return whether the lookup occurs in a Jakarta EE container.
      */
     public boolean isResourceRef() {
         return this.resourceRef;
@@ -141,20 +141,19 @@ public class JndiLocator {
         Object jndiObject;
         try {
             jndiObject = getJndiTemplate().lookup(convertedName, requiredType);
-        }
-        catch (NamingException ex) {
+        } catch (NamingException ex) {
             if (!convertedName.equals(jndiName)) {
                 // Try fallback to originally specified name...
-                if (log.isDebugEnabled()) {
-                    log.debug("Converted JNDI name [" + convertedName +
-                            "] not found - trying original name [" + jndiName + "]. " + ex);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Converted JNDI name [" + convertedName
+                            + "] not found - trying original name [" + jndiName + "]. " + ex);
                 }
                 jndiObject = getJndiTemplate().lookup(jndiName, requiredType);
             } else {
                 throw ex;
             }
         }
-        log.debug("Located object with JNDI name '{}'", convertedName);
+        LOGGER.debug("Located object with JNDI name '{}'", convertedName);
         return jndiObject;
     }
 

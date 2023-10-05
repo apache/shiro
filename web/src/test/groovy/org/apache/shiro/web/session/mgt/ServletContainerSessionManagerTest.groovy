@@ -176,9 +176,4 @@ class ServletContainerSessionManagerTest {
 
         verify request, response, httpSession
     }
-
-
-
-
-
 }

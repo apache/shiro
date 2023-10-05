@@ -17,7 +17,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.apache.shiro</groupId>
@@ -105,36 +106,36 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.karaf.tooling</groupId>-->
-<!--                <artifactId>karaf-maven-plugin</artifactId>-->
-<!--                <version>${karaf.version}</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>verify</id>-->
-<!--                        <phase>process-resources</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>verify</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <descriptors>-->
-<!--                                <descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features</descriptor>-->
-<!--                                <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features</descriptor>-->
-<!--                                <descriptor>mvn:org.apache.karaf.features/spring-legacy/${karaf.version}/xml/features</descriptor>-->
-<!--                                <descriptor>file:${project.build.directory}/classes/features.xml</descriptor>-->
-<!--                            </descriptors>-->
-<!--                            <distribution>org.apache.karaf.features:framework</distribution>-->
-<!--                            <javase>1.8</javase>-->
-<!--                            <framework>-->
-<!--                                <feature>framework</feature>-->
-<!--                            </framework>-->
-<!--                            <features>-->
-<!--                                <feature>shiro*</feature>-->
-<!--                            </features>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.karaf.tooling</groupId>-->
+            <!--                <artifactId>karaf-maven-plugin</artifactId>-->
+            <!--                <version>${karaf.version}</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>verify</id>-->
+            <!--                        <phase>process-resources</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>verify</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <descriptors>-->
+            <!--                                <descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features</descriptor>-->
+            <!--                                <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features</descriptor>-->
+            <!--                                <descriptor>mvn:org.apache.karaf.features/spring-legacy/${karaf.version}/xml/features</descriptor>-->
+            <!--                                <descriptor>file:${project.build.directory}/classes/features.xml</descriptor>-->
+            <!--                            </descriptors>-->
+            <!--                            <distribution>org.apache.karaf.features:framework</distribution>-->
+            <!--                            <javase>1.8</javase>-->
+            <!--                            <framework>-->
+            <!--                                <feature>framework</feature>-->
+            <!--                            </framework>-->
+            <!--                            <features>-->
+            <!--                                <feature>shiro*</feature>-->
+            <!--                            </features>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
 

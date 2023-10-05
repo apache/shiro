@@ -31,11 +31,10 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-
 /**
  * Requires the requesting user to be {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated} for the
- * request to continue, and if they're not, requires the user to login via the HTTP "Authentication" header (e.g. BASIC, Bearer, etc.)
- * Upon successful login, they're allowed to continue on to the requested resource/url.
+ * request to continue, and if they're not, requires the user to login via the HTTP "Authentication"
+ * header (e.g. BASIC, Bearer, etc.) Upon successful login, they're allowed to continue on to the requested resource/url.
  * <p/>
  * The {@link #onAccessDenied(ServletRequest, ServletResponse)} method will
  * only be called if the subject making the request is not
@@ -49,11 +48,6 @@ import java.util.Set;
 abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
 
     /**
-     * This class's private logger.
-     */
-    private static final Logger log = LoggerFactory.getLogger(HttpAuthenticationFilter.class);
-
-    /**
      * HTTP Authorization header, equal to <code>Authorization</code>
      */
     protected static final String AUTHORIZATION_HEADER = "Authorization";
@@ -62,6 +56,11 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      * HTTP Authentication header, equal to <code>WWW-Authenticate</code>
      */
     protected static final String AUTHENTICATE_HEADER = "WWW-Authenticate";
+
+    /**
+     * This class's private logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpAuthenticationFilter.class);
 
     /**
      * The name that is displayed during the challenge process of authentication, defaults to <code>application</code>
@@ -145,7 +144,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      * the HTTP Basic challenge response.  The default value is <code>BASIC</code>.
      *
      * @return the HTTP <code>WWW-Authenticate</code> header scheme that this filter will use when sending the HTTP
-     *         Basic challenge response.
+     * Basic challenge response.
      * @see #sendChallenge
      */
     public String getAuthcScheme() {
@@ -173,8 +172,9 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      *    /basic/** = authcBasic[POST,PUT,DELETE]
      * </pre>
      * then a GET request would not required authentication but a POST would.
-     * @param request The current HTTP servlet request.
-     * @param response The current HTTP servlet response.
+     *
+     * @param request     The current HTTP servlet request.
+     * @param response    The current HTTP servlet response.
      * @param mappedValue The array of configured HTTP methods as strings. This is empty if no methods are configured.
      */
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
@@ -185,10 +185,11 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
         // If no methods have been configured, then all of them require auth,
         // otherwise only the declared ones need authentication.
 
-        Set<String> methods = httpMethodsFromOptions((String[])mappedValue);
+        Set<String> methods = httpMethodsFromOptions((String[]) mappedValue);
         boolean authcRequired = methods.size() == 0;
         for (String m : methods) {
-            if (httpMethod.toUpperCase(Locale.ENGLISH).equals(m)) { // list of methods is in upper case
+            // list of methods is in upper case
+            if (httpMethod.toUpperCase(Locale.ENGLISH).equals(m)) {
                 authcRequired = true;
                 break;
             }
@@ -196,8 +197,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
 
         if (authcRequired) {
             return super.isAccessAllowed(request, response, mappedValue);
-        }
-        else {
+        } else {
             return true;
         }
     }
@@ -225,7 +225,8 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      * @return true if the request should be processed; false if the request should not continue to be processed
      */
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        boolean loggedIn = false; //false by default or we wouldn't be in this method
+        //false by default or we wouldn't be in this method
+        boolean loggedIn = false;
         if (isLoginAttempt(request, response)) {
             loggedIn = executeLogin(request, response);
         }
@@ -289,7 +290,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      * @param authzHeader the 'Authorization' header value (guaranteed to be non-null if the
      *                    {@link #isLoginAttempt(ServletRequest, ServletResponse)} method is not overridden).
      * @return <code>true</code> if the authzHeader value matches that configured as defined by
-     *         the {@link #getAuthzScheme() authzScheme}.
+     * the {@link #getAuthzScheme() authzScheme}.
      */
     protected boolean isLoginAttempt(String authzHeader) {
         //SHIRO-415: use English Locale:
@@ -303,14 +304,15 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      * <p/>
      * The header value constructed is equal to:
      * <p/>
-     * <code>{@link #getAuthcScheme() getAuthcScheme()} + " realm=\"" + {@link #getApplicationName() getApplicationName()} + "\"";</code>
+     * <code>{@link #getAuthcScheme() getAuthcScheme()} + " realm=\""
+     *      + {@link #getApplicationName() getApplicationName()} + "\"";</code>
      *
      * @param request  incoming ServletRequest, ignored by this implementation
      * @param response outgoing ServletResponse
      * @return false - this sends the challenge to be sent back
      */
     protected boolean sendChallenge(ServletRequest request, ServletResponse response) {
-        log.debug("Authentication required: sending 401 Authentication challenge response.");
+        LOGGER.debug("Authentication required: sending 401 Authentication challenge response.");
 
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -343,7 +345,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
             return createToken("", "", request, response);
         }
 
-        log.debug("Attempting to execute login with auth header");
+        LOGGER.debug("Attempting to execute login with auth header");
 
         String[] prinCred = getPrincipalsAndCredentials(authorizationHeader, request);
         if (prinCred == null || prinCred.length < 2) {
@@ -386,10 +388,10 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
     /**
      * Returns a String[] containing credential parts parsed from the "Authorization" header.
      *
-     * @param scheme  the {@link #getAuthcScheme() authcScheme} found in the request
-     *                {@link #getAuthzHeader(ServletRequest) authzHeader}.  It is ignored by this implementation,
-     *                but available to overriding implementations should they find it useful.
-     * @param value the raw string value from the "Authorization" header.
+     * @param scheme the {@link #getAuthcScheme() authcScheme} found in the request
+     *               {@link #getAuthzHeader(ServletRequest) authzHeader}.  It is ignored by this implementation,
+     *               but available to overriding implementations should they find it useful.
+     * @param value  the raw string value from the "Authorization" header.
      */
     abstract String[] getPrincipalsAndCredentials(String scheme, String value);
 }

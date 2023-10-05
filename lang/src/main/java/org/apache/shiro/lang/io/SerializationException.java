@@ -26,8 +26,7 @@ import org.apache.shiro.lang.ShiroException;
  *
  * @since Apr 23, 2008 8:58:22 AM
  */
-public class SerializationException extends ShiroException
-{
+public class SerializationException extends ShiroException {
 
     /**
      * Creates a new SerializationException.

@@ -27,8 +27,7 @@ import javax.servlet.ServletContext;
  */
 public class ServletContextSupport {
 
-    //TODO - complete JavaDoc
-    private ServletContext servletContext = null;
+    private ServletContext servletContext;
 
     public ServletContext getServletContext() {
         return servletContext;
@@ -85,7 +84,7 @@ public class ServletContextSupport {
      * Same concept as {@link #toString() toString()}, but returns a {@link StringBuilder} instance instead.
      *
      * @return a StringBuilder instance to use for appending String data that will eventually be returned from a
-     *         {@code toString()} invocation.
+     * {@code toString()} invocation.
      */
     protected StringBuilder toStringBuilder() {
         return new StringBuilder(super.toString());

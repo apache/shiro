@@ -34,7 +34,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.easymock.EasyMock.createMock;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test relies on the internal structure of FilterChainResolver in order to check that it got created correctly.
@@ -57,8 +59,8 @@ public class FilterChainResolverProviderTest {
         key1c = Key.get(Filter.class, Names.named("key1c"));
         key2a = Key.get(Filter.class, Names.named("key2a"));
 
-        chains.put("one", new Key[]{key1a, key1b, key1c});
-        chains.put("two", new Key[]{key2a});
+        chains.put("one", new Key[] {key1a, key1b, key1c});
+        chains.put("two", new Key[] {key2a});
 
         underTest = new FilterChainResolverProvider(chains);
     }

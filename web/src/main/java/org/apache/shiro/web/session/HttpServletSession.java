@@ -43,7 +43,7 @@ public class HttpServletSession implements Session {
     private static final String HOST_SESSION_KEY = HttpServletSession.class.getName() + ".HOST_SESSION_KEY";
     private static final String TOUCH_OBJECT_SESSION_KEY = HttpServletSession.class.getName() + ".TOUCH_OBJECT_SESSION_KEY";
 
-    private HttpSession httpSession = null;
+    private HttpSession httpSession;
 
     public HttpServletSession(HttpSession httpSession, String host) {
         if (httpSession == null) {
@@ -51,8 +51,8 @@ public class HttpServletSession implements Session {
             throw new IllegalArgumentException(msg);
         }
         if (httpSession instanceof ShiroHttpSession) {
-            String msg = "HttpSession constructor argument cannot be an instance of ShiroHttpSession.  This " +
-                    "is enforced to prevent circular dependencies and infinite loops.";
+            String msg = "HttpSession constructor argument cannot be an instance of ShiroHttpSession.  This "
+                    + "is enforced to prevent circular dependencies and infinite loops.";
             throw new IllegalArgumentException(msg);
         }
         this.httpSession = httpSession;
@@ -73,6 +73,7 @@ public class HttpServletSession implements Session {
         return new Date(httpSession.getLastAccessedTime());
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     public long getTimeout() throws InvalidSessionException {
         try {
             return httpSession.getMaxInactiveInterval() * 1000L;
@@ -81,6 +82,7 @@ public class HttpServletSession implements Session {
         }
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
         try {
             int timeout = (int) (maxIdleTimeInMillis / 1000);
@@ -134,8 +136,8 @@ public class HttpServletSession implements Session {
 
     private static String assertString(Object key) {
         if (!(key instanceof String)) {
-            String msg = "HttpSession based implementations of the Shiro Session interface requires attribute keys " +
-                    "to be String objects.  The HttpSession class does not support anything other than String keys.";
+            String msg = "HttpSession based implementations of the Shiro Session interface requires attribute keys "
+                    + "to be String objects.  The HttpSession class does not support anything other than String keys.";
             throw new IllegalArgumentException(msg);
         }
         return (String) key;

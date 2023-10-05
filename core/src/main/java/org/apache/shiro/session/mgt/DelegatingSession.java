@@ -47,8 +47,8 @@ public class DelegatingSession implements Session, Serializable {
     private final SessionKey key;
 
     //cached fields to avoid a server-side method call if out-of-process:
-    private Date startTimestamp = null;
-    private String host = null;
+    private Date startTimestamp;
+    private String host;
 
     /**
      * Handle to the target NativeSessionManager that will support the delegate calls.
@@ -64,9 +64,9 @@ public class DelegatingSession implements Session, Serializable {
             throw new IllegalArgumentException("sessionKey argument cannot be null.");
         }
         if (key.getSessionId() == null) {
-            String msg = "The " + DelegatingSession.class.getName() + " implementation requires that the " +
-                    "SessionKey argument returns a non-null sessionId to support the " +
-                    "Session.getId() invocations.";
+            String msg = "The " + DelegatingSession.class.getName() + " implementation requires that the "
+                    + "SessionKey argument returns a non-null sessionId to support the "
+                    + "Session.getId() invocations.";
             throw new IllegalArgumentException(msg);
         }
         this.sessionManager = sessionManager;

@@ -20,27 +20,27 @@ package org.apache.shiro.samples.aspectj.bank;
 
 public class BankServerRunner {
 
-    private SecureBankService _bankService;
+    private SecureBankService bankService;
 
     public synchronized void start() throws Exception {
-        if (_bankService == null) {
-            _bankService = new SecureBankService();
-            _bankService.start();
+        if (bankService == null) {
+            bankService = new SecureBankService();
+            bankService.start();
         }
     }
 
     public synchronized void stop() {
-        if (_bankService != null) {
+        if (bankService != null) {
             try {
-                _bankService.dispose();
+                bankService.dispose();
             } finally {
-                _bankService = null;
+                bankService = null;
             }
         }
     }
 
     public BankService getBankService() {
-        return _bankService;
+        return bankService;
     }
 
     public static void main(String[] args) {

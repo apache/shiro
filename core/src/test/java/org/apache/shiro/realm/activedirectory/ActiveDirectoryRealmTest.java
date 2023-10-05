@@ -19,7 +19,12 @@
 package org.apache.shiro.realm.activedirectory;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.*;
+
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAccount;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -55,9 +60,10 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import static org.hamcrest.Matchers.arrayWithSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Simple test case for ActiveDirectoryRealm.
@@ -66,17 +72,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * heart of ActiveDirectoryRealm (no meaningful implementation of queryForLdapAccount, etc.) it obviously should.
  * This version was intended to mimic my current usage scenario in an effort to debug upgrade issues which were not related
  * to LDAP connectivity.
- *
  */
 public class ActiveDirectoryRealmTest {
-
-    DefaultSecurityManager securityManager = null;
-    AuthorizingRealm realm;
 
     private static final String USERNAME = "testuser";
     private static final String PASSWORD = "password";
     private static final int USER_ID = 12345;
     private static final String ROLE = "admin";
+
+    DefaultSecurityManager securityManager;
+    AuthorizingRealm realm;
 
     @BeforeEach
     public void setup() {
@@ -115,7 +120,8 @@ public class ActiveDirectoryRealmTest {
 
     @Test
     void testExistingUserSuffix() throws Exception {
-        assertExistingUserSuffix(USERNAME, "testuser@ExAmple.COM"); // suffix case matches configure suffix
+        // suffix case matches configure suffix
+        assertExistingUserSuffix(USERNAME, "testuser@ExAmple.COM");
 
         // suffix matches user entry
         assertExistingUserSuffix(USERNAME + "@example.com", "testuser@example.com");
@@ -127,7 +133,8 @@ public class ActiveDirectoryRealmTest {
         LdapContext ldapContext = createMock(LdapContext.class);
         NamingEnumeration<SearchResult> results = createMock(NamingEnumeration.class);
         Capture<Object[]> captureArgs = Capture.newInstance(CaptureType.ALL);
-        expect(ldapContext.search(anyString(), anyString(), capture(captureArgs), anyObject(SearchControls.class))).andReturn(results);
+        expect(ldapContext.search(anyString(), anyString(), capture(captureArgs), anyObject(SearchControls.class)))
+                .andReturn(results);
         replay(ldapContext);
 
         ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm() {{
@@ -150,7 +157,7 @@ public class ActiveDirectoryRealmTest {
         assertThat(args[0], is(expectedPrincipalName));
     }
 
-    public class TestActiveDirectoryRealm extends ActiveDirectoryRealm {
+    public static class TestActiveDirectoryRealm extends ActiveDirectoryRealm {
 
         /*--------------------------------------------
         |         C O N S T R U C T O R S           |
@@ -195,7 +202,8 @@ public class ActiveDirectoryRealmTest {
         }
 
         // override ldap query because i don't care about testing that piece in this case
-        protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
+        protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory)
+                throws NamingException {
             return new SimpleAccount(token.getPrincipal(), token.getCredentials(), getName());
         }
 
