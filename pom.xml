@@ -1626,12 +1626,6 @@
                         </reports>
                     </reportSet>
                 </reportSets>
-
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>dashboard-maven-plugin</artifactId>
-                <version>1.0.0-beta-1</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
