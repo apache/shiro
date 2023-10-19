@@ -31,7 +31,7 @@ import java.net.URI;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static jakarta.ws.rs.core.MediaType.TEXT_HTML_TYPE;
 
-public class WebContainerTest extends JakartaAbstractContainerIT {
+public class WebContainerIT extends JakartaAbstractContainerIT {
 
     @SuppressWarnings("checkstyle:MagicNumber")
     @Test
