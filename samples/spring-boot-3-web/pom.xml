@@ -36,7 +36,6 @@
     <properties>
         <module.name>samples.spring.boot3.web</module.name>
         <spring-boot3.version>3.1.2</spring-boot3.version>
-        <spring-boot.version>${spring-boot3.version}</spring-boot.version>
         <!--    below versions are not necessary in "real" applications -->
         <spring.version>6.0.11</spring.version>
     </properties>
@@ -93,7 +92,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
+                <version>${spring-boot3.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -112,7 +111,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
+                <version>${spring-boot3.version}</version>
                 <executions>
                     <execution>
                         <goals>
