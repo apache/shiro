@@ -30,7 +30,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.12.1-SNAPSHOT</version>
+    <version>1.13.0-SNAPSHOT</version>
 
     <name>Apache Shiro</name>
     <url>https://shiro.apache.org/</url>
@@ -69,7 +69,7 @@
         <shiro.previousVersion>1.11.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
-        <project.build.outputTimestamp>2023-07-11T11:48:03Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2023-10-25T19:21:25Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
         <nexus.deploy.skip>false</nexus.deploy.skip>
 
