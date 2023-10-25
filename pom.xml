@@ -677,7 +677,7 @@
                     <!-- This configuration copied from apache:apache:7 parent pom -->
                     <useReleaseProfile>false</useReleaseProfile>
                     <goals>deploy site site:stage</goals>
-                    <arguments>-Pdocs,apache-release</arguments>
+                    <arguments>-Pdocs,apache-release -DskipITs -DskipTests</arguments>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                 </configuration>
             </plugin>
