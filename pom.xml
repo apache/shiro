@@ -87,7 +87,7 @@
              modules' OSGi metadata: -->
         <aspectj.version>1.9.20.1</aspectj.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
-        <commons.cli.version>1.5.0</commons.cli.version>
+        <commons.cli.version>1.6.0</commons.cli.version>
         <commons.codec.version>1.14</commons.codec.version>
         <commons.collection.version>3.2.2</commons.collection.version>
         <commons.configuration2.version>2.9.0</commons.configuration2.version>
@@ -109,7 +109,7 @@
              modules' OSGi metadata: -->
         <quartz.version>2.3.2</quartz.version>
         <slf4j.version>2.0.9</slf4j.version>
-        <log4j.version>2.20.0</log4j.version>
+        <log4j.version>2.21.1</log4j.version>
         <spring.version>5.3.30</spring.version>
         <spring-boot.version>2.7.17</spring-boot.version>
         <guice.version>4.2.3</guice.version>
@@ -303,7 +303,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.3.2</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -538,7 +538,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                     <configuration>
                         <configLocation>${checkstyle.configLocation}</configLocation>
                         <suppressionsLocation>${checkstyle.supressionsLocation}</suppressionsLocation>
@@ -1522,7 +1522,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.1</version>
                 <configuration>
                     <aggregate>true</aggregate>
                 </configuration>
