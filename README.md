@@ -1,4 +1,4 @@
-[<img src="http://shiro.apache.org/assets/images/apache-shiro-logo.png" align="right" />](http://shiro.apache.org)
+[<img src="https://shiro.apache.org/images/apache-shiro-logo.png" align="right" />](http://shiro.apache.org)
 
 [![Maven Central](https://img.shields.io/maven-central/v/org.apache.shiro/shiro-core.svg)]()
 [![Build Status](https://ci-builds.apache.org/job/Shiro/job/Shiro-all/job/1.9.x/badge/icon)](https://ci-builds.apache.org/job/Shiro/job/Shiro-all/job/1.9.x/)
