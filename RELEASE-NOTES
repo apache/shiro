@@ -21,6 +21,75 @@ combined with Jira's auto-generated release notes during a release for the
 total set.
 
 ###########################################################
+# 1.12.0
+###########################################################
+
+Improvement
+    [SHIRO-816] - Update shiro-hazelcast to support Hazelcast 5.x
+
+Task
+    [SHIRO-849] - Add support for JCache
+
+###########################################################
+# 1.11.0
+###########################################################
+
+Bug
+    [SHIRO-899] - Jakarta 9+ fails with Shiro native sessions
+    [SHIRO-903] - Shiro must use ant pattern matching with Spring
+
+Improvement
+    [SHIRO-889] - Provide Jakarta jar modules
+
+###########################################################
+# 1.10.1
+###########################################################
+
+Bug
+    [SHIRO-892] - No Guice binding for newly introduced ShiroFilterConfiguration
+    [SHIRO-893] - NPE caused by lack of default ShiroFilterConfiguration
+
+Test
+    [SHIRO-895] - Work around Guice 4's Java 17 compatibliity for Java 17-based tests
+
+Dependency upgrade
+    [SHIRO-894] - EasyMock 5.0.1 for Java 17 compatibility
+    [SHIRO-896] - HSQLDB 2.7.1
+
+
+###########################################################
+# 1.10.0
+###########################################################
+
+Bug
+    [SHIRO-512] - Race condition in Shiro's web container session timeout handling
+    [SHIRO-887] - FormAuthenticationFilter trims passwords which start and/or end with one or more space character(s)
+
+Improvement
+    [SHIRO-884] - fix source jar Reproducible Builds issue
+    [SHIRO-885] - Use OWASP Java Encoder with OSGi manifest
+    [SHIRO-890] - Avoid another proxy creator when @EnableAspectJAutoProxy enabled
+    [SHIRO-891] - Allow for direct configuration of ShiroFilter through WebEnvironment
+
+Dependency upgrade
+    * [SHIRO-886] - Upgrade to commons configuration 2.8.0
+
+
+###########################################################
+# 1.9.1
+###########################################################
+
+Improvement
+    [SHIRO-871] - ActiveDirectoryRealm - append suffix only if missing from username
+    [SHIRO-872] - fix Reproducible Builds issues
+    [SHIRO-883] - Add support for case insensitive regex path matching
+
+Dependency upgrade
+    [SHIRO-878] - Update Spring Dependencies to 5.2.20
+    [SHIRO-882] - Upgrade to apache pom parent 26
+
+
+###########################################################
 # 1.9.0
 ###########################################################
 
