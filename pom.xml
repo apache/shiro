@@ -30,7 +30,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>1.13.0-SNAPSHOT</version>
+    <version>1.13.0</version>
 
     <name>Apache Shiro</name>
     <url>https://shiro.apache.org/</url>
@@ -44,7 +44,7 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/shiro.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/shiro.git</developerConnection>
         <url>https://github.com/apache/shiro/tree/${project.scm.tag}</url>
-        <tag>shiro-root-1.12.0</tag>
+        <tag>shiro-root-1.13.0</tag>
     </scm>
     <issueManagement>
         <system>Jira</system>
@@ -69,7 +69,7 @@
         <shiro.previousVersion>1.11.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
-        <project.build.outputTimestamp>2023-10-25T19:21:25Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2023-10-29T09:55:59Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
         <nexus.deploy.skip>false</nexus.deploy.skip>
 
