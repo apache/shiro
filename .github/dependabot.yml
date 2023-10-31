@@ -57,10 +57,10 @@ updates:
       - dependency-name: "org.eclipse.jetty:*"
         update-types: [ "version-update:semver-major" ]
 
-  # Dependencies for Maven - on 1.12.x
+  # Dependencies for Maven - on 1.13.x
   - package-ecosystem: 'maven'
     directory: '/'
-    target-branch: '1.12.x'
+    target-branch: '1.13.x'
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 50
@@ -102,10 +102,10 @@ updates:
       interval: 'daily'
     open-pull-requests-limit: 10
 
-  # Dependencies for GitHub Actions - on 1.12.x
+  # Dependencies for GitHub Actions - on 1.13.x
   - package-ecosystem: 'github-actions'
     directory: '/'
-    target-branch: '1.12.x'
+    target-branch: '1.13.x'
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 10
