@@ -66,8 +66,7 @@
     </distributionManagement>
 
     <properties>
-
-        <shiro.previousVersion>1.7.1</shiro.previousVersion>
+        <shiro.previousVersion>1.13.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2022-03-22T23:08:15Z</project.build.outputTimestamp>
@@ -77,6 +76,7 @@
         <!--suppress CheckTagEmptyBody -->
         <failsafe.argLine></failsafe.argLine>
         <nexus.deploy.skip>false</nexus.deploy.skip>
+        <nexus-staging-profile>nexus-staging</nexus-staging-profile>
         <jacocoAgent/>
         <!-- non-dependency-based properties: -->
         <shiro.osgi.importRange>[2, 3)</shiro.osgi.importRange>
@@ -783,23 +783,18 @@
                     <pushChanges>false</pushChanges>
                     <localCheckout>true</localCheckout>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <!-- This configuration copied from apache:apache:7 parent pom -->
-                    <useReleaseProfile>false</useReleaseProfile>
                     <preparationGoals>validate</preparationGoals>
+                    <preparationProfiles>skip-checkstyle</preparationProfiles>
                     <goals>deploy</goals>
-                    <arguments>-Pdocs,apache-release,skip-checkstyle</arguments>
+                    <releaseProfiles>docs,apache-release,${nexus-staging-profile}</releaseProfiles>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
-                <extensions>true</extensions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
                 <configuration>
-                    <nexusUrl>https://repository.apache.org</nexusUrl>
-                    <serverId>apache.releases.https</serverId>
-                    <skipNexusStagingDeployMojo>${nexus.deploy.skip}</skipNexusStagingDeployMojo>
+                    <deployAtEnd>true</deployAtEnd>
                 </configuration>
             </plugin>
             <plugin>
@@ -1755,6 +1750,24 @@
             </build>
         </profile>
         <profile>
+            <id>nexus-staging</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.13</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <nexusUrl>https://repository.apache.org</nexusUrl>
+                            <serverId>apache.releases.https</serverId>
+                            <skipNexusStagingDeployMojo>${nexus.deploy.skip}</skipNexusStagingDeployMojo>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <!--  NOTE: this plugin config will return false positives, usage will require
                   human interpretation (and should NOT be used to fail builds)
             -->
@@ -1855,6 +1868,9 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
         </repository>
     </repositories>
     <pluginRepositories>
@@ -1864,6 +1880,9 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
         </pluginRepository>
     </pluginRepositories>
 </project>
