@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-spring-boot</artifactId>
-        <version>1.13.0</version>
+        <version>1.13.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>shiro-spring-boot-web-starter</artifactId>
