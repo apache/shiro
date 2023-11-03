@@ -14,6 +14,8 @@
 package org.apache.shiro.cdi;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -82,28 +83,23 @@ class AnnotatedTypeWrapperTest {
     @SuppressWarnings("MagicNumber")
     void twoAdditionalAnnotations() {
         initializeStubs();
-        var wrapper = new AnnotatedTypeWrapper<>(annotatedType,
-                ShiroSecureAnnotated.class.getDeclaredAnnotations()[0],
-                StatelessAnnotated.class.getDeclaredAnnotations()[0]);
+        Annotation shiroSecureAnnotation = getAnnotation(ShiroSecureAnnotated.class, ShiroSecureAnnotation.class);
+        Annotation statelessAnnotation = getAnnotation(StatelessAnnotated.class, Stateless.class);
+        var wrapper = new AnnotatedTypeWrapper<>(annotatedType, shiroSecureAnnotation, statelessAnnotation);
         assertEquals(5, wrapper.getAnnotations().size());
-        assertTrue(wrapper.isAnnotationPresent(ShiroSecureAnnotated.class
-                .getDeclaredAnnotations()[0].annotationType()));
-        assertTrue(wrapper.isAnnotationPresent(StatelessAnnotated.class
-                .getDeclaredAnnotations()[0].annotationType()));
-        assertTrue(wrapper.isAnnotationPresent(Annotated.class
-                .getDeclaredAnnotations()[0].annotationType()));
-        assertTrue(wrapper.isAnnotationPresent(Annotated.class
-                .getDeclaredAnnotations()[1].annotationType()));
-        assertTrue(wrapper.isAnnotationPresent(Annotated.class
-                .getDeclaredAnnotations()[2].annotationType()));
+        assertTrue(wrapper.isAnnotationPresent(ShiroSecureAnnotation.class));
+        assertTrue(wrapper.isAnnotationPresent(Stateless.class));
+        assertTrue(wrapper.isAnnotationPresent(RequiresAuthentication.class));
+        assertTrue(wrapper.isAnnotationPresent(RequiresGuest.class));
+        assertTrue(wrapper.isAnnotationPresent(RequiresPermissions.class));
     }
 
     @Test
     void removeAnnotations() {
         initializeStubs();
-        var wrapper = new AnnotatedTypeWrapper<>(annotatedType, true,
-                Set.of(SessionScopedAnnotated.class.getDeclaredAnnotations()[0]),
-                Set.of(Annotated.class.getDeclaredAnnotations()[1]));
+        Set<Annotation> sessionScopeAnnoationsSet = Set.of(getAnnotation(SessionScopedAnnotated.class, SessionScoped.class));
+        Set<Annotation> requiresGuestAnnoationsSet = Set.of(getAnnotation(Annotated.class, RequiresGuest.class));
+        var wrapper = new AnnotatedTypeWrapper<>(annotatedType, true, sessionScopeAnnoationsSet, requiresGuestAnnoationsSet);
         assertEquals(3, wrapper.getAnnotations().size());
         assertFalse(wrapper.isAnnotationPresent(RequiresGuest.class));
         assertTrue(wrapper.isAnnotationPresent(SessionScoped.class));
@@ -130,15 +126,14 @@ class AnnotatedTypeWrapperTest {
         initializeStubs();
         when(annotatedType.getJavaClass()).thenReturn(Void.class);
         assertEquals(3, annotatedType.getAnnotations().size());
+        Annotation shiroSecureAnnoations = getAnnotation(ShiroSecureAnnotated.class, ShiroSecureAnnotation.class);
+        Annotation statelessAnnoations = getAnnotation(StatelessAnnotated.class, Stateless.class);
         var wrapper = new AnnotatedTypeWrapper<>(annotatedType, false,
-                Set.of(ShiroSecureAnnotated.class.getDeclaredAnnotations()[0],
-                        StatelessAnnotated.class.getDeclaredAnnotations()[0]),
+                Set.of(shiroSecureAnnoations, statelessAnnoations),
                 Set.of());
         assertEquals(2, wrapper.getAnnotations().size());
-        assertTrue(wrapper.isAnnotationPresent(ShiroSecureAnnotated.class
-                .getDeclaredAnnotations()[0].annotationType()));
-        assertTrue(wrapper.isAnnotationPresent(StatelessAnnotated.class
-                .getDeclaredAnnotations()[0].annotationType()));
+        assertTrue(wrapper.isAnnotationPresent(ShiroSecureAnnotation.class));
+        assertTrue(wrapper.isAnnotationPresent(Stateless.class));
         assertEquals(Void.class, wrapper.getJavaClass());
     }
 
@@ -153,5 +148,12 @@ class AnnotatedTypeWrapperTest {
     private void initializeStubs() {
         when(annotatedType.getAnnotations()).thenReturn(Stream.of(Annotated.class.getDeclaredAnnotations())
                 .collect(Collectors.toSet()));
+    }
+
+    private Annotation getAnnotation(Class<?> annotatedClass, Class<?> annotation) {
+        return Arrays.stream(annotatedClass.getDeclaredAnnotations())
+                .filter(a -> a.annotationType().equals(annotation))
+                .findFirst()
+                .orElse(null);
     }
 }
