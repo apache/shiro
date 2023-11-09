@@ -37,7 +37,7 @@
         <!-- override older compiler source / target flags set by Apache parent POM -->
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
-        <arquillian.version>1.7.1.Final</arquillian.version>
+        <arquillian.version>1.7.2.Final</arquillian.version>
         <arquillian.drone.version>2.5.6</arquillian.drone.version>
         <arquillian.graphene.version>2.5.4</arquillian.graphene.version>
         <failsafe.argLine>
