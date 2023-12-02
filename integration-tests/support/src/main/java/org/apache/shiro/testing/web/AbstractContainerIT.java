@@ -96,7 +96,7 @@ public abstract class AbstractContainerIT {
                 ctx.setContextPath(path);
 
                 // Useful for WebXmlConfiguration
-                ctx.setBaseResource(newResource(webapp));
+                ctx.setBaseResource(newResource(ctx, webapp));
 
                 ctx.setConfigurations(new Configuration[] {
                         new WebInfConfiguration(),
