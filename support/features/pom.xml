@@ -39,7 +39,7 @@
         <!-- Not a Shiro dependency - used for quartz bundle resolution only (see features.xml): -->
         <commons.collections.version>3.2.2</commons.collections.version>
         <!-- karaf plugin version -->
-        <karaf.version>4.4.3</karaf.version>
+        <karaf.version>4.4.4</karaf.version>
     </properties>
 
     <dependencies>
