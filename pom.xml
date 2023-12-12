@@ -440,7 +440,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>aspectj-maven-plugin</artifactId>
-                    <version>1.14.0</version>
+                    <version>1.15.0</version>
                     <configuration>
                         <source>${maven.compiler.release}</source>
                         <target>${maven.compiler.release}</target>
