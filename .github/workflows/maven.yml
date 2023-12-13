@@ -42,11 +42,11 @@ jobs:
           distribution: temurin
 
       - name: License Check
-        run: mvn apache-rat:check "-Drat.consoleOutput"
+        run: ./mvnw apache-rat:check "-Drat.consoleOutput"
 
       - name: Build with Maven
         run: >-
-          mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
           -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
 
   build-all:
@@ -88,13 +88,13 @@ jobs:
       - name: Build with Maven (Linux)
         if: matrix.os == 'ubuntu-latest' && matrix.jdk <= 17
         run: >-
-          mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
           -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
 
       - name: Build with Maven (non-Linux or JDK > 17)
         if: matrix.os != 'ubuntu-latest' || matrix.jdk > 17
         run: >-
-          mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
           -Pskip_jakarta_ee_tests
 
       - name: Archive test run logs
