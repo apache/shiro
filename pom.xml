@@ -998,24 +998,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Shiro samples: -->
-            <dependency>
-                <groupId>org.apache.shiro.samples</groupId>
-                <artifactId>samples-spring-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-spring-boot-web-starter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-
             <!-- Intra project test dependencies: -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
@@ -1401,33 +1383,6 @@
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-
-            <!-- Spring Boot-->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-autoconfigure</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-configuration-processor</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-test</artifactId>
-                <version>${spring-boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${spring-boot.version}</version>
             </dependency>
 
             <!-- Guice -->

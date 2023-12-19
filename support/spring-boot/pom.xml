@@ -38,6 +38,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!--
             The spring test API uses mockito, as much as I prefer mockito over easymock, one mock framework is
             probably enough, so putting in this pom makes that more obvious.
