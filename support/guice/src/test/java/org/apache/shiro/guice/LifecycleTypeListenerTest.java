@@ -33,6 +33,7 @@ import static org.easymock.EasyMock.verify;
 
 public class LifecycleTypeListenerTest {
     @Test
+    @SuppressWarnings({"unchecked", "rawtypes"})
     void testHearInitializable() throws Exception {
         TypeEncounter encounter = createMock(TypeEncounter.class);
 
@@ -48,7 +49,9 @@ public class LifecycleTypeListenerTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testHearDestroyable() throws Exception {
+        @SuppressWarnings("rawtypes")
         TypeEncounter encounter = createMock(TypeEncounter.class);
 
         encounter.register(anyObject(DestroyableInjectionListener.class));

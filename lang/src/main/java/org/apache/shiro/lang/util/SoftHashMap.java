@@ -236,6 +236,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
         return map.keySet();
     }
 
+    @SuppressWarnings("unchecked")
     public Collection<V> values() {
         processQueue();
         Collection<K> keys = map.keySet();
@@ -289,6 +290,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
         return map.size();
     }
 
+    @SuppressWarnings("unchecked")
     public Set<Map.Entry<K, V>> entrySet() {
         // throw out garbage collected values first
         processQueue();

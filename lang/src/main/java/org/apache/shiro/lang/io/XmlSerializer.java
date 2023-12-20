@@ -36,6 +36,7 @@ import java.io.ByteArrayOutputStream;
  * @since 0.9
  * @deprecated This class should not be used directly because of unsecure XMLEncoder/XMLDecoder usage.
  */
+@Deprecated(forRemoval = true)
 public class XmlSerializer implements Serializer {
 
     /**

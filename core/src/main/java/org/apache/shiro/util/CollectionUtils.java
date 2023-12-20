@@ -38,6 +38,7 @@ public final class CollectionUtils {
     private CollectionUtils() {
     }
 
+    @SafeVarargs
     public static <E> Set<E> asSet(E... elements) {
         if (elements == null || elements.length == 0) {
             return Collections.emptySet();
@@ -116,6 +117,7 @@ public final class CollectionUtils {
         return principals == null || principals.isEmpty();
     }
 
+    @SafeVarargs
     public static <E> List<E> asList(E... elements) {
         if (elements == null || elements.length == 0) {
             return Collections.emptyList();

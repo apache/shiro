@@ -31,6 +31,10 @@
     <name>Apache Shiro :: ITs :: Guice 4</name>
     <packaging>war</packaging>
 
+    <properties>
+        <groups>none()</groups>
+    </properties>
+
     <build>
         <plugins>
             <plugin>

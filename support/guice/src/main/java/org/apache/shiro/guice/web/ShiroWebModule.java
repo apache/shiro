@@ -129,6 +129,7 @@ public abstract class ShiroWebModule extends ShiroModule {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected final void configureShiro() {
         bindBeanType(TypeLiteral.get(ServletContext.class), Key.get(ServletContext.class, Names.named(NAME)));
         bind(Key.get(ServletContext.class, Names.named(NAME))).toInstance(this.servletContext);
@@ -148,6 +149,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         bind(FilterChainResolver.class).toProvider(new FilterChainResolverProvider(setupFilterChainConfigs()));
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Key<? extends Filter>[]> setupFilterChainConfigs() {
 
         // loop through and build a map of Filter Key -> Map<Path, Config>
@@ -271,6 +273,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         bind.to(WebGuiceEnvironment.class).asEagerSingleton();
     }
 
+    @SuppressWarnings("unchecked")
     protected final void addFilterChain(String pattern, Key<? extends Filter> key) {
         // check for legacy API
         if (key instanceof FilterConfigKey) {
@@ -290,6 +293,7 @@ public abstract class ShiroWebModule extends ShiroModule {
      *                      and config to be used when processing resources on <code>pattern</code>.
      * @since 1.4
      */
+    @SafeVarargs
     protected final void addFilterChain(String pattern, FilterConfig<? extends Filter>... filterConfigs) {
         filterChains.put(pattern, filterConfigs);
     }
@@ -383,9 +387,9 @@ public abstract class ShiroWebModule extends ShiroModule {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void addLegacyFilterChain(String pattern, FilterConfigKey filterConfigKey) {
-
-        FilterConfig<Filter> filterConfig = new FilterConfig<Filter>(filterConfigKey.getKey(), filterConfigKey.getConfigValue());
+        FilterConfig<Filter> filterConfig = new FilterConfig<>(filterConfigKey.getKey(), filterConfigKey.getConfigValue());
         addFilterChain(pattern, filterConfig);
     }
 
@@ -399,6 +403,7 @@ public abstract class ShiroWebModule extends ShiroModule {
      * @param keys
      */
     @Deprecated
+    @SuppressWarnings("unchecked")
     protected final void addFilterChain(String pattern, Key<? extends Filter>... keys) {
 
         // We need to extract the keys and FilterConfigKey and convert to the new format.

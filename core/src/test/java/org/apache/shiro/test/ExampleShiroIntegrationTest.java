@@ -18,10 +18,8 @@
  */
 package org.apache.shiro.test;
 
-import org.apache.shiro.ini.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.env.BasicIniEnvironment;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.lang.util.Factory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -38,8 +36,8 @@ public class ExampleShiroIntegrationTest extends AbstractShiroTest {
         //0.  Build and set the SecurityManager used to build Subject instances used in your tests
         //    This typically only needs to be done once per class if your shiro.ini doesn't change,
         //    otherwise, you'll need to do this logic in each test that is different
-        Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:test.shiro.ini");
-        setSecurityManager(factory.getInstance());
+        var basicIniEnvironment = new BasicIniEnvironment("classpath:test.shiro.ini");
+        setSecurityManager(basicIniEnvironment.getSecurityManager());
     }
 
     @Test

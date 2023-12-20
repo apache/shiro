@@ -42,7 +42,7 @@ public class MemoryConstrainedCacheManager extends AbstractCacheManager {
      * @return a new {@link MapCache MapCache} instance backed by a {@link SoftHashMap}.
      */
     @Override
-    protected Cache createCache(String name) {
-        return new MapCache<Object, Object>(name, new SoftHashMap<Object, Object>());
+    protected <K, V> Cache<K, V> createCache(String name) {
+        return new MapCache<>(name, new SoftHashMap<>());
     }
 }

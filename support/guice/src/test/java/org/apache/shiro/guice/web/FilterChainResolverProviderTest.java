@@ -51,8 +51,9 @@ public class FilterChainResolverProviderTest {
     private FilterChainResolverProvider underTest;
 
     @BeforeEach
+    @SuppressWarnings("unchecked")
     public void setup() {
-        chains = new LinkedHashMap<String, Key<? extends Filter>[]>();
+        chains = new LinkedHashMap<>();
 
         key1a = Key.get(Filter.class, Names.named("key1a"));
         key1b = Key.get(Filter.class, Names.named("key1b"));
@@ -66,6 +67,7 @@ public class FilterChainResolverProviderTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void testGetDependencies() throws Exception {
 
         Set<Dependency<?>> dependencySet = underTest.getDependencies();

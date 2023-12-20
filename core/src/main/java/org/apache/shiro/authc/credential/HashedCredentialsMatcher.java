@@ -21,7 +21,6 @@ package org.apache.shiro.authc.credential;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SaltedAuthenticationInfo;
-import org.apache.shiro.crypto.hash.AbstractHash;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.lang.codec.Base64;
@@ -294,11 +293,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      * @param hashIterations the number of times to hash a submitted {@code AuthenticationToken}'s credentials.
      */
     public void setHashIterations(int hashIterations) {
-        if (hashIterations < 1) {
-            this.hashIterations = 1;
-        } else {
-            this.hashIterations = hashIterations;
-        }
+        this.hashIterations = Math.max(hashIterations, 1);
     }
 
     /**
@@ -362,7 +357,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
                 storedBytes = Base64.decode(storedBytes);
             }
         }
-        AbstractHash hash = newHashInstance();
+        SimpleHash hash = newHashInstance();
         hash.setBytes(storedBytes);
         return hash;
     }
@@ -460,7 +455,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      *
      * @return a new, <em>uninitialized</em> instance, without its byte array set.
      */
-    protected AbstractHash newHashInstance() {
+    protected SimpleHash newHashInstance() {
         String hashAlgorithmName = assertHashAlgorithmName();
         return new SimpleHash(hashAlgorithmName);
     }

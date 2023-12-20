@@ -30,11 +30,13 @@ public enum ProvidedHashFormat {
     /**
      * Value representing the {@link HexFormat} implementation.
      */
+    @Deprecated
     HEX(HexFormat.class),
 
     /**
      * Value representing the {@link Base64Format} implementation.
      */
+    @Deprecated
     BASE64(Base64Format.class),
 
     /**

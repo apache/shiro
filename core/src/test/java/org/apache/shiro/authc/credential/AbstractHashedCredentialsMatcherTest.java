@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.crypto.hash.AbstractHash;
+import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.lang.util.ClassUtils;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +36,7 @@ public abstract class AbstractHashedCredentialsMatcherTest {
 
     public abstract Class<? extends HashedCredentialsMatcher> getMatcherClass();
 
-    public abstract AbstractHash hash(Object credentials);
+    public abstract SimpleHash hash(Object credentials);
 
     @Test
     void testBasic() {

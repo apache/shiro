@@ -20,7 +20,6 @@ package org.apache.shiro.samples.sprhib.model;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -28,6 +27,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -43,7 +43,9 @@ import java.util.Set;
  * does in fact do this for your reference (see User.hbm.xml - the 'roles' declaration).</p>
  */
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {
+        @Index(name = "idx_users_username", columnList = "username"),
+        @Index(name = "idx_users_email", columnList = "email")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class User {
 
@@ -71,7 +73,6 @@ public class User {
      */
     @Basic(optional = false)
     @Column(length = 100)
-    @Index(name = "idx_users_username")
     public String getUsername() {
         return username;
     }
@@ -81,7 +82,6 @@ public class User {
     }
 
     @Basic(optional = false)
-    @Index(name = "idx_users_email")
     public String getEmail() {
         return email;
     }

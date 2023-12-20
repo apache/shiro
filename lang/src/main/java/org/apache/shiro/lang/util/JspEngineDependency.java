@@ -16,23 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.authc.credential;
+package org.apache.shiro.lang.util;
 
-import org.apache.shiro.crypto.hash.Sha384Hash;
-import org.apache.shiro.crypto.hash.SimpleHash;
-
+import javax.servlet.jsp.JspEngineInfo;
 
 /**
- * @since Jun 10, 2008 5:02:27 PM
+ * This only exists so bundle plugin doesn't complain about redundant dependencies
  */
-@Deprecated
-public class Sha384CredentialsMatcherTest extends AbstractHashedCredentialsMatcherTest {
-
-    public Class<? extends HashedCredentialsMatcher> getMatcherClass() {
-        return Sha384CredentialsMatcher.class;
-    }
-
-    public SimpleHash hash(Object credentials) {
-        return new Sha384Hash(credentials);
+class JspEngineDependency extends JspEngineInfo {
+    @Override
+    public String getSpecificationVersion() {
+        return null;
     }
 }

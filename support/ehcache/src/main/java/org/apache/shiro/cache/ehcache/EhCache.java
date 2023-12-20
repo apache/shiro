@@ -69,6 +69,7 @@ public class EhCache<K, V> implements Cache<K, V> {
      * @param key the key of the element to return.
      * @return The value placed into the cache with an earlier put, or null if not found or expired
      */
+    @SuppressWarnings("unchecked")
     public V get(K key) throws CacheException {
         try {
             if (LOGGER.isTraceEnabled()) {
@@ -84,7 +85,6 @@ public class EhCache<K, V> implements Cache<K, V> {
                     }
                     return null;
                 } else {
-                    //noinspection unchecked
                     return (V) element.getObjectValue();
                 }
             }

@@ -36,6 +36,7 @@ public class DefaultFiltersTest {
         EnumSet<DefaultFilter> defaultFilters = EnumSet.allOf(DefaultFilter.class);
         for (Field field : ShiroWebModule.class.getFields()) {
             if (Modifier.isStatic(field.getModifiers()) && Key.class.isAssignableFrom(field.getType())) {
+                @SuppressWarnings("unchecked")
                 Class<? extends Filter> filterType = ((Key) field.get(null)).getTypeLiteral().getRawType();
                 boolean found = false;
                 for (DefaultFilter filter : defaultFilters) {

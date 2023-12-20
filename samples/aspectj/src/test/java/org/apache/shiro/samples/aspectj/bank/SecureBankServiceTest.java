@@ -21,9 +21,8 @@ package org.apache.shiro.samples.aspectj.bank;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.ini.IniSecurityManagerFactory;
-import org.apache.shiro.lang.util.Factory;
-import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.authz.annotation.RequiresGuest;
+import org.apache.shiro.env.BasicIniEnvironment;
 import org.apache.shiro.subject.Subject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -47,9 +46,7 @@ public class SecureBankServiceTest {
 
     @BeforeAll
     public static void setUpClass() throws Exception {
-        Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiroBankServiceTest.ini");
-        SecurityManager securityManager = factory.getInstance();
-        SecurityUtils.setSecurityManager(securityManager);
+        SecurityUtils.setSecurityManager(new BasicIniEnvironment("classpath:shiroBankServiceTest.ini").getSecurityManager());
 
         service = new SecureBankService();
         service.start();
@@ -250,5 +247,10 @@ public class SecureBankServiceTest {
         Assertions.assertEquals(eIsActive, service.isAccountActive(actualAccountId));
         Assertions.assertEquals(eBalance, (int) service.getBalanceOf(actualAccountId));
         Assertions.assertEquals(eTxLogCount, service.getTxHistoryFor(actualAccountId).length);
+    }
+
+    @RequiresGuest
+    void dontComplainAboutMissingAspects() {
+
     }
 }

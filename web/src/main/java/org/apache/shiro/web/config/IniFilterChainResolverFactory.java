@@ -43,6 +43,7 @@ import java.util.Map;
  *
  * @since 1.0
  */
+@SuppressWarnings("deprecation")
 public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChainResolver> {
 
     /**

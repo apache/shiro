@@ -20,7 +20,6 @@ package org.apache.shiro.samples.sprhib.model;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -28,6 +27,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import java.util.Set;
@@ -36,7 +36,9 @@ import java.util.Set;
  * Model object that represents a security role.
  */
 @Entity
-@Table(name = "roles")
+@Table(name = "roles", indexes = {
+        @Index(name = "idx_roles_name", columnList = "name")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Role {
 
@@ -68,7 +70,6 @@ public class Role {
 
     @Basic(optional = false)
     @Column(length = 100)
-    @Index(name = "idx_roles_name")
     public String getName() {
         return name;
     }

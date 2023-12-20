@@ -21,7 +21,7 @@ package org.apache.shiro.subject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.ini.IniSecurityManagerFactory;
+import org.apache.shiro.env.BasicIniEnvironment;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import java.io.Serializable;
 import java.util.concurrent.Callable;
 
+import static org.apache.shiro.env.BasicIniEnvironment.INI_REALM_NAME;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -149,8 +150,7 @@ public class DelegatingSubjectTest {
         users.put("user1", "user1,role1");
         users.put("user2", "user2,role2");
         users.put("user3", "user3,role3");
-        IniSecurityManagerFactory factory = new IniSecurityManagerFactory(ini);
-        SecurityManager sm = factory.getInstance();
+        SecurityManager sm = new BasicIniEnvironment(ini).getSecurityManager();
 
         //login as user1
         Subject subject = new Subject.Builder(sm).buildSubject();
@@ -165,7 +165,7 @@ public class DelegatingSubjectTest {
         assertNull(subject.getPreviousPrincipals());
 
         //runAs user2:
-        subject.runAs(new SimplePrincipalCollection("user2", IniSecurityManagerFactory.INI_REALM_NAME));
+        subject.runAs(new SimplePrincipalCollection("user2", INI_REALM_NAME));
         assertTrue(subject.isRunAs());
         assertEquals("user2", subject.getPrincipal());
         assertTrue(subject.hasRole("role2"));
@@ -178,7 +178,7 @@ public class DelegatingSubjectTest {
         assertTrue(previous.getPrimaryPrincipal().equals("user1"));
 
         //test the stack functionality:  While as user2, run as user3:
-        subject.runAs(new SimplePrincipalCollection("user3", IniSecurityManagerFactory.INI_REALM_NAME));
+        subject.runAs(new SimplePrincipalCollection("user3", INI_REALM_NAME));
         assertTrue(subject.isRunAs());
         assertEquals("user3", subject.getPrincipal());
         assertTrue(subject.hasRole("role3"));

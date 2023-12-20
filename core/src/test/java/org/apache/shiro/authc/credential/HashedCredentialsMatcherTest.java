@@ -95,6 +95,7 @@ public class HashedCredentialsMatcherTest {
      * <a href="https://issues.apache.org/jira/browse/SHIRO-186">SHIRO-186</a> edits.
      */
     @Test
+    @SuppressWarnings("deprecation")
     void testBackwardsCompatibleSaltedAuthenticationInfo() {
         HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha512Hash.ALGORITHM_NAME);
         //enable this for Shiro 1.0 backwards compatibility:

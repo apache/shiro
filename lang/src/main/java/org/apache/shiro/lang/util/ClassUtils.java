@@ -148,9 +148,9 @@ public final class ClassUtils {
      * @return the located class
      * @throws UnknownClassException if the class cannot be found.
      */
-    public static Class forName(String fqcn) throws UnknownClassException {
-
-        Class clazz = THREAD_CL_ACCESSOR.loadClass(fqcn);
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> forName(String fqcn) throws UnknownClassException {
+        Class<?> clazz = THREAD_CL_ACCESSOR.loadClass(fqcn);
 
         if (clazz == null) {
             if (LOGGER.isTraceEnabled()) {
@@ -179,7 +179,7 @@ public final class ClassUtils {
             throw new UnknownClassException(msg);
         }
 
-        return clazz;
+        return (Class<T>) clazz;
     }
 
     public static boolean isAvailable(String fullyQualifiedClassName) {
@@ -199,37 +199,36 @@ public final class ClassUtils {
         return newInstance(forName(fqcn), args);
     }
 
-    public static Object newInstance(Class clazz) {
+    public static Object newInstance(Class<?> clazz) {
         if (clazz == null) {
             String msg = "Class method parameter cannot be null.";
             throw new IllegalArgumentException(msg);
         }
         try {
-            return clazz.newInstance();
+            return clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             throw new InstantiationException("Unable to instantiate class [" + clazz.getName() + "]", e);
         }
     }
 
-    public static Object newInstance(Class clazz, Object... args) {
-        Class[] argTypes = new Class[args.length];
+    public static Object newInstance(Class<?> clazz, Object... args) {
+        var argTypes = new Class<?>[args.length];
         for (int i = 0; i < args.length; i++) {
             argTypes[i] = args[i].getClass();
         }
-        Constructor ctor = getConstructor(clazz, argTypes);
+        Constructor<?> ctor = getConstructor(clazz, argTypes);
         return instantiate(ctor, args);
     }
 
-    public static Constructor getConstructor(Class clazz, Class... argTypes) {
+    public static Constructor<?> getConstructor(Class<?> clazz, Class<?>... argTypes) {
         try {
             return clazz.getConstructor(argTypes);
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
-
     }
 
-    public static Object instantiate(Constructor ctor, Object... args) {
+    public static Object instantiate(Constructor<?> ctor, Object... args) {
         try {
             return ctor.newInstance(args);
         } catch (Exception e) {
@@ -245,7 +244,7 @@ public final class ClassUtils {
      * @since 1.3
      */
     public static List<Method> getAnnotatedMethods(final Class<?> type, final Class<? extends Annotation> annotation) {
-        final List<Method> methods = new ArrayList<Method>();
+        final List<Method> methods = new ArrayList<>();
         Class<?> clazz = type;
         while (!Object.class.equals(clazz)) {
             Method[] currentClassMethods = clazz.getDeclaredMethods();
@@ -264,7 +263,7 @@ public final class ClassUtils {
      * @since 1.0
      */
     private interface ClassLoaderAccessor {
-        Class loadClass(String fqcn);
+        Class<?> loadClass(String fqcn);
 
         InputStream getResourceStream(String name);
     }
@@ -274,8 +273,8 @@ public final class ClassUtils {
      */
     private abstract static class ExceptionIgnoringAccessor implements ClassLoaderAccessor {
 
-        public Class loadClass(String fqcn) {
-            Class clazz = null;
+        public Class<?> loadClass(String fqcn) {
+            Class<?> clazz = null;
             ClassLoader cl = getClassLoader();
             if (cl != null) {
                 try {

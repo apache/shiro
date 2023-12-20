@@ -29,6 +29,7 @@ import org.apache.shiro.crypto.hash.Sha256Hash;
  * @deprecated since 1.1 - use the HashedCredentialsMatcher directly and set its
  * {@link HashedCredentialsMatcher#setHashAlgorithmName(String) hashAlgorithmName} property.
  */
+@Deprecated
 public class Sha256CredentialsMatcher extends HashedCredentialsMatcher {
 
     public Sha256CredentialsMatcher() {

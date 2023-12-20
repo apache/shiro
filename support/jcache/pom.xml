@@ -74,7 +74,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.jcache</Bundle-SymbolicName>
-                        <Export-Package>org.apache.shiro.jcache*;version=${project.version}</Export-Package>
+                        <Export-Package>org.apache.shiro.cache.jcache*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
                             javax.cache*;version="${jcache.osgi.importRange}",

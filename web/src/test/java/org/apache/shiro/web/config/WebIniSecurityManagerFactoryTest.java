@@ -47,9 +47,11 @@ public class WebIniSecurityManagerFactoryTest {
         Ini ini = new Ini();
         //just a normal configuration line in the MAIN section for any of the default filters should work
         //out of the box.  So, create the main section and just config one of them:
+        @SuppressWarnings("deprecation")
         Ini.Section section = ini.addSection(IniSecurityManagerFactory.MAIN_SECTION_NAME);
         section.put("authc.loginUrl", "/login.jsp");
 
+        @SuppressWarnings("deprecation")
         WebIniSecurityManagerFactory factory = new WebIniSecurityManagerFactory(ini);
         org.apache.shiro.mgt.SecurityManager sm = factory.getInstance();
         assertNotNull(sm);

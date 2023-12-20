@@ -25,6 +25,7 @@ package org.apache.shiro.realm.ldap;
  * @since 1.1
  * @deprecated Renamed to {@link DefaultLdapRealm}, this class will be removed prior to 2.0
  */
+@Deprecated
 public class JndiLdapRealm extends DefaultLdapRealm {
 
 }

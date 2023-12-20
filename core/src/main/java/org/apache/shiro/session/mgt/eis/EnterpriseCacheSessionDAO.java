@@ -54,8 +54,8 @@ public class EnterpriseCacheSessionDAO extends CachingSessionDAO {
     public EnterpriseCacheSessionDAO() {
         setCacheManager(new AbstractCacheManager() {
             @Override
-            protected Cache<Serializable, Session> createCache(String name) throws CacheException {
-                return new MapCache<Serializable, Session>(name, new ConcurrentHashMap<Serializable, Session>());
+            protected <Serializable, Session> Cache<Serializable, Session> createCache(String name) throws CacheException {
+                return new MapCache<>(name, new ConcurrentHashMap<>());
             }
         });
     }

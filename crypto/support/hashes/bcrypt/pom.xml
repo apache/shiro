@@ -43,6 +43,17 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-crypto-hash</artifactId>
         </dependency>
+        <dependency>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+            <version>1.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>

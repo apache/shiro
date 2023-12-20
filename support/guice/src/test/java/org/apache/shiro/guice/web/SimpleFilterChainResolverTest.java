@@ -49,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class SimpleFilterChainResolverTest {
 
     @Test
+    @SuppressWarnings("unchecked")
     void testGetChain() throws Exception {
         // test that it uses the pattern matcher - check
         // test that the FIRST chain found is the one that gets returned - check

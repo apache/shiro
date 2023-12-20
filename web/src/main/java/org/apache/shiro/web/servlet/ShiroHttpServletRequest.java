@@ -222,6 +222,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         }
     }
 
+    @Deprecated
     public boolean isRequestedSessionIdFromUrl() {
         return isRequestedSessionIdFromURL();
     }

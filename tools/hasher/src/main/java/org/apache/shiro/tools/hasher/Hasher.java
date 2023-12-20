@@ -266,7 +266,7 @@ public final class Hasher {
                 if (password) {
                     formatString = Shiro2CryptFormat.class.getName();
                 } else {
-                    formatString = HexFormat.class.getName();
+                    formatString = getHexFormatString();
                 }
             }
 
@@ -295,6 +295,11 @@ public final class Hasher {
                 }
             }
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static String getHexFormatString() {
+        return HexFormat.class.getName();
     }
 
     private static String createMutexMessage(Option... options) {

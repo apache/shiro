@@ -16,23 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.authc.credential;
+package org.apache.shiro.util;
 
-import org.apache.shiro.crypto.hash.Sha384Hash;
-import org.apache.shiro.crypto.hash.SimpleHash;
-
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.configuration2.BaseConfiguration;
 
 /**
- * @since Jun 10, 2008 5:02:27 PM
+ * This class only exists to satisfy the OSGi plugin
  */
-@Deprecated
-public class Sha384CredentialsMatcherTest extends AbstractHashedCredentialsMatcherTest {
-
-    public Class<? extends HashedCredentialsMatcher> getMatcherClass() {
-        return Sha384CredentialsMatcher.class;
-    }
-
-    public SimpleHash hash(Object credentials) {
-        return new Sha384Hash(credentials);
-    }
+class OsgiDependencies {
+    BeanUtils bu;
+    BaseConfiguration bc;
 }

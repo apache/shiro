@@ -16,23 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.shiro.authc.credential;
+package org.apache.shiro.crypto.support.hashes.argon2;
 
-import org.apache.shiro.crypto.hash.Sha384Hash;
-import org.apache.shiro.crypto.hash.SimpleHash;
-
+import com.google.inject.Inject;
+import org.aopalliance.aop.Advice;
 
 /**
- * @since Jun 10, 2008 5:02:27 PM
+ * only present to satisfy OSGi plugin
  */
-@Deprecated
-public class Sha384CredentialsMatcherTest extends AbstractHashedCredentialsMatcherTest {
-
-    public Class<? extends HashedCredentialsMatcher> getMatcherClass() {
-        return Sha384CredentialsMatcher.class;
-    }
-
-    public SimpleHash hash(Object credentials) {
-        return new Sha384Hash(credentials);
-    }
+class OsgiDependencies {
+    Advice advice;
+    Inject inject;
 }

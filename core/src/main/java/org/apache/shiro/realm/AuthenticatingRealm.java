@@ -223,7 +223,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @return the authenticationToken class supported by this realm.
      * @see #setAuthenticationTokenClass
      */
-    public Class getAuthenticationTokenClass() {
+    public Class<? extends AuthenticationToken> getAuthenticationTokenClass() {
         return authenticationTokenClass;
     }
 

@@ -33,6 +33,7 @@ public class JndiObjectFactory<T> extends JndiLocator implements Factory<T> {
     private String resourceName;
     private Class<? extends T> requiredType;
 
+    @SuppressWarnings("unchecked")
     public T getInstance() {
         try {
             if (requiredType != null) {

@@ -21,6 +21,7 @@ package org.apache.shiro.crypto.hash;
 import org.apache.shiro.crypto.UnknownAlgorithmException;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.CodecException;
+import org.apache.shiro.lang.codec.CodecSupport;
 import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
@@ -28,6 +29,7 @@ import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -40,12 +42,12 @@ import static java.util.Objects.requireNonNull;
  * (e.g. {@link Sha512Hash}, etc.), but it does allow for any algorithm name to be specified in case the other subclass
  * implementations do not represent an algorithm that you may want to use.
  * <p/>
- * As of Shiro 1.1, this class effectively replaces the (now-deprecated) {@link AbstractHash} class.  It subclasses
+ * As of Shiro 1.1, this class effectively replaces the (now-deprecated) {@code AbstractHash} class.  It subclasses
  * {@code AbstractHash} only to retain backwards-compatibility.
  *
  * @since 1.1
  */
-public class SimpleHash extends AbstractHash {
+public class SimpleHash extends CodecSupport implements Hash, Serializable {
 
     private static final int DEFAULT_ITERATIONS = 1;
     private static final long serialVersionUID = -6689895264902387303L;
@@ -122,7 +124,6 @@ public class SimpleHash extends AbstractHash {
      * @throws UnknownAlgorithmException                  if the {@code algorithmName} is not available.
      */
     public SimpleHash(String algorithmName, Object source) throws CodecException, UnknownAlgorithmException {
-        //noinspection NullableProblems
         this(algorithmName, source, SimpleByteSource.empty(), DEFAULT_ITERATIONS);
     }
 
@@ -302,7 +303,6 @@ public class SimpleHash extends AbstractHash {
      *
      * @param alreadyHashedBytes the raw already-hashed bytes to store in this instance.
      */
-    @Override
     public void setBytes(byte[] alreadyHashedBytes) {
         this.bytes = alreadyHashedBytes;
         this.hexEncoded = null;
@@ -342,7 +342,6 @@ public class SimpleHash extends AbstractHash {
      * @return the MessageDigest object for the specified {@code algorithm}.
      * @throws UnknownAlgorithmException if the specified algorithm name is not available.
      */
-    @Override
     protected MessageDigest getDigest(String algorithmName) throws UnknownAlgorithmException {
         try {
             return MessageDigest.getInstance(algorithmName);
@@ -359,9 +358,8 @@ public class SimpleHash extends AbstractHash {
      * @return the hashed bytes.
      * @throws UnknownAlgorithmException if the configured {@link #getAlgorithmName() algorithmName} is not available.
      */
-    @Override
     protected byte[] hash(byte[] bytes) throws UnknownAlgorithmException {
-        return hash(bytes, null, DEFAULT_ITERATIONS);
+        return hash(bytes, new byte[0], DEFAULT_ITERATIONS);
     }
 
     /**
@@ -372,7 +370,6 @@ public class SimpleHash extends AbstractHash {
      * @return the hashed bytes
      * @throws UnknownAlgorithmException if the configured {@link #getAlgorithmName() algorithmName} is not available.
      */
-    @Override
     protected byte[] hash(byte[] bytes, byte[] salt) throws UnknownAlgorithmException {
         return hash(bytes, salt, DEFAULT_ITERATIONS);
     }
@@ -386,7 +383,6 @@ public class SimpleHash extends AbstractHash {
      * @return the hashed bytes.
      * @throws UnknownAlgorithmException if the {@link #getAlgorithmName() algorithmName} is not available.
      */
-    @Override
     protected byte[] hash(byte[] bytes, byte[] salt, int hashIterations) throws UnknownAlgorithmException {
         MessageDigest digest = getDigest(getAlgorithmName());
         if (salt.length != 0) {

@@ -49,6 +49,7 @@ public class AbstractInjectionProviderTest {
     static Key keyF1 = Key.get(Object.class, Names.named("field1"));
 
     @Test
+    @SuppressWarnings("unchecked")
     void testGet() throws Exception {
         Injector mockInjector = createMock(Injector.class);
 
