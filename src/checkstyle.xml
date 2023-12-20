@@ -47,7 +47,7 @@
 
     <!-- Activation here is needed for IntelliJ CheckstyleIDEA plugin -->
     <module name="SuppressionFilter">
-        <property name="file" value="src/suppressions.xml"/>
+        <property name="file" value="${root.dir}/src/suppressions.xml"/>
     </module>
 
     <!-- Enable suppression of file contents using //CHECKSTYLE:[ON|OFF] comments -->
