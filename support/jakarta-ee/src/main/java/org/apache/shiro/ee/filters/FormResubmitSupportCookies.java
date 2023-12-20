@@ -70,8 +70,9 @@ public class FormResubmitSupportCookies {
         } else {
             try {
                 return (int) Duration.ofMinutes(request.getServletContext().getSessionTimeout()).toSeconds();
-            } catch (Throwable e) {
-                // workaround for https://github.com/eclipse/jetty.project/issues/8556
+            } catch (NoSuchMethodError noSuchMethodError) {
+                // Older servers (e.g. Jetty 9.x) do not support getSessionTimeout() at all
+                log.debug("ServletContext.getSessionTimeout() not supported", noSuchMethodError);
                 return (int) Duration.ofHours(1).toSeconds();
             }
         }
