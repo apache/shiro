@@ -32,6 +32,7 @@ import static org.easymock.EasyMock.verify;
 
 public class PathMatchingFilterProviderTest {
     @Test
+    @SuppressWarnings("unchecked")
     void testPostProcess() {
         PathMatchingFilter filter = createMock(PathMatchingFilter.class);
 

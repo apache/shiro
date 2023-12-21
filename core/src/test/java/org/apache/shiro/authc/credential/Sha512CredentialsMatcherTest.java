@@ -18,20 +18,21 @@
  */
 package org.apache.shiro.authc.credential;
 
-import org.apache.shiro.crypto.hash.AbstractHash;
 import org.apache.shiro.crypto.hash.Sha512Hash;
+import org.apache.shiro.crypto.hash.SimpleHash;
 
 
 /**
  * @since Jun 10, 2008 5:02:58 PM
  */
+@Deprecated
 public class Sha512CredentialsMatcherTest extends AbstractHashedCredentialsMatcherTest {
 
     public Class<? extends HashedCredentialsMatcher> getMatcherClass() {
         return Sha512CredentialsMatcher.class;
     }
 
-    public AbstractHash hash(Object credentials) {
+    public SimpleHash hash(Object credentials) {
         return new Sha512Hash(credentials);
     }
 }

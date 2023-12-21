@@ -28,7 +28,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,12 +49,12 @@ public class ShiroHttpSession implements HttpSession {
      */
     public static final String DEFAULT_SESSION_ID_NAME = "JSESSIONID";
 
-    private static final Enumeration EMPTY_ENUMERATION = new Enumeration() {
+    private static final Enumeration<String> EMPTY_ENUMERATION = new Enumeration<>() {
         public boolean hasMoreElements() {
             return false;
         }
 
-        public Object nextElement() {
+        public String nextElement() {
             return null;
         }
     };
@@ -67,7 +66,7 @@ public class ShiroHttpSession implements HttpSession {
                     return null;
                 }
 
-                public Enumeration getIds() {
+                public Enumeration<String> getIds() {
                     return EMPTY_ENUMERATION;
                 }
             };
@@ -141,11 +140,12 @@ public class ShiroHttpSession implements HttpSession {
         }
     }
 
+    @Deprecated
+    @Override
     public Object getValue(String s) {
         return getAttribute(s);
     }
 
-    @SuppressWarnings({"unchecked"})
     protected Set<String> getKeyNames() {
         Collection<Object> keySet;
         try {
@@ -160,25 +160,27 @@ public class ShiroHttpSession implements HttpSession {
                 keyNames.add(o.toString());
             }
         } else {
-            keyNames = Collections.EMPTY_SET;
+            keyNames = Set.of();
         }
         return keyNames;
     }
 
-    public Enumeration getAttributeNames() {
+    @Override
+    public Enumeration<String> getAttributeNames() {
         Set<String> keyNames = getKeyNames();
-        final Iterator iterator = keyNames.iterator();
-        return new Enumeration() {
+        final Iterator<String> iterator = keyNames.iterator();
+        return new Enumeration<>() {
             public boolean hasMoreElements() {
                 return iterator.hasNext();
             }
 
-            public Object nextElement() {
+            public String nextElement() {
                 return iterator.next();
             }
         };
     }
 
+    @Deprecated
     public String[] getValueNames() {
         Set<String> keyNames = getKeyNames();
         String[] array = new String[keyNames.size()];
@@ -219,6 +221,7 @@ public class ShiroHttpSession implements HttpSession {
         }
     }
 
+    @Deprecated
     public void putValue(String s, Object o) {
         setAttribute(s, o);
     }
@@ -232,6 +235,7 @@ public class ShiroHttpSession implements HttpSession {
         }
     }
 
+    @Deprecated
     public void removeValue(String s) {
         removeAttribute(s);
     }

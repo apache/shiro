@@ -373,13 +373,10 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
 
             final Subject subject = createSubject(request, response);
 
-            //noinspection unchecked
-            subject.execute(new Callable() {
-                public Object call() throws Exception {
-                    updateSessionLastAccessTime(request, response);
-                    executeChain(request, response, chain);
-                    return null;
-                }
+            subject.execute((Callable<Void>) () -> {
+                updateSessionLastAccessTime(request, response);
+                executeChain(request, response, chain);
+                return null;
             });
         } catch (ExecutionException ex) {
             t = ex.getCause();

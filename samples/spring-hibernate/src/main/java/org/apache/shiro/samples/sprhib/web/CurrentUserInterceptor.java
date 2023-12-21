@@ -22,8 +22,8 @@ import org.apache.shiro.samples.sprhib.model.User;
 import org.apache.shiro.samples.sprhib.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
  * cached in the Hibernate second-level cache.
  */
 @Component
-public class CurrentUserInterceptor extends HandlerInterceptorAdapter {
+public class CurrentUserInterceptor implements HandlerInterceptor {
 
     private UserService userService;
 

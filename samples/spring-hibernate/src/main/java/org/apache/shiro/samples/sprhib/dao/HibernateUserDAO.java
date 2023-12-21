@@ -18,9 +18,9 @@
  */
 package org.apache.shiro.samples.sprhib.dao;
 
+import org.apache.shiro.lang.util.Assert;
 import org.apache.shiro.samples.sprhib.model.User;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class HibernateUserDAO extends HibernateDao implements UserDAO {
     public User findUser(String username) {
         Assert.hasText(username);
         String query = "from User u where u.username = :username";
-        return (User) getSession().createQuery(query).setString("username", username).uniqueResult();
+        return (User) getSession().createQuery(query).setParameter("username", username).uniqueResult();
     }
 
     public void createUser(User user) {

@@ -73,8 +73,10 @@ public class BeanTypeListenerTest {
 
     @Test
     void testPropertySetting() throws Exception {
+        @SuppressWarnings("unchecked")
         TypeEncounter<SomeInjectableBean> encounter = mock(TypeEncounter.class);
 
+        @SuppressWarnings("unchecked")
         Provider<Injector> injectorProvider = mock(Provider.class);
         Injector injector = mock(Injector.class);
 
@@ -82,6 +84,7 @@ public class BeanTypeListenerTest {
 
         when(injectorProvider.get()).then(args -> injector);
 
+        @SuppressWarnings("unchecked")
         ArgumentCaptor<MembersInjector<SomeInjectableBean>> captor = ArgumentCaptor.forClass(MembersInjector.class);
 
         SecurityManager securityManager = mock(SecurityManager.class);

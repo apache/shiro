@@ -45,6 +45,7 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Named;
@@ -270,6 +271,7 @@ public class ShiroWebModuleTest {
      * @since 1.4
      */
     @Test
+    @Tag("Guice3")
     void testAddFilterChainGuice3Only() {
 
         Assumptions.assumeTrue(ShiroWebModule.isGuiceVersion3(), "This test only runs against Guice 3.x");
@@ -290,6 +292,8 @@ public class ShiroWebModuleTest {
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
 
             @Override
+            @SuppressWarnings("unchecked")
+            @Deprecated
             protected void configureShiroWeb() {
                 bindRealm().to(ShiroModuleTest.MockRealm.class);
                 expose(FilterChainResolver.class);

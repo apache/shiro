@@ -38,13 +38,13 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
     /**
      * Retains all Cache objects maintained by this cache manager.
      */
-    private final ConcurrentMap<String, Cache> caches;
+    private final ConcurrentMap<String, Cache<?, ?>> caches;
 
     /**
      * Default no-arg constructor that instantiates an internal name-to-cache {@code ConcurrentMap}.
      */
     public AbstractCacheManager() {
-        this.caches = new ConcurrentHashMap<String, Cache>();
+        this.caches = new ConcurrentHashMap<>();
     }
 
     /**
@@ -56,17 +56,18 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
      * @throws IllegalArgumentException if the {@code name} argument is {@code null} or does not contain text.
      * @throws CacheException           if there is a problem lazily creating a {@code Cache} instance.
      */
+    @SuppressWarnings("unchecked")
     public <K, V> Cache<K, V> getCache(String name) throws IllegalArgumentException, CacheException {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("Cache name cannot be null or empty.");
         }
 
-        Cache cache;
+        Cache<K, V> cache;
 
-        cache = caches.get(name);
+        cache = (Cache<K, V>) caches.get(name);
         if (cache == null) {
             cache = createCache(name);
-            Cache existing = caches.putIfAbsent(name, cache);
+            Cache<K, V> existing = (Cache<K, V>) caches.putIfAbsent(name, cache);
             if (existing != null) {
                 cache = existing;
             }
@@ -83,7 +84,7 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
      * @return a new {@code Cache} instance associated with the specified {@code name}.
      * @throws CacheException if the {@code Cache} instance cannot be created.
      */
-    protected abstract Cache createCache(String name) throws CacheException;
+    protected abstract <K, V> Cache<K, V> createCache(String name) throws CacheException;
 
     /**
      * Cleanup method that first {@link LifecycleUtils#destroy destroys} all of it's managed caches and then
@@ -101,7 +102,7 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
     }
 
     public String toString() {
-        Collection<Cache> values = caches.values();
+        Collection<Cache<?, ?>> values = caches.values();
         StringBuilder sb = new StringBuilder(getClass().getSimpleName())
                 .append(" with ")
                 .append(caches.size())

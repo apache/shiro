@@ -61,6 +61,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     private DefaultWebSecurityManager sm;
 
     @BeforeEach
+    @SuppressWarnings("deprecation")
     public void setup() {
         sm = new DefaultWebSecurityManager();
         sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
@@ -82,6 +83,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     void checkSessionManagerDeterminesContainerSessionMode() {
         sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
         WebSessionManager sessionManager = mock(WebSessionManager.class);
@@ -96,6 +98,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     void shiroSessionModeInit() {
         sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
     }
@@ -211,6 +214,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         Ini.Section section = ini.addSection(IniRealm.USERS_SECTION_NAME);
         section.put("user1", "user1");
 
+        @SuppressWarnings("deprecation")
         WebIniSecurityManagerFactory factory = new WebIniSecurityManagerFactory(ini);
 
         WebSecurityManager securityManager = (WebSecurityManager) factory.getInstance();

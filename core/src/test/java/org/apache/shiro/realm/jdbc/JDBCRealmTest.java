@@ -22,10 +22,10 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.env.BasicIniEnvironment;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.CodecSupport;
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.ini.IniSecurityManagerFactory;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -84,8 +84,8 @@ public class JDBCRealmTest {
         config.setSectionProperty("main", "myRealm.credentialsMatcher", "$myRealmCredentialsMatcher");
         config.setSectionProperty("main", "securityManager.sessionManager.sessionValidationSchedulerEnabled", "false");
 
-        IniSecurityManagerFactory factory = new IniSecurityManagerFactory(config);
-        securityManager = (DefaultSecurityManager) factory.createInstance();
+        var basicIniEnvironment = new BasicIniEnvironment(config);
+        securityManager = (DefaultSecurityManager) basicIniEnvironment.getSecurityManager();
         SecurityUtils.setSecurityManager(securityManager);
 
         // Create a database and realm for the test

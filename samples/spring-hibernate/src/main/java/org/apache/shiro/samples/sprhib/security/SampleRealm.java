@@ -49,6 +49,7 @@ public class SampleRealm extends AuthorizingRealm {
 
     protected UserDAO userDAO;
 
+    @SuppressWarnings("deprecation")
     public SampleRealm() {
         //This name must match the name in the User class's getPrincipals() method
         setName("SampleRealm");

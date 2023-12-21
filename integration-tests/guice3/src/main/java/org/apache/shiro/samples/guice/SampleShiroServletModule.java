@@ -45,6 +45,7 @@ public class SampleShiroServletModule extends ShiroWebModule {
     }
 
     @Override
+    @SuppressWarnings({"unchecked", "deprecation"})
     protected void configureShiroWeb() {
         bindConstant().annotatedWith(Names.named("shiro.loginUrl")).to("/login.jsp");
         try {

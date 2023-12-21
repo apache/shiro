@@ -126,9 +126,10 @@ public class ReflectionBuilder {
         // SHIRO-739
         beanUtilsBean = new BeanUtilsBean(new ConvertUtilsBean() {
             @Override
-            public Object convert(String value, Class clazz) {
+            @SuppressWarnings("unchecked")
+            public Object convert(String value, Class<?> clazz) {
                 if (clazz.isEnum()) {
-                    return Enum.valueOf(clazz, value);
+                    return Enum.valueOf((Class<Enum>) clazz, value);
                 } else {
                     return super.convert(value, clazz);
                 }
@@ -460,7 +461,7 @@ public class ReflectionBuilder {
         return referencedObject;
     }
 
-    protected boolean isTypedProperty(Object object, String propertyName, Class clazz) {
+    protected boolean isTypedProperty(Object object, String propertyName, Class<?> clazz) {
         if (clazz == null) {
             throw new NullPointerException("type (class) argument cannot be null.");
         }
@@ -471,7 +472,7 @@ public class ReflectionBuilder {
                         + "type " + object.getClass().getName() + ".";
                 throw new ConfigurationException(msg);
             }
-            Class propertyClazz = descriptor.getPropertyType();
+            Class<?> propertyClazz = descriptor.getPropertyType();
             return clazz.isAssignableFrom(propertyClazz);
         } catch (ConfigurationException ce) {
             //let it propagate:
@@ -666,7 +667,8 @@ public class ReflectionBuilder {
             } else {
                 //we're assigning a map or array entry.  Check to see which we should call:
                 if (isTypedProperty(object, mapPropertyPath, Map.class)) {
-                    Map map = (Map) getProperty(object, mapPropertyPath);
+                    @SuppressWarnings("unchecked")
+                    var map = (Map<Object, Object>) getProperty(object, mapPropertyPath);
                     Object mapKey = resolveValue(keyString);
                     //noinspection unchecked
                     map.put(mapKey, value);

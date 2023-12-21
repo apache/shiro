@@ -30,7 +30,7 @@ import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.util.resource.FileResource;
+import org.eclipse.jetty.util.resource.PathResource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.FragmentConfiguration;
@@ -55,7 +55,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.eclipse.jetty.util.resource.Resource.newResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -113,7 +112,7 @@ public abstract class AbstractContainerIT {
                     // See: http://stackoverflow.com/questions/13222071/spring-3-1-webapplicationinitializer-embedded-jetty-8-annotationconfiguration
                     // And more precisely: http://stackoverflow.com/a/18449506/1215828
                     File classes = new File(classpath);
-                    FileResource containerResources = new FileResource(classes.toURI());
+                    var containerResources = new PathResource(classes.toURI());
                     ctx.getMetaData().addContainerResource(containerResources);
                 }
 

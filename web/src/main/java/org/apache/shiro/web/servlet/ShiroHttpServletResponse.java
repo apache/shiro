@@ -91,7 +91,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         }
     }
 
-
+    @Deprecated
     public String encodeRedirectUrl(String s) {
         return encodeRedirectURL(s);
     }
@@ -116,6 +116,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         }
     }
 
+    @Deprecated
     public String encodeUrl(String s) {
         return encodeURL(s);
     }

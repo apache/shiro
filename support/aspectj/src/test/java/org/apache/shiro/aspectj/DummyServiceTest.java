@@ -22,10 +22,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.ini.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.env.BasicIniEnvironment;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.lang.util.Factory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -47,9 +45,8 @@ public class DummyServiceTest {
 
     @BeforeAll
     public static void setUpClass() throws Exception {
-        Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiroDummyServiceTest.ini");
-        SecurityManager securityManager = factory.getInstance();
-        SecurityUtils.setSecurityManager(securityManager);
+        var basicIniEnvironment = new BasicIniEnvironment("classpath:shiroDummyServiceTest.ini");
+        SecurityUtils.setSecurityManager(basicIniEnvironment.getSecurityManager());
 
         securedService = new SecuredDummyService();
         restrictedService = new RestrictedDummyService();

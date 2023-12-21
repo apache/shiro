@@ -70,8 +70,10 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      */
     private Ini ini;
 
+    @SuppressWarnings("deprecation")
     private WebIniSecurityManagerFactory factory;
 
+    @SuppressWarnings("deprecation")
     public IniWebEnvironment() {
         factory = new WebIniSecurityManagerFactory();
     }
@@ -278,6 +280,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         return (ShiroFilterConfiguration) this.objects.get(SHIRO_FILTER_CONFIG_NAME);
     }
 
+    @SuppressWarnings("deprecation")
     protected FilterChainResolver createFilterChainResolver() {
 
         FilterChainResolver resolver = null;
@@ -285,9 +288,10 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         Ini ini = getIni();
 
         if (!CollectionUtils.isEmpty(ini)) {
+            @SuppressWarnings("unchecked")
             Factory<FilterChainResolver> factory = (Factory<FilterChainResolver>) this.objects.get(FILTER_CHAIN_RESOLVER_NAME);
             if (factory instanceof IniFactorySupport) {
-                IniFactorySupport iniFactory = (IniFactorySupport) factory;
+                var iniFactory = (IniFactorySupport<?>) factory;
                 iniFactory.setIni(ini);
                 iniFactory.setDefaults(this.objects);
             }
@@ -326,6 +330,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      *
      * @return an array with two elements, {@code /WEB-INF/shiro.ini} and {@code classpath:shiro.ini}.
      */
+    @SuppressWarnings("deprecation")
     protected String[] getDefaultConfigLocations() {
         return new String[] {
                 DEFAULT_WEB_INI_RESOURCE_PATH,
@@ -429,7 +434,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      * @return the SecurityManager factory used by this WebEnvironment.
      * @since 1.4
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "deprecation"})
     protected WebIniSecurityManagerFactory getSecurityManagerFactory() {
         return factory;
     }
@@ -440,6 +445,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      * @param factory the SecurityManager factory to used.
      * @since 1.4
      */
+    @SuppressWarnings("deprecation")
     protected void setSecurityManagerFactory(WebIniSecurityManagerFactory factory) {
         this.factory = factory;
     }

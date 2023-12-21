@@ -69,6 +69,11 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
+                <configuration>
+                    <additionalCompilerArgs>
+                        <additionalCompilerArg>-Xlint:adviceDidNotMatch=ignore</additionalCompilerArg>
+                    </additionalCompilerArgs>
+                </configuration>
                 <executions>
                     <execution>
                         <id>aspectj-compile</id>

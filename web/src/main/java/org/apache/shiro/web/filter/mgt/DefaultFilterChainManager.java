@@ -31,7 +31,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -359,8 +358,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
     }
 
     public Set<String> getChainNames() {
-        //noinspection unchecked
-        return this.filterChains != null ? this.filterChains.keySet() : Collections.EMPTY_SET;
+        return this.filterChains != null ? this.filterChains.keySet() : Set.of();
     }
 
     public FilterChain proxy(FilterChain original, String chainName) {

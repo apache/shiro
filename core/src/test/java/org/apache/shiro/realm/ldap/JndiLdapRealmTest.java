@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @deprecated Replaced by {@link DefaultLdapRealmTest}
  */
 @SuppressWarnings({"ThrowableInstanceNeverThrown", "deprecation"})
+@Deprecated
 public class JndiLdapRealmTest extends DefaultLdapRealmTest {
 
     protected DefaultLdapRealm getNewRealmUnderTest() {

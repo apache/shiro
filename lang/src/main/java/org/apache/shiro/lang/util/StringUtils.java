@@ -535,6 +535,7 @@ public final class StringUtils {
     // CollectionUtils cannot be removed from shiro-core until 2.0 as it has a dependency on PrincipalCollection
 
 
+    @SafeVarargs
     private static <E> Set<E> asSet(E... elements) {
         if (elements == null || elements.length == 0) {
             return Collections.emptySet();
