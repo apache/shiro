@@ -39,7 +39,7 @@
 
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] %msg%n"/>
+            <PatternLayout pattern="%msg%n"/>
         </Console>
     </Appenders>
     <Loggers>
