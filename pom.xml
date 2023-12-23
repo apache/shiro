@@ -344,6 +344,7 @@
                             <exclude>**/nb-configuration.xml</exclude>
                             <exclude>**/faces-config.NavData</exclude>
                             <exclude>**/org.mockito.plugins.MockMaker</exclude>
+                            <exclude>.mvn/*</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
@@ -1518,6 +1519,7 @@
                         <exclude>**/nb-configuration.xml</exclude>
                         <exclude>**/faces-config.NavData</exclude>
                         <exclude>**/org.mockito.plugins.MockMaker</exclude>
+                        <exclude>.mvn/*</exclude>
                     </excludes>
                 </configuration>
             </plugin>
