@@ -50,7 +50,7 @@ public class IniEnvironment extends IniWebEnvironment {
         @Override
         protected Map<String, ?> createDefaults(Ini ini, Ini.Section mainSection) {
             @SuppressWarnings("unchecked")
-            Map<String, Filter> defaults = (Map<String, Filter>) super.createDefaults(ini, mainSection);
+            Map<String, Filter> defaults = null;
             try {
                 // SSL filter must be first because it will trigger an exception if OmniFaces is not available
                 var sslFilter = new SslFilter();
