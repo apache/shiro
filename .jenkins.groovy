@@ -93,7 +93,7 @@ pipeline {
                     stage('Build') {
                         steps {
                             echo 'Building'
-                            sh 'mvn clean verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs \
+                            sh 'mvn clean verify --show-version --errors --batch-mode -Pdocs \
                             -Dmaven.test.failure.ignore=true -Pskip_jakarta_ee_tests'
                         }
                         post {
