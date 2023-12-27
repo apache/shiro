@@ -16,6 +16,13 @@
 # under the License.
 
 version: 2
+# Add Maven Central explicitly to work around:
+#   https://github.com/dependabot/dependabot-core/issues/8329
+registries:
+  maven-central:
+    type: maven-repository
+    url: https://repo.maven.apache.org/maven2
+
 updates:
   # Dependencies for Maven
   - package-ecosystem: 'maven'
