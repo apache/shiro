@@ -1816,4 +1816,30 @@
             </build>
         </profile>
     </profiles>
+    <!--Disable snapshot repositories because they download snapshots
+        instead of using the current build in CI 'mvn verify' steps-->
+    <repositories>
+        <repository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
