@@ -121,7 +121,7 @@
         <mockito.version>5.8.0</mockito.version>
         <bytebuddy.version>1.14.11</bytebuddy.version>
         <gmaven.version>3.0.2</gmaven.version>
-        <groovy.version>4.0.15</groovy.version>
+        <groovy.version>4.0.17</groovy.version>
         <junit.version>5.10.1</junit.version>
         <junit.server.jetty.version>3.1.1</junit.server.jetty.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
