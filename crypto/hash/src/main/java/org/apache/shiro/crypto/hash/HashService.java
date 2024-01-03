@@ -74,4 +74,10 @@ public interface HashService {
      * @see Hash#getSalt()
      */
     Hash computeHash(HashRequest request);
+
+    /**
+     * @return Default algorithm name for this hash service
+     * @since 2.0
+     */
+    String getDefaultAlgorithmName();
 }
