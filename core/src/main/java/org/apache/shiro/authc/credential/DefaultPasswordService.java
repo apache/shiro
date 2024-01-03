@@ -141,7 +141,9 @@ public class DefaultPasswordService implements HashingPasswordService {
     }
 
     protected HashRequest createHashRequest(ByteSource plaintext) {
-        return new HashRequest.Builder().setSource(plaintext).build();
+        return new HashRequest.Builder().setSource(plaintext)
+                .setAlgorithmName(getHashService().getDefaultAlgorithmName())
+                .build();
     }
 
     protected ByteSource createByteSource(Object o) {

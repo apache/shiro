@@ -108,6 +108,7 @@ public class DefaultHashService implements ConfigurableHashService {
         this.defaultAlgorithmName = name;
     }
 
+    @Override
     public String getDefaultAlgorithmName() {
         return this.defaultAlgorithmName;
     }
