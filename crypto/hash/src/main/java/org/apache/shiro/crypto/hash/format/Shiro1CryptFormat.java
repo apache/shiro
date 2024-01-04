@@ -157,11 +157,13 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         String iterationsString = parts[i--];
 
         byte[] digest = Base64.decode(digestBase64);
-        ByteSource salt = null;
+        ByteSource salt;
 
         if (StringUtils.hasLength(saltBase64)) {
             byte[] saltBytes = Base64.decode(saltBase64);
             salt = ByteSource.Util.bytes(saltBytes);
+        } else {
+            salt = ByteSource.Util.bytes(new byte[0]);
         }
 
         int iterations;
@@ -174,9 +176,7 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
 
         SimpleHash hash = new SimpleHash(algorithmName);
         hash.setBytes(digest);
-        if (salt != null) {
-            hash.setSalt(salt);
-        }
+        hash.setSalt(salt);
         hash.setIterations(iterations);
 
         return hash;
