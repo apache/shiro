@@ -22,19 +22,22 @@ import org.apache.shiro.event.EventBus;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.config.AbstractShiroBeanConfiguration;
 import org.apache.shiro.spring.ShiroEventBusBeanPostProcessor;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 
 /**
  * @since 1.4.0
  */
 @Configuration
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 @ConditionalOnProperty(name = "shiro.enabled", matchIfMissing = true)
 public class ShiroBeanAutoConfiguration extends AbstractShiroBeanConfiguration {
-
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
@@ -42,6 +45,7 @@ public class ShiroBeanAutoConfiguration extends AbstractShiroBeanConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected EventBus eventBus() {
@@ -49,6 +53,7 @@ public class ShiroBeanAutoConfiguration extends AbstractShiroBeanConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     public ShiroEventBusBeanPostProcessor shiroEventBusAwareBeanPostProcessor() {

@@ -37,6 +37,7 @@ import org.apache.shiro.spring.web.ShiroUrlPathHelper;
 import org.apache.shiro.spring.web.config.AbstractShiroWebConfiguration;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.servlet.Cookie;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,17 +45,18 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 
 /**
  * @since 1.4.0
  */
 @Configuration
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 @AutoConfigureBefore(ShiroAutoConfiguration.class)
 @AutoConfigureAfter(ShiroWebMvcAutoConfiguration.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
 public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
-
     @Bean
     @ConditionalOnMissingBean
     @Override

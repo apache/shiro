@@ -21,13 +21,16 @@ package org.apache.shiro.spring.config;
 import org.apache.shiro.event.EventBus;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.ShiroEventBusBeanPostProcessor;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 
 /**
  * @since 1.4.0
  */
 @Configuration
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class ShiroBeanConfiguration extends AbstractShiroBeanConfiguration {
 
     @Bean
