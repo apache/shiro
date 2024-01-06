@@ -58,6 +58,7 @@ import org.springframework.context.annotation.Role;
 @ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
 public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected AuthenticationStrategy authenticationStrategy() {
@@ -65,6 +66,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected Authenticator authenticator() {
@@ -72,6 +74,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected Authorizer authorizer() {
@@ -79,6 +82,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected SubjectDAO subjectDAO() {
@@ -86,6 +90,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected SessionStorageEvaluator sessionStorageEvaluator() {
@@ -93,6 +98,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected SubjectFactory subjectFactory() {
@@ -100,6 +106,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected SessionFactory sessionFactory() {
@@ -107,6 +114,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected SessionDAO sessionDAO() {
@@ -114,6 +122,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected SessionManager sessionManager() {
@@ -121,6 +130,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected SessionsSecurityManager securityManager(List<Realm> realms) {
@@ -128,6 +138,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean(name = "sessionCookieTemplate")
     @Override
     protected Cookie sessionCookieTemplate() {
@@ -135,6 +146,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected RememberMeManager rememberMeManager() {
@@ -142,6 +154,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean(name = "rememberMeCookieTemplate")
     @Override
     protected Cookie rememberMeCookieTemplate() {
@@ -149,6 +162,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected ShiroFilterChainDefinition shiroFilterChainDefinition() {
@@ -156,6 +170,7 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     protected ShiroUrlPathHelper shiroUrlPathHelper() {

@@ -35,18 +35,21 @@ public class ShiroBeanConfiguration extends AbstractShiroBeanConfiguration {
 
     @Bean
     @Override
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
         return super.lifecycleBeanPostProcessor();
     }
 
     @Bean
     @Override
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     protected EventBus eventBus() {
         return super.eventBus();
     }
 
     @Bean
     @Override
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public ShiroEventBusBeanPostProcessor shiroEventBusAwareBeanPostProcessor() {
         return super.shiroEventBusAwareBeanPostProcessor();
     }
