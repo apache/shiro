@@ -242,9 +242,7 @@
                         <gh_user>${gh_user}</gh_user>
                         <gh_token>${gh_token}</gh_token>
                         <webdriver.browser>${webdriver.browser}</webdriver.browser>
-                        <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
                         <webdriver.chrome.binary>${webdriver.chrome.binary}</webdriver.chrome.binary>
-                        <webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
                         <webdriver.firefox.binary>${webdriver.firefox.binary}</webdriver.firefox.binary>
                     </systemPropertyVariables>
                     <argLine>${failsafe.argLine} ${payara.argLine}</argLine>
