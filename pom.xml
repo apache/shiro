@@ -107,7 +107,7 @@
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
         <quartz.version>2.3.2</quartz.version>
-        <slf4j.version>2.0.11</slf4j.version>
+        <slf4j.version>2.0.12</slf4j.version>
         <log4j.version>2.22.1</log4j.version>
         <spring.version>5.3.31</spring.version>
         <spring-boot.version>2.7.18</spring-boot.version>
