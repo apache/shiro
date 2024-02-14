@@ -58,6 +58,9 @@ updates:
       - dependency-name: "org.omnifaces:omnifaces"
         update-types: [ "version-update:semver-major" ]
 
+      - dependency-name: "org.aspectj:*"
+        update-types: [ "version-update:semver-patch" ]
+
       - dependency-name: "org.springframework*:*"
         update-types: [ "version-update:semver-major" ]
       - dependency-name: "com.flowlogix:flowlogix-jee"
