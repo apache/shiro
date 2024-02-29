@@ -107,6 +107,7 @@
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
         <quartz.version>2.3.2</quartz.version>
+        <quartz.docs.version>2.3.0</quartz.docs.version>
         <slf4j.version>2.0.12</slf4j.version>
         <log4j.version>2.23.0</log4j.version>
         <spring.version>5.3.32</spring.version>
@@ -297,6 +298,17 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <excludePackageNames>org.apache.shiro.samples.*</excludePackageNames>
+                        <linksource>true</linksource>
+                        <links>
+                            <link>https://docs.oracle.com/javase/${jdk.version}/docs/api/</link>
+                            <link>https://www.slf4j.org/api/</link>
+                            <link>https://docs.spring.io/spring/docs/${spring.version}/javadoc-api/</link>
+                            <link>https://docs.spring.io/spring-boot/docs/${spring-boot.version}/api/</link>
+                            <link>https://junit.org/junit5/docs/${junit.version}/api/</link>
+                            <link>https://easymock.org/api/</link>
+                            <link>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}/org/mockito/Mockito.html</link>
+                            <link>https://www.quartz-scheduler.org/api/${quartz.docs.version}/</link>
+                        </links>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1429,20 +1441,8 @@
         <plugins>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <inherited>false</inherited>
                 <configuration>
-                    <linksource>true</linksource>
-                    <links>
-                        <link>https://docs.oracle.com/javase/11/docs/api/</link>
-                        <link>https://docs.oracle.com/javaee/7/api/</link>
-                        <link>https://www.slf4j.org/api/</link>
-                        <link>https://docs.spring.io/spring/docs/2.5.x/javadoc-api/</link>
-                        <link>https://junit.org/junit4/javadoc/4.12/</link>
-                        <link>https://easymock.org/api/</link>
-                        <link>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}/org/mockito/Mockito.html</link>
-                        <link>https://www.quartz-scheduler.org/api/1.8.6/</link>
-                    </links>
-                    <!-- Don't include the sample apps - they're not part of Shiro's API: -->
-                    <excludePackageNames>org.apache.shiro.samples.*</excludePackageNames>
                     <top><![CDATA[
 <!-- Matomo -->
 <script>
