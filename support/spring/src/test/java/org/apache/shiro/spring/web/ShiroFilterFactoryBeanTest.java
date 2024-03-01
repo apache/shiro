@@ -68,7 +68,7 @@ public class ShiroFilterFactoryBeanTest {
         DefaultFilterChainManager fcManager = (DefaultFilterChainManager) resolver.getFilterChainManager();
         NamedFilterList chain = fcManager.getChain("/test");
         assertNotNull(chain);
-        assertEquals(chain.size(), 3);
+        assertEquals(3, chain.size());
         Filter[] filters = new Filter[chain.size()];
         filters = chain.toArray(filters);
         // global filter

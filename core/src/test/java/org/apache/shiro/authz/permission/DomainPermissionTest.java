@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -44,7 +43,7 @@ public class DomainPermissionTest {
         p = new DomainPermission();
 
         // Verify domain
-        assertTrue("domain".equals(p.getDomain()));
+        assertEquals("domain", p.getDomain());
 
         // Verify actions
         set = p.getActions();

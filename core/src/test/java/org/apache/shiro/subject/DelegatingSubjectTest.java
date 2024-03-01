@@ -39,6 +39,7 @@ import static org.apache.shiro.env.BasicIniEnvironment.INI_REALM_NAME;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -68,7 +69,7 @@ public class DelegatingSubjectTest {
 
         Session session = subject.getSession();
         session.setAttribute(key, value);
-        assertTrue(session.getAttribute(key).equals(value));
+        assertEquals(session.getAttribute(key), value);
         Serializable firstSessionId = session.getId();
         assertNotNull(firstSessionId);
 
@@ -79,7 +80,7 @@ public class DelegatingSubjectTest {
         assertNull(session.getAttribute(key));
         Serializable secondSessionId = session.getId();
         assertNotNull(secondSessionId);
-        assertFalse(firstSessionId.equals(secondSessionId));
+        assertNotEquals(firstSessionId, secondSessionId);
 
         subject.logout();
 
@@ -175,7 +176,7 @@ public class DelegatingSubjectTest {
         //assert we still have the previous (user1) principals:
         PrincipalCollection previous = subject.getPreviousPrincipals();
         assertFalse(previous == null || previous.isEmpty());
-        assertTrue(previous.getPrimaryPrincipal().equals("user1"));
+        assertEquals("user1", previous.getPrimaryPrincipal());
 
         //test the stack functionality:  While as user2, run as user3:
         subject.runAs(new SimplePrincipalCollection("user3", INI_REALM_NAME));
@@ -188,7 +189,7 @@ public class DelegatingSubjectTest {
         //assert we still have the previous (user2) principals in the stack:
         previous = subject.getPreviousPrincipals();
         assertFalse(previous == null || previous.isEmpty());
-        assertTrue(previous.getPrimaryPrincipal().equals("user2"));
+        assertEquals("user2", previous.getPrimaryPrincipal());
 
         //drop down to user2:
         subject.releaseRunAs();
@@ -203,7 +204,7 @@ public class DelegatingSubjectTest {
         //assert we still have the previous (user1) principals:
         previous = subject.getPreviousPrincipals();
         assertFalse(previous == null || previous.isEmpty());
-        assertTrue(previous.getPrimaryPrincipal().equals("user1"));
+        assertEquals("user1", previous.getPrimaryPrincipal());
 
         //drop down to original user1:
         subject.releaseRunAs();

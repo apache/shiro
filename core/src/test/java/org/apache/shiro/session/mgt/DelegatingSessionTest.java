@@ -62,7 +62,7 @@ public class DelegatingSessionTest {
     @Test
     void testTimeout() {
         Serializable origId = session.getId();
-        assertEquals(session.getTimeout(), AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
+        assertEquals(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT, session.getTimeout());
         session.touch();
         session.setTimeout(100);
         assertEquals(100, session.getTimeout());

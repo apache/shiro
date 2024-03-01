@@ -27,61 +27,61 @@ class ClassUtilsTest {
     @Test
     void testGetPrimitiveClasses() throws UnknownClassException {
 
-        assertEquals(ClassUtils.forName("boolean"), boolean.class);
-        assertEquals(ClassUtils.forName("byte"), byte.class);
-        assertEquals(ClassUtils.forName("char"), char.class);
-        assertEquals(ClassUtils.forName("short"), short.class);
-        assertEquals(ClassUtils.forName("int"), int.class);
-        assertEquals(ClassUtils.forName("long"), long.class);
-        assertEquals(ClassUtils.forName("float"), float.class);
-        assertEquals(ClassUtils.forName("double"), double.class);
-        assertEquals(ClassUtils.forName("void"), void.class);
+        assertEquals(boolean.class, ClassUtils.forName("boolean"));
+        assertEquals(byte.class, ClassUtils.forName("byte"));
+        assertEquals(char.class, ClassUtils.forName("char"));
+        assertEquals(short.class, ClassUtils.forName("short"));
+        assertEquals(int.class, ClassUtils.forName("int"));
+        assertEquals(long.class, ClassUtils.forName("long"));
+        assertEquals(float.class, ClassUtils.forName("float"));
+        assertEquals(double.class, ClassUtils.forName("double"));
+        assertEquals(void.class, ClassUtils.forName("void"));
 
-        assertEquals(ClassUtils.forName(boolean.class.getName()), boolean.class);
-        assertEquals(ClassUtils.forName(byte.class.getName()), byte.class);
-        assertEquals(ClassUtils.forName(char.class.getName()), char.class);
-        assertEquals(ClassUtils.forName(short.class.getName()), short.class);
-        assertEquals(ClassUtils.forName(int.class.getName()), int.class);
-        assertEquals(ClassUtils.forName(long.class.getName()), long.class);
-        assertEquals(ClassUtils.forName(float.class.getName()), float.class);
-        assertEquals(ClassUtils.forName(double.class.getName()), double.class);
-        assertEquals(ClassUtils.forName(void.class.getName()), void.class);
+        assertEquals(boolean.class, ClassUtils.forName(boolean.class.getName()));
+        assertEquals(byte.class, ClassUtils.forName(byte.class.getName()));
+        assertEquals(char.class, ClassUtils.forName(char.class.getName()));
+        assertEquals(short.class, ClassUtils.forName(short.class.getName()));
+        assertEquals(int.class, ClassUtils.forName(int.class.getName()));
+        assertEquals(long.class, ClassUtils.forName(long.class.getName()));
+        assertEquals(float.class, ClassUtils.forName(float.class.getName()));
+        assertEquals(double.class, ClassUtils.forName(double.class.getName()));
+        assertEquals(void.class, ClassUtils.forName(void.class.getName()));
 
     }
 
     @Test
     void testGetPrimitiveArrays() throws UnknownClassException {
 
-        assertEquals(ClassUtils.forName("[Z"), boolean[].class);
-        assertEquals(ClassUtils.forName("[B"), byte[].class);
-        assertEquals(ClassUtils.forName("[C"), char[].class);
-        assertEquals(ClassUtils.forName("[S"), short[].class);
-        assertEquals(ClassUtils.forName("[I"), int[].class);
-        assertEquals(ClassUtils.forName("[J"), long[].class);
-        assertEquals(ClassUtils.forName("[F"), float[].class);
-        assertEquals(ClassUtils.forName("[D"), double[].class);
+        assertEquals(boolean[].class, ClassUtils.forName("[Z"));
+        assertEquals(byte[].class, ClassUtils.forName("[B"));
+        assertEquals(char[].class, ClassUtils.forName("[C"));
+        assertEquals(short[].class, ClassUtils.forName("[S"));
+        assertEquals(int[].class, ClassUtils.forName("[I"));
+        assertEquals(long[].class, ClassUtils.forName("[J"));
+        assertEquals(float[].class, ClassUtils.forName("[F"));
+        assertEquals(double[].class, ClassUtils.forName("[D"));
 
 
-        assertEquals(ClassUtils.forName(boolean[].class.getName()), boolean[].class);
-        assertEquals(ClassUtils.forName(byte[].class.getName()), byte[].class);
-        assertEquals(ClassUtils.forName(char[].class.getName()), char[].class);
-        assertEquals(ClassUtils.forName(short[].class.getName()), short[].class);
-        assertEquals(ClassUtils.forName(int[].class.getName()), int[].class);
-        assertEquals(ClassUtils.forName(long[].class.getName()), long[].class);
-        assertEquals(ClassUtils.forName(float[].class.getName()), float[].class);
-        assertEquals(ClassUtils.forName(double[].class.getName()), double[].class);
+        assertEquals(boolean[].class, ClassUtils.forName(boolean[].class.getName()));
+        assertEquals(byte[].class, ClassUtils.forName(byte[].class.getName()));
+        assertEquals(char[].class, ClassUtils.forName(char[].class.getName()));
+        assertEquals(short[].class, ClassUtils.forName(short[].class.getName()));
+        assertEquals(int[].class, ClassUtils.forName(int[].class.getName()));
+        assertEquals(long[].class, ClassUtils.forName(long[].class.getName()));
+        assertEquals(float[].class, ClassUtils.forName(float[].class.getName()));
+        assertEquals(double[].class, ClassUtils.forName(double[].class.getName()));
     }
 
     @Test
     void testGetClass() {
-        assertEquals(ClassUtils.forName("java.lang.String"), String.class);
-        assertEquals(ClassUtils.forName("[Ljava.lang.String;"), String[].class);
-        assertEquals(ClassUtils.forName(String.class.getName()), String.class);
-        assertEquals(ClassUtils.forName(String[].class.getName()), String[].class);
+        assertEquals(String.class, ClassUtils.forName("java.lang.String"));
+        assertEquals(String[].class, ClassUtils.forName("[Ljava.lang.String;"));
+        assertEquals(String.class, ClassUtils.forName(String.class.getName()));
+        assertEquals(String[].class, ClassUtils.forName(String[].class.getName()));
 
-        assertEquals(ClassUtils.forName("org.apache.shiro.lang.util.ClassUtilsTest"), ClassUtilsTest.class);
-        assertEquals(ClassUtils.forName("[Lorg.apache.shiro.lang.util.ClassUtilsTest;"), ClassUtilsTest[].class);
-        assertEquals(ClassUtils.forName(ClassUtilsTest.class.getName()), ClassUtilsTest.class);
-        assertEquals(ClassUtils.forName(ClassUtilsTest[].class.getName()), ClassUtilsTest[].class);
+        assertEquals(ClassUtilsTest.class, ClassUtils.forName("org.apache.shiro.lang.util.ClassUtilsTest"));
+        assertEquals(ClassUtilsTest[].class, ClassUtils.forName("[Lorg.apache.shiro.lang.util.ClassUtilsTest;"));
+        assertEquals(ClassUtilsTest.class, ClassUtils.forName(ClassUtilsTest.class.getName()));
+        assertEquals(ClassUtilsTest[].class, ClassUtils.forName(ClassUtilsTest[].class.getName()));
     }
 }

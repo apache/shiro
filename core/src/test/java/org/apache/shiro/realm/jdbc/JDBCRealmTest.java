@@ -36,7 +36,6 @@ import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInfo;
 
 import javax.sql.DataSource;
@@ -47,6 +46,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -259,7 +262,7 @@ public class JDBCRealmTest {
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        Assertions.assertTrue(currentUser.hasRole(testRole));
+        assertTrue(currentUser.hasRole(testRole));
     }
 
     @Test
@@ -273,7 +276,7 @@ public class JDBCRealmTest {
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        Assertions.assertFalse(currentUser.hasRole("Game Overall Director"));
+        assertFalse(currentUser.hasRole("Game Overall Director"));
     }
 
     @Test
@@ -288,7 +291,7 @@ public class JDBCRealmTest {
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        Assertions.assertTrue(currentUser.isPermitted(testPermissionString));
+        assertTrue(currentUser.isPermitted(testPermissionString));
     }
 
     @Test
@@ -303,7 +306,7 @@ public class JDBCRealmTest {
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        Assertions.assertFalse(currentUser.isPermitted("testDomain:testTarget:specialAction"));
+        assertFalse(currentUser.isPermitted("testDomain:testTarget:specialAction"));
     }
 
     /**
@@ -357,7 +360,7 @@ public class JDBCRealmTest {
             String password = sha256Hash.toHex();
             sql.executeUpdate("insert into users values ('" + username + "', '" + password + "')");
         } catch (SQLException ex) {
-            Assertions.fail("Exception creating test database");
+            fail("Exception creating test database");
         } finally {
             JdbcUtils.closeStatement(sql);
             JdbcUtils.closeConnection(conn);
@@ -393,7 +396,7 @@ public class JDBCRealmTest {
                     "insert into users values ('" + username + "', '" + password + "', '"
                             + maybeBase64EncodedSalt + "')");
         } catch (SQLException ex) {
-            Assertions.fail("Exception creating test database");
+            fail("Exception creating test database");
         } finally {
             JdbcUtils.closeStatement(sql);
             JdbcUtils.closeConnection(conn);
@@ -418,7 +421,7 @@ public class JDBCRealmTest {
             sql.executeUpdate(
                     "insert into roles_permissions values ('" + testRole + "', '" + testPermissionString + "')");
         } catch (SQLException ex) {
-            Assertions.fail("Exception adding test role and permission");
+            fail("Exception adding test role and permission");
         } finally {
             JdbcUtils.closeStatement(sql);
             JdbcUtils.closeConnection(conn);

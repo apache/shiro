@@ -254,7 +254,7 @@ public class AuthorizingRealmTest {
         authorizationInfo.addStringPermission("\t");
         authorizationInfo.addStringPermission(null);
         Collection<Permission> permissions = realm.getPermissions(authorizationInfo);
-        assertEquals(permissions.size(), 4);
+        assertEquals(4, permissions.size());
     }
 
     private void assertArrayEquals(boolean[] expected, boolean[] actual) {

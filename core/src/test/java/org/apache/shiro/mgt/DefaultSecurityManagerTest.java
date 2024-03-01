@@ -80,7 +80,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
 
         Session session = subject.getSession();
         session.setAttribute("key", "value");
-        assertEquals(session.getAttribute("key"), "value");
+        assertEquals("value", session.getAttribute("key"));
 
         subject.logout();
 
@@ -137,7 +137,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         Serializable firstSessionId = session.getId();
 
         session.setAttribute("key", "value");
-        assertEquals(session.getAttribute("key"), "value");
+        assertEquals("value", session.getAttribute("key"));
 
         subject.logout();
 

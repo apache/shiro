@@ -78,7 +78,7 @@ public class EhCacheManagerTest {
         cache.put("hello", "world");
         String value = cache.get("hello");
         assertNotNull(value);
-        assertEquals(value, "world");
+        assertEquals("world", value);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class EhCacheManagerTest {
         cache.put("hello2", "world2");
         String value = cache.get("hello");
         assertNotNull(value);
-        assertEquals(value, "world");
+        assertEquals("world", value);
         assertEquals("world2", cache.get("hello2"));
         assertEquals(2, cache.size());
 
@@ -123,7 +123,7 @@ public class EhCacheManagerTest {
         cache.put("hello2", "world2");
         String value = cache.get("hello");
         assertNotNull(value);
-        assertEquals(value, "world");
+        assertEquals("world", value);
         assertEquals("world2", cache.get("hello2"));
         assertEquals(2, cache.size());
 
@@ -148,7 +148,7 @@ public class EhCacheManagerTest {
         cache.put("hello2", "world2");
         String value = cache.get("hello");
         assertNotNull(value);
-        assertEquals(value, "world");
+        assertEquals("world", value);
         assertEquals("world2", cache.get("hello2"));
         assertEquals(2, cache.size());
 
@@ -182,7 +182,7 @@ public class EhCacheManagerTest {
         cache.put("hello2", "world2");
         String value = cache.get("hello");
         assertNotNull(value);
-        assertEquals(value, "world");
+        assertEquals("world", value);
         assertEquals("world2", cache.get("hello2"));
         assertEquals(2, cache.size());
 
