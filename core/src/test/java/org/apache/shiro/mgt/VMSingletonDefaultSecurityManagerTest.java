@@ -29,6 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -62,12 +63,12 @@ public class VMSingletonDefaultSecurityManagerTest {
             AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
             subject.login(token);
             subject.getSession().setAttribute("key", "value");
-            assertTrue(subject.getSession().getAttribute("key").equals("value"));
+            assertEquals("value", subject.getSession().getAttribute("key"));
 
             subject = SecurityUtils.getSubject();
 
             assertTrue(subject.isAuthenticated());
-            assertTrue(subject.getSession().getAttribute("key").equals("value"));
+            assertEquals("value", subject.getSession().getAttribute("key"));
         } finally {
             sm.destroy();
             //SHIRO-270:

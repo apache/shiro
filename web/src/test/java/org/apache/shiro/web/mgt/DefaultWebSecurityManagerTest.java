@@ -149,7 +149,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         Session session = subject.getSession();
         assertEquals(session.getTimeout(), globalTimeout);
         session.setTimeout(125);
-        assertEquals(session.getTimeout(), 125);
+        assertEquals(125, session.getTimeout());
         sleep(200);
         try {
             session.getTimeout();

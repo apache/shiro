@@ -98,7 +98,7 @@ public class SimpleNamedFilterListTest {
         list.add(0, singleFilter);
         assertEquals(2, list.size());
         assertTrue(list.get(0) instanceof SslFilter);
-        assertArrayEquals(list.toArray(), new Object[] {singleFilter, filter});
+        assertArrayEquals(new Object[]{singleFilter, filter}, list.toArray());
 
         list.addAll(multipleFilters);
         assertEquals(4, list.size());
