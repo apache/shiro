@@ -33,7 +33,7 @@ public abstract class SecureComponent extends UIOutput {
     }
 
     @Override
-    public void encodeAll(FacesContext ctx) throws IOException {
+    public void encodeEnd(FacesContext ctx) throws IOException {
         verifyAttributes();
         doEncodeAll(ctx);
     }
