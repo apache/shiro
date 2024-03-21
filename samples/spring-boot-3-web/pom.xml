@@ -35,9 +35,9 @@
 
     <properties>
         <module.name>samples.spring.boot3.web</module.name>
-        <spring-boot3.version>3.1.5</spring-boot3.version>
+        <spring-boot3.version>3.2.3</spring-boot3.version>
         <!--    below versions are not necessary in "real" applications -->
-        <spring.version>6.0.13</spring.version>
+        <spring.version>6.1.5</spring.version>
     </properties>
 
     <dependencies>
@@ -95,6 +95,20 @@
                 <version>${spring-boot3.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
