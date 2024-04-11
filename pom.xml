@@ -110,7 +110,7 @@
         <quartz.docs.version>2.3.0</quartz.docs.version>
         <slf4j.version>2.0.12</slf4j.version>
         <log4j.version>2.23.1</log4j.version>
-        <spring.version>5.3.33</spring.version>
+        <spring.version>5.3.34</spring.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
