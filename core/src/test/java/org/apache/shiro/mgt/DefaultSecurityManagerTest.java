@@ -27,6 +27,7 @@ import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractValidatingSessionManager;
+import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.ThreadContext;
@@ -186,5 +187,13 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
         subject.login(token);
         assertEquals(sm, subject.getSecurityManager());
+    }
+
+    @Test
+    void testNewSubjectWithoutSessionCreationEnabled() {
+        SimplePrincipalCollection principals = new SimplePrincipalCollection("guest", "asd");
+        Subject subject = new Subject.Builder().principals(principals).sessionCreationEnabled(false).buildSubject();
+
+        assertEquals(subject.getPrincipal(), "guest");
     }
 }
