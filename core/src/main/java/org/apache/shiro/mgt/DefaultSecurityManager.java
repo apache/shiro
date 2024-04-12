@@ -355,7 +355,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         //(this is needed here in case rememberMe principals were resolved and they need to be stored in the
         //session, so we don't constantly rehydrate the rememberMe PrincipalCollection on every operation).
         //Added in 1.2:
-        save(subject);
+        if (subjectContext.isSessionCreationEnabled()) {
+            save(subject);
+        }
 
         return subject;
     }
