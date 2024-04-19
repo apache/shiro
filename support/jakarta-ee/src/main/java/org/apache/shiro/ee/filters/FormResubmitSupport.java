@@ -33,6 +33,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
+import static org.apache.shiro.ee.filters.ShiroFilter.isSecurityManagerTypeOf;
 import static org.apache.shiro.ee.filters.ShiroFilter.unwrapSecurityManager;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.io.IOException;
@@ -137,11 +138,11 @@ public class FormResubmitSupport {
     }
 
     static void savePostDataForResubmit(HttpServletRequest request, HttpServletResponse response, @NonNull String loginUrl) {
-        if (isPostRequest(request) && unwrapSecurityManager(SecurityUtils.getSecurityManager())
-                instanceof DefaultSecurityManager) {
+        if (isPostRequest(request) && isSecurityManagerTypeOf(SecurityUtils.getSecurityManager(),
+                DefaultSecurityManager.class)) {
             String postData = getPostData(request);
             var cacheKey = UUID.randomUUID();
-            var dsm = (DefaultSecurityManager) unwrapSecurityManager(SecurityUtils.getSecurityManager());
+            DefaultSecurityManager dsm = unwrapSecurityManager(SecurityUtils.getSecurityManager());
             if (dsm.getCacheManager() != null) {
                 var cache = dsm.getCacheManager().getCache(FORM_DATA_CACHE);
                 var rememberMeManager = (AbstractRememberMeManager) dsm.getRememberMeManager();
@@ -179,8 +180,8 @@ public class FormResubmitSupport {
 
     static String getSavedFormDataFromKey(@NonNull String savedFormDataKey) {
         String savedFormData = null;
-        if (unwrapSecurityManager(SecurityUtils.getSecurityManager()) instanceof DefaultSecurityManager) {
-            var dsm = (DefaultSecurityManager) unwrapSecurityManager(SecurityUtils.getSecurityManager());
+        if (isSecurityManagerTypeOf(SecurityUtils.getSecurityManager(), DefaultSecurityManager.class)) {
+            DefaultSecurityManager dsm = unwrapSecurityManager(SecurityUtils.getSecurityManager());
             if (dsm.getCacheManager() != null) {
                 var cache = dsm.getCacheManager().getCache(FORM_DATA_CACHE);
                 var cacheKey = UUID.fromString(savedFormDataKey);
