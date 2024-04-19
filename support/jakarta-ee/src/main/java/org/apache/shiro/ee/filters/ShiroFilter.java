@@ -45,6 +45,7 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
@@ -174,6 +175,22 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             } else {
                 return wrapped.createSubject(context);
             }
+        }
+    }
+
+    /**
+     * Unwraps the security manager. This method should only be used under limited circumstances,
+     * Because the returned value is no longer wrapped, it will not be able to create subjects correctly.
+     *
+     * @param securityManager
+     * @return unwrapped security manager
+     */
+    public static org.apache.shiro.mgt.SecurityManager unwrapSecurityManager(SecurityManager securityManager) {
+        if (securityManager instanceof WrappedSecurityManager) {
+            WrappedSecurityManager wsm = (WrappedSecurityManager) securityManager;
+            return wsm.wrapped;
+        } else {
+            return securityManager;
         }
     }
 

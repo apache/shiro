@@ -32,8 +32,8 @@ import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getSessionC
 import java.net.URISyntaxException;
 import java.util.Collections;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
-import org.apache.shiro.ee.filters.ShiroFilter.WrappedSecurityManager;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
+import static org.apache.shiro.ee.filters.ShiroFilter.unwrapSecurityManager;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.io.IOException;
 import java.net.CookieManager;
@@ -541,15 +541,6 @@ public class FormResubmitSupport {
             }
         }
         return rv;
-    }
-
-    private static org.apache.shiro.mgt.SecurityManager unwrapSecurityManager(SecurityManager securityManager) {
-        if (securityManager instanceof WrappedSecurityManager) {
-            WrappedSecurityManager wsm = (WrappedSecurityManager) securityManager;
-            return wsm.wrapped;
-        } else {
-            return securityManager;
-        }
     }
 
     private static String getJSFNewViewState(URI savedRequest, HttpClient client, String savedFormData)
