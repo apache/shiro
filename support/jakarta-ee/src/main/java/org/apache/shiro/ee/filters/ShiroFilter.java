@@ -45,6 +45,7 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
@@ -174,6 +175,36 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             } else {
                 return wrapped.createSubject(context);
             }
+        }
+    }
+
+    /**
+     * Determines if the specified security manager is of the specified type or a subclass of the specified type.
+     *
+     * @param securityManager
+     * @param type
+     * @return true if the security manager is of the specified type or a subclass of the specified type, false otherwise.
+     */
+    public static boolean isSecurityManagerTypeOf(SecurityManager securityManager,
+                                                  Class<? extends SecurityManager> type) {
+        return type.isAssignableFrom(unwrapSecurityManager(securityManager).getClass());
+    }
+
+    /**
+     * Unwraps the security manager. This method should only be used under limited circumstances,
+     * Because the returned value is no longer wrapped, it will not be able to create subjects correctly.
+     *
+     * @param <SM> the desired type of the security manager
+     * @param securityManager
+     * @return unwrapped security manager
+     */
+    @SuppressWarnings("unchecked")
+    public static <SM extends SecurityManager> SM unwrapSecurityManager(SecurityManager securityManager) {
+        if (securityManager instanceof WrappedSecurityManager) {
+            WrappedSecurityManager wsm = (WrappedSecurityManager) securityManager;
+            return (SM) wsm.wrapped;
+        } else {
+            return (SM) securityManager;
         }
     }
 
