@@ -13,6 +13,9 @@
  */
 package org.apache.shiro.ee.filters;
 
+import static org.apache.shiro.SecurityUtils.getSecurityManager;
+import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
+import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.CONTENT_TYPE;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.COOKIE;
@@ -33,8 +36,6 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
-import static org.apache.shiro.ee.filters.ShiroFilter.isSecurityManagerTypeOf;
-import static org.apache.shiro.ee.filters.ShiroFilter.unwrapSecurityManager;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.io.IOException;
 import java.net.CookieManager;
@@ -138,11 +139,11 @@ public class FormResubmitSupport {
     }
 
     static void savePostDataForResubmit(HttpServletRequest request, HttpServletResponse response, @NonNull String loginUrl) {
-        if (isPostRequest(request) && isSecurityManagerTypeOf(SecurityUtils.getSecurityManager(),
+        if (isPostRequest(request) && isSecurityManagerTypeOf(getSecurityManager(),
                 DefaultSecurityManager.class)) {
             String postData = getPostData(request);
             var cacheKey = UUID.randomUUID();
-            DefaultSecurityManager dsm = unwrapSecurityManager(SecurityUtils.getSecurityManager());
+            DefaultSecurityManager dsm = getSecurityManager(DefaultSecurityManager.class);
             if (dsm.getCacheManager() != null) {
                 var cache = dsm.getCacheManager().getCache(FORM_DATA_CACHE);
                 var rememberMeManager = (AbstractRememberMeManager) dsm.getRememberMeManager();
@@ -180,8 +181,8 @@ public class FormResubmitSupport {
 
     static String getSavedFormDataFromKey(@NonNull String savedFormDataKey) {
         String savedFormData = null;
-        if (isSecurityManagerTypeOf(SecurityUtils.getSecurityManager(), DefaultSecurityManager.class)) {
-            DefaultSecurityManager dsm = unwrapSecurityManager(SecurityUtils.getSecurityManager());
+        if (isSecurityManagerTypeOf(getSecurityManager(), DefaultSecurityManager.class)) {
+            DefaultSecurityManager dsm = getSecurityManager(DefaultSecurityManager.class);
             if (dsm.getCacheManager() != null) {
                 var cache = dsm.getCacheManager().getCache(FORM_DATA_CACHE);
                 var cacheKey = UUID.fromString(savedFormDataKey);
@@ -212,7 +213,7 @@ public class FormResubmitSupport {
             Servlets.addResponseCookie(request, response, WebUtils.SAVED_REQUEST_KEY,
                     path, null, request.getContextPath(),
                     // cookie age = session timeout
-                    getCookieAge(request, SecurityUtils.getSecurityManager()));
+                    getCookieAge(request, getSecurityManager()));
         }
     }
 
@@ -478,7 +479,7 @@ public class FormResubmitSupport {
                 // do not duplicate the session cookie(s)
                 transformCookieHeader(headers.allValues(SET_COOKIE))
                         .entrySet().stream().filter(not(entry -> entry.getKey()
-                                .startsWith(getSessionCookieName(servletContext, SecurityUtils.getSecurityManager()))))
+                                .startsWith(getSessionCookieName(servletContext, getSecurityManager()))))
                         .forEach(entry -> addCookie(originalResponse, servletContext,
                                 entry.getKey(), entry.getValue(), -1));
                 if (isPartialAjaxRequest) {
@@ -508,7 +509,7 @@ public class FormResubmitSupport {
             HttpServletRequest originalRequest) {
         CookieManager cookieManager = new CookieManager();
         var session = SecurityUtils.getSubject().getSession();
-        var sessionCookieName = getSessionCookieName(servletContext, SecurityUtils.getSecurityManager());
+        var sessionCookieName = getSessionCookieName(servletContext, getSecurityManager());
         var sessionCookie = new HttpCookie(sessionCookieName, session.getId().toString());
         sessionCookie.setPath(servletContext.getContextPath());
         sessionCookie.setVersion(0);
@@ -533,7 +534,7 @@ public class FormResubmitSupport {
 
     public static DefaultWebSessionManager getNativeSessionManager(SecurityManager securityManager) {
         DefaultWebSessionManager rv = null;
-        SecurityManager unwrapped = unwrapSecurityManager(securityManager);
+        SecurityManager unwrapped = unwrapSecurityManager(securityManager, SecurityManager.class, type -> false);
         if (unwrapped instanceof SessionsSecurityManager) {
             var ssm = (SessionsSecurityManager) unwrapped;
             var sm = ssm.getSessionManager();

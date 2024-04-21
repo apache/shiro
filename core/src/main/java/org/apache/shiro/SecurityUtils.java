@@ -19,8 +19,11 @@
 package org.apache.shiro;
 
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.mgt.WrappedSecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 
 /**
@@ -122,5 +125,67 @@ public abstract class SecurityUtils {
             throw new UnavailableSecurityManagerException(msg);
         }
         return securityManager;
+    }
+
+    /**
+     * Returns the SecurityManager, ensuring it is of the specified type.
+     * Unwraps wrapped SecurityManagers if necessary.
+     * Caution, since this method unwraps SecurityManagers, it is possible that
+     * functionality of the wrapper is lost by the returned instance.
+     *
+     * @param type the expected type of the SecurityManager
+     * @return the SecurityManager.
+     * @param <SM> the expected type of the SecurityManager
+     */
+    public static <SM extends SecurityManager> SM getSecurityManager(Class<SM> type) {
+        Objects.requireNonNull(type, "Class argument cannot be null.");
+        return unwrapSecurityManager(getSecurityManager(), type);
+    }
+
+    /**
+     * Determines if the specified security manager is of the specified type or a subclass of the specified type.
+     *
+     * @param securityManager
+     * @param type
+     * @return true if the security manager is of the specified type or a subclass of the specified type, false otherwise.
+     */
+    public static boolean isSecurityManagerTypeOf(SecurityManager securityManager,
+                                                  Class<? extends SecurityManager> type) {
+        return type.isAssignableFrom(unwrapSecurityManager(securityManager, type).getClass());
+    }
+
+    /**
+     * Unwraps wrapped SecurityManagers if necessary.
+     * @param securityManager the SecurityManager to unwrap
+     * @param type the expected type of the SecurityManager
+     * @return the unwrapped SecurityManager
+     * @param <SM> Type of the SecurityManager
+     */
+    public static <SM extends SecurityManager> SM
+    unwrapSecurityManager(SecurityManager securityManager, Class<SM> type) {
+        return unwrapSecurityManager(securityManager, type, type::isAssignableFrom);
+    }
+
+    /**
+     * Unwraps wrapped SecurityManagers if necessary.
+     * @param securityManager the SecurityManager to unwrap
+     * @param type the expected type of the SecurityManager
+     * @param predicate to determine if the SecurityManager is of the expected type
+     * @return the unwrapped SecurityManager
+     * @param <SM> Type of the SecurityManager
+     */
+    @SuppressWarnings("unchecked")
+    public static <SM extends SecurityManager> SM
+    unwrapSecurityManager(SecurityManager securityManager, Class<SM> type,
+                          Predicate<Class<? extends SecurityManager>> predicate) {
+        while (securityManager instanceof WrappedSecurityManager && !predicate.test(securityManager.getClass())) {
+            WrappedSecurityManager wrappedSecurityManager = (WrappedSecurityManager) securityManager;
+            securityManager = wrappedSecurityManager.unwrap();
+            if (securityManager == wrappedSecurityManager) {
+                throw new IllegalStateException("SecurityManager implementation of type [" + type.getName()
+                        + "] is wrapped by itself, which is an invalid configuration.");
+            }
+        }
+        return (SM) securityManager;
     }
 }
