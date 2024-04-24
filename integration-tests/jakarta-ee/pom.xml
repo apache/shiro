@@ -37,14 +37,8 @@
         <!-- override older compiler source / target flags set by Apache parent POM -->
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
-        <arquillian.version>1.8.0.Final</arquillian.version>
-        <arquillian.drone.version>2.5.6</arquillian.drone.version>
-        <arquillian.graphene.version>2.5.4</arquillian.graphene.version>
-        <failsafe.argLine>
-            --add-opens java.base/java.lang=ALL-UNNAMED
-            --add-opens java.base/java.net=ALL-UNNAMED
-            --add-opens java.base/sun.net.www=ALL-UNNAMED
-        </failsafe.argLine>
+        <arquillian.payara5.version>2.5</arquillian.payara5.version>
+        <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
         <webdriver.browser>firefox</webdriver.browser>
 
         <payara.version>5.2022.5</payara.version>
@@ -156,13 +150,13 @@
         <dependency>
             <groupId>org.jboss.arquillian.junit5</groupId>
             <artifactId>arquillian-junit5-container</artifactId>
-            <version>${arquillian.version}</version>
+            <version>1.8.0.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>fish.payara.arquillian</groupId>
             <artifactId>arquillian-payara-server-remote</artifactId>
-            <version>2.5</version>
+            <version>${arquillian.payara5.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -190,20 +184,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${arquillian.version}</version>
-                <type>pom</type>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-bom</artifactId>
-                <version>${arquillian.drone.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-bom</artifactId>
