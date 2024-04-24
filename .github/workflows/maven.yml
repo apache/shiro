@@ -96,6 +96,10 @@ jobs:
           # 17
           - version: 17
             dist: temurin
+        exclude:
+          # exclude temurin on MacOS, no longer distributed
+          - os: 'macOS-latest'
+            dist: 'temurin'
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
