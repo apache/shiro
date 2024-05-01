@@ -18,6 +18,7 @@ import java.net.URL;
 import static org.apache.shiro.ee.util.JakartaTransformer.isJakarta;
 import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_DEV_MODE;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -30,9 +31,6 @@ import static org.jboss.arquillian.graphene.Graphene.waitGui;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -104,27 +102,21 @@ public class ShiroBeansIT {
     void checkDontCallWhenNotAuth() {
         webDriver.get(baseURL + "shiro/unprotected/manybeans");
         guardAjax(facesViewScoped).click();
-        assertTrue(messages.getText().startsWith("view scope unauth: Attempting to perform a user-only operation"),
-                "anonymous user should get an exception");
+        assertThat(messages.getText().startsWith("view scope unauth: Attempting to perform a user-only operation")).as("anonymous user should get an exception").isTrue();
         guardAjax(omniViewScoped).click();
-        assertTrue(messages.getText().startsWith("omni view scope unauth: Attempting to perform a user-only operation"),
-                "anonymous user should get an exception");
+        assertThat(messages.getText().startsWith("omni view scope unauth: Attempting to perform a user-only operation")).as("anonymous user should get an exception").isTrue();
         guardAjax(sessionScoped).click();
-        assertTrue(messages.getText().startsWith("session scoped unauth: Attempting to perform a user-only operation"),
-                "anonymous user should get an exception");
+        assertThat(messages.getText().startsWith("session scoped unauth: Attempting to perform a user-only operation")).as("anonymous user should get an exception").isTrue();
         guardAjax(stateless).click();
-        assertTrue(messages.getText().startsWith("stateless bean unauth: Attempting to perform a user-only operation"),
-                "anonymous user should get an exception");
+        assertThat(messages.getText().startsWith("stateless bean unauth: Attempting to perform a user-only operation")).as("anonymous user should get an exception").isTrue();
         guardAjax(unprotectedMethod).click();
-        assertEquals("unprotected method: hello from unprotected", messages.getText());
+        assertThat(messages.getText()).isEqualTo("unprotected method: hello from unprotected");
         guardAjax(protectedMethod).click();
-        assertTrue(messages.getText().startsWith("protected unauth: Attempting to perform a user-only operation"),
-                "anonymous user should get an exception");
+        assertThat(messages.getText().startsWith("protected unauth: Attempting to perform a user-only operation")).as("anonymous user should get an exception").isTrue();
         webDriver.get(baseURL + "lastException");
         String exceptionText = webDriver.findElement(By.tagName("body")).getText();
-        assertTrue(exceptionText
-                        .startsWith(jakartify("WARNING: javax.ejb.EJBException: Attempting to perform a user-only operation")),
-                String.format("capturing correct warning from the server: %s", exceptionText));
+        assertThat(exceptionText
+                .startsWith(jakartify("WARNING: javax.ejb.EJBException: Attempting to perform a user-only operation"))).as(String.format("capturing correct warning from the server: %s", exceptionText)).isTrue();
     }
 
     @Test
@@ -135,15 +127,15 @@ public class ShiroBeansIT {
 
         webDriver.get(baseURL + "shiro/unprotected/manybeans");
         guardAjax(facesViewScoped).click();
-        assertTrue(messages.getText().startsWith("Hello from FacesViewScoped"));
+        assertThat(messages.getText()).startsWith("Hello from FacesViewScoped");
         guardAjax(omniViewScoped).click();
-        assertTrue(messages.getText().startsWith("Hello from OmniViewScoped"));
+        assertThat(messages.getText()).startsWith("Hello from OmniViewScoped");
         guardAjax(sessionScoped).click();
-        assertTrue(messages.getText().startsWith("Hello from SessionScoped"));
+        assertThat(messages.getText()).startsWith("Hello from SessionScoped");
         guardAjax(stateless).click();
-        assertTrue(messages.getText().startsWith("Hello from ProtectedStatelessBean"));
+        assertThat(messages.getText()).startsWith("Hello from ProtectedStatelessBean");
         guardAjax(protectedMethod).click();
-        assertEquals("protected method: hello from protected", messages.getText());
+        assertThat(messages.getText()).isEqualTo("protected method: hello from protected");
     }
 
     @Test
@@ -170,13 +162,13 @@ public class ShiroBeansIT {
         waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
         webDriver.switchTo().alert().accept();
         webDriver.get(baseURL + createStatistic);
-        assertEquals("2", webDriver.findElement(By.tagName("body")).getText());
+        assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("2");
         webDriver.get(baseURL + destroyStatistic);
-        assertEquals(isBrokenDestructor && webSessions ? "1" : "2", webDriver.findElement(By.tagName("body")).getText());
+        assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo(isBrokenDestructor && webSessions ? "1" : "2");
         webDriver.get(baseURL + "api/statistics/pc_ss");
-        assertEquals("1", webDriver.findElement(By.tagName("body")).getText());
+        assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("1");
         webDriver.get(baseURL + "api/statistics/pd_ss");
-        assertEquals("1", webDriver.findElement(By.tagName("body")).getText());
+        assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("1");
     }
 
     private void login() {

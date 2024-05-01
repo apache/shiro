@@ -42,12 +42,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -92,7 +89,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
         sm.setSessionManager(sessionManager);
 
-        assertTrue(sm.isHttpSessionMode(), "The set SessionManager is not being used to determine isHttpSessionMode.");
+        assertThat(sm.isHttpSessionMode()).as("The set SessionManager is not being used to determine isHttpSessionMode.").isTrue();
 
         verify(sessionManager).isServletContainerSessions();
     }
@@ -122,13 +119,13 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
         Subject subject = newSubject(mockRequest, mockResponse);
 
-        assertFalse(subject.isAuthenticated());
+        assertThat(subject.isAuthenticated()).isFalse();
 
         subject.login(new UsernamePasswordToken("lonestarr", "vespa"));
 
-        assertTrue(subject.isAuthenticated());
-        assertNotNull(subject.getPrincipal());
-        assertEquals("lonestarr", subject.getPrincipal());
+        assertThat(subject.isAuthenticated()).isTrue();
+        assertThat(subject.getPrincipal()).isNotNull();
+        assertThat(subject.getPrincipal()).isEqualTo("lonestarr");
     }
 
     @SuppressWarnings("checkstyle:MagicNumber")
@@ -147,9 +144,9 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         Subject subject = newSubject(mockRequest, mockResponse);
 
         Session session = subject.getSession();
-        assertEquals(session.getTimeout(), globalTimeout);
+        assertThat(globalTimeout).isEqualTo(session.getTimeout());
         session.setTimeout(125);
-        assertEquals(125, session.getTimeout());
+        assertThat(session.getTimeout()).isEqualTo(125);
         sleep(200);
         try {
             session.getTimeout();
@@ -169,10 +166,10 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
         Subject subject = newSubject(mockRequest, mockResponse);
 
-        assertNotNull(subject);
-        assertTrue(subject.getPrincipals() == null || subject.getPrincipals().isEmpty());
-        assertNull(subject.getSession(false));
-        assertFalse(subject.isAuthenticated());
+        assertThat(subject).isNotNull();
+        assertThat(subject.getPrincipals() == null || subject.getPrincipals().isEmpty()).isTrue();
+        assertThat(subject.getSession(false)).isNull();
+        assertThat(subject.isAuthenticated()).isFalse();
     }
 
     @Test
@@ -188,7 +185,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         Session session = subject.getSession();
         Serializable sessionId = session.getId();
 
-        assertNotNull(sessionId);
+        assertThat(sessionId).isNotNull();
 
         mockRequest = mock(HttpServletRequest.class);
         mockResponse = mock(HttpServletResponse.class);
@@ -200,8 +197,8 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         subject = newSubject(mockRequest, mockResponse);
 
         session = subject.getSession(false);
-        assertNotNull(session);
-        assertEquals(sessionId, session.getId());
+        assertThat(session).isNotNull();
+        assertThat(session.getId()).isEqualTo(sessionId);
     }
 
     /**
@@ -222,8 +219,8 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         PrincipalCollection principals = new SimplePrincipalCollection("user1", "iniRealm");
         Subject subject = new Subject.Builder(securityManager).principals(principals).buildSubject();
 
-        assertNotNull(subject);
-        assertEquals("user1", subject.getPrincipal());
+        assertThat(subject).isNotNull();
+        assertThat(subject.getPrincipal()).isEqualTo("user1");
     }
 
 }

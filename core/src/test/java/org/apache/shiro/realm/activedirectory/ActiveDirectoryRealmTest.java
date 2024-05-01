@@ -52,19 +52,14 @@ import javax.naming.ldap.LdapContext;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.hamcrest.MatcherAssert.assertThat;
 
-import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.is;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -105,17 +100,17 @@ public class ActiveDirectoryRealmTest {
         String localhost = "localhost";
         Subject subject = SecurityUtils.getSubject();
         subject.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
-        assertTrue(subject.isAuthenticated());
-        assertTrue(subject.hasRole(ROLE));
+        assertThat(subject.isAuthenticated()).isTrue();
+        assertThat(subject.hasRole(ROLE)).isTrue();
 
 
         UsernamePrincipal usernamePrincipal = subject.getPrincipals().oneByType(UsernamePrincipal.class);
-        assertEquals(USERNAME, usernamePrincipal.getUsername());
+        assertThat(usernamePrincipal.getUsername()).isEqualTo(USERNAME);
 
         UserIdPrincipal userIdPrincipal = subject.getPrincipals().oneByType(UserIdPrincipal.class);
-        assertEquals(USER_ID, userIdPrincipal.getUserId());
+        assertThat(userIdPrincipal.getUserId()).isEqualTo(USER_ID);
 
-        assertTrue(realm.hasRole(subject.getPrincipals(), ROLE));
+        assertThat(realm.hasRole(subject.getPrincipals(), ROLE)).isTrue();
 
         subject.logout();
     }
@@ -155,8 +150,8 @@ public class ActiveDirectoryRealmTest {
         });
 
         Object[] args = captureArgs.getValue();
-        assertThat(args, arrayWithSize(1));
-        assertThat(args[0], is(expectedPrincipalName));
+        assertThat(args).hasSize(1);
+        assertThat(args[0]).isEqualTo(expectedPrincipalName);
     }
 
     public static class TestActiveDirectoryRealm extends ActiveDirectoryRealm {

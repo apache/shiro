@@ -63,17 +63,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class ShiroWebModuleTest {
@@ -100,12 +95,12 @@ public class ShiroWebModuleTest {
         // we're not getting a WebSecurityManager here b/c it's not exposed.  There didn't seem to be a good reason to
         // expose it outside the Shiro module.
         SecurityManager securityManager = injector.getInstance(SecurityManager.class);
-        assertNotNull(securityManager);
-        assertTrue(securityManager instanceof WebSecurityManager);
+        assertThat(securityManager).isNotNull();
+        assertThat(securityManager instanceof WebSecurityManager).isTrue();
         SessionManager sessionManager = injector.getInstance(SessionManager.class);
-        assertNotNull(sessionManager);
-        assertTrue(sessionManager instanceof ServletContainerSessionManager);
-        assertTrue(((DefaultWebSecurityManager) securityManager).getSessionManager() instanceof ServletContainerSessionManager);
+        assertThat(sessionManager).isNotNull();
+        assertThat(sessionManager instanceof ServletContainerSessionManager).isTrue();
+        assertThat(((DefaultWebSecurityManager) securityManager).getSessionManager() instanceof ServletContainerSessionManager).isTrue();
     }
 
     @Test
@@ -136,13 +131,13 @@ public class ShiroWebModuleTest {
             }
         });
         SecurityManager securityManager = injector.getInstance(SecurityManager.class);
-        assertNotNull(securityManager);
-        assertTrue(securityManager instanceof MyDefaultWebSecurityManager);
+        assertThat(securityManager).isNotNull();
+        assertThat(securityManager instanceof MyDefaultWebSecurityManager).isTrue();
         WebSecurityManager webSecurityManager = injector.getInstance(WebSecurityManager.class);
-        assertNotNull(webSecurityManager);
-        assertTrue(webSecurityManager instanceof MyDefaultWebSecurityManager);
+        assertThat(webSecurityManager).isNotNull();
+        assertThat(webSecurityManager instanceof MyDefaultWebSecurityManager).isTrue();
         // SHIRO-435: Check both keys SecurityManager and WebSecurityManager are bound to the same instance
-        assertTrue(securityManager == webSecurityManager);
+        assertThat(securityManager == webSecurityManager).isTrue();
     }
 
     @Test
@@ -169,13 +164,13 @@ public class ShiroWebModuleTest {
             }
         });
         Environment environment = injector.getInstance(Environment.class);
-        assertNotNull(environment);
-        assertTrue(environment instanceof MyWebEnvironment);
+        assertThat(environment).isNotNull();
+        assertThat(environment instanceof MyWebEnvironment).isTrue();
         WebEnvironment webEnvironment = injector.getInstance(WebEnvironment.class);
-        assertNotNull(webEnvironment);
-        assertTrue(webEnvironment instanceof MyWebEnvironment);
+        assertThat(webEnvironment).isNotNull();
+        assertThat(webEnvironment instanceof MyWebEnvironment).isTrue();
         // SHIRO-435: Check both keys Environment and WebEnvironment are bound to the same instance
-        assertTrue(environment == webEnvironment);
+        assertThat(environment == webEnvironment).isTrue();
     }
 
     /**
@@ -221,48 +216,48 @@ public class ShiroWebModuleTest {
         });
 
         FilterChainResolver resolver = injector.getInstance(FilterChainResolver.class);
-        assertThat(resolver, instanceOf(SimpleFilterChainResolver.class));
+        assertThat(resolver).isInstanceOf(SimpleFilterChainResolver.class);
         SimpleFilterChainResolver simpleFilterChainResolver = (SimpleFilterChainResolver) resolver;
 
         // test the /test_authc resource
         FilterChain filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
         Filter nextFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(nextFilter, instanceOf(InvalidRequestFilter.class));
+        assertThat(nextFilter).isInstanceOf(InvalidRequestFilter.class);
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(nextFilter, instanceOf(FormAuthenticationFilter.class));
+        assertThat(nextFilter).isInstanceOf(FormAuthenticationFilter.class);
 
         // test the /test_custom_filter resource
         filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(nextFilter, instanceOf(InvalidRequestFilter.class));
+        assertThat(nextFilter).isInstanceOf(InvalidRequestFilter.class);
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(nextFilter, instanceOf(CustomFilter.class));
+        assertThat(nextFilter).isInstanceOf(CustomFilter.class);
 
         // test the /test_authc_basic resource
         filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(nextFilter, instanceOf(InvalidRequestFilter.class));
+        assertThat(nextFilter).isInstanceOf(InvalidRequestFilter.class);
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(nextFilter, instanceOf(BasicHttpAuthenticationFilter.class));
+        assertThat(nextFilter).isInstanceOf(BasicHttpAuthenticationFilter.class);
 
         // test the /test_perms resource
         filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(nextFilter, instanceOf(InvalidRequestFilter.class));
+        assertThat(nextFilter).isInstanceOf(InvalidRequestFilter.class);
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(nextFilter, instanceOf(PermissionsAuthorizationFilter.class));
+        assertThat(nextFilter).isInstanceOf(PermissionsAuthorizationFilter.class);
 
         // test the /multiple_configs resource
         filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(InvalidRequestFilter.class));
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(FormAuthenticationFilter.class));
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(RolesAuthorizationFilter.class));
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(PermissionsAuthorizationFilter.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isInstanceOf(InvalidRequestFilter.class);
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isInstanceOf(FormAuthenticationFilter.class);
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isInstanceOf(RolesAuthorizationFilter.class);
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isInstanceOf(PermissionsAuthorizationFilter.class);
 
         verify(servletContext, request);
     }
@@ -313,33 +308,33 @@ public class ShiroWebModuleTest {
         });
 
         FilterChainResolver resolver = injector.getInstance(FilterChainResolver.class);
-        assertThat(resolver, instanceOf(SimpleFilterChainResolver.class));
+        assertThat(resolver).isInstanceOf(SimpleFilterChainResolver.class);
         SimpleFilterChainResolver simpleFilterChainResolver = (SimpleFilterChainResolver) resolver;
 
         // test the /test_authc resource
         FilterChain filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
         Filter nextFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(nextFilter, instanceOf(FormAuthenticationFilter.class));
+        assertThat(nextFilter).isInstanceOf(FormAuthenticationFilter.class);
 
         // test the /test_custom_filter resource
         filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(nextFilter, instanceOf(CustomFilter.class));
+        assertThat(nextFilter).isInstanceOf(CustomFilter.class);
 
         // test the /test_perms resource
         filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
         nextFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(nextFilter, instanceOf(PermissionsAuthorizationFilter.class));
+        assertThat(nextFilter).isInstanceOf(PermissionsAuthorizationFilter.class);
 
         // test the /multiple_configs resource
         filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(FormAuthenticationFilter.class));
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(RolesAuthorizationFilter.class));
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(PermissionsAuthorizationFilter.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isInstanceOf(FormAuthenticationFilter.class);
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isInstanceOf(RolesAuthorizationFilter.class);
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isInstanceOf(PermissionsAuthorizationFilter.class);
 
         verify(servletContext, request);
     }
@@ -374,15 +369,15 @@ public class ShiroWebModuleTest {
         });
 
         FilterChainResolver resolver = injector.getInstance(FilterChainResolver.class);
-        assertThat(resolver, instanceOf(SimpleFilterChainResolver.class));
+        assertThat(resolver).isInstanceOf(SimpleFilterChainResolver.class);
         SimpleFilterChainResolver simpleFilterChainResolver = (SimpleFilterChainResolver) resolver;
 
         // test the /test_authc resource
         FilterChain filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
 
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(InvalidRequestFilter.class));
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), nullValue());
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isInstanceOf(InvalidRequestFilter.class);
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isNull();
 
         verify(servletContext, request);
     }
@@ -422,15 +417,15 @@ public class ShiroWebModuleTest {
         });
 
         FilterChainResolver resolver = injector.getInstance(FilterChainResolver.class);
-        assertThat(resolver, instanceOf(SimpleFilterChainResolver.class));
+        assertThat(resolver).isInstanceOf(SimpleFilterChainResolver.class);
         SimpleFilterChainResolver simpleFilterChainResolver = (SimpleFilterChainResolver) resolver;
 
         // test the /test_authc resource
         FilterChain filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
 
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(FormAuthenticationFilter.class));
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), nullValue());
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isInstanceOf(FormAuthenticationFilter.class);
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isNull();
 
         verify(servletContext, request);
     }
@@ -468,18 +463,18 @@ public class ShiroWebModuleTest {
         });
 
         FilterChainResolver resolver = injector.getInstance(FilterChainResolver.class);
-        assertThat(resolver, instanceOf(SimpleFilterChainResolver.class));
+        assertThat(resolver).isInstanceOf(SimpleFilterChainResolver.class);
         SimpleFilterChainResolver simpleFilterChainResolver = (SimpleFilterChainResolver) resolver;
 
         // test the /test_authc resource
         FilterChain filterChain = simpleFilterChainResolver.getChain(request, null, null);
-        assertThat(filterChain, instanceOf(SimpleFilterChain.class));
+        assertThat(filterChain).isInstanceOf(SimpleFilterChain.class);
 
         Filter invalidRequestFilter = getNextFilter((SimpleFilterChain) filterChain);
-        assertThat(invalidRequestFilter, instanceOf(InvalidRequestFilter.class));
-        assertFalse(((InvalidRequestFilter) invalidRequestFilter).isBlockBackslash(), "Expected 'blockBackslash' to be false");
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), instanceOf(FormAuthenticationFilter.class));
-        assertThat(getNextFilter((SimpleFilterChain) filterChain), nullValue());
+        assertThat(invalidRequestFilter).isInstanceOf(InvalidRequestFilter.class);
+        assertThat(((InvalidRequestFilter) invalidRequestFilter).isBlockBackslash()).as("Expected 'blockBackslash' to be false").isFalse();
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isInstanceOf(FormAuthenticationFilter.class);
+        assertThat(getNextFilter((SimpleFilterChain) filterChain)).isNull();
 
         verify(servletContext, request);
     }

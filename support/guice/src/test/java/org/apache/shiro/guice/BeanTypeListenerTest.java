@@ -38,10 +38,7 @@ import org.mockito.ArgumentCaptor;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -59,16 +56,16 @@ import static org.mockito.Mockito.when;
 public class BeanTypeListenerTest {
     @Test
     void testUnmatchedPackage() throws Exception {
-        assertFalse(BeanTypeListener.MATCHER.matches(TypeLiteral.get(GuiceEnvironment.class)));
-        assertFalse(BeanTypeListener.MATCHER.matches(TypeLiteral.get(ShiroWebModule.class)));
-        assertFalse(BeanTypeListener.MATCHER.matches(TypeLiteral.get(ShiroAopModule.class)));
+        assertThat(BeanTypeListener.MATCHER.matches(TypeLiteral.get(GuiceEnvironment.class))).isFalse();
+        assertThat(BeanTypeListener.MATCHER.matches(TypeLiteral.get(ShiroWebModule.class))).isFalse();
+        assertThat(BeanTypeListener.MATCHER.matches(TypeLiteral.get(ShiroAopModule.class))).isFalse();
     }
 
     @Test
     void testMatchedPackage() throws Exception {
-        assertTrue(BeanTypeListener.MATCHER.matches(TypeLiteral.get(SecurityUtils.class)));
-        assertTrue(BeanTypeListener.MATCHER.matches(TypeLiteral.get(DefaultAnnotationResolver.class)));
-        assertTrue(BeanTypeListener.MATCHER.matches(TypeLiteral.get(BlowfishCipherService.class)));
+        assertThat(BeanTypeListener.MATCHER.matches(TypeLiteral.get(SecurityUtils.class))).isTrue();
+        assertThat(BeanTypeListener.MATCHER.matches(TypeLiteral.get(DefaultAnnotationResolver.class))).isTrue();
+        assertThat(BeanTypeListener.MATCHER.matches(TypeLiteral.get(BlowfishCipherService.class))).isTrue();
     }
 
     @Test
@@ -105,9 +102,9 @@ public class BeanTypeListenerTest {
         verify(encounter).register(captor.capture());
         captor.getValue().injectMembers(bean);
 
-        assertSame(securityManager, bean.securityManager);
-        assertSame(property, bean.myProperty);
-        assertNull(bean.unavailableProperty);
+        assertThat(bean.securityManager).isSameAs(securityManager);
+        assertThat(bean.myProperty).isSameAs(property);
+        assertThat(bean.unavailableProperty).isNull();
     }
 
     public static class SomeInjectableBean {
