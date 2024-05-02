@@ -97,7 +97,7 @@ public class ShiroScopeContextTest {
         try (var cdim = mockStatic(CDI.class, Answers.RETURNS_DEEP_STUBS)) {
             when(CDI.current().getBeanManager().getContext(SessionScoped.class).get(contextual)).thenReturn(bean);
             assertThat(ctx.get(contextual)).isEqualTo(bean);
-            assertThat(ctx.get(null)).isNull();
+            assertThat((Object)ctx.get(null)).isNull();
             verify(CDI.current().getBeanManager(), atLeast(2)).getContext(any());
         }
     }
@@ -109,7 +109,7 @@ public class ShiroScopeContextTest {
             when(CDI.current().getBeanManager().getContext(SessionScoped.class)
                     .get(contextual, creationalContext)).thenReturn(bean);
             assertThat(ctx.get(contextual, creationalContext)).isEqualTo(bean);
-            assertThat(ctx.get(null)).isNull();
+            assertThat((Object)ctx.get(null)).isNull();
             verify(CDI.current().getBeanManager(), atLeast(2)).getContext(any());
         }
     }
