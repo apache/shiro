@@ -281,27 +281,45 @@ public class AntPathMatcherTests {
 
     @Test
     void extractPathWithinPattern() throws Exception {
-        assertThat(pathMatcher.extractPathWithinPattern("/docs/commit.html", "/docs/commit.html")).isEqualTo("");
+        assertThat(pathMatcher.extractPathWithinPattern("/docs/commit.html", "/docs/commit.html"))
+                .isEmpty();
+        assertThat(pathMatcher.extractPathWithinPattern("/docs/*", "/docs/cvs/commit"))
+                .isEqualTo("cvs/commit");
+        assertThat(pathMatcher.extractPathWithinPattern("/docs/cvs/*.html", "/docs/cvs/commit.html"))
+                .isEqualTo("commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("/docs/**", "/docs/cvs/commit"))
+                .isEqualTo("cvs/commit");
+        assertThat(pathMatcher.extractPathWithinPattern("/docs/**/*.html", "/docs/cvs/commit.html"))
+                .isEqualTo("cvs/commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("/docs/**/*.html", "/docs/commit.html"))
+                .isEqualTo("commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("/*.html", "/commit.html"))
+                .isEqualTo("commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("/*.html", "/docs/commit.html"))
+                .isEqualTo("docs/commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("*.html", "/commit.html"))
+                .isEqualTo("/commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("*.html", "/docs/commit.html"))
+                .isEqualTo("/docs/commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("**/*.*", "/docs/commit.html"))
+                .isEqualTo("/docs/commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("*", "/docs/commit.html"))
+                .isEqualTo("/docs/commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("**/commit.html", "/docs/cvs/other/commit.html"))
+                .isEqualTo("/docs/cvs/other/commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("/docs/**/commit.html", "/docs/cvs/other/commit.html"))
+                .isEqualTo("cvs/other/commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("/docs/**/**/**/**", "/docs/cvs/other/commit.html"))
+                .isEqualTo("cvs/other/commit.html");
 
-        assertThat(pathMatcher.extractPathWithinPattern("/docs/*", "/docs/cvs/commit")).isEqualTo("cvs/commit");
-        assertThat(pathMatcher.extractPathWithinPattern("/docs/cvs/*.html", "/docs/cvs/commit.html")).isEqualTo("commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("/docs/**", "/docs/cvs/commit")).isEqualTo("cvs/commit");
-        assertThat(pathMatcher.extractPathWithinPattern("/docs/**/*.html", "/docs/cvs/commit.html")).isEqualTo("cvs/commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("/docs/**/*.html", "/docs/commit.html")).isEqualTo("commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("/*.html", "/commit.html")).isEqualTo("commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("/*.html", "/docs/commit.html")).isEqualTo("docs/commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("*.html", "/commit.html")).isEqualTo("/commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("*.html", "/docs/commit.html")).isEqualTo("/docs/commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("**/*.*", "/docs/commit.html")).isEqualTo("/docs/commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("*", "/docs/commit.html")).isEqualTo("/docs/commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("**/commit.html", "/docs/cvs/other/commit.html")).isEqualTo("/docs/cvs/other/commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("/docs/**/commit.html", "/docs/cvs/other/commit.html")).isEqualTo("cvs/other/commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("/docs/**/**/**/**", "/docs/cvs/other/commit.html")).isEqualTo("cvs/other/commit.html");
-
-        assertThat(pathMatcher.extractPathWithinPattern("/d?cs/*", "/docs/cvs/commit")).isEqualTo("docs/cvs/commit");
-        assertThat(pathMatcher.extractPathWithinPattern("/docs/c?s/*.html", "/docs/cvs/commit.html")).isEqualTo("cvs/commit.html");
-        assertThat(pathMatcher.extractPathWithinPattern("/d?cs/**", "/docs/cvs/commit")).isEqualTo("docs/cvs/commit");
-        assertThat(pathMatcher.extractPathWithinPattern("/d?cs/**/*.html", "/docs/cvs/commit.html")).isEqualTo("docs/cvs/commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("/d?cs/*", "/docs/cvs/commit"))
+                .isEqualTo("docs/cvs/commit");
+        assertThat(pathMatcher.extractPathWithinPattern("/docs/c?s/*.html", "/docs/cvs/commit.html"))
+                .isEqualTo("cvs/commit.html");
+        assertThat(pathMatcher.extractPathWithinPattern("/d?cs/**", "/docs/cvs/commit"))
+                .isEqualTo("docs/cvs/commit");
+        assertThat(pathMatcher.extractPathWithinPattern("/d?cs/**/*.html", "/docs/cvs/commit.html"))
+                .isEqualTo("docs/cvs/commit.html");
     }
 
     @Test

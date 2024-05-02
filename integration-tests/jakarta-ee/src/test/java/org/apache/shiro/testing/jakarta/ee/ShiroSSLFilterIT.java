@@ -50,7 +50,8 @@ public class ShiroSSLFilterIT {
     @Test
     @OperateOnDeployment(DEPLOYMENT_PROD_MODE)
     void checkNonSSL() {
-        assertThatExceptionOfType(WebDriverException.class).isThrownBy(() -> webDriver.get(baseURL + "shiro/unprotected/manybeans"));
+        assertThatExceptionOfType(WebDriverException.class).isThrownBy(() ->
+            webDriver.get(baseURL + "shiro/unprotected/manybeans"));
     }
 
     @Test

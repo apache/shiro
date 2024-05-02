@@ -100,7 +100,8 @@ public class ShiroWebModuleTest {
         SessionManager sessionManager = injector.getInstance(SessionManager.class);
         assertThat(sessionManager).isNotNull();
         assertThat(sessionManager instanceof ServletContainerSessionManager).isTrue();
-        assertThat(((DefaultWebSecurityManager) securityManager).getSessionManager() instanceof ServletContainerSessionManager).isTrue();
+        assertThat(((DefaultWebSecurityManager) securityManager).getSessionManager())
+            .isInstanceOf(ServletContainerSessionManager.class);
     }
 
     @Test
@@ -472,7 +473,9 @@ public class ShiroWebModuleTest {
 
         Filter invalidRequestFilter = getNextFilter((SimpleFilterChain) filterChain);
         assertThat(invalidRequestFilter).isInstanceOf(InvalidRequestFilter.class);
-        assertThat(((InvalidRequestFilter) invalidRequestFilter).isBlockBackslash()).as("Expected 'blockBackslash' to be false").isFalse();
+        assertThat(((InvalidRequestFilter) invalidRequestFilter).isBlockBackslash())
+                .as("Expected 'blockBackslash' to be false")
+                .isFalse();
         assertThat(getNextFilter((SimpleFilterChain) filterChain)).isInstanceOf(FormAuthenticationFilter.class);
         assertThat(getNextFilter((SimpleFilterChain) filterChain)).isNull();
 

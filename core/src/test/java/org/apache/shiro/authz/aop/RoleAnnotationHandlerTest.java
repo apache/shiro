@@ -62,7 +62,8 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
         };
 
         runWithSubject(subject -> {
-            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> handler.assertAuthorized(requiresRolesAnnotation));
+            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() ->
+                handler.assertAuthorized(requiresRolesAnnotation));
         });
     }
 
@@ -90,7 +91,8 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
         };
 
         runWithSubject(subject -> {
-            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> handler.assertAuthorized(requiresRolesAnnotation));
+            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() ->
+                handler.assertAuthorized(requiresRolesAnnotation));
         });
     }
 

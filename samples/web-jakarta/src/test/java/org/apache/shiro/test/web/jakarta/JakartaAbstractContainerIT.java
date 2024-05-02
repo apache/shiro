@@ -57,7 +57,9 @@ public abstract class JakartaAbstractContainerIT {
             }
         });
 
-        assertThat(warFiles.length).as("Expected only one war file in target directory, run 'mvn clean' and try again").isEqualTo(1);
+        assertThat(warFiles.length)
+            .as("Expected only one war file in target directory, run 'mvn clean' and try again")
+            .isEqualTo(1);
 
         return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
     }

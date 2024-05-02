@@ -57,7 +57,8 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
         };
 
         runWithSubject(subject -> {
-            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> handler.assertAuthorized(requiresPermissionAnnotation));
+            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() ->
+                handler.assertAuthorized(requiresPermissionAnnotation));
         });
     }
 
@@ -85,7 +86,8 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
         };
 
         runWithSubject(subject -> {
-            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> handler.assertAuthorized(requiresPermissionAnnotation));
+            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() ->
+                handler.assertAuthorized(requiresPermissionAnnotation));
         });
     }
 

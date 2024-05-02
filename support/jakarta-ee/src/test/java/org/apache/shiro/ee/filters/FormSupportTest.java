@@ -100,21 +100,29 @@ public class FormSupportTest {
     void extractViewState() {
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> extractJSFNewViewState(null, null));
         assertThat(extractJSFNewViewState("", "hello")).isEqualTo("hello");
-        assertThat(extractJSFNewViewState("xxx", jakartify("javax.faces.ViewState=stateless&hello=bye"))).isEqualTo(jakartify("javax.faces.ViewState=stateless&hello=bye"));
+        assertThat(extractJSFNewViewState("xxx", jakartify("javax.faces.ViewState=stateless&hello=bye")))
+            .isEqualTo(jakartify("javax.faces.ViewState=stateless&hello=bye"));
         assertThat(extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"123:456\"/>"),
-                jakartify("javax.faces.ViewState=stateless&hello=bye"))).isEqualTo(jakartify("javax.faces.ViewState=stateless&hello=bye"));
+                jakartify("javax.faces.ViewState=stateless&hello=bye")))
+            .isEqualTo(jakartify("javax.faces.ViewState=stateless&hello=bye"));
         assertThat(extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"123:456\"/>"),
-                jakartify("aaa=bbb&javax.faces.ViewState=xxx:yyy&hello=bye"))).isEqualTo(jakartify("aaa=bbb&javax.faces.ViewState=xxx:yyy&hello=bye"));
+                jakartify("aaa=bbb&javax.faces.ViewState=xxx:yyy&hello=bye")))
+            .isEqualTo(jakartify("aaa=bbb&javax.faces.ViewState=xxx:yyy&hello=bye"));
         assertThat(extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"123:456\"/>"),
-                jakartify("javax.faces.ViewState=987:654&hello=bye"))).isEqualTo(jakartify("javax.faces.ViewState=123:456&hello=bye"));
+                jakartify("javax.faces.ViewState=987:654&hello=bye")))
+            .isEqualTo(jakartify("javax.faces.ViewState=123:456&hello=bye"));
         assertThat(extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"-123:-456\"/>"),
-                jakartify("javax.faces.ViewState=987:654&hello=bye"))).isEqualTo(jakartify("javax.faces.ViewState=-123:-456&hello=bye"));
+                jakartify("javax.faces.ViewState=987:654&hello=bye")))
+            .isEqualTo(jakartify("javax.faces.ViewState=-123:-456&hello=bye"));
         assertThat(extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"-123:-456\"/>"),
-                jakartify("javax.faces.ViewState=-987:-654&hello=bye"))).isEqualTo(jakartify("javax.faces.ViewState=-123:-456&hello=bye"));
+                jakartify("javax.faces.ViewState=-987:-654&hello=bye")))
+            .isEqualTo(jakartify("javax.faces.ViewState=-123:-456&hello=bye"));
         assertThat(extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"-123:-456\"/>"),
-                jakartify("aaa=bbb&javax.faces.ViewState=-987:-654&hello=bye"))).isEqualTo(jakartify("aaa=bbb&javax.faces.ViewState=-123:-456&hello=bye"));
+                jakartify("aaa=bbb&javax.faces.ViewState=-987:-654&hello=bye")))
+            .isEqualTo(jakartify("aaa=bbb&javax.faces.ViewState=-123:-456&hello=bye"));
         assertThat(extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"-123:-456\"/>"),
-                jakartify("aaa=bbb&javax.faces.ViewState=-987:-654"))).isEqualTo(jakartify("aaa=bbb&javax.faces.ViewState=-123:-456"));
+                jakartify("aaa=bbb&javax.faces.ViewState=-987:-654")))
+            .isEqualTo(jakartify("aaa=bbb&javax.faces.ViewState=-123:-456"));
     }
 
     @Test
@@ -130,7 +138,8 @@ public class FormSupportTest {
                 + jakartify("&javax.faces.partial.execute=j_idt12:j_idt18 j_idt12")
                 + jakartify("&javax.faces.partial.render=j_idt12")
                 + jakartify("&javax.faces.behavior.event=action")
-                + jakartify("&javax.faces.partial.ajax=false"), false)).isEqualTo(new PartialAjaxResult("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
+                + jakartify("&javax.faces.partial.ajax=false"), false))
+            .isEqualTo(new PartialAjaxResult("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
                 + jakartify("&javax.faces.ViewState=7709788254588873136:-8052771455757429917")
                 + jakartify("&javax.faces.source=j_idt12:j_idt18")
                 + jakartify("&javax.faces.behavior.event=action"), true, false));
@@ -141,7 +150,8 @@ public class FormSupportTest {
         var map = Map.of("name1", "value1", "name2", "value2", "name3", "value3");
         assertThat(transformCookieHeader(List.of("name1=value1", "name2=value2; path=/my/path", "name3=value3"))).isEqualTo(map);
         assertThat(transformCookieHeader(List.of("name="))).isEqualTo(Map.of("name", ""));
-        assertThat(transformCookieHeader(List.of("JSESSIONID=\"abc\"; $Version=\"1\"; $Path=\"/mypath\""))).isEqualTo(Map.of("JSESSIONID", "abc"));
+        assertThat(transformCookieHeader(List.of("JSESSIONID=\"abc\"; $Version=\"1\"; $Path=\"/mypath\"")))
+            .isEqualTo(Map.of("JSESSIONID", "abc"));
     }
 
     private static String decode(String plain) {

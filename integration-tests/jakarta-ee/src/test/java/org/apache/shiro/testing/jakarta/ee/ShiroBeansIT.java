@@ -102,21 +102,21 @@ public class ShiroBeansIT {
     void checkDontCallWhenNotAuth() {
         webDriver.get(baseURL + "shiro/unprotected/manybeans");
         guardAjax(facesViewScoped).click();
-        assertThat(messages.getText().startsWith("view scope unauth: Attempting to perform a user-only operation")).as("anonymous user should get an exception").isTrue();
+        assertThat(messages.getText()).startsWith("view scope unauth: Attempting to perform a user-only operation");
         guardAjax(omniViewScoped).click();
-        assertThat(messages.getText().startsWith("omni view scope unauth: Attempting to perform a user-only operation")).as("anonymous user should get an exception").isTrue();
+        assertThat(messages.getText()).startsWith("omni view scope unauth: Attempting to perform a user-only operation");
         guardAjax(sessionScoped).click();
-        assertThat(messages.getText().startsWith("session scoped unauth: Attempting to perform a user-only operation")).as("anonymous user should get an exception").isTrue();
+        assertThat(messages.getText()).startsWith("session scoped unauth: Attempting to perform a user-only operation");
         guardAjax(stateless).click();
-        assertThat(messages.getText().startsWith("stateless bean unauth: Attempting to perform a user-only operation")).as("anonymous user should get an exception").isTrue();
+        assertThat(messages.getText()).startsWith("stateless bean unauth: Attempting to perform a user-only operation");
         guardAjax(unprotectedMethod).click();
         assertThat(messages.getText()).isEqualTo("unprotected method: hello from unprotected");
         guardAjax(protectedMethod).click();
-        assertThat(messages.getText().startsWith("protected unauth: Attempting to perform a user-only operation")).as("anonymous user should get an exception").isTrue();
+        assertThat(messages.getText()).startsWith("protected unauth: Attempting to perform a user-only operation");
         webDriver.get(baseURL + "lastException");
         String exceptionText = webDriver.findElement(By.tagName("body")).getText();
-        assertThat(exceptionText
-                .startsWith(jakartify("WARNING: javax.ejb.EJBException: Attempting to perform a user-only operation"))).as(String.format("capturing correct warning from the server: %s", exceptionText)).isTrue();
+        assertThat(exceptionText).startsWith(
+            jakartify("WARNING: javax.ejb.EJBException: Attempting to perform a user-only operation"));
     }
 
     @Test

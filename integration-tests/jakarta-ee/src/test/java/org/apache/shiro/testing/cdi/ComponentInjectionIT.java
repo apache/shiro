@@ -105,7 +105,8 @@ public class ComponentInjectionIT {
     void principalInjection() {
         SecurityUtils.getSubject().login(new UsernamePasswordToken("user", "password"));
         assertThat(injectedComponents.getPropertyPrincipal()).isNotNull();
-        assertThat(Optional.ofNullable(injectedComponents.getPropertyPrincipal().get()).orElseThrow().getUserName()).isEqualTo("user");
+        assertThat(Optional.ofNullable(injectedComponents.getPropertyPrincipal().get()).orElseThrow().getUserName())
+            .isEqualTo("user");
         injectedComponents.getSubject().logout();
     }
 

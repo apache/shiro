@@ -89,7 +89,8 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
         sm.setSessionManager(sessionManager);
 
-        assertThat(sm.isHttpSessionMode()).as("The set SessionManager is not being used to determine isHttpSessionMode.").isTrue();
+        assertThat(sm.isHttpSessionMode())
+            .as("The set SessionManager is not being used to determine isHttpSessionMode.").isTrue();
 
         verify(sessionManager).isServletContainerSessions();
     }

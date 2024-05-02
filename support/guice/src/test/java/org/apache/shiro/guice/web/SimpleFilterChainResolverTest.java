@@ -124,7 +124,8 @@ public class SimpleFilterChainResolverTest {
 
         ctrl.replay();
 
-        assertThat(underTest.getChain(request, response, originalChain)).as("Expected no chain to match, did not get a null value in return.").isNull();
+        assertThat(underTest.getChain(request, response, originalChain))
+            .as("Expected no chain to match, did not get a null value in return.").isNull();
 
         ctrl.verify();
     }
