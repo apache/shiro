@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletContext;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.anyObject;
@@ -36,7 +37,6 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class WebGuiceEnvironmentTest {
 

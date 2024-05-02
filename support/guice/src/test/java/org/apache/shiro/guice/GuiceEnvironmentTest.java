@@ -22,9 +22,9 @@ import com.google.inject.spi.InjectionPoint;
 import org.apache.shiro.mgt.SecurityManager;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.easymock.EasyMock.createMock;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class GuiceEnvironmentTest {
     @Test
