@@ -18,13 +18,12 @@
  */
 package org.apache.shiro.authz;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.shiro.authc.AuthenticationException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
@@ -44,7 +43,7 @@ public class ModularRealmAuthorizerTest {
 
         // its null to start with
         for (Realm realm : realms) {
-            assertNull(((AuthorizingRealm) realm).getRolePermissionResolver());
+            assertThat(((AuthorizingRealm) realm).getRolePermissionResolver()).isNull();
         }
 
         ModularRealmAuthorizer modRealmAuthz = new ModularRealmAuthorizer();
@@ -52,7 +51,7 @@ public class ModularRealmAuthorizerTest {
 
         // make sure they are still null
         for (Realm realm : realms) {
-            assertNull(((AuthorizingRealm) realm).getRolePermissionResolver());
+            assertThat(((AuthorizingRealm) realm).getRolePermissionResolver()).isNull();
         }
 
         // now set the RolePermissionResolver
@@ -66,14 +65,14 @@ public class ModularRealmAuthorizerTest {
         // make sure they are set
         for (Realm realm : realms) {
             // check for same instance
-            assertTrue(((AuthorizingRealm) realm).getRolePermissionResolver() == rolePermissionResolver);
+            assertThat(((AuthorizingRealm) realm).getRolePermissionResolver() == rolePermissionResolver).isTrue();
         }
 
         // add a new realm and make sure the RolePermissionResolver is set
         MockAuthorizingRealm mockRealm = new MockAuthorizingRealm();
         realms.add(mockRealm);
         modRealmAuthz.setRealms(realms);
-        assertTrue(((AuthorizingRealm) mockRealm).getRolePermissionResolver() == rolePermissionResolver);
+        assertThat(((AuthorizingRealm) mockRealm).getRolePermissionResolver() == rolePermissionResolver).isTrue();
 
 
 // TODO: no way to unset them, not sure if that is a valid use case, but this is consistent with the PermissionResolver logic

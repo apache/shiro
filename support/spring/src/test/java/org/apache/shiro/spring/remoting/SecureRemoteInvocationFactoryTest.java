@@ -31,12 +31,11 @@ import org.springframework.remoting.support.RemoteInvocation;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * //TODO - Class JavaDoc!
@@ -81,7 +80,7 @@ public class SecureRemoteInvocationFactoryTest {
 
         verify(mi);
 
-        assertNull(ri.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY));
+        assertThat(ri.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY)).isNull();
     }
 
     @Test
@@ -104,7 +103,7 @@ public class SecureRemoteInvocationFactoryTest {
 
         verify(mi);
 
-        assertEquals(dummySessionId, ri.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY));
+        assertThat(ri.getAttribute(SecureRemoteInvocationFactory.SESSION_ID_KEY)).isEqualTo(dummySessionId);
     }
 
     /*@Test

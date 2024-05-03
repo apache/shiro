@@ -55,8 +55,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 public abstract class AbstractContainerIT {
@@ -152,7 +151,7 @@ public abstract class AbstractContainerIT {
 
         jetty.start();
 
-        assertTrue(jetty.isStarted());
+        assertThat(jetty.isStarted()).isTrue();
     }
 
     protected static String getBaseUri() {
@@ -172,7 +171,9 @@ public abstract class AbstractContainerIT {
         });
 
         assert warFiles != null;
-        assertEquals(1, warFiles.length, "Expected only one war file in target directory, run 'mvn clean' and try again");
+        assertThat(warFiles.length)
+            .as("Expected only one war file in target directory, run 'mvn clean' and try again")
+            .isEqualTo(1);
 
         return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
     }

@@ -29,10 +29,7 @@ import java.net.URI;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static jakarta.ws.rs.core.MediaType.TEXT_HTML_TYPE;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class WebContainerIT extends JakartaAbstractContainerIT {
 
@@ -49,27 +46,27 @@ public class WebContainerIT extends JakartaAbstractContainerIT {
                     .get()) {
                 jsessionid = new Cookie("JSESSIONID",
                         loginPage.getMetadata().get("Set-Cookie").get(0).toString().split(";")[0].split("=")[1]);
-                assertTrue(loginPage.readEntity(String.class).contains("loginform"));
+                assertThat(loginPage.readEntity(String.class)).contains("loginform");
             }
 
-            assertNotNull(jsessionid);
+            assertThat(jsessionid).isNotNull();
             URI location;
             try (Response loginAction = client.target(getBaseUri())
                     .path("/login.jsp")
                     .request(APPLICATION_FORM_URLENCODED)
                     .cookie(jsessionid)
                     .post(Entity.entity("username=root&password=secret&submit=Login", APPLICATION_FORM_URLENCODED))) {
-                assertEquals(302, loginAction.getStatus());
+                assertThat(loginAction.getStatus()).isEqualTo(302);
                 location = loginAction.getLocation();
             }
 
-            assertNotNull(location);
+            assertThat(location).isNotNull();
             final String loggedPage = client.target(getBaseUri())
                     .path(location.getPath())
                     .request(APPLICATION_FORM_URLENCODED)
                     .cookie(jsessionid)
                     .get(String.class);
-            assertTrue(loggedPage.contains("Hi root!"));
+            assertThat(loggedPage).contains("Hi root!");
         } finally {
             client.close();
         }

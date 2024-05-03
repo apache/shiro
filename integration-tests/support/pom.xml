@@ -124,6 +124,13 @@
             <scope>compile</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- dependency on the Base64 class
              in 2.0 this is split out, so this dep will be removed
              in the future
