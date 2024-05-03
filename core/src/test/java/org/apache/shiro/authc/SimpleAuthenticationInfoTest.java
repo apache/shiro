@@ -58,50 +58,54 @@ public class SimpleAuthenticationInfoTest {
         SimpleAuthenticationInfo aggregate = new SimpleAuthenticationInfo();
         // Make a quick test fixture that does *not* implement MutablePrincipalCollection
         PrincipalCollection principalCollection = new PrincipalCollection() {
-            @SuppressWarnings("unchecked")
-            public List asList() {
+            @Override
+            public List<?> asList() {
                 return null;
             }
 
-            @SuppressWarnings("unchecked")
-            public Set asSet() {
+            @Override
+            public Set<?> asSet() {
                 return null;
             }
 
+            @Override
             public <T> Collection<T> byType(Class<T> type) {
                 return null;
             }
 
-            @SuppressWarnings("unchecked")
-            public Collection fromRealm(String realmName) {
+            @Override
+            public Collection<?> fromRealm(String realmName) {
                 Collection<Object> principals = new HashSet<Object>();
                 principals.add("testprincipal");
                 return principals;
             }
 
+            @Override
             public Object getPrimaryPrincipal() {
                 return null;
             }
 
+            @Override
             public Set<String> getRealmNames() {
                 Set<String> realms = new HashSet<String>();
                 realms.add("testrealm");
                 return realms;
             }
 
+            @Override
             public boolean isEmpty() {
                 return false;
             }
 
+            @Override
             public <T> T oneByType(Class<T> type) {
                 return null;
             }
 
-            @SuppressWarnings("unchecked")
-            public Iterator iterator() {
+            @Override
+            public Iterator<Object> iterator() {
                 return null;
             }
-
         };
         aggregate.setPrincipals(principalCollection);
         SimpleAuthenticationInfo local = new SimpleAuthenticationInfo("username", "password", "testRealm");
