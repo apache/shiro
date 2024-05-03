@@ -26,10 +26,10 @@ import org.junit.jupiter.api.Test;
 import javax.annotation.security.DenyAll;
 import java.lang.annotation.Annotation;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test cases for the {@link DenyAllAnnotationHandler} class.
@@ -39,7 +39,7 @@ public class DenyAllAnnotationHandlerTest extends SecurityManagerTestSupport {
 
     @Test
     void testGuestSingleRoleAssertion() throws Throwable {
-        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
+        assertThrows(UnauthenticatedException.class, () -> {
             DenyAllAnnotationHandler handler = new DenyAllAnnotationHandler();
 
             Annotation denyAllAnnotation = new DenyAll() {
@@ -55,7 +55,7 @@ public class DenyAllAnnotationHandlerTest extends SecurityManagerTestSupport {
 
     @Test
     void testOneOfTheRolesRequired() throws Throwable {
-        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
+        assertThrows(UnauthenticatedException.class, () -> {
             subject = createMock(Subject.class);
             expect(subject.hasRole("blah")).andReturn(true);
             replay(subject);

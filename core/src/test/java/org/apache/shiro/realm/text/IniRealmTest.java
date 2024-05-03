@@ -23,8 +23,9 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.config.Ini;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit tests for the {@link IniRealm} class.
@@ -45,7 +46,7 @@ public class IniRealmTest {
 
     @Test
     void testInitWithoutIniResource() {
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
+        assertThrows(IllegalStateException.class, () -> {
             new IniRealm().init();
         });
     }
@@ -55,11 +56,11 @@ public class IniRealmTest {
         IniRealm realm = new IniRealm();
         realm.setResourcePath("classpath:org/apache/shiro/realm/text/IniRealmTest.simple.ini");
         realm.init();
-        assertThat(realm.roleExists("admin")).isTrue();
+        assertTrue(realm.roleExists("admin"));
         UsernamePasswordToken token = new UsernamePasswordToken("user1", "user1");
         AuthenticationInfo info = realm.getAuthenticationInfo(token);
-        assertThat(info).isNotNull();
-        assertThat(realm.hasRole(info.getPrincipals(), "admin")).isTrue();
+        assertNotNull(info);
+        assertTrue(realm.hasRole(info.getPrincipals(), "admin"));
     }
 
     @Test
@@ -67,6 +68,6 @@ public class IniRealmTest {
         IniRealm realm = new IniRealm();
         realm.setResourcePath("classpath:org/apache/shiro/realm/text/IniRealmTest.noUsers.ini");
         realm.init();
-        assertThat(realm.roleExists("admin")).isTrue();
+        assertTrue(realm.roleExists("admin"));
     }
 }

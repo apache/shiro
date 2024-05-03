@@ -22,9 +22,9 @@ import com.google.inject.spi.InjectionPoint;
 import org.apache.shiro.mgt.SecurityManager;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.easymock.EasyMock.createMock;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class GuiceEnvironmentTest {
     @Test
@@ -32,7 +32,7 @@ public class GuiceEnvironmentTest {
         SecurityManager securityManager = createMock(SecurityManager.class);
 
         GuiceEnvironment underTest = new GuiceEnvironment(securityManager);
-        assertThat(underTest.getSecurityManager()).isSameAs(securityManager);
+        assertSame(securityManager, underTest.getSecurityManager());
     }
 
     @Test

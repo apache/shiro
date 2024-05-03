@@ -26,8 +26,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 import static org.apache.shiro.cdi.AopHelper.autorizationAnnotationClasses;
-import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.times;
@@ -62,7 +61,7 @@ class AopHelperTest {
     @SneakyThrows
     void numberOfInterceptors() {
         createInterceptors();
-        assertThat(interceptors).hasSize(2);
+        assertEquals(2, interceptors.size());
     }
 
     @Test
@@ -80,17 +79,17 @@ class AopHelperTest {
     @Test
     @SneakyThrows
     void checkNotAnnotated() {
-        assertThat(AopHelper.createSecurityInterceptors(NotAnnotated.class.getMethod("method"),
-                NotAnnotated.class)).isEmpty();
+        assertEquals(0, AopHelper.createSecurityInterceptors(NotAnnotated.class.getMethod("method"),
+                NotAnnotated.class).size());
     }
 
     @Test
     @SneakyThrows
     @SuppressWarnings("MagicNumber")
     void checkAllAnnotationTypes() {
-        assertThat(autorizationAnnotationClasses.keySet().stream().distinct().count()).isEqualTo(8);
+        assertEquals(8, autorizationAnnotationClasses.keySet().stream().distinct().count());
         for (Class<? extends Annotation> clz : autorizationAnnotationClasses.keySet()) {
-            assertThat(autorizationAnnotationClasses.get(clz).call().getAnnotationClass()).isEqualTo(clz);
+            assertEquals(clz, autorizationAnnotationClasses.get(clz).call().getAnnotationClass());
         }
     }
 }

@@ -31,13 +31,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AbstractInjectionProviderTest {
 
@@ -75,10 +76,10 @@ public class AbstractInjectionProviderTest {
 
         SomeInjectedClass got = underTest.get();
 
-        assertThat(got.c1).as("Wrong parameter passed to constructor (index 0).").isEqualTo(c1);
-        assertThat(got.c2).as("Wrong parameter passed to constructor (index 1).").isEqualTo(c2);
+        assertEquals(c1, got.c1, "Wrong parameter passed to constructor (index 0).");
+        assertEquals(c2, got.c2, "Wrong parameter passed to constructor (index 1).");
 
-        assertThat(postProcessCalled.get()).as("postProcess method was not called.").isTrue();
+        assertTrue(postProcessCalled.get(), "postProcess method was not called.");
 
         verify(mockInjector);
     }
@@ -123,11 +124,11 @@ public class AbstractInjectionProviderTest {
             }
         }
 
-        assertThat(foundC1).as("Did not find dependency C1").isTrue();
-        assertThat(foundC2).as("Did not find dependency C2").isTrue();
-        assertThat(foundV1).as("Did not find dependency V1").isTrue();
-        assertThat(foundV2).as("Did not find dependency V2").isTrue();
-        assertThat(foundF1).as("Did not find dependency F1").isTrue();
+        assertTrue(foundC1, "Did not find dependency C1");
+        assertTrue(foundC2, "Did not find dependency C2");
+        assertTrue(foundV1, "Did not find dependency V1");
+        assertTrue(foundV2, "Did not find dependency V2");
+        assertTrue(foundF1, "Did not find dependency F1");
     }
 
     static class SomeInjectedClass {

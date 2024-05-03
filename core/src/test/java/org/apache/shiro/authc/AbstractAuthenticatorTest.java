@@ -28,12 +28,14 @@ import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @since 0.1
@@ -96,7 +98,7 @@ public class AbstractAuthenticatorTest {
      */
     @Test
     void authenticateWithNullArgument() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             abstractAuthenticator.authenticate(null);
         });
     }
@@ -107,7 +109,7 @@ public class AbstractAuthenticatorTest {
      */
     @Test
     void throwAuthenticationExceptionIfDoAuthenticateReturnsNull() {
-        assertThatExceptionOfType(AuthenticationException.class).isThrownBy(() -> {
+        assertThrows(AuthenticationException.class, () -> {
             abstractAuthenticator = createAuthcReturnNull();
             abstractAuthenticator.authenticate(newToken());
         });
@@ -121,7 +123,7 @@ public class AbstractAuthenticatorTest {
     @Test
     void nonNullAuthenticationInfoAfterAuthenticate() {
         AuthenticationInfo authcInfo = abstractAuthenticator.authenticate(newToken());
-        assertThat(authcInfo).isNotNull();
+        assertNotNull(authcInfo);
     }
 
     @Test
@@ -158,7 +160,7 @@ public class AbstractAuthenticatorTest {
             abstractAuthenticator.authenticate(token);
         } catch (AuthenticationException e) {
             exceptionThrown = true;
-            assertThat(ae).isEqualTo(e);
+            assertEquals(e, ae);
         }
         verify(mockListener);
 
@@ -169,7 +171,7 @@ public class AbstractAuthenticatorTest {
 
     @Test
     void notifyFailureAfterDoAuthenticateThrowsNonAuthenticationException() {
-        assertThatExceptionOfType(AuthenticationException.class).isThrownBy(() -> {
+        assertThrows(AuthenticationException.class, () -> {
             abstractAuthenticator = new AbstractAuthenticator() {
                 protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                     throw new IllegalArgumentException("not an AuthenticationException subclass");
@@ -200,8 +202,8 @@ public class AbstractAuthenticatorTest {
         }
 
         String logMsg = String.join("\n", listAppender.getMessages());
-        assertThat(logMsg).contains("WARN");
-        assertThat(logMsg).contains("java.lang.IllegalArgumentException: " + expectedExceptionMessage);
+        assertTrue(logMsg.contains("WARN"));
+        assertTrue(logMsg.contains("java.lang.IllegalArgumentException: " + expectedExceptionMessage));
     }
 
 }

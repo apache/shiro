@@ -27,7 +27,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.EnumSet;
 
-import static org.assertj.core.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultFiltersTest {
 

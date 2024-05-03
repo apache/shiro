@@ -33,8 +33,9 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
 import static org.apache.shiro.ee.cdi.ShiroScopeContext.isWebContainerSessions;
-import static org.assertj.core.api.Assertions.assertThat;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.lenient;
@@ -81,14 +82,14 @@ public class ShiroScopeContextTest {
 
     @Test
     void basics() {
-        assertThat(ctx.isActive()).isTrue();
-        assertThat(ctx.getScope()).isEqualTo(ViewScoped.class);
+        assertTrue(ctx.isActive());
+        assertEquals(ViewScoped.class, ctx.getScope());
     }
 
     @Test
     void webSessionsBasic() {
         setupWebSessions();
-        assertThat(isWebContainerSessions(SecurityUtils.getSecurityManager())).isTrue();
+        assertTrue(isWebContainerSessions(SecurityUtils.getSecurityManager()));
     }
 
     @Test
@@ -96,8 +97,8 @@ public class ShiroScopeContextTest {
         setupWebSessions();
         try (var cdim = mockStatic(CDI.class, Answers.RETURNS_DEEP_STUBS)) {
             when(CDI.current().getBeanManager().getContext(SessionScoped.class).get(contextual)).thenReturn(bean);
-            assertThat(ctx.get(contextual)).isEqualTo(bean);
-            assertThat((Object) ctx.get(null)).isNull();
+            assertEquals(bean, ctx.get(contextual));
+            assertNull(ctx.get(null));
             verify(CDI.current().getBeanManager(), atLeast(2)).getContext(any());
         }
     }
@@ -108,8 +109,8 @@ public class ShiroScopeContextTest {
         try (var cdim = mockStatic(CDI.class, Answers.RETURNS_DEEP_STUBS)) {
             when(CDI.current().getBeanManager().getContext(SessionScoped.class)
                     .get(contextual, creationalContext)).thenReturn(bean);
-            assertThat(ctx.get(contextual, creationalContext)).isEqualTo(bean);
-            assertThat((Object) ctx.get(null)).isNull();
+            assertEquals(bean, ctx.get(contextual, creationalContext));
+            assertNull(ctx.get(null));
             verify(CDI.current().getBeanManager(), atLeast(2)).getContext(any());
         }
     }

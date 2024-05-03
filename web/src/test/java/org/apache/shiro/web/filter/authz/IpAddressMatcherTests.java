@@ -17,7 +17,8 @@ package org.apache.shiro.web.filter.authz;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @since 2.0
@@ -30,35 +31,35 @@ public class IpAddressMatcherTests {
 
     @Test
     void ipv6MatcherMatchesIpv6Address() {
-        assertThat(v6matcher.matches(ipv6Address)).isTrue();
+        assertTrue(v6matcher.matches(ipv6Address));
     }
 
     @Test
     void ipv6MatcherDoesntMatchIpv4Address() {
-        assertThat(v6matcher.matches(ipv4Address)).isFalse();
+        assertFalse(v6matcher.matches(ipv4Address));
     }
 
     @Test
     void ipv4MatcherMatchesIpv4Address() {
-        assertThat(v4matcher.matches(ipv4Address)).isTrue();
+        assertTrue(v4matcher.matches(ipv4Address));
     }
 
     @Test
     void ipv4SubnetMatchesCorrectly() throws Exception {
         IpAddressMatcher matcher = new IpAddressMatcher("192.168.1.0/24");
-        assertThat(matcher.matches(ipv4Address)).isTrue();
+        assertTrue(matcher.matches(ipv4Address));
         matcher = new IpAddressMatcher("192.168.1.128/25");
-        assertThat(matcher.matches(ipv4Address)).isFalse();
-        assertThat(matcher.matches("192.168.1.159")).isTrue();
+        assertFalse(matcher.matches(ipv4Address));
+        assertTrue(matcher.matches("192.168.1.159"));
     }
 
     @Test
     void ipv6RangeMatches() throws Exception {
         IpAddressMatcher matcher = new IpAddressMatcher("2001:DB8::/48");
-        assertThat(matcher.matches("2001:DB8:0:0:0:0:0:0")).isTrue();
-        assertThat(matcher.matches("2001:DB8:0:0:0:0:0:1")).isTrue();
-        assertThat(matcher.matches("2001:DB8:0:FFFF:FFFF:FFFF:FFFF:FFFF")).isTrue();
-        assertThat(matcher.matches("2001:DB8:1:0:0:0:0:0")).isFalse();
+        assertTrue(matcher.matches("2001:DB8:0:0:0:0:0:0"));
+        assertTrue(matcher.matches("2001:DB8:0:0:0:0:0:1"));
+        assertTrue(matcher.matches("2001:DB8:0:FFFF:FFFF:FFFF:FFFF:FFFF"));
+        assertFalse(matcher.matches("2001:DB8:1:0:0:0:0:0"));
     }
 
     // https://github.com/spring-projects/spring-security/issues/1970q
@@ -66,11 +67,11 @@ public class IpAddressMatcherTests {
     void zeroMaskMatchesAnything() throws Exception {
         IpAddressMatcher matcher = new IpAddressMatcher("0.0.0.0/0");
 
-        assertThat(matcher.matches("123.4.5.6")).isTrue();
-        assertThat(matcher.matches("192.168.0.159")).isTrue();
+        assertTrue(matcher.matches("123.4.5.6"));
+        assertTrue(matcher.matches("192.168.0.159"));
 
         matcher = new IpAddressMatcher("192.168.0.159/0");
-        assertThat(matcher.matches("123.4.5.6")).isTrue();
-        assertThat(matcher.matches("192.168.0.159")).isTrue();
+        assertTrue(matcher.matches("123.4.5.6"));
+        assertTrue(matcher.matches("192.168.0.159"));
     }
 }

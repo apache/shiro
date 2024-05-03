@@ -24,7 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @since 1.3
@@ -41,23 +43,23 @@ public class DomainPermissionTest {
         p = new DomainPermission();
 
         // Verify domain
-        assertThat(p.getDomain()).isEqualTo("domain");
+        assertEquals("domain", p.getDomain());
 
         // Verify actions
         set = p.getActions();
-        assertThat(set).isNull();
+        assertNull(set);
 
         // Verify targets
         set = p.getTargets();
-        assertThat(set).isNull();
+        assertNull(set);
 
         // Verify parts
         parts = p.getParts();
-        assertThat(parts.size()).as("Number of parts").isEqualTo(1);
+        assertEquals(1, parts.size(), "Number of parts");
         set = parts.get(0);
-        assertThat(set).hasSize(1);
+        assertEquals(1, set.size());
         entry = set.iterator().next();
-        assertThat(entry).isEqualTo("domain");
+        assertEquals("domain", entry);
     }
 
     @Test
@@ -72,33 +74,33 @@ public class DomainPermissionTest {
         p = new DomainPermission("action1");
 
         // Verify domain
-        assertThat(p.getDomain()).isEqualTo("domain");
+        assertEquals("domain", p.getDomain());
 
         // Verify actions
         set = p.getActions();
-        assertThat(set).isNotNull();
-        assertThat(set).hasSize(1);
+        assertNotNull(set);
+        assertEquals(1, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action1");
+        assertEquals("action1", entry);
 
         // Verify targets
         set = p.getTargets();
-        assertThat(set).isNull();
+        assertNull(set);
 
         // Verify parts
         parts = p.getParts();
-        assertThat(parts).hasSize(2);
+        assertEquals(2, parts.size());
         set = parts.get(0);
-        assertThat(set).hasSize(1);
+        assertEquals(1, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("domain");
+        assertEquals("domain", entry);
         set = parts.get(1);
-        assertThat(set).hasSize(1);
+        assertEquals(1, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action1");
+        assertEquals("action1", entry);
     }
 
     @Test
@@ -113,41 +115,41 @@ public class DomainPermissionTest {
         p = new DomainPermission("action1,action2,action3");
 
         // Verify domain
-        assertThat(p.getDomain()).isEqualTo("domain");
+        assertEquals("domain", p.getDomain());
 
         // Verify actions
         set = p.getActions();
-        assertThat(set).isNotNull();
-        assertThat(set).hasSize(3);
+        assertNotNull(set);
+        assertEquals(3, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action1");
+        assertEquals("action1", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action2");
+        assertEquals("action2", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action3");
+        assertEquals("action3", entry);
 
         // Verify targets
         set = p.getTargets();
-        assertThat(set).isNull();
+        assertNull(set);
 
         // Verify parts
         parts = p.getParts();
-        assertThat(parts).hasSize(2);
+        assertEquals(2, parts.size());
         set = parts.get(0);
-        assertThat(set).hasSize(1);
+        assertEquals(1, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("domain");
+        assertEquals("domain", entry);
         set = parts.get(1);
-        assertThat(set).hasSize(3);
+        assertEquals(3, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action1");
+        assertEquals("action1", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action2");
+        assertEquals("action2", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action3");
+        assertEquals("action3", entry);
     }
 
     @Test
@@ -162,42 +164,42 @@ public class DomainPermissionTest {
         p = new DomainPermission("action1", "target1");
 
         // Verify domain
-        assertThat(p.getDomain()).isEqualTo("domain");
+        assertEquals("domain", p.getDomain());
 
         // Verify actions
         set = p.getActions();
-        assertThat(set).isNotNull();
-        assertThat(set).hasSize(1);
+        assertNotNull(set);
+        assertEquals(1, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action1");
+        assertEquals("action1", entry);
 
         // Verify targets
         set = p.getTargets();
-        assertThat(set).isNotNull();
-        assertThat(set).hasSize(1);
+        assertNotNull(set);
+        assertEquals(1, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("target1");
+        assertEquals("target1", entry);
 
         // Verify parts
         parts = p.getParts();
-        assertThat(parts).hasSize(3);
+        assertEquals(3, parts.size());
         set = parts.get(0);
-        assertThat(set).hasSize(1);
+        assertEquals(1, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("domain");
+        assertEquals("domain", entry);
         set = parts.get(1);
-        assertThat(set).hasSize(1);
+        assertEquals(1, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action1");
+        assertEquals("action1", entry);
         set = parts.get(2);
-        assertThat(set).hasSize(1);
+        assertEquals(1, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("target1");
+        assertEquals("target1", entry);
     }
 
     @Test
@@ -212,57 +214,57 @@ public class DomainPermissionTest {
         p = new DomainPermission("action1,action2,action3", "target1,target2,target3");
 
         // Verify domain
-        assertThat(p.getDomain()).isEqualTo("domain");
+        assertEquals("domain", p.getDomain());
 
         // Verify actions
         set = p.getActions();
-        assertThat(set).isNotNull();
-        assertThat(set).hasSize(3);
+        assertNotNull(set);
+        assertEquals(3, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action1");
+        assertEquals("action1", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action2");
+        assertEquals("action2", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action3");
+        assertEquals("action3", entry);
 
         // Verify targets
         set = p.getTargets();
-        assertThat(set).isNotNull();
-        assertThat(set).hasSize(3);
+        assertNotNull(set);
+        assertEquals(3, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("target1");
+        assertEquals("target1", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("target2");
+        assertEquals("target2", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("target3");
+        assertEquals("target3", entry);
 
         // Verify parts
         parts = p.getParts();
-        assertThat(parts).hasSize(3);
+        assertEquals(3, parts.size());
         set = parts.get(0);
-        assertThat(set).hasSize(1);
+        assertEquals(1, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("domain");
+        assertEquals("domain", entry);
         set = parts.get(1);
-        assertThat(set).hasSize(3);
+        assertEquals(3, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action1");
+        assertEquals("action1", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action2");
+        assertEquals("action2", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("action3");
+        assertEquals("action3", entry);
         set = parts.get(2);
-        assertThat(set).hasSize(3);
+        assertEquals(3, set.size());
         iterator = set.iterator();
         entry = iterator.next();
-        assertThat(entry).isEqualTo("target1");
+        assertEquals("target1", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("target2");
+        assertEquals("target2", entry);
         entry = iterator.next();
-        assertThat(entry).isEqualTo("target3");
+        assertEquals("target3", entry);
     }
 }

@@ -20,68 +20,68 @@ package org.apache.shiro.lang.util;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ClassUtilsTest {
 
     @Test
     void testGetPrimitiveClasses() throws UnknownClassException {
 
-        assertThat(ClassUtils.forName("boolean")).isEqualTo(boolean.class);
-        assertThat(ClassUtils.forName("byte")).isEqualTo(byte.class);
-        assertThat(ClassUtils.forName("char")).isEqualTo(char.class);
-        assertThat(ClassUtils.forName("short")).isEqualTo(short.class);
-        assertThat(ClassUtils.forName("int")).isEqualTo(int.class);
-        assertThat(ClassUtils.forName("long")).isEqualTo(long.class);
-        assertThat(ClassUtils.forName("float")).isEqualTo(float.class);
-        assertThat(ClassUtils.forName("double")).isEqualTo(double.class);
-        assertThat(ClassUtils.forName("void")).isEqualTo(void.class);
+        assertEquals(boolean.class, ClassUtils.forName("boolean"));
+        assertEquals(byte.class, ClassUtils.forName("byte"));
+        assertEquals(char.class, ClassUtils.forName("char"));
+        assertEquals(short.class, ClassUtils.forName("short"));
+        assertEquals(int.class, ClassUtils.forName("int"));
+        assertEquals(long.class, ClassUtils.forName("long"));
+        assertEquals(float.class, ClassUtils.forName("float"));
+        assertEquals(double.class, ClassUtils.forName("double"));
+        assertEquals(void.class, ClassUtils.forName("void"));
 
-        assertThat(ClassUtils.forName(boolean.class.getName())).isEqualTo(boolean.class);
-        assertThat(ClassUtils.forName(byte.class.getName())).isEqualTo(byte.class);
-        assertThat(ClassUtils.forName(char.class.getName())).isEqualTo(char.class);
-        assertThat(ClassUtils.forName(short.class.getName())).isEqualTo(short.class);
-        assertThat(ClassUtils.forName(int.class.getName())).isEqualTo(int.class);
-        assertThat(ClassUtils.forName(long.class.getName())).isEqualTo(long.class);
-        assertThat(ClassUtils.forName(float.class.getName())).isEqualTo(float.class);
-        assertThat(ClassUtils.forName(double.class.getName())).isEqualTo(double.class);
-        assertThat(ClassUtils.forName(void.class.getName())).isEqualTo(void.class);
+        assertEquals(boolean.class, ClassUtils.forName(boolean.class.getName()));
+        assertEquals(byte.class, ClassUtils.forName(byte.class.getName()));
+        assertEquals(char.class, ClassUtils.forName(char.class.getName()));
+        assertEquals(short.class, ClassUtils.forName(short.class.getName()));
+        assertEquals(int.class, ClassUtils.forName(int.class.getName()));
+        assertEquals(long.class, ClassUtils.forName(long.class.getName()));
+        assertEquals(float.class, ClassUtils.forName(float.class.getName()));
+        assertEquals(double.class, ClassUtils.forName(double.class.getName()));
+        assertEquals(void.class, ClassUtils.forName(void.class.getName()));
 
     }
 
     @Test
     void testGetPrimitiveArrays() throws UnknownClassException {
 
-        assertThat(ClassUtils.forName("[Z")).isEqualTo(boolean[].class);
-        assertThat(ClassUtils.forName("[B")).isEqualTo(byte[].class);
-        assertThat(ClassUtils.forName("[C")).isEqualTo(char[].class);
-        assertThat(ClassUtils.forName("[S")).isEqualTo(short[].class);
-        assertThat(ClassUtils.forName("[I")).isEqualTo(int[].class);
-        assertThat(ClassUtils.forName("[J")).isEqualTo(long[].class);
-        assertThat(ClassUtils.forName("[F")).isEqualTo(float[].class);
-        assertThat(ClassUtils.forName("[D")).isEqualTo(double[].class);
+        assertEquals(boolean[].class, ClassUtils.forName("[Z"));
+        assertEquals(byte[].class, ClassUtils.forName("[B"));
+        assertEquals(char[].class, ClassUtils.forName("[C"));
+        assertEquals(short[].class, ClassUtils.forName("[S"));
+        assertEquals(int[].class, ClassUtils.forName("[I"));
+        assertEquals(long[].class, ClassUtils.forName("[J"));
+        assertEquals(float[].class, ClassUtils.forName("[F"));
+        assertEquals(double[].class, ClassUtils.forName("[D"));
 
 
-        assertThat(ClassUtils.forName(boolean[].class.getName())).isEqualTo(boolean[].class);
-        assertThat(ClassUtils.forName(byte[].class.getName())).isEqualTo(byte[].class);
-        assertThat(ClassUtils.forName(char[].class.getName())).isEqualTo(char[].class);
-        assertThat(ClassUtils.forName(short[].class.getName())).isEqualTo(short[].class);
-        assertThat(ClassUtils.forName(int[].class.getName())).isEqualTo(int[].class);
-        assertThat(ClassUtils.forName(long[].class.getName())).isEqualTo(long[].class);
-        assertThat(ClassUtils.forName(float[].class.getName())).isEqualTo(float[].class);
-        assertThat(ClassUtils.forName(double[].class.getName())).isEqualTo(double[].class);
+        assertEquals(boolean[].class, ClassUtils.forName(boolean[].class.getName()));
+        assertEquals(byte[].class, ClassUtils.forName(byte[].class.getName()));
+        assertEquals(char[].class, ClassUtils.forName(char[].class.getName()));
+        assertEquals(short[].class, ClassUtils.forName(short[].class.getName()));
+        assertEquals(int[].class, ClassUtils.forName(int[].class.getName()));
+        assertEquals(long[].class, ClassUtils.forName(long[].class.getName()));
+        assertEquals(float[].class, ClassUtils.forName(float[].class.getName()));
+        assertEquals(double[].class, ClassUtils.forName(double[].class.getName()));
     }
 
     @Test
     void testGetClass() {
-        assertThat(ClassUtils.forName("java.lang.String")).isEqualTo(String.class);
-        assertThat(ClassUtils.forName("[Ljava.lang.String;")).isEqualTo(String[].class);
-        assertThat(ClassUtils.forName(String.class.getName())).isEqualTo(String.class);
-        assertThat(ClassUtils.forName(String[].class.getName())).isEqualTo(String[].class);
+        assertEquals(String.class, ClassUtils.forName("java.lang.String"));
+        assertEquals(String[].class, ClassUtils.forName("[Ljava.lang.String;"));
+        assertEquals(String.class, ClassUtils.forName(String.class.getName()));
+        assertEquals(String[].class, ClassUtils.forName(String[].class.getName()));
 
-        assertThat(ClassUtils.forName("org.apache.shiro.lang.util.ClassUtilsTest")).isEqualTo(ClassUtilsTest.class);
-        assertThat(ClassUtils.forName("[Lorg.apache.shiro.lang.util.ClassUtilsTest;")).isEqualTo(ClassUtilsTest[].class);
-        assertThat(ClassUtils.forName(ClassUtilsTest.class.getName())).isEqualTo(ClassUtilsTest.class);
-        assertThat(ClassUtils.forName(ClassUtilsTest[].class.getName())).isEqualTo(ClassUtilsTest[].class);
+        assertEquals(ClassUtilsTest.class, ClassUtils.forName("org.apache.shiro.lang.util.ClassUtilsTest"));
+        assertEquals(ClassUtilsTest[].class, ClassUtils.forName("[Lorg.apache.shiro.lang.util.ClassUtilsTest;"));
+        assertEquals(ClassUtilsTest.class, ClassUtils.forName(ClassUtilsTest.class.getName()));
+        assertEquals(ClassUtilsTest[].class, ClassUtils.forName(ClassUtilsTest[].class.getName()));
     }
 }

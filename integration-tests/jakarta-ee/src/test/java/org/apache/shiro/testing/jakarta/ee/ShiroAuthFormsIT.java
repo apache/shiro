@@ -28,7 +28,6 @@ import java.util.stream.Stream;
 
 import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import static org.apache.shiro.web.servlet.ShiroHttpSession.DEFAULT_SESSION_ID_NAME;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -44,6 +43,9 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.archive.importer.MavenImporter;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -133,9 +135,9 @@ public class ShiroAuthFormsIT {
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void protectedPageWithLogin() {
         webDriver.get(baseURL + "shiro/protected");
-        assertThat(webDriver.getCurrentUrl().contains("shiro/auth")).as("redirect to login").isTrue();
+        assertTrue(webDriver.getCurrentUrl().contains("shiro/auth"), "redirect to login");
         login();
-        assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
+        assertEquals("Protected Page", webDriver.getTitle());
     }
 
     @Test
@@ -144,9 +146,9 @@ public class ShiroAuthFormsIT {
         webDriver.get(baseURL + "shiro/protected");
         login();
         guardHttp(logout).click();
-        assertThat(webDriver.getCurrentUrl().contains("shiro/auth")).as("redirect to login").isTrue();
+        assertTrue(webDriver.getCurrentUrl().contains("shiro/auth"), "redirect to login");
         login();
-        assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
+        assertEquals("Protected Page", webDriver.getTitle());
     }
 
     @Test
@@ -156,7 +158,7 @@ public class ShiroAuthFormsIT {
         username.sendKeys("webuser");
         password.sendKeys("webpwd");
         guardHttp(nonJSFLogin).click();
-        assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
+        assertEquals("Protected Page", webDriver.getTitle());
     }
 
     @Test
@@ -167,14 +169,14 @@ public class ShiroAuthFormsIT {
         password.sendKeys("webpwd");
         guardHttp(nonJSFLogin).click();
         guardHttp(logoutViaFilter).click();
-        assertThat(webDriver.getCurrentUrl().contains("shiro/auth")).as("redirect to login").isTrue();
+        assertTrue(webDriver.getCurrentUrl().contains("shiro/auth"), "redirect to login");
         username.sendKeys("webuser");
         password.sendKeys("webpwd");
         guardHttp(nonJSFLogin).click();
         firstName.sendKeys("Jack");
         lastName.sendKeys("Frost");
         guardHttp(submitFirst).click();
-        assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
+        assertEquals("Form Submitted - firstName: Jack, lastName: Frost", messages.getText());
     }
 
     @Test
@@ -188,9 +190,9 @@ public class ShiroAuthFormsIT {
         webDriver.manage().deleteCookieNamed(isShiroNativeSessionsIntegrationTest()
                 ? "native_session_cookie" : DEFAULT_SESSION_ID_NAME);
         webDriver.navigate().refresh();
-        assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
+        assertEquals("Protected Page", webDriver.getTitle());
         guardHttp(logout).click();
-        assertThat(webDriver.getCurrentUrl().contains("shiro/auth")).as("redirect to login").isTrue();
+        assertTrue(webDriver.getCurrentUrl().contains("shiro/auth"), "redirect to login");
     }
 
     @Test
@@ -198,14 +200,14 @@ public class ShiroAuthFormsIT {
     void unauthorized() {
         webDriver.get(baseURL + "shiro/adminpage");
         login();
-        assertThat(webDriver.getTitle()).isEqualTo("Unauthorized");
+        assertEquals("Unauthorized", webDriver.getTitle());
         guardHttp(logout).click();
-        assertThat(webDriver.getCurrentUrl()).isEqualTo(baseURL + "index");
+        assertEquals(baseURL + "index", webDriver.getCurrentUrl());
         webDriver.get(baseURL + "shiro/adminpage");
         username.sendKeys("admin");
         password.sendKeys("adminpwd");
         guardHttp(login).click();
-        assertThat(webDriver.getTitle()).isEqualTo("Admin Page");
+        assertEquals("Admin Page", webDriver.getTitle());
     }
 
     @Test
@@ -215,9 +217,9 @@ public class ShiroAuthFormsIT {
         username.sendKeys("webuser");
         password.sendKeys("wrongpwd");
         guardHttp(login).click();
-        assertThat(loginFailureMessage.getText()).isEqualTo("Login Failed");
+        assertEquals("Login Failed", loginFailureMessage.getText());
         login();
-        assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
+        assertEquals("Protected Page", webDriver.getTitle());
     }
 
     @Test
@@ -231,7 +233,7 @@ public class ShiroAuthFormsIT {
         firstName.sendKeys("Jack");
         lastName.sendKeys("Frost");
         guardHttp(submitFirst).click();
-        assertThat(sessionExpiredMessage.getText()).isEqualTo("Your Session Has Expired");
+        assertEquals("Your Session Has Expired", sessionExpiredMessage.getText());
     }
 
     @Test
@@ -239,7 +241,7 @@ public class ShiroAuthFormsIT {
     void nonAjaxResubmit() {
         nonAjaxSessionExpired();
         login();
-        assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
+        assertEquals("Form Submitted - firstName: Jack, lastName: Frost", messages.getText());
     }
 
     @Test
@@ -250,7 +252,7 @@ public class ShiroAuthFormsIT {
         password.sendKeys("yyy");
         guardHttp(login).click();
         login();
-        assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
+        assertEquals("Form Submitted - firstName: Jack, lastName: Frost", messages.getText());
     }
 
     @Test
@@ -265,7 +267,7 @@ public class ShiroAuthFormsIT {
         firstName.sendKeys("Jack");
         lastName.sendKeys("Frost");
         guardHttp(submitFirst).click();
-        assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
+        assertEquals("Form Submitted - firstName: Jack, lastName: Frost", messages.getText());
     }
 
     @Test
@@ -279,7 +281,7 @@ public class ShiroAuthFormsIT {
         address.sendKeys("1 Houston Street");
         city.sendKeys("New York");
         waitForHttp(submitSecond).click();
-        assertThat(sessionExpiredMessage.getText()).isEqualTo("Your Session Has Expired");
+        assertEquals("Your Session Has Expired", sessionExpiredMessage.getText());
     }
 
     @Test
@@ -287,11 +289,13 @@ public class ShiroAuthFormsIT {
     void ajaxResubmit() {
         ajaxSessionExpired();
         login();
-        assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: 1 Houston Street, City: New York");
+        assertEquals("2nd Form Submitted - Address: 1 Houston Street, City: New York",
+                secondFormMessages.getText());
         address.sendKeys("Workshop");
         city.sendKeys("North Pole");
         guardAjax(submitSecond).click();
-        assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: Workshop, City: North Pole");
+        assertEquals("2nd Form Submitted - Address: Workshop, City: North Pole",
+                secondFormMessages.getText());
     }
 
     @Test
@@ -312,7 +316,8 @@ public class ShiroAuthFormsIT {
         } else {
             waitForHttp(submitSecond).click();
         }
-        assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: 1 Houston Street, City: New York");
+        assertEquals("2nd Form Submitted - Address: 1 Houston Street, City: New York",
+                secondFormMessages.getText());
         address.sendKeys("Workshop");
         city.sendKeys("North Pole");
         invalidateSession.click();
@@ -325,11 +330,13 @@ public class ShiroAuthFormsIT {
         } else {
             waitForHttp(submitSecond).click();
         }
-        assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: Workshop, City: North Pole");
+        assertEquals("2nd Form Submitted - Address: Workshop, City: North Pole",
+                secondFormMessages.getText());
         address.sendKeys("LAX Airport");
         city.sendKeys("Los Angeles");
         guardAjax(submitSecond).click();
-        assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: LAX Airport, City: Los Angeles");
+        assertEquals("2nd Form Submitted - Address: LAX Airport, City: Los Angeles",
+                secondFormMessages.getText());
     }
 
     @Test
@@ -339,7 +346,7 @@ public class ShiroAuthFormsIT {
         login();
         webDriver.get(baseURL + "shiro/auth/loginform");
         login();
-        assertThat(webDriver.getTitle()).isEqualTo("Index");
+        assertEquals("Index", webDriver.getTitle());
     }
 
     private void login() {

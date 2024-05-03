@@ -26,10 +26,9 @@ import org.junit.jupiter.api.Test;
 import java.text.ParseException;
 import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("checkstyle:MagicNumber")
 public class TextConfigurationRealmTest {
@@ -195,7 +194,7 @@ public class TextConfigurationRealmTest {
                     runnable.start();
                     Thread.sleep(500);
                     // No role until lock is released and role definitions are processed
-                    assertThat(realm.roleExists("role1")).as("role exists when it shouldn't").isFalse();
+                    assertFalse(realm.roleExists("role1"), "role exists when it shouldn't");
                 } finally {
                     rolesLock.writeLock().unlock();
                 }
@@ -215,7 +214,7 @@ public class TextConfigurationRealmTest {
         Thread testTask = new Thread(testThread);
         realm.test(testTask);
         testTask.join(500);
-        assertThat(realm.roleExists("role1")).as("role doesn't exist when it should").isTrue();
+        assertTrue(realm.roleExists("role1"), "role doesn't exist when it should");
         testThread.test();
     }
 
@@ -233,7 +232,7 @@ public class TextConfigurationRealmTest {
                     runnable.start();
                     Thread.sleep(500);
                     // No account until lock is released and user definitions are processed
-                    assertThat(realm.accountExists("user1")).as("account exists when it shouldn't").isFalse();
+                    assertFalse(realm.accountExists("user1"), "account exists when it shouldn't");
                 } finally {
                     usersLock.writeLock().unlock();
                 }
@@ -252,7 +251,7 @@ public class TextConfigurationRealmTest {
         Thread testTask = new Thread(testThread);
         realm.test(testTask);
         testTask.join(500);
-        assertThat(realm.accountExists("user1")).as("account doesn't exist when it should").isTrue();
+        assertTrue(realm.accountExists("user1"), "account doesn't exist when it should");
         testThread.test();
     }
 

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test cases for the {@link PermissionAnnotationHandler} class.
@@ -57,8 +57,7 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
         };
 
         runWithSubject(subject -> {
-            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() ->
-                handler.assertAuthorized(requiresPermissionAnnotation));
+            assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresPermissionAnnotation));
         });
     }
 
@@ -86,8 +85,7 @@ public class PermissionAnnotationHandlerTest extends SecurityManagerTestSupport 
         };
 
         runWithSubject(subject -> {
-            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() ->
-                handler.assertAuthorized(requiresPermissionAnnotation));
+            assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresPermissionAnnotation));
         });
     }
 

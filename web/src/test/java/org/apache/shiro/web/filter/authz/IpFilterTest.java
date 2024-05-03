@@ -24,11 +24,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Test cases for the {@link AuthorizationFilter} class.
@@ -43,7 +43,7 @@ public class IpFilterTest {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getRemoteAddr()).andReturn("192.168.42.42");
         replay(request);
-        assertThat(filter.isAccessAllowed(request, null, null)).isFalse();
+        assertFalse(filter.isAccessAllowed(request, null, null));
         verify(request);
     }
 
@@ -54,7 +54,7 @@ public class IpFilterTest {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getRemoteAddr()).andReturn("192.168.42.42");
         replay(request);
-        assertThat(filter.isAccessAllowed(request, null, null)).isFalse();
+        assertFalse(filter.isAccessAllowed(request, null, null));
         verify(request);
     }
 
@@ -65,7 +65,7 @@ public class IpFilterTest {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getRemoteAddr()).andReturn("192.168.33.44");
         replay(request);
-        assertThat(filter.isAccessAllowed(request, null, null)).isFalse();
+        assertFalse(filter.isAccessAllowed(request, null, null));
         verify(request);
     }
 
@@ -77,7 +77,7 @@ public class IpFilterTest {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getRemoteAddr()).andReturn("192.168.33.44");
         replay(request);
-        assertThat(filter.isAccessAllowed(request, null, null)).isFalse();
+        assertFalse(filter.isAccessAllowed(request, null, null));
         verify(request);
     }
 
@@ -97,7 +97,7 @@ public class IpFilterTest {
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
         expect(request.getRemoteAddr()).andReturn("192.168.33.44");
         replay(request);
-        assertThat(filter.isAccessAllowed(request, null, null)).isFalse();
+        assertFalse(filter.isAccessAllowed(request, null, null));
         verify(request);
     }
 }

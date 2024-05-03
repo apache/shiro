@@ -38,11 +38,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -65,14 +67,14 @@ public class ShiroFilterFactoryBeanTest {
         PathMatchingFilterChainResolver resolver = (PathMatchingFilterChainResolver) shiroFilter.getFilterChainResolver();
         DefaultFilterChainManager fcManager = (DefaultFilterChainManager) resolver.getFilterChainManager();
         NamedFilterList chain = fcManager.getChain("/test");
-        assertThat(chain).isNotNull();
-        assertThat(chain).hasSize(3);
+        assertNotNull(chain);
+        assertEquals(3, chain.size());
         Filter[] filters = new Filter[chain.size()];
         filters = chain.toArray(filters);
         // global filter
-        assertThat(filters[0] instanceof InvalidRequestFilter).isTrue();
-        assertThat(filters[1] instanceof DummyFilter).isTrue();
-        assertThat(filters[2] instanceof FormAuthenticationFilter).isTrue();
+        assertTrue(filters[0] instanceof InvalidRequestFilter);
+        assertTrue(filters[1] instanceof DummyFilter);
+        assertTrue(filters[2] instanceof FormAuthenticationFilter);
     }
 
     /**
@@ -106,9 +108,9 @@ public class ShiroFilterFactoryBeanTest {
             public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse)
                     throws IOException, ServletException {
                 HttpServletRequest request = (HttpServletRequest) servletRequest;
-                assertThat(request.getSession()).isNotNull();
+                assertNotNull(request.getSession());
                 //this line asserts the fix for the user-reported issue:
-                assertThat(request.getSession().getServletContext()).isNotNull();
+                assertNotNull(request.getSession().getServletContext());
             }
         };
 

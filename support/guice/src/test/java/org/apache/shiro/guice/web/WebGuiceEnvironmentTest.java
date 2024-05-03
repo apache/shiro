@@ -28,8 +28,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletContext;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.capture;
@@ -37,6 +35,8 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class WebGuiceEnvironmentTest {
 
@@ -65,12 +65,12 @@ public class WebGuiceEnvironmentTest {
         WebGuiceEnvironment underTest =
                 new WebGuiceEnvironment(filterChainResolver, servletContext, securityManager, filterConfiguration);
 
-        assertThat(underTest.getSecurityManager()).isSameAs(securityManager);
-        assertThat(underTest.getFilterChainResolver()).isSameAs(filterChainResolver);
-        assertThat(underTest.getWebSecurityManager()).isSameAs(securityManager);
-        assertThat(underTest.getServletContext()).isSameAs(servletContext);
+        assertSame(securityManager, underTest.getSecurityManager());
+        assertSame(filterChainResolver, underTest.getFilterChainResolver());
+        assertSame(securityManager, underTest.getWebSecurityManager());
+        assertSame(servletContext, underTest.getServletContext());
 
-        assertThat(capture.getValue()).isSameAs(underTest);
+        assertSame(underTest, capture.getValue());
 
         verify(servletContext);
     }

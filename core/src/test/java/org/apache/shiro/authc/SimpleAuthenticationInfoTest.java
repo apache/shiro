@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.shiro.subject.PrincipalCollection;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
@@ -106,7 +106,7 @@ public class SimpleAuthenticationInfoTest {
         aggregate.setPrincipals(principalCollection);
         SimpleAuthenticationInfo local = new SimpleAuthenticationInfo("username", "password", "testRealm");
         aggregate.merge(local);
-        assertThat(aggregate.getPrincipals().asList()).hasSize(2);
+        assertEquals(2, aggregate.getPrincipals().asList().size());
     }
 
 }
