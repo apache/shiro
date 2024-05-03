@@ -24,11 +24,11 @@ import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpSession;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.captureInt;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpServletSessionTest {
 
@@ -61,7 +61,7 @@ public class HttpServletSessionTest {
 
         long timeoutInMilliseconds = servletSession.getTimeout();
 
-        assertThat(timeoutInMilliseconds).isEqualTo(expectedLongValue);
-        assertThat(capturedInt.getValue().intValue()).isEqualTo(expectedTimeoutInSeconds);
+        assertEquals(expectedLongValue, timeoutInMilliseconds);
+        assertEquals(expectedTimeoutInSeconds, capturedInt.getValue().intValue());
     }
 }

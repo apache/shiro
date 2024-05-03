@@ -20,7 +20,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
 import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.shiro.testing.jakarta.ee.PropertyPrincipal;
 import org.apache.shiro.testing.jaxrs.NoIniJaxRsIT;
@@ -40,6 +39,12 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests @Injecting Subject, Session, Principal and SecurityManager with CDI
@@ -72,41 +77,40 @@ public class ComponentInjectionIT {
     @Test
     @OperateOnDeployment(TESTABLE_MODE)
     void securityManagerInjection() {
-        assertThat(injectedComponents.getSecurityManager()).isNotNull();
-        assertThat(injectedComponents.getSecurityManager().getSession(() -> null)).isNull();
+        assertNotNull(injectedComponents.getSecurityManager());
+        assertNull(injectedComponents.getSecurityManager().getSession(() -> null));
     }
 
     @Test
     @OperateOnDeployment(TESTABLE_MODE)
     void subjectInjection() {
-        assertThat(injectedComponents.getSubject()).isNotNull();
-        assertThat(injectedComponents.getSubject().getPrincipal()).isNull();
-        assertThat(injectedComponents.getSubject().isAuthenticated()).isFalse();
+        assertNotNull(injectedComponents.getSubject());
+        assertNull(injectedComponents.getSubject().getPrincipal());
+        assertFalse(injectedComponents.getSubject().isAuthenticated());
         UsernamePasswordToken token = new UsernamePasswordToken("user", "password");
         injectedComponents.getSubject().login(token);
-        assertThat(injectedComponents.getSubject().isAuthenticated()).isTrue();
+        assertTrue(injectedComponents.getSubject().isAuthenticated());
 
         injectedComponents.getSubject().logout();
-        assertThat(injectedComponents.getSubject().isAuthenticated()).isFalse();
+        assertFalse(injectedComponents.getSubject().isAuthenticated());
     }
 
     @Test
     @OperateOnDeployment(TESTABLE_MODE)
     void sessionInjection() {
-        assertThat(injectedComponents.getSession()).isNotNull();
-        assertThat(injectedComponents.getNoCreateionSession()).isNotNull();
+        assertNotNull(injectedComponents.getSession());
+        assertNotNull(injectedComponents.getNoCreateionSession());
         injectedComponents.getSession().setAttribute("hello", "bye");
-        assertThat(injectedComponents.getSession().getAttribute("hello")).isEqualTo("bye");
-        assertThat(injectedComponents.getNoCreateionSession().getAttribute("hello")).isEqualTo("bye");
+        assertEquals("bye", injectedComponents.getSession().getAttribute("hello"));
+        assertEquals("bye", injectedComponents.getNoCreateionSession().getAttribute("hello"));
     }
 
     @Test
     @OperateOnDeployment(TESTABLE_MODE)
     void principalInjection() {
         SecurityUtils.getSubject().login(new UsernamePasswordToken("user", "password"));
-        assertThat(injectedComponents.getPropertyPrincipal()).isNotNull();
-        assertThat(Optional.ofNullable(injectedComponents.getPropertyPrincipal().get()).orElseThrow().getUserName())
-            .isEqualTo("user");
+        assertNotNull(injectedComponents.getPropertyPrincipal());
+        assertEquals("user", Optional.ofNullable(injectedComponents.getPropertyPrincipal().get()).orElseThrow().getUserName());
         injectedComponents.getSubject().logout();
     }
 
@@ -134,7 +138,6 @@ public class ComponentInjectionIT {
                 .addClass(NoIniJaxRsIT.class)
                 .addClass(PropertyPrincipal.class)
                 .addClass(ComponentInjectionBean.class)
-                .addPackages(true, "org.assertj.core")
                 .addPackages(true, "org.slf4j");
         log.debug("Archive contents for {}: {}", archive, webArchive.toString(true));
         return webArchive;

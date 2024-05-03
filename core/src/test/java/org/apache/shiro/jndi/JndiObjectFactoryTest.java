@@ -22,8 +22,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.naming.NamingException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * This test makes the assumption that {@link JndiLocator} is tested elsewhere and only makes an attempt to test the
@@ -37,8 +37,8 @@ public class JndiObjectFactoryTest {
         JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
             @Override
             protected Object lookup(String jndiName, Class requiredType) throws NamingException {
-                assertThat(jndiName).isEqualTo(name);
-                assertThat(requiredType).isEqualTo(String.class);
+                assertEquals(name, jndiName);
+                assertEquals(String.class, requiredType);
                 return new String(returnValue);
             }
         };
@@ -46,7 +46,7 @@ public class JndiObjectFactoryTest {
         underTest.setRequiredType(String.class);
         underTest.setResourceName(name);
 
-        assertThat(underTest.getInstance()).isEqualTo(returnValue);
+        assertEquals(returnValue, underTest.getInstance());
     }
 
     @Test
@@ -56,19 +56,19 @@ public class JndiObjectFactoryTest {
         JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
             @Override
             protected Object lookup(String jndiName) throws NamingException {
-                assertThat(jndiName).isEqualTo(name);
+                assertEquals(name, jndiName);
                 return new String(returnValue);
             }
         };
 
         underTest.setResourceName(name);
 
-        assertThat(underTest.getInstance()).isEqualTo(returnValue);
+        assertEquals(returnValue, underTest.getInstance());
     }
 
     @Test
     void testJndiLookupFailsWithType() throws Exception {
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
+        assertThrows(IllegalStateException.class, () -> {
             final String name = "my/jndi/resource";
             JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
                 @Override
@@ -86,7 +86,7 @@ public class JndiObjectFactoryTest {
 
     @Test
     void testJndiLookupFailsNoType() throws Exception {
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
+        assertThrows(IllegalStateException.class, () -> {
             final String name = "my/jndi/resource";
             JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
                 @Override

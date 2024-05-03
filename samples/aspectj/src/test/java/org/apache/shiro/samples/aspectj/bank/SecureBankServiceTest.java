@@ -33,9 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings({"checkstyle:MemberName", "checkstyle:MethodName", "checkstyle:MagicNumber"})
 public class SecureBankServiceTest {
@@ -123,7 +121,7 @@ public class SecureBankServiceTest {
 
     @Test
     void testWithdrawFrom_emptyAccount() throws Exception {
-        assertThatExceptionOfType(NotEnoughFundsException.class).isThrownBy(() -> {
+        assertThrows(NotEnoughFundsException.class, () -> {
             loginAsUser();
             long accountId = createAndValidateAccountFor("Wally Smith");
             service.withdrawFrom(accountId, 100);
@@ -132,7 +130,7 @@ public class SecureBankServiceTest {
 
     @Test
     void testWithdrawFrom_notEnoughFunds() throws Exception {
-        assertThatExceptionOfType(NotEnoughFundsException.class).isThrownBy(() -> {
+        assertThrows(NotEnoughFundsException.class, () -> {
             loginAsUser();
             long accountId = createAndValidateAccountFor("Frank Smith");
             makeDepositAndValidateAccount(accountId, 50, "Frank Smith");
@@ -177,7 +175,7 @@ public class SecureBankServiceTest {
         logoutCurrentSubject();
         loginAsSuperviser();
         double closingBalance = service.closeAccount(accountId);
-        assertThat((int) closingBalance).isEqualTo(0);
+        assertEquals(0, (int) closingBalance);
         assertAccount("Chris Smith", false, 0, 1, accountId);
     }
 
@@ -190,13 +188,13 @@ public class SecureBankServiceTest {
         logoutCurrentSubject();
         loginAsSuperviser();
         double closingBalance = service.closeAccount(accountId);
-        assertThat((int) closingBalance).isEqualTo(385);
+        assertEquals(385, (int) closingBalance);
         assertAccount("Gerry Smith", false, 0, 2, accountId);
     }
 
     @Test
     void testCloseAccount_alreadyClosed() throws Exception {
-        assertThatExceptionOfType(InactiveAccountException.class).isThrownBy(() -> {
+        assertThrows(InactiveAccountException.class, () -> {
             loginAsUser();
             long accountId = createAndValidateAccountFor("Chris Smith");
 
@@ -211,7 +209,7 @@ public class SecureBankServiceTest {
 
     @Test
     void testCloseAccount_unauthorizedAttempt() throws Exception {
-        assertThatExceptionOfType(UnauthorizedException.class).isThrownBy(() -> {
+        assertThrows(UnauthorizedException.class, () -> {
             loginAsUser();
             long accountId = createAndValidateAccountFor("Chris Smith");
             service.closeAccount(accountId);
@@ -228,7 +226,7 @@ public class SecureBankServiceTest {
         double previousBalance = service.getBalanceOf(anAccountId);
         int previousTxCount = service.getTxHistoryFor(anAccountId).length;
         double newBalance = service.depositInto(anAccountId, anAmount);
-        assertThat((int) newBalance).isEqualTo((int) previousBalance + anAmount);
+        assertEquals((int) previousBalance + anAmount, (int) newBalance);
         assertAccount(eOwnerName, true, (int) newBalance, 1 + previousTxCount, anAccountId);
         return newBalance;
     }
@@ -237,7 +235,7 @@ public class SecureBankServiceTest {
         double previousBalance = service.getBalanceOf(anAccountId);
         int previousTxCount = service.getTxHistoryFor(anAccountId).length;
         double newBalance = service.withdrawFrom(anAccountId, anAmount);
-        assertThat((int) newBalance).isEqualTo((int) previousBalance - anAmount);
+        assertEquals((int) previousBalance - anAmount, (int) newBalance);
         assertAccount(eOwnerName, true, (int) newBalance, 1 + previousTxCount, anAccountId);
         return newBalance;
     }
@@ -245,10 +243,10 @@ public class SecureBankServiceTest {
 
     public static void assertAccount(String eOwnerName, boolean eIsActive, int eBalance,
                                      int eTxLogCount, long actualAccountId) throws Exception {
-        assertThat(service.getOwnerOf(actualAccountId)).isEqualTo(eOwnerName);
-        assertThat(service.isAccountActive(actualAccountId)).isEqualTo(eIsActive);
-        assertThat((int) service.getBalanceOf(actualAccountId)).isEqualTo(eBalance);
-        assertThat(service.getTxHistoryFor(actualAccountId).length).isEqualTo(eTxLogCount);
+        assertEquals(eOwnerName, service.getOwnerOf(actualAccountId));
+        assertEquals(eIsActive, service.isAccountActive(actualAccountId));
+        assertEquals(eBalance, (int) service.getBalanceOf(actualAccountId));
+        assertEquals(eTxLogCount, service.getTxHistoryFor(actualAccountId).length);
     }
 
     @RequiresGuest

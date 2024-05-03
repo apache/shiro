@@ -22,11 +22,12 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matcher;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShiroMatchersTest {
     @Test
@@ -39,8 +40,8 @@ public class ShiroMatchersTest {
 
         Matcher<TypeLiteral> underTest = ShiroMatchers.typeLiteral(classMatcher);
 
-        assertThat(underTest.matches(TypeLiteral.get(MatchingClass.class))).isTrue();
-        assertThat(underTest.matches(TypeLiteral.get(NotMatchingClass.class))).isFalse();
+        assertTrue(underTest.matches(TypeLiteral.get(MatchingClass.class)));
+        assertFalse(underTest.matches(TypeLiteral.get(NotMatchingClass.class)));
 
         verify(classMatcher);
     }

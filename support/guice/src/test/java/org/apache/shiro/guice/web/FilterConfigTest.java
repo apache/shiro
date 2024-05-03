@@ -30,12 +30,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FilterConfigTest {
     private FilterChainResolver setupResolver() {
@@ -69,7 +69,7 @@ public class FilterConfigTest {
         HttpServletRequest request = createMockRequest("/index.html");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertThat(resolved).isNotNull();
+        assertNotNull(resolved);
         verify(request);
     }
 
@@ -81,7 +81,7 @@ public class FilterConfigTest {
         HttpServletRequest request = createMockRequest("/index2.html");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertThat(resolved).isNotNull();
+        assertNotNull(resolved);
         verify(request);
     }
 

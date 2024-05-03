@@ -20,7 +20,7 @@ package org.apache.shiro.authz.permission;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -30,11 +30,11 @@ public class AllPermissionTest {
 
     @Test
     void testNullArgument() {
-        assertThat(new AllPermission().implies(null)).isTrue();
+        assertTrue(new AllPermission().implies(null));
     }
 
     @Test
     void testNonNullArgument() {
-        assertThat(new AllPermission().implies(new AllPermission())).isTrue();
+        assertTrue(new AllPermission().implies(new AllPermission()));
     }
 }

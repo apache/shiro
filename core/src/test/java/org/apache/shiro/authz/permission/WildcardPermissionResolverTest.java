@@ -20,48 +20,50 @@ package org.apache.shiro.authz.permission;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WildcardPermissionResolverTest {
 
     @Test
     void testDefaultIsNonCaseSensitive() {
         WildcardPermissionResolver resolver = new WildcardPermissionResolver();
-        assertThat(resolver.isCaseSensitive()).as("Default sensitivity should be false").isFalse();
+        assertFalse(resolver.isCaseSensitive(), "Default sensitivity should be false");
         /* this is a round-about test as permissions don't store case sensitivity just lower case
         the string. */
         WildcardPermission permission = (WildcardPermission) resolver.resolvePermission("Foo:*");
-        assertThat(permission.toString()).as("string should be lowercase").isEqualTo("foo:*");
+        assertEquals("foo:*", permission.toString(), "string should be lowercase");
     }
 
     @Test
     void testCaseSensitive() {
         WildcardPermissionResolver resolver = new WildcardPermissionResolver(true);
-        assertThat(resolver.isCaseSensitive()).as("Sensitivity should be true").isTrue();
+        assertTrue(resolver.isCaseSensitive(), "Sensitivity should be true");
         /* this is a round-about test as permissions don't store case sensitivity just lower case
         the string. */
         WildcardPermission permission = (WildcardPermission) resolver.resolvePermission("Foo:*");
-        assertThat(permission.toString()).as("string should be mixed case").isEqualTo("Foo:*");
+        assertEquals("Foo:*", permission.toString(), "string should be mixed case");
     }
 
     @Test
     void testCaseInsensitive() {
         WildcardPermissionResolver resolver = new WildcardPermissionResolver(false);
-        assertThat(resolver.isCaseSensitive()).as("Sensitivity should be false").isFalse();
+        assertFalse(resolver.isCaseSensitive(), "Sensitivity should be false");
         /* this is a round-about test as permissions don't store case sensitivity just lower case
         the string. */
         WildcardPermission permission = (WildcardPermission) resolver.resolvePermission("Foo:*");
-        assertThat(permission.toString()).as("string should be lowercase").isEqualTo("foo:*");
+        assertEquals("foo:*", permission.toString(), "string should be lowercase");
     }
 
     @Test
     void testCaseSensitiveToggle() {
         WildcardPermissionResolver resolver = new WildcardPermissionResolver();
-        assertThat(resolver.isCaseSensitive()).as("Default sensitivity should be false").isFalse();
+        assertFalse(resolver.isCaseSensitive(), "Default sensitivity should be false");
         resolver.setCaseSensitive(true);
-        assertThat(resolver.isCaseSensitive()).as("Sensitivity should be true").isTrue();
+        assertTrue(resolver.isCaseSensitive(), "Sensitivity should be true");
         resolver.setCaseSensitive(false);
-        assertThat(resolver.isCaseSensitive()).as("Sensitivity should be false").isFalse();
+        assertFalse(resolver.isCaseSensitive(), "Sensitivity should be false");
     }
 
 }

@@ -54,9 +54,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class ShiroAopModuleTest {
@@ -78,13 +79,13 @@ public class ShiroAopModuleTest {
 
             @Override
             protected void configureDefaultInterceptors(AnnotationResolver resolver) {
-                assertThat(resolver).isSameAs(annotationResolver);
+                assertSame(annotationResolver, resolver);
                 bind(Object.class).annotatedWith(Names.named("configureDefaultInterceptors"));
             }
 
             @Override
             protected void configureInterceptors(AnnotationResolver resolver) {
-                assertThat(resolver).isSameAs(annotationResolver);
+                assertSame(annotationResolver, resolver);
                 bind(Object.class).annotatedWith(Names.named("configureInterceptors"));
             }
         };
@@ -125,7 +126,7 @@ public class ShiroAopModuleTest {
         for (Element element : elements) {
             if (element instanceof InterceptorBinding) {
                 InterceptorBinding binding = (InterceptorBinding) element;
-                assertThat(binding.getClassMatcher().matches(getClass())).isTrue();
+                assertTrue(binding.getClassMatcher().matches(getClass()));
                 Method method = null;
                 Class<? extends Annotation> theAnnotation = null;
 
@@ -143,15 +144,15 @@ public class ShiroAopModuleTest {
                 }
 
                 List<MethodInterceptor> interceptors = binding.getInterceptors();
-                assertThat(interceptors).hasSize(1);
-                assertThat(interceptors.get(0) instanceof AopAllianceMethodInterceptorAdapter).isTrue();
-                assertThat(interceptorTypes.get(theAnnotation)
-                        .isInstance(((AopAllianceMethodInterceptorAdapter) interceptors.get(0)).shiroInterceptor)).isTrue();
+                assertEquals(1, interceptors.size());
+                assertTrue(interceptors.get(0) instanceof AopAllianceMethodInterceptorAdapter);
+                assertTrue(interceptorTypes.get(theAnnotation)
+                                .isInstance(((AopAllianceMethodInterceptorAdapter) interceptors.get(0)).shiroInterceptor));
 
             }
         }
 
-        assertThat(protectedMethods.isEmpty()).as("Not all interceptors were bound.").isTrue();
+        assertTrue(protectedMethods.isEmpty(), "Not all interceptors were bound.");
     }
 
     @Target({ElementType.TYPE, ElementType.METHOD})

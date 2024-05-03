@@ -21,7 +21,8 @@ package org.apache.shiro.spring.security.interceptor;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AuthorizationAttributeSourceAdvisorTest {
 
@@ -69,26 +70,38 @@ public class AuthorizationAttributeSourceAdvisorTest {
 
     @Test
     void matches() throws NoSuchMethodException {
-        assertThat(new AuthorizationAttributeSourceAdvisor().matches(
-                Secured.class.getDeclaredMethod("secureMethod"), Secured.class
-        )).as("the method is annotated, should match").isTrue();
-        assertThat(new AuthorizationAttributeSourceAdvisor().matches(
-                Secured.class.getDeclaredMethod("unsecuredMethod"), Secured.class
-        )).as("the method is not annotated, should not match").isFalse();
+        assertTrue(
+                new AuthorizationAttributeSourceAdvisor().matches(
+                        Secured.class.getDeclaredMethod("secureMethod"), Secured.class
+                ),
+                "the method is annotated, should match");
+        assertFalse(
+                new AuthorizationAttributeSourceAdvisor().matches(
+                        Secured.class.getDeclaredMethod("unsecuredMethod"), Secured.class
+                ),
+                "the method is not annotated, should not match");
 
-        assertThat(new AuthorizationAttributeSourceAdvisor().matches(
-                ServiceInterface.class.getDeclaredMethod("secureMethod"), ServiceImpl.class
-        )).as("the method declaration is annotated in the interface, should match").isTrue();
-        assertThat(new AuthorizationAttributeSourceAdvisor().matches(
-                ServiceInterface.class.getDeclaredMethod("unsecuredMethod"), ServiceImpl.class
-        )).as("not annotated method, should not match").isFalse();
+        assertTrue(
+                new AuthorizationAttributeSourceAdvisor().matches(
+                        ServiceInterface.class.getDeclaredMethod("secureMethod"), ServiceImpl.class
+                ),
+                "the method declaration is annotated in the interface, should match");
+        assertFalse(
+                new AuthorizationAttributeSourceAdvisor().matches(
+                        ServiceInterface.class.getDeclaredMethod("unsecuredMethod"), ServiceImpl.class
+                ),
+                "not annotated method, should not match");
 
-        assertThat(new AuthorizationAttributeSourceAdvisor().matches(
-                SafeServiceInterface.class.getDeclaredMethod("someMethod"), SafeServiceInterface.class
-        )).as("the method declaration is in the interface with type-annotation, should match").isTrue();
-        assertThat(new AuthorizationAttributeSourceAdvisor().matches(
-                SafeServiceImpl.class.getDeclaredMethod("someMethod"), SafeServiceImpl.class
-        )).as("the method declaration is in the interface with type-annotation, should match").isTrue();
+        assertTrue(
+                new AuthorizationAttributeSourceAdvisor().matches(
+                        SafeServiceInterface.class.getDeclaredMethod("someMethod"), SafeServiceInterface.class
+                ),
+                "the method declaration is in the interface with type-annotation, should match");
+        assertTrue(
+                new AuthorizationAttributeSourceAdvisor().matches(
+                        SafeServiceImpl.class.getDeclaredMethod("someMethod"), SafeServiceImpl.class
+                ),
+                "the method declaration is in the interface with type-annotation, should match");
 
     }
 

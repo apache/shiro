@@ -33,8 +33,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -42,6 +40,10 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for the {@link DefaultSessionManager DefaultSessionManager} implementation.
@@ -76,9 +78,9 @@ public class DefaultSessionManagerTest {
         long timeout = 1000;
         sm.setGlobalSessionTimeout(timeout);
         Session session = sm.start(null);
-        assertThat(session).isNotNull();
-        assertThat(session.getId()).isNotNull();
-        assertThat(timeout).isEqualTo(session.getTimeout());
+        assertNotNull(session);
+        assertNotNull(session.getId());
+        assertEquals(session.getTimeout(), timeout);
     }
 
     @Test
@@ -91,7 +93,7 @@ public class DefaultSessionManagerTest {
         };
         sm.getSessionListeners().add(listener);
         sm.start(null);
-        assertThat(started[0]).isTrue();
+        assertTrue(started[0]);
     }
 
     @Test
@@ -105,7 +107,7 @@ public class DefaultSessionManagerTest {
         sm.getSessionListeners().add(listener);
         Session session = sm.start(null);
         sm.stop(new DefaultSessionKey(session.getId()));
-        assertThat(stopped[0]).isTrue();
+        assertTrue(stopped[0]);
     }
 
     //asserts fix for SHIRO-388:
@@ -127,8 +129,8 @@ public class DefaultSessionManagerTest {
 
         sm.stop(new DefaultSessionKey(session.getId()));
 
-        assertThat(stopped[0]).isTrue();
-        assertThat(value[0]).isEqualTo("bar");
+        assertTrue(stopped[0]);
+        assertEquals("bar", value[0]);
     }
 
     @SuppressWarnings("checkstyle:MagicNumber")
@@ -150,7 +152,7 @@ public class DefaultSessionManagerTest {
         } catch (InvalidSessionException expected) {
             //do nothing - expected.
         }
-        assertThat(expired[0]).isTrue();
+        assertTrue(expired[0]);
     }
 
     @SuppressWarnings("checkstyle:MagicNumber")
@@ -177,7 +179,7 @@ public class DefaultSessionManagerTest {
         expectLastCall().anyTimes();
         replay(sessionDAO);
         Session session = sm.start(null);
-        assertThat(session).isNotNull();
+        assertNotNull(session);
         verify(sessionDAO);
         reset(sessionDAO);
 
@@ -225,7 +227,7 @@ public class DefaultSessionManagerTest {
             Session session = sessionManager.start(null);
 
             // now sessionValidationScheduler should be enabled
-            assertThat(sessionValidationScheduler.isEnabled()).as("sessionValidationScheduler was not enabled").isTrue();
+            assertTrue(sessionValidationScheduler.isEnabled(), "sessionValidationScheduler was not enabled");
         } finally {
             // cleanup after test
             sessionManager.destroy();

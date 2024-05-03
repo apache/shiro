@@ -23,11 +23,11 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,7 +46,7 @@ public class AopAllianceMethodInvocationAdapterTest {
 
         replay(mock);
 
-        assertThat(underTest.getMethod()).isSameAs(method);
+        assertSame(method, underTest.getMethod());
 
         verify(mock);
     }
@@ -60,7 +60,7 @@ public class AopAllianceMethodInvocationAdapterTest {
 
         replay(mock);
 
-        assertThat(underTest.getArguments()).isSameAs(args);
+        assertSame(args, underTest.getArguments());
 
         verify(mock);
     }
@@ -74,7 +74,7 @@ public class AopAllianceMethodInvocationAdapterTest {
 
         replay(mock);
 
-        assertThat(underTest.proceed()).isSameAs(value);
+        assertSame(value, underTest.proceed());
 
         verify(mock);
     }
@@ -88,7 +88,7 @@ public class AopAllianceMethodInvocationAdapterTest {
 
         replay(mock);
 
-        assertThat(underTest.getThis()).isSameAs(value);
+        assertSame(value, underTest.getThis());
 
         verify(mock);
     }

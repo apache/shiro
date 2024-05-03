@@ -29,7 +29,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the {@link org.apache.shiro.authc.credential.HashedCredentialsMatcher} class.
@@ -54,7 +54,7 @@ public class HashedCredentialsMatcherTest {
         AuthenticationToken token = new UsernamePasswordToken("username", "password");
 
         //verify the hashed token matches what is in the account:
-        assertThat(matcher.doCredentialsMatch(token, account)).isTrue();
+        assertTrue(matcher.doCredentialsMatch(token, account));
     }
 
     /**
@@ -87,7 +87,7 @@ public class HashedCredentialsMatcherTest {
         AuthenticationToken token = new UsernamePasswordToken("username", "password");
 
         //verify the hashed token matches what is in the account:
-        assertThat(matcher.doCredentialsMatch(token, account)).isTrue();
+        assertTrue(matcher.doCredentialsMatch(token, account));
     }
 
     /**
@@ -124,6 +124,6 @@ public class HashedCredentialsMatcherTest {
         AuthenticationToken token = new UsernamePasswordToken("username", "password");
 
         //verify the hashed token matches what is in the account:
-        assertThat(matcher.doCredentialsMatch(token, account)).isTrue();
+        assertTrue(matcher.doCredentialsMatch(token, account));
     }
 }

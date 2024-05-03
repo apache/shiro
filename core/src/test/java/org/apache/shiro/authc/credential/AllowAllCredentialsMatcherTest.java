@@ -20,7 +20,7 @@ package org.apache.shiro.authc.credential;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -30,7 +30,7 @@ public class AllowAllCredentialsMatcherTest {
 
     @Test
     void testBasic() {
-        assertThat(new AllowAllCredentialsMatcher().doCredentialsMatch(null, null)).isTrue();
+        assertTrue(new AllowAllCredentialsMatcher().doCredentialsMatch(null, null));
     }
 
 }

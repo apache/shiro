@@ -37,8 +37,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -46,6 +44,9 @@ import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -118,7 +119,7 @@ class CookieRememberMeManagerTest {
         replay(mockRequest);
 
         CookieRememberMeManager mgr = new CookieRememberMeManager();
-        assertThat(mgr.getRememberedSerializedIdentity(context)).isNull();
+        assertNull(mgr.getRememberedSerializedIdentity(context));
     }
 
 
@@ -156,14 +157,14 @@ class CookieRememberMeManagerTest {
 
         verify(mockRequest);
 
-        assertThat(collection).isNotNull();
+        assertNotNull(collection);
         //noinspection ConstantConditions
-        assertThat(collection.iterator().next()).isEqualTo("user");
+        assertEquals("user", collection.iterator().next());
     }
 
     @Test
     void getRememberedPrincipalsNoMoreDefaultCipher() {
-        assertThatExceptionOfType(CryptoException.class).isThrownBy(() -> {
+        assertThrows(CryptoException.class, () -> {
             HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
             HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
             WebSubjectContext context = new DefaultWebSubjectContext();
@@ -177,14 +178,14 @@ class CookieRememberMeManagerTest {
             //The following base64 string was determined from the log output of the above 'onSuccessfulLogin' test.
             //This will have to change any time the PrincipalCollection implementation changes:
             final String userPCAesBase64 = "0o6DCfePYTjK4q579qzUFEfkeGRvbBOdKHp2y8/nGAltt1Vz8uW0Z8igeO"
-                    + "Tq/yBmcw25f3Q0ui/Leg3x0iQZWhw9Bbu0mFHmHsGxEd6mPwtUpSegIjyX5c/kZpqnb7QLdajPWiczX8P"
-                    + "Oc2Eku5+8ye1u38Y8uKlklHxcYCPh0pRiDSBxfjPsLaDfOpGbmPjZd4SVg68i/++TvUjqBNJyb+pDix3f"
-                    + "PeuPvReWGcE50iovezVZrEfDOAQ0cZYW35ShypMWOmE9yZnb+p8++StDyAUegryyuIa4pjuRzfMh9D+sN"
-                    + "F9tm/EnDC1VCer2S/a0AGlWAQiM7jrWt1sNinZcKIrvShaWI21tONJt8WhozNS2H72lk4p92rfLNHeglT"
-                    + "xObxIYxLfTI9KiToSe1nYmpQmbBO8x1wWDkWBG//EqRvhgbIfQVqJp12T0fJC1nFuZuVhw/ZanaAZGDk8"
-                    + "7aLMiw3T6FBZtWaspgvfH+0TJrTD8Ra386ekNXNN8JW8=";
+                     + "Tq/yBmcw25f3Q0ui/Leg3x0iQZWhw9Bbu0mFHmHsGxEd6mPwtUpSegIjyX5c/kZpqnb7QLdajPWiczX8P"
+                     + "Oc2Eku5+8ye1u38Y8uKlklHxcYCPh0pRiDSBxfjPsLaDfOpGbmPjZd4SVg68i/++TvUjqBNJyb+pDix3f"
+                     + "PeuPvReWGcE50iovezVZrEfDOAQ0cZYW35ShypMWOmE9yZnb+p8++StDyAUegryyuIa4pjuRzfMh9D+sN"
+                     + "F9tm/EnDC1VCer2S/a0AGlWAQiM7jrWt1sNinZcKIrvShaWI21tONJt8WhozNS2H72lk4p92rfLNHeglT"
+                     + "xObxIYxLfTI9KiToSe1nYmpQmbBO8x1wWDkWBG//EqRvhgbIfQVqJp12T0fJC1nFuZuVhw/ZanaAZGDk8"
+                     + "7aLMiw3T6FBZtWaspgvfH+0TJrTD8Ra386ekNXNN8JW8=";
 
-            Cookie[] cookies = new Cookie[]{
+            Cookie[] cookies = new Cookie[] {
                     new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
             };
 
@@ -250,7 +251,7 @@ class CookieRememberMeManagerTest {
 
         CookieRememberMeManager mgr = new CookieRememberMeManager();
         PrincipalCollection rememberedPrincipals = mgr.getRememberedPrincipals(context);
-        assertThat(rememberedPrincipals).as("rememberedPrincipals should be null on invalid cookies.").isNull();
+        assertNull(rememberedPrincipals, "rememberedPrincipals should be null on invalid cookies.");
     }
 
     @Test
@@ -304,7 +305,7 @@ class CookieRememberMeManagerTest {
         final byte[] rememberedSerializedIdentity = mgr.getRememberedSerializedIdentity(context);
 
         // then
-        assertThat(rememberedSerializedIdentity).as("should ignore invalid cookie values").isNull();
+        assertNull(rememberedSerializedIdentity, "should ignore invalid cookie values");
     }
 
     @SuppressWarnings("checkstyle:MagicNumber")

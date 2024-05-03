@@ -18,8 +18,6 @@ import static com.flowlogix.util.ShrinkWrapManipulator.toHttpsURL;
 import java.net.URL;
 
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_PROD_MODE;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -27,6 +25,9 @@ import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -50,15 +51,14 @@ public class ShiroSSLFilterIT {
     @Test
     @OperateOnDeployment(DEPLOYMENT_PROD_MODE)
     void checkNonSSL() {
-        assertThatExceptionOfType(WebDriverException.class).isThrownBy(() ->
-            webDriver.get(baseURL + "shiro/unprotected/manybeans"));
+        assertThrows(WebDriverException.class, () -> webDriver.get(baseURL + "shiro/unprotected/manybeans"));
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_PROD_MODE)
     void checkSSL() {
         webDriver.get(toHttpsURL(baseURL) + "shiro/unprotected/manybeans");
-        assertThat(webDriver.getTitle()).isEqualTo("Many Beans Unprotected");
+        assertEquals("Many Beans Unprotected", webDriver.getTitle());
     }
 
     @Deployment(testable = false, name = DEPLOYMENT_PROD_MODE)

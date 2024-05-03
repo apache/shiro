@@ -27,7 +27,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -68,7 +68,7 @@ public class OncePerRequestFilterTest {
 
         filter.doFilter(request, response, chain);
 
-        assertThat(filter.filterCount).as("Filter should have executed").isEqualTo(1);
+        assertEquals(1, filter.filterCount, "Filter should have executed");
     }
 
     /**
@@ -84,7 +84,7 @@ public class OncePerRequestFilterTest {
 
         filter.doFilter(request, response, chain);
 
-        assertThat(filter.filterCount).as("Filter should NOT have executed").isEqualTo(0);
+        assertEquals(0, filter.filterCount, "Filter should NOT have executed");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class OncePerRequestFilterTest {
         filter.doFilter(request, response, chain);
         filter.doFilter(request, response, chain);
 
-        assertThat(filter.filterCount).as("Filter should have executed twice").isEqualTo(2);
+        assertEquals(2, filter.filterCount, "Filter should have executed twice");
     }
 
     static class CountingOncePerRequestFilter extends OncePerRequestFilter {

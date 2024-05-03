@@ -24,7 +24,7 @@ import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test cases for the {@link AbstractRememberMeManager} implementation.
@@ -43,7 +43,7 @@ public class AbstractRememberMeManagerTest {
         //Since the dummy's getRememberedSerializedIdentity implementation returns an empty byte
         //array, we should be ok:
         PrincipalCollection principals = rmm.getRememberedPrincipals(new DefaultSubjectContext());
-        assertThat(principals).isNull();
+        assertNull(principals);
 
         //try with a null return value too:
         rmm = new DummyRememberMeManager() {
@@ -53,7 +53,7 @@ public class AbstractRememberMeManagerTest {
             }
         };
         principals = rmm.getRememberedPrincipals(new DefaultSubjectContext());
-        assertThat(principals).isNull();
+        assertNull(principals);
     }
 
     @SuppressWarnings("checkstyle:FinalClass")

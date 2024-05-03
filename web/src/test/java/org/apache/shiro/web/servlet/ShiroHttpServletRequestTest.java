@@ -28,7 +28,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -75,13 +76,13 @@ public class ShiroHttpServletRequestTest {
             return null;
         });
 
-        assertThat(request.getSession(true)).isNotNull();
-        assertThat(request.getSession(false)).isNotNull();
+        assertNotNull(request.getSession(true));
+        assertNotNull(request.getSession(false));
 
         mockSubject.logout();
 
-        assertThat(request.getSession(false)).isNull();
-        assertThat(request.getSession(true)).isNotNull();
+        assertNull(request.getSession(false));
+        assertNotNull(request.getSession(true));
         verify(mockSubject, times(2)).getSession(true);
         verify(mockSubject, atLeast(3)).getSession(false);
     }

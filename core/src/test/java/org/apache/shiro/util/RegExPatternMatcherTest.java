@@ -20,7 +20,8 @@ package org.apache.shiro.util;
 
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for the {@link RegExPatternMatcher}.
@@ -61,7 +62,7 @@ public class RegExPatternMatcherTest {
     }
 
     private void assertPatternMatch(String pattern, String path, PatternMatcher pm) {
-        assertThat(pm.matches(pattern, path)).as("Expected path '" + path + "' to match pattern '" + pattern + "'").isTrue();
+        assertTrue(pm.matches(pattern, path), "Expected path '" + path + "' to match pattern '" + pattern + "'");
     }
 
     private void assertPatternNotMatch(String pattern, String path) {
@@ -69,6 +70,6 @@ public class RegExPatternMatcherTest {
     }
 
     private void assertPatternNotMatch(String pattern, String path, PatternMatcher pm) {
-        assertThat(pm.matches(pattern, path)).as("Expected path '" + path + "' to NOT match pattern '" + pattern + "'").isFalse();
+        assertFalse(pm.matches(pattern, path), "Expected path '" + path + "' to NOT match pattern '" + pattern + "'");
     }
 }

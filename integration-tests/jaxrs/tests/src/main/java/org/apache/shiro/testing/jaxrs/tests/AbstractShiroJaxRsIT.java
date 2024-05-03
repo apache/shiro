@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractShiroJaxRsIT {
@@ -58,7 +58,7 @@ public abstract class AbstractShiroJaxRsIT {
         final Response usersResponse = usersTarget.request(MediaType.APPLICATION_JSON_TYPE)
                 .buildGet()
                 .invoke();
-        assertThat(usersResponse.getStatus()).isEqualTo(Status.FORBIDDEN.getStatusCode());
+        assertEquals(Status.FORBIDDEN.getStatusCode(), usersResponse.getStatus());
     }
 
     @SuppressWarnings({"checkstyle:MagicNumber"})
@@ -70,9 +70,9 @@ public abstract class AbstractShiroJaxRsIT {
                 .header("Authorization", "Basic " + basicToken)
                 .buildGet()
                 .invoke();
-        assertThat(usersResponse.getStatus()).isEqualTo(Status.OK.getStatusCode());
+        assertEquals(Status.OK.getStatusCode(), usersResponse.getStatus());
         final Stormtrooper[] stormtroopers = usersResponse.readEntity(Stormtrooper[].class);
-        assertThat(stormtroopers.length).isEqualTo(50);
+        assertEquals(50, stormtroopers.length);
         Arrays.stream(stormtroopers).forEach(stormtrooper
                 -> assertTrue(stormtrooper.getStormtrooperId().getValue().startsWith("u")));
     }

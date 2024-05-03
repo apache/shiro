@@ -20,14 +20,14 @@ package org.apache.shiro.authc.credential;
 
 import org.apache.shiro.authc.AuthenticationInfo;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.apache.shiro.lang.util.ClassUtils;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @since Jun 10, 2008 4:47:09 PM
@@ -44,6 +44,6 @@ public abstract class AbstractHashedCredentialsMatcherTest {
         byte[] hashed = hash("password").getBytes();
         AuthenticationInfo account = new SimpleAuthenticationInfo("username", hashed, "realmName");
         AuthenticationToken token = new UsernamePasswordToken("username", "password");
-        assertThat(matcher.doCredentialsMatch(token, account)).isTrue();
+        assertTrue(matcher.doCredentialsMatch(token, account));
     }
 }

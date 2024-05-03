@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import javax.annotation.security.RolesAllowed;
 import java.lang.annotation.Annotation;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -39,7 +39,7 @@ public class RolesAllowedAnnotationHandlerTest extends SecurityManagerTestSuppor
 
     @Test
     void testGuestSingleRoleAssertion() throws Throwable {
-        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
+        assertThrows(UnauthenticatedException.class, () -> {
             subject = mock(Subject.class);
             doThrow(new UnauthenticatedException()).when(subject).checkRole("blah");
 
@@ -53,7 +53,7 @@ public class RolesAllowedAnnotationHandlerTest extends SecurityManagerTestSuppor
             Annotation rolesAllowedAnnotation = new RolesAllowed() {
                 @Override
                 public String[] value() {
-                    return new String[]{"blah"};
+                    return new String[] {"blah"};
                 }
 
                 @Override
@@ -68,7 +68,7 @@ public class RolesAllowedAnnotationHandlerTest extends SecurityManagerTestSuppor
 
     @Test
     void testGuestMultipleRolesAssertion() throws Throwable {
-        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
+        assertThrows(UnauthenticatedException.class, () -> {
             subject = mock(Subject.class);
 
             doThrow(new UnauthenticatedException()).when(subject).checkRole("blah");
@@ -85,7 +85,7 @@ public class RolesAllowedAnnotationHandlerTest extends SecurityManagerTestSuppor
             Annotation rolesAllowedAnnotation = new RolesAllowed() {
                 @Override
                 public String[] value() {
-                    return new String[]{"blah", "blah2"};
+                    return new String[] {"blah", "blah2"};
                 }
 
                 @Override
