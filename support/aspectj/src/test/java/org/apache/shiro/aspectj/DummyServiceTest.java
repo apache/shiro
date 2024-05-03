@@ -30,7 +30,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  *
@@ -102,7 +102,7 @@ public class DummyServiceTest {
 
     @Test
     void testGuest_asUser() throws Exception {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             loginAsUser();
             securedService.guest();
         });
@@ -110,7 +110,7 @@ public class DummyServiceTest {
 
     @Test
     void testGuest_asAdmin() throws Exception {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             loginAsAdmin();
             securedService.guest();
         });
@@ -119,7 +119,7 @@ public class DummyServiceTest {
     // TEST PEEK
     @Test
     void testPeek_asAnonymous() throws Exception {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             securedService.peek();
         });
     }
@@ -140,7 +140,7 @@ public class DummyServiceTest {
     //UnauthenticatedException per SHIRO-146
     @Test
     void testRetrieve_asAnonymous() throws Exception {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             securedService.retrieve();
         });
     }
@@ -161,14 +161,14 @@ public class DummyServiceTest {
     //UnauthenticatedException per SHIRO-146
     @Test
     void testChange_asAnonymous() throws Exception {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             securedService.change();
         });
     }
 
     @Test
     void testChange_asUser() throws Exception {
-        assertThrows(UnauthorizedException.class, () -> {
+        assertThatExceptionOfType(UnauthorizedException.class).isThrownBy(() -> {
             loginAsUser();
             securedService.change();
         });
@@ -184,14 +184,14 @@ public class DummyServiceTest {
     //UnauthenticatedException per SHIRO-146
     @Test
     void testRetrieveRestricted_asAnonymous() throws Exception {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             restrictedService.retrieve();
         });
     }
 
     @Test
     void testRetrieveRestricted_asUser() throws Exception {
-        assertThrows(UnauthorizedException.class, () -> {
+        assertThatExceptionOfType(UnauthorizedException.class).isThrownBy(() -> {
             loginAsUser();
             restrictedService.retrieve();
         });

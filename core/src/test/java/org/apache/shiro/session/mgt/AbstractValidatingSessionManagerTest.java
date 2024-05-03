@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Unit tests for the {@link org.apache.shiro.session.mgt.AbstractValidatingSessionManager} class.
@@ -90,7 +90,7 @@ public class AbstractValidatingSessionManagerTest {
         sessionManager.setSessionListeners(Arrays.asList(sessionListener));
         sessionManager.validateSessions();
 
-        assertEquals(1, expirationCount.intValue());
+        assertThat(expirationCount.intValue()).isEqualTo(1);
     }
 
 
@@ -125,7 +125,7 @@ public class AbstractValidatingSessionManagerTest {
         sessionManager.setSessionListeners(Arrays.asList(sessionListener));
 
         Session session = sessionManager.start(null);
-        assertEquals(1, sessionManager.getActiveSessions().size());
+        assertThat(sessionManager.getActiveSessions()).hasSize(1);
 
         session.setTimeout(0L);
         //last access timestamp needs to be older than the current timestamp when validating, so ensure a delay:
@@ -133,6 +133,6 @@ public class AbstractValidatingSessionManagerTest {
 
         sessionManager.validateSessions();
 
-        assertEquals(0, sessionManager.getActiveSessions().size());
+        assertThat(sessionManager.getActiveSessions()).isEmpty();
     }
 }

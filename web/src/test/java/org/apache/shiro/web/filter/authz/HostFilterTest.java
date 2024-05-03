@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @since 1.0
@@ -40,7 +40,7 @@ public class HostFilterTest {
             String ibase = base + i;
             for (int j = 0; j < 256; j++) {
                 String ip = ibase + "." + j;
-                assertTrue(p.matcher(ip).matches());
+                assertThat(p.matcher(ip).matches()).isTrue();
             }
         }
     }
@@ -58,7 +58,7 @@ public class HostFilterTest {
                 String jBase = ibase + "." + j;
                 for (int k = 0; k < 256; k++) {
                     String ip = jBase + "." + k;
-                    assertTrue(p.matcher(ip).matches());
+                    assertThat(p.matcher(ip).matches()).isTrue();
                 }
             }
         }

@@ -481,7 +481,7 @@
 
     <profiles>
         <profile>
-            <id>payara-server-remote</id>
+            <id>payara-server-local</id>
             <properties>
                 <payara.start.skip>true</payara.start.skip>
                 <payara.argLine/>
