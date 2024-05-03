@@ -30,11 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit tests for the {@link PathMatchingFilter} implementation.
@@ -138,9 +138,8 @@ public class PathMatchingFilterParameterizedTest {
         initPathMatchingFilterParameterizedTest(pattern, request, shouldMatch);
         LOG.debug("Input pattern: [{}], input path: [{}].", this.pattern, this.request.getPathInfo());
         boolean matchEnabled = filter.pathsMatch(this.pattern, this.request);
-        assertEquals(this.shouldMatch, matchEnabled,
-                "PathMatch can match URL end with multi Separator, ["
-                        + this.pattern + "] - [" + this.request.getPathInfo() + "]");
+        assertThat(matchEnabled).as("PathMatch can match URL end with multi Separator, ["
+                + this.pattern + "] - [" + this.request.getPathInfo() + "]").isEqualTo(this.shouldMatch);
         verify(request);
     }
 

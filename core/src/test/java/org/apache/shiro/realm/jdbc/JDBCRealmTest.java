@@ -47,9 +47,8 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 
 /**
@@ -262,7 +261,7 @@ public class JDBCRealmTest {
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        assertTrue(currentUser.hasRole(testRole));
+        assertThat(currentUser.hasRole(testRole)).isTrue();
     }
 
     @Test
@@ -276,7 +275,7 @@ public class JDBCRealmTest {
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        assertFalse(currentUser.hasRole("Game Overall Director"));
+        assertThat(currentUser.hasRole("Game Overall Director")).isFalse();
     }
 
     @Test
@@ -291,7 +290,7 @@ public class JDBCRealmTest {
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        assertTrue(currentUser.isPermitted(testPermissionString));
+        assertThat(currentUser.isPermitted(testPermissionString)).isTrue();
     }
 
     @Test
@@ -306,7 +305,7 @@ public class JDBCRealmTest {
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        assertFalse(currentUser.isPermitted("testDomain:testTarget:specialAction"));
+        assertThat(currentUser.isPermitted("testDomain:testTarget:specialAction")).isFalse();
     }
 
     /**

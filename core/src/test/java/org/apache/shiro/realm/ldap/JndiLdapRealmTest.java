@@ -20,7 +20,7 @@ package org.apache.shiro.realm.ldap;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for the {@link JndiLdapRealm} class.
@@ -51,6 +51,6 @@ public class JndiLdapRealmTest extends DefaultLdapRealmTest {
         };
         String principal = "foo";
         String userDn = realm.getUserDn(principal);
-        assertEquals(principal, userDn);
+        assertThat(userDn).isEqualTo(principal);
     }
 }

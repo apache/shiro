@@ -23,13 +23,13 @@ import org.apache.shiro.aop.MethodInterceptor;
 import org.easymock.IAnswer;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.getCurrentArguments;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 
 public class AopAllianceMethodInterceptorAdapterTest {
@@ -51,7 +51,7 @@ public class AopAllianceMethodInterceptorAdapterTest {
         Object invocation = underTest.invoke(allianceInvocation);
         Object value = ((AopAllianceMethodInvocationAdapter) invocation).proceed();
 
-        assertSame(expectedValue, value, "Adapter invocation returned a different value.");
+        assertThat(value).as("Adapter invocation returned a different value.").isSameAs(expectedValue);
 
         verify(mockShiroInterceptor, allianceInvocation);
     }
