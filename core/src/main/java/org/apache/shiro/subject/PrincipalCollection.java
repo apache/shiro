@@ -41,7 +41,7 @@ import java.util.Set;
  * @see #getRealmNames()
  * @since 0.9
  */
-public interface PrincipalCollection extends Iterable<Object>, Serializable {
+public interface PrincipalCollection extends Iterable, Serializable {
 
     /**
      * Returns the primary principal used application-wide to uniquely identify the owning account/Subject.
@@ -112,7 +112,7 @@ public interface PrincipalCollection extends Iterable<Object>, Serializable {
      *
      * @return a single Subject's principals retrieved from all configured Realms as a List.
      */
-    List<?> asList();
+    List asList();
 
     /**
      * Returns a single Subject's principals retrieved from all configured Realms as a Set, or an empty Set if there
@@ -122,7 +122,7 @@ public interface PrincipalCollection extends Iterable<Object>, Serializable {
      *
      * @return a single Subject's principals retrieved from all configured Realms as a Set.
      */
-    Set<?> asSet();
+    Set asSet();
 
     /**
      * Returns a single Subject's principals retrieved from the specified Realm <em>only</em> as a Collection, or an empty
@@ -134,7 +134,7 @@ public interface PrincipalCollection extends Iterable<Object>, Serializable {
      * @return the Subject's principals from the specified Realm only as a Collection or an empty Collection if there
      * are not any principals from that realm.
      */
-    Collection<?> fromRealm(String realmName);
+    Collection fromRealm(String realmName);
 
     /**
      * Returns the realm names that this collection has principals for.

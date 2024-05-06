@@ -49,7 +49,7 @@ public class JndiLdapContextFactoryTest {
         factory = new JndiLdapContextFactory() {
             //Fake a JNDI environment for the tests:
             @Override
-            protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
+            protected LdapContext createLdapContext(Hashtable env) throws NamingException {
                 return createNiceMock(LdapContext.class);
             }
         };
@@ -99,7 +99,7 @@ public class JndiLdapContextFactoryTest {
 
     @Test
     void testCustomEnvironment() {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("foo", "bar");
         factory.setEnvironment(map);
         assertThat(factory.getEnvironment()).containsEntry("foo", "bar");
@@ -116,7 +116,7 @@ public class JndiLdapContextFactoryTest {
     void testGetLdapContextDefault() throws NamingException {
         factory = new JndiLdapContextFactory() {
             @Override
-            protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
+            protected LdapContext createLdapContext(Hashtable env) throws NamingException {
                 assertThat(env).containsEntry(Context.PROVIDER_URL, "ldap://localhost:389");
                 assertThat(env).containsEntry(Context.SECURITY_PRINCIPAL, "foo");
                 assertThat(env).containsEntry(Context.SECURITY_CREDENTIALS, "bar");
@@ -135,7 +135,7 @@ public class JndiLdapContextFactoryTest {
     void testGetLdapContextStringArguments() throws NamingException {
         factory = new JndiLdapContextFactory() {
             @Override
-            protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
+            protected LdapContext createLdapContext(Hashtable env) throws NamingException {
                 assertThat(env).containsEntry(Context.PROVIDER_URL, "ldap://localhost:389");
                 assertThat(env).containsEntry(Context.SECURITY_PRINCIPAL, "foo");
                 assertThat(env).containsEntry(Context.SECURITY_CREDENTIALS, "bar");
@@ -153,7 +153,7 @@ public class JndiLdapContextFactoryTest {
     void testGetSystemLdapContext() throws NamingException {
         factory = new JndiLdapContextFactory() {
             @Override
-            protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
+            protected LdapContext createLdapContext(Hashtable env) throws NamingException {
                 assertThat(env).containsEntry(Context.PROVIDER_URL, "ldap://localhost:389");
                 assertThat(env).containsEntry(Context.SECURITY_PRINCIPAL, "foo");
                 assertThat(env).containsEntry(Context.SECURITY_CREDENTIALS, "bar");
@@ -173,7 +173,7 @@ public class JndiLdapContextFactoryTest {
     void testGetSystemLdapContextPoolingDisabled() throws NamingException {
         factory = new JndiLdapContextFactory() {
             @Override
-            protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
+            protected LdapContext createLdapContext(Hashtable env) throws NamingException {
                 assertThat(env).containsEntry(Context.PROVIDER_URL, "ldap://localhost:389");
                 assertThat(env).containsEntry(Context.SECURITY_PRINCIPAL, "foo");
                 assertThat(env).containsEntry(Context.SECURITY_CREDENTIALS, "bar");

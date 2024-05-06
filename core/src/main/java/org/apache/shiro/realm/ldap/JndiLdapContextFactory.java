@@ -197,7 +197,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      *
      * @return the base JNDI environment template to use when acquiring an LDAP connection (an {@link LdapContext})
      */
-    public Map<String, Object> getEnvironment() {
+    public Map getEnvironment() {
         return this.environment;
     }
 
@@ -213,7 +213,8 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      *
      * @param env the base JNDI environment template to use when acquiring LDAP connections.
      */
-    public void setEnvironment(Map<String, Object> env) {
+    @SuppressWarnings({"unchecked"})
+    public void setEnvironment(Map env) {
         this.environment = env;
     }
 
@@ -487,7 +488,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      * @return an LdapConnection
      * @throws NamingException if a problem occurs creating the connection
      */
-    protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
+    protected LdapContext createLdapContext(Hashtable env) throws NamingException {
         return new InitialLdapContext(env, null);
     }
 

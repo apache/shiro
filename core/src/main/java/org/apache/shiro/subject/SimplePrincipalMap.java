@@ -153,16 +153,16 @@ public class SimplePrincipalMap implements PrincipalMap {
         return instances != null ? instances : Collections.<T>emptyList();
     }
 
-    public List<?> asList() {
+    public List asList() {
         if (CollectionUtils.isEmpty(this.combinedPrincipals)) {
             return Collections.emptyList();
         }
-        List<Object> list = new ArrayList<>(this.combinedPrincipals.size());
+        List<Object> list = new ArrayList<Object>(this.combinedPrincipals.size());
         list.addAll(this.combinedPrincipals.values());
         return list;
     }
 
-    public Set<?> asSet() {
+    public Set asSet() {
         if (CollectionUtils.isEmpty(this.combinedPrincipals)) {
             return Collections.emptySet();
         }
@@ -171,7 +171,7 @@ public class SimplePrincipalMap implements PrincipalMap {
         return set;
     }
 
-    public Collection<?> fromRealm(String realmName) {
+    public Collection fromRealm(String realmName) {
         if (CollectionUtils.isEmpty(this.realmPrincipals)) {
             return Collections.emptySet();
         }
@@ -193,9 +193,8 @@ public class SimplePrincipalMap implements PrincipalMap {
         return CollectionUtils.isEmpty(this.combinedPrincipals);
     }
 
-    @SuppressWarnings("unchecked")
-    public Iterator<Object> iterator() {
-        return (Iterator<Object>) asList().iterator();
+    public Iterator iterator() {
+        return asList().iterator();
     }
 
     public Map<String, Object> getRealmPrincipals(String name) {
@@ -215,15 +214,15 @@ public class SimplePrincipalMap implements PrincipalMap {
         }
         if (this.realmPrincipals == null) {
             if (!CollectionUtils.isEmpty(principals)) {
-                this.realmPrincipals = new HashMap<>();
-                return this.realmPrincipals.put(realmName, new HashMap<>(principals));
+                this.realmPrincipals = new HashMap<String, Map<String, Object>>();
+                return this.realmPrincipals.put(realmName, new HashMap<String, Object>(principals));
             } else {
                 return null;
             }
         } else {
             Map<String, Object> existingPrincipals = this.realmPrincipals.remove(realmName);
             if (!CollectionUtils.isEmpty(principals)) {
-                this.realmPrincipals.put(realmName, new HashMap<>(principals));
+                this.realmPrincipals.put(realmName, new HashMap<String, Object>(principals));
             }
             return existingPrincipals;
         }
