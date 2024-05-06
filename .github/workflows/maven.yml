@@ -46,7 +46,7 @@ jobs:
 
       - name: Build with Maven
         run: >-
-          mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs,skip_jakarta_ee_tests
+          mvn verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
           -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
 
   build-all:
