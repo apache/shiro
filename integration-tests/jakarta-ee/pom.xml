@@ -41,7 +41,7 @@
         <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
         <webdriver.browser>firefox</webdriver.browser>
 
-        <payara.version>5.2022.5</payara.version>
+        <payara.version>5.2022.5.jdk21</payara.version>
         <payara.start.skip>${skipITs}</payara.start.skip>
         <asadmin.cmd>asadmin</asadmin.cmd>
         <unix-sed-skip>${payara.start.skip}</unix-sed-skip>
@@ -276,7 +276,7 @@
                     <overWriteIfNewer>false</overWriteIfNewer>
                     <artifactItems>
                         <artifactItem>
-                            <groupId>fish.payara.distributions</groupId>
+                            <groupId>com.flowlogix.payara</groupId>
                             <artifactId>payara</artifactId>
                             <version>${payara.version}</version>
                             <type>zip</type>
