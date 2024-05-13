@@ -369,7 +369,7 @@
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>4.4</version>
+                    <version>4.5</version>
                     <configuration>
                         <aggregate>true</aggregate>
                         <header>${root.dir}/src/license/header.txt</header>
