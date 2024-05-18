@@ -305,8 +305,6 @@
                             <link>https://docs.spring.io/spring/docs/${spring.version}/javadoc-api/</link>
                             <link>https://docs.spring.io/spring-boot/docs/${spring-boot.version}/api/</link>
                             <link>https://junit.org/junit5/docs/${junit.version}/api/</link>
-                            <link>https://easymock.org/api/</link>
-                            <link>https://javadoc.io/doc/org.mockito/mockito-core/${mockito.version}/org/mockito/Mockito.html</link>
                             <link>https://www.quartz-scheduler.org/api/${quartz.docs.version}/</link>
                         </links>
                     </configuration>
