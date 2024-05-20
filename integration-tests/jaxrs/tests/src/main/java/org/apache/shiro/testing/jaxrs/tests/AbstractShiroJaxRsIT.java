@@ -58,7 +58,7 @@ public abstract class AbstractShiroJaxRsIT {
         final Response usersResponse = usersTarget.request(MediaType.APPLICATION_JSON_TYPE)
                 .buildGet()
                 .invoke();
-        assertEquals(Status.FORBIDDEN.getStatusCode(), usersResponse.getStatus());
+        assertEquals(Status.UNAUTHORIZED.getStatusCode(), usersResponse.getStatus());
     }
 
     @SuppressWarnings({"checkstyle:MagicNumber"})
