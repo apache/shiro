@@ -29,7 +29,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {EventBusTestConfiguration.class, RealmTestConfiguration.class, ShiroWebConfiguration.class})
@@ -45,10 +45,10 @@ public class ShiroWebConfigurationTestSameSiteStrict {
         // org/apache/shiro/spring/web/config/ShiroWebConfigurationTestSameSiteStrict.properties
 
         // then
-        assertEquals(Cookie.SameSiteOptions.STRICT, shiroWebConfiguration.sessionIdCookieSameSite);
-        assertEquals(Cookie.SameSiteOptions.STRICT, shiroWebConfiguration.rememberMeSameSite);
+        assertThat(shiroWebConfiguration.sessionIdCookieSameSite).isEqualTo(Cookie.SameSiteOptions.STRICT);
+        assertThat(shiroWebConfiguration.rememberMeSameSite).isEqualTo(Cookie.SameSiteOptions.STRICT);
 
-        assertEquals(Cookie.SameSiteOptions.STRICT, shiroWebConfiguration.sessionCookieTemplate().getSameSite());
-        assertEquals(Cookie.SameSiteOptions.STRICT, shiroWebConfiguration.rememberMeCookieTemplate().getSameSite());
+        assertThat(shiroWebConfiguration.sessionCookieTemplate().getSameSite()).isEqualTo(Cookie.SameSiteOptions.STRICT);
+        assertThat(shiroWebConfiguration.rememberMeCookieTemplate().getSameSite()).isEqualTo(Cookie.SameSiteOptions.STRICT);
     }
 }

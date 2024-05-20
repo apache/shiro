@@ -33,10 +33,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createMock;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test relies on the internal structure of FilterChainResolver in order to check that it got created correctly.
@@ -71,12 +69,12 @@ public class FilterChainResolverProviderTest {
     void testGetDependencies() throws Exception {
 
         Set<Dependency<?>> dependencySet = underTest.getDependencies();
-        assertEquals(4, dependencySet.size());
+        assertThat(dependencySet).hasSize(4);
 
-        assertTrue(dependencySet.contains(Dependency.get(key1a)), "Dependency set doesn't contain key1a.");
-        assertTrue(dependencySet.contains(Dependency.get(key1b)), "Dependency set doesn't contain key1b.");
-        assertTrue(dependencySet.contains(Dependency.get(key1c)), "Dependency set doesn't contain key1c.");
-        assertTrue(dependencySet.contains(Dependency.get(key2a)), "Dependency set doesn't contain key2a.");
+        assertThat(dependencySet.contains(Dependency.get(key1a))).as("Dependency set doesn't contain key1a.").isTrue();
+        assertThat(dependencySet.contains(Dependency.get(key1b))).as("Dependency set doesn't contain key1b.").isTrue();
+        assertThat(dependencySet.contains(Dependency.get(key1c))).as("Dependency set doesn't contain key1c.").isTrue();
+        assertThat(dependencySet.contains(Dependency.get(key2a))).as("Dependency set doesn't contain key2a.").isTrue();
     }
 
 
@@ -98,8 +96,8 @@ public class FilterChainResolverProviderTest {
         Field patternMatcherField = SimpleFilterChainResolver.class.getDeclaredField("patternMatcher");
         patternMatcherField.setAccessible(true);
 
-        assertSame(chains, chainsField.get(resolver));
-        assertSame(injector, injectorField.get(resolver));
-        assertSame(patternMatcher, patternMatcherField.get(resolver));
+        assertThat(chainsField.get(resolver)).isSameAs(chains);
+        assertThat(injectorField.get(resolver)).isSameAs(injector);
+        assertThat(patternMatcherField.get(resolver)).isSameAs(patternMatcher);
     }
 }

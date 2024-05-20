@@ -34,9 +34,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.apache.shiro.SecurityUtils.getSecurityManager;
 import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
 import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -78,12 +79,12 @@ class SecurityUtilsUnwrapTest {
     @Test
     void basicUnwrap() {
         SecurityManager sm = unwrapSecurityManager(securityManager, SecurityManager.class);
-        assertEquals(securityManager, sm);
+        assertThat(sm).isEqualTo(securityManager);
     }
 
     @Test
     void basicTypeCheck() {
-        assertTrue(isSecurityManagerTypeOf(securityManager, SecurityManager.class));
+        assertThat(isSecurityManagerTypeOf(securityManager, SecurityManager.class)).isTrue();
     }
 
     @Test
@@ -91,13 +92,13 @@ class SecurityUtilsUnwrapTest {
         try (var threadContext = mockStatic(ThreadContext.class)) {
             threadContext.when(ThreadContext::getSecurityManager).thenReturn(defaultSecurityManager);
             DefaultSecurityManager dsm = getSecurityManager(DefaultSecurityManager.class);
-            assertEquals(defaultSecurityManager, dsm);
+            assertThat(dsm).isEqualTo(defaultSecurityManager);
         }
     }
 
     @Test
     void failedTypeUnwrap() {
-        assertThrows(ClassCastException.class, () -> {
+        assertThatExceptionOfType(ClassCastException.class).isThrownBy(() -> {
             SessionsSecurityManager ssm = unwrapSecurityManager(securityManager, SessionsSecurityManager.class);
         });
     }
@@ -105,10 +106,10 @@ class SecurityUtilsUnwrapTest {
     @Test
     void defaultSecurityManager() {
         var dsm = unwrapSecurityManager(defaultSecurityManager, DefaultSecurityManager.class);
-        assertEquals(defaultSecurityManager, dsm);
+        assertThat(dsm).isEqualTo(defaultSecurityManager);
         when(defaultSecurityManager.createSubject(subjectContext)).thenReturn(subject);
         Subject subject = dsm.createSubject(subjectContext);
-        assertEquals(this.subject, subject);
+        assertThat(subject).isEqualTo(this.subject);
         verify(defaultSecurityManager).createSubject(subjectContext);
         verifyNoMoreInteractions(defaultSecurityManager, this.subject, subjectContext);
     }
@@ -116,7 +117,7 @@ class SecurityUtilsUnwrapTest {
     @Test
     void invalidCast() {
         SecurityManager wrapped = new Wrapped(defaultSecurityManager);
-        assertThrows(ClassCastException.class, () -> {
+        assertThatExceptionOfType(ClassCastException.class).isThrownBy(() -> {
             DefaultSecurityManager sm = (DefaultSecurityManager) wrapped;
         });
     }
@@ -124,19 +125,19 @@ class SecurityUtilsUnwrapTest {
     @Test
     void unwrapOne() {
         SecurityManager wrapped = new Wrapped(defaultSecurityManager);
-        assertEquals(defaultSecurityManager, unwrapSecurityManager(wrapped, DefaultSecurityManager.class));
+        assertThat(unwrapSecurityManager(wrapped, DefaultSecurityManager.class)).isEqualTo(defaultSecurityManager);
     }
 
     @Test
     void unwrapTwo() {
         SecurityManager wrapped = new Wrapped(new Wrapped(defaultSecurityManager));
-        assertEquals(defaultSecurityManager, unwrapSecurityManager(wrapped, DefaultSecurityManager.class));
+        assertThat(unwrapSecurityManager(wrapped, DefaultSecurityManager.class)).isEqualTo(defaultSecurityManager);
     }
 
     @Test
     void invalidWrap() {
         SecurityManager wrapped = new Wrapped(new InvalidWrapped(defaultSecurityManager));
-        assertThrows(IllegalStateException.class, () -> {
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
             assertEquals(defaultSecurityManager, unwrapSecurityManager(wrapped, DefaultSecurityManager.class));
         });
     }
@@ -144,7 +145,7 @@ class SecurityUtilsUnwrapTest {
     @Test
     void invalidWrapInverted() {
         SecurityManager wrapped = new InvalidWrapped(new Wrapped(defaultSecurityManager));
-        assertThrows(IllegalStateException.class, () -> {
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
             assertEquals(defaultSecurityManager, unwrapSecurityManager(wrapped, DefaultSecurityManager.class));
         });
     }

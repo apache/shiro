@@ -24,10 +24,9 @@ import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -52,9 +51,9 @@ public class GuiceShiroFilterTest {
 
         GuiceShiroFilter underTest = new GuiceShiroFilter(securityManager, filterChainResolver, filterConfiguration);
 
-        assertSame(securityManager, underTest.getSecurityManager());
-        assertSame(filterChainResolver, underTest.getFilterChainResolver());
-        assertTrue(underTest.isStaticSecurityManagerEnabled());
-        assertFalse(underTest.isFilterOncePerRequest());
+        assertThat(underTest.getSecurityManager()).isSameAs(securityManager);
+        assertThat(underTest.getFilterChainResolver()).isSameAs(filterChainResolver);
+        assertThat(underTest.isStaticSecurityManagerEnabled()).isTrue();
+        assertThat(underTest.isFilterOncePerRequest()).isFalse();
     }
 }

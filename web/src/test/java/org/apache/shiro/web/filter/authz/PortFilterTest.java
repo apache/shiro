@@ -23,12 +23,12 @@ import org.junit.jupiter.api.Test;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Tests for the {@link PortFilter} class.
@@ -59,7 +59,7 @@ public class PortFilterTest {
 
         verify(request);
         verify(response);
-        assertFalse(result);
+        assertThat(result).isFalse();
     }
 
     /**
@@ -87,7 +87,7 @@ public class PortFilterTest {
 
         verify(request);
         verify(response);
-        assertFalse(result);
+        assertThat(result).isFalse();
     }
 
 }

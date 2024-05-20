@@ -22,8 +22,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.apache.shiro.authc.AuthenticationException;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -46,7 +46,7 @@ public class AllSuccessfulStrategyTest {
     @Test
     void beforeAllAttempts() {
         AuthenticationInfo info = strategy.beforeAllAttempts(null, null);
-        assertNotNull(info);
+        assertThat(info).isNotNull();
     }
 
     @Test
@@ -56,7 +56,7 @@ public class AllSuccessfulStrategyTest {
 
     @Test
     void beforeAttemptRealmDoesntSupportToken() {
-        assertThrows(UnsupportedTokenException.class, () -> {
+        assertThatExceptionOfType(UnsupportedTokenException.class).isThrownBy(() -> {
             Realm notSupportingRealm = new AuthorizingRealm() {
 
                 public boolean supports(AuthenticationToken token) {

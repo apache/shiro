@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * Common method tests across implementations.  In actuality, the methods don't change across
@@ -92,7 +92,7 @@ public abstract class AbstractAuthorizationAnnotationTest {
 
     @Test
     void testGuestImplementationFailure() {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             bindUser();
             testService.guestImplementation();
         });
@@ -120,7 +120,7 @@ public abstract class AbstractAuthorizationAnnotationTest {
 
     @Test
     void testUserImplementationFailure() {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             bindGuest();
             testService.userImplementation();
         });
@@ -148,7 +148,7 @@ public abstract class AbstractAuthorizationAnnotationTest {
 
     @Test
     void testAuthenticatedImplementationFailure() {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             bindUser();
             testService.authenticatedImplementation();
         });
