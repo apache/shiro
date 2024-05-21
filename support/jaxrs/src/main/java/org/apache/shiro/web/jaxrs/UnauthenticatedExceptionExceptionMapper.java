@@ -43,6 +43,6 @@ public class UnauthenticatedExceptionExceptionMapper implements ExceptionMapper<
             LOG.debug("unauthenticated.", exception);
         }
 
-        return Response.status(Status.FORBIDDEN).build();
+        return Response.status(Status.UNAUTHORIZED).build();
     }
 }
