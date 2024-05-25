@@ -22,6 +22,7 @@ import org.apache.shiro.web.filter.InvalidRequestFilter
 import org.apache.shiro.web.filter.mgt.DefaultFilter
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.parallel.Isolated
 
 import javax.servlet.Filter
 import javax.servlet.FilterConfig
@@ -41,6 +42,7 @@ import static org.hamcrest.MatcherAssert.assertThat
  *
  * @since 1.2
  */
+@Isolated
 class IniFilterChainResolverFactoryTest {
 
     private IniFilterChainResolverFactory factory;

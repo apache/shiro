@@ -21,6 +21,7 @@ package org.apache.shiro.web.filter
 
 import org.apache.shiro.web.RestoreSystemProperties
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
 
 import javax.servlet.http.HttpServletRequest
 
@@ -29,6 +30,7 @@ import static org.easymock.EasyMock.mock
 import static org.easymock.EasyMock.replay
 import static org.hamcrest.MatcherAssert.assertThat
 
+@Isolated("Uses System Properties")
 class InvalidRequestFilterTest {
 
     @Test

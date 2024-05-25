@@ -34,9 +34,11 @@ import org.apache.shiro.util.ThreadContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import java.io.Serializable;
 
+import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * @since 0.2
  */
+@ResourceLock(GLOBAL_SECURITY_MANAGER_RESOURCE)
 public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
 
     DefaultSecurityManager sm;

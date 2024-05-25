@@ -31,6 +31,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @since 2.0
  */
+@Isolated("Uses System Input")
 public class HasherTest {
 
     private final InputStream systemIn = System.in;

@@ -23,6 +23,7 @@ import org.apache.shiro.lang.util.LifecycleUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,6 +38,7 @@ import java.util.Set;
  *
  * @since May 11, 2010 12:41:38 PM
  */
+@Isolated
 public class EhCacheManagerTest {
 
     private EhCacheManager cacheManager;
