@@ -20,6 +20,7 @@ package org.apache.shiro.config.ogdl
 
 import org.apache.shiro.config.ogdl.CommonsInterpolator
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
 
 import static org.junit.jupiter.api.Assertions.assertEquals
 import static org.junit.jupiter.api.Assertions.assertNull
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNull
  * Tests for {@link org.apache.shiro.config.ogdl.CommonsInterpolator}.
  * @since 1.4
  */
+@Isolated("System property usage")
 class CommonsInterpolatorTest {
 
     @SuppressWarnings("unused")

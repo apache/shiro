@@ -23,12 +23,15 @@ import org.apache.shiro.subject.Subject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
 
 /**
  * Simple example test class to be used to show how one might write Shiro-compatible unit tests.
  *
  * @since 1.2
  */
+@ResourceLock(GLOBAL_SECURITY_MANAGER_RESOURCE)
 public class ExampleShiroIntegrationTest extends AbstractShiroTest {
 
     @BeforeAll

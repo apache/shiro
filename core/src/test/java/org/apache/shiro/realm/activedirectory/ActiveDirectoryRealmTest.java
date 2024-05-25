@@ -43,6 +43,7 @@ import org.easymock.CaptureType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -52,6 +53,7 @@ import javax.naming.ldap.LdapContext;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.capture;
@@ -75,6 +77,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * This version was intended to mimic my current usage scenario in an effort to debug upgrade issues which were not related
  * to LDAP connectivity.
  */
+@ResourceLock(GLOBAL_SECURITY_MANAGER_RESOURCE)
 public class ActiveDirectoryRealmTest {
 
     private static final String USERNAME = "testuser";

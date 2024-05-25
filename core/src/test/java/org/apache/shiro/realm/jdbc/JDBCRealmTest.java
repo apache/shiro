@@ -37,6 +37,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import javax.sql.DataSource;
 
@@ -47,6 +48,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Optional;
 
+import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -55,6 +57,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Test case for JDBCRealm.
  */
+@ResourceLock(GLOBAL_SECURITY_MANAGER_RESOURCE)
 public class JDBCRealmTest {
 
     protected DefaultSecurityManager securityManager;

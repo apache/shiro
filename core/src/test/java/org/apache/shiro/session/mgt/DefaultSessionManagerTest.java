@@ -30,9 +30,11 @@ import org.easymock.IArgumentMatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import java.util.UUID;
 
+import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -48,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Unit test for the {@link DefaultSessionManager DefaultSessionManager} implementation.
  */
+@ResourceLock(GLOBAL_SECURITY_MANAGER_RESOURCE)
 public class DefaultSessionManagerTest {
 
     DefaultSessionManager sm;

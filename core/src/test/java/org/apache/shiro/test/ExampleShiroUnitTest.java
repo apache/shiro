@@ -21,7 +21,9 @@ package org.apache.shiro.test;
 import org.apache.shiro.subject.Subject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
+import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 
@@ -30,6 +32,7 @@ import static org.easymock.EasyMock.expect;
  *
  * @since 1.2
  */
+@ResourceLock(GLOBAL_SECURITY_MANAGER_RESOURCE)
 public class ExampleShiroUnitTest extends AbstractShiroTest {
 
     @Test

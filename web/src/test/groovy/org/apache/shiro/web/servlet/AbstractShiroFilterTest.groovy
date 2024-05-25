@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.web.servlet
 
+import org.junit.jupiter.api.parallel.Isolated
+
 import javax.servlet.FilterConfig
 import javax.servlet.ServletContext
 import org.apache.shiro.SecurityUtils
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*
 /**
  * Unit tests for the {@link AbstractShiroFilter} implementation.
  */
+@Isolated("Uses System Properties and Static Security Manager")
 class AbstractShiroFilterTest {
 
     @Test

@@ -34,6 +34,7 @@ import org.apache.shiro.web.subject.WebSubject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -56,6 +57,7 @@ import static org.mockito.Mockito.when;
 /**
  * @since 0.9
  */
+@Isolated
 public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTest {
 
     private DefaultWebSecurityManager sm;
