@@ -106,8 +106,8 @@
         <owasp.java.encoder.version>1.2.3</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
-        <quartz.version>2.3.2</quartz.version>
-        <quartz.docs.version>2.3.0</quartz.docs.version>
+        <quartz.version>2.4.0-rc2</quartz.version>
+        <quartz.docs.version>2.4.0-rc2</quartz.docs.version>
         <slf4j.version>2.0.13</slf4j.version>
         <log4j.version>2.23.1</log4j.version>
         <spring.version>5.3.36</spring.version>
