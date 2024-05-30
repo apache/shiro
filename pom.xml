@@ -120,7 +120,7 @@
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.2.0</easymock.version>
         <mockito.version>5.12.0</mockito.version>
-        <bytebuddy.version>1.14.16</bytebuddy.version>
+        <bytebuddy.version>1.14.17</bytebuddy.version>
         <gmaven.version>3.0.2</gmaven.version>
         <groovy.version>4.0.21</groovy.version>
         <junit.version>5.10.2</junit.version>
