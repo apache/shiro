@@ -29,6 +29,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractValidatingSessionManager;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.ThreadContext;
 import org.junit.jupiter.api.AfterEach;
@@ -195,8 +196,29 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
     @Test
     void testNewSubjectWithoutSessionCreationEnabled() {
         SimplePrincipalCollection principals = new SimplePrincipalCollection("guest", "asd");
+        // this tests that calling `buildSubject` doesn't throw an exception due to session-creation being disabled
         Subject subject = new Subject.Builder().principals(principals).sessionCreationEnabled(false).buildSubject();
 
         assertEquals(subject.getPrincipal(), "guest");
+    }
+
+    @Test
+    void testNewSubjectWithSubjectFactoryThatDisablesSessionCreation() {
+        ((DefaultSecurityManager) SecurityUtils.getSecurityManager())
+            .setSubjectFactory(new SessionCreationDisabledSubjectFactory());
+
+        SimplePrincipalCollection principals = new SimplePrincipalCollection("guest", "asd");
+        // this tests that calling `buildSubject` doesn't throw an exception due to session-creation being disabled
+        Subject subject = new Subject.Builder().principals(principals).buildSubject();
+
+        assertEquals(subject.getPrincipal(), "guest");
+    }
+
+    private static final class SessionCreationDisabledSubjectFactory extends DefaultSubjectFactory {
+        @Override
+        public Subject createSubject(SubjectContext context) {
+            context.setSessionCreationEnabled(false);
+            return super.createSubject(context);
+        }
     }
 }
