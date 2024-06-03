@@ -143,7 +143,7 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>5.5.3</version>
+            <version>5.5.4</version>
         </dependency>
 
         <!-- Arquillian test dependencies -->
