@@ -52,3 +52,4 @@ release.properties
 pom.xml.*
 -
 .sdkmanrc
+.DS_Store
