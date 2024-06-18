@@ -170,6 +170,18 @@
             <artifactId>arquillian-suite-extension</artifactId>
             <version>1.2.2</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.30.2-GA</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Selenium test dependencies -->
