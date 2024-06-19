@@ -672,6 +672,7 @@
                         <exclude>org/apache/shiro/**/*Test$*</exclude>
                         <exclude>org/apache/shiro/**/*IT</exclude>
                         <exclude>org/apache/shiro/**/*IT$*</exclude>
+                        <exclude>org/apache/shiro/testing/jakarta/ee/PropertyPrincipal</exclude>
                         <exclude>org/apache/shiro/**/__EJB31_Generated*</exclude>
                         <!-- cause too many coverage misses -->
                         <exclude>org/apache/shiro/**/Deployments</exclude>
