@@ -51,6 +51,7 @@ public class ShiroAnnotationProcessorAutoConfiguration extends AbstractShiroAnno
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     @Override
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {

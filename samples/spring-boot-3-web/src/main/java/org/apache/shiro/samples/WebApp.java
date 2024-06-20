@@ -73,6 +73,7 @@ public class WebApp {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public Realm realm() {
         TextConfigurationRealm realm = new TextConfigurationRealm();
         realm.setUserDefinitions("joe.coder=password,user\n" + "jill.coder=password,admin");
@@ -83,6 +84,7 @@ public class WebApp {
     }
 
     @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public ShiroFilterChainDefinition shiroFilterChainDefinition() {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
         // need to accept POSTs from the login form
