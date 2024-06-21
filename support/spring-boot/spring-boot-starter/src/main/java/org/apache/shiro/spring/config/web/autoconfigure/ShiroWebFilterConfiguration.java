@@ -21,12 +21,14 @@ package org.apache.shiro.spring.config.web.autoconfigure;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.AbstractShiroWebFilterConfiguration;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 
 import javax.servlet.DispatcherType;
 import java.util.List;
@@ -37,6 +39,7 @@ import java.util.List;
 @Configuration
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfiguration {
 
     /**
@@ -70,6 +73,7 @@ public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfigura
     }
 
     @Bean(name = "globalFilters")
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
     protected List<String> globalFilters() {
         return super.globalFilters();
