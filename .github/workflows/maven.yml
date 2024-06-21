@@ -33,10 +33,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Set up JDK
-        uses: actions/setup-java@387ac29b308b003ca37ba93a6cab5eb57c8f5f93 # v4.0.0
+        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
         with:
           java-version: 11
           distribution: temurin
@@ -55,7 +55,7 @@ jobs:
     strategy:
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest', 'macOS-latest' ]
-        jdk: [ 11, 17, 21 ]
+        jdk: [ 11, 17, 21, 22 ]
         dist: [ 'temurin', 'adopt-openj9', 'zulu' ]
         exclude:
           # was already built
@@ -71,16 +71,19 @@ jobs:
           # no OpenJ9 21
           - dist: adopt-openj9
             jdk: 21
+          # no OpenJ9 22
+          - dist: adopt-openj9
+            jdk: 22
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Set up JDK
-        uses: actions/setup-java@387ac29b308b003ca37ba93a6cab5eb57c8f5f93 # v4.0.0
+        uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
         with:
           java-version: ${{ matrix.jdk }}
           distribution: ${{ matrix.dist }}
@@ -98,7 +101,7 @@ jobs:
           -Pskip_jakarta_ee_tests
 
       - name: Archive test run logs
-        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         if: always()
         with:
           name: test-logs-${{ matrix.os }}-${{ matrix.jdk }}-${{ matrix.dist }}

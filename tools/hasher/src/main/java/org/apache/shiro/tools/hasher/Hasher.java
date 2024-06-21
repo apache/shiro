@@ -479,9 +479,8 @@ public final class Hasher {
     private static char[] readPassword(boolean confirm) throws IOException {
         java.io.Console console = System.console();
         char[] first;
-        if (console != null) {
+        if (isTerminal(console)) {
             first = console.readPassword("%s", "Password to hash: ");
-            //throw new IllegalStateException("java.io.Console is not available on the current JVM.  Cannot read passwords.");
         } else if (System.in != null) {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String readLine = br.readLine();
@@ -494,7 +493,7 @@ public final class Hasher {
         if (first == null || first.length == 0) {
             throw new IllegalArgumentException("No password specified.");
         }
-        if (confirm) {
+        if (confirm && isTerminal(console)) {
             char[] second = console.readPassword("%s", "Password to hash (confirm): ");
             if (!Arrays.equals(first, second)) {
                 String msg = "Password entries do not match.";
@@ -502,6 +501,15 @@ public final class Hasher {
             }
         }
         return first;
+    }
+
+    private static boolean isTerminal(java.io.Console console) {
+        try {
+            // isTerminal() is only available in Java 22 or later
+            return console != null && (Boolean) console.getClass().getMethod("isTerminal").invoke(console);
+        } catch (ReflectiveOperationException e) {
+            return true;
+        }
     }
 
     private static File toFile(String path) {

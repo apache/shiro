@@ -30,6 +30,7 @@ import org.easymock.IArgumentMatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.util.UUID;
 
@@ -48,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 /**
  * Unit test for the {@link DefaultSessionManager DefaultSessionManager} implementation.
  */
+@Isolated
 public class DefaultSessionManagerTest {
 
     DefaultSessionManager sm;

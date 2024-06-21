@@ -45,6 +45,7 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
@@ -149,7 +150,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
     }
 
     @RequiredArgsConstructor
-    static class WrappedSecurityManager implements WebSecurityManager {
+    static class WrappedSecurityManager implements WebSecurityManager, org.apache.shiro.mgt.WrappedSecurityManager {
         final @Delegate WebSecurityManager wrapped;
 
         @Override
@@ -174,6 +175,12 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             } else {
                 return wrapped.createSubject(context);
             }
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <SM extends SecurityManager> SM unwrap() {
+            return (SM) wrapped;
         }
     }
 

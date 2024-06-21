@@ -25,6 +25,7 @@ import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.net.URI;
 
@@ -40,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @since 0.1
  */
+@Isolated
 public class AbstractAuthenticatorTest {
 
     static ListAppender listAppender;

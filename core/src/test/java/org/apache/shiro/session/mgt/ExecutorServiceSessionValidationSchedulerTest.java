@@ -20,9 +20,11 @@ package org.apache.shiro.session.mgt;
 
 import org.apache.shiro.session.Session;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("checkstyle:MagicNumber")
 public class ExecutorServiceSessionValidationSchedulerTest {
@@ -47,8 +49,8 @@ public class ExecutorServiceSessionValidationSchedulerTest {
         session.setTimeout(2000L);
         defaultSessionManager.create(session);
         Thread.sleep(5000L);
-        Assertions.assertTrue(defaultSessionManager.getActiveSessions().isEmpty());
-        Assertions.assertTrue(executorServiceSessionValidationScheduler.isEnabled());
+        assertTrue(defaultSessionManager.getActiveSessions().isEmpty());
+        assertTrue(executorServiceSessionValidationScheduler.isEnabled());
     }
 
     @Test
@@ -59,19 +61,19 @@ public class ExecutorServiceSessionValidationSchedulerTest {
         Thread.sleep(1000L);
         session.stop();
         Thread.sleep(3000L);
-        Assertions.assertTrue(defaultSessionManager.getActiveSessions().isEmpty());
-        Assertions.assertTrue(executorServiceSessionValidationScheduler.isEnabled());
+        assertTrue(defaultSessionManager.getActiveSessions().isEmpty());
+        assertTrue(executorServiceSessionValidationScheduler.isEnabled());
     }
 
     @Test
     void enableSessionValidation() throws InterruptedException {
-        Assertions.assertTrue(executorServiceSessionValidationScheduler.isEnabled());
+        assertTrue(executorServiceSessionValidationScheduler.isEnabled());
         executorServiceSessionValidationScheduler.disableSessionValidation();
         Thread.sleep(2000L);
-        Assertions.assertFalse(executorServiceSessionValidationScheduler.isEnabled());
+        assertFalse(executorServiceSessionValidationScheduler.isEnabled());
         executorServiceSessionValidationScheduler.enableSessionValidation();
         Thread.sleep(2000L);
-        Assertions.assertTrue(executorServiceSessionValidationScheduler.isEnabled());
+        assertTrue(executorServiceSessionValidationScheduler.isEnabled());
     }
 
     @Test
@@ -88,8 +90,8 @@ public class ExecutorServiceSessionValidationSchedulerTest {
         Thread.sleep(2000L);
         session.stop();
         Thread.sleep(2000L);
-        Assertions.assertFalse(defaultSessionManager.getActiveSessions().isEmpty());
-        Assertions.assertTrue(executorServiceSessionValidationScheduler.isEnabled());
+        assertFalse(defaultSessionManager.getActiveSessions().isEmpty());
+        assertTrue(executorServiceSessionValidationScheduler.isEnabled());
     }
 
     @AfterEach

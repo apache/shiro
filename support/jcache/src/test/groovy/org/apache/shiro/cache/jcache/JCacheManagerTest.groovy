@@ -22,6 +22,7 @@ import org.apache.shiro.cache.Cache
 import org.apache.shiro.cache.CacheException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
 
 import static org.hamcrest.MatcherAssert.assertThat
 
@@ -32,6 +33,7 @@ import static org.hamcrest.Matchers.*
  *
  * @since 1.9
  */
+@Isolated
 class JCacheManagerTest {
 
     @Test

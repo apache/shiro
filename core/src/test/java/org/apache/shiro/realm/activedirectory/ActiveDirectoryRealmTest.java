@@ -41,9 +41,9 @@ import org.apache.shiro.util.ThreadContext;
 import org.easymock.Capture;
 import org.easymock.CaptureType;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -53,6 +53,7 @@ import javax.naming.ldap.LdapContext;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.capture;
@@ -63,7 +64,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.is;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Simple test case for ActiveDirectoryRealm.
@@ -73,6 +77,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * This version was intended to mimic my current usage scenario in an effort to debug upgrade issues which were not related
  * to LDAP connectivity.
  */
+@ResourceLock(GLOBAL_SECURITY_MANAGER_RESOURCE)
 public class ActiveDirectoryRealmTest {
 
     private static final String USERNAME = "testuser";
@@ -108,10 +113,10 @@ public class ActiveDirectoryRealmTest {
 
 
         UsernamePrincipal usernamePrincipal = subject.getPrincipals().oneByType(UsernamePrincipal.class);
-        assertTrue(usernamePrincipal.getUsername().equals(USERNAME));
+        assertEquals(USERNAME, usernamePrincipal.getUsername());
 
         UserIdPrincipal userIdPrincipal = subject.getPrincipals().oneByType(UserIdPrincipal.class);
-        assertTrue(userIdPrincipal.getUserId() == USER_ID);
+        assertEquals(USER_ID, userIdPrincipal.getUserId());
 
         assertTrue(realm.hasRole(subject.getPrincipals(), ROLE));
 
@@ -148,7 +153,7 @@ public class ActiveDirectoryRealmTest {
             try {
                 activeDirectoryRealm.getRoleNamesForUser(username, ldapContext);
             } catch (NamingException e) {
-                Assertions.fail("Unexpected NamingException thrown during test");
+                fail("Unexpected NamingException thrown during test");
             }
         });
 

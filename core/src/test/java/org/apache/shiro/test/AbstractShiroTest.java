@@ -33,6 +33,10 @@ import org.junit.jupiter.api.AfterAll;
  * @since 1.2
  */
 public abstract class AbstractShiroTest {
+    /**
+     * The resource name of the global SecurityManager instance used in the test environment
+     */
+    public static final String GLOBAL_SECURITY_MANAGER_RESOURCE = "globalSecurityManager";
 
     private static ThreadState subjectThreadState;
 

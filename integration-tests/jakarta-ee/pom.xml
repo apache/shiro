@@ -37,17 +37,11 @@
         <!-- override older compiler source / target flags set by Apache parent POM -->
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
-        <arquillian.version>1.8.0.Final</arquillian.version>
-        <arquillian.drone.version>2.5.6</arquillian.drone.version>
-        <arquillian.graphene.version>2.5.4</arquillian.graphene.version>
-        <failsafe.argLine>
-            --add-opens java.base/java.lang=ALL-UNNAMED
-            --add-opens java.base/java.net=ALL-UNNAMED
-            --add-opens java.base/sun.net.www=ALL-UNNAMED
-        </failsafe.argLine>
+        <arquillian.payara5.version>2.5</arquillian.payara5.version>
+        <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
         <webdriver.browser>firefox</webdriver.browser>
 
-        <payara.version>5.2022.5</payara.version>
+        <payara.version>5.2022.5.jdk21</payara.version>
         <payara.start.skip>${skipITs}</payara.start.skip>
         <asadmin.cmd>asadmin</asadmin.cmd>
         <unix-sed-skip>${payara.start.skip}</unix-sed-skip>
@@ -68,7 +62,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.4</version>
+            <version>3.14.5</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -149,20 +143,20 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>5.5.2</version>
+            <version>5.5.4</version>
         </dependency>
 
         <!-- Arquillian test dependencies -->
         <dependency>
             <groupId>org.jboss.arquillian.junit5</groupId>
             <artifactId>arquillian-junit5-container</artifactId>
-            <version>${arquillian.version}</version>
+            <version>1.8.0.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>fish.payara.arquillian</groupId>
             <artifactId>arquillian-payara-server-remote</artifactId>
-            <version>2.5</version>
+            <version>${arquillian.payara5.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -175,6 +169,18 @@
             <groupId>org.eu.ingwar.tools</groupId>
             <artifactId>arquillian-suite-extension</artifactId>
             <version>1.2.2</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.30.2-GA</version>
             <scope>test</scope>
         </dependency>
 
@@ -191,23 +197,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${arquillian.version}</version>
-                <type>pom</type>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-bom</artifactId>
-                <version>${arquillian.drone.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-bom</artifactId>
-                <version>3.2.1</version>
+                <version>3.3.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -242,9 +234,7 @@
                         <gh_user>${gh_user}</gh_user>
                         <gh_token>${gh_token}</gh_token>
                         <webdriver.browser>${webdriver.browser}</webdriver.browser>
-                        <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
                         <webdriver.chrome.binary>${webdriver.chrome.binary}</webdriver.chrome.binary>
-                        <webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
                         <webdriver.firefox.binary>${webdriver.firefox.binary}</webdriver.firefox.binary>
                     </systemPropertyVariables>
                     <argLine>${failsafe.argLine} ${payara.argLine}</argLine>
@@ -298,7 +288,7 @@
                     <overWriteIfNewer>false</overWriteIfNewer>
                     <artifactItems>
                         <artifactItem>
-                            <groupId>fish.payara.distributions</groupId>
+                            <groupId>com.flowlogix.payara</groupId>
                             <artifactId>payara</artifactId>
                             <version>${payara.version}</version>
                             <type>zip</type>
@@ -371,7 +361,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.3.0</version>
                 <configuration>
                     <executable>${project.build.directory}/dependency/payara5/bin/${asadmin.cmd}</executable>
                     <skip>${payara.start.skip}</skip>
@@ -503,7 +493,7 @@
 
     <profiles>
         <profile>
-            <id>payara-server-remote</id>
+            <id>payara-server-local</id>
             <properties>
                 <payara.start.skip>true</payara.start.skip>
                 <payara.argLine/>

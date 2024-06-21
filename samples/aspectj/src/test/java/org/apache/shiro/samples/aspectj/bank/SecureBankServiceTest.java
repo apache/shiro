@@ -26,13 +26,13 @@ import org.apache.shiro.env.BasicIniEnvironment;
 import org.apache.shiro.subject.Subject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings({"checkstyle:MemberName", "checkstyle:MethodName", "checkstyle:MagicNumber"})
@@ -175,7 +175,7 @@ public class SecureBankServiceTest {
         logoutCurrentSubject();
         loginAsSuperviser();
         double closingBalance = service.closeAccount(accountId);
-        Assertions.assertEquals(0, (int) closingBalance);
+        assertEquals(0, (int) closingBalance);
         assertAccount("Chris Smith", false, 0, 1, accountId);
     }
 
@@ -188,7 +188,7 @@ public class SecureBankServiceTest {
         logoutCurrentSubject();
         loginAsSuperviser();
         double closingBalance = service.closeAccount(accountId);
-        Assertions.assertEquals(385, (int) closingBalance);
+        assertEquals(385, (int) closingBalance);
         assertAccount("Gerry Smith", false, 0, 2, accountId);
     }
 
@@ -201,7 +201,7 @@ public class SecureBankServiceTest {
             logoutCurrentSubject();
             loginAsSuperviser();
             double closingBalance = service.closeAccount(accountId);
-            Assertions.assertEquals(0, (int) closingBalance);
+            assertEquals(0, (int) closingBalance);
             assertAccount("Chris Smith", false, 0, 1, accountId);
             service.closeAccount(accountId);
         });
@@ -226,7 +226,7 @@ public class SecureBankServiceTest {
         double previousBalance = service.getBalanceOf(anAccountId);
         int previousTxCount = service.getTxHistoryFor(anAccountId).length;
         double newBalance = service.depositInto(anAccountId, anAmount);
-        Assertions.assertEquals((int) previousBalance + anAmount, (int) newBalance);
+        assertEquals((int) previousBalance + anAmount, (int) newBalance);
         assertAccount(eOwnerName, true, (int) newBalance, 1 + previousTxCount, anAccountId);
         return newBalance;
     }
@@ -235,7 +235,7 @@ public class SecureBankServiceTest {
         double previousBalance = service.getBalanceOf(anAccountId);
         int previousTxCount = service.getTxHistoryFor(anAccountId).length;
         double newBalance = service.withdrawFrom(anAccountId, anAmount);
-        Assertions.assertEquals((int) previousBalance - anAmount, (int) newBalance);
+        assertEquals((int) previousBalance - anAmount, (int) newBalance);
         assertAccount(eOwnerName, true, (int) newBalance, 1 + previousTxCount, anAccountId);
         return newBalance;
     }
@@ -243,10 +243,10 @@ public class SecureBankServiceTest {
 
     public static void assertAccount(String eOwnerName, boolean eIsActive, int eBalance,
                                      int eTxLogCount, long actualAccountId) throws Exception {
-        Assertions.assertEquals(eOwnerName, service.getOwnerOf(actualAccountId));
-        Assertions.assertEquals(eIsActive, service.isAccountActive(actualAccountId));
-        Assertions.assertEquals(eBalance, (int) service.getBalanceOf(actualAccountId));
-        Assertions.assertEquals(eTxLogCount, service.getTxHistoryFor(actualAccountId).length);
+        assertEquals(eOwnerName, service.getOwnerOf(actualAccountId));
+        assertEquals(eIsActive, service.isAccountActive(actualAccountId));
+        assertEquals(eBalance, (int) service.getBalanceOf(actualAccountId));
+        assertEquals(eTxLogCount, service.getTxHistoryFor(actualAccountId).length);
     }
 
     @RequiresGuest

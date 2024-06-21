@@ -26,6 +26,7 @@ import org.apache.shiro.config.ConfigurationException
 import org.apache.shiro.config.Ini
 import org.apache.shiro.config.ogdl.event.BeanEvent
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
 
 import java.util.concurrent.ConcurrentHashMap
 
@@ -36,6 +37,7 @@ import static org.hamcrest.Matchers.*
 /**
  * Unit tests for the {@link org.apache.shiro.config.ogdl.ReflectionBuilder} implementation.
  */
+@Isolated
 @SuppressWarnings("GrMethodMayBeStatic")
 class ReflectionBuilderTest {
 

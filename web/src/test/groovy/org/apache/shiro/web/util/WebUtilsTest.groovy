@@ -20,6 +20,7 @@ package org.apache.shiro.web.util
 
 import org.apache.shiro.web.RestoreSystemProperties
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
 
 import javax.servlet.http.HttpServletRequest
 
@@ -31,7 +32,8 @@ import static org.junit.jupiter.api.Assertions.*
 /**
  * Tests for {@link WebUtils}.
  */
-public class WebUtilsTest {
+@Isolated("Uses System Properties")
+class WebUtilsTest {
 
     @Test
     void testGetContextPathIncludes() {

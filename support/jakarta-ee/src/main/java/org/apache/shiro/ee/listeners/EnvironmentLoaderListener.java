@@ -13,6 +13,7 @@
  */
 package org.apache.shiro.ee.listeners;
 
+import java.util.Optional;
 import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -61,7 +62,8 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
             sce.getServletContext().setAttribute(FORM_RESUBMIT_DISABLED_PARAM, Boolean.TRUE);
         }
         String secureCookiesStr = sce.getServletContext().getInitParameter(FORM_RESUBMIT_SECURE_COOKIES);
-        if (secureCookiesStr == null || Boolean.parseBoolean(secureCookiesStr)) {
+        if (Optional.ofNullable(System.getProperty(FORM_RESUBMIT_SECURE_COOKIES)).map(Boolean::valueOf)
+                        .or(() -> Optional.ofNullable(secureCookiesStr).map(Boolean::valueOf)).orElse(true)) {
             sce.getServletContext().setAttribute(FORM_RESUBMIT_SECURE_COOKIES, Boolean.TRUE);
         } else {
             sce.getServletContext().setAttribute(FORM_RESUBMIT_SECURE_COOKIES, Boolean.FALSE);

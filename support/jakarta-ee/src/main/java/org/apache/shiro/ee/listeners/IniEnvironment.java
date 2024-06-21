@@ -15,11 +15,14 @@ package org.apache.shiro.ee.listeners;
 
 import java.nio.charset.StandardCharsets;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.shiro.ee.filters.FormAuthenticationFilter;
 import org.apache.shiro.ee.filters.LogoutFilter;
 import org.apache.shiro.ee.filters.SslFilter;
 
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import javax.servlet.Filter;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +47,9 @@ public class IniEnvironment extends IniWebEnvironment {
     private String otherConfigLocation;
 
     @SuppressWarnings("deprecation")
+    @RequiredArgsConstructor
     private static final class SecurityManagerFactory extends WebIniSecurityManagerFactory {
+        private final Function<Supplier<byte[]>, SecurityManager> securityManagerSupplier;
         private final Lazy<AesCipherService> cipherService = new Lazy<>(AesCipherService::new);
 
         @Override
@@ -65,7 +70,7 @@ public class IniEnvironment extends IniWebEnvironment {
 
         @Override
         protected SecurityManager createDefaultInstance() {
-            return new DefaultWebSecurityManager(this::generateCipherKey);
+            return securityManagerSupplier.apply(this::generateCipherKey);
         }
 
         private byte[] generateCipherKey() {
@@ -80,7 +85,11 @@ public class IniEnvironment extends IniWebEnvironment {
     }
 
     public IniEnvironment() {
-        var securityManagerFactory = new SecurityManagerFactory();
+        this(DefaultWebSecurityManager::new);
+    }
+
+    public IniEnvironment(Function<Supplier<byte[]>, SecurityManager> securityManagerSupplier) {
+        var securityManagerFactory = new SecurityManagerFactory(securityManagerSupplier);
         securityManagerFactory.getReflectionBuilder().setAlternateObjectSupplier(Beans::getInstance);
         setSecurityManagerFactory(securityManagerFactory);
     }
