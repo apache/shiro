@@ -150,7 +150,7 @@
         <dependency>
             <groupId>org.jboss.arquillian.junit5</groupId>
             <artifactId>arquillian-junit5-container</artifactId>
-            <version>1.8.0.Final</version>
+            <version>1.8.1.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
