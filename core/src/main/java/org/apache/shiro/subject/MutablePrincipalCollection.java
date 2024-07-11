@@ -25,6 +25,9 @@ import java.util.Collection;
  * A {@link PrincipalCollection} that allows modification.
  *
  * @since 0.9
+ * @deprecated Principal collections should not be mutable after their initial construction because they are shared by
+ * an unspecified and unpredictable number of other objects. This interface only exists for compatibility with existing
+ * code.
  */
 public interface MutablePrincipalCollection extends PrincipalCollection {
 
