@@ -37,6 +37,7 @@
         <!-- override older compiler source / target flags set by Apache parent POM -->
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
+        <arquillian.core.version>1.9.0.Final</arquillian.core.version>
         <arquillian.payara5.version>2.5</arquillian.payara5.version>
         <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
         <webdriver.browser>firefox</webdriver.browser>
@@ -150,13 +151,59 @@
         <dependency>
             <groupId>org.jboss.arquillian.junit5</groupId>
             <artifactId>arquillian-junit5-container</artifactId>
-            <version>1.8.0.Final</version>
+            <version>${arquillian.core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>fish.payara.arquillian</groupId>
             <artifactId>arquillian-payara-server-remote</artifactId>
             <version>${arquillian.payara5.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.arquillian.testenricher</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.arquillian.protocol</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-spi</artifactId>
+            <version>${arquillian.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+            <version>${arquillian.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-cdi</artifactId>
+            <version>${arquillian.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-ejb</artifactId>
+            <version>${arquillian.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-resource</artifactId>
+            <version>${arquillian.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-initialcontext</artifactId>
+            <version>${arquillian.core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
