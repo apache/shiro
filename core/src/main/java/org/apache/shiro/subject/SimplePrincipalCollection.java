@@ -38,6 +38,13 @@ import java.util.Set;
 /**
  * A simple implementation of the {@link MutablePrincipalCollection} interface that tracks principals internally
  * by storing them in a {@link LinkedHashMap}.
+ * <p/>
+ * To comply with the {@link PrincipalCollection PrincipalCollection} interface, mutation of a principal
+ * collection must be restricted to the time before it is shared with other objects.
+ *
+ * @deprecated use {@link ImmutablePrincipalCollection} instead. Principal collections should not be mutable after
+ * their initial construction because they are shared by an unspecified and unpredictable number of other objects.
+ * This implementation only exists for compatibility with existing code.
  *
  * @since 0.9
  */
