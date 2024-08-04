@@ -20,7 +20,7 @@ package org.apache.shiro.authc;
 
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
-import org.apache.shiro.subject.MutablePrincipalCollection;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 
@@ -205,10 +205,10 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
         if (this.principals == null) {
             this.principals = info.getPrincipals();
         } else {
-            if (!(this.principals instanceof MutablePrincipalCollection)) {
-                this.principals = new SimplePrincipalCollection(this.principals);
-            }
-            ((MutablePrincipalCollection) this.principals).addAll(info.getPrincipals());
+            this.principals = new ImmutablePrincipalCollection.Builder()
+                    .addPrincipals(this.principals)
+                    .addPrincipals(info.getPrincipals())
+                    .build();
         }
 
         //only mess with a salt value if we don't have one yet.  It doesn't make sense
