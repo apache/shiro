@@ -25,7 +25,7 @@ import lombok.Getter;
 import org.apache.shiro.authc.SimpleAccount;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.SimpleAccountRealm;
-import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.testing.jakarta.ee.PropertyPrincipal;
 
 @ApplicationPath("/")
@@ -37,7 +37,7 @@ public class TestApplication extends Application {
         var realm = new SimpleAccountRealm("testRealm") {
             @Override
             public void addAccount(String username, String password) {
-                SimpleAccount account = new SimpleAccount(new SimplePrincipalCollection(
+                SimpleAccount account = new SimpleAccount(ImmutablePrincipalCollection.ofSingleRealm(
                         List.of(username, new PropertyPrincipal(username)), getName()), password);
                 add(account);
             }

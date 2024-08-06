@@ -34,8 +34,8 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.UserIdPrincipal;
 import org.apache.shiro.realm.UsernamePrincipal;
 import org.apache.shiro.realm.ldap.LdapContextFactory;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.easymock.Capture;
@@ -190,10 +190,10 @@ public class ActiveDirectoryRealmTest {
             SimpleAccount account = (SimpleAccount) super.doGetAuthenticationInfo(token);
 
             if (account != null) {
-                SimplePrincipalCollection principals = new SimplePrincipalCollection();
-                principals.add(new UserIdPrincipal(USER_ID), getName());
-                principals.add(new UsernamePrincipal(USERNAME), getName());
-                account.setPrincipals(principals);
+                var principals = new ImmutablePrincipalCollection.Builder();
+                principals.addPrincipal(new UserIdPrincipal(USER_ID), getName());
+                principals.addPrincipal(new UsernamePrincipal(USERNAME), getName());
+                account.setPrincipals(principals.build());
             }
 
             return account;

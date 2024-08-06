@@ -19,8 +19,8 @@
 package org.apache.shiro.realm.text;
 
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
@@ -114,7 +114,7 @@ public class TextConfigurationRealmTest {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
             public void run() {
-                PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
+                PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 assertTrue(realm.hasRole(principalCollection, "role2"),
                         "principal doesn't have role when it should");
                 assertTrue(realm.hasAllRoles(principalCollection, Arrays.asList(new String[] {"role1", "role2"})),
@@ -131,7 +131,7 @@ public class TextConfigurationRealmTest {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
             public void run() {
-                PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
+                PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 try {
                     realm.checkRoles(principalCollection, new String[] {"role1", "role2"});
                 } catch (AuthorizationException ae) {
@@ -149,7 +149,7 @@ public class TextConfigurationRealmTest {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
             public void run() {
-                PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
+                PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 try {
                     realm.checkPermission(principalCollection, "role1_permission1");
                     realm.checkPermissions(principalCollection, new String[] {"role1_permission1", "role2_permission2"});
@@ -169,7 +169,7 @@ public class TextConfigurationRealmTest {
         executeTest(new Runnable() {
 
             public void run() {
-                PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
+                PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 assertTrue(realm.isPermitted(principalCollection,
                         "role1_permission1"),
                         "permission not permitted when it should be");

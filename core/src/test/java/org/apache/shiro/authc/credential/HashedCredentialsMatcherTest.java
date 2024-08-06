@@ -25,8 +25,8 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.apache.shiro.lang.util.ByteSource;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -74,7 +74,7 @@ public class HashedCredentialsMatcherTest {
 
             @Override
             public PrincipalCollection getPrincipals() {
-                return new SimplePrincipalCollection(username, "realmName");
+                return ImmutablePrincipalCollection.ofSinglePrincipal(username, "realmName");
             }
 
             @Override
@@ -111,7 +111,7 @@ public class HashedCredentialsMatcherTest {
 
             @Override
             public PrincipalCollection getPrincipals() {
-                return new SimplePrincipalCollection(username, "realmName");
+                return ImmutablePrincipalCollection.ofSinglePrincipal(username, "realmName");
             }
 
             @Override

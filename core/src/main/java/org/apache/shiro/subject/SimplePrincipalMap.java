@@ -69,7 +69,7 @@ public class SimplePrincipalMap implements PrincipalMap {
 
     protected Map<String, Object> ensureCombinedPrincipals() {
         if (this.combinedPrincipals == null) {
-            this.combinedPrincipals = new HashMap<String, Object>();
+            this.combinedPrincipals = new HashMap<>();
         }
         return this.combinedPrincipals;
     }
@@ -153,7 +153,7 @@ public class SimplePrincipalMap implements PrincipalMap {
         return instances != null ? instances : Collections.<T>emptyList();
     }
 
-    public List asList() {
+    public List<?> asList() {
         if (CollectionUtils.isEmpty(this.combinedPrincipals)) {
             return Collections.emptyList();
         }
@@ -162,7 +162,7 @@ public class SimplePrincipalMap implements PrincipalMap {
         return list;
     }
 
-    public Set asSet() {
+    public Set<?> asSet() {
         if (CollectionUtils.isEmpty(this.combinedPrincipals)) {
             return Collections.emptySet();
         }
@@ -171,7 +171,7 @@ public class SimplePrincipalMap implements PrincipalMap {
         return set;
     }
 
-    public Collection fromRealm(String realmName) {
+    public Collection<?> fromRealm(String realmName) {
         if (CollectionUtils.isEmpty(this.realmPrincipals)) {
             return Collections.emptySet();
         }
@@ -193,8 +193,9 @@ public class SimplePrincipalMap implements PrincipalMap {
         return CollectionUtils.isEmpty(this.combinedPrincipals);
     }
 
-    public Iterator iterator() {
-        return asList().iterator();
+    @SuppressWarnings("unchecked")
+    public Iterator<Object> iterator() {
+        return (Iterator<Object>) asList().iterator();
     }
 
     public Map<String, Object> getRealmPrincipals(String name) {

@@ -97,8 +97,7 @@ public class SimpleAuthenticationInfoTest {
                 return null;
             }
 
-            @SuppressWarnings("unchecked")
-            public Iterator iterator() {
+            public Iterator<Object> iterator() {
                 return null;
             }
 

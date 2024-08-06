@@ -27,7 +27,8 @@ import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractValidatingSessionManager;
-import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.subject.support.DelegatingSubject;
@@ -195,7 +196,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
 
     @Test
     void testNewSubjectWithoutSessionCreationEnabled() {
-        SimplePrincipalCollection principals = new SimplePrincipalCollection("guest", "asd");
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("guest", "asd");
         // this tests that calling `buildSubject` doesn't throw an exception due to session-creation being disabled
         Subject subject = new Subject.Builder().principals(principals).sessionCreationEnabled(false).buildSubject();
 
@@ -207,7 +208,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         ((DefaultSecurityManager) SecurityUtils.getSecurityManager())
             .setSubjectFactory(new SessionCreationDisabledSubjectFactory());
 
-        SimplePrincipalCollection principals = new SimplePrincipalCollection("guest", "asd");
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("guest", "asd");
         // this tests that calling `buildSubject` doesn't throw an exception due to session-creation being disabled
         Subject subject = new Subject.Builder().principals(principals).buildSubject();
 

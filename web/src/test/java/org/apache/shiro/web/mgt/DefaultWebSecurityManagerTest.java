@@ -24,8 +24,8 @@ import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.AbstractSessionManager;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.config.WebIniSecurityManagerFactory;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
@@ -221,7 +221,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
 
         WebSecurityManager securityManager = (WebSecurityManager) factory.getInstance();
 
-        PrincipalCollection principals = new SimplePrincipalCollection("user1", "iniRealm");
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "iniRealm");
         Subject subject = new Subject.Builder(securityManager).principals(principals).buildSubject();
 
         assertNotNull(subject);

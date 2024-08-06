@@ -93,7 +93,7 @@ public class DelegatingSubjectTest {
         String username = "jsmith";
 
         SecurityManager securityManager = createNiceMock(SecurityManager.class);
-        PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
+        PrincipalCollection identity = ImmutablePrincipalCollection.ofSinglePrincipal(username, "testRealm");
         final Subject sourceSubject = new DelegatingSubject(identity, true, null, null, securityManager);
 
         assertNull(ThreadContext.getSubject());
@@ -123,7 +123,7 @@ public class DelegatingSubjectTest {
         String username = "jsmith";
 
         SecurityManager securityManager = createNiceMock(SecurityManager.class);
-        PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
+        PrincipalCollection identity = ImmutablePrincipalCollection.ofSinglePrincipal(username, "testRealm");
         final Subject sourceSubject = new DelegatingSubject(identity, true, null, null, securityManager);
 
         assertNull(ThreadContext.getSubject());
@@ -166,7 +166,7 @@ public class DelegatingSubjectTest {
         assertNull(subject.getPreviousPrincipals());
 
         //runAs user2:
-        subject.runAs(new SimplePrincipalCollection("user2", INI_REALM_NAME));
+        subject.runAs(ImmutablePrincipalCollection.ofSinglePrincipal("user2", INI_REALM_NAME));
         assertTrue(subject.isRunAs());
         assertEquals("user2", subject.getPrincipal());
         assertTrue(subject.hasRole("role2"));
@@ -179,7 +179,7 @@ public class DelegatingSubjectTest {
         assertEquals("user1", previous.getPrimaryPrincipal());
 
         //test the stack functionality:  While as user2, run as user3:
-        subject.runAs(new SimplePrincipalCollection("user3", INI_REALM_NAME));
+        subject.runAs(ImmutablePrincipalCollection.ofSinglePrincipal("user3", INI_REALM_NAME));
         assertTrue(subject.isRunAs());
         assertEquals("user3", subject.getPrincipal());
         assertTrue(subject.hasRole("role3"));
@@ -229,7 +229,7 @@ public class DelegatingSubjectTest {
         String username = "jsmith";
 
         DefaultSecurityManager securityManager = new DefaultSecurityManager();
-        PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
+        PrincipalCollection identity = ImmutablePrincipalCollection.ofSinglePrincipal(username, "testRealm");
         final String hostname = "localhost";
         final DelegatingSubject sourceSubject = new DelegatingSubject(identity, true, hostname, null, securityManager);
 
