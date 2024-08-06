@@ -157,7 +157,7 @@ public class SimplePrincipalMap implements PrincipalMap {
         if (CollectionUtils.isEmpty(this.combinedPrincipals)) {
             return Collections.emptyList();
         }
-        List<Object> list = new ArrayList<Object>(this.combinedPrincipals.size());
+        List<Object> list = new ArrayList<>(this.combinedPrincipals.size());
         list.addAll(this.combinedPrincipals.values());
         return list;
     }
@@ -215,15 +215,15 @@ public class SimplePrincipalMap implements PrincipalMap {
         }
         if (this.realmPrincipals == null) {
             if (!CollectionUtils.isEmpty(principals)) {
-                this.realmPrincipals = new HashMap<String, Map<String, Object>>();
-                return this.realmPrincipals.put(realmName, new HashMap<String, Object>(principals));
+                this.realmPrincipals = new HashMap<>();
+                return this.realmPrincipals.put(realmName, new HashMap<>(principals));
             } else {
                 return null;
             }
         } else {
             Map<String, Object> existingPrincipals = this.realmPrincipals.remove(realmName);
             if (!CollectionUtils.isEmpty(principals)) {
-                this.realmPrincipals.put(realmName, new HashMap<String, Object>(principals));
+                this.realmPrincipals.put(realmName, new HashMap<>(principals));
             }
             return existingPrincipals;
         }

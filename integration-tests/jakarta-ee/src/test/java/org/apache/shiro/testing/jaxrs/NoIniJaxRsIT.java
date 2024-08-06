@@ -27,6 +27,7 @@ import lombok.SneakyThrows;
 import org.apache.shiro.testing.cdi.ComponentInjectionIT;
 
 import static org.apache.shiro.testing.cdi.ComponentInjectionIT.TESTABLE_MODE;
+import static org.assertj.core.api.Assertions.fail;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -35,7 +36,6 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

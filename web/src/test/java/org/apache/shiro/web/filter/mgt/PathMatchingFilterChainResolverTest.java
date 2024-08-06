@@ -30,12 +30,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,31 +51,31 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
     @Test
     void testNewInstance() {
-        assertNotNull(resolver.getPathMatcher());
-        assertTrue(resolver.getPathMatcher() instanceof AntPathMatcher);
-        assertNotNull(resolver.getFilterChainManager());
-        assertTrue(resolver.getFilterChainManager() instanceof DefaultFilterChainManager);
+        assertThat(resolver.getPathMatcher()).isNotNull();
+        assertThat(resolver.getPathMatcher() instanceof AntPathMatcher).isTrue();
+        assertThat(resolver.getFilterChainManager()).isNotNull();
+        assertThat(resolver.getFilterChainManager() instanceof DefaultFilterChainManager).isTrue();
     }
 
     @Test
     void testNewInstanceWithFilterConfig() {
         FilterConfig mock = createNiceMockFilterConfig();
         resolver = new PathMatchingFilterChainResolver(mock);
-        assertNotNull(resolver.getPathMatcher());
-        assertTrue(resolver.getPathMatcher() instanceof AntPathMatcher);
-        assertNotNull(resolver.getFilterChainManager());
-        assertTrue(resolver.getFilterChainManager() instanceof DefaultFilterChainManager);
-        assertEquals(((DefaultFilterChainManager) resolver.getFilterChainManager()).getFilterConfig(), mock);
+        assertThat(resolver.getPathMatcher()).isNotNull();
+        assertThat(resolver.getPathMatcher() instanceof AntPathMatcher).isTrue();
+        assertThat(resolver.getFilterChainManager()).isNotNull();
+        assertThat(resolver.getFilterChainManager() instanceof DefaultFilterChainManager).isTrue();
+        assertThat(mock).isEqualTo(((DefaultFilterChainManager) resolver.getFilterChainManager()).getFilterConfig());
     }
 
     @Test
     void testSetters() {
         resolver.setPathMatcher(new AntPathMatcher());
-        assertNotNull(resolver.getPathMatcher());
-        assertTrue(resolver.getPathMatcher() instanceof AntPathMatcher);
+        assertThat(resolver.getPathMatcher()).isNotNull();
+        assertThat(resolver.getPathMatcher() instanceof AntPathMatcher).isTrue();
         resolver.setFilterChainManager(new DefaultFilterChainManager());
-        assertNotNull(resolver.getFilterChainManager());
-        assertTrue(resolver.getFilterChainManager() instanceof DefaultFilterChainManager);
+        assertThat(resolver.getFilterChainManager()).isNotNull();
+        assertThat(resolver.getFilterChainManager() instanceof DefaultFilterChainManager).isTrue();
     }
 
     @Test
@@ -89,7 +84,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         ServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNull(resolved);
+        assertThat(resolved).isNull();
     }
 
     @Test
@@ -105,7 +100,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         when(request.getPathInfo()).thenReturn("/index.html");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNotNull(resolved);
+        assertThat(resolved).isNotNull();
         verify(request).getServletPath();
     }
 
@@ -122,7 +117,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         when(request.getPathInfo()).thenReturn("./index.html");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNotNull(resolved);
+        assertThat(resolved).isNotNull();
         verify(request).getServletPath();
     }
 
@@ -138,7 +133,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         when(request.getPathInfo()).thenReturn("../index.html");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNotNull(resolved);
+        assertThat(resolved).isNotNull();
         verify(request).getServletPath();
     }
 
@@ -155,7 +150,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         when(request.getPathInfo()).thenReturn(null);
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNull(resolved);
+        assertThat(resolved).isNull();
         verify(request).getServletPath();
     }
 
@@ -175,7 +170,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         when(request.getPathInfo()).thenReturn("/resource/book");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNotNull(resolved);
+        assertThat(resolved).isNotNull();
         verify(request).getServletPath();
     }
 
@@ -195,7 +190,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         when(request.getPathInfo()).thenReturn(null);
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNotNull(resolved);
+        assertThat(resolved).isNotNull();
         verify(request).getServletPath();
     }
 
@@ -215,7 +210,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         when(request.getPathInfo()).thenReturn("/resource/book");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNotNull(resolved);
+        assertThat(resolved).isNotNull();
         verify(request).getServletPath();
     }
 
@@ -235,7 +230,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         when(request.getPathInfo()).thenReturn("/resource/book//");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNotNull(resolved);
+        assertThat(resolved).isNotNull();
         verify(request).getServletPath();
     }
 
@@ -253,7 +248,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         when(request.getPathInfo()).thenReturn("/resource/");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertThat(resolved, notNullValue());
+        assertThat(resolved).isNotNull();
     }
 
     /**
@@ -272,7 +267,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         when(request.getPathInfo()).thenReturn("/resource/123/book/");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNotNull(resolved);
+        assertThat(resolved).isNotNull();
         verify(request).getServletPath();
     }
 
@@ -292,7 +287,7 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         when(request.getPathInfo()).thenReturn("/resource/123/book");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNotNull(resolved);
+        assertThat(resolved).isNotNull();
         verify(request).getServletPath();
     }
 }
