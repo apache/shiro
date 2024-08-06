@@ -29,6 +29,7 @@ import java.util.Collection;
  * an unspecified and unpredictable number of other objects. This interface only exists for compatibility with existing
  * code.
  */
+@Deprecated
 public interface MutablePrincipalCollection extends PrincipalCollection {
 
     /**

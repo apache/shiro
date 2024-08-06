@@ -39,8 +39,8 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.authz.permission.WildcardPermission;
 import org.apache.shiro.authz.permission.WildcardPermissionResolver;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -134,7 +134,7 @@ public class AuthorizingRealmTest {
         };
 
         Principal principal = new UsernamePrincipal("blah");
-        PrincipalCollection pCollection = new SimplePrincipalCollection(principal, "nullAuthzRealm");
+        PrincipalCollection pCollection = ImmutablePrincipalCollection.ofSinglePrincipal(principal, "nullAuthzRealm");
         List<Permission> permList = new ArrayList<Permission>();
         permList.add(new WildcardPermission("stringPerm1"));
         permList.add(new WildcardPermission("stringPerm2"));
@@ -204,7 +204,8 @@ public class AuthorizingRealmTest {
     @Test
     void testRealmWithRolePermissionResolver() {
         Principal principal = new UsernamePrincipal("rolePermResolver");
-        PrincipalCollection pCollection = new SimplePrincipalCollection(principal, "testRealmWithRolePermissionResolver");
+        PrincipalCollection pCollection = ImmutablePrincipalCollection.ofSinglePrincipal(principal,
+                "testRealmWithRolePermissionResolver");
 
         AuthorizingRealm realm = new AllowAllRealm();
         realm.setRolePermissionResolver(new RolePermissionResolver() {
@@ -229,7 +230,8 @@ public class AuthorizingRealmTest {
     @Test
     void testRealmWithEmptyOrNullPermissions() {
         Principal principal = new UsernamePrincipal("rolePermResolver");
-        PrincipalCollection pCollection = new SimplePrincipalCollection(principal, "testRealmWithRolePermissionResolver");
+        PrincipalCollection pCollection = ImmutablePrincipalCollection.ofSinglePrincipal(principal,
+                "testRealmWithRolePermissionResolver");
 
         AuthorizingRealm realm = new AllowAllRealm();
         realm.setRolePermissionResolver(new RolePermissionResolver() {

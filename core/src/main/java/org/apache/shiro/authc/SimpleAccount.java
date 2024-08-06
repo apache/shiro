@@ -20,8 +20,8 @@ package org.apache.shiro.authc;
 
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.lang.util.ByteSource;
 
 import java.io.Serializable;
@@ -82,7 +82,9 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      */
     public SimpleAccount(Object principal, Object credentials, String realmName) {
         this(principal instanceof PrincipalCollection
-                ? (PrincipalCollection) principal : new SimplePrincipalCollection(principal, realmName), credentials);
+                ? (PrincipalCollection) principal
+                : ImmutablePrincipalCollection.ofSinglePrincipal(principal, realmName),
+                credentials);
     }
 
     /**
@@ -98,7 +100,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      */
     public SimpleAccount(Object principal, Object hashedCredentials, ByteSource credentialsSalt, String realmName) {
         this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal
-                        : new SimplePrincipalCollection(principal, realmName),
+                        : ImmutablePrincipalCollection.ofSinglePrincipal(principal, realmName),
                 hashedCredentials, credentialsSalt);
     }
 
@@ -110,8 +112,8 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * @param credentials the credentials that verify identity for the account
      * @param realmName   the name of the realm that accesses this account data
      */
-    public SimpleAccount(Collection principals, Object credentials, String realmName) {
-        this(new SimplePrincipalCollection(principals, realmName), credentials);
+    public SimpleAccount(Collection<?> principals, Object credentials, String realmName) {
+        this(ImmutablePrincipalCollection.ofSingleRealm(principals, realmName), credentials);
     }
 
     /**
@@ -166,7 +168,8 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      */
     public SimpleAccount(Object principal, Object credentials, String realmName,
                          Set<String> roleNames, Set<Permission> permissions) {
-        this.authcInfo = new SimpleAuthenticationInfo(new SimplePrincipalCollection(principal, realmName), credentials);
+        this.authcInfo = new SimpleAuthenticationInfo(ImmutablePrincipalCollection.ofSinglePrincipal(principal, realmName),
+                credentials);
         this.authzInfo = new SimpleAuthorizationInfo(roleNames);
         this.authzInfo.setObjectPermissions(permissions);
     }
@@ -185,7 +188,8 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
 
     public SimpleAccount(Collection principals, Object credentials, String realmName,
                          Set<String> roleNames, Set<Permission> permissions) {
-        this.authcInfo = new SimpleAuthenticationInfo(new SimplePrincipalCollection(principals, realmName), credentials);
+        this.authcInfo = new SimpleAuthenticationInfo(ImmutablePrincipalCollection.ofSinglePrincipal(principals, realmName),
+                credentials);
         this.authzInfo = new SimpleAuthorizationInfo(roleNames);
         this.authzInfo.setObjectPermissions(permissions);
     }

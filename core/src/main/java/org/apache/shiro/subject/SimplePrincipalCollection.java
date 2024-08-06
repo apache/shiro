@@ -48,6 +48,7 @@ import java.util.Set;
  *
  * @since 0.9
  */
+@Deprecated
 @SuppressWarnings({"unchecked"})
 public class SimplePrincipalCollection implements MutablePrincipalCollection {
 

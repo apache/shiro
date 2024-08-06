@@ -20,8 +20,8 @@ package org.apache.shiro.spring.security.interceptor;
 
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectThreadState;
 import org.apache.shiro.util.ThreadState;
@@ -72,12 +72,12 @@ public abstract class AbstractAuthorizationAnnotationTest {
     }
 
     protected void bindUser() {
-        PrincipalCollection principals = new SimplePrincipalCollection("test", realm.getName());
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("test", realm.getName());
         bind(new Subject.Builder(securityManager).principals(principals).buildSubject());
     }
 
     protected void bindAuthenticatedUser() {
-        PrincipalCollection principals = new SimplePrincipalCollection("test", realm.getName());
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("test", realm.getName());
         bind(new Subject.Builder(securityManager).
                 principals(principals).authenticated(true).buildSubject());
     }

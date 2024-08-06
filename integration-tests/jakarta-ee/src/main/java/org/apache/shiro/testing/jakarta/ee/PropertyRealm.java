@@ -23,7 +23,7 @@ import org.apache.shiro.authc.SimpleAccount;
 import org.apache.shiro.authz.SimpleRole;
 import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.realm.text.IniRealm;
-import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 
 @Named
 @ApplicationScoped
@@ -56,11 +56,11 @@ public class PropertyRealm extends IniRealm {
 
             SimpleAccount account = getUser(username);
             if (account == null) {
-                var pc = new SimplePrincipalCollection();
-                pc.add(username, getName());
-                pc.add(5, getName());
-                pc.add(new PropertyPrincipal(username), getName());
-                account = new SimpleAccount(pc, password, getName());
+                var principalBuilder = new ImmutablePrincipalCollection.Builder();
+                principalBuilder.addPrincipal(username, getName());
+                principalBuilder.addPrincipal(5, getName());
+                principalBuilder.addPrincipal(new PropertyPrincipal(username), getName());
+                account = new SimpleAccount(principalBuilder.build(), password, getName());
                 add(account);
             }
             account.setCredentials(password);

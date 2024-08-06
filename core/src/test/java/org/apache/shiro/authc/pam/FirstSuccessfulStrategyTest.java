@@ -21,8 +21,8 @@ package org.apache.shiro.authc.pam;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.MergableAuthenticationInfo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,7 +58,7 @@ public class FirstSuccessfulStrategyTest {
 
             @Override
             public PrincipalCollection getPrincipals() {
-                return new SimplePrincipalCollection("principals", "realmName");
+                return ImmutablePrincipalCollection.ofSinglePrincipal("principals", "realmName");
             }
 
             @Override
@@ -80,7 +80,7 @@ public class FirstSuccessfulStrategyTest {
 
             @Override
             public PrincipalCollection getPrincipals() {
-                return new SimplePrincipalCollection();
+                return ImmutablePrincipalCollection.empty();
             }
 
             @Override
@@ -109,8 +109,8 @@ public class FirstSuccessfulStrategyTest {
 
     @Test
     void testBeforeAttemptEmptyList() {
-        SimplePrincipalCollection principalCollection = new SimplePrincipalCollection();
-        AuthenticationInfo aggregate = new SimpleAuthenticationInfo(principalCollection, null);
+        AuthenticationInfo aggregate = new SimpleAuthenticationInfo(ImmutablePrincipalCollection.empty(),
+                null);
         assertEquals(strategy.beforeAttempt(null, null, aggregate), aggregate);
     }
 
