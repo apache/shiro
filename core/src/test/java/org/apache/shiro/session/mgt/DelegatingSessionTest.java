@@ -27,8 +27,8 @@ import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.Serializable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * Unit test for the {@link DelegatingSession} class.
@@ -64,10 +64,10 @@ public class DelegatingSessionTest {
     @Test
     void testTimeout() {
         Serializable origId = session.getId();
-        assertEquals(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT, session.getTimeout());
+        assertThat(session.getTimeout()).isEqualTo(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
         session.touch();
         session.setTimeout(100);
-        assertEquals(100, session.getTimeout());
+        assertThat(session.getTimeout()).isEqualTo(100);
         sleep(150);
         try {
             session.getTimeout();

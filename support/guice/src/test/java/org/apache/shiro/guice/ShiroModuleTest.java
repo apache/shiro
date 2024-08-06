@@ -42,14 +42,12 @@ import org.apache.shiro.lang.util.Destroyable;
 
 import java.util.Collection;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ShiroModuleTest {
 
@@ -70,7 +68,7 @@ public class ShiroModuleTest {
             }
         });
         SecurityManager securityManager = injector.getInstance(SecurityManager.class);
-        assertNotNull(securityManager);
+        assertThat(securityManager).isNotNull();
     }
 
     @Test
@@ -96,7 +94,7 @@ public class ShiroModuleTest {
             }
         });
         SecurityManager securityManager = injector.getInstance(SecurityManager.class);
-        assertNotNull(securityManager);
+        assertThat(securityManager).isNotNull();
         SecurityUtils.setSecurityManager(securityManager);
 
         final Subject subject = new Subject.Builder(securityManager).buildSubject();
@@ -126,8 +124,8 @@ public class ShiroModuleTest {
             }
         });
         SecurityManager securityManager = injector.getInstance(SecurityManager.class);
-        assertNotNull(securityManager);
-        assertTrue(securityManager instanceof MyDefaultSecurityManager);
+        assertThat(securityManager).isNotNull();
+        assertThat(securityManager instanceof MyDefaultSecurityManager).isTrue();
     }
 
     @Test
@@ -151,9 +149,9 @@ public class ShiroModuleTest {
             }
         });
         DefaultSecurityManager securityManager = (DefaultSecurityManager) injector.getInstance(SecurityManager.class);
-        assertNotNull(securityManager);
-        assertNotNull(securityManager.getSessionManager());
-        assertTrue(securityManager.getSessionManager() instanceof MyDefaultSessionManager);
+        assertThat(securityManager).isNotNull();
+        assertThat(securityManager.getSessionManager()).isNotNull();
+        assertThat(securityManager.getSessionManager() instanceof MyDefaultSessionManager).isTrue();
     }
 
     @Test
@@ -178,8 +176,8 @@ public class ShiroModuleTest {
             }
         });
         Environment environment = injector.getInstance(Environment.class);
-        assertNotNull(environment);
-        assertTrue(environment instanceof MyEnvironment);
+        assertThat(environment).isNotNull();
+        assertThat(environment instanceof MyEnvironment).isTrue();
     }
 
     @Test
@@ -284,8 +282,8 @@ public class ShiroModuleTest {
 
         MockEventBusAware eventBusAware = injector.getInstance(MockEventBusAware.class);
 
-        assertSame(eventBus, eventBusAware.eventBus);
-        assertSame(eventBus, ((DefaultSecurityManager) securityManager).getEventBus());
+        assertThat(eventBusAware.eventBus).isSameAs(eventBus);
+        assertThat(((DefaultSecurityManager) securityManager).getEventBus()).isSameAs(eventBus);
     }
 
     public interface MockRealm extends Realm {

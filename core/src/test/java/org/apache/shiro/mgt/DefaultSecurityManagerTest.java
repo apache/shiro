@@ -41,12 +41,8 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 import java.io.Serializable;
 
 import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 /**
  * @since 0.2
@@ -80,19 +76,19 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
 
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
         subject.login(token);
-        assertTrue(subject.isAuthenticated());
-        assertEquals("guest", subject.getPrincipal());
-        assertTrue(subject.hasRole("guest"));
+        assertThat(subject.isAuthenticated()).isTrue();
+        assertThat(subject.getPrincipal()).isEqualTo("guest");
+        assertThat(subject.hasRole("guest")).isTrue();
 
         Session session = subject.getSession();
         session.setAttribute("key", "value");
-        assertEquals("value", session.getAttribute("key"));
+        assertThat(session.getAttribute("key")).isEqualTo("value");
 
         subject.logout();
 
-        assertNull(subject.getSession(false));
-        assertNull(subject.getPrincipal());
-        assertNull(subject.getPrincipals());
+        assertThat(subject.getSession(false)).isNull();
+        assertThat(subject.getPrincipal()).isNull();
+        assertThat(subject.getPrincipals()).isNull();
     }
 
     /**
@@ -108,7 +104,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         String key = "foo";
         String value1 = "bar";
         session.setAttribute(key, value1);
-        assertEquals(value1, session.getAttribute(key));
+        assertThat(session.getAttribute(key)).isEqualTo(value1);
 
         //now test auto creation:
         session.setTimeout(50);
@@ -135,35 +131,35 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
 
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
         subject.login(token);
-        assertTrue(subject.isAuthenticated());
-        assertEquals("guest", subject.getPrincipal());
-        assertTrue(subject.hasRole("guest"));
+        assertThat(subject.isAuthenticated()).isTrue();
+        assertThat(subject.getPrincipal()).isEqualTo("guest");
+        assertThat(subject.hasRole("guest")).isTrue();
 
         Session session = subject.getSession();
         Serializable firstSessionId = session.getId();
 
         session.setAttribute("key", "value");
-        assertEquals("value", session.getAttribute("key"));
+        assertThat(session.getAttribute("key")).isEqualTo("value");
 
         subject.logout();
 
-        assertNull(subject.getSession(false));
-        assertNull(subject.getPrincipal());
-        assertNull(subject.getPrincipals());
+        assertThat(subject.getSession(false)).isNull();
+        assertThat(subject.getPrincipal()).isNull();
+        assertThat(subject.getPrincipals()).isNull();
 
         subject.login(new UsernamePasswordToken("lonestarr", "vespa"));
-        assertTrue(subject.isAuthenticated());
-        assertEquals("lonestarr", subject.getPrincipal());
-        assertTrue(subject.hasRole("goodguy"));
+        assertThat(subject.isAuthenticated()).isTrue();
+        assertThat(subject.getPrincipal()).isEqualTo("lonestarr");
+        assertThat(subject.hasRole("goodguy")).isTrue();
 
-        assertNotNull(subject.getSession());
-        assertNotEquals(firstSessionId, subject.getSession().getId());
+        assertThat(subject.getSession()).isNotNull();
+        assertThat(subject.getSession().getId()).isNotEqualTo(firstSessionId);
 
         subject.logout();
 
-        assertNull(subject.getSession(false));
-        assertNull(subject.getPrincipal());
-        assertNull(subject.getPrincipals());
+        assertThat(subject.getSession(false)).isNull();
+        assertThat(subject.getPrincipal()).isNull();
+        assertThat(subject.getPrincipals()).isNull();
 
     }
 
@@ -181,7 +177,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         try {
             SecurityUtils.getSecurityManager();
         } catch (UnavailableSecurityManagerException e) {
-            assertTrue(e.getMessage().startsWith("No SecurityManager accessible"));
+            assertThat(e.getMessage()).startsWith("No SecurityManager accessible");
         }
 
         // Specify sm to use and build subject with
@@ -191,7 +187,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         // Login and verify specified sm is used and no error thrown
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
         subject.login(token);
-        assertEquals(sm, subject.getSecurityManager());
+        assertThat(subject.getSecurityManager()).isEqualTo(sm);
     }
 
     @Test
@@ -200,7 +196,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         // this tests that calling `buildSubject` doesn't throw an exception due to session-creation being disabled
         Subject subject = new Subject.Builder().principals(principals).sessionCreationEnabled(false).buildSubject();
 
-        assertEquals(subject.getPrincipal(), "guest");
+        assertThat(subject.getPrincipal()).isEqualTo("guest");
     }
 
     @Test
@@ -212,7 +208,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         // this tests that calling `buildSubject` doesn't throw an exception due to session-creation being disabled
         Subject subject = new Subject.Builder().principals(principals).buildSubject();
 
-        assertEquals(subject.getPrincipal(), "guest");
+        assertThat(subject.getPrincipal()).isEqualTo("guest");
     }
 
     private static final class SessionCreationDisabledSubjectFactory extends DefaultSubjectFactory {

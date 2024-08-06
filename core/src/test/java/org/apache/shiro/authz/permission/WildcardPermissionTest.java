@@ -20,10 +20,8 @@ package org.apache.shiro.authz.permission;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * @since 0.9
@@ -32,28 +30,28 @@ public class WildcardPermissionTest {
 
     @Test
     void testNull() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
             new WildcardPermission(null);
         });
     }
 
     @Test
     void testEmpty() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
             new WildcardPermission("");
         });
     }
 
     @Test
     void testBlank() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
             new WildcardPermission("   ");
         });
     }
 
     @Test
     void testOnlyDelimiters() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
             new WildcardPermission("::,,::,:");
         });
     }
@@ -66,38 +64,38 @@ public class WildcardPermissionTest {
         // Case insensitive, same
         p1 = new WildcardPermission("something");
         p2 = new WildcardPermission("something");
-        assertTrue(p1.implies(p2));
-        assertTrue(p2.implies(p1));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p2.implies(p1)).isTrue();
 
         // Case insensitive, different case
         p1 = new WildcardPermission("something");
         p2 = new WildcardPermission("SOMETHING");
-        assertTrue(p1.implies(p2));
-        assertTrue(p2.implies(p1));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p2.implies(p1)).isTrue();
 
         // Case insensitive, different word
         p1 = new WildcardPermission("something");
         p2 = new WildcardPermission("else");
-        assertFalse(p1.implies(p2));
-        assertFalse(p2.implies(p1));
+        assertThat(p1.implies(p2)).isFalse();
+        assertThat(p2.implies(p1)).isFalse();
 
         // Case sensitive same
         p1 = new WildcardPermission("BLAHBLAH", false);
         p2 = new WildcardPermission("BLAHBLAH", false);
-        assertTrue(p1.implies(p2));
-        assertTrue(p2.implies(p1));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p2.implies(p1)).isTrue();
 
         // Case sensitive, different case
         p1 = new WildcardPermission("BLAHBLAH", false);
         p2 = new WildcardPermission("bLAHBLAH", false);
-        assertTrue(p1.implies(p2));
-        assertTrue(p2.implies(p1));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p2.implies(p1)).isTrue();
 
         // Case sensitive, different word
         p1 = new WildcardPermission("BLAHBLAH", false);
         p2 = new WildcardPermission("whatwhat", false);
-        assertFalse(p1.implies(p2));
-        assertFalse(p2.implies(p1));
+        assertThat(p1.implies(p2)).isFalse();
+        assertThat(p2.implies(p1)).isFalse();
 
     }
 
@@ -108,36 +106,36 @@ public class WildcardPermissionTest {
 
         p1 = new WildcardPermission("one,two");
         p2 = new WildcardPermission("one");
-        assertTrue(p1.implies(p2));
-        assertFalse(p2.implies(p1));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p2.implies(p1)).isFalse();
 
         p1 = new WildcardPermission("one,two,three");
         p2 = new WildcardPermission("one,three");
-        assertTrue(p1.implies(p2));
-        assertFalse(p2.implies(p1));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p2.implies(p1)).isFalse();
 
         p1 = new WildcardPermission("one,two:one,two,three");
         p2 = new WildcardPermission("one:three");
         p3 = new WildcardPermission("one:two,three");
-        assertTrue(p1.implies(p2));
-        assertFalse(p2.implies(p1));
-        assertTrue(p1.implies(p3));
-        assertFalse(p2.implies(p3));
-        assertTrue(p3.implies(p2));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p2.implies(p1)).isFalse();
+        assertThat(p1.implies(p3)).isTrue();
+        assertThat(p2.implies(p3)).isFalse();
+        assertThat(p3.implies(p2)).isTrue();
 
         p1 = new WildcardPermission("one,two,three:one,two,three:one,two");
         p2 = new WildcardPermission("one:three:two");
-        assertTrue(p1.implies(p2));
-        assertFalse(p2.implies(p1));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p2.implies(p1)).isFalse();
 
         p1 = new WildcardPermission("one");
         p2 = new WildcardPermission("one:two,three,four");
         p3 = new WildcardPermission("one:two,three,four:five:six:seven");
-        assertTrue(p1.implies(p2));
-        assertTrue(p1.implies(p3));
-        assertFalse(p2.implies(p1));
-        assertFalse(p3.implies(p1));
-        assertTrue(p2.implies(p3));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p1.implies(p3)).isTrue();
+        assertThat(p2.implies(p1)).isFalse();
+        assertThat(p3.implies(p1)).isFalse();
+        assertThat(p2.implies(p3)).isTrue();
     }
 
     /**
@@ -148,7 +146,7 @@ public class WildcardPermissionTest {
 
         WildcardPermission p6 = new WildcardPermission("one,two:three,four");
         WildcardPermission p6DiffOrder = new WildcardPermission("two,one:four,three");
-        assertEquals(p6, p6DiffOrder);
+        assertThat(p6DiffOrder).isEqualTo(p6);
     }
 
     @SuppressWarnings({"checkstyle:MultipleVariableDeclarations", "checkstyle:MethodLength"})
@@ -161,10 +159,10 @@ public class WildcardPermissionTest {
         p3 = new WildcardPermission("one:two");
         p4 = new WildcardPermission("one,two:three,four");
         p5 = new WildcardPermission("one,two:three,four,five:six:seven,eight");
-        assertTrue(p1.implies(p2));
-        assertTrue(p1.implies(p3));
-        assertTrue(p1.implies(p4));
-        assertTrue(p1.implies(p5));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p1.implies(p3)).isTrue();
+        assertThat(p1.implies(p4)).isTrue();
+        assertThat(p1.implies(p5)).isTrue();
 
         p1 = new WildcardPermission("newsletter:*");
         p2 = new WildcardPermission("newsletter:read");
@@ -175,45 +173,45 @@ public class WildcardPermissionTest {
         p7 = new WildcardPermission("newsletter:write:*");
         p8 = new WildcardPermission("newsletter:read,write:*");
         p9 = new WildcardPermission("newsletter");
-        assertTrue(p1.implies(p2));
-        assertTrue(p1.implies(p3));
-        assertTrue(p1.implies(p4));
-        assertTrue(p1.implies(p5));
-        assertTrue(p1.implies(p6));
-        assertTrue(p1.implies(p7));
-        assertTrue(p1.implies(p8));
-        assertTrue(p1.implies(p9));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p1.implies(p3)).isTrue();
+        assertThat(p1.implies(p4)).isTrue();
+        assertThat(p1.implies(p5)).isTrue();
+        assertThat(p1.implies(p6)).isTrue();
+        assertThat(p1.implies(p7)).isTrue();
+        assertThat(p1.implies(p8)).isTrue();
+        assertThat(p1.implies(p9)).isTrue();
 
 
         p1 = new WildcardPermission("newsletter:*:*");
-        assertTrue(p1.implies(p2));
-        assertTrue(p1.implies(p3));
-        assertTrue(p1.implies(p4));
-        assertTrue(p1.implies(p5));
-        assertTrue(p1.implies(p6));
-        assertTrue(p1.implies(p7));
-        assertTrue(p1.implies(p8));
-        assertTrue(p1.implies(p9));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p1.implies(p3)).isTrue();
+        assertThat(p1.implies(p4)).isTrue();
+        assertThat(p1.implies(p5)).isTrue();
+        assertThat(p1.implies(p6)).isTrue();
+        assertThat(p1.implies(p7)).isTrue();
+        assertThat(p1.implies(p8)).isTrue();
+        assertThat(p1.implies(p9)).isTrue();
 
         p1 = new WildcardPermission("newsletter:*:*:*");
-        assertTrue(p1.implies(p2));
-        assertTrue(p1.implies(p3));
-        assertTrue(p1.implies(p4));
-        assertTrue(p1.implies(p5));
-        assertTrue(p1.implies(p6));
-        assertTrue(p1.implies(p7));
-        assertTrue(p1.implies(p8));
-        assertTrue(p1.implies(p9));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p1.implies(p3)).isTrue();
+        assertThat(p1.implies(p4)).isTrue();
+        assertThat(p1.implies(p5)).isTrue();
+        assertThat(p1.implies(p6)).isTrue();
+        assertThat(p1.implies(p7)).isTrue();
+        assertThat(p1.implies(p8)).isTrue();
+        assertThat(p1.implies(p9)).isTrue();
 
         p1 = new WildcardPermission("newsletter");
-        assertTrue(p1.implies(p2));
-        assertTrue(p1.implies(p3));
-        assertTrue(p1.implies(p4));
-        assertTrue(p1.implies(p5));
-        assertTrue(p1.implies(p6));
-        assertTrue(p1.implies(p7));
-        assertTrue(p1.implies(p8));
-        assertTrue(p1.implies(p9));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p1.implies(p3)).isTrue();
+        assertThat(p1.implies(p4)).isTrue();
+        assertThat(p1.implies(p5)).isTrue();
+        assertThat(p1.implies(p6)).isTrue();
+        assertThat(p1.implies(p7)).isTrue();
+        assertThat(p1.implies(p8)).isTrue();
+        assertThat(p1.implies(p9)).isTrue();
 
         p1 = new WildcardPermission("newsletter:*:read");
         p2 = new WildcardPermission("newsletter:123:read");
@@ -221,15 +219,15 @@ public class WildcardPermissionTest {
         p4 = new WildcardPermission("newsletter:read");
         p5 = new WildcardPermission("newsletter:read,write");
         p6 = new WildcardPermission("newsletter:123:read:write");
-        assertTrue(p1.implies(p2));
-        assertFalse(p1.implies(p3));
-        assertFalse(p1.implies(p4));
-        assertFalse(p1.implies(p5));
-        assertTrue(p1.implies(p6));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p1.implies(p3)).isFalse();
+        assertThat(p1.implies(p4)).isFalse();
+        assertThat(p1.implies(p5)).isFalse();
+        assertThat(p1.implies(p6)).isTrue();
 
         p1 = new WildcardPermission("newsletter:*:read:*");
-        assertTrue(p1.implies(p2));
-        assertTrue(p1.implies(p6));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p1.implies(p6)).isTrue();
 
     }
 
@@ -241,16 +239,16 @@ public class WildcardPermissionTest {
         WildcardPermission p4 = new WildcardPermission("one,two:three,four");
         WildcardPermission p5 = new WildcardPermission("one,two:three,four,five:six:seven,eight");
 
-        assertEquals("*", p1.toString());
-        assertEquals(p1, new WildcardPermission(p1.toString()));
-        assertEquals("one", p2.toString());
-        assertEquals(p2, new WildcardPermission(p2.toString()));
-        assertEquals("one:two", p3.toString());
-        assertEquals(p3, new WildcardPermission(p3.toString()));
-        assertEquals("one,two:three,four", p4.toString());
-        assertEquals(p4, new WildcardPermission(p4.toString()));
-        assertEquals("one,two:three,four,five:six:seven,eight", p5.toString());
-        assertEquals(p5, new WildcardPermission(p5.toString()));
+        assertThat(p1.toString()).isEqualTo("*");
+        assertThat(new WildcardPermission(p1.toString())).isEqualTo(p1);
+        assertThat(p2.toString()).isEqualTo("one");
+        assertThat(new WildcardPermission(p2.toString())).isEqualTo(p2);
+        assertThat(p3.toString()).isEqualTo("one:two");
+        assertThat(new WildcardPermission(p3.toString())).isEqualTo(p3);
+        assertThat(p4.toString()).isEqualTo("one,two:three,four");
+        assertThat(new WildcardPermission(p4.toString())).isEqualTo(p4);
+        assertThat(p5.toString()).isEqualTo("one,two:three,four,five:six:seven,eight");
+        assertThat(new WildcardPermission(p5.toString())).isEqualTo(p5);
     }
 
     @SuppressWarnings("checkstyle:MultipleVariableDeclarations")
@@ -263,20 +261,20 @@ public class WildcardPermissionTest {
         p3 = new WildcardPermission("one:*:*");
         p4 = new WildcardPermission("one:read");
 
-        assertTrue(p1.implies(p2));
-        assertTrue(p1.implies(p3));
-        assertTrue(p1.implies(p4));
+        assertThat(p1.implies(p2)).isTrue();
+        assertThat(p1.implies(p3)).isTrue();
+        assertThat(p1.implies(p4)).isTrue();
 
-        assertTrue(p2.implies(p1));
-        assertTrue(p2.implies(p3));
-        assertTrue(p2.implies(p4));
+        assertThat(p2.implies(p1)).isTrue();
+        assertThat(p2.implies(p3)).isTrue();
+        assertThat(p2.implies(p4)).isTrue();
 
-        assertTrue(p3.implies(p1));
-        assertTrue(p3.implies(p2));
-        assertTrue(p3.implies(p4));
+        assertThat(p3.implies(p1)).isTrue();
+        assertThat(p3.implies(p2)).isTrue();
+        assertThat(p3.implies(p4)).isTrue();
 
-        assertFalse(p4.implies(p1));
-        assertFalse(p4.implies(p2));
-        assertFalse(p4.implies(p3));
+        assertThat(p4.implies(p1)).isFalse();
+        assertThat(p4.implies(p2)).isFalse();
+        assertThat(p4.implies(p3)).isFalse();
     }
 }
