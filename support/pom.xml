@@ -36,7 +36,6 @@
         <module>jcache</module>
         <module>ehcache</module>
         <module>hazelcast</module>
-        <module>quartz</module>
         <module>spring</module>
         <module>guice</module>
         <module>spring-boot</module>
