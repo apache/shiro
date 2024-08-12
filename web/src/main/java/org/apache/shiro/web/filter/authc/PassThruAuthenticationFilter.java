@@ -20,8 +20,8 @@ package org.apache.shiro.web.filter.authc;
 
 import org.apache.shiro.subject.Subject;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * An authentication filter that redirects the user to the login page when they are trying to access

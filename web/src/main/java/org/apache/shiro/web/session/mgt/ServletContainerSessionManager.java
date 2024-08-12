@@ -26,9 +26,9 @@ import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.web.session.HttpServletSession;
 import org.apache.shiro.web.util.WebUtils;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 
 /**

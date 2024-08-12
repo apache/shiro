@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.web;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

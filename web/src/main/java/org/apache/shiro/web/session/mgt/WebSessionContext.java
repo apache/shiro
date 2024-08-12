@@ -21,8 +21,8 @@ package org.apache.shiro.web.session.mgt;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.web.util.RequestPairSource;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * A {@code WebSubjectContext} is a {@link SessionContext} that additionally provides for type-safe

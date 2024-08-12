@@ -23,10 +23,10 @@ import org.apache.shiro.crypto.hash.AbstractCryptHash;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
 import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -48,6 +48,7 @@ class BCryptHash extends AbstractCryptHash {
 
     public static final int SALT_LENGTH = 16;
 
+    @Serial
     private static final long serialVersionUID = 6957869292324606101L;
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCryptHash.class);
@@ -212,7 +213,7 @@ class BCryptHash extends AbstractCryptHash {
                 .toString();
     }
 
-    private static @NonNull String getBcryptVersion(String algorithmName) {
+    private static String getBcryptVersion(String algorithmName) {
         if (algorithmName.startsWith(BCRYPT_ALGORITHM_BASE)) {
             algorithmName = algorithmName.substring(BCRYPT_ALGORITHM_BASE.length());
         }

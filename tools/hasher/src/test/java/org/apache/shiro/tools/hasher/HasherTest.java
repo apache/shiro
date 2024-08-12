@@ -103,9 +103,9 @@ public class HasherTest {
         Hasher.main(args);
 
         // when
-        assertEquals(1, listAppender.getEvents().size());
+        assertThat(listAppender.getEvents()).hasSize(1);
         LogEvent iLoggingEvent = listAppender.getEvents().get(0);
-        assertTrue(iLoggingEvent.getMessage().getFormattedMessage().contains("$shiro2$2y$10$"));
+        assertThat(iLoggingEvent.getMessage().getFormattedMessage()).contains("$shiro2$2y$10$");
     }
 
     @Test

@@ -23,6 +23,7 @@ import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.lang.util.ByteSource;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -49,6 +50,7 @@ public abstract class AbstractCryptHash implements Hash, Serializable {
 
     protected static final Pattern DELIMITER = Pattern.compile("\\$");
 
+    @Serial
     private static final long serialVersionUID = 2483214646921027859L;
 
     private final String algorithmName;
@@ -215,8 +217,7 @@ public abstract class AbstractCryptHash implements Hash, Serializable {
      */
     @Override
     public boolean equals(final Object other) {
-        if (other instanceof AbstractCryptHash) {
-            final AbstractCryptHash that = (AbstractCryptHash) other;
+        if (other instanceof AbstractCryptHash that) {
             return this.formatToCryptString().equals(that.formatToCryptString());
         }
         return false;

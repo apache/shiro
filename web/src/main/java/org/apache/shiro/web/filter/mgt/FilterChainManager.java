@@ -21,8 +21,8 @@ package org.apache.shiro.web.filter.mgt;
 import org.apache.shiro.config.ConfigurationException;
 import org.apache.shiro.util.AntPathMatcher;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -85,7 +85,7 @@ public interface FilterChainManager {
      * {@link #addToChain(String, String, String) creating filter chains}.
      * <p/>
      * Calling this method is effectively the same as calling
-     * <code>{@link #addFilter(String, javax.servlet.Filter, boolean) addFilter}(name, filter, <b>false</b>);</code>
+     * <code>{@link #addFilter(String, jakarta.servlet.Filter, boolean) addFilter}(name, filter, <b>false</b>);</code>
      *
      * @param name   the name to assign to the filter, used to reference the filter in chain definitions
      * @param filter the filter to initialize and then add to the pool of available filters that can be used
@@ -99,7 +99,7 @@ public interface FilterChainManager {
      * @param name   the name to assign to the filter, used to reference the filter in chain definitions
      * @param filter the filter to assign to the filter pool
      * @param init   whether or not the {@code Filter} should be
-     *               {@link Filter#init(javax.servlet.FilterConfig) initialized} first before being added to the pool.
+     *               {@link Filter#init(jakarta.servlet.FilterConfig) initialized} first before being added to the pool.
      */
     void addFilter(String name, Filter filter, boolean init);
 
@@ -121,7 +121,7 @@ public interface FilterChainManager {
      * where
      * <ol>
      * <li>{@code filterN} is the name of a filter previously
-     * {@link #addFilter(String, javax.servlet.Filter) registered} with the manager, and</li>
+     * {@link #addFilter(String, jakarta.servlet.Filter) registered} with the manager, and</li>
      * <li>{@code [optional_configN]} is an optional bracketed string that has meaning for that particular filter for
      * <em>this particular chain</em></li>
      * </ol>
@@ -168,13 +168,23 @@ public interface FilterChainManager {
 
     /**
      * Creates a chain that should match any non-matched request paths,
-     * typically {@code /**} assuming an {@link AntPathMatcher} I used.
+     * typically assuming an {@link AntPathMatcher} is used.
      *
      * @param chainName The name of the chain to create, likely {@code /**}.
      * @see AntPathMatcher AntPathMatcher
      * @since 1.6
      */
-    void createDefaultChain(String chainName);
+    void createDefaultChain(String chainName, String chainDefinition);
+
+    /**
+     * @since 1.6
+     * @deprecated use {@link FilterChainManager#createDefaultChain(String, String)} instead.
+     * @see AntPathMatcher AntPathMatcher
+     */
+    @Deprecated
+    default void createDefaultChain(String chainName) {
+        createDefaultChain(chainName, DefaultFilter.noAccess.name());
+    }
 
     /**
      * Adds (appends) a filter to the filter chain identified by the given {@code chainName}.  If there is no chain
@@ -182,7 +192,7 @@ public interface FilterChainManager {
      *
      * @param chainName  the name of the chain where the filter will be appended.
      * @param filterName the name of the {@link #addFilter registered} filter to add to the chain.
-     * @throws IllegalArgumentException if there is not a {@link #addFilter(String, javax.servlet.Filter) registered}
+     * @throws IllegalArgumentException if there is not a {@link #addFilter(String, jakarta.servlet.Filter) registered}
      *                                  filter under the given {@code filterName}
      */
     void addToChain(String chainName, String filterName);
@@ -199,7 +209,7 @@ public interface FilterChainManager {
      * @param filterName                the name of the {@link #addFilter registered} filter to add to the chain.
      * @param chainSpecificFilterConfig the filter-specific configuration that should be applied for only the specified
      *                                  filter chain.
-     * @throws IllegalArgumentException if there is not a {@link #addFilter(String, javax.servlet.Filter) registered}
+     * @throws IllegalArgumentException if there is not a {@link #addFilter(String, jakarta.servlet.Filter) registered}
      *                                  filter under the given {@code filterName}
      * @throws ConfigurationException   if the filter is not capable of accepting {@code chainSpecificFilterConfig}
      *                                  (usually such filters implement the

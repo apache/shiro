@@ -41,20 +41,14 @@
             <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-spec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.owasp.encoder</groupId>
@@ -107,20 +101,16 @@
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.web</Bundle-SymbolicName>
                         <Export-Package>org.apache.shiro.web*;version=${project.version}</Export-Package>
-                        <!-- javax.servlet.jsp* marked as optional per SHIRO-390: -->
+                        <!-- jakarta.servlet.jsp* marked as optional per SHIRO-390: -->
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            javax.servlet.jsp*;resolution:=optional,
+                            jakarta.servlet.jsp*;resolution:=optional,
                             *
                         </Import-Package>
                         <_removeheaders>Bnd-LastModified</_removeheaders>
                         <_reproducible>true</_reproducible>
                     </instructions>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

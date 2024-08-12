@@ -20,8 +20,8 @@ package org.apache.shiro.web.filter.authz;
 
 import org.apache.shiro.lang.util.StringUtils;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;

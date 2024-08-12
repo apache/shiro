@@ -17,10 +17,10 @@
 
 ---
 jdk:
-  - openjdk17
+  - openjdk25
 before_install:
-  - sdk install java 19.0.2-zulu
-  - sdk use java 19.0.2-zulu
+  - sdk install java 25.0.3-zulu
+  - sdk use java 25.0.3-zulu
   - sdk install maven
 install:
   - mvn install -DskipTests -DskipITs

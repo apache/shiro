@@ -30,12 +30,12 @@ import org.apache.shiro.web.subject.WebSubject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
@@ -230,7 +230,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * processing.
      * <p/>
      * If the {@code ServletRequest} is an instance of {@link HttpServletRequest}, the value returned from this method
-     * is obtained by calling {@link #wrapServletRequest(javax.servlet.http.HttpServletRequest)} to allow Shiro-specific
+     * is obtained by calling {@link #wrapServletRequest(jakarta.servlet.http.HttpServletRequest)} to allow Shiro-specific
      * HTTP behavior, otherwise the original {@code ServletRequest} argument is returned.
      *
      * @param request  the incoming ServletRequest
@@ -242,8 +242,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
     @SuppressWarnings({"UnusedDeclaration"})
     protected ServletRequest prepareServletRequest(ServletRequest request, ServletResponse response, FilterChain chain) {
         ServletRequest toUse = request;
-        if (request instanceof HttpServletRequest) {
-            HttpServletRequest http = (HttpServletRequest) request;
+        if (request instanceof HttpServletRequest http) {
             toUse = wrapServletRequest(http);
         }
         return toUse;
@@ -267,7 +266,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * Prepares the {@code ServletResponse} instance that will be passed to the {@code FilterChain} for request
      * processing.
      * <p/>
-     * This implementation delegates to {@link #wrapServletRequest(javax.servlet.http.HttpServletRequest)}
+     * This implementation delegates to {@link #wrapServletRequest(jakarta.servlet.http.HttpServletRequest)}
      * only if Shiro-based sessions are enabled (that is, !{@link #isHttpSessions()}) and the request instance is a
      * {@link ShiroHttpServletRequest}.  This ensures that any URL rewriting that occurs is handled correctly using the
      * Shiro-managed Session's sessionId and not a servlet container session ID.
@@ -284,11 +283,11 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
     @SuppressWarnings({"UnusedDeclaration"})
     protected ServletResponse prepareServletResponse(ServletRequest request, ServletResponse response, FilterChain chain) {
         ServletResponse toUse = response;
-        if (!isHttpSessions() && (request instanceof ShiroHttpServletRequest)
-                && (response instanceof HttpServletResponse)) {
+        if (!isHttpSessions() && (request instanceof ShiroHttpServletRequest servletRequest)
+                && (response instanceof HttpServletResponse servletResponse)) {
             //the ShiroHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
             //using Shiro sessions (i.e. not simple HttpSession based sessions):
-            toUse = wrapServletResponse((HttpServletResponse) response, (ShiroHttpServletRequest) request);
+            toUse = wrapServletResponse(servletResponse, servletRequest);
         }
         return toUse;
     }
@@ -345,11 +344,11 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * the incoming {@code ServletRequest} for use during Shiro's processing</li>
      * <li>{@link #prepareServletResponse(ServletRequest, ServletResponse, FilterChain) Prepares}
      * the outgoing {@code ServletResponse} for use during Shiro's processing</li>
-     * <li> {@link #createSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) Creates} a
+     * <li> {@link #createSubject(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) Creates} a
      * {@link Subject} instance based on the specified request/response pair.</li>
      * <li>Finally {@link Subject#execute(Runnable) executes} the
-     * {@link #updateSessionLastAccessTime(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} and
-     * {@link #executeChain(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}
+     * {@link #updateSessionLastAccessTime(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)} and
+     * {@link #executeChain(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, jakarta.servlet.FilterChain)}
      * methods</li>
      * </ol>
      * <p/>
@@ -360,7 +359,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * @param servletResponse the outgoing {@code ServletResponse}
      * @param chain           the container-provided {@code FilterChain} to execute
      * @throws IOException                    if an IO error occurs
-     * @throws javax.servlet.ServletException if a Throwable other than an IOException
+     * @throws jakarta.servlet.ServletException if a Throwable other than an IOException
      */
     protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse, final FilterChain chain)
             throws ServletException, IOException {
@@ -385,11 +384,11 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
         }
 
         if (t != null) {
-            if (t instanceof ServletException) {
-                throw (ServletException) t;
+            if (t instanceof ServletException exception) {
+                throw exception;
             }
-            if (t instanceof IOException) {
-                throw (IOException) t;
+            if (t instanceof IOException exception) {
+                throw exception;
             }
             //otherwise it's not one of the two exceptions expected by the filter method signature - wrap it in one:
             String msg = "Filtered request failed.";
@@ -440,7 +439,8 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * Executes a {@link FilterChain} for the given request.
      * <p/>
      * This implementation first delegates to
-     * <code>{@link #getExecutionChain(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
+     * <code>
+     * {@link #getExecutionChain(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, jakarta.servlet.FilterChain)
      * getExecutionChain}</code>
      * to allow the application's Shiro configuration to determine exactly how the chain should execute.  The resulting
      * value from that call is then executed directly by calling the returned {@code FilterChain}'s

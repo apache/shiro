@@ -23,5 +23,5 @@ package org.apache.shiro.event.support;
  */
 public interface TypedEventListener extends EventListener {
 
-    Class getEventType();
+    Class<?> getEventType();
 }

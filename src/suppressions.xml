@@ -40,4 +40,5 @@
     <suppress checks=".*" files="Quickstart.*.java"/>
     <suppress checks=".*" files="application.properties"/>
     <suppress checks="LineLength" lines="45" files="org.apache.shiro.web.filter.InvalidRequestFilter"/>
+    <suppress checks="LineLength" lines="30" files="org.apache.shiro.util.AntPathMatcherTests"/>
 </suppressions>

@@ -17,7 +17,7 @@
  * under the License.
  */
 /**
- * Base package supporting all Servlet {@link javax.servlet.Filter Filter} implementations used to control
+ * Base package supporting all Servlet {@link jakarta.servlet.Filter Filter} implementations used to control
  * access to web pages and URL resources.
  */
 package org.apache.shiro.web.filter;

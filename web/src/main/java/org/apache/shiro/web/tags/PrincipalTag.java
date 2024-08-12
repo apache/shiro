@@ -21,8 +21,8 @@ package org.apache.shiro.web.tags;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspTagException;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspTagException;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -151,12 +151,11 @@ public class PrincipalTag extends SecureTag {
         return SKIP_BODY;
     }
 
-    @SuppressWarnings({"unchecked"})
     private Object getPrincipalFromClassName() {
         Object principal = null;
 
         try {
-            Class cls = Class.forName(type);
+            Class<?> cls = Class.forName(type);
             principal = getSubject().getPrincipals().oneByType(cls);
         } catch (ClassNotFoundException e) {
             if (LOGGER.isErrorEnabled()) {

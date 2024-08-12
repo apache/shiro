@@ -31,8 +31,8 @@ import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterConfig;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterConfig;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -61,7 +61,8 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     private List<String> globalFilters = Collections.singletonList(DefaultFilter.invalidRequest.name());
 
-    private boolean caseInsensitive;
+    private boolean allowAccessByDefault;
+    private boolean caseInsensitive = true;
 
     public IniFilterChainResolverFactory() {
         super();
@@ -92,6 +93,14 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         this.globalFilters = globalFilters;
     }
 
+    public boolean isAllowAccessByDefault() {
+        return allowAccessByDefault;
+    }
+
+    public void setAllowAccessByDefault(boolean allowAccessByDefault) {
+        this.allowAccessByDefault = allowAccessByDefault;
+    }
+
     public boolean isCaseInsensitive() {
         return caseInsensitive;
     }
@@ -102,8 +111,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     protected FilterChainResolver createInstance(Ini ini) {
         FilterChainResolver filterChainResolver = createDefaultInstance();
-        if (filterChainResolver instanceof PathMatchingFilterChainResolver) {
-            PathMatchingFilterChainResolver resolver = (PathMatchingFilterChainResolver) filterChainResolver;
+        if (filterChainResolver instanceof PathMatchingFilterChainResolver resolver) {
             FilterChainManager manager = resolver.getFilterChainManager();
             buildChains(manager, ini);
         }
@@ -159,7 +167,11 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
         // create the default chain, to match anything the path matching would have missed
         // TODO this assumes ANT path matching
-        manager.createDefaultChain("/**");
+        if (isAllowAccessByDefault()) {
+            manager.createDefaultChain("/**", DefaultFilter.anon.name());
+        } else {
+            manager.createDefaultChain("/**", DefaultFilter.noAccess.name());
+        }
     }
 
     protected void registerFilters(Map<String, Filter> filters, FilterChainManager manager) {
@@ -203,8 +215,8 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         for (Map.Entry<String, ?> entry : objects.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-            if (value instanceof Filter) {
-                filterMap.put(key, (Filter) value);
+            if (value instanceof Filter filter) {
+                filterMap.put(key, filter);
             }
         }
         return filterMap;

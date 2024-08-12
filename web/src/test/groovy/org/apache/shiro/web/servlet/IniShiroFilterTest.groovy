@@ -18,9 +18,9 @@
  */
 package org.apache.shiro.web.servlet
 
-import javax.servlet.FilterConfig
-import javax.servlet.ServletContext
-import javax.servlet.ServletException
+import jakarta.servlet.FilterConfig
+import jakarta.servlet.ServletContext
+import jakarta.servlet.ServletException
 import org.apache.shiro.lang.io.ResourceUtils
 import org.junit.jupiter.api.Test
 

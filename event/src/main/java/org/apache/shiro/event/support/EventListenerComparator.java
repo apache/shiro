@@ -51,10 +51,8 @@ public class EventListenerComparator implements Comparator<EventListener> {
         } else if (a == b || a.equals(b)) {
             return 0;
         } else {
-            if (a instanceof TypedEventListener) {
-                TypedEventListener ta = (TypedEventListener) a;
-                if (b instanceof TypedEventListener) {
-                    TypedEventListener tb = (TypedEventListener) b;
+            if (a instanceof TypedEventListener ta) {
+                if (b instanceof TypedEventListener tb) {
                     return EVENT_CLASS_COMPARATOR.compare(ta.getEventType(), tb.getEventType());
                 } else {
                     //TypedEventListeners are 'less than' (higher priority) than non typed
