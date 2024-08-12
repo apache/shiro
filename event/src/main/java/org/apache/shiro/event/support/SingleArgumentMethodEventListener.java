@@ -59,7 +59,7 @@ public class SingleArgumentMethodEventListener implements TypedEventListener {
         return event != null && getEventType().isInstance(event);
     }
 
-    public Class getEventType() {
+    public Class<?> getEventType() {
         return getMethodArgumentType(getMethod());
     }
 
@@ -72,8 +72,8 @@ public class SingleArgumentMethodEventListener implements TypedEventListener {
         }
     }
 
-    protected Class getMethodArgumentType(Method method) {
-        Class[] paramTypes = method.getParameterTypes();
+    protected Class<?> getMethodArgumentType(Method method) {
+        Class<?>[] paramTypes = method.getParameterTypes();
         if (paramTypes.length != 1) {
             //the default implementation expects a single typed argument and nothing more:
             String msg = "Event handler methods must accept a single argument.";

@@ -20,8 +20,8 @@ package org.apache.shiro.web.filter.authc;
 
 import org.apache.shiro.web.filter.PathMatchingFilter;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * Filter that allows access to a path immediately without performing security checks of any kind.

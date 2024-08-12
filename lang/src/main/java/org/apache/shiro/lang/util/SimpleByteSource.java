@@ -118,7 +118,7 @@ public class SimpleByteSource implements ByteSource {
      * <li>{@link ByteSource}</li>
      * <li>{@link String}</li>
      * <li>{@link File}</li>
-     * </li>{@link InputStream}</li>
+     * <li>{@link InputStream}</li>
      * </ul>
      *
      * @param o the object to test to see if it can be easily converted to bytes by instances of this class.
@@ -179,8 +179,7 @@ public class SimpleByteSource implements ByteSource {
         if (o == this) {
             return true;
         }
-        if (o instanceof ByteSource) {
-            ByteSource bs = (ByteSource) o;
+        if (o instanceof ByteSource bs) {
             return Arrays.equals(getBytes(), bs.getBytes());
         }
         return false;

@@ -25,8 +25,8 @@ import org.apache.shiro.web.filter.mgt.FilterChainResolver
 import org.apache.shiro.web.mgt.WebSecurityManager
 import org.junit.jupiter.api.Test
 
-import javax.servlet.FilterConfig
-import javax.servlet.ServletContext
+import jakarta.servlet.FilterConfig
+import jakarta.servlet.ServletContext
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.sameInstance

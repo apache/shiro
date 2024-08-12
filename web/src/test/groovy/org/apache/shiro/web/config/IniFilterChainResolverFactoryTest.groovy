@@ -24,9 +24,9 @@ import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.parallel.Isolated
 
-import javax.servlet.Filter
-import javax.servlet.FilterConfig
-import javax.servlet.ServletContext
+import jakarta.servlet.Filter
+import jakarta.servlet.FilterConfig
+import jakarta.servlet.ServletContext
 import org.apache.shiro.config.Ini
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter
 import org.apache.shiro.web.filter.authz.SslFilter

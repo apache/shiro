@@ -17,7 +17,7 @@
  * under the License.
  */
 
-def deployableBranch = env.BRANCH_NAME ==~ /(1.12.x|1.11.x|1.10.x|main|3.x)/
+def deployableBranch = env.BRANCH_NAME ==~ /(1.13.x|2.x|3.x|4.x|main)/
 def latestSupportedJDK = 'jdk_25_latest'
 def builtinVersion = '999-SNAPSHOT'
 def nextVersion
@@ -39,7 +39,7 @@ pipeline {
                     axis {
                         // https://cwiki.apache.org/confluence/display/INFRA/JDK+Installation+Matrix
                         name 'MATRIX_JDK'
-                        values 'jdk_25_latest', 'jdk_11_latest', 'jdk_17_latest', 'jdk_21_latest'
+                        values 'jdk_26_latest', 'jdk_25_latest', 'jdk_21_latest'
                     }
                     // Additional axes, like OS and maven version can be configured here.
                 }
@@ -107,6 +107,9 @@ pipeline {
                                 def parts = latestRelease.tokenize('.')
                                 def nextPatch = parts[2].toInteger() + 1
                                 nextVersion = "${parts[0]}.${parts[1]}.${nextPatch}-SNAPSHOT"
+                                if (env.BRANCH_NAME == '2.x') {
+                                    nextVersion = '2.0.0-SNAPSHOT'
+                                }
                                 if (env.BRANCH_NAME == '3.x') {
                                     nextVersion = '3.0.0-SNAPSHOT'
                                 }
@@ -130,7 +133,7 @@ pipeline {
                         steps {
                             echo 'Building'
                             sh './mvnw verify --show-version --errors --batch-mode --no-transfer-progress \
-                            -Dmaven.test.failure.ignore=true -Pskip_jakarta_ee_tests'
+                            -Dmaven.test.failure.ignore=true -Pskip_jakarta_ee_tests -Djdk.version=17 -Djapicmp.skip=true'
                         }
                         post {
                             always {

@@ -29,8 +29,8 @@ import org.apache.shiro.web.session.mgt.WebSessionContext;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.util.WebUtils;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * Default {@link WebSubject WebSubject} implementation that additional ensures the ability to retain a
@@ -72,14 +72,17 @@ public class WebDelegatingSubject extends DelegatingSubject implements WebSubjec
 
     /**
      * Returns {@code true} if session creation is allowed  (as determined by the super class's
-     * {@link super#isSessionCreationEnabled()} value and no request-specific override has disabled sessions for this subject,
+     * {@link DelegatingSubject#isSessionCreationEnabled()} value and no request-specific
+     * override has disabled sessions for this subject,
      * {@code false} otherwise.
      * <p/>
-     * This means session creation is disabled if the super {@link super#isSessionCreationEnabled()} property is {@code false}
+     * This means session creation is disabled if the super
+     * {@link DelegatingSubject#isSessionCreationEnabled()} property is {@code false}
      * or if a request attribute is discovered that turns off sessions for the current request.
      *
      * @return {@code true} if session creation is allowed  (as determined by the super class's
-     * {@link super#isSessionCreationEnabled()} value and no request-specific override has disabled sessions for this
+     * {@link DelegatingSubject#isSessionCreationEnabled()} value and no request-specific
+     * override has disabled sessions for this
      * subject, {@code false} otherwise.
      * @since 1.2
      */

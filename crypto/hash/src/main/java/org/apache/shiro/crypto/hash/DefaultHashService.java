@@ -30,11 +30,12 @@ import java.util.Random;
  * understood by the JDK
  * {@link java.security.MessageDigest#getInstance(String) MessageDigest.getInstance(String algorithmName)} method
  * will work, or any Hash algorithm implemented by any loadable {@link HashSpi}. The default is {@code argon2}.
- * </p>
+ * <p>
  * A hash and the salt used to compute it are often stored together.  If an attacker is ever able to access
  * the hash (e.g. during password cracking) and it has the full salt value, the attacker has all of the input necessary
  * to try to brute-force crack the hash (source + complete salt).
  * <p/>
+ * <p>
  * However, if part of the salt is not available to the attacker (because it is not stored with the hash), it is
  * <em>much</em> harder to crack the hash value since the attacker does not have the complete inputs necessary.
  * <p/>

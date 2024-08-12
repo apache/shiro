@@ -20,7 +20,7 @@ package org.apache.shiro.web.util
 
 import org.junit.jupiter.api.Test
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.equalTo
 import static org.easymock.EasyMock.niceMock

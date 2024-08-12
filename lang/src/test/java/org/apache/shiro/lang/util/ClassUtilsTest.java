@@ -20,13 +20,14 @@ package org.apache.shiro.lang.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
+import static org.apache.shiro.lang.io.ResourceUtils.getInputStreamForPath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ClassUtilsTest {
-
     @Test
     void testGetPrimitiveClasses() throws UnknownClassException {
-
         assertThat(ClassUtils.forName("boolean")).isEqualTo(boolean.class);
         assertThat(ClassUtils.forName("byte")).isEqualTo(byte.class);
         assertThat(ClassUtils.forName("char")).isEqualTo(char.class);
@@ -83,5 +84,18 @@ class ClassUtilsTest {
         assertThat(ClassUtils.forName("[Lorg.apache.shiro.lang.util.ClassUtilsTest;")).isEqualTo(ClassUtilsTest[].class);
         assertThat(ClassUtils.forName(ClassUtilsTest.class.getName())).isEqualTo(ClassUtilsTest.class);
         assertThat(ClassUtils.forName(ClassUtilsTest[].class.getName())).isEqualTo(ClassUtilsTest[].class);
+    }
+
+    @Test
+    void inputStreamFileLoading() throws IOException {
+        try (InputStream is = getInputStreamForPath("classpath:org/apache/shiro/lang/util/ClassUtilsTest.class")) {
+            assertThat(is.readAllBytes()).isNotEmpty();
+        }
+        try (InputStream is = getInputStreamForPath("target/test-classes/test-data/file.json")) {
+            assertThat(is.readAllBytes()).isNotEmpty();
+        }
+        try (InputStream is = getInputStreamForPath("file:target/test-classes/test-data/file.json")) {
+            assertThat(is.readAllBytes()).isNotEmpty();
+        }
     }
 }

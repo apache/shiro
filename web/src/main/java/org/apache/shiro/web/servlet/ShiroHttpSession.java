@@ -22,11 +22,11 @@ import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.web.session.HttpServletSession;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSessionBindingEvent;
+import jakarta.servlet.http.HttpSessionBindingListener;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -48,28 +48,6 @@ public class ShiroHttpSession implements HttpSession {
      * default session id name.
      */
     public static final String DEFAULT_SESSION_ID_NAME = "JSESSIONID";
-
-    private static final Enumeration<String> EMPTY_ENUMERATION = new Enumeration<>() {
-        public boolean hasMoreElements() {
-            return false;
-        }
-
-        public String nextElement() {
-            return null;
-        }
-    };
-
-    @SuppressWarnings({"deprecation"})
-    private static final javax.servlet.http.HttpSessionContext HTTP_SESSION_CONTEXT =
-            new javax.servlet.http.HttpSessionContext() {
-                public HttpSession getSession(String s) {
-                    return null;
-                }
-
-                public Enumeration<String> getIds() {
-                    return EMPTY_ENUMERATION;
-                }
-            };
 
     protected ServletContext servletContext;
     protected HttpServletRequest currentRequest;
@@ -127,23 +105,12 @@ public class ShiroHttpSession implements HttpSession {
         }
     }
 
-    @SuppressWarnings({"deprecation"})
-    public javax.servlet.http.HttpSessionContext getSessionContext() {
-        return HTTP_SESSION_CONTEXT;
-    }
-
     public Object getAttribute(String s) {
         try {
             return getSession().getAttribute(s);
         } catch (InvalidSessionException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    @Deprecated
-    @Override
-    public Object getValue(String s) {
-        return getAttribute(s);
     }
 
     protected Set<String> getKeyNames() {

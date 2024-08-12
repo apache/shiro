@@ -66,10 +66,12 @@
     </distributionManagement>
 
     <properties>
-        <shiro.previousVersion>2.0.0</shiro.previousVersion>
+        <!-- *** Remove the line below when 3.0.0 is released -->
+        <shiro.previousVersion>3.0.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
-        <project.build.outputTimestamp>2026-01-15T21:40:21Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-02-07T22:56:07Z</project.build.outputTimestamp>
+        <root.dir>${maven.multiModuleProjectDirectory}</root.dir>
         <jacoco.skip>true</jacoco.skip>
         <!-- workaround for gmavenplus plugin until maven 4 is being used -->
         <maven.project.sourceRoots.warningsDisabled>true</maven.project.sourceRoots.warningsDisabled>
@@ -84,13 +86,13 @@
         <nexus-staging-profile>nexus-staging</nexus-staging-profile>
         <jacocoAgent/>
         <!-- non-dependency-based properties: -->
-        <shiro.osgi.importRange>[2, 3)</shiro.osgi.importRange>
+        <shiro.osgi.importRange>[3.0.0,999.999.999]</shiro.osgi.importRange>
         <jcache.osgi.importRange>[1.1,2)</jcache.osgi.importRange>
 
         <!-- Compile 3rd party dependencies: -->
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
-        <aspectj.version>1.9.20.1</aspectj.version>
+        <aspectj.version>1.9.25.1</aspectj.version>
         <commons.beanutils.version>1.11.0</commons.beanutils.version>
         <commons.cli.version>1.11.0</commons.cli.version>
         <commons.collection.version>3.2.2</commons.collection.version>
@@ -98,18 +100,12 @@
         <commons.lang3.version>3.20.0</commons.lang3.version>
         <commons.logging.version>1.3.6</commons.logging.version>
         <commons.text.version>1.8</commons.text.version>
-        <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
-             modules' OSGi metadata: -->
-        <ehcache.version>2.6.11</ehcache.version>
-        <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
-        <hazelcast.version>5.3.8</hazelcast.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <javax.annotation.api.version>1.3.2</javax.annotation.api.version>
         <jcache.api.version>1.1.1</jcache.api.version>
-        <jdk.version>11</jdk.version>
-        <jetty.version>9.4.58.v20250814</jetty.version>
-        <tomcat.version>9.0.113</tomcat.version>
-        <tomcat10.version>10.1.50</tomcat10.version>
+        <jdk.version>17</jdk.version>
+        <tomcat.version>11.0.22</tomcat.version>
+        <jakarta.ee.version>11.0.0</jakarta.ee.version>
+        <jetty.version>12.1.10</jetty.version>
         <owasp.java.encoder.version>1.4.0</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
@@ -117,11 +113,11 @@
         <quartz.docs.version>2.3.0</quartz.docs.version>
         <slf4j.version>2.0.18</slf4j.version>
         <log4j.version>2.26.0</log4j.version>
-        <spring.version>5.3.39</spring.version>
-        <spring-boot.version>2.7.18</spring-boot.version>
-        <guice.version>4.2.3</guice.version>
-        <jaxrs.api.version>2.1.6</jaxrs.api.version>
-        <htmlunit.version>4.21.0</htmlunit.version>
+        <spring.version>7.0.8</spring.version>
+        <spring-boot.version>4.1.0</spring-boot.version>
+        <guice.version>7.0.0</guice.version>
+        <jaxrs.api.version>4.0.0</jaxrs.api.version>
+        <htmlunit.version>5.1.0</htmlunit.version>
         <bouncycastle.version>1.84</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
@@ -129,13 +125,11 @@
         <mockito.version>5.23.0</mockito.version>
         <bytebuddy.version>1.18.10</bytebuddy.version>
         <gmaven.version>5.0.0</gmaven.version>
-        <groovy.version>4.0.27</groovy.version>
-        <junit.version>5.13.4</junit.version>
-        <junit.engine.version>1.13.4</junit.engine.version>
+        <groovy.version>5.0.6</groovy.version>
+        <junit.version>6.1.0</junit.version>
         <junit.server.jetty.version>3.5.0</junit.server.jetty.version>
-        <hibernate.version>5.6.15.Final</hibernate.version>
+        <hibernate.version>7.4.1.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
-        <jakarta.annotations.version>1.3.5</jakarta.annotations.version>
         <lombok.version>1.18.46</lombok.version>
 
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
@@ -156,7 +150,6 @@
         <module>web</module>
         <module>support</module>
         <module>tools</module>
-        <module>bom</module>
         <module>integration-tests</module>
         <module>samples</module>
         <!-- <module>test-coverage</module> -->
@@ -317,36 +310,29 @@
                         <links>
                             <link>https://docs.oracle.com/en/java/javase/${jdk.version}/docs/api/</link>
                             <link>https://docs.spring.io/spring-framework/docs/${spring.version}/javadoc-api/</link>
-                            <link>https://docs.spring.io/spring-boot/docs/${spring-boot.version}/api/</link>
+                            <link>https://docs.spring.io/spring-boot/${spring-boot.version}/api/java/</link>
                             <link>https://junit.org/junit5/docs/${junit.version}/api/</link>
                             <link>https://www.quartz-scheduler.org/api/${quartz.docs.version}/</link>
                         </links>
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>3.5.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-help-plugin</artifactId>
-                    <version>3.5.1</version>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>5.1.9</version>
+                    <version>6.0.2</version>
+                    <dependencies>
+                        <!-- Required to upgrade bnd in the maven-bundle-plugin to be able to handle Multi-Release jars -->
+                        <dependency>
+                            <groupId>biz.aQute.bnd</groupId>
+                            <artifactId>biz.aQute.bndlib</artifactId>
+                            <version>7.3.0</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>4.0.0-M16</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-scm-publish-plugin</artifactId>
-                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.rat</groupId>
@@ -367,6 +353,7 @@
                             <exclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</exclude>
                             <exclude>**/spring.provides</exclude>
                             <exclude>**/*.iml</exclude>
+                            <exclude>**/*.idea/**</exclude>
                             <exclude>**/target/**</exclude>
                             <exclude>**/nb-configuration.xml</exclude>
                             <exclude>**/faces-config.NavData</exclude>
@@ -398,6 +385,9 @@
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
                     <version>${gmaven.version}</version>
+                    <configuration>
+                        <targetBytecode>${jdk.version}</targetBytecode>
+                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.groovy</groupId>
@@ -434,22 +424,17 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
+                    <groupId>org.eclipse.jetty.ee11</groupId>
+                    <artifactId>jetty-ee11-maven-plugin</artifactId>
                     <version>${jetty.version}</version>
                     <configuration>
-                        <contextPath>/</contextPath>
                         <httpConnector>
                             <port>9080</port>
                             <idleTimeout>60000</idleTimeout>
                         </httpConnector>
-                        <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
-                            <filename>./target/yyyy_mm_dd.request.log</filename>
-                            <retainDays>90</retainDays>
-                            <append>true</append>
-                            <extended>false</extended>
-                            <logTimeZone>GMT</logTimeZone>
-                        </requestLog>
+                        <webApp>
+                            <contextPath>/</contextPath>
+                        </webApp>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -516,76 +501,7 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>jakarta</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>shade</goal>
-                            </goals>
-                            <configuration>
-                                <minimizeJar>false</minimizeJar>
-                                <shadedArtifactAttached>true</shadedArtifactAttached>
-                                <shadedClassifierName>jakarta</shadedClassifierName>
-                                <createDependencyReducedPom>false</createDependencyReducedPom>
-                                <transformers>
-                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer" />
-                                </transformers>
-                                <artifactSet>
-                                    <includes>
-                                        <include>${project.groupId}:${project.artifactId}</include>
-                                    </includes>
-                                </artifactSet>
-                                <relocations>
-                                    <relocation>
-                                        <pattern>javax.annotation</pattern>
-                                        <shadedPattern>jakarta.annotation</shadedPattern>
-                                        <excludes>
-                                            <exclude>javax.annotation.processing.**</exclude>
-                                        </excludes>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.enterprise</pattern>
-                                        <shadedPattern>jakarta.enterprise</shadedPattern>
-                                        <excludes>
-                                            <exclude>javax.enterprise.deploy.**</exclude>
-                                        </excludes>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.inject</pattern>
-                                        <shadedPattern>jakarta.inject</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.json</pattern>
-                                        <shadedPattern>jakarta.json</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.servlet.http.HttpSessionContext</pattern>
-                                        <shadedPattern>org.apache.shiro.web.servlet.HttpSessionContext</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.servlet</pattern>
-                                        <shadedPattern>jakarta.servlet</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.websocket</pattern>
-                                        <shadedPattern>jakarta.websocket</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.ws.rs</pattern>
-                                        <shadedPattern>jakarta.ws.rs</shadedPattern>
-                                    </relocation>
-                                </relocations>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.6.0</version>
                     <configuration>
                         <configLocation>${checkstyle.configLocation}</configLocation>
                         <suppressionsLocation>${checkstyle.suppressionsLocation}</suppressionsLocation>
@@ -610,7 +526,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>10.26.1</version>
+                            <version>13.5.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -630,27 +546,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.commonjava.maven.plugins</groupId>
-                <artifactId>directory-maven-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                    <execution>
-                        <id>directories</id>
-                        <goals>
-                            <goal>directory-of</goal>
-                        </goals>
-                        <phase>validate</phase>
-                        <configuration>
-                            <property>root.dir</property>
-                            <project>
-                                <groupId>org.apache.shiro</groupId>
-                                <artifactId>shiro-root</artifactId>
-                            </project>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
             <plugin>
@@ -658,9 +553,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <showWarnings>true</showWarnings>
+                    <parameters>true</parameters>
                     <compilerArgs>
                         <arg>-Xlint:deprecation</arg>
                         <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:rawtypes</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
                         <annotationProcessorPath>
@@ -691,11 +588,13 @@
                         <include>org/apache/shiro/**</include>
                     </includes>
                     <excludes>
+                        <exclude>**/*$$SpringCGLIB$$*</exclude>
                         <exclude>**/*$$FastClassBy*$$*</exclude>
                         <exclude>**/*$$EnhancerBy*CGLIB$$*</exclude>
                         <exclude>**/*$MockitoMock$*</exclude>
                         <exclude>**/*$HibernateProxy$*</exclude>
                         <exclude>**/*$Proxy$*WeldClientProxy</exclude>
+                        <exclude>**/*$Proxy$*WeldSubclass</exclude>
                         <exclude>org/apache/shiro/samples/guice/SampleShiroGuiceBootstrap</exclude>
                         <exclude>org/apache/shiro/samples/guice/SampleShiroServletModule</exclude>
                         <exclude>org/apache/shiro/**/*Test</exclude>
@@ -705,6 +604,7 @@
                         <exclude>org/apache/shiro/testing/jakarta/ee/PropertyPrincipal</exclude>
                         <exclude>org/apache/shiro/testing/cdi/ComponentInjectionBean</exclude>
                         <exclude>org/apache/shiro/**/__EJB31_Generated*</exclude>
+                        <exclude>org/apache/shiro/util/DefaultScopedValues</exclude>
                         <!-- cause too many coverage misses -->
                         <exclude>org/apache/shiro/**/Deployments</exclude>
                     </excludes>
@@ -743,9 +643,7 @@
                     <execution>
                         <goals>
                             <goal>addTestSources</goal>
-                            <goal>generateTestStubs</goal>
                             <goal>compileTests</goal>
-                            <goal>removeTestStubs</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -938,8 +836,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.27.7</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.easymock</groupId>
@@ -1038,7 +934,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-ehcache</artifactId>
+                <artifactId>shiro-jcache</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1054,11 +950,6 @@
             <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-guice</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-hazelcast</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -1087,6 +978,12 @@
                 <version>${project.version}</version>
                 <classifier>tests</classifier>
                 <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.27.7</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1135,12 +1032,6 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>3.25.3</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
                 <version>${bytebuddy.version}</version>
@@ -1160,11 +1051,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons.lang3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>${javax.annotation.api.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
@@ -1270,6 +1156,13 @@
             </dependency>
 
             <dependency>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-bom</artifactId>
+                <version>11.0.0</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
                 <!-- Required in the sample apps only for 3rd-party libraries that expect to call
                      the commons logging APIs -->
                 <groupId>org.slf4j</groupId>
@@ -1296,54 +1189,9 @@
                 <optional>true</optional>
             </dependency>
             <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>2.2</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.taglibs</groupId>
-                <artifactId>taglibs-standard-spec</artifactId>
-                <version>${taglibs.standard.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.taglibs</groupId>
-                <artifactId>taglibs-standard-impl</artifactId>
-                <version>${taglibs.standard.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>4.0.1</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.groovy</groupId>
                 <artifactId>groovy</artifactId>
                 <version>${groovy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-core</artifactId>
-                <version>${ehcache.version}</version>
-                <optional>true</optional>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>net.sf.ehcache</groupId>
-                        <artifactId>sizeof-agent</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.hazelcast</groupId>
-                <artifactId>hazelcast</artifactId>
-                <version>${hazelcast.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.htmlunit</groupId>
@@ -1352,7 +1200,7 @@
             </dependency>
             <dependency>
                 <!-- Used for sample applications only - not required for the framework: -->
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${hibernate.version}</version>
                 <optional>true</optional>
@@ -1382,8 +1230,8 @@
                         <artifactId>jacc</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>javax.servlet-api</artifactId>
+                        <groupId>jakarta.servlet</groupId>
+                        <artifactId>jakarta.servlet-api</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>jboss</groupId>
@@ -1391,28 +1239,11 @@
                         <artifactId>jboss-cache</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>net.sf.ehcache</groupId>
-                        <artifactId>ehcache</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <groupId>asm</groupId>
                         <!--suppress MavenModelInspection -->
                         <artifactId>asm-attrs</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>javax.transaction</groupId>
-                        <artifactId>jta</artifactId>
-                    </exclusion>
                 </exclusions>
-            </dependency>
-            <!-- Used to support Hibernate's JTA runtime dependency in the sample application(s) only.
-                 Not required for Shiro -->
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jta_1.1_spec</artifactId>
-                <version>1.1.1</version>
-                <scope>runtime</scope>
-                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -1487,15 +1318,16 @@
                 </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>4.0.9</version>
+            </dependency>
+
             <!-- Guice -->
             <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
-                <version>${guice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.inject.extensions</groupId>
-                <artifactId>guice-multibindings</artifactId>
                 <version>${guice.version}</version>
             </dependency>
             <dependency>
@@ -1509,16 +1341,17 @@
                 <version>${quartz.version}</version>
                 <optional>true</optional>
             </dependency>
-            <dependency>
-                <groupId>com.github.mjeanroy</groupId>
-                <artifactId>junit-servers-jetty-9</artifactId>
-                <version>${junit.server.jetty.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>33.6.0-jre</version>
             </dependency>
 
             <dependency>
@@ -1612,6 +1445,7 @@
                         <exclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</exclude>
                         <exclude>**/spring.provides</exclude>
                         <exclude>**/*.iml</exclude>
+                        <exclude>**/*.idea/**</exclude>
                         <exclude>**/target/**</exclude>
                         <exclude>**/nb-configuration.xml</exclude>
                         <exclude>**/faces-config.NavData</exclude>
@@ -1730,6 +1564,61 @@
                 </pluginManagement>
             </build>
         </profile>
+        <profile>
+            <id>jdk-21</id>
+            <activation>
+                <jdk>[21,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>jdk21-compile</id>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <multiReleaseOutput>true</multiReleaseOutput>
+                                    <release>21</release>
+                                    <compileSourceRoots>${project.build.sourceDirectory}21</compileSourceRoots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jdk-25</id>
+            <activation>
+                <jdk>[25,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>jdk25-compile</id>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <multiReleaseOutput>true</multiReleaseOutput>
+                                    <release>25</release>
+                                    <compileSourceRoots>${project.build.sourceDirectory}25</compileSourceRoots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <profile>
             <id>docs</id>
             <build>

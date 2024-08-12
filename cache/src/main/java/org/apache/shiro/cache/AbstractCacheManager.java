@@ -94,7 +94,7 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
      */
     public void destroy() throws Exception {
         while (!caches.isEmpty()) {
-            for (Cache cache : caches.values()) {
+            for (Cache<?, ?> cache : caches.values()) {
                 LifecycleUtils.destroy(cache);
             }
             caches.clear();
@@ -108,7 +108,7 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
                 .append(caches.size())
                 .append(" cache(s)): [");
         int i = 0;
-        for (Cache cache : values) {
+        for (Cache<?, ?> cache : values) {
             if (i > 0) {
                 sb.append(", ");
             }

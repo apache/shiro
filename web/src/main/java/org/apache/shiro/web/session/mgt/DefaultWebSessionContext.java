@@ -20,8 +20,8 @@ package org.apache.shiro.web.session.mgt;
 
 import org.apache.shiro.session.mgt.DefaultSessionContext;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import java.util.Map;
 
 /**

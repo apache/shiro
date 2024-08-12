@@ -25,8 +25,8 @@ import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
 import org.apache.shiro.web.util.RequestPairSource;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * A {@code WebSubject} represents a Subject instance that was acquired as a result of an incoming

@@ -185,9 +185,9 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
      * @param token the string token from which a class name will be heuristically determined.
      * @return the discovered HashFormat class implementation or {@code null} if no class could be heuristically determined.
      */
-    protected Class getHashFormatClass(String token) {
+    protected Class<?> getHashFormatClass(String token) {
 
-        Class clazz = null;
+        Class<?> clazz = null;
 
         //check to see if the token is a configured FQCN alias.  This is faster than searching packages,
         //so we try this first:
@@ -324,7 +324,7 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
         return null;
     }
 
-    protected final void assertHashFormatImpl(Class clazz) {
+    protected final void assertHashFormatImpl(Class<?> clazz) {
         if (!HashFormat.class.isAssignableFrom(clazz) || clazz.isInterface()) {
             throw new IllegalArgumentException("Discovered class [" + clazz.getName() + "] is not a "
                     + HashFormat.class.getName() + " implementation.");
@@ -332,7 +332,7 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
 
     }
 
-    protected final HashFormat newHashFormatInstance(Class clazz) {
+    protected final HashFormat newHashFormatInstance(Class<?> clazz) {
         assertHashFormatImpl(clazz);
         return (HashFormat) ClassUtils.newInstance(clazz);
     }

@@ -30,11 +30,9 @@ public final class ByteUtils {
      * @param value An array holding sensitive data
      */
     public static void wipe(Object value) {
-        if (value instanceof byte[]) {
-            byte[] array = (byte[]) value;
+        if (value instanceof byte[] array) {
             Arrays.fill(array, (byte) 0);
-        } else if (value instanceof char[]) {
-            char[] array = (char[]) value;
+        } else if (value instanceof char[] array) {
             Arrays.fill(array, '\u0000');
         }
     }

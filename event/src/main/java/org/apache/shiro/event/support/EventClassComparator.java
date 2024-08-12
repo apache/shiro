@@ -47,10 +47,8 @@ import java.util.Comparator;
  *
  * @since 1.3
  */
-public class EventClassComparator implements Comparator<Class> {
-
-    @SuppressWarnings("unchecked")
-    public int compare(Class a, Class b) {
+public class EventClassComparator implements Comparator<Class<?>> {
+    public int compare(Class<?> a, Class<?> b) {
         if (a == null) {
             if (b == null) {
                 return 0;
@@ -59,7 +57,7 @@ public class EventClassComparator implements Comparator<Class> {
             }
         } else if (b == null) {
             return 1;
-        } else if (a == b || a.equals(b)) {
+        } else if (a == b) {
             return 0;
         } else {
             if (a.isAssignableFrom(b)) {

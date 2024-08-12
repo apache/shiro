@@ -24,6 +24,7 @@ import org.apache.shiro.lang.codec.CodecException;
 import org.apache.shiro.lang.codec.CodecSupport;
 import org.apache.shiro.lang.codec.Hex;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -46,6 +47,7 @@ import java.util.Arrays;
 @Deprecated
 public abstract class AbstractHash extends CodecSupport implements Hash, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4723044219611288405L;
     /**
      * The hashed data
@@ -283,8 +285,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      */
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Hash) {
-            Hash other = (Hash) o;
+        if (o instanceof Hash other) {
             return MessageDigest.isEqual(getBytes(), other.getBytes());
         }
         return false;

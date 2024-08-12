@@ -51,7 +51,7 @@ public final class StringUtils {
     public static final char DEFAULT_DELIMITER_CHAR = ',';
 
     /**
-     * Constant representing the default quote character (double quote), equal to '&quot;'</code>
+     * Constant representing the default quote character (double quote), equal to <code>'&quot;'</code>
      */
     public static final char DEFAULT_QUOTE_CHAR = '"';
 
@@ -105,7 +105,7 @@ public final class StringUtils {
      * @see #hasText(String)
      */
     public static boolean hasLength(String str) {
-        return (str != null && str.length() > 0);
+        return (str != null && !str.isEmpty());
     }
 
 
@@ -207,7 +207,7 @@ public final class StringUtils {
      * @return a single string, delimited by the specified {@code delimiter}.
      * @since 1.2
      */
-    public static String toDelimitedString(Collection c, String delimiter) {
+    public static String toDelimitedString(Collection<?> c, String delimiter) {
         if (c == null || c.isEmpty()) {
             return EMPTY_STRING;
         }
@@ -264,13 +264,13 @@ public final class StringUtils {
             return null;
         }
         StringTokenizer st = new StringTokenizer(str, delimiters);
-        List tokens = new ArrayList();
+        List<String> tokens = new ArrayList<>();
         while (st.hasMoreTokens()) {
             String token = st.nextToken();
             if (trimTokens) {
                 token = token.trim();
             }
-            if (!ignoreEmptyTokens || token.length() > 0) {
+            if (!ignoreEmptyTokens || !token.isEmpty()) {
                 tokens.add(token);
             }
         }
@@ -287,12 +287,11 @@ public final class StringUtils {
      * @return the String array (<code>null</code> if the passed-in
      * Collection was <code>null</code>)
      */
-    @SuppressWarnings({"unchecked"})
-    public static String[] toStringArray(Collection collection) {
+    public static String[] toStringArray(Collection<String> collection) {
         if (collection == null) {
             return null;
         }
-        return (String[]) collection.toArray(new String[collection.size()]);
+        return collection.toArray(new String[collection.size()]);
     }
 
     public static String[] splitKeyValue(String aLine) throws ParseException {
@@ -440,12 +439,14 @@ public final class StringUtils {
     }
 
     /**
+     * <p>
      * Joins the elements of the provided {@code Iterator} into
      * a single String containing the provided elements.</p>
      * <p/>
+     * <p>
      * No delimiter is added before or after the list.
      * A {@code null} separator is the same as an empty String ("").</p>
-     * <p/>
+     * <p>
      * Copied from Commons Lang, version 3 (r1138702).</p>
      *
      * @param iterator  the {@code Iterator} of values to join together, may be null
@@ -515,7 +516,7 @@ public final class StringUtils {
      * @since 1.2
      */
     public static String uppercaseFirstChar(String in) {
-        if (in == null || in.length() == 0) {
+        if (in == null || in.isEmpty()) {
             return in;
         }
         int length = in.length();
@@ -545,7 +546,7 @@ public final class StringUtils {
             return Collections.singleton(elements[0]);
         }
 
-        LinkedHashSet<E> set = new LinkedHashSet<E>(elements.length * 4 / 3 + 1);
+        LinkedHashSet<E> set = new LinkedHashSet<>(elements.length * 4 / 3 + 1);
         Collections.addAll(set, elements);
         return set;
     }

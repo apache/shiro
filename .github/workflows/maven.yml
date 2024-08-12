@@ -24,9 +24,9 @@ permissions:
 on:
   workflow_dispatch: { }
   push:
-    branches: [ main, '1.13.x', '1.12.x', '1.11.x', '1.10.x' ]
+    branches: [ main, '3.x', '4.x' ]
   pull_request:
-    branches: [ main, '1.13.x', '1.12.x', '1.11.x', '1.10.x' ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -51,7 +51,7 @@ jobs:
         # zizmor: ignore[template-injection]
         run: >-
           ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
-          -Pskip_jakarta_ee_tests -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
+          -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
 
   build-all:
     needs: build
@@ -59,7 +59,7 @@ jobs:
     strategy:
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest', 'macOS-latest' ]
-        jdk: [ 11, 17, 21, 25 ]
+        jdk: [ 21, 25 ]
         dist: [ 'temurin', 'adopt-openj9', 'zulu' ]
         exclude:
           # was already built
@@ -95,14 +95,14 @@ jobs:
           distribution: ${{ matrix.dist }}
 
       - name: Build with Maven (Linux)
-        if: matrix.os == 'ubuntu-latest' && matrix.jdk <= 21
+        if: matrix.os == 'ubuntu-latest' && matrix.jdk >= 21
         # zizmor: ignore[template-injection]
         run: >-
           ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress
           -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build with Maven (non-Linux or JDK > 21)
-        if: matrix.os != 'ubuntu-latest' || matrix.jdk > 21
+      - name: Build with Maven (non-Linux)
+        if: matrix.os != 'ubuntu-latest' || matrix.jdk < 21
         run: >-
           ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress
           -Pskip_jakarta_ee_tests

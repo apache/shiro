@@ -21,15 +21,15 @@ package org.apache.shiro.web.filter.authc;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * Filter that allows access to resources if the accessor is a known user, which is defined as
  * having a known principal.  This means that any user who is authenticated or remembered via a
  * 'remember me' feature will be allowed access from this filter.
  * <p/>
- * If the accessor is not a known user, then they will be redirected to the {@link #setLoginUrl(String) loginUrl}</p>
+ * If the accessor is not a known user, then they will be redirected to the {@link #setLoginUrl(String) loginUrl}<p>
  *
  * @since 0.9
  */
@@ -37,13 +37,13 @@ public class UserFilter extends AccessControlFilter {
 
     /**
      * Returns <code>true</code> if the request is a
-     * {@link #isLoginRequest(javax.servlet.ServletRequest, javax.servlet.ServletResponse) loginRequest} or
-     * if the current {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) subject}
+     * {@link #isLoginRequest(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) loginRequest} or
+     * if the current {@link #getSubject(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) subject}
      * is not <code>null</code>, <code>false</code> otherwise.
      *
      * @return <code>true</code> if the request is a
-     * {@link #isLoginRequest(javax.servlet.ServletRequest, javax.servlet.ServletResponse) loginRequest} or
-     * if the current {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) subject}
+     * {@link #isLoginRequest(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) loginRequest} or
+     * if the current {@link #getSubject(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) subject}
      * is not <code>null</code>, <code>false</code> otherwise.
      */
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {

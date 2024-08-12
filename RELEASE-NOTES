@@ -15,6 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
+#### DEPRECATED ####
+Currently Apache Shiro uses GitHub releases for release notes, so this file is no longer being updated.
+It will be removed in a future release.
+#### DEPRECATED ####
+
 This is not an official release notes document.  It exists for Shiro developers
 to jot down their notes while working in the source code.  These notes will be
 combined with Jira’s auto-generated release notes during a release for the

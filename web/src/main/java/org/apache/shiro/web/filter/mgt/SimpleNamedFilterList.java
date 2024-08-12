@@ -21,8 +21,8 @@ package org.apache.shiro.web.filter.mgt;
 import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.web.servlet.ProxiedFilterChain;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
