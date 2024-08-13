@@ -66,7 +66,7 @@
     </distributionManagement>
 
     <properties>
-        <shiro.previousVersion>1.13.0</shiro.previousVersion>
+        <shiro.previousVersion>2.0.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2022-03-22T23:08:15Z</project.build.outputTimestamp>
@@ -448,9 +448,10 @@
                         </oldVersion>
                         <parameter>
                             <onlyModified>true</onlyModified>
+                            <breakBuildOnSourceIncompatibleModifications>true</breakBuildOnSourceIncompatibleModifications>
                             <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
-                            <breakBuildBasedOnSemanticVersioning>true</breakBuildBasedOnSemanticVersioning>
-                            <postAnalysisScript>${root.dir}/src/japicmp/postAnalysisScript.groovy</postAnalysisScript>
+                            <breakBuildBasedOnSemanticVersioning>false</breakBuildBasedOnSemanticVersioning>
+<!--                            <postAnalysisScript>${root.dir}/src/japicmp/postAnalysisScript.groovy</postAnalysisScript>-->
                         </parameter>
                     </configuration>
                 </plugin>
@@ -854,6 +855,19 @@
                                 </bannedDependencies>
                             </rules>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.siom79.japicmp</groupId>
+                <artifactId>japicmp-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>japicmp</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>cmp</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -1783,24 +1797,6 @@
             <properties>
                 <jacoco.skip>false</jacoco.skip>
             </properties>
-            <build>
-                <plugins>
-                    <!-- TODO: re-enable after first 2.0 release -->
-                    <!-- it's a 2.0 release breaking changes are expected -->
-                    <!--                    <plugin>-->
-                    <!--                        <groupId>com.github.siom79.japicmp</groupId>-->
-                    <!--                        <artifactId>japicmp-maven-plugin</artifactId>-->
-                    <!--                        <executions>-->
-                    <!--                            <execution>-->
-                    <!--                                <id>japicmp</id>-->
-                    <!--                                <goals>-->
-                    <!--                                    <goal>cmp</goal>-->
-                    <!--                                </goals>-->
-                    <!--                            </execution>-->
-                    <!--                        </executions>-->
-                    <!--                    </plugin>-->
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>skip-checkstyle</id>
