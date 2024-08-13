@@ -33,6 +33,8 @@
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]tools[\\/]hasher[\\/]*"/>
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]config[\\/]ogdl[\\/]*"/>
     <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]cache[\\/]ehcache[\\/]*"/>
+    <suppress checks="MethodName" files=".*Test\.java"/>
+    <suppress checks="MethodName" files=".*IT\.java"/>
     <suppress checks=".*" files="Quickstart.*.java"/>
     <suppress checks=".*" files="application.properties"/>
 </suppressions>
