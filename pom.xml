@@ -66,7 +66,9 @@
     </distributionManagement>
 
     <properties>
-        <shiro.previousVersion>2.0.0</shiro.previousVersion>
+        <!-- *** Remove the line below when 3.0.0 is released -->
+        <japicmp.skip>true</japicmp.skip>
+        <shiro.previousVersion>3.0.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2024-08-12T08:14:05Z</project.build.outputTimestamp>
