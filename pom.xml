@@ -87,7 +87,7 @@
              modules' OSGi metadata: -->
         <aspectj.version>1.9.20.1</aspectj.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
-        <commons.cli.version>1.8.0</commons.cli.version>
+        <commons.cli.version>1.9.0</commons.cli.version>
         <commons.collection.version>3.2.2</commons.collection.version>
         <commons.configuration2.version>2.11.0</commons.configuration2.version>
         <commons.lang3.version>3.16.0</commons.lang3.version>
