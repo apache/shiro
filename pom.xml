@@ -135,6 +135,7 @@
         <!-- checkstyle -->
         <checkstyle.configLocation>${root.dir}/src/checkstyle.xml</checkstyle.configLocation>
         <checkstyle.supressionsLocation>${root.dir}/src/suppressions.xml</checkstyle.supressionsLocation>
+        <fluido-skin.version>2.0.0-M10</fluido-skin.version>
     </properties>
 
     <modules>
@@ -333,6 +334,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
+                    <version>4.0.0-M16</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -1452,6 +1454,12 @@
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven.skins</groupId>
+                <artifactId>maven-fluido-skin</artifactId>
+                <version>${fluido-skin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
