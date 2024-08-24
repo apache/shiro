@@ -36,6 +36,25 @@
         <module>spring-boot-web-starter</module>
     </modules>
 
+    <properties>
+        <junit.engine.version>1.11.0</junit.engine.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+             <groupId>org.junit.platform</groupId>
+             <artifactId>junit-platform-engine</artifactId>
+             <version>${junit.engine.version}</version>
+             <scope>test</scope>
+         </dependency>
+        <dependency>
+             <groupId>org.junit.platform</groupId>
+             <artifactId>junit-platform-commons</artifactId>
+             <version>${junit.engine.version}</version>
+             <scope>test</scope>
+         </dependency>
+    </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
