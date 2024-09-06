@@ -40,7 +40,7 @@
         <arquillian.core.version>1.9.1.Final</arquillian.core.version>
         <arquillian.payara5.version>2.5</arquillian.payara5.version>
         <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
-        <webdriver.browser>firefox</webdriver.browser>
+        <drone.browser>firefox</drone.browser>
 
         <payara.version>5.2022.5.jdk21</payara.version>
         <payara.start.skip>${skipITs}</payara.start.skip>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.5</version>
+            <version>3.14.6</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -246,7 +246,7 @@
             <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-bom</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -280,9 +280,9 @@
                         <integration.test.mode>${integration.test.mode}</integration.test.mode>
                         <gh_user>${gh_user}</gh_user>
                         <gh_token>${gh_token}</gh_token>
-                        <webdriver.browser>${webdriver.browser}</webdriver.browser>
-                        <webdriver.chrome.binary>${webdriver.chrome.binary}</webdriver.chrome.binary>
-                        <webdriver.firefox.binary>${webdriver.firefox.binary}</webdriver.firefox.binary>
+                        <webdriver.browser>${drone.browser}</webdriver.browser>
+                        <webdriver.chrome.binary>${drone.chrome.binary}</webdriver.chrome.binary>
+                        <webdriver.firefox.binary>${drone.firefox.binary}</webdriver.firefox.binary>
                     </systemPropertyVariables>
                     <argLine>${failsafe.argLine} ${payara.argLine}</argLine>
                     <skip>${jakartaee.it.skip}</skip>

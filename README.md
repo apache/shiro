@@ -3,7 +3,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.apache.shiro/shiro-core)](https://central.sonatype.com/artifact/org.apache.shiro/shiro-core/)
 [![Build Status](https://ci-builds.apache.org/buildStatus/icon?job=Shiro%2FShiro-all%2Fmain)](https://ci-builds.apache.org/job/Shiro/job/Shiro-all/job/main/)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/apache/shiro/badge)](https://api.securityscorecards.dev/projects/github.com/apache/shiro)
-[![Reproducible Builds](https://img.shields.io/badge/Reproducible_Builds-ok-success?labelColor=1e5b96)](https://github.com/jvm-repo-rebuild/reproducible-central/blob/master/content/org/apache/shiro/README.md)
+[![Reproducible Builds](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/jvm-repo-rebuild/reproducible-central/master/content/org/apache/shiro/badge.json)](https://github.com/jvm-repo-rebuild/reproducible-central/blob/master/content/org/apache/shiro/README.md)
 
 Apache Shiro
 ============

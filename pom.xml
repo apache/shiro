@@ -89,11 +89,11 @@
              modules' OSGi metadata: -->
         <aspectj.version>1.9.20.1</aspectj.version>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
-        <commons.cli.version>1.8.0</commons.cli.version>
+        <commons.cli.version>1.9.0</commons.cli.version>
         <commons.collection.version>3.2.2</commons.collection.version>
         <commons.configuration2.version>2.11.0</commons.configuration2.version>
-        <commons.lang3.version>3.16.0</commons.lang3.version>
-        <commons.logging.version>1.3.3</commons.logging.version>
+        <commons.lang3.version>3.17.0</commons.lang3.version>
+        <commons.logging.version>1.3.4</commons.logging.version>
         <commons.text.version>1.8</commons.text.version>
         <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
              modules' OSGi metadata: -->
@@ -104,15 +104,15 @@
         <javax.annotation.api.version>1.3.2</javax.annotation.api.version>
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>11</jdk.version>
-        <jetty.version>9.4.55.v20240627</jetty.version>
-        <owasp.java.encoder.version>1.3.0</owasp.java.encoder.version>
+        <jetty.version>9.4.56.v20240826</jetty.version>
+        <owasp.java.encoder.version>1.3.1</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
         <quartz.version>2.5.0-rc1</quartz.version>
         <quartz.docs.version>2.3.0</quartz.docs.version>
         <slf4j.version>2.0.16</slf4j.version>
         <log4j.version>2.23.1</log4j.version>
-        <spring.version>5.3.37</spring.version>
+        <spring.version>5.3.39</spring.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
@@ -121,12 +121,12 @@
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.4.0</easymock.version>
-        <mockito.version>5.12.0</mockito.version>
-        <bytebuddy.version>1.14.18</bytebuddy.version>
+        <mockito.version>5.13.0</mockito.version>
+        <bytebuddy.version>1.15.1</bytebuddy.version>
         <gmaven.version>3.0.2</gmaven.version>
         <groovy.version>4.0.22</groovy.version>
-        <junit.version>5.10.3</junit.version>
-        <junit.server.jetty.version>3.1.1</junit.server.jetty.version>
+        <junit.version>5.11.0</junit.version>
+        <junit.server.jetty.version>3.3.0</junit.server.jetty.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <jakarta.annotations.version>1.3.5</jakarta.annotations.version>
@@ -137,6 +137,7 @@
         <!-- checkstyle -->
         <checkstyle.configLocation>${root.dir}/src/checkstyle.xml</checkstyle.configLocation>
         <checkstyle.supressionsLocation>${root.dir}/src/suppressions.xml</checkstyle.supressionsLocation>
+        <fluido-skin.version>2.0.0-M10</fluido-skin.version>
     </properties>
 
     <modules>
@@ -325,7 +326,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-help-plugin</artifactId>
-                    <version>3.4.1</version>
+                    <version>3.5.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
@@ -335,6 +336,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
+                    <version>4.0.0-M16</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -433,12 +435,12 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>10.0.3</version>
+                    <version>10.0.4</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.siom79.japicmp</groupId>
                     <artifactId>japicmp-maven-plugin</artifactId>
-                    <version>0.22.0</version>
+                    <version>0.23.0</version>
                     <configuration>
                         <oldVersion>
                             <dependency>
@@ -559,7 +561,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.5.0</version>
                     <configuration>
                         <configLocation>${checkstyle.configLocation}</configLocation>
                         <suppressionsLocation>${checkstyle.supressionsLocation}</suppressionsLocation>
@@ -584,7 +586,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>10.17.0</version>
+                            <version>10.18.1</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -721,7 +723,7 @@
                 -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -885,11 +887,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -1092,13 +1096,6 @@
 
             <!-- ... -->
             <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
                 <groupId>org.junit-pioneer</groupId>
                 <artifactId>junit-pioneer</artifactId>
                 <version>2.2.0</version>
@@ -1183,6 +1180,20 @@
                 <artifactId>log4j-core-test</artifactId>
                 <version>${log4j.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -1461,6 +1472,12 @@
                 <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven.skins</groupId>
+                <artifactId>maven-fluido-skin</artifactId>
+                <version>${fluido-skin.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -1502,7 +1519,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>3.5.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                 </configuration>
@@ -1516,7 +1533,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.24.0</version>
+                <version>3.25.0</version>
             </plugin>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
