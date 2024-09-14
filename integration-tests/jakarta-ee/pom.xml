@@ -40,6 +40,7 @@
         <arquillian.core.version>1.9.1.Final</arquillian.core.version>
         <arquillian.payara5.version>2.5</arquillian.payara5.version>
         <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
+        <shrinkwrap.resolver.version>3.3.1</shrinkwrap.resolver.version>
         <drone.browser>firefox</drone.browser>
 
         <payara.version>5.2022.5.jdk21</payara.version>
@@ -246,7 +247,7 @@
             <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-bom</artifactId>
-                <version>3.3.1</version>
+                <version>${shrinkwrap.resolver.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
