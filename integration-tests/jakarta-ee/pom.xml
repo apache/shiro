@@ -40,6 +40,7 @@
         <arquillian.core.version>1.9.1.Final</arquillian.core.version>
         <arquillian.payara5.version>2.5</arquillian.payara5.version>
         <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
+        <shrinkwrap.resolver.version>3.3.1</shrinkwrap.resolver.version>
         <drone.browser>firefox</drone.browser>
 
         <payara.version>5.2022.5.jdk21</payara.version>
@@ -213,6 +214,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>6.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.eu.ingwar.tools</groupId>
             <artifactId>arquillian-suite-extension</artifactId>
             <version>1.2.2</version>
@@ -246,7 +253,7 @@
             <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-bom</artifactId>
-                <version>3.3.1</version>
+                <version>${shrinkwrap.resolver.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -283,6 +290,7 @@
                         <webdriver.browser>${drone.browser}</webdriver.browser>
                         <webdriver.chrome.binary>${drone.chrome.binary}</webdriver.chrome.binary>
                         <webdriver.firefox.binary>${drone.firefox.binary}</webdriver.firefox.binary>
+                        <org.jboss.shrinkwrap.resolver.maven.skipCompilation>true</org.jboss.shrinkwrap.resolver.maven.skipCompilation>
                     </systemPropertyVariables>
                     <argLine>${failsafe.argLine} ${payara.argLine}</argLine>
                     <skip>${jakartaee.it.skip}</skip>
