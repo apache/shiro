@@ -33,12 +33,17 @@ import org.apache.shiro.web.env.WebEnvironment;
 @WebListener
 public class EnvironmentLoaderListener extends EnvironmentLoader implements ServletContextListener {
     private static final String SHIRO_EE_DISABLED_PARAM = "org.apache.shiro.ee.disabled";
+    private static final String SHIRO_EE_REDIRECT_DISABLED_PARAM = "org.apache.shiro.ee.redirect.disabled";
     private static final String FORM_RESUBMIT_DISABLED_PARAM = "org.apache.shiro.form-resubmit.disabled";
     private static final String FORM_RESUBMIT_SECURE_COOKIES = "org.apache.shiro.form-resubmit.secure-cookies";
     private static final String SHIRO_WEB_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.disable-principal";
 
     public static boolean isShiroEEDisabled(ServletContext ctx) {
         return Boolean.TRUE.equals(ctx.getAttribute(SHIRO_EE_DISABLED_PARAM));
+    }
+
+    public static boolean isShiroEERedirectDisabled(ServletContext ctx) {
+        return Boolean.TRUE.equals(ctx.getAttribute(SHIRO_EE_REDIRECT_DISABLED_PARAM));
     }
 
     public static boolean isFormResubmitDisabled(ServletContext ctx) {
@@ -57,6 +62,9 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
     public void contextInitialized(ServletContextEvent sce) {
         if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_DISABLED_PARAM))) {
             sce.getServletContext().setAttribute(SHIRO_EE_DISABLED_PARAM, Boolean.TRUE);
+        }
+        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_REDIRECT_DISABLED_PARAM))) {
+            sce.getServletContext().setAttribute(SHIRO_EE_REDIRECT_DISABLED_PARAM, Boolean.TRUE);
         }
         if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(FORM_RESUBMIT_DISABLED_PARAM))) {
             sce.getServletContext().setAttribute(FORM_RESUBMIT_DISABLED_PARAM, Boolean.TRUE);

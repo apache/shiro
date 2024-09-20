@@ -93,7 +93,7 @@ public class Forms {
         }
 
         public boolean redirectIfLoggedIn() {
-            return redirectIfLoggedIn("");
+            return redirectIfLoggedIn("/");
         }
 
         public boolean redirectIfLoggedIn(String view) {
@@ -155,7 +155,7 @@ public class Forms {
     public static void login(String username, String password, boolean rememberMe) {
         try {
             SecurityUtils.getSubject().login(new UsernamePasswordToken(username, password, rememberMe));
-            redirectToSaved(Faces.getRequestAttribute(LOGIN_PREDICATE_ATTR_NAME), "");
+            redirectToSaved(Faces.getRequestAttribute(LOGIN_PREDICATE_ATTR_NAME), "/");
         } catch (AuthenticationException e) {
             Faces.setFlashAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME, e);
             int loginFailedWaitTime = Faces.getRequestAttribute(LOGIN_WAITTIME_ATTR_NAME);
