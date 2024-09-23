@@ -395,11 +395,11 @@
                                             }
                                         }
 
-                                        int sslPort = portbase + 81
+                                        int httpsPort = portbase + 81
 
                                         project.properties.'payara.portbase' = portbase as String
                                         project.properties.'payara.adminport' = adminPort as String
-                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -DsslPort=$sslPort" as String
+                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -DhttpsPort=$httpsPort" as String
                                         project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
                                         println "Payara: portbase = ${project.properties.'payara.portbase'}, " +
                                                 "argLine = ${project.properties.'payara.argLine'}"
