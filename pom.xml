@@ -123,7 +123,7 @@
         <bytebuddy.version>1.15.3</bytebuddy.version>
         <gmaven.version>4.0.1</gmaven.version>
         <groovy.version>4.0.23</groovy.version>
-        <junit.version>5.11.1</junit.version>
+        <junit.version>5.11.2</junit.version>
         <junit.server.jetty.version>3.3.0</junit.server.jetty.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
