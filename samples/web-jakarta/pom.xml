@@ -33,7 +33,7 @@
 
     <properties>
         <meecrowave.version>1.2.15</meecrowave.version>
-        <tomcat.version>10.1.30</tomcat.version>
+        <tomcat.version>11.0.0</tomcat.version>
         <jacoco.skip>true</jacoco.skip>
     </properties>
 
