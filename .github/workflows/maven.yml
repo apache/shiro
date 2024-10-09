@@ -101,7 +101,7 @@ jobs:
           -Pskip_jakarta_ee_tests
 
       - name: Archive test run logs
-        uses: actions/upload-artifact@604373da6381bf24206979c74d06a550515601b9 # v4.4.1
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
         if: always()
         with:
           name: test-logs-${{ matrix.os }}-${{ matrix.jdk }}-${{ matrix.dist }}
