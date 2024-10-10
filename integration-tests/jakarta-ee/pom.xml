@@ -50,6 +50,7 @@
         <mac-backup-file/>
         <create-domain-skip>true</create-domain-skip>
         <domain.name>domain1</domain.name>
+        <payara.https.port>8181</payara.https.port>
 
         <jakartaee.it.skip>${skipITs}</jakartaee.it.skip>
         <integration.modes.skip>${jakartaee.it.skip}</integration.modes.skip>
@@ -287,6 +288,7 @@
                         <integration.test.mode>${integration.test.mode}</integration.test.mode>
                         <gh_user>${gh_user}</gh_user>
                         <gh_token>${gh_token}</gh_token>
+                        <httpsPort>${payara.https.port}</httpsPort>
                         <webdriver.browser>${drone.browser}</webdriver.browser>
                         <webdriver.chrome.binary>${drone.chrome.binary}</webdriver.chrome.binary>
                         <webdriver.firefox.binary>${drone.firefox.binary}</webdriver.firefox.binary>
@@ -399,7 +401,7 @@
 
                                         project.properties.'payara.portbase' = portbase as String
                                         project.properties.'payara.adminport' = adminPort as String
-                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -DhttpsPort=$httpsPort" as String
+                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -Dpayara.https.port=$httpsPort" as String
                                         project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
                                         println "Payara: portbase = ${project.properties.'payara.portbase'}, " +
                                                 "argLine = ${project.properties.'payara.argLine'}"
