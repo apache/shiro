@@ -115,7 +115,7 @@
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
         <htmlunit.version>4.5.0</htmlunit.version>
-        <bouncycastle.version>1.78.1</bouncycastle.version>
+        <bouncycastle.version>1.79</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.4.0</easymock.version>
