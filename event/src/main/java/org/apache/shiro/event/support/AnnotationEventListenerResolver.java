@@ -63,7 +63,7 @@ public class AnnotationEventListenerResolver implements EventListenerResolver {
             return Collections.emptyList();
         }
 
-        List<EventListener> listeners = new ArrayList<EventListener>(methods.size());
+        List<EventListener> listeners = new ArrayList<>(methods.size());
 
         for (Method m : methods) {
             listeners.add(new SingleArgumentMethodEventListener(instance, m));

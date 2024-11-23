@@ -46,8 +46,8 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
     private Set<String> searchPackages;
 
     public DefaultHashFormatFactory() {
-        this.searchPackages = new HashSet<String>();
-        this.formatClassNames = new HashMap<String, String>();
+        this.searchPackages = new HashSet<>();
+        this.formatClassNames = new HashMap<>();
     }
 
     /**

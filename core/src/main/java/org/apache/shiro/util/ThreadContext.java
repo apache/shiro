@@ -60,7 +60,7 @@ public abstract class ThreadContext {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadContext.class);
 
-    private static final ThreadLocal<Map<Object, Object>> RESOURCES = new InheritableThreadLocalMap<Map<Object, Object>>();
+    private static final ThreadLocal<Map<Object, Object>> RESOURCES = new InheritableThreadLocalMap<>();
 
     /**
      * Default no-argument constructor.
@@ -78,7 +78,7 @@ public abstract class ThreadContext {
         if (RESOURCES.get() == null) {
             return Collections.emptyMap();
         } else {
-            return new HashMap<Object, Object>(RESOURCES.get());
+            return new HashMap<>(RESOURCES.get());
         }
     }
 
@@ -115,7 +115,7 @@ public abstract class ThreadContext {
 
     private static void ensureResourcesInitialized() {
         if (RESOURCES.get() == null) {
-            RESOURCES.set(new HashMap<Object, Object>());
+            RESOURCES.set(new HashMap<>());
         }
     }
 
@@ -339,6 +339,7 @@ public abstract class ThreadContext {
          * @param parentValue the parent value, a HashMap as defined in the {@link #initialValue()} method.
          * @return the HashMap to be used by any parent-spawned child threads (a clone of the parent HashMap).
          */
+        @Override
         @SuppressWarnings({"unchecked"})
         protected Map<Object, Object> childValue(Map<Object, Object> parentValue) {
             if (parentValue != null) {

@@ -78,7 +78,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
 
     protected Collection getPrincipalsLazy(String realmName) {
         if (realmPrincipals == null) {
-            realmPrincipals = new LinkedHashMap<String, Set>();
+            realmPrincipals = new LinkedHashMap<>();
         }
         Set principals = realmPrincipals.get(realmName);
         if (principals == null) {
@@ -158,7 +158,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         if (realmPrincipals == null || realmPrincipals.isEmpty()) {
             return Collections.EMPTY_SET;
         }
-        Set<T> typed = new LinkedHashSet<T>();
+        Set<T> typed = new LinkedHashSet<>();
         Collection<Set> values = realmPrincipals.values();
         for (Set set : values) {
             for (Object o : set) {

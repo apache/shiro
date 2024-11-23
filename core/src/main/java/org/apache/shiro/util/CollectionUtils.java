@@ -48,7 +48,7 @@ public final class CollectionUtils {
             return Collections.singleton(elements[0]);
         }
 
-        LinkedHashSet<E> set = new LinkedHashSet<E>(elements.length * 4 / 3 + 1);
+        LinkedHashSet<E> set = new LinkedHashSet<>(elements.length * 4 / 3 + 1);
         Collections.addAll(set, elements);
         return set;
     }

@@ -125,7 +125,7 @@ public class SimpleHashProvider implements HashSpi {
             Optional<Object> secretSalt = Optional.ofNullable(request.getParameters().get(Parameters.PARAMETER_SECRET_SALT));
 
             return secretSalt
-                    .map(salt -> (String) salt)
+                    .map(String.class::cast)
                     .map(salt -> Base64.getDecoder().decode(salt))
                     .map(SimpleByteSource::new)
                     .orElse(null);

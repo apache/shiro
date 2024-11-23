@@ -86,7 +86,7 @@ public final class Ini implements Map<String, Ini.Section> {
      * Creates a new empty {@code Ini} instance.
      */
     public Ini() {
-        this.sections = new LinkedHashMap<String, Section>();
+        this.sections = new LinkedHashMap<>();
     }
 
     /**
@@ -312,15 +312,10 @@ public final class Ini implements Map<String, Ini.Section> {
      * @param reader the {@code Reader} from which to read the INI-formatted text
      */
     public void load(Reader reader) {
-        Scanner scanner = new Scanner(reader);
-        try {
+        try (Scanner scanner = new Scanner(reader)) {
             load(scanner);
-        } finally {
-            try {
-                scanner.close();
-            } catch (Exception e) {
-                LOGGER.debug("Unable to cleanly close the InputStream scanner.  Non-critical - ignoring.", e);
-            }
+        } catch (Exception e) {
+            LOGGER.debug("Unable to process input. Non-critical - ignoring.", e);
         }
     }
 
@@ -532,7 +527,7 @@ public final class Ini implements Map<String, Ini.Section> {
                 throw new NullPointerException("name");
             }
             this.name = name;
-            this.props = new LinkedHashMap<String, String>();
+            this.props = new LinkedHashMap<>();
         }
 
         private Section(String name, String sectionContent) {
@@ -625,7 +620,7 @@ public final class Ini implements Map<String, Ini.Section> {
         }
 
         private static Map<String, String> toMapProps(String content) {
-            Map<String, String> props = new LinkedHashMap<String, String>();
+            Map<String, String> props = new LinkedHashMap<>();
             String line;
             StringBuilder lineBuffer = new StringBuilder();
             Scanner scanner = new Scanner(content);

@@ -214,8 +214,8 @@ public class AntPathMatcher implements PatternMatcher {
             strLoop:
             for (int i = 0; i <= strLength - patLength; i++) {
                 for (int j = 0; j < patLength; j++) {
-                    String subPat = (String) pattDirs[pattIdxStart + j + 1];
-                    String subStr = (String) pathDirs[pathIdxStart + i + j];
+                    String subPat = pattDirs[pattIdxStart + j + 1];
+                    String subStr = pathDirs[pathIdxStart + i + j];
                     if (!matchStrings(subPat, subStr)) {
                         continue strLoop;
                     }
@@ -281,11 +281,9 @@ public class AntPathMatcher implements PatternMatcher {
             }
             for (int i = 0; i <= patIdxEnd; i++) {
                 ch = patArr[i];
-                if (ch != '?') {
-                    if (ch != strArr[i]) {
-                        // Character mismatch
-                        return false;
-                    }
+                if (ch != '?' && ch != strArr[i]) {
+                    // Character mismatch
+                    return false;
                 }
             }
             // String matches against pattern
@@ -300,11 +298,9 @@ public class AntPathMatcher implements PatternMatcher {
 
         // Process characters before first star
         while ((ch = patArr[patIdxStart]) != '*' && strIdxStart <= strIdxEnd) {
-            if (ch != '?') {
-                if (ch != strArr[strIdxStart]) {
-                    // Character mismatch
-                    return false;
-                }
+            if (ch != '?' && ch != strArr[strIdxStart]) {
+                // Character mismatch
+                return false;
             }
             patIdxStart++;
             strIdxStart++;
@@ -322,11 +318,9 @@ public class AntPathMatcher implements PatternMatcher {
 
         // Process characters after last star
         while ((ch = patArr[patIdxEnd]) != '*' && strIdxStart <= strIdxEnd) {
-            if (ch != '?') {
-                if (ch != strArr[strIdxEnd]) {
-                    // Character mismatch
-                    return false;
-                }
+            if (ch != '?' && ch != strArr[strIdxEnd]) {
+                // Character mismatch
+                return false;
             }
             patIdxEnd--;
             strIdxEnd--;
@@ -366,10 +360,8 @@ public class AntPathMatcher implements PatternMatcher {
             for (int i = 0; i <= strLength - patLength; i++) {
                 for (int j = 0; j < patLength; j++) {
                     ch = patArr[patIdxStart + j + 1];
-                    if (ch != '?') {
-                        if (ch != strArr[strIdxStart + i + j]) {
-                            continue strLoop;
-                        }
+                    if (ch != '?' && ch != strArr[strIdxStart + i + j]) {
+                        continue strLoop;
                     }
                 }
 

@@ -388,7 +388,7 @@ public final class StringUtils {
             return null;
         }
 
-        List<String> tokens = new ArrayList<String>();
+        List<String> tokens = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         boolean inQuotes = false;
 
@@ -545,7 +545,7 @@ public final class StringUtils {
             return Collections.singleton(elements[0]);
         }
 
-        LinkedHashSet<E> set = new LinkedHashSet<E>(elements.length * 4 / 3 + 1);
+        LinkedHashSet<E> set = new LinkedHashSet<>(elements.length * 4 / 3 + 1);
         Collections.addAll(set, elements);
         return set;
     }

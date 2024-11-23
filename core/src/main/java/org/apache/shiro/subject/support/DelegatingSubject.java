@@ -398,7 +398,7 @@ public class DelegatingSubject implements Subject {
     }
 
     public <V> Callable<V> associateWith(Callable<V> callable) {
-        return new SubjectCallable<V>(this, callable);
+        return new SubjectCallable<>(this, callable);
     }
 
     public Runnable associateWith(Runnable runnable) {
@@ -421,6 +421,7 @@ public class DelegatingSubject implements Subject {
             owner = owningSubject;
         }
 
+        @Override
         public void stop() throws InvalidSessionException {
             super.stop();
             owner.sessionStopped();
@@ -500,7 +501,7 @@ public class DelegatingSubject implements Subject {
         }
         List<PrincipalCollection> stack = getRunAsPrincipalsStack();
         if (stack == null) {
-            stack = new CopyOnWriteArrayList<PrincipalCollection>();
+            stack = new CopyOnWriteArrayList<>();
         }
         stack.add(0, principals);
         Session session = getSession();

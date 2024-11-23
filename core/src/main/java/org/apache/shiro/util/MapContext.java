@@ -40,7 +40,7 @@ public class MapContext implements Map<String, Object>, Serializable {
     private final Map<String, Object> backingMap;
 
     public MapContext() {
-        this.backingMap = new HashMap<String, Object>();
+        this.backingMap = new HashMap<>();
     }
 
     public MapContext(Map<String, Object> map) {

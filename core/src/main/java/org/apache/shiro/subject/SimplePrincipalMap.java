@@ -69,7 +69,7 @@ public class SimplePrincipalMap implements PrincipalMap {
 
     protected Map<String, Object> ensureCombinedPrincipals() {
         if (this.combinedPrincipals == null) {
-            this.combinedPrincipals = new HashMap<String, Object>();
+            this.combinedPrincipals = new HashMap<>();
         }
         return this.combinedPrincipals;
     }
@@ -145,19 +145,19 @@ public class SimplePrincipalMap implements PrincipalMap {
         for (Object value : this.combinedPrincipals.values()) {
             if (type.isInstance(value)) {
                 if (instances == null) {
-                    instances = new ArrayList<T>();
+                    instances = new ArrayList<>();
                 }
                 instances.add(type.cast(value));
             }
         }
-        return instances != null ? instances : Collections.<T>emptyList();
+        return instances != null ? instances : Collections.emptyList();
     }
 
     public List asList() {
         if (CollectionUtils.isEmpty(this.combinedPrincipals)) {
             return Collections.emptyList();
         }
-        List<Object> list = new ArrayList<Object>(this.combinedPrincipals.size());
+        List<Object> list = new ArrayList<>(this.combinedPrincipals.size());
         list.addAll(this.combinedPrincipals.values());
         return list;
     }
@@ -166,7 +166,7 @@ public class SimplePrincipalMap implements PrincipalMap {
         if (CollectionUtils.isEmpty(this.combinedPrincipals)) {
             return Collections.emptySet();
         }
-        Set<Object> set = new HashSet<Object>(this.combinedPrincipals.size());
+        Set<Object> set = new HashSet<>(this.combinedPrincipals.size());
         set.addAll(this.combinedPrincipals.values());
         return set;
     }
@@ -214,15 +214,15 @@ public class SimplePrincipalMap implements PrincipalMap {
         }
         if (this.realmPrincipals == null) {
             if (!CollectionUtils.isEmpty(principals)) {
-                this.realmPrincipals = new HashMap<String, Map<String, Object>>();
-                return this.realmPrincipals.put(realmName, new HashMap<String, Object>(principals));
+                this.realmPrincipals = new HashMap<>();
+                return this.realmPrincipals.put(realmName, new HashMap<>(principals));
             } else {
                 return null;
             }
         } else {
             Map<String, Object> existingPrincipals = this.realmPrincipals.remove(realmName);
             if (!CollectionUtils.isEmpty(principals)) {
-                this.realmPrincipals.put(realmName, new HashMap<String, Object>(principals));
+                this.realmPrincipals.put(realmName, new HashMap<>(principals));
             }
             return existingPrincipals;
         }
@@ -239,11 +239,11 @@ public class SimplePrincipalMap implements PrincipalMap {
             return removeRealmPrincipal(realmName, principalName);
         }
         if (this.realmPrincipals == null) {
-            this.realmPrincipals = new HashMap<String, Map<String, Object>>();
+            this.realmPrincipals = new HashMap<>();
         }
         Map<String, Object> principals = this.realmPrincipals.get(realmName);
         if (principals == null) {
-            principals = new HashMap<String, Object>();
+            principals = new HashMap<>();
             this.realmPrincipals.put(realmName, principals);
         }
         return principals.put(principalName, principal);

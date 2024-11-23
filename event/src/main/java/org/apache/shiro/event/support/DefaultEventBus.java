@@ -103,7 +103,7 @@ public class DefaultEventBus implements EventBus {
 
     public DefaultEventBus() {
         //not thread safe, so we need locks:
-        this.registry = new LinkedHashMap<Object, Subscription>();
+        this.registry = new LinkedHashMap<>();
         ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
         this.registryReadLock = rwl.readLock();
         this.registryWriteLock = rwl.writeLock();
@@ -190,14 +190,14 @@ public class DefaultEventBus implements EventBus {
         private final List<EventListener> listeners;
 
         Subscription(List<EventListener> listeners) {
-            List<EventListener> toSort = new ArrayList<EventListener>(listeners);
+            List<EventListener> toSort = new ArrayList<>(listeners);
             toSort.sort(EVENT_LISTENER_COMPARATOR);
             this.listeners = toSort;
         }
 
         public void onEvent(Object event) {
 
-            Set<Object> delivered = new HashSet<Object>();
+            Set<Object> delivered = new HashSet<>();
 
             for (EventListener listener : this.listeners) {
                 Object target = listener;

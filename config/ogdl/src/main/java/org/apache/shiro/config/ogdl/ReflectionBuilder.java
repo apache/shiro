@@ -79,7 +79,6 @@ public class ReflectionBuilder {
     private static final String HEX_BEGIN_TOKEN = "0x";
     private static final String NULL_VALUE_TOKEN = "null";
     private static final String EMPTY_STRING_VALUE_TOKEN = "\"\"";
-    private static final char STRING_VALUE_DELIMETER = '"';
     private static final char MAP_PROPERTY_BEGIN_TOKEN = '[';
     private static final char MAP_PROPERTY_END_TOKEN = ']';
 
@@ -156,7 +155,7 @@ public class ReflectionBuilder {
 
     //@since 1.3
     private Map<String, Object> createDefaultObjectMap() {
-        Map<String, Object> map = new LinkedHashMap<String, Object>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put(EVENT_BUS_NAME, new DefaultEventBus());
         return map;
     }
@@ -324,7 +323,7 @@ public class ReflectionBuilder {
         final Map<String, Object> immutableObjects = Collections.unmodifiableMap(objects);
 
         //destroy objects in the opposite order they were initialized:
-        List<Map.Entry<String, ?>> entries = new ArrayList<Map.Entry<String, ?>>(objects.entrySet());
+        List<Map.Entry<String, ?>> entries = new ArrayList<>(objects.entrySet());
         Collections.reverse(entries);
 
         for (Map.Entry<String, ?> entry : entries) {
@@ -497,10 +496,10 @@ public class ReflectionBuilder {
             }
         }
 
-        Set<String> setTokens = new LinkedHashSet<String>(Arrays.asList(tokens));
+        Set<String> setTokens = new LinkedHashSet<>(Arrays.asList(tokens));
 
         //now convert into correct values and/or references:
-        Set<Object> values = new LinkedHashSet<Object>(setTokens.size());
+        Set<Object> values = new LinkedHashSet<>(setTokens.size());
         for (String token : setTokens) {
             Object value = resolveValue(token);
             values.add(value);
@@ -523,7 +522,7 @@ public class ReflectionBuilder {
             }
         }
 
-        Map<String, String> mapTokens = new LinkedHashMap<String, String>(tokens.length);
+        Map<String, String> mapTokens = new LinkedHashMap<>(tokens.length);
         for (String token : tokens) {
             String[] kvPair = StringUtils.split(token, MAP_KEY_VALUE_DELIMITER);
             if (kvPair == null || kvPair.length != 2) {
@@ -536,7 +535,7 @@ public class ReflectionBuilder {
         }
 
         //now convert into correct values and/or references:
-        Map<Object, Object> map = new LinkedHashMap<Object, Object>(mapTokens.size());
+        Map<Object, Object> map = new LinkedHashMap<>(mapTokens.size());
         for (Map.Entry<String, String> entry : mapTokens.entrySet()) {
             Object key = resolveValue(entry.getKey());
             Object value = resolveValue(entry.getValue());
@@ -562,7 +561,7 @@ public class ReflectionBuilder {
         }
 
         //now convert into correct values and/or references:
-        List<Object> values = new ArrayList<Object>(tokens.length);
+        List<Object> values = new ArrayList<>(tokens.length);
         for (String token : tokens) {
             Object value = resolveValue(token);
             values.add(value);
@@ -585,7 +584,7 @@ public class ReflectionBuilder {
         }
 
         //now convert into correct values and/or references:
-        List<Object> values = new ArrayList<Object>(tokens.length);
+        List<Object> values = new ArrayList<>(tokens.length);
         for (String token : tokens) {
             Object value = resolveValue(token);
             values.add(value);
@@ -674,7 +673,7 @@ public class ReflectionBuilder {
                     map.put(mapKey, value);
                 } else {
                     //must be an array property.  Convert the key string to an index:
-                    int index = Integer.valueOf(keyString);
+                    int index = Integer.parseInt(keyString);
                     setIndexedProperty(object, mapPropertyPath, index, value);
                 }
             }
@@ -688,7 +687,7 @@ public class ReflectionBuilder {
                 referencedValue = map.get(mapKey);
             } else {
                 //must be an array property:
-                int index = Integer.valueOf(keyString);
+                int index = Integer.parseInt(keyString);
                 referencedValue = getIndexedProperty(object, mapPropertyPath, index);
             }
 
@@ -705,7 +704,7 @@ public class ReflectionBuilder {
         try {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Applying property [{}] value [{}] on object of type [{}]",
-                        new Object[] {propertyPath, value, object.getClass().getName()});
+                        propertyPath, value, object.getClass().getName());
             }
             beanUtilsBean.setProperty(object, propertyPath, value);
         } catch (Exception e) {
@@ -799,8 +798,8 @@ public class ReflectionBuilder {
 
     private final class BeanConfigurationProcessor {
 
-        private final List<Statement> statements = new ArrayList<Statement>();
-        private final List<BeanConfiguration> beanConfigurations = new ArrayList<BeanConfiguration>();
+        private final List<Statement> statements = new ArrayList<>();
+        private final List<BeanConfiguration> beanConfigurations = new ArrayList<>();
 
         public void add(Statement statement) {
             //we execute bean configuration statements in the order they are declared.
@@ -876,7 +875,7 @@ public class ReflectionBuilder {
     private final class BeanConfiguration {
 
         private final InstantiationStatement instantiationStatement;
-        private final List<AssignmentStatement> assignments = new ArrayList<AssignmentStatement>();
+        private final List<AssignmentStatement> assignments = new ArrayList<>();
         private final String beanName;
         private Object bean;
 
