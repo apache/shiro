@@ -75,6 +75,8 @@
         <surefire.argLine></surefire.argLine>
         <!--suppress CheckTagEmptyBody -->
         <failsafe.argLine></failsafe.argLine>
+        <junit5.parallel.tests.enabled>true</junit5.parallel.tests.enabled>
+        <junit5.parallel.tests.mode>concurrent</junit5.parallel.tests.mode>
         <nexus.deploy.skip>false</nexus.deploy.skip>
         <nexus-staging-profile>nexus-staging</nexus-staging-profile>
         <jacocoAgent/>
@@ -281,8 +283,8 @@
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         <properties>
                             <configurationParameters>
-                                junit.jupiter.execution.parallel.enabled = true
-                                junit.jupiter.execution.parallel.mode.default = concurrent
+                                junit.jupiter.execution.parallel.enabled = ${junit5.parallel.tests.enabled}
+                                junit.jupiter.execution.parallel.mode.default = ${junit5.parallel.tests.mode}
                             </configurationParameters>
                         </properties>
                     </configuration>

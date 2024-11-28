@@ -31,6 +31,7 @@ import org.apache.shiro.env.Environment;
 import org.apache.shiro.event.EventBus;
 import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.event.Subscribe;
+import org.apache.shiro.lang.util.Destroyable;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
@@ -38,7 +39,7 @@ import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.subject.Subject;
 import org.junit.jupiter.api.Test;
-import org.apache.shiro.lang.util.Destroyable;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.util.Collection;
 
@@ -51,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Isolated("System property usage")
 public class ShiroModuleTest {
 
     @Test
