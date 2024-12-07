@@ -71,7 +71,6 @@
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2022-03-22T23:08:15Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
-        <jacocoOutputFile>${root.dir}/target/jacoco.exec</jacocoOutputFile>
         <!--suppress CheckTagEmptyBody -->
         <surefire.argLine></surefire.argLine>
         <!--suppress CheckTagEmptyBody -->
@@ -685,9 +684,15 @@
                         <exclude>org/apache/shiro/**/Deployments</exclude>
                     </excludes>
                     <propertyName>jacocoAgent</propertyName>
-                    <destFile>${jacocoOutputFile}</destFile>
-                    <dataFile>${jacocoOutputFile}</dataFile>
                     <classDumpDir>${root.dir}/target/classes</classDumpDir>
+                    <fileSets>
+                        <fileSet>
+                            <directory>${project.basedir}</directory>
+                            <includes>
+                                <include>**/*.exec</include>
+                            </includes>
+                        </fileSet>
+                    </fileSets>
                 </configuration>
                 <executions>
                     <execution>
