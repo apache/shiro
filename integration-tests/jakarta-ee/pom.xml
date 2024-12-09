@@ -293,6 +293,7 @@
                         <webdriver.chrome.binary>${drone.chrome.binary}</webdriver.chrome.binary>
                         <webdriver.firefox.binary>${drone.firefox.binary}</webdriver.firefox.binary>
                         <org.jboss.shrinkwrap.resolver.maven.skipCompilation>true</org.jboss.shrinkwrap.resolver.maven.skipCompilation>
+                        <org.jboss.shrinkwrap.resolver.maven.ignoreDecryptionProblems>true</org.jboss.shrinkwrap.resolver.maven.ignoreDecryptionProblems>
                     </systemPropertyVariables>
                     <argLine>${failsafe.argLine} ${payara.argLine}</argLine>
                     <skip>${jakartaee.it.skip}</skip>

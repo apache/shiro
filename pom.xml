@@ -365,6 +365,7 @@
                             <exclude>**/faces-config.NavData</exclude>
                             <exclude>**/org.mockito.plugins.MockMaker</exclude>
                             <exclude>.mvn/*</exclude>
+                            <exclude>.jenkins_maven_args</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
@@ -1569,6 +1570,7 @@
                         <exclude>**/faces-config.NavData</exclude>
                         <exclude>**/org.mockito.plugins.MockMaker</exclude>
                         <exclude>.mvn/*</exclude>
+                        <exclude>.jenkins_maven_args</exclude>
                     </excludes>
                 </configuration>
             </plugin>
