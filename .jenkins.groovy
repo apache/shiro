@@ -86,14 +86,14 @@ pipeline {
                     stage('License check') {
                         steps {
                             echo 'License check'
-                            sh 'mvn --batch-mode -Drat.consoleOutput=true apache-rat:check'
+                            sh './mvnw --batch-mode -Drat.consoleOutput=true apache-rat:check'
                         }
                     }
 
                     stage('Build') {
                         steps {
                             echo 'Building'
-                            sh 'mvn clean verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs \
+                            sh './mvnw clean verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs \
                             -Dmaven.test.failure.ignore=true -Pskip_jakarta_ee_tests'
                         }
                         post {
@@ -116,7 +116,7 @@ pipeline {
                         }
                         steps {
                             echo 'Deploying'
-                            sh 'mvn --batch-mode clean deploy -Pdocs -DskipTests -DskipITs'
+                            sh './mvnw --batch-mode clean deploy -Pdocs -DskipTests -DskipITs'
                         }
                     }
 
