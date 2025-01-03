@@ -123,7 +123,7 @@
         <easymock.version>5.5.0</easymock.version>
         <mockito.version>5.14.2</mockito.version>
         <bytebuddy.version>1.15.11</bytebuddy.version>
-        <gmaven.version>4.1.0</gmaven.version>
+        <gmaven.version>4.1.1</gmaven.version>
         <groovy.version>4.0.24</groovy.version>
         <junit.version>5.11.4</junit.version>
         <junit.server.jetty.version>3.3.1</junit.server.jetty.version>
