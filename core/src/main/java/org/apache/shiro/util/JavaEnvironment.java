@@ -119,7 +119,7 @@ public abstract class JavaEnvironment {
 
     /**
      * Get the major version code. This means we can do things like
-     * <code>if (getMajorVersion() < JAVA_14)</code>.
+     * <code>if (getMajorVersion() &lt; JAVA_14)</code>.
      *
      * @return a code comparable to the JAVA_XX codes in this class
      * @see #JAVA_13
