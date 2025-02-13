@@ -88,7 +88,7 @@
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
         <aspectj.version>1.9.20.1</aspectj.version>
-        <commons.beanutils.version>1.10.0</commons.beanutils.version>
+        <commons.beanutils.version>1.10.1</commons.beanutils.version>
         <commons.cli.version>1.9.0</commons.cli.version>
         <commons.collection.version>3.2.2</commons.collection.version>
         <commons.configuration2.version>2.11.0</commons.configuration2.version>
