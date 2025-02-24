@@ -18,8 +18,11 @@
  */
 package org.apache.shiro.spring.web;
 
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.spring.web.ee10.ShiroHttpServletRequestEE10;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.lang.util.Nameable;
 import org.apache.shiro.lang.util.StringUtils;
@@ -37,6 +40,7 @@ import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.apache.shiro.web.servlet.OncePerRequestFilter;
+import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -44,7 +48,7 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -78,12 +82,12 @@ import java.util.Map;
  * optional.
  * <p/>
  * This implementation is also a {@link BeanPostProcessor} and will acquire
- * any {@link javax.servlet.Filter Filter} beans defined independently in your Spring application context.  Upon
+ * any {@link jakarta.servlet.Filter Filter} beans defined independently in your Spring application context.  Upon
  * discovery, they will be automatically added to the {@link #setFilters(java.util.Map) map} keyed by the bean ID.
  * That ID can then be used in the filter chain definitions, for example:
  *
  * <pre>
- * &lt;bean id="<b>myCustomFilter</b>" class="com.class.that.implements.javax.servlet.Filter"/&gt;
+ * &lt;bean id="<b>myCustomFilter</b>" class="com.class.that.implements.jakarta.servlet.Filter"/&gt;
  * ...
  * &lt;bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean"&gt;
  *    ...
@@ -303,7 +307,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * <p/>
      * For example, just defining this bean in a web Spring XML application context:
      * <pre>
-     * &lt;bean id=&quot;myFilter&quot; class=&quot;com.class.that.implements.javax.servlet.Filter&quot;&gt;
+     * &lt;bean id=&quot;myFilter&quot; class=&quot;com.class.that.implements.jakarta.servlet.Filter&quot;&gt;
      * ...
      * &lt;/bean&gt;</pre>
      * Will automatically place that bean into this Filters map under the key '<b>myFilter</b>'.
@@ -595,5 +599,18 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
                 setFilterChainResolver(resolver);
             }
         }
+
+        /**
+         * Wraps the original HttpServletRequest in a {@link ShiroHttpServletRequest}, which is required for supporting
+         * Servlet Specification behavior backed by a {@link org.apache.shiro.subject.Subject Subject} instance.
+         *
+         * @param orig the original Servlet Container-provided incoming {@code HttpServletRequest} instance.
+         * @return {@link ShiroHttpServletRequest ShiroHttpServletRequest} instance wrapping the original.
+         * @since 1.0
+         */
+        protected ServletRequest wrapServletRequest(HttpServletRequest orig) {
+            return new ShiroHttpServletRequestEE10(orig, getServletContext(), isHttpSessions());
+        }
+
     }
 }

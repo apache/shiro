@@ -26,7 +26,7 @@ import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.easymock.Capture;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.anyObject;

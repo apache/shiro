@@ -30,8 +30,8 @@ import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
+import jakarta.inject.Singleton;
+import jakarta.servlet.ServletContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -45,7 +45,6 @@ public class SampleShiroServletModule extends ShiroWebModule {
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "deprecation"})
     protected void configureShiroWeb() {
         bindConstant().annotatedWith(Names.named("shiro.loginUrl")).to("/login.jsp");
         try {
@@ -58,7 +57,10 @@ public class SampleShiroServletModule extends ShiroWebModule {
         this.addFilterChain("/logout", LOGOUT);
         this.addFilterChain("/account/**", AUTHC);
 
-        this.addFilterChain("/remoting/**", AUTHC, config(ROLES, "b2bClient"), config(PERMS, "remote:invoke:lan,wan"));
+        this.addFilterChain("/remoting/**",
+                        filterConfig(AUTHC),
+                        filterConfig(ROLES, "b2bClient"),
+                        filterConfig(PERMS, "remote:invoke:lan,wan"));
     }
 
     @Provides

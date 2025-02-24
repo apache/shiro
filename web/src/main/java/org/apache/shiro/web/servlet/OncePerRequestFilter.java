@@ -21,10 +21,10 @@ package org.apache.shiro.web.servlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import java.io.IOException;
 
 /**
@@ -36,7 +36,7 @@ import java.io.IOException;
  * to identify that a request is already filtered. The default implementation
  * is based on the configured name of the concrete filter instance.
  * <h3>Controlling filter execution</h3>
- * 1.2 introduced the {@link #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method and
+ * 1.2 introduced the {@link #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)} method and
  * {@link #isEnabled()} property to allow explicit control over whether the filter executes (or allows passthrough)
  * for any given request.
  * <p/>
@@ -81,7 +81,7 @@ public abstract class OncePerRequestFilter extends NameableFilter {
      * <p/>
      * <b>*</b> This configuration property is for general configuration for any request that comes through
      * the filter.  The
-     * {@link #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse) isEnabled(request,response)}
+     * {@link #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) isEnabled(request,response)}
      * method actually determines whether or not if the filter is enabled based on the current request.
      *
      * @return {@code true} if this filter should <em>generally</em> execute, {@code false} if it should let the
@@ -214,7 +214,7 @@ public abstract class OncePerRequestFilter extends NameableFilter {
      * @param request current HTTP request
      * @return whether the given request should <i>not</i> be filtered
      * @throws ServletException in case of errors
-     * @deprecated in favor of overriding {@link #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
+     * @deprecated in favor of overriding {@link #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)}
      * for custom behavior.  This method will be removed in Shiro 2.0.
      */
     @Deprecated
@@ -226,7 +226,7 @@ public abstract class OncePerRequestFilter extends NameableFilter {
 
     /**
      * Same contract as for
-     * {@link #doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)},
+     * {@link #doFilter(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, jakarta.servlet.FilterChain)},
      * but guaranteed to be invoked only once per request.
      *
      * @param request  incoming {@code ServletRequest}

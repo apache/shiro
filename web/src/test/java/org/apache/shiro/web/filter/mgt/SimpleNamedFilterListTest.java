@@ -26,8 +26,8 @@ import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
 import org.apache.shiro.web.filter.authz.SslFilter;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

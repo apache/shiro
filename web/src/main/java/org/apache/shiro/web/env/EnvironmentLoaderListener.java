@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.web.env;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 /**
  * Bootstrap listener to startup and shutdown the web application's Shiro
@@ -59,7 +59,7 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
 
     /**
      * Destroys any previously created/bound {@code WebEnvironment} instance created by
-     * the {@link #contextInitialized(javax.servlet.ServletContextEvent)} method.
+     * the {@link #contextInitialized(jakarta.servlet.ServletContextEvent)} method.
      *
      * @param sce the ServletContextEvent triggered upon application shutdown
      */

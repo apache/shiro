@@ -31,8 +31,8 @@ import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterConfig;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterConfig;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;

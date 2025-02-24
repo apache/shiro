@@ -34,8 +34,8 @@ import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
+import jakarta.inject.Singleton;
+import jakarta.servlet.ServletContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 

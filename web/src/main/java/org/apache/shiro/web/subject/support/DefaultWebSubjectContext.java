@@ -23,8 +23,8 @@ import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * Default {@code WebSubjectContext} implementation that provides for additional storage and retrieval of

@@ -43,8 +43,7 @@
 
     <modules>
         <module>support</module>
-        <module>guice3</module>
-        <module>guice4</module>
+        <module>guice</module>
         <module>meecrowave-support</module>
         <module>jaxrs</module>
         <module>jakarta-ee-support</module>

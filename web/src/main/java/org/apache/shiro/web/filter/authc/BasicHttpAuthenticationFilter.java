@@ -23,9 +23,9 @@ import org.apache.shiro.lang.codec.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 /**
@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletRequest;
  * <li>The client then sends another request for the same resource with the following header:<br/>
  * <p><code>Authorization: Basic <em>Base64_encoded_username_and_password</em></code></p></li>
  * </ol>
- * The {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method will
+ * The {@link #onAccessDenied(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)} method will
  * only be called if the subject making the request is not
  * {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated}
  *
@@ -74,10 +74,10 @@ public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
      * <p/>
      * This implementation:
      * <ol><li>acquires the username and password based on the request's
-     * {@link #getAuthzHeader(javax.servlet.ServletRequest) authorization header} via the
-     * {@link #getPrincipalsAndCredentials(String, javax.servlet.ServletRequest) getPrincipalsAndCredentials} method</li>
+     * {@link #getAuthzHeader(jakarta.servlet.ServletRequest) authorization header} via the
+     * {@link #getPrincipalsAndCredentials(String, jakarta.servlet.ServletRequest) getPrincipalsAndCredentials} method</li>
      * <li>The return value of that method is converted to an <code>AuthenticationToken</code> via the
-     * {@link #createToken(String, String, javax.servlet.ServletRequest, javax.servlet.ServletResponse) createToken} method</li>
+     * {@link #createToken(String, String, jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) createToken} method</li>
      * <li>The created <code>AuthenticationToken</code> is returned.</li>
      * </ol>
      *
@@ -121,7 +121,7 @@ public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
      * return decoded.split(":");</code>
      *
      * @param scheme  the {@link #getAuthcScheme() authcScheme} found in the request
-     *                {@link #getAuthzHeader(javax.servlet.ServletRequest) authzHeader}.  It is ignored by this implementation,
+     *                {@link #getAuthzHeader(jakarta.servlet.ServletRequest) authzHeader}.  It is ignored by this implementation,
      *                but available to overriding implementations should they find it useful.
      * @param encoded the Base64-encoded username:password value found after the scheme in the header
      * @return the username (index 0)/password (index 1) pair obtained from the encoded header data.

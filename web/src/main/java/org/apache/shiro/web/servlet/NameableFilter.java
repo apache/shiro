@@ -20,13 +20,13 @@ package org.apache.shiro.web.servlet;
 
 import org.apache.shiro.lang.util.Nameable;
 
-import javax.servlet.FilterConfig;
+import jakarta.servlet.FilterConfig;
 
 /**
  * Allows a filter to be named via JavaBeans-compatible
  * {@link #getName()}/{@link #setName(String)} methods.  If no name is specified, the name of the filter will
  * default to the name given to it in {@code web.xml} (the {@code FilterConfig}'s
- * {@link javax.servlet.FilterConfig#getFilterName() filterName}).
+ * {@link jakarta.servlet.FilterConfig#getFilterName() filterName}).
  *
  * @since 1.0
  */
@@ -46,8 +46,8 @@ public abstract class NameableFilter extends AbstractFilter implements Nameable 
      * this.name = {@link #getFilterConfig() getFilterConfig()}.{@link FilterConfig#getFilterName() getName()};</pre>
      *
      * @return the filter name, or {@code null} if none available
-     * @see javax.servlet.GenericServlet#getServletName()
-     * @see javax.servlet.FilterConfig#getFilterName()
+     * @see jakarta.servlet.GenericServlet#getServletName()
+     * @see jakarta.servlet.FilterConfig#getFilterName()
      */
     protected String getName() {
         if (this.name == null) {
@@ -67,7 +67,7 @@ public abstract class NameableFilter extends AbstractFilter implements Nameable 
      * servlet container at start-up:
      * <pre>
      * this.name = {@link #getFilterConfig() getFilterConfig()}.
-     *     {@link javax.servlet.FilterConfig#getFilterName() getName()};</pre>
+     * {@link jakarta.servlet.FilterConfig#getFilterName() getName()};</pre>
      *
      * @param name the name of the filter.
      */

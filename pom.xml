@@ -112,9 +112,9 @@
         <quartz.docs.version>2.3.0</quartz.docs.version>
         <slf4j.version>2.0.17</slf4j.version>
         <log4j.version>2.24.3</log4j.version>
-        <spring.version>5.3.39</spring.version>
-        <spring-boot.version>2.7.18</spring-boot.version>
-        <guice.version>4.2.3</guice.version>
+        <spring.version>6.1.17</spring.version>
+        <spring-boot.version>3.0.13</spring-boot.version>
+        <guice.version>7.0.0</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
         <htmlunit.version>4.10.0</htmlunit.version>
         <bouncycastle.version>1.80</bouncycastle.version>
@@ -1251,9 +1251,9 @@
                 <optional>true</optional>
             </dependency>
             <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>2.2</version>
+                <groupId>jakarta.servlet.jsp</groupId>
+                <artifactId>jakarta.servlet.jsp-api</artifactId>
+                <version>3.0.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -1269,9 +1269,9 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>4.0.1</version>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>5.0.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -1337,8 +1337,8 @@
                         <artifactId>jacc</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>javax.servlet-api</artifactId>
+                        <groupId>jakarta.servlet</groupId>
+                        <artifactId>jakarta.servlet-api</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>jboss</groupId>
@@ -1446,11 +1446,6 @@
             <dependency>
                 <groupId>com.google.inject</groupId>
                 <artifactId>guice</artifactId>
-                <version>${guice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.inject.extensions</groupId>
-                <artifactId>guice-multibindings</artifactId>
                 <version>${guice.version}</version>
             </dependency>
             <dependency>

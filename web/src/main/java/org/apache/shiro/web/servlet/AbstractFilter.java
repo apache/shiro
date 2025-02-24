@@ -22,15 +22,15 @@ import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
 
 /**
  * Base abstract Filter simplifying Filter initialization and {@link #getInitParam(String) access} to init parameters.
  * Subclass initialization logic should be performed by overriding the {@link #onFilterConfigSet()} template method.
  * FilterChain execution logic (the
- * {@link #doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)} method
+ * {@link #doFilter(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, jakarta.servlet.FilterChain)} method
  * is left to subclasses.
  *
  * @since 1.0
@@ -46,7 +46,7 @@ public abstract class AbstractFilter extends ServletContextSupport implements Fi
 
     /**
      * Returns the servlet container specified {@code FilterConfig} instance provided at
-     * {@link #init(javax.servlet.FilterConfig) startup}.
+     * {@link #init(jakarta.servlet.FilterConfig) startup}.
      *
      * @return the servlet container specified {@code FilterConfig} instance provided at start-up.
      */
@@ -89,7 +89,7 @@ public abstract class AbstractFilter extends ServletContextSupport implements Fi
      * {@link #onFilterConfigSet() onFilterConfigSet()} to trigger any processing a subclass might wish to perform.
      *
      * @param filterConfig the servlet container supplied FilterConfig instance.
-     * @throws javax.servlet.ServletException if {@link #onFilterConfigSet() onFilterConfigSet()} throws an Exception.
+     * @throws jakarta.servlet.ServletException if {@link #onFilterConfigSet() onFilterConfigSet()} throws an Exception.
      */
     public final void init(FilterConfig filterConfig) throws ServletException {
         setFilterConfig(filterConfig);

@@ -50,8 +50,9 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
     protected boolean useNativeSessionManager;
 
     // Session Cookie info
+
     @Value("#{ @environment['shiro.sessionManager.cookie.name'] ?:"
-            + " T(org.apache.shiro.web.servlet.ShiroHttpSession).DEFAULT_SESSION_ID_NAME }")
+            + " T(org.apache.shiro.spring.web.ee10.ShiroHttpSessionEE10).DEFAULT_SESSION_ID_NAME }")
     protected String sessionIdCookieName;
 
     @Value("#{ @environment['shiro.sessionManager.cookie.maxAge'] ?:"

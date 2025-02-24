@@ -26,9 +26,9 @@ import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.Filter;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -95,8 +95,8 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * Returns the context path within the application based on the specified <code>request</code>.
      * <p/>
      * This implementation merely delegates to
-     * {@link WebUtils#getPathWithinApplication(javax.servlet.http.HttpServletRequest)
-     *      WebUtils.getPathWithinApplication(request)},
+     * {@link WebUtils#getPathWithinApplication(jakarta.servlet.http.HttpServletRequest)
+     * WebUtils.getPathWithinApplication(request)},
      * but can be overridden by subclasses for custom logic.
      *
      * @param request the incoming <code>ServletRequest</code>
@@ -165,15 +165,15 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     /**
      * Implementation that handles path-matching behavior before a request is evaluated.  If the path matches and
      * the filter
-     * {@link #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String, Object) isEnabled} for
+     * {@link #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, String, Object) isEnabled} for
      * that path/config, the request will be allowed through via the result from
-     * {@link #onPreHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) onPreHandle}.  If the
+     * {@link #onPreHandle(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, Object) onPreHandle}.  If the
      * path does not match or the filter is not enabled for that path, this filter will allow passthrough immediately
      * to allow the {@code FilterChain} to continue executing.
      * <p/>
      * In order to retain path-matching functionality, subclasses should not override this method if at all
      * possible, and instead override
-     * {@link #onPreHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) onPreHandle} instead.
+     * {@link #onPreHandle(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, Object) onPreHandle} instead.
      *
      * @param request  the incoming ServletRequest
      * @param response the outgoing ServletResponse
@@ -246,7 +246,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * @return {@code true} if the request should be able to continue, {@code false} if the filter will
      * handle the response directly.
      * @throws Exception if an error occurs
-     * @see #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String, Object)
+     * @see #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, String, Object)
      */
     protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         return true;
@@ -255,12 +255,12 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     @SuppressWarnings("UnusedParameters")
     /**
      * Path-matching version of the parent class's
-     * {@link #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method, but additionally allows
+     * {@link #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)} method, but additionally allows
      * for inspection of any path-specific configuration values corresponding to the specified request.  Subclasses
      * may wish to inspect this additional mapped configuration to determine if the filter is enabled or not.
      * <p/>
      * This method's default implementation ignores the {@code path} and {@code mappedValue} arguments and merely
-     * returns the value from a call to {@link #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}.
+     * returns the value from a call to {@link #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)}.
      * It is expected that subclasses override this method if they need to perform enable/disable logic for a specific
      * request based on any path-specific config for the filter instance.
      *
