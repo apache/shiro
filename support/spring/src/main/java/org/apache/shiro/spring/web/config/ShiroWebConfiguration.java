@@ -32,8 +32,10 @@ import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.web.ShiroUrlPathHelper;
 import org.apache.shiro.web.servlet.Cookie;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 
 import java.util.List;
 
@@ -41,6 +43,7 @@ import java.util.List;
  * @since 1.4.0
  */
 @Configuration
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class ShiroWebConfiguration extends AbstractShiroWebConfiguration {
 
     @Bean
