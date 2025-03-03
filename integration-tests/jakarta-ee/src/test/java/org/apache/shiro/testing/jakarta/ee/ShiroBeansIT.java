@@ -114,8 +114,7 @@ public class ShiroBeansIT {
         webDriver.get(baseURL + "lastException");
         String exceptionText = webDriver.findElement(By.tagName("body")).getText();
         assertThat(exceptionText).startsWith(
-                "WARNING: jakarta.ejb.EJBException: Attempting to perform a user-only operation" +
-                String.format("capturing correct warning from the server: %s", exceptionText));
+                "WARNING: jakarta.ejb.EJBException: Attempting to perform a user-only operation");
     }
 
     @Test
