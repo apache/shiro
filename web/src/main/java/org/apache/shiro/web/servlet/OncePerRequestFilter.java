@@ -68,7 +68,7 @@ public abstract class OncePerRequestFilter extends NameableFilter {
 
     /**
      * Determines if the filter's once per request functionality is enabled, defaults to false. It is recommended
-     * to leave this disabled if you are using a {@link javax.servlet.RequestDispatcher RequestDispatcher} to forward
+     * to leave this disabled if you are using a {@link jakarta.servlet.RequestDispatcher RequestDispatcher} to forward
      * or include request (JSP tags, programmatically, or via a framework).
      */
     private boolean filterOncePerRequest;
@@ -116,7 +116,7 @@ public abstract class OncePerRequestFilter extends NameableFilter {
 
     /**
      * Sets whether this filter executes once per request or for every invocation of the filter. It is recommended
-     * to leave this disabled if you are using a {@link javax.servlet.RequestDispatcher RequestDispatcher} to forward
+     * to leave this disabled if you are using a {@link jakarta.servlet.RequestDispatcher RequestDispatcher} to forward
      * or include request (JSP tags, programmatically, or via a framework).
      *
      * @param filterOncePerRequest Whether this filter executes once per request.

@@ -15,7 +15,7 @@ package org.apache.shiro.ee.faces.tags;
 
 import org.apache.shiro.subject.PrincipalCollection;
 
-import javax.faces.context.FacesContext;
+import jakarta.faces.context.FacesContext;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;

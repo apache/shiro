@@ -62,8 +62,8 @@ public class LogoutFilter extends AdviceFilter {
     private boolean postOnlyLogout;
 
     /**
-     * Acquires the currently executing {@link #getSubject(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) subject},
-     * a potentially Subject or request-specific
+     * Acquires the currently executing {@link #getSubject(jakarta.servlet.ServletRequest,
+     * jakarta.servlet.ServletResponse) subject}, a potentially Subject or request-specific
      * {@link #getRedirectUrl(ServletRequest, ServletResponse, org.apache.shiro.subject.Subject) redirectUrl},
      * and redirects the end-user to that redirect url.
      *

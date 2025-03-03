@@ -440,8 +440,8 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * Executes a {@link FilterChain} for the given request.
      * <p/>
      * This implementation first delegates to
-     * <code>{@link #getExecutionChain(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, jakarta.servlet.FilterChain)
-     * getExecutionChain}</code>
+     * <code>{@link #getExecutionChain(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse,
+     * jakarta.servlet.FilterChain) getExecutionChain}</code>
      * to allow the application's Shiro configuration to determine exactly how the chain should execute.  The resulting
      * value from that call is then executed directly by calling the returned {@code FilterChain}'s
      * {@link FilterChain#doFilter doFilter} method.  That is:

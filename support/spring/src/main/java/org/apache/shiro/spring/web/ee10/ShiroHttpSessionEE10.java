@@ -18,64 +18,58 @@
  */
 package org.apache.shiro.spring.web.ee10;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.web.session.HttpServletSession;
+
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpSessionBindingEvent;
 import jakarta.servlet.http.HttpSessionBindingListener;
-import org.apache.shiro.session.InvalidSessionException;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
-import org.apache.shiro.web.session.HttpServletSession;
-
-//
-// NOTE this class only exists because of the terribly annoying decision by spring not to release any pure Jakarta
-// EE 9 version (6.0 is EE9 everywhere except shiro-test which forces EE 10. This class can go away when the rest
-// of shiro can move up to EE 10.
-//
-// see https://github.com/spring-projects/spring-framework/issues/29435 for their reasoning
-//
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Wrapper class that uses a Shiro {@link Session Session} under the hood for all session operations instead of the
  * Servlet Container's session mechanism.  This is required in heterogeneous client environments where the Session
- * is used on both the business tier as well as in multiple client technologies (web, swing, flash, etc) since
+ * is used on both the business tier as well as in multiple client technologies (web, swing, flash, etc.) since
  * Servlet container sessions alone cannot support this feature.
  *
  * @since 0.2
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class ShiroHttpSessionEE10 implements HttpSession {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * default session id name.
+     */
     public static final String DEFAULT_SESSION_ID_NAME = "JSESSIONID";
 
-    private static final Enumeration EMPTY_ENUMERATION = new Enumeration() {
+    private static final Enumeration<String> EMPTY_ENUMERATION = new Enumeration<>() {
         public boolean hasMoreElements() {
             return false;
         }
 
-        public Object nextElement() {
+        public String nextElement() {
             return null;
         }
     };
 
 
 
-    protected ServletContext servletContext = null;
-    protected HttpServletRequest currentRequest = null;
-    protected Session session = null; //'real' Shiro Session
+    protected ServletContext servletContext;
+    protected HttpServletRequest currentRequest;
+    //'real' Shiro Session
+    protected Session session;
 
     public ShiroHttpSessionEE10(Session session, HttpServletRequest currentRequest, ServletContext servletContext) {
         if (session instanceof HttpServletSession) {
-            String msg = "Session constructor argument cannot be an instance of HttpServletSession.  This is enforced to " +
-                    "prevent circular dependencies and infinite loops.";
+            String msg = "Session constructor argument cannot be an instance of HttpServletSession.  This is enforced to "
+                + "prevent circular dependencies and infinite loops.";
             throw new IllegalArgumentException(msg);
         }
         this.session = session;
@@ -117,12 +111,11 @@ public class ShiroHttpSessionEE10 implements HttpSession {
 
     public int getMaxInactiveInterval() {
         try {
-            return (new Long(getSession().getTimeout() / 1000)).intValue();
+            return (Long.valueOf(getSession().getTimeout() / 1000)).intValue();
         } catch (InvalidSessionException e) {
             throw new IllegalStateException(e);
         }
     }
-
 
     public Object getAttribute(String s) {
         try {
@@ -132,11 +125,6 @@ public class ShiroHttpSessionEE10 implements HttpSession {
         }
     }
 
-    public Object getValue(String s) {
-        return getAttribute(s);
-    }
-
-    @SuppressWarnings({"unchecked"})
     protected Set<String> getKeyNames() {
         Collection<Object> keySet;
         try {
@@ -151,25 +139,27 @@ public class ShiroHttpSessionEE10 implements HttpSession {
                 keyNames.add(o.toString());
             }
         } else {
-            keyNames = Collections.EMPTY_SET;
+            keyNames = Set.of();
         }
         return keyNames;
     }
 
-    public Enumeration getAttributeNames() {
+    @Override
+    public Enumeration<String> getAttributeNames() {
         Set<String> keyNames = getKeyNames();
-        final Iterator iterator = keyNames.iterator();
-        return new Enumeration() {
+        final Iterator<String> iterator = keyNames.iterator();
+        return new Enumeration<>() {
             public boolean hasMoreElements() {
                 return iterator.hasNext();
             }
 
-            public Object nextElement() {
+            public String nextElement() {
                 return iterator.next();
             }
         };
     }
 
+    @Deprecated
     public String[] getValueNames() {
         Set<String> keyNames = getKeyNames();
         String[] array = new String[keyNames.size()];
@@ -210,6 +200,7 @@ public class ShiroHttpSessionEE10 implements HttpSession {
         }
     }
 
+    @Deprecated
     public void putValue(String s, Object o) {
         setAttribute(s, o);
     }
@@ -223,6 +214,7 @@ public class ShiroHttpSessionEE10 implements HttpSession {
         }
     }
 
+    @Deprecated
     public void removeValue(String s) {
         removeAttribute(s);
     }
@@ -236,7 +228,7 @@ public class ShiroHttpSessionEE10 implements HttpSession {
     }
 
     public boolean isNew() {
-        Boolean value = (Boolean) currentRequest.getAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_IS_NEW);
+        Boolean value = (Boolean) currentRequest.getAttribute(ShiroHttpServletRequestEE10.REFERENCED_SESSION_IS_NEW);
         return value != null && value.equals(Boolean.TRUE);
     }
 }

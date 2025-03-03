@@ -13,8 +13,8 @@
  */
 package org.apache.shiro.testing.jakarta.ee.servlets;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 
 /**
  * Rest API entry point

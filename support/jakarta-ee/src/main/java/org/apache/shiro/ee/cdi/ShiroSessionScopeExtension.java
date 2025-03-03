@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.enterprise.inject.spi.WithAnnotations;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
+import jakarta.enterprise.inject.spi.BeforeBeanDiscovery;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
+import jakarta.enterprise.inject.spi.WithAnnotations;
 
 import org.apache.shiro.cdi.AnnotatedTypeWrapper;
 import org.apache.shiro.cdi.ShiroSecurityExtension.ShiroSecureAnnotated;
@@ -41,7 +41,7 @@ public class ShiroSessionScopeExtension implements Extension, Serializable {
     @SuppressWarnings("ConstantName")
     private static final List<ShiroScopeContext> contexts = Stream.of(
                     new ShiroScopeContext(ShiroSessionScoped.class, SessionScoped.class),
-                    new ShiroScopeContext(ShiroFacesViewScoped.class, javax.faces.view.ViewScoped.class),
+                    new ShiroScopeContext(ShiroFacesViewScoped.class, jakarta.faces.view.ViewScoped.class),
                     new ShiroScopeContext(ShiroOmniViewScoped.class, org.omnifaces.cdi.ViewScoped.class))
             .collect(Collectors.toList());
 
@@ -50,7 +50,7 @@ public class ShiroSessionScopeExtension implements Extension, Serializable {
     private static final class SessionScopedAnnotated implements Serializable {
     }
 
-    @javax.faces.view.ViewScoped
+    @jakarta.faces.view.ViewScoped
     @SuppressWarnings("serial")
     private static final class FacesViewScopedAnnotated implements Serializable {
     }
@@ -108,7 +108,7 @@ public class ShiroSessionScopeExtension implements Extension, Serializable {
                 Set.of(SessionScopedAnnotated.class.getDeclaredAnnotations()[0])));
     }
 
-    <T> void addFacesViewScoped(@Observes @WithAnnotations(javax.faces.view.ViewScoped.class) ProcessAnnotatedType<T> pat) {
+    <T> void addFacesViewScoped(@Observes @WithAnnotations(jakarta.faces.view.ViewScoped.class) ProcessAnnotatedType<T> pat) {
         pat.setAnnotatedType(new AnnotatedTypeWrapper<>(pat.getAnnotatedType(), true,
                 Set.of(ShiroFacesViewScopedAnnotated.class.getDeclaredAnnotations()[0],
                         ShiroSecureAnnotated.class.getDeclaredAnnotations()[0]),

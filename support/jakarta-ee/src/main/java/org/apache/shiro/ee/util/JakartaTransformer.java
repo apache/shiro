@@ -14,7 +14,7 @@
 package org.apache.shiro.ee.util;
 
 import java.util.regex.Pattern;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.AccessLevel;
 import lombok.Getter;
