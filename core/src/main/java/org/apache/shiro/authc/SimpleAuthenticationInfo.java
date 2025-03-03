@@ -245,7 +245,8 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
         }
 
         // At this point, the credentials should be a collection
-        Collection<?> credentialCollection = (Collection<?>) getCredentials();
+        @SuppressWarnings("unchecked")
+        Collection<Object> credentialCollection = (Collection<Object>) getCredentials();
         if (otherCredentials instanceof Collection<?> collection) {
             credentialCollection.addAll(collection);
         } else {
