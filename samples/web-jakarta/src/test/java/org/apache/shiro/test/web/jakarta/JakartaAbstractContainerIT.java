@@ -24,11 +24,9 @@ import org.junit.jupiter.api.BeforeAll;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import org.junit.jupiter.api.Disabled;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled("Needs meecrowave 2.0.0")
 public abstract class JakartaAbstractContainerIT {
 
     protected static Meecrowave meecrowave;
