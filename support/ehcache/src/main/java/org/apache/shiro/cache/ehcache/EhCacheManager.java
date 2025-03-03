@@ -18,12 +18,19 @@
  */
 package org.apache.shiro.cache.ehcache;
 
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.URL;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.lang.io.ResourceUtils;
 import org.apache.shiro.lang.util.Destroyable;
 import org.apache.shiro.lang.util.Initializable;
+import org.ehcache.config.CacheConfiguration;
+import org.ehcache.config.builders.CacheManagerBuilder;
+import org.ehcache.xml.XmlConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,17 +40,17 @@ import java.io.InputStream;
 /**
  * Shiro {@code CacheManager} implementation utilizing the Ehcache framework for all cache functionality.
  * <p/>
- * This class can {@link #setCacheManager(net.sf.ehcache.CacheManager) accept} a manually configured
- * {@link net.sf.ehcache.CacheManager net.sf.ehcache.CacheManager} instance,
+ * This class can {@link #setCacheManager(org.ehcache.CacheManager) accept} a manually configured
+ * {@link org.ehcache.CacheManager org.ehcache.CacheManager} instance,
  * or an {@code ehcache.xml} path location can be specified instead and one will be constructed. If neither are
  * specified, Shiro's failsafe <code><a href="./ehcache.xml">ehcache.xml</a></code> file will be used by default.
  * <p/>
  * This implementation requires EhCache 1.2 and above. Make sure EhCache 1.1 or earlier
  * is not in the classpath or it will not work.
  * <p/>
- * Please see the <a href="http://ehcache.sf.net" target="_top">Ehcache website</a> for their documentation.
+ * Please see the <a href="http://ehcache.org" target="_top">Ehcache website</a> for their documentation.
  *
- * @see <a href="http://ehcache.sf.net" target="_top">The Ehcache website</a>
+ * @see <a href="http://ehcache.org" target="_top">The Ehcache website</a>
  * @since 0.2
  */
 public class EhCacheManager implements CacheManager, Initializable, Destroyable {
@@ -56,7 +63,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     /**
      * The EhCache cache manager used by this implementation to create caches.
      */
-    protected net.sf.ehcache.CacheManager manager;
+    protected org.ehcache.CacheManager manager;
 
     /**
      * Indicates if the CacheManager instance was implicitly/automatically created by this instance, indicating that
@@ -76,20 +83,20 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     }
 
     /**
-     * Returns the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
+     * Returns the wrapped Ehcache {@link org.ehcache.CacheManager CacheManager} instance.
      *
-     * @return the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
+     * @return the wrapped Ehcache {@link org.ehcache.CacheManager CacheManager} instance.
      */
-    public net.sf.ehcache.CacheManager getCacheManager() {
+    public org.ehcache.CacheManager getCacheManager() {
         return manager;
     }
 
     /**
-     * Sets the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
+     * Sets the wrapped Ehcache {@link org.ehcache.CacheManager CacheManager} instance.
      *
-     * @param manager the wrapped Ehcache {@link net.sf.ehcache.CacheManager CacheManager} instance.
+     * @param manager the wrapped Ehcache {@link org.ehcache.CacheManager CacheManager} instance.
      */
-    public void setCacheManager(net.sf.ehcache.CacheManager manager) {
+    public void setCacheManager(org.ehcache.CacheManager manager) {
         this.manager = manager;
     }
 
@@ -141,36 +148,57 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     }
 
     /**
+     * Acquires the URL for the ehcache configuration file using
+     * {@link ResourceUtils#getURLForPath(String) ResourceUtils.getURLForPath} with the
+     * path returned from {@link #getCacheManagerConfigFile() getCacheManagerConfigFile()}.
+     *
+     * @return the URL for the ehcache configuration file.
+     */
+    protected URL getCacheManagerConfigFileUrl() {
+        final var configFile = getCacheManagerConfigFile();
+        try {
+            return ResourceUtils.getURLForPath(configFile);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to parse cacheManagerConfigFile ["
+                            + configFile + "]", e);
+        }
+    }
+
+    /**
      * Loads an existing EhCache from the cache manager, or starts a new cache if one is not found.
      *
      * @param name the name of the cache to load/create.
      */
-    public final <K, V> Cache<K, V> getCache(String name) throws CacheException {
+    @Override
+    public final <K, V> Cache<K, V> getCache(String name)
+            throws CacheException {
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Acquiring EhCache instance named [" + name + "]");
+            LOGGER.trace("Acquiring EhCache instance named [{}]", name);
         }
 
         try {
-            net.sf.ehcache.Ehcache cache = ensureCacheManager().getEhcache(name);
+            org.ehcache.Cache<K, V> cache = (org.ehcache.Cache<K, V>) ensureCacheManager()
+                    .getCache(name, Serializable.class, Serializable.class);
             if (cache == null) {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Cache with name '{}' does not yet exist.  Creating now.", name);
                 }
-                this.manager.addCache(name);
-
-                cache = manager.getCache(name);
+                CacheConfiguration<K, V> config = (CacheConfiguration<K, V>) new XmlConfiguration(getCacheManagerConfigFileUrl())
+                        .newCacheConfigurationBuilderFromTemplate("default", Serializable.class, Serializable.class)
+                        .build();
+                cache = manager.createCache(name, config);
 
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Added EhCache named [" + name + "]");
+                    LOGGER.info("Added EhCache named [{}]", name);
                 }
             } else {
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Using existing EHCache named [" + cache.getName() + "]");
+                    LOGGER.info("Using existing EHCache named [{}]", name);
                 }
             }
-            return new EhCache<K, V>(cache);
-        } catch (net.sf.ehcache.CacheException e) {
+            return new EhCache<>(cache);
+        } catch (IllegalArgumentException | IllegalStateException | ReflectiveOperationException e) {
             throw new CacheException(e);
         }
     }
@@ -191,24 +219,21 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * this case.
      *
      * @throws org.apache.shiro.cache.CacheException if there are any CacheExceptions thrown by EhCache.
-     * @see net.sf.ehcache.CacheManager#create
+     * @see org.ehcache.CacheManager#createCache(String, org.ehcache.config.CacheConfiguration)
      */
     public final void init() throws CacheException {
         ensureCacheManager();
     }
 
-    private net.sf.ehcache.CacheManager ensureCacheManager() {
+    private org.ehcache.CacheManager ensureCacheManager() {
         try {
             if (this.manager == null) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("cacheManager property not set.  Constructing CacheManager instance... ");
                 }
-                //using the CacheManager constructor, the resulting instance is _not_ a VM singleton
-                //(as would be the case by calling CacheManager.getInstance().  We do not use the getInstance here
-                //because we need to know if we need to destroy the CacheManager instance - using the static call,
-                //we don't know which component is responsible for shutting it down.  By using a single EhCacheManager,
-                //it will always know to shut down the instance if it was responsible for creating it.
-                this.manager = new net.sf.ehcache.CacheManager(getCacheManagerConfigFileInputStream());
+                final XmlConfiguration xmlConfig = new XmlConfiguration(getCacheManagerConfigFileUrl());
+                this.manager = CacheManagerBuilder.newCacheManager(xmlConfig);
+                this.manager.init();
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace("instantiated Ehcache CacheManager instance.");
                 }
@@ -233,8 +258,8 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     public void destroy() {
         if (cacheManagerImplicitlyCreated) {
             try {
-                net.sf.ehcache.CacheManager cacheMgr = getCacheManager();
-                cacheMgr.shutdown();
+                org.ehcache.CacheManager cacheMgr = getCacheManager();
+                cacheMgr.close();
             } catch (Throwable t) {
                 if (LOGGER.isWarnEnabled()) {
                     LOGGER.warn("Unable to cleanly shutdown implicitly created CacheManager instance.  "
@@ -246,4 +271,30 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
             }
         }
     }
+
+    private abstract static class TypeToken<T> {
+
+        private final Type type;
+
+        protected TypeToken() {
+            Type superClass = getClass().getGenericSuperclass();
+            if (superClass instanceof ParameterizedType ptype) {
+                type = ptype.getActualTypeArguments()[0];
+            } else {
+                throw new IllegalStateException("Invalid TypeToken; must specify type parameters");
+            }
+        }
+
+        @SuppressWarnings("unchecked")
+        public Class<T> getType() {
+            if (type instanceof Class<?>) {
+                return (Class<T>) type;
+            } else if (type instanceof ParameterizedType ptype) {
+                return (Class<T>) ptype.getRawType();
+            } else {
+                throw new IllegalArgumentException("Type " + type + " is not a Class or ParameterizedType");
+            }
+        }
+    }
+
 }

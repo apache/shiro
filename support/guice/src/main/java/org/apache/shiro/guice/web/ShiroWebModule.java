@@ -51,8 +51,8 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 
-import javax.servlet.Filter;
-import javax.servlet.ServletContext;
+import jakarta.servlet.Filter;
+import jakarta.servlet.ServletContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -276,8 +276,8 @@ public abstract class ShiroWebModule extends ShiroModule {
     @SuppressWarnings("unchecked")
     protected final void addFilterChain(String pattern, Key<? extends Filter> key) {
         // check for legacy API
-        if (key instanceof FilterConfigKey) {
-            addLegacyFilterChain(pattern, (FilterConfigKey) key);
+        if (key instanceof FilterConfigKey configKey) {
+            addLegacyFilterChain(pattern, configKey);
         } else {
             addFilterChain(pattern, new FilterConfig<Filter>((Key<Filter>) key, ""));
         }
@@ -412,9 +412,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         for (int ii = 0; ii < keys.length; ii++) {
             Key<? extends Filter> key = keys[ii];
             // If this is a path matching filter, we need to remember the config
-            if (key instanceof FilterConfigKey) {
-                // legacy config
-                FilterConfigKey legacyKey = (FilterConfigKey) key;
+            if (key instanceof FilterConfigKey legacyKey) {
                 filterConfigs[ii] = new FilterConfig(legacyKey.getKey(), legacyKey.getConfigValue());
             } else {
                 // Some other type of Filter key, no config

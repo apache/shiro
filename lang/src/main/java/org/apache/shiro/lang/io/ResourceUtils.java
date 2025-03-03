@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.lang.io;
 
+import java.net.URI;
 import org.apache.shiro.lang.util.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,25 +121,45 @@ public final class ResourceUtils {
      */
     public static InputStream getInputStreamForPath(String resourcePath) throws IOException {
 
-        InputStream is;
-        if (resourcePath.startsWith(CLASSPATH_PREFIX)) {
-            is = loadFromClassPath(stripPrefix(resourcePath));
-
-        } else if (resourcePath.startsWith(URL_PREFIX)) {
-            is = loadFromUrl(stripPrefix(resourcePath));
-
-        } else if (resourcePath.startsWith(FILE_PREFIX)) {
-            is = loadFromFile(stripPrefix(resourcePath));
-
-        } else {
-            is = loadFromFile(resourcePath);
-        }
-
-        if (is == null) {
+        URL url = getURLForPath(resourcePath);
+        if (url == null) {
             throw new IOException("Resource [" + resourcePath + "] could not be found.");
         }
 
-        return is;
+        return url.openStream();
+    }
+
+    /**
+     * Returns the URL for the resource represented by the specified path, supporting scheme
+     * prefixes that direct how to acquire the input stream
+     * ({@link #CLASSPATH_PREFIX CLASSPATH_PREFIX},
+     * {@link #URL_PREFIX URL_PREFIX}, or {@link #FILE_PREFIX FILE_PREFIX}).  If the path is not prefixed by one
+     * of these schemes, the path is assumed to be a file-based path that can be loaded with a
+     * call to {@link URI#create(String)}.
+     *
+     * @param resourcePath the String path representing the resource to obtain.
+     * @return the URL for the specified resource.
+     * @throws IOException if there is a problem acquiring the resource at the specified path.
+     */
+    public static URL getURLForPath(String resourcePath) throws IOException {
+        URL url;
+
+        if (resourcePath.startsWith(CLASSPATH_PREFIX)) {
+            url = ClassUtils.getResource(stripPrefix(resourcePath));
+        } else if (resourcePath.startsWith(URL_PREFIX)) {
+            url = URI.create(stripPrefix(resourcePath)).toURL();
+        } else {
+            url = URI.create(resourcePath).toURL();
+        }
+
+        if (url == null) {
+            return null;
+        }
+
+        // throw early if resource cannot be acquired
+        try (InputStream ignored = url.openStream()) {
+            return url;
+        }
     }
 
     private static InputStream loadFromFile(String path) throws IOException {

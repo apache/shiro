@@ -20,18 +20,17 @@ package org.apache.shiro.samples.spring.config;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.samples.spring.BootstrapDataPopulator;
 import org.apache.shiro.samples.spring.DefaultSampleManager;
 import org.apache.shiro.samples.spring.realm.SaltAwareJdbcRealm;
 import org.apache.shiro.spring.config.ShiroAnnotationProcessorConfiguration;
 import org.apache.shiro.spring.config.ShiroBeanConfiguration;
-import org.apache.shiro.spring.remoting.SecureRemoteInvocationExecutor;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroRequestMappingConfig;
 import org.apache.shiro.spring.web.config.ShiroWebConfiguration;
 import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -51,7 +50,6 @@ import javax.sql.DataSource;
         ShiroWebConfiguration.class,
         ShiroWebFilterConfiguration.class,
         JspViewsConfig.class,
-        RemotingServletConfig.class,
         ShiroRequestMappingConfig.class})
 @ComponentScan("org.apache.shiro.samples.spring")
 public class ApplicationConfig {
@@ -119,23 +117,6 @@ public class ApplicationConfig {
     }
 
     /**
-     * Secure Spring remoting:  Ensure any Spring Remoting method invocations can be associated
-     * with a Subject for security checks.
-     *
-     * @param securityManager
-     * @return
-     */
-    @Bean
-    protected SecureRemoteInvocationExecutor secureRemoteInvocationExecutor(SecurityManager securityManager) {
-
-        SecureRemoteInvocationExecutor executor = new SecureRemoteInvocationExecutor();
-        executor.setSecurityManager(securityManager);
-
-        return executor;
-    }
-
-
-    /**
      * Simulated business-tier "Manager", not Shiro related, just an example
      *
      * @return
@@ -174,8 +155,6 @@ public class ApplicationConfig {
         chainDefinition.addPathDefinition("/s/login", "anon");
         //allow WebStart to pull the jars for the swing app
         chainDefinition.addPathDefinition("/*.jar", "anon");
-        // protected using SecureRemoteInvocationExecutor
-        chainDefinition.addPathDefinition("/remoting/**", "anon");
         chainDefinition.addPathDefinition("/**", "authc");
 
 

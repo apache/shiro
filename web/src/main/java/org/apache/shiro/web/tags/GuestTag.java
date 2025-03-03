@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.web.tags;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

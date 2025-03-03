@@ -33,7 +33,7 @@
 
     <properties>
         <meecrowave.version>1.2.15</meecrowave.version>
-        <tomcat.version>10.1.30</tomcat.version>
+        <tomcat.version>10.1.36</tomcat.version>
         <jacoco.skip>true</jacoco.skip>
     </properties>
 
@@ -53,13 +53,11 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
-            <classifier>jakarta</classifier>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-web</artifactId>
-            <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -133,9 +131,13 @@
         </dependency>
 
         <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.meecrowave</groupId>
             <artifactId>meecrowave-core</artifactId>
-            <classifier>jakarta</classifier>
             <version>${meecrowave.version}</version>
             <scope>test</scope>
         </dependency>

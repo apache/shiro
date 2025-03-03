@@ -24,6 +24,7 @@ import org.apache.shiro.lang.util.StringUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +58,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     // that is NOT serialization backwards compatible.  Serialization-compatible
     // changes do not require a change to this number.  If you need to generate
     // a new number in this case, use the JDK's 'serialver' program to generate it.
+    @Serial
     private static final long serialVersionUID = -6305224034025797558L;
 
     //TODO - complete JavaDoc
@@ -69,8 +71,8 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     }
 
     public SimplePrincipalCollection(Object principal, String realmName) {
-        if (principal instanceof Collection) {
-            addAll((Collection) principal, realmName);
+        if (principal instanceof Collection collection) {
+            addAll(collection, realmName);
         } else {
             add(principal, realmName);
         }
@@ -243,8 +245,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         if (o == this) {
             return true;
         }
-        if (o instanceof SimplePrincipalCollection) {
-            SimplePrincipalCollection other = (SimplePrincipalCollection) o;
+        if (o instanceof SimplePrincipalCollection other) {
             return Objects.equals(this.realmPrincipals, other.realmPrincipals);
         }
         return false;

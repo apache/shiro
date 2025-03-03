@@ -37,12 +37,10 @@ public final class ByteSourceWrapper implements Closeable {
      * This method generically accepts byte array or ByteSource instance.
      */
     public static ByteSourceWrapper wrap(Object value) {
-        if (value instanceof byte[]) {
-            byte[] bytes = (byte[]) value;
+        if (value instanceof byte[] bytes) {
             return new ByteSourceWrapper(bytes);
-        } else if (value instanceof ByteSource) {
-            byte[] bytes = ((ByteSource) value).getBytes();
-            return new ByteSourceWrapper(bytes);
+        } else if (value instanceof ByteSource source) {
+            return new ByteSourceWrapper(source.getBytes());
         }
         throw new IllegalArgumentException();
     }

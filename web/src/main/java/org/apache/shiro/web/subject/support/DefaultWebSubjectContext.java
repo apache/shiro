@@ -23,8 +23,10 @@ import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import java.io.Serial;
+
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * Default {@code WebSubjectContext} implementation that provides for additional storage and retrieval of
@@ -34,6 +36,7 @@ import javax.servlet.ServletResponse;
  */
 public class DefaultWebSubjectContext extends DefaultSubjectContext implements WebSubjectContext {
 
+    @Serial
     private static final long serialVersionUID = 8188555355305827739L;
 
     private static final String SERVLET_REQUEST = DefaultWebSubjectContext.class.getName() + ".SERVLET_REQUEST";
@@ -75,8 +78,8 @@ public class DefaultWebSubjectContext extends DefaultSubjectContext implements W
         //fall back on existing subject instance if it exists:
         if (request == null) {
             Subject existing = getSubject();
-            if (existing instanceof WebSubject) {
-                request = ((WebSubject) existing).getServletRequest();
+            if (existing instanceof WebSubject subject) {
+                request = subject.getServletRequest();
             }
         }
 
@@ -100,8 +103,8 @@ public class DefaultWebSubjectContext extends DefaultSubjectContext implements W
         //fall back on existing subject instance if it exists:
         if (response == null) {
             Subject existing = getSubject();
-            if (existing instanceof WebSubject) {
-                response = ((WebSubject) existing).getServletResponse();
+            if (existing instanceof WebSubject subject) {
+                response = subject.getServletResponse();
             }
         }
 

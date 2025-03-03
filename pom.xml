@@ -81,7 +81,7 @@
         <nexus-staging-profile>nexus-staging</nexus-staging-profile>
         <jacocoAgent/>
         <!-- non-dependency-based properties: -->
-        <shiro.osgi.importRange>[2, 3)</shiro.osgi.importRange>
+        <shiro.osgi.importRange>[3, 4)</shiro.osgi.importRange>
         <jcache.osgi.importRange>[1.1,2)</jcache.osgi.importRange>
 
         <!-- Compile 3rd party dependencies: -->
@@ -97,14 +97,13 @@
         <commons.text.version>1.8</commons.text.version>
         <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
              modules' OSGi metadata: -->
-        <ehcache.version>2.6.11</ehcache.version>
+        <ehcache.version>3.10.8</ehcache.version>
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
         <hazelcast.version>5.3.8</hazelcast.version>
         <hsqldb.version>2.7.3</hsqldb.version>
-        <javax.annotation.api.version>1.3.2</javax.annotation.api.version>
         <jcache.api.version>1.1.1</jcache.api.version>
-        <jdk.version>11</jdk.version>
-        <jetty.version>9.4.56.v20240826</jetty.version>
+        <jdk.version>17</jdk.version>
+        <jetty.version>12.0.6</jetty.version>
         <owasp.java.encoder.version>1.3.1</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
@@ -112,24 +111,24 @@
         <quartz.docs.version>2.3.0</quartz.docs.version>
         <slf4j.version>2.0.16</slf4j.version>
         <log4j.version>2.24.0</log4j.version>
-        <spring.version>5.3.39</spring.version>
-        <spring-boot.version>2.7.18</spring-boot.version>
-        <guice.version>4.2.3</guice.version>
-        <jaxrs.api.version>2.1.6</jaxrs.api.version>
+        <spring.version>6.2.3</spring.version>
+        <spring-boot.version>3.4.3</spring-boot.version>
+        <guice.version>7.0.0</guice.version>
+        <jaxrs.api.version>3.1.0</jaxrs.api.version>
         <htmlunit.version>4.4.0</htmlunit.version>
         <bouncycastle.version>1.78.1</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.4.0</easymock.version>
-        <mockito.version>5.13.0</mockito.version>
+        <mockito.version>5.15.2</mockito.version>
         <bytebuddy.version>1.15.1</bytebuddy.version>
         <gmaven.version>3.0.2</gmaven.version>
         <groovy.version>4.0.23</groovy.version>
         <junit.version>5.11.0</junit.version>
         <junit.server.jetty.version>3.3.0</junit.server.jetty.version>
-        <hibernate.version>5.6.15.Final</hibernate.version>
+        <hibernate.version>6.6.9.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
-        <jakarta.annotations.version>1.3.5</jakarta.annotations.version>
+        <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
         <lombok.version>1.18.34</lombok.version>
 
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
@@ -414,16 +413,18 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
+                    <groupId>org.eclipse.jetty.ee10</groupId>
+                    <artifactId>jetty-ee10-maven-plugin</artifactId>
                     <version>${jetty.version}</version>
                     <configuration>
-                        <contextPath>/</contextPath>
+                        <webApp>
+                            <contextPath>/</contextPath>
+                        </webApp>
                         <httpConnector>
                             <port>9080</port>
                             <idleTimeout>60000</idleTimeout>
                         </httpConnector>
-                        <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+                        <requestLog implementation="org.eclipse.jetty.server.RequestLogWriter">
                             <filename>./target/yyyy_mm_dd.request.log</filename>
                             <retainDays>90</retainDays>
                             <append>true</append>
@@ -487,76 +488,6 @@
                             <version>${aspectj.version}</version>
                         </dependency>
                     </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-shade-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>jakarta</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>shade</goal>
-                            </goals>
-                            <configuration>
-                                <minimizeJar>false</minimizeJar>
-                                <shadedArtifactAttached>true</shadedArtifactAttached>
-                                <shadedClassifierName>jakarta</shadedClassifierName>
-                                <createDependencyReducedPom>false</createDependencyReducedPom>
-                                <transformers>
-                                    <transformer
-                                            implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                    <transformer
-                                            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
-                                </transformers>
-                                <artifactSet>
-                                    <includes>
-                                        <include>${project.groupId}:${project.artifactId}</include>
-                                    </includes>
-                                </artifactSet>
-                                <relocations>
-                                    <relocation>
-                                        <pattern>javax.annotation</pattern>
-                                        <shadedPattern>jakarta.annotation</shadedPattern>
-                                        <excludes>
-                                            <exclude>javax.annotation.processing.**</exclude>
-                                        </excludes>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.enterprise</pattern>
-                                        <shadedPattern>jakarta.enterprise</shadedPattern>
-                                        <excludes>
-                                            <exclude>javax.enterprise.deploy.**</exclude>
-                                        </excludes>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.inject</pattern>
-                                        <shadedPattern>jakarta.inject</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.json</pattern>
-                                        <shadedPattern>jakarta.json</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.servlet.http.HttpSessionContext</pattern>
-                                        <shadedPattern>org.apache.shiro.web.servlet.HttpSessionContext</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.servlet</pattern>
-                                        <shadedPattern>jakarta.servlet</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.websocket</pattern>
-                                        <shadedPattern>jakarta.websocket</shadedPattern>
-                                    </relocation>
-                                    <relocation>
-                                        <pattern>javax.ws.rs</pattern>
-                                        <shadedPattern>jakarta.ws.rs</shadedPattern>
-                                    </relocation>
-                                </relocations>
-                            </configuration>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -1124,11 +1055,6 @@
                 <version>${commons.cli.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>${javax.annotation.api.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
                 <version>${aspectj.version}</version>
@@ -1248,9 +1174,9 @@
                 <optional>true</optional>
             </dependency>
             <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>2.2</version>
+                <groupId>jakarta.servlet.jsp</groupId>
+                <artifactId>jakarta.servlet.jsp-api</artifactId>
+                <version>3.1.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -1266,9 +1192,9 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>4.0.1</version>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>6.0.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -1277,18 +1203,15 @@
                 <version>${groovy.version}</version>
             </dependency>
             <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-core</artifactId>
+                <groupId>org.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>
+                <classifier>jakarta</classifier>
                 <optional>true</optional>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>net.sf.ehcache</groupId>
-                        <artifactId>sizeof-agent</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1304,7 +1227,7 @@
             </dependency>
             <dependency>
                 <!-- Used for sample applications only - not required for the framework: -->
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${hibernate.version}</version>
                 <optional>true</optional>
@@ -1334,8 +1257,8 @@
                         <artifactId>jacc</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>javax.servlet-api</artifactId>
+                        <groupId>jakarta.servlet</groupId>
+                        <artifactId>jakarta.servlet-api</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>jboss</groupId>
@@ -1343,28 +1266,11 @@
                         <artifactId>jboss-cache</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>net.sf.ehcache</groupId>
-                        <artifactId>ehcache</artifactId>
-                    </exclusion>
-                    <exclusion>
                         <groupId>asm</groupId>
                         <!--suppress MavenModelInspection -->
                         <artifactId>asm-attrs</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>javax.transaction</groupId>
-                        <artifactId>jta</artifactId>
-                    </exclusion>
                 </exclusions>
-            </dependency>
-            <!-- Used to support Hibernate's JTA runtime dependency in the sample application(s) only.
-                 Not required for Shiro -->
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jta_1.1_spec</artifactId>
-                <version>1.1.1</version>
-                <scope>runtime</scope>
-                <optional>true</optional>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -1447,11 +1353,6 @@
             </dependency>
             <dependency>
                 <groupId>com.google.inject.extensions</groupId>
-                <artifactId>guice-multibindings</artifactId>
-                <version>${guice.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.inject.extensions</groupId>
                 <artifactId>guice-servlet</artifactId>
                 <version>${guice.version}</version>
             </dependency>
@@ -1463,7 +1364,7 @@
             </dependency>
             <dependency>
                 <groupId>com.github.mjeanroy</groupId>
-                <artifactId>junit-servers-jetty-9</artifactId>
+                <artifactId>junit-servers-jetty-12</artifactId>
                 <version>${junit.server.jetty.version}</version>
             </dependency>
 

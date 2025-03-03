@@ -18,9 +18,9 @@
  */
 package org.apache.shiro.web.filter.mgt;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * A {@code FilterChainResolver} can resolve an appropriate {@link FilterChain} to execute during a
@@ -40,7 +40,7 @@ public interface FilterChainResolver {
      * Returns the filter chain that should be executed for the given request, or {@code null} if the
      * original chain should be used.
      * <p/>
-     * This method allows a implementation to define arbitrary security {@link javax.servlet.Filter Filter}
+     * This method allows a implementation to define arbitrary security {@link jakarta.servlet.Filter Filter}
      * chains for any given request or URL pattern.
      *
      * @param request       the incoming ServletRequest

@@ -44,7 +44,7 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -78,12 +78,12 @@ import java.util.Map;
  * optional.
  * <p/>
  * This implementation is also a {@link BeanPostProcessor} and will acquire
- * any {@link javax.servlet.Filter Filter} beans defined independently in your Spring application context.  Upon
+ * any {@link jakarta.servlet.Filter Filter} beans defined independently in your Spring application context.  Upon
  * discovery, they will be automatically added to the {@link #setFilters(java.util.Map) map} keyed by the bean ID.
  * That ID can then be used in the filter chain definitions, for example:
  *
  * <pre>
- * &lt;bean id="<b>myCustomFilter</b>" class="com.class.that.implements.javax.servlet.Filter"/&gt;
+ * &lt;bean id="<b>myCustomFilter</b>" class="com.class.that.implements.jakarta.servlet.Filter"/&gt;
  * ...
  * &lt;bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean"&gt;
  *    ...
@@ -303,7 +303,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * <p/>
      * For example, just defining this bean in a web Spring XML application context:
      * <pre>
-     * &lt;bean id=&quot;myFilter&quot; class=&quot;com.class.that.implements.javax.servlet.Filter&quot;&gt;
+     * &lt;bean id=&quot;myFilter&quot; class=&quot;com.class.that.implements.jakarta.servlet.Filter&quot;&gt;
      * ...
      * &lt;/bean&gt;</pre>
      * Will automatically place that bean into this Filters map under the key '<b>myFilter</b>'.
@@ -422,8 +422,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
                 String name = entry.getKey();
                 Filter filter = entry.getValue();
                 applyGlobalPropertiesIfNecessary(filter);
-                if (filter instanceof Nameable) {
-                    ((Nameable) filter).setName(name);
+                if (filter instanceof Nameable nameable) {
+                    nameable.setName(name);
                 }
                 //'init' argument is false, since Spring-configured filters should be initialized
                 //in Spring (i.e. 'init-method=blah') or implement InitializingBean:
@@ -501,8 +501,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
     private void applyLoginUrlIfNecessary(Filter filter) {
         String loginUrl = getLoginUrl();
-        if (StringUtils.hasText(loginUrl) && (filter instanceof AccessControlFilter)) {
-            AccessControlFilter acFilter = (AccessControlFilter) filter;
+        if (StringUtils.hasText(loginUrl) && (filter instanceof AccessControlFilter acFilter)) {
             //only apply the login url if they haven't explicitly configured one already:
             String existingLoginUrl = acFilter.getLoginUrl();
             if (AccessControlFilter.DEFAULT_LOGIN_URL.equals(existingLoginUrl)) {
@@ -513,8 +512,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
     private void applySuccessUrlIfNecessary(Filter filter) {
         String successUrl = getSuccessUrl();
-        if (StringUtils.hasText(successUrl) && (filter instanceof AuthenticationFilter)) {
-            AuthenticationFilter authcFilter = (AuthenticationFilter) filter;
+        if (StringUtils.hasText(successUrl) && (filter instanceof AuthenticationFilter authcFilter)) {
             //only apply the successUrl if they haven't explicitly configured one already:
             String existingSuccessUrl = authcFilter.getSuccessUrl();
             if (AuthenticationFilter.DEFAULT_SUCCESS_URL.equals(existingSuccessUrl)) {
@@ -525,8 +523,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
     private void applyUnauthorizedUrlIfNecessary(Filter filter) {
         String unauthorizedUrl = getUnauthorizedUrl();
-        if (StringUtils.hasText(unauthorizedUrl) && (filter instanceof AuthorizationFilter)) {
-            AuthorizationFilter authzFilter = (AuthorizationFilter) filter;
+        if (StringUtils.hasText(unauthorizedUrl) && (filter instanceof AuthorizationFilter authzFilter)) {
             //only apply the unauthorizedUrl if they haven't explicitly configured one already:
             String existingUnauthorizedUrl = authzFilter.getUnauthorizedUrl();
             if (existingUnauthorizedUrl == null) {
@@ -540,8 +537,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
         applySuccessUrlIfNecessary(filter);
         applyUnauthorizedUrlIfNecessary(filter);
 
-        if (filter instanceof OncePerRequestFilter) {
-            ((OncePerRequestFilter) filter).setFilterOncePerRequest(filterConfiguration.isFilterOncePerRequest());
+        if (filter instanceof OncePerRequestFilter requestFilter) {
+            requestFilter.setFilterOncePerRequest(filterConfiguration.isFilterOncePerRequest());
         }
     }
 
@@ -551,9 +548,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * later during filter chain construction.
      */
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (bean instanceof Filter) {
+        if (bean instanceof Filter filter) {
             LOGGER.debug("Found filter chain candidate filter '{}'", beanName);
-            Filter filter = (Filter) bean;
             applyGlobalPropertiesIfNecessary(filter);
             getFilters().put(beanName, filter);
         } else {

@@ -13,7 +13,7 @@
  */
 package org.apache.shiro.testing.jakarta.ee;
 
-import javax.enterprise.inject.Model;
+import jakarta.enterprise.inject.Model;
 
 import lombok.Getter;
 import lombok.Setter;

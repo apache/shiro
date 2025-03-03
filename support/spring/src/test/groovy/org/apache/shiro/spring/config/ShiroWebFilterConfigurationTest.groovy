@@ -31,17 +31,17 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 import org.springframework.test.context.web.WebAppConfiguration
 
-import javax.servlet.Filter
-import javax.servlet.FilterChain
-import javax.servlet.FilterConfig
-import javax.servlet.ServletException
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
+import jakarta.servlet.Filter
+import jakarta.servlet.FilterChain
+import jakarta.servlet.FilterConfig
+import jakarta.servlet.ServletException
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.ServletResponse
 
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.instanceOf
@@ -52,7 +52,7 @@ import static org.hamcrest.MatcherAssert.assertThat
  * Test ShiroWebFilterConfiguration creates a ShiroFilterFactoryBean that contains Servlet filters that are available for injection.
  */
 @WebAppConfiguration
-@ContextConfiguration(classes = [RealmTestConfiguration, FilterConfiguration, ShiroConfiguration, ShiroWebFilterConfiguration])
+@SpringJUnitConfig(classes = [RealmTestConfiguration, FilterConfiguration, ShiroConfiguration, ShiroWebFilterConfiguration])
 @ExtendWith(SpringExtension.class)
 class ShiroWebFilterConfigurationTest extends AbstractJUnit4SpringContextTests {
 

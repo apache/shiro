@@ -23,7 +23,7 @@ import org.apache.shiro.web.config.ShiroFilterConfiguration
 import org.apache.shiro.web.filter.mgt.FilterChainResolver
 import org.apache.shiro.web.mgt.WebSecurityManager
 
-import javax.servlet.ServletContext
+import jakarta.servlet.ServletContext
 
 /**
  * Mock WebEnvironment, replaces IniWebEnvironment in EnvironmentLoader tests, to avoid extra dependencies.

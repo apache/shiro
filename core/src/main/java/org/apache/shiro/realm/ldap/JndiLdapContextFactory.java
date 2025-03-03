@@ -518,8 +518,8 @@ public class JndiLdapContextFactory implements LdapContextFactory {
                 // from the FAQ, we need to check for empty credentials:
                 // http://docs.oracle.com/javase/tutorial/jndi/ldap/faq.html
                 if (credentials == null
-                        || (credentials instanceof byte[] && ((byte[]) credentials).length <= 0)
-                        || (credentials instanceof char[] && ((char[]) credentials).length <= 0)
+                        || (credentials instanceof byte[] bytes && bytes.length <= 0)
+                        || (credentials instanceof char[] chars && chars.length <= 0)
                         || (String.class.isInstance(credentials) && !StringUtils.hasText(String.valueOf(credentials)))) {
 
                     throw new javax.naming.AuthenticationException("LDAP Simple authentication requires both a "

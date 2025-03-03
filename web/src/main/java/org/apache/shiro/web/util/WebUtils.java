@@ -30,14 +30,16 @@ import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -68,28 +70,28 @@ public final class WebUtils {
      * <p>If included via a RequestDispatcher, the current resource will see the
      * originating request. Its own URI and paths are exposed as request attributes.
      */
-    public static final String INCLUDE_REQUEST_URI_ATTRIBUTE = "javax.servlet.include.request_uri";
-    public static final String INCLUDE_CONTEXT_PATH_ATTRIBUTE = "javax.servlet.include.context_path";
-    public static final String INCLUDE_SERVLET_PATH_ATTRIBUTE = "javax.servlet.include.servlet_path";
-    public static final String INCLUDE_PATH_INFO_ATTRIBUTE = "javax.servlet.include.path_info";
-    public static final String INCLUDE_QUERY_STRING_ATTRIBUTE = "javax.servlet.include.query_string";
+    public static final String INCLUDE_REQUEST_URI_ATTRIBUTE = RequestDispatcher.INCLUDE_REQUEST_URI;
+    public static final String INCLUDE_CONTEXT_PATH_ATTRIBUTE = RequestDispatcher.INCLUDE_CONTEXT_PATH;
+    public static final String INCLUDE_SERVLET_PATH_ATTRIBUTE = RequestDispatcher.INCLUDE_SERVLET_PATH;
+    public static final String INCLUDE_PATH_INFO_ATTRIBUTE = RequestDispatcher.INCLUDE_PATH_INFO;
+    public static final String INCLUDE_QUERY_STRING_ATTRIBUTE = RequestDispatcher.INCLUDE_QUERY_STRING;
 
     /**
      * Standard Servlet 2.4+ spec request attributes for forward URI and paths.
      * <p>If forwarded to via a RequestDispatcher, the current resource will see its
      * own URI and paths. The originating URI and paths are exposed as request attributes.
      */
-    public static final String FORWARD_REQUEST_URI_ATTRIBUTE = "javax.servlet.forward.request_uri";
-    public static final String FORWARD_CONTEXT_PATH_ATTRIBUTE = "javax.servlet.forward.context_path";
-    public static final String FORWARD_SERVLET_PATH_ATTRIBUTE = "javax.servlet.forward.servlet_path";
-    public static final String FORWARD_PATH_INFO_ATTRIBUTE = "javax.servlet.forward.path_info";
-    public static final String FORWARD_QUERY_STRING_ATTRIBUTE = "javax.servlet.forward.query_string";
+    public static final String FORWARD_REQUEST_URI_ATTRIBUTE = RequestDispatcher.FORWARD_REQUEST_URI;
+    public static final String FORWARD_CONTEXT_PATH_ATTRIBUTE = RequestDispatcher.FORWARD_CONTEXT_PATH;
+    public static final String FORWARD_SERVLET_PATH_ATTRIBUTE = RequestDispatcher.FORWARD_SERVLET_PATH;
+    public static final String FORWARD_PATH_INFO_ATTRIBUTE = RequestDispatcher.FORWARD_PATH_INFO;
+    public static final String FORWARD_QUERY_STRING_ATTRIBUTE = RequestDispatcher.FORWARD_QUERY_STRING;
 
     /**
      * Default character encoding to use when <code>request.getCharacterEncoding</code>
      * returns <code>null</code>, according to the Servlet spec.
      *
-     * @see javax.servlet.ServletRequest#getCharacterEncoding
+     * @see jakarta.servlet.ServletRequest#getCharacterEncoding
      */
     public static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
 
@@ -341,14 +343,14 @@ public final class WebUtils {
         if (attr == null) {
             return null;
         }
-        if (attr instanceof RuntimeException) {
-            throw (RuntimeException) attr;
+        if (attr instanceof RuntimeException exception) {
+            throw exception;
         }
-        if (attr instanceof Error) {
-            throw (Error) attr;
+        if (attr instanceof Error error) {
+            throw error;
         }
-        if (attr instanceof Exception) {
-            throw new IllegalStateException((Exception) attr);
+        if (attr instanceof Exception exception) {
+            throw new IllegalStateException(exception);
         }
         if (!(attr instanceof WebEnvironment)) {
             throw new IllegalStateException("Context attribute is not of type WebEnvironment: " + attr);
@@ -366,7 +368,8 @@ public final class WebUtils {
      * @param source  the String to decode
      * @return the decoded String
      * @see #DEFAULT_CHARACTER_ENCODING
-     * @see javax.servlet.ServletRequest#getCharacterEncoding
+     * @see jakarta.servlet.ServletRequest#getCharacterEncoding
+     * @see java.net.URLDecoder#decode(String, java.nio.charset.Charset)
      * @see java.net.URLDecoder#decode(String, String)
      * @see java.net.URLDecoder#decode(String)
      */
@@ -381,7 +384,7 @@ public final class WebUtils {
                         + "] with encoding '" + Encode.forHtml(enc)
                         + "': falling back to platform default encoding; exception message: " + ex.getMessage());
             }
-            return URLDecoder.decode(source);
+            return URLDecoder.decode(source, StandardCharsets.UTF_8);
         }
     }
 
@@ -394,7 +397,7 @@ public final class WebUtils {
      *
      * @param request current HTTP request
      * @return the encoding for the request (never <code>null</code>)
-     * @see javax.servlet.ServletRequest#getCharacterEncoding()
+     * @see jakarta.servlet.ServletRequest#getCharacterEncoding()
      */
     protected static String determineEncoding(HttpServletRequest request) {
         String enc = request.getCharacterEncoding();
@@ -419,39 +422,39 @@ public final class WebUtils {
      */
 
     public static boolean isWeb(Object requestPairSource) {
-        return requestPairSource instanceof RequestPairSource && isWeb((RequestPairSource) requestPairSource);
+        return requestPairSource instanceof RequestPairSource rps && isWeb(rps);
     }
 
     public static boolean isHttp(Object requestPairSource) {
-        return requestPairSource instanceof RequestPairSource && isHttp((RequestPairSource) requestPairSource);
+        return requestPairSource instanceof RequestPairSource rps && isHttp(rps);
     }
 
     public static ServletRequest getRequest(Object requestPairSource) {
-        if (requestPairSource instanceof RequestPairSource) {
-            return ((RequestPairSource) requestPairSource).getServletRequest();
+        if (requestPairSource instanceof RequestPairSource source) {
+            return source.getServletRequest();
         }
         return null;
     }
 
     public static ServletResponse getResponse(Object requestPairSource) {
-        if (requestPairSource instanceof RequestPairSource) {
-            return ((RequestPairSource) requestPairSource).getServletResponse();
+        if (requestPairSource instanceof RequestPairSource source) {
+            return source.getServletResponse();
         }
         return null;
     }
 
     public static HttpServletRequest getHttpRequest(Object requestPairSource) {
         ServletRequest request = getRequest(requestPairSource);
-        if (request instanceof HttpServletRequest) {
-            return (HttpServletRequest) request;
+        if (request instanceof HttpServletRequest servletRequest) {
+            return servletRequest;
         }
         return null;
     }
 
     public static HttpServletResponse getHttpResponse(Object requestPairSource) {
         ServletResponse response = getResponse(requestPairSource);
-        if (response instanceof HttpServletResponse) {
-            return (HttpServletResponse) response;
+        if (response instanceof HttpServletResponse servletResponse) {
+            return servletResponse;
         }
         return null;
     }
@@ -481,8 +484,7 @@ public final class WebUtils {
      * otherwise.
      */
     public static boolean isSessionCreationEnabled(Object requestPairSource) {
-        if (requestPairSource instanceof RequestPairSource) {
-            RequestPairSource source = (RequestPairSource) requestPairSource;
+        if (requestPairSource instanceof RequestPairSource source) {
             return isSessionCreationEnabled(source.getServletRequest());
         }
         //by default
@@ -503,8 +505,8 @@ public final class WebUtils {
     public static boolean isSessionCreationEnabled(ServletRequest request) {
         if (request != null) {
             Object val = request.getAttribute(DefaultSubjectContext.SESSION_CREATION_ENABLED);
-            if (val != null && val instanceof Boolean) {
-                return (Boolean) val;
+            if (val != null && val instanceof Boolean boolean1) {
+                return boolean1;
             }
         }
         //by default
@@ -671,13 +673,13 @@ public final class WebUtils {
 
     /**
      * Redirects the to the request url from a previously
-     * {@link #saveRequest(javax.servlet.ServletRequest) saved} request, or if there is no saved request, redirects the
+     * {@link #saveRequest(jakarta.servlet.ServletRequest) saved} request, or if there is no saved request, redirects the
      * end user to the specified {@code fallbackUrl}.  If there is no saved request or fallback url, this method
      * throws an {@link IllegalStateException}.
      * <p/>
      * This method is primarily used to support a common login scenario - if an unauthenticated user accesses a
      * page that requires authentication, it is expected that request is
-     * {@link #saveRequest(javax.servlet.ServletRequest) saved} first and then redirected to the login page. Then,
+     * {@link #saveRequest(jakarta.servlet.ServletRequest) saved} first and then redirected to the login page. Then,
      * after a successful login, this method can be called to redirect them back to their originally requested URL, a
      * nice usability feature.
      *

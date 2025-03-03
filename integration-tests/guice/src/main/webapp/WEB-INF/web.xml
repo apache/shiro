@@ -1,4 +1,5 @@
-<%--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements.  See the NOTICE file
   ~ distributed with this work for additional information
@@ -15,22 +16,28 @@
   ~ KIND, either express or implied.  See the License for the
   ~ specific language governing permissions and limitations
   ~ under the License.
-  --%>
-<%@ include file="../include.jsp" %>
+  -->
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
 
-<html>
-<head>
-    <link type="text/css" rel="stylesheet" href="<c:url value="/style.css"/>"/>
-</head>
-<body>
+    <listener>
+        <listener-class>org.apache.shiro.samples.guice.SampleShiroGuiceBootstrap</listener-class>
+    </listener>
 
-<h2>Users only</h2>
+    <filter>
+        <filter-name>GuiceFilter</filter-name>
+        <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+    </filter>
 
-<p>You are currently logged in.</p>
+    <filter-mapping>
+        <filter-name>GuiceFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-<p><a href="<c:url value="/home.jsp"/>">Return to the home page.</a></p>
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
 
-<p><a href="<c:url value="/logout"/>">Log out.</a></p>
-
-</body>
-</html>
+</web-app>

@@ -23,6 +23,7 @@ import org.apache.shiro.lang.util.SimpleByteSource;
 import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -38,6 +39,7 @@ import java.util.Set;
  */
 public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, SaltedAuthenticationInfo {
 
+    @Serial
     private static final long serialVersionUID = 5390456512469696779L;
     /**
      * The principals identifying the account associated with this AuthenticationInfo instance.
@@ -220,8 +222,8 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
         //is null, then it can't hurt to pull in a non-null value if one exists.
         //
         //since 1.1:
-        if (this.credentialsSalt == null && info instanceof SaltedAuthenticationInfo) {
-            this.credentialsSalt = ((SaltedAuthenticationInfo) info).getCredentialsSalt();
+        if (this.credentialsSalt == null && info instanceof SaltedAuthenticationInfo authenticationInfo) {
+            this.credentialsSalt = authenticationInfo.getCredentialsSalt();
         }
 
         Object thisCredentials = getCredentials();
@@ -243,12 +245,9 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
         }
 
         // At this point, the credentials should be a collection
-        @SuppressWarnings("unchecked")
-        Collection<Object> credentialCollection = (Collection<Object>) getCredentials();
-        if (otherCredentials instanceof Collection) {
-            @SuppressWarnings("unchecked")
-            Collection<Object> otherCredentialsCollection = (Collection<Object>) otherCredentials;
-            credentialCollection.addAll(otherCredentialsCollection);
+        Collection<?> credentialCollection = (Collection<?>) getCredentials();
+        if (otherCredentials instanceof Collection<?> collection) {
+            credentialCollection.addAll(collection);
         } else {
             credentialCollection.add(otherCredentials);
         }

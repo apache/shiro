@@ -15,12 +15,13 @@ package org.apache.shiro.ee.cdi;
 
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getNativeSessionManager;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import javax.enterprise.context.spi.Context;
-import javax.enterprise.context.spi.Contextual;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.CDI;
+import jakarta.enterprise.context.spi.Context;
+import jakarta.enterprise.context.spi.Contextual;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.spi.CDI;
 
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.SecurityUtils;
@@ -37,6 +38,7 @@ import org.omnifaces.util.Beans;
  */
 public class ShiroScopeContext implements Context, Serializable {
     private static final String BEAN_STORAGE_KEY = "org.apache.shiro.ee.bean-storage";
+    @Serial
     private static final long serialVersionUID = 1L;
     private final Class<? extends Annotation> scopeType;
     private final Class<? extends Annotation> webScopeType;
@@ -45,7 +47,7 @@ public class ShiroScopeContext implements Context, Serializable {
     public ShiroScopeContext(Class<? extends Annotation> scopeType, Class<? extends Annotation> webScopeType) {
         this.scopeType = scopeType;
         this.webScopeType = webScopeType;
-        isViewScoped = webScopeType == javax.faces.view.ViewScoped.class
+        isViewScoped = webScopeType == jakarta.faces.view.ViewScoped.class
                 || webScopeType == org.omnifaces.cdi.ViewScoped.class;
     }
 
@@ -62,10 +64,10 @@ public class ShiroScopeContext implements Context, Serializable {
         } else {
             synchronized (contextual) {
                 if (isViewScoped) {
-                    return Beans.getReference(ViewScopeManager.class).createBean(contextual, creationalContext);
+                    return Beans.getReference(ViewScopeManager.class).getBean(contextual, creationalContext);
                 } else {
                     return getBeanStorage(SecurityUtils.getSubject().getSession())
-                            .createBean(contextual, creationalContext);
+                            .getBean(contextual, creationalContext);
                 }
             }
         }
@@ -100,8 +102,7 @@ public class ShiroScopeContext implements Context, Serializable {
     }
 
     public static boolean isWebContainerSessions(SecurityManager sm) {
-        if (sm instanceof WebSecurityManager) {
-            WebSecurityManager wsm = (WebSecurityManager) sm;
+        if (sm instanceof WebSecurityManager wsm) {
             return wsm.isHttpSessionMode();
         }
         return false;

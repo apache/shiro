@@ -275,7 +275,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return true if remember me services should be performed as a result of the successful authentication attempt.
      */
     protected boolean isRememberMe(AuthenticationToken token) {
-        return token instanceof RememberMeAuthenticationToken && ((RememberMeAuthenticationToken) token).isRememberMe();
+        return token instanceof RememberMeAuthenticationToken rmat && rmat.isRememberMe();
     }
 
     /**

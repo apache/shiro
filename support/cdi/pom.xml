@@ -38,7 +38,7 @@
         <dependency>
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <version>2.0.2</version>
+            <version>4.0.1</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
@@ -59,8 +59,15 @@
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>2.0.2</version>
+            <version>3.0.2</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ejb</groupId>
+            <artifactId>jakarta.ejb-api</artifactId>
+            <version>4.0.1</version>
+            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -107,30 +114,6 @@
                         <_removeheaders>Bnd-LastModified</_removeheaders>
                         <_reproducible>true</_reproducible>
                     </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <configuration>
-                    <relocations combine.children="append">
-                        <relocation>
-                            <pattern>javax.faces</pattern>
-                            <shadedPattern>jakarta.faces</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.el</pattern>
-                            <shadedPattern>jakarta.el</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.interceptor</pattern>
-                            <shadedPattern>jakarta.interceptor</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.activation</pattern>
-                            <shadedPattern>jakarta.activation</shadedPattern>
-                        </relocation>
-                    </relocations>
                 </configuration>
             </plugin>
             <plugin>
