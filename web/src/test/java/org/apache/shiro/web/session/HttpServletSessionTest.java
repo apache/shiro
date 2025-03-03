@@ -22,7 +22,7 @@ import org.easymock.Capture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import static org.easymock.EasyMock.captureInt;
 import static org.easymock.EasyMock.createMock;

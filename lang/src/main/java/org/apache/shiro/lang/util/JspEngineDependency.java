@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.lang.util;
 
-import javax.servlet.jsp.JspEngineInfo;
+import jakarta.servlet.jsp.JspEngineInfo;
 
 /**
  * This only exists so bundle plugin doesn't complain about redundant dependencies

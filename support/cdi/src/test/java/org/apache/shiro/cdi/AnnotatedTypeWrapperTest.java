@@ -19,9 +19,9 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.ejb.Stateless;
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.inject.spi.AnnotatedType;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.spi.AnnotatedType;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresGuest;

@@ -25,7 +25,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -84,12 +84,12 @@ public class FormSupportTest {
     void viewStatePattern() {
         String statefulFormData
                 = "j_idt5%3Dj_idt5%26j_idt5%3Aj_idt7%3Daaa%26j_idt5%3Aj_idt9%3Dbbb%26j_idt5%3A"
-                + "j_idt11%3DSubmit+...%26" + jakartify("javax.faces.ViewState")
+                + "j_idt11%3DSubmit+...%26" + jakartify("jakarta.faces.ViewState")
                 + "%3D-8335355445345003673%3A-6008443334776649058";
         assertTrue(isJSFStatefulForm(decode(statefulFormData)));
         String statelessFormData
                 = "j_idt5%3Dj_idt5%26j_idt5%3Aj_idt7%3Daaa%26j_idt5%3Aj_idt9%3Dbbb%26j_idt5%3A"
-                + "j_idt11%3DSubmit+...%26" + jakartify("javax.faces.ViewState") + "%3Dstateless";
+                + "j_idt11%3DSubmit+...%26" + jakartify("jakarta.faces.ViewState") + "%3Dstateless";
         assertFalse(isJSFStatefulForm(statelessFormData));
         assertThrows(NullPointerException.class, () -> isJSFStatefulForm(null));
         String nonJSFFormData
@@ -103,51 +103,51 @@ public class FormSupportTest {
     void extractViewState() {
         assertThrows(NullPointerException.class, () -> extractJSFNewViewState(null, null));
         assertEquals("hello", extractJSFNewViewState("", "hello"));
-        assertEquals(jakartify("javax.faces.ViewState=stateless&hello=bye"),
-                extractJSFNewViewState("xxx", jakartify("javax.faces.ViewState=stateless&hello=bye")));
-        assertEquals(jakartify("javax.faces.ViewState=stateless&hello=bye"),
-                extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"123:456\"/>"),
-                        jakartify("javax.faces.ViewState=stateless&hello=bye")));
-        assertEquals(jakartify("aaa=bbb&javax.faces.ViewState=xxx:yyy&hello=bye"),
-                extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"123:456\"/>"),
-                        jakartify("aaa=bbb&javax.faces.ViewState=xxx:yyy&hello=bye")));
-        assertEquals(jakartify("javax.faces.ViewState=123:456&hello=bye"),
-                extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"123:456\"/>"),
-                        jakartify("javax.faces.ViewState=987:654&hello=bye")));
-        assertEquals(jakartify("javax.faces.ViewState=-123:-456&hello=bye"),
-                extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"-123:-456\"/>"),
-                        jakartify("javax.faces.ViewState=987:654&hello=bye")));
-        assertEquals(jakartify("javax.faces.ViewState=-123:-456&hello=bye"),
-                extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"-123:-456\"/>"),
-                        jakartify("javax.faces.ViewState=-987:-654&hello=bye")));
-        assertEquals(jakartify("aaa=bbb&javax.faces.ViewState=-123:-456&hello=bye"),
-                extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"-123:-456\"/>"),
-                        jakartify("aaa=bbb&javax.faces.ViewState=-987:-654&hello=bye")));
-        assertEquals(jakartify("aaa=bbb&javax.faces.ViewState=-123:-456"),
-                extractJSFNewViewState(jakartify("<input name=\"javax.faces.ViewState\" value=\"-123:-456\"/>"),
-                        jakartify("aaa=bbb&javax.faces.ViewState=-987:-654")));
+        assertEquals(jakartify("jakarta.faces.ViewState=stateless&hello=bye"),
+                extractJSFNewViewState("xxx", jakartify("jakarta.faces.ViewState=stateless&hello=bye")));
+        assertEquals(jakartify("jakarta.faces.ViewState=stateless&hello=bye"),
+                extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>"),
+                        jakartify("jakarta.faces.ViewState=stateless&hello=bye")));
+        assertEquals(jakartify("aaa=bbb&jakarta.faces.ViewState=xxx:yyy&hello=bye"),
+                extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>"),
+                        jakartify("aaa=bbb&jakarta.faces.ViewState=xxx:yyy&hello=bye")));
+        assertEquals(jakartify("jakarta.faces.ViewState=123:456&hello=bye"),
+                extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>"),
+                        jakartify("jakarta.faces.ViewState=987:654&hello=bye")));
+        assertEquals(jakartify("jakarta.faces.ViewState=-123:-456&hello=bye"),
+                extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>"),
+                        jakartify("jakarta.faces.ViewState=987:654&hello=bye")));
+        assertEquals(jakartify("jakarta.faces.ViewState=-123:-456&hello=bye"),
+                extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>"),
+                        jakartify("jakarta.faces.ViewState=-987:-654&hello=bye")));
+        assertEquals(jakartify("aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye"),
+                extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>"),
+                        jakartify("aaa=bbb&jakarta.faces.ViewState=-987:-654&hello=bye")));
+        assertEquals(jakartify("aaa=bbb&jakarta.faces.ViewState=-123:-456"),
+                extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>"),
+                        jakartify("aaa=bbb&jakarta.faces.ViewState=-987:-654")));
     }
 
     @Test
     void noAjaxRequests() {
         assertEquals(
                 new PartialAjaxResult(
-                        jakartify("aaa=bbb&javax.faces.ViewState=-123:-456&hello=bye"),
+                        jakartify("aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye"),
                         true, false),
-                noJSFAjaxRequests(jakartify("aaa=bbb&javax.faces.ViewState=-123:-456")
-                        + jakartify("&javax.faces.partial.ajax=true&hello=bye"), false));
+                noJSFAjaxRequests(jakartify("aaa=bbb&jakarta.faces.ViewState=-123:-456")
+                        + jakartify("&jakarta.faces.partial.ajax=true&hello=bye"), false));
         assertEquals(new PartialAjaxResult("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
-                        + jakartify("&javax.faces.ViewState=7709788254588873136:-8052771455757429917")
-                        + jakartify("&javax.faces.source=j_idt12:j_idt18")
-                        + jakartify("&javax.faces.behavior.event=action"), true, false),
+                        + jakartify("&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917")
+                        + jakartify("&jakarta.faces.source=j_idt12:j_idt18")
+                        + jakartify("&jakarta.faces.behavior.event=action"), true, false),
                 noJSFAjaxRequests("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
-                        + jakartify("&javax.faces.ViewState=7709788254588873136:-8052771455757429917")
-                        + jakartify("&javax.faces.source=j_idt12:j_idt18")
-                        + jakartify("&javax.faces.partial.event=click")
-                        + jakartify("&javax.faces.partial.execute=j_idt12:j_idt18 j_idt12")
-                        + jakartify("&javax.faces.partial.render=j_idt12")
-                        + jakartify("&javax.faces.behavior.event=action")
-                        + jakartify("&javax.faces.partial.ajax=false"), false));
+                        + jakartify("&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917")
+                        + jakartify("&jakarta.faces.source=j_idt12:j_idt18")
+                        + jakartify("&jakarta.faces.partial.event=click")
+                        + jakartify("&jakarta.faces.partial.execute=j_idt12:j_idt18 j_idt12")
+                        + jakartify("&jakarta.faces.partial.render=j_idt12")
+                        + jakartify("&jakarta.faces.behavior.event=action")
+                        + jakartify("&jakarta.faces.partial.ajax=false"), false));
     }
 
     @Test

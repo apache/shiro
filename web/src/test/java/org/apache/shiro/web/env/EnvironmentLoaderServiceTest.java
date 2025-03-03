@@ -22,7 +22,7 @@ import org.apache.shiro.config.ConfigurationException;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.util.Arrays;
 import java.util.List;
 

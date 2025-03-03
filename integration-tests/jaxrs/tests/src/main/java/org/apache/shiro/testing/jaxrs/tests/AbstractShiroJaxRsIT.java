@@ -19,33 +19,51 @@
 
 package org.apache.shiro.testing.jaxrs.tests;
 
+import jakarta.ws.rs.client.Invocation;
 import org.apache.johnzon.jaxrs.jsonb.jaxrs.JsonbJaxrsProvider;
 import org.apache.shiro.testing.jaxrs.app.json.JsonbConfigProvider;
 import org.apache.shiro.testing.jaxrs.app.model.Stormtrooper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractShiroJaxRsIT {
 
-    final Client client = ClientBuilder.newClient()
-            .register(new JsonbConfigProvider())
-            .register(new JsonbJaxrsProvider<>());
+    static {
+        String cp = System.getProperty("java.class.path").replaceAll(":", "\n");
 
-    protected abstract URI getBaseUri();
+        java.lang.System.err.println("CLASSPATH:\n" + cp);
+
+        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+        List<String> arguments = runtimeMxBean.getInputArguments();
+        System.err.println("foo:" + arguments);
+    }
+
+    final Client client;
+
+  {
+    client = ClientBuilder.newClient();
+    client.register(new JsonbConfigProvider());
+    client.register(new JsonbJaxrsProvider<>());
+  }
+
+  protected abstract URI getBaseUri();
 
     @BeforeEach
     public void logOut() {
@@ -66,10 +84,10 @@ public abstract class AbstractShiroJaxRsIT {
     public void testGetUsersBasicAuthenticated() {
         final WebTarget usersTarget = client.target(getBaseUri()).path("troopers");
         final String basicToken = Base64.getEncoder().encodeToString("root:secret".getBytes(StandardCharsets.UTF_8));
-        final Response usersResponse = usersTarget.request(MediaType.APPLICATION_JSON_TYPE)
-                .header("Authorization", "Basic " + basicToken)
-                .buildGet()
-                .invoke();
+      Invocation.Builder request = usersTarget.request(MediaType.APPLICATION_JSON_TYPE);
+      Invocation.Builder authorization = request.header("Authorization", "Basic " + basicToken);
+      Invocation invocation = authorization.buildGet();
+      final Response usersResponse = invocation.invoke();
         assertEquals(Status.OK.getStatusCode(), usersResponse.getStatus());
         final Stormtrooper[] stormtroopers = usersResponse.readEntity(Stormtrooper[].class);
         assertEquals(50, stormtroopers.length);

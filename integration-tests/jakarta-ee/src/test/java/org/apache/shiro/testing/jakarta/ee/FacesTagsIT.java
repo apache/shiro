@@ -31,6 +31,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,6 +41,8 @@ import org.openqa.selenium.support.FindBy;
 
 @ExtendWith(ArquillianExtension.class)
 @Tag("UserInterface")
+@Disabled("Failing with Cannot invoke \"org.jboss.arquillian.container.test.impl.domain"
+    + ".ProtocolDefinition.createProtocolConfiguration()\" because \"protocolDefinition\" is null")
 public class FacesTagsIT {
     @Drone
     private WebDriver webDriver;

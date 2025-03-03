@@ -26,7 +26,7 @@
     <parent>
         <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
         <artifactId>shiro-its-jaxrs</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>shiro-its-jaxrs-openliberty</artifactId>
@@ -43,16 +43,37 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
+            <artifactId>shiro-its-jaxrs-tests</artifactId>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
             <artifactId>shiro-its-jaxrs-app</artifactId>
             <type>war</type>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
-            <artifactId>shiro-its-jaxrs-tests</artifactId>
-            <type>jar</type>
-            <scope>test</scope>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-client</artifactId>
+            <version>4.0.6</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.glassfish.jersey.core</groupId>-->
+<!--            <artifactId>jersey-client</artifactId>-->
+<!--            <version>3.0.2</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.glassfish.jersey.inject</groupId>-->
+<!--            <artifactId>jersey-hk2</artifactId>-->
+<!--            <version>3.0.2</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -65,10 +86,10 @@
                     <serverName>shiro-its-jaxrs-openliberty</serverName>
                     <features>
                         <acceptLicense>true</acceptLicense>
-                        <feature>jaxrs-2.1</feature>
-                        <feature>servlet-4.0</feature>
-                        <feature>cdi-2.0</feature>
-                        <feature>jsonb-1.0</feature>
+                        <feature>restfulWS-3.0</feature>
+                        <feature>servlet-5.0</feature>
+                        <feature>cdi-3.0</feature>
+                        <feature>jsonb-2.0</feature>
                     </features>
                     <deployPackages>dependencies</deployPackages>
                     <looseApplication>false</looseApplication>

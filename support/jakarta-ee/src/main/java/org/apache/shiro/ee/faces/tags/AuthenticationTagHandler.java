@@ -13,11 +13,11 @@
  */
 package org.apache.shiro.ee.faces.tags;
 
-import javax.el.ELException;
-import javax.faces.FacesException;
-import javax.faces.component.UIComponent;
-import javax.faces.view.facelets.FaceletContext;
-import javax.faces.view.facelets.TagConfig;
+import jakarta.el.ELException;
+import jakarta.faces.FacesException;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.view.facelets.FaceletContext;
+import jakarta.faces.view.facelets.TagConfig;
 import java.io.IOException;
 
 import lombok.extern.slf4j.Slf4j;

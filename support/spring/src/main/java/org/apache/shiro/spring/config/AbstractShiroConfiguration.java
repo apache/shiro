@@ -49,12 +49,14 @@ import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * @since 1.4.0
  */
+@Component
 public class AbstractShiroConfiguration {
 
     @Autowired(required = false)

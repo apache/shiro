@@ -13,7 +13,7 @@
  */
 package org.apache.shiro.ee.faces.tags;
 
-import javax.faces.view.facelets.TagConfig;
+import jakarta.faces.view.facelets.TagConfig;
 
 /**
  * Tag that renders the tag body only if the current user has executed a <b>successful</b> authentication attempt

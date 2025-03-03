@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <artifactId>shiro-integration-tests</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>shiro-its-support</artifactId>
@@ -45,8 +45,8 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

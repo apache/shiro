@@ -18,6 +18,9 @@
  */
 package org.apache.shiro.guice.web;
 
+
+
+
 import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -51,8 +54,8 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 
-import javax.servlet.Filter;
-import javax.servlet.ServletContext;
+import jakarta.servlet.Filter;
+import jakarta.servlet.ServletContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

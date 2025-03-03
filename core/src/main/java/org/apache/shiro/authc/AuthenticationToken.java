@@ -47,7 +47,7 @@ import java.io.Serializable;
  * RememberMe services (the <tt>UsernamePasswordToken</tt> already implements this interface).
  * <p/>
  * <p>If you are familiar with JAAS, an <tt>AuthenticationToken</tt> replaces the concept of a
- * {@link javax.security.auth.callback.Callback}, and  defines meaningful behavior
+ * {@link jakarta.security.auth.callback.Callback}, and  defines meaningful behavior
  * (<tt>Callback</tt> is just a marker interface, and of little use).  We
  * also think the name <em>AuthenticationToken</em> more accurately reflects its true purpose
  * in a login framework, whereas <em>Callback</em> is less obvious.

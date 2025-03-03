@@ -39,8 +39,13 @@ public abstract class JakartaAbstractContainerIT {
             meecrowave.getConfiguration().addGlobalContextCustomizer(
                     ctx -> ctx.setJarScanner(new org.apache.tomcat.util.scan.StandardJarScanner()));
             meecrowave.start();
+            // v-- fails with class cast exception --V
             meecrowave.deployWebapp("/", root);
         } catch (final Exception e) {
+            // todo: failures here are showing class cast exception because two separate instances of
+            //  the interface org.apache.webbeans.spi.LoaderService are being loaded, one in the app
+            //  classloader, and one in ParallelWebappClassLoader, and then Class.cast() is failing
+            //  because the target object was loaded in a different classloader
             e.printStackTrace();
         }
     }

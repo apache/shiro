@@ -22,9 +22,9 @@ import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -169,7 +169,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
      * Determines the action (verb) attempting to be performed on the filtered resource by the current request.
      * <p/>
      * This implementation expects the incoming request to be an {@link HttpServletRequest} and returns a mapped
-     * action based on the HTTP request {@link javax.servlet.http.HttpServletRequest#getMethod() method}.
+     * action based on the HTTP request {@link jakarta.servlet.http.HttpServletRequest#getMethod() method}.
      *
      * @param request to pull the method from.
      * @return The string equivalent verb of the http method.
@@ -232,7 +232,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
      * </ol>
      * per {@link org.apache.shiro.authz.permission.WildcardPermission WildcardPermission} conventions.  Subclasses
      * are of course free to override this method or the
-     * {@link #buildPermissions(javax.servlet.http.HttpServletRequest, String[], String) buildPermissions} request
+     * {@link #buildPermissions(jakarta.servlet.http.HttpServletRequest, String[], String) buildPermissions} request
      * variant for custom building logic or with different permission formats.
      *
      * @param configuredPerms list of configuredPerms to be converted.
@@ -269,6 +269,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
      * Resolves an 'application friendly' action verb based on the {@code HttpServletRequest}'s method, appends that
      * action to each configured permission (the {@code mappedValue} argument is a {@code String[]} array), and
      * delegates the permission check for the newly constructed permission(s) to the superclass
+     * {@link PermissionsAuthorizationFilter#isAccessAllowed(ServletRequest, ServletResponse, Object) isAccessAllowed}
      * {@link PermissionsAuthorizationFilter#isAccessAllowed(ServletRequest, ServletResponse, Object) isAccessAllowed}
      * implementation to perform the actual permission check.
      *

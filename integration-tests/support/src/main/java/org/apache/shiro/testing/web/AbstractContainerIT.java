@@ -80,6 +80,8 @@ public abstract class AbstractContainerIT {
 
         jetty = new EmbeddedJetty(config) {
 
+            // TODO: I have no idea why this would have ever worked. It appears to be overriding a private method
+            //  and therefore never gets used?
             /**
              * Overriding with contents of this pull request, to make fragment scanning work.
              * <a href="https://github.com/mjeanroy/junit-servers/pull/3"></a>
