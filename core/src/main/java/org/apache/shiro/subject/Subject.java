@@ -351,7 +351,7 @@ public interface Subject {
      * Although the underlying implementation determines exactly how this method functions, most implementations have
      * this method act as the logical equivalent to this code:
      * <pre>
-     * {@link #getPrincipal() getPrincipal()} != null && !{@link #isAuthenticated() isAuthenticated()}</pre>
+     * {@link #getPrincipal() getPrincipal()} != null &amp;&amp; !{@link #isAuthenticated() isAuthenticated()}</pre>
      * <p/>
      * Note as indicated by the above code example, if a {@code Subject} is remembered, they are
      * <em>NOT</em> considered authenticated.  A check against {@link #isAuthenticated() isAuthenticated()} is a more

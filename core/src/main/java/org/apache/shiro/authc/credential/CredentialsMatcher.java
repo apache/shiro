@@ -33,8 +33,6 @@ import org.apache.shiro.authc.AuthenticationToken;
  *
  * @see SimpleCredentialsMatcher
  * @see AllowAllCredentialsMatcher
- * @see Md5CredentialsMatcher
- * @see Sha1CredentialsMatcher
  * @since 0.1
  */
 public interface CredentialsMatcher {

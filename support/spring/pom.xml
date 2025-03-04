@@ -32,6 +32,7 @@
     <packaging>bundle</packaging>
     <properties>
         <module.name>spring</module.name>
+        <junit5.parallel.tests.enabled>false</junit5.parallel.tests.enabled>
     </properties>
 
     <dependencies>

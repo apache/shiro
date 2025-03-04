@@ -117,7 +117,7 @@ public interface SessionDAO {
      * return something similar to the results returned by this query (assuming
      * {@link org.apache.shiro.session.mgt.SimpleSession SimpleSession}s were being stored):
      * <pre>
-     * select * from sessions s where s.lastAccessTimestamp < ? and s.stopTimestamp is null
+     * select * from sessions s where s.lastAccessTimestamp &lt; ? and s.stopTimestamp is null
      * </pre>
      * where the {@code ?} parameter is a date instance equal to 'now' minus the session timeout
      * (e.g. now - 30 minutes).
