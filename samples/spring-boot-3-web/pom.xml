@@ -35,37 +35,32 @@
 
     <properties>
         <module.name>samples.spring.boot3.web</module.name>
-        <spring-boot3.version>3.3.4</spring-boot3.version>
+        <spring-boot3.version>3.4.3</spring-boot3.version>
         <!--    below versions are not necessary in "real" applications -->
-        <spring.version>6.1.13</spring.version>
+        <spring.version>6.2.3</spring.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
-            <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-web</artifactId>
-            <classifier>jakarta</classifier>
         </dependency>
 
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring-boot-web-starter</artifactId>
-            <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring-boot-starter</artifactId>
-            <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
-            <classifier>jakarta</classifier>
         </dependency>
 
         <!-- Spring Boot -->
@@ -79,12 +74,6 @@
             <optional>true</optional>
         </dependency>
 
-        <!--    below dependencies may not be necessary in "real" applications -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
     <dependencyManagement>

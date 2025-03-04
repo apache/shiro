@@ -20,8 +20,8 @@ package org.apache.shiro.web.servlet
 
 import org.junit.jupiter.api.parallel.Isolated
 
-import javax.servlet.FilterConfig
-import javax.servlet.ServletContext
+import jakarta.servlet.FilterConfig
+import jakarta.servlet.ServletContext
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.UnavailableSecurityManagerException
 import org.apache.shiro.web.mgt.WebSecurityManager

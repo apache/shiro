@@ -24,11 +24,11 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.enterprise.context.SessionScoped;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.CDI;
-import javax.faces.view.ViewScoped;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.faces.view.ViewScoped;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 
@@ -116,7 +116,7 @@ public class ShiroScopeContextTest {
 
 
     private void setupWebSessions() {
-        when(SecurityUtils.getSecurityManager()).thenReturn(mock(WebSecurityManager.class));
+        secMock.when(SecurityUtils::getSecurityManager).thenReturn(mock(WebSecurityManager.class));
         WebSecurityManager wsm = (WebSecurityManager) SecurityUtils.getSecurityManager();
         when(wsm.isHttpSessionMode()).thenReturn(true);
     }

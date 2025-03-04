@@ -56,8 +56,8 @@ public class ShiroEventBusBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        if (bean instanceof EventBusAware) {
-            ((EventBusAware) bean).setEventBus(eventBus);
+        if (bean instanceof EventBusAware aware) {
+            aware.setEventBus(eventBus);
         } else if (isEventSubscriber(bean)) {
             eventBus.register(bean);
         }

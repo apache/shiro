@@ -14,8 +14,8 @@
 package org.apache.shiro.ee.filters;
 
 import org.apache.shiro.ee.filters.AuthenticationFilterDelegate.MethodsFromFilter;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;

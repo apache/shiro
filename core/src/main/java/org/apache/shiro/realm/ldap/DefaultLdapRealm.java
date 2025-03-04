@@ -336,8 +336,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      */
     protected Object getLdapPrincipal(AuthenticationToken token) {
         Object principal = token.getPrincipal();
-        if (principal instanceof String) {
-            String sPrincipal = (String) principal;
+        if (principal instanceof String sPrincipal) {
             return getUserDn(sPrincipal);
         }
         return principal;

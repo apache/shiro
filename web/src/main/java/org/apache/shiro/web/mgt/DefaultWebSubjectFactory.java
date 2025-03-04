@@ -27,8 +27,8 @@ import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.WebDelegatingSubject;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 import org.apache.shiro.web.subject.WebSubject;
 
