@@ -19,8 +19,6 @@
 package org.apache.shiro.cache.ehcache;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.net.URL;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
@@ -268,31 +266,6 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
             } finally {
                 this.manager = null;
                 this.cacheManagerImplicitlyCreated = false;
-            }
-        }
-    }
-
-    private abstract static class TypeToken<T> {
-
-        private final Type type;
-
-        protected TypeToken() {
-            Type superClass = getClass().getGenericSuperclass();
-            if (superClass instanceof ParameterizedType ptype) {
-                type = ptype.getActualTypeArguments()[0];
-            } else {
-                throw new IllegalStateException("Invalid TypeToken; must specify type parameters");
-            }
-        }
-
-        @SuppressWarnings("unchecked")
-        public Class<T> getType() {
-            if (type instanceof Class<?>) {
-                return (Class<T>) type;
-            } else if (type instanceof ParameterizedType ptype) {
-                return (Class<T>) ptype.getRawType();
-            } else {
-                throw new IllegalArgumentException("Type " + type + " is not a Class or ParameterizedType");
             }
         }
     }
