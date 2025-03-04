@@ -47,6 +47,7 @@ import org.easymock.EasyMock;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import javax.inject.Named;
 import javax.servlet.Filter;
@@ -71,6 +72,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
 
+@Isolated("System property usage")
 public class ShiroWebModuleTest {
 
 

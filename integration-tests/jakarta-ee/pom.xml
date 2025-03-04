@@ -37,10 +37,10 @@
         <!-- override older compiler source / target flags set by Apache parent POM -->
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
-        <arquillian.core.version>1.9.1.Final</arquillian.core.version>
+        <arquillian.core.version>1.9.3.Final</arquillian.core.version>
         <arquillian.payara5.version>2.5</arquillian.payara5.version>
         <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
-        <shrinkwrap.resolver.version>3.3.1</shrinkwrap.resolver.version>
+        <shrinkwrap.resolver.version>3.3.3</shrinkwrap.resolver.version>
         <drone.browser>firefox</drone.browser>
 
         <payara.version>5.2022.5.jdk21</payara.version>
@@ -50,6 +50,7 @@
         <mac-backup-file/>
         <create-domain-skip>true</create-domain-skip>
         <domain.name>domain1</domain.name>
+        <payara.https.port>8181</payara.https.port>
 
         <jakartaee.it.skip>${skipITs}</jakartaee.it.skip>
         <integration.modes.skip>${jakartaee.it.skip}</integration.modes.skip>
@@ -64,7 +65,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.6</version>
+            <version>3.14.7</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -145,7 +146,7 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>5.5.4</version>
+            <version>5.5.6</version>
         </dependency>
 
         <!-- Arquillian test dependencies -->
@@ -287,10 +288,12 @@
                         <integration.test.mode>${integration.test.mode}</integration.test.mode>
                         <gh_user>${gh_user}</gh_user>
                         <gh_token>${gh_token}</gh_token>
+                        <httpsPort>${payara.https.port}</httpsPort>
                         <webdriver.browser>${drone.browser}</webdriver.browser>
                         <webdriver.chrome.binary>${drone.chrome.binary}</webdriver.chrome.binary>
                         <webdriver.firefox.binary>${drone.firefox.binary}</webdriver.firefox.binary>
                         <org.jboss.shrinkwrap.resolver.maven.skipCompilation>true</org.jboss.shrinkwrap.resolver.maven.skipCompilation>
+                        <org.jboss.shrinkwrap.resolver.maven.ignoreDecryptionProblems>true</org.jboss.shrinkwrap.resolver.maven.ignoreDecryptionProblems>
                     </systemPropertyVariables>
                     <argLine>${failsafe.argLine} ${payara.argLine}</argLine>
                     <skip>${jakartaee.it.skip}</skip>
@@ -395,11 +398,11 @@
                                             }
                                         }
 
-                                        int sslPort = portbase + 81
+                                        int httpsPort = portbase + 81
 
                                         project.properties.'payara.portbase' = portbase as String
                                         project.properties.'payara.adminport' = adminPort as String
-                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -DsslPort=$sslPort" as String
+                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -Dpayara.https.port=$httpsPort" as String
                                         project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
                                         println "Payara: portbase = ${project.properties.'payara.portbase'}, " +
                                                 "argLine = ${project.properties.'payara.argLine'}"
@@ -416,7 +419,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.5.0</version>
                 <configuration>
                     <executable>${project.build.directory}/dependency/payara5/bin/${asadmin.cmd}</executable>
                     <skip>${payara.start.skip}</skip>
