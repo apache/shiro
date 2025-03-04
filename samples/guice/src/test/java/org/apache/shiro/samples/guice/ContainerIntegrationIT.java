@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.samples.guice;
 
-import com.github.mjeanroy.junit.servers.jetty12.EmbeddedJetty;
 import org.apache.shiro.testing.web.AbstractContainerIT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,7 +57,7 @@ public class ContainerIntegrationIT extends AbstractContainerIT {
     }
 
     @Test
-    void logInAndRememberMe(EmbeddedJetty jetty) throws Exception {
+    void logInAndRememberMe() throws Exception {
         HtmlPage page = webClient.getPage(getBaseUri() + "login.jsp");
         HtmlForm form = page.getFormByName("loginform");
         form.getInputByName("username").setValueAttribute("root");
