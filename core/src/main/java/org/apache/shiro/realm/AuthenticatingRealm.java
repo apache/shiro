@@ -391,7 +391,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @since 1.2
      */
     public final void init() {
-        //trigger obtaining the authorization cache if possible
+        //trigger obtaining the authentication cache if possible
         getAvailableAuthenticationCache();
         onInit();
     }
@@ -411,7 +411,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @since 1.2
      */
     protected void afterCacheManagerSet() {
-        //trigger obtaining the authorization cache if possible
+        //trigger obtaining the authentication cache if possible
         getAvailableAuthenticationCache();
     }
 
@@ -485,9 +485,9 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
             Object key = getAuthenticationCacheKey(token);
             info = cache.get(key);
             if (info == null) {
-                LOGGER.trace("No AuthorizationInfo found in cache for key [{}]", key);
+                LOGGER.trace("No AuthenticationInfo found in cache for key [{}]", key);
             } else {
-                LOGGER.trace("Found cached AuthorizationInfo for key [{}]", key);
+                LOGGER.trace("Found cached AuthenticationInfo for key [{}]", key);
             }
         }
 
@@ -677,7 +677,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * {@link #clearCache(org.apache.shiro.subject.PrincipalCollection)} method instead (which will in turn call this
      * method by default).
      *
-     * @param principals the principals of the account for which to clear the cached AuthorizationInfo.
+     * @param principals the principals of the account for which to clear the cached AuthenticationInfo.
      * @see #clearCache(org.apache.shiro.subject.PrincipalCollection)
      * @since 1.2
      */
