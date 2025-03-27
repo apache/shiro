@@ -67,7 +67,7 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-client</artifactId>
-            <version>3.6.5</version>
+            <version>3.6.6</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
