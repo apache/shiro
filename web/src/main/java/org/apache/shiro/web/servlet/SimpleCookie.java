@@ -294,7 +294,7 @@ public class SimpleCookie implements Cookie {
         StringBuilder sb = new StringBuilder(name).append(NAME_VALUE_DELIMITER);
 
         if (StringUtils.hasText(value)) {
-            sb.append(value);
+            sb.append(Encode.forUriComponent(value));
         }
 
         appendComment(sb, comment);
@@ -313,7 +313,7 @@ public class SimpleCookie implements Cookie {
     private void appendComment(StringBuilder sb, String comment) {
         if (StringUtils.hasText(comment)) {
             sb.append(ATTRIBUTE_DELIMITER);
-            sb.append(COMMENT_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(comment);
+            sb.append(COMMENT_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(Encode.forUriComponent(comment));
         }
     }
 

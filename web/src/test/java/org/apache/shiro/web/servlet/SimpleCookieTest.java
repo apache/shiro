@@ -163,4 +163,72 @@ public class SimpleCookieTest {
         assertNull(this.cookie.readValue(mockRequest, mockResponse));
     }
 
+    @Test
+    public void testCookieAttributesArePercentEncodedWhenBuildingSetCookieHeaderValue() {
+        String cookieDomain = "example.com";
+        String cookiePath = "/docs";
+        String actualSetCookieHeaderValue = this.cookie.buildHeaderValue(
+            this.cookie.getName(),
+            "Some +=;@%value",
+            "Some +=;@%comment",
+            cookieDomain,
+            cookiePath,
+            SimpleCookie.DEFAULT_MAX_AGE,
+            SimpleCookie.DEFAULT_VERSION,
+            true,
+            true,
+            Cookie.SameSiteOptions.STRICT);
+
+        String expectedSetCookieHeaderValue = new StringBuilder()
+            .append("test").append(SimpleCookie.NAME_VALUE_DELIMITER).append("Some%20%2B%3D%3B%40%25value")
+            .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+            .append(SimpleCookie.COMMENT_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER)
+            .append("Some%20%2B%3D%3B%40%25comment")
+            .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+            .append(SimpleCookie.DOMAIN_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(cookieDomain)
+            .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+            .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(cookiePath)
+            .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+            .append(SimpleCookie.SECURE_ATTRIBUTE_NAME)
+            .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+            .append(SimpleCookie.HTTP_ONLY_ATTRIBUTE_NAME)
+            .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+            .append(SimpleCookie.SAME_SITE_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER)
+            .append(Cookie.SameSiteOptions.STRICT.toString().toLowerCase(Locale.ENGLISH))
+            .toString();
+
+        assertEquals(expectedSetCookieHeaderValue, actualSetCookieHeaderValue);
+    }
+
+    @Test
+    public void testCookieAttributesArePercentEncodedWhenSavedToRequest() {
+        this.cookie.setValue("Some +=;@%value");
+        this.cookie.setComment("Some +=;@%comment");
+        String path = "/docs";
+        this.cookie.setPath(path);
+
+        String expectedSetCookieHeaderValue = new StringBuilder()
+            .append("test").append(SimpleCookie.NAME_VALUE_DELIMITER).append("Some%20%2B%3D%3B%40%25value")
+            .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+            .append(SimpleCookie.COMMENT_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER)
+            .append("Some%20%2B%3D%3B%40%25comment")
+            .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+            .append(SimpleCookie.PATH_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER).append(path)
+            .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+            .append(SimpleCookie.HTTP_ONLY_ATTRIBUTE_NAME)
+            .append(SimpleCookie.ATTRIBUTE_DELIMITER)
+            .append(SimpleCookie.SAME_SITE_ATTRIBUTE_NAME).append(SimpleCookie.NAME_VALUE_DELIMITER)
+            .append(Cookie.SameSiteOptions.LAX.toString().toLowerCase(Locale.ENGLISH))
+            .toString();
+
+        mockResponse.addHeader(SimpleCookie.COOKIE_HEADER_NAME, expectedSetCookieHeaderValue);
+
+        replay(mockRequest);
+        replay(mockResponse);
+
+        this.cookie.saveTo(mockRequest, mockResponse);
+
+        verify(mockRequest);
+        verify(mockResponse);
+    }
 }
