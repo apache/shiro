@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>33</version>
+        <version>34</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -309,9 +309,9 @@
                         <excludePackageNames>org.apache.shiro.samples.*</excludePackageNames>
                         <linksource>true</linksource>
                         <links>
-                            <link>https://docs.oracle.com/javase/${jdk.version}/docs/api/</link>
+                            <link>https://docs.oracle.com/en/java/javase/${jdk.version}/docs/api/</link>
                             <link>https://www.slf4j.org/api/</link>
-                            <link>https://docs.spring.io/spring/docs/${spring.version}/javadoc-api/</link>
+                            <link>https://docs.spring.io/spring-framework/docs/${spring.version}/javadoc-api/</link>
                             <link>https://docs.spring.io/spring-boot/docs/${spring-boot.version}/api/</link>
                             <link>https://junit.org/junit5/docs/${junit.version}/api/</link>
                             <link>https://www.quartz-scheduler.org/api/${quartz.docs.version}/</link>
