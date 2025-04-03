@@ -461,9 +461,9 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
+                    <groupId>dev.aspectj</groupId>
                     <artifactId>aspectj-maven-plugin</artifactId>
-                    <version>1.15.0</version>
+                    <version>1.14.1</version>
                     <configuration>
                         <source>${maven.compiler.release}</source>
                         <target>${maven.compiler.release}</target>
