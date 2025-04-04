@@ -121,7 +121,7 @@
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.5.0</easymock.version>
-        <mockito.version>5.16.1</mockito.version>
+        <mockito.version>5.17.0</mockito.version>
         <bytebuddy.version>1.17.5</bytebuddy.version>
         <gmaven.version>4.1.1</gmaven.version>
         <groovy.version>4.0.26</groovy.version>
