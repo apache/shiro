@@ -196,4 +196,23 @@ public class DefaultLdapRealmTest {
         String userDn = realm.getUserDn(principal);
         assertEquals(principal, userDn);
     }
+
+    @Test
+    void testGetLdapPrincipalNullPrincipal() {
+        AuthenticationToken token = new AuthenticationToken() {
+            @Override
+            public Object getPrincipal() {
+                return null;
+            }
+
+            @Override
+            public Object getCredentials() {
+                return "secret";
+            }
+        };
+
+        assertThrows(AuthenticationException.class, () -> {
+            realm.getLdapPrincipal(token);
+        });
+    }
 }

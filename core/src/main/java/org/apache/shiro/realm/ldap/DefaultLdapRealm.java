@@ -329,13 +329,19 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * <p/>
      * If the token's {@code principal} is not a String, it is assumed to already be in the format supported by the
      * underlying {@link LdapContextFactory} implementation and the raw principal is returned directly.
+     * <p/>
+     * If the token's {@code principal} is {@code null}, an {@link AuthenticationException} will be thrown.
      *
      * @param token the {@link AuthenticationToken} submitted during the authentication process
      * @return the User DN or raw principal to use to acquire the LdapContext.
+     * @throws AuthenticationException if the principal is null
      * @see LdapContextFactory#getLdapContext(Object, Object)
      */
     protected Object getLdapPrincipal(AuthenticationToken token) {
         Object principal = token.getPrincipal();
+        if (principal == null) {
+            throw new AuthenticationException("No principal found for provided credentials");
+        }
         if (principal instanceof String) {
             String sPrincipal = (String) principal;
             return getUserDn(sPrincipal);
@@ -356,6 +362,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * @param token              the submitted authentication token that triggered the authentication attempt.
      * @param ldapContextFactory factory used to retrieve LDAP connections.
      * @return an {@link AuthenticationInfo} instance representing the authenticated user's information.
+     * @throws AuthenticationException if no principal is found or LDAP authentication fails.
      * @throws NamingException if any LDAP errors occur.
      */
     protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token,
