@@ -520,6 +520,8 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return the deserialized (reconstituted) {@code PrincipalCollection}
      */
     protected PrincipalCollection deserialize(byte[] serializedIdentity) {
+        // OSGi fix: shiro-core classloader needed by deserializer in shiro-lang to find classes in shiro-core
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         return getSerializer().deserialize(serializedIdentity);
     }
 
