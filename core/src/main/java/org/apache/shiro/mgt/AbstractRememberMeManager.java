@@ -29,6 +29,7 @@ import org.apache.shiro.lang.io.DefaultSerializer;
 import org.apache.shiro.lang.io.Serializer;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.ByteUtils;
+import org.apache.shiro.lang.util.ClassUtils;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
@@ -509,7 +510,12 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return the serialized principal collection in the form of a byte array
      */
     protected byte[] serialize(PrincipalCollection principals) {
-        return getSerializer().serialize(principals);
+        ClassUtils.setAdditionalClassLoader(AbstractRememberMeManager.class.getClassLoader());
+        try {
+            return getSerializer().serialize(principals);
+        } finally {
+            ClassUtils.removeAdditionalClassLoader();
+        }
     }
 
     /**
@@ -520,7 +526,12 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return the deserialized (reconstituted) {@code PrincipalCollection}
      */
     protected PrincipalCollection deserialize(byte[] serializedIdentity) {
-        return getSerializer().deserialize(serializedIdentity);
+        ClassUtils.setAdditionalClassLoader(AbstractRememberMeManager.class.getClassLoader());
+        try {
+            return getSerializer().deserialize(serializedIdentity);
+        } finally {
+            ClassUtils.removeAdditionalClassLoader();
+        }
     }
 
     /**

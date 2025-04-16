@@ -43,6 +43,7 @@ public final class ClassUtils {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassUtils.class);
 
+    private static final ThreadLocal<ClassLoader> ADDITIONAL_CLASS_LOADER = new ThreadLocal<>();
 
     /**
      * SHIRO-767: add a map to mapping primitive data type
@@ -75,10 +76,21 @@ public final class ClassUtils {
     /**
      * @since 1.0
      */
-    private static final ClassLoaderAccessor CLASS_CL_ACCESSOR = new ExceptionIgnoringAccessor() {
+    private static final ClassLoaderAccessor CLASS_LANG_CL_ACCESSOR = new ExceptionIgnoringAccessor() {
         @Override
         protected ClassLoader doGetClassLoader() throws Throwable {
             return ClassUtils.class.getClassLoader();
+        }
+    };
+
+    /**
+     * @since 2.0.4
+     */
+    private static final ClassLoaderAccessor ADDITIONAL_CL_ACCESSOR = new ExceptionIgnoringAccessor() {
+        @Override
+        protected ClassLoader doGetClassLoader() throws Throwable {
+            ClassLoader cl = ADDITIONAL_CLASS_LOADER.get();
+            return cl != null ? cl : ClassUtils.class.getClassLoader();
         }
     };
 
@@ -117,7 +129,15 @@ public final class ClassUtils {
                 LOGGER.trace("Resource [" + name + "] was not found via the thread context ClassLoader.  Trying the "
                         + "current ClassLoader...");
             }
-            is = CLASS_CL_ACCESSOR.getResourceStream(name);
+            is = CLASS_LANG_CL_ACCESSOR.getResourceStream(name);
+        }
+
+        if (is == null) {
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Resource [" + name + "] was not found via the org.apache.shiro.lang ClassLoader.  Trying the "
+                        + "additionally set ClassLoader...");
+            }
+            is = ADDITIONAL_CL_ACCESSOR.getResourceStream(name);
         }
 
         if (is == null) {
@@ -157,7 +177,15 @@ public final class ClassUtils {
                 LOGGER.trace("Unable to load class named [" + fqcn
                         + "] from the thread context ClassLoader.  Trying the current ClassLoader...");
             }
-            clazz = CLASS_CL_ACCESSOR.loadClass(fqcn);
+            clazz = CLASS_LANG_CL_ACCESSOR.loadClass(fqcn);
+        }
+
+        if (clazz == null) {
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Unable to load class named [" + fqcn
+                        + "] from the org.apache.shiro.lang ClassLoader.  Trying the additionally set ClassLoader...");
+            }
+            clazz = ADDITIONAL_CL_ACCESSOR.loadClass(fqcn);
         }
 
         if (clazz == null) {
@@ -257,6 +285,27 @@ public final class ClassUtils {
             clazz = clazz.getSuperclass();
         }
         return methods;
+    }
+
+    /**
+     * Sets additional ClassLoader for {@link #getResourceAsStream(String)} and {@link #forName(String)} to use
+     * It is used in addition to the thread context class loader and the system class loader.
+
+     * @param classLoader class loader to use
+     * @since 2.0.4
+     */
+    public static void setAdditionalClassLoader(ClassLoader classLoader) {
+        ADDITIONAL_CLASS_LOADER.set(classLoader);
+    }
+
+    /**
+     * Removes the additional ClassLoader set by {@link #setAdditionalClassLoader(ClassLoader)}.
+     * This must be called to avoid memory leaks.
+     *
+     * @since 2.0.4
+     */
+    public static void removeAdditionalClassLoader() {
+        ADDITIONAL_CLASS_LOADER.remove();
     }
 
     /**
