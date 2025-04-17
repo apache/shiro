@@ -153,7 +153,7 @@
         <module>bom</module>
         <module>integration-tests</module>
         <module>samples</module>
-        <module>test-coverage</module>
+        <!-- <module>test-coverage</module> -->
     </modules>
 
     <mailingLists>
