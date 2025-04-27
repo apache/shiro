@@ -19,7 +19,6 @@
 package org.apache.shiro.crypto.hash;
 
 import java.security.SecureRandom;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 
@@ -90,7 +89,7 @@ public class DefaultHashService implements ConfigurableHashService {
 
         Optional<HashSpi> kdfHash = HashProvider.getByAlgorithmName(algorithmName);
         if (kdfHash.isPresent()) {
-            HashSpi hashSpi = kdfHash.orElseThrow(NoSuchElementException::new);
+            HashSpi hashSpi = kdfHash.get();
 
             return hashSpi.newHashFactory(random).generate(request);
         }
