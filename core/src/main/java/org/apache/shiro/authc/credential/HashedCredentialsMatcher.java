@@ -49,7 +49,7 @@ import static java.util.Objects.requireNonNull;
  * <h2>Salting and Multiple Hash Iterations</h2>
  * Because simple hashing is usually not good enough for secure applications, this class also supports 'salting'
  * and multiple hash iterations.  Please read this excellent
- * <a href="http://www.owasp.org/index.php/Hashing_Java" _target="blank">Hashing Java article</a> to learn about
+ * <a href="http://www.owasp.org/index.php/Hashing_Java">Hashing Java article</a> to learn about
  * salting and multiple iterations and why you might want to use them. (Note of sections 5
  * &quot;Why add salt?&quot; and 6 "Hardening against the attacker's attack").</p>
  * <h4>Real World Case Study</h4>
@@ -100,9 +100,8 @@ import static java.util.Objects.requireNonNull;
  * <h3>Multiple Hash Iterations</h3>
  * If you hash your users' credentials multiple times before persisting to the data store, you will also need to
  * set this class's {@link #setHashIterations(int) hashIterations} property.  See the
- * <a href="http://www.owasp.org/index.php/Hashing_Java" _target="blank">Hashing Java article</a>'s
- * <a href="http://www.owasp.org/index.php/Hashing_Java#Hardening_against_the_attacker.27s_attack">
- * &quot;Hardening against the attacker's attack&quot;</a> section to learn more about why you might want to use
+ * <a href="https://web.archive.org/web/20140329025341/http://www.owasp.org/index.php/Hashing_Java">Hashing Java article</a>'s
+ * &quot;Hardening against the attacker's attack&quot; section to learn more about why you might want to use
  * multiple hash iterations.
  * <h2>MD5 &amp; SHA-1 Notice</h2>
  * <a href="http://en.wikipedia.org/wiki/MD5">MD5</a> and

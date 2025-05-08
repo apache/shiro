@@ -91,10 +91,10 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     }
 
     /**
-     * Returns the PermissionResolver to be used on <em>all</em> configured realms, or <code>null</code (the default)
+     * Returns the PermissionResolver to be used on <em>all</em> configured realms, or <code>null</code> (the default)
      * if all realm instances will each configure their own permission resolver.
      *
-     * @return the PermissionResolver to be used on <em>all</em> configured realms, or <code>null</code (the default)
+     * @return the PermissionResolver to be used on <em>all</em> configured realms, or <code>null</code> (the default)
      * if realm instances will each configure their own permission resolver.
      * @since 1.0
      */
@@ -145,10 +145,10 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
     }
 
     /**
-     * Returns the RolePermissionResolver to be used on <em>all</em> configured realms, or <code>null</code (the default)
+     * Returns the RolePermissionResolver to be used on <em>all</em> configured realms, or <code>null</code> (the default)
      * if all realm instances will each configure their own permission resolver.
      *
-     * @return the RolePermissionResolver to be used on <em>all</em> configured realms, or <code>null</code (the default)
+     * @return the RolePermissionResolver to be used on <em>all</em> configured realms, or <code>null</code> (the default)
      * if realm instances will each configure their own role permission resolver.
      * @since 1.0
      */

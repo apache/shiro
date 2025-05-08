@@ -37,7 +37,7 @@
     </modules>
 
     <properties>
-        <junit.engine.version>1.11.0</junit.engine.version>
+        <junit.engine.version>1.12.2</junit.engine.version>
     </properties>
 
     <dependencies>

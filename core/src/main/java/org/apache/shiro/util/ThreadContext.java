@@ -60,7 +60,7 @@ public abstract class ThreadContext {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ThreadContext.class);
 
-    private static final ThreadLocal<Map<Object, Object>> RESOURCES = new InheritableThreadLocalMap<Map<Object, Object>>();
+    private static final ThreadLocal<Map<Object, Object>> RESOURCES = new ThreadLocal<>();
 
     /**
      * Default no-argument constructor.
@@ -326,27 +326,6 @@ public abstract class ThreadContext {
      */
     public static Subject unbindSubject() {
         return (Subject) remove(SUBJECT_KEY);
-    }
-
-    private static final class InheritableThreadLocalMap<T extends Map<Object, Object>>
-                                            extends InheritableThreadLocal<Map<Object, Object>> {
-
-        /**
-         * This implementation was added to address a
-         * <a href="http://jsecurity.markmail.org/search/?q=#query:+page:1+mid:xqi2yxurwmrpqrvj+state:results">
-         * user-reported issue</a>.
-         *
-         * @param parentValue the parent value, a HashMap as defined in the {@link #initialValue()} method.
-         * @return the HashMap to be used by any parent-spawned child threads (a clone of the parent HashMap).
-         */
-        @SuppressWarnings({"unchecked"})
-        protected Map<Object, Object> childValue(Map<Object, Object> parentValue) {
-            if (parentValue != null) {
-                return (Map<Object, Object>) ((HashMap<Object, Object>) parentValue).clone();
-            } else {
-                return null;
-            }
-        }
     }
 }
 

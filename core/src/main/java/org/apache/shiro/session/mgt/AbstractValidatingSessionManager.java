@@ -140,10 +140,18 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
         try {
             doValidate(session);
         } catch (ExpiredSessionException ese) {
-            onExpiration(session, ese, key);
+            try {
+                onExpiration(session, ese, key);
+            } catch (IllegalStateException eise) {
+                LOGGER.trace("Attempting to validate an expired session with key {}", key, eise);
+            }
             throw ese;
         } catch (InvalidSessionException ise) {
-            onInvalidation(session, ise, key);
+            try {
+                onInvalidation(session, ise, key);
+            } catch (IllegalStateException eise) {
+                LOGGER.trace("Attempting to validate session with key {}", key, eise);
+            }
             throw ise;
         }
     }

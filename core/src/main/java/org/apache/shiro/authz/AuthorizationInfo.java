@@ -26,7 +26,7 @@ import java.util.Collection;
  * used during authorization (access control) checks only.
  * <p/>
  * Roles are represented as a <code>Collection</code> of Strings
- * ({@link java.util.Collection Collection}<{@link String String}>), typically each element being the Role name.
+ * ({@link java.util.Collection Collection}&lt;{@link String String}&gt;), typically each element being the Role name.
  * <p/>
  * {@link Permission Permission}s are provided in two ways:
  * <ul>
