@@ -73,19 +73,4 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>jdk16</id>
-            <activation>
-                <jdk>[16,)</jdk>
-            </activation>
-            <properties>
-                <!-- needed by guice until it is compatible with jdk16+. -->
-                <surefire.argLine>--illegal-access=permit</surefire.argLine>
-                <failsafe.argLine>--illegal-access=permit</failsafe.argLine>
-            </properties>
-        </profile>
-    </profiles>
-
 </project>
