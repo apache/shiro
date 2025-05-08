@@ -276,7 +276,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
-                        <argLine>@{jacocoAgent} @{surefire.argLine} -XX:+IgnoreUnrecognizedVMOptions -Xshare:off</argLine>
+                        <argLine>-XX:+IgnoreUnrecognizedVMOptions @{jacocoAgent} @{surefire.argLine} -Xshare:off</argLine>
                         <shutdown>kill</shutdown>
                         <enableProcessChecker>native</enableProcessChecker>
                         <trimStackTrace>false</trimStackTrace>
@@ -293,7 +293,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <configuration>
-                        <argLine>@{jacocoAgent} @{failsafe.argLine}</argLine>
+                        <argLine>-XX:+IgnoreUnrecognizedVMOptions @{jacocoAgent} @{failsafe.argLine}</argLine>
                         <trimStackTrace>false</trimStackTrace>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     </configuration>
