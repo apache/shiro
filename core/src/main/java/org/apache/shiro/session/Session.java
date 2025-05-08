@@ -29,7 +29,7 @@ import java.util.Date;
  * A {@code Session} is intended to be managed by the business tier and accessible via other
  * tiers without being tied to any given client technology.  This is a <em>great</em> benefit to Java
  * systems, since until now, the only viable session mechanisms were the
- * {@code javax.servlet.http.HttpSession} or Stateful Session EJB's, which many times
+ * {@code jakarta.servlet.http.HttpSession} or Stateful Session EJB's, which many times
  * unnecessarily coupled applications to web or ejb technologies.
  *
  * @since 0.1

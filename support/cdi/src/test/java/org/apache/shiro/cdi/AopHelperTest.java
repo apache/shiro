@@ -21,7 +21,7 @@ import org.apache.shiro.authz.aop.UserAnnotationHandler;
 import org.apache.shiro.cdi.AopHelper.SecurityInterceptor;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.util.List;
 

@@ -20,13 +20,13 @@ package org.apache.shiro.samples.spring.web;
 
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Controller responsible for logging out the current user by invoking
@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/s/logout")
 public class LogoutController extends AbstractController {
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         SecurityUtils.getSubject().logout();
         return new ModelAndView("redirect:login");
