@@ -31,11 +31,13 @@ import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.boot.autoconfigure.exception.NoRealmBeanConfiguredException;
 import org.apache.shiro.spring.config.AbstractShiroConfiguration;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 
 import java.util.List;
 
@@ -43,10 +45,10 @@ import java.util.List;
  * @since 1.4.0
  */
 @Configuration
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 @SuppressWarnings("SpringFacetCodeInspection")
 @ConditionalOnProperty(name = "shiro.enabled", matchIfMissing = true)
 public class ShiroAutoConfiguration extends AbstractShiroConfiguration {
-
     @Bean
     @ConditionalOnMissingBean
     @Override
