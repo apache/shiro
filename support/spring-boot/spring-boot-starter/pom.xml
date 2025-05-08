@@ -33,6 +33,7 @@
     <name>Apache Shiro :: Support :: Spring Boot</name>
     <properties>
         <module.name>spring.boot.starter</module.name>
+        <surefire.argLine>--enable-native-access=ALL-UNNAMED</surefire.argLine>
     </properties>
 
     <dependencies>
