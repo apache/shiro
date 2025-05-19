@@ -116,7 +116,7 @@
         <spring-boot.version>2.7.18</spring-boot.version>
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
-        <htmlunit.version>4.11.1</htmlunit.version>
+        <htmlunit.version>4.12.0</htmlunit.version>
         <bouncycastle.version>1.80</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
