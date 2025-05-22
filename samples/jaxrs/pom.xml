@@ -158,7 +158,7 @@
         <profile>
             <id>cxf</id>
             <properties>
-                <cxf.version>4.1.1</cxf.version>
+                <cxf.version>4.1.2</cxf.version>
             </properties>
             <dependencies>
                 <dependency>
