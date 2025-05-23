@@ -13,8 +13,8 @@
  */
 package org.apache.shiro.testing.cdi;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import lombok.Getter;
 import org.apache.shiro.cdi.annotations.NoSessionCreation;

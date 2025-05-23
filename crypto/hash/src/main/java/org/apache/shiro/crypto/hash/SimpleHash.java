@@ -29,6 +29,7 @@ import org.apache.shiro.lang.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -50,6 +51,7 @@ import static java.util.Objects.requireNonNull;
 public class SimpleHash extends CodecSupport implements Hash, Serializable {
 
     private static final int DEFAULT_ITERATIONS = 1;
+    @Serial
     private static final long serialVersionUID = -6689895264902387303L;
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleHash.class);
@@ -245,8 +247,8 @@ public class SimpleHash extends CodecSupport implements Hash, Serializable {
      * @since 1.2
      */
     protected ByteSource toByteSource(Object object) {
-        if (object instanceof ByteSource) {
-            return (ByteSource) object;
+        if (object instanceof ByteSource source) {
+            return source;
         }
         byte[] bytes = toBytes(object);
         return ByteSource.Util.bytes(bytes);
@@ -460,8 +462,7 @@ public class SimpleHash extends CodecSupport implements Hash, Serializable {
      */
     @Override
     public boolean equals(Object o) {
-        if (o instanceof Hash) {
-            Hash other = (Hash) o;
+        if (o instanceof Hash other) {
             return MessageDigest.isEqual(getBytes(), other.getBytes());
         }
         return false;

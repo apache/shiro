@@ -52,7 +52,7 @@ public class EhCacheManagerTest {
 
     @Test
     void testCacheManagerCreationDuringInit() {
-        net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
+        org.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertThat(ehCacheManager).isNull();
         cacheManager.init();
         //now assert that an internal CacheManager has been created:
@@ -62,7 +62,7 @@ public class EhCacheManagerTest {
 
     @Test
     void testLazyCacheManagerCreationWithoutCallingInit() {
-        net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
+        org.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertThat(ehCacheManager).isNull();
 
         //don't call init here - the ehcache CacheManager should be lazily created
@@ -82,7 +82,7 @@ public class EhCacheManagerTest {
 
     @Test
     void testRemove() {
-        net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
+        org.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertThat(ehCacheManager).isNull();
 
         Cache<String, String> cache = cacheManager.getCache("test");
@@ -109,7 +109,7 @@ public class EhCacheManagerTest {
 
     @Test
     void testClear() {
-        net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
+        org.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertThat(ehCacheManager).isNull();
 
         Cache<String, String> cache = cacheManager.getCache("test");
@@ -134,7 +134,7 @@ public class EhCacheManagerTest {
 
     @Test
     void testKeys() {
-        net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
+        org.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertThat(ehCacheManager).isNull();
 
         Cache<String, String> cache = cacheManager.getCache("test");
@@ -168,7 +168,7 @@ public class EhCacheManagerTest {
 
     @Test
     void testValues() {
-        net.sf.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
+        org.ehcache.CacheManager ehCacheManager = cacheManager.getCacheManager();
         assertThat(ehCacheManager).isNull();
 
         Cache<String, String> cache = cacheManager.getCache("test");

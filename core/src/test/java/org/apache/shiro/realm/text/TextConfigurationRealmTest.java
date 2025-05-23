@@ -46,7 +46,7 @@ public class TextConfigurationRealmTest {
     private void setUsers() {
         StringBuilder userDefinitions = new StringBuilder();
         for (int i = 1; i < 3; i++) {
-            userDefinitions.append(String.format("user%1$d = user%1$d_password, role1, role2%n", i));
+            userDefinitions.append("user%1$d = user%1$d_password, role1, role2%n".formatted(i));
         }
         realm.setUserDefinitions(userDefinitions.toString());
     }

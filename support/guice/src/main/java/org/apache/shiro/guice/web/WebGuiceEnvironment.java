@@ -27,8 +27,8 @@ import org.apache.shiro.web.env.WebEnvironment;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 
-import javax.inject.Named;
-import javax.servlet.ServletContext;
+import jakarta.inject.Named;
+import jakarta.servlet.ServletContext;
 
 @Singleton
 class WebGuiceEnvironment implements WebEnvironment {

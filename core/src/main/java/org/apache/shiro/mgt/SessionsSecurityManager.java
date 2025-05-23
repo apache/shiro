@@ -127,8 +127,8 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * instance implements the {@link CacheManagerAware CacheManagerAware} interface.
      */
     protected void applyCacheManagerToSessionManager() {
-        if (this.sessionManager instanceof CacheManagerAware) {
-            ((CacheManagerAware) this.sessionManager).setCacheManager(getCacheManager());
+        if (this.sessionManager instanceof CacheManagerAware aware) {
+            aware.setCacheManager(getCacheManager());
         }
     }
 
@@ -143,8 +143,8 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      */
     protected void applyEventBusToSessionManager() {
         EventBus eventBus = getEventBus();
-        if (eventBus != null && this.sessionManager instanceof EventBusAware) {
-            ((EventBusAware) this.sessionManager).setEventBus(eventBus);
+        if (eventBus != null && this.sessionManager instanceof EventBusAware aware) {
+            aware.setEventBus(eventBus);
         }
     }
 

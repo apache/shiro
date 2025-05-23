@@ -87,8 +87,8 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
      * {@link org.apache.shiro.authc.MergableAuthenticationInfo MergableAuthenticationInfo} is not desired for some reason.
      */
     protected AuthenticationInfo merge(AuthenticationInfo info, AuthenticationInfo aggregate) {
-        if (aggregate instanceof MergableAuthenticationInfo) {
-            ((MergableAuthenticationInfo) aggregate).merge(info);
+        if (aggregate instanceof MergableAuthenticationInfo authenticationInfo) {
+            authenticationInfo.merge(info);
             return aggregate;
         } else {
             throw new IllegalArgumentException("Attempt to merge authentication info from multiple realms, but aggregate "

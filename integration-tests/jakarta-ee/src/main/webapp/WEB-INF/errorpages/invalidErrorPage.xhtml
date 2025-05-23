@@ -31,14 +31,14 @@
             <li>Date/time: #{of:formatDate(now, 'yyyy-MM-dd HH:mm:ss')}</li>
             <li>User agent: #{header['user-agent']}</li>
             <li>User IP: #{request.remoteAddr}</li>
-            <li>Request URI: #{requestScope['javax.servlet.error.request_uri']}</li>
+            <li>Request URI: #{requestScope['jakarta.servlet.error.request_uri']}</li>
             <li>Ajax request: #{facesContext.partialViewContext.ajaxRequest ? 'Yes' : 'No'}</li>
-            <li>Status code: #{requestScope['javax.servlet.error.status_code']}</li>
-            <li id="exceptionType">Exception type: #{requestScope['javax.servlet.error.exception_type']}</li>
-            <li>Exception message: #{requestScope['javax.servlet.error.message']}</li>
+            <li>Status code: #{requestScope['jakarta.servlet.error.status_code']}</li>
+            <li id="exceptionType">Exception type: #{requestScope['jakarta.servlet.error.exception_type']}</li>
+            <li>Exception message: #{requestScope['jakarta.servlet.error.message']}</li>
             <li>Exception UUID: #{requestScope['org.omnifaces.exception_uuid']}</li>
             <li>Stack trace:
-                <pre>#{of:printStackTrace(requestScope['javax.servlet.error.exception'])}</pre>
+                <pre>#{of:printStackTrace(requestScope['jakarta.servlet.error.exception'])}</pre>
             </li>
         </ul>
     </h:body>
