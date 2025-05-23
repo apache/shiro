@@ -108,25 +108,14 @@
 
     <profiles>
         <profile>
-            <id>jdk16</id>
-            <activation>
-                <jdk>[16,)</jdk>
-            </activation>
-            <properties>
-                <!-- needed by guice until it is compatible with jdk16+. -->
-                <surefire.argLine>--illegal-access=permit</surefire.argLine>
-                <failsafe.argLine>--illegal-access=permit</failsafe.argLine>
-            </properties>
-        </profile>
-        <profile>
             <id>jdk17</id>
             <activation>
                 <jdk>[17,)</jdk>
             </activation>
             <properties>
                 <!-- needed by guice until it is compatible with jdk17+. -->
-                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</surefire.argLine>
-                <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</failsafe.argLine>
+                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</surefire.argLine>
+                <failsafe.argLine>${surefire.argLine}</failsafe.argLine>
             </properties>
         </profile>
     </profiles>

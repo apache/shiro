@@ -55,7 +55,7 @@ jobs:
     strategy:
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest', 'macOS-latest' ]
-        jdk: [ 11, 17, 21, 23 ]
+        jdk: [ 11, 17, 21, 24 ]
         dist: [ 'temurin', 'adopt-openj9', 'zulu' ]
         exclude:
           # was already built
@@ -71,9 +71,9 @@ jobs:
           # no OpenJ9 21
           - dist: adopt-openj9
             jdk: 21
-          # no OpenJ9 23
+          # no OpenJ9 24
           - dist: adopt-openj9
-            jdk: 23
+            jdk: 24
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
