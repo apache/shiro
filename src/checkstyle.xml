@@ -111,7 +111,7 @@
             <property name="scope" value="public"/>
         </module>
         <module name="JavadocVariable">
-            <property name="scope" value="public"/>
+            <property name="accessModifiers" value=""/>
         </module>
         <module name="JavadocStyle">
             <property name="checkFirstSentence" value="false"/>

@@ -42,6 +42,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -66,7 +67,7 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-client</artifactId>
-            <version>3.6.3</version>
+            <version>3.6.6</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>

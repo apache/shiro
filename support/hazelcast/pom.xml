@@ -34,6 +34,7 @@
     <properties>
         <hazelcast.osgi.importRange>[4, 5)</hazelcast.osgi.importRange>
         <module.name>hazelcast</module.name>
+        <surefire.argLine>--sun-misc-unsafe-memory-access=allow</surefire.argLine>
     </properties>
 
     <dependencies>

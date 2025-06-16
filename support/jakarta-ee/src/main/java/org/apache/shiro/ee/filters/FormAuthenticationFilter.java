@@ -81,7 +81,7 @@ public class FormAuthenticationFilter extends org.apache.shiro.web.filter.authc.
                                      ServletResponse response) throws Exception {
         if (request instanceof HttpServletRequest) {
             FallbackPredicate loginFallbackType = (FallbackPredicate) request.getAttribute(LOGIN_PREDICATE_ATTR_NAME);
-            redirectToSaved(WebUtils.toHttp(request), WebUtils.toHttp(response), loginFallbackType, "");
+            redirectToSaved(WebUtils.toHttp(request), WebUtils.toHttp(response), loginFallbackType, "/");
         }
         return false;
     }

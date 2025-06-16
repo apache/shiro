@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>32</version>
+        <version>34</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -66,7 +66,7 @@
     </distributionManagement>
 
     <properties>
-        <shiro.previousVersion>1.13.0</shiro.previousVersion>
+        <shiro.previousVersion>2.0.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2022-03-22T23:08:15Z</project.build.outputTimestamp>
@@ -75,6 +75,8 @@
         <surefire.argLine></surefire.argLine>
         <!--suppress CheckTagEmptyBody -->
         <failsafe.argLine></failsafe.argLine>
+        <junit5.parallel.tests.enabled>true</junit5.parallel.tests.enabled>
+        <junit5.parallel.tests.mode>concurrent</junit5.parallel.tests.mode>
         <nexus.deploy.skip>false</nexus.deploy.skip>
         <nexus-staging-profile>nexus-staging</nexus-staging-profile>
         <jacocoAgent/>
@@ -86,55 +88,56 @@
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
         <aspectj.version>1.9.20.1</aspectj.version>
-        <commons.beanutils.version>1.9.4</commons.beanutils.version>
-        <commons.cli.version>1.8.0</commons.cli.version>
+        <commons.beanutils.version>1.10.1</commons.beanutils.version>
+        <commons.cli.version>1.9.0</commons.cli.version>
         <commons.collection.version>3.2.2</commons.collection.version>
-        <commons.configuration2.version>2.11.0</commons.configuration2.version>
-        <commons.lang3.version>3.14.0</commons.lang3.version>
-        <commons.logging.version>1.3.2</commons.logging.version>
+        <commons.configuration2.version>2.12.0</commons.configuration2.version>
+        <commons.lang3.version>3.17.0</commons.lang3.version>
+        <commons.logging.version>1.3.5</commons.logging.version>
         <commons.text.version>1.8</commons.text.version>
         <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
              modules' OSGi metadata: -->
         <ehcache.version>2.6.11</ehcache.version>
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
-        <hazelcast.version>5.3.7</hazelcast.version>
-        <hsqldb.version>2.7.3</hsqldb.version>
+        <hazelcast.version>5.3.8</hazelcast.version>
+        <hsqldb.version>2.7.4</hsqldb.version>
         <javax.annotation.api.version>1.3.2</javax.annotation.api.version>
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>11</jdk.version>
-        <jetty.version>9.4.54.v20240208</jetty.version>
-        <owasp.java.encoder.version>1.2.3</owasp.java.encoder.version>
+        <jetty.version>9.4.57.v20241219</jetty.version>
+        <owasp.java.encoder.version>1.3.1</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
-        <quartz.version>2.5.0-rc1</quartz.version>
+        <quartz.version>2.5.0</quartz.version>
         <quartz.docs.version>2.3.0</quartz.docs.version>
-        <slf4j.version>2.0.13</slf4j.version>
-        <log4j.version>2.23.1</log4j.version>
-        <spring.version>5.3.37</spring.version>
+        <slf4j.version>2.0.17</slf4j.version>
+        <log4j.version>2.24.3</log4j.version>
+        <spring.version>5.3.39</spring.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
-        <htmlunit.version>4.2.0</htmlunit.version>
-        <bouncycastle.version>1.78.1</bouncycastle.version>
+        <htmlunit.version>4.13.0</htmlunit.version>
+        <bouncycastle.version>1.81</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
-        <easymock.version>5.3.0</easymock.version>
-        <mockito.version>5.12.0</mockito.version>
-        <bytebuddy.version>1.14.17</bytebuddy.version>
-        <gmaven.version>3.0.2</gmaven.version>
-        <groovy.version>4.0.21</groovy.version>
-        <junit.version>5.10.2</junit.version>
-        <junit.server.jetty.version>3.1.1</junit.server.jetty.version>
+        <easymock.version>5.6.0</easymock.version>
+        <mockito.version>5.18.0</mockito.version>
+        <bytebuddy.version>1.17.5</bytebuddy.version>
+        <gmaven.version>4.2.0</gmaven.version>
+        <groovy.version>4.0.26</groovy.version>
+        <junit.version>5.13.1</junit.version>
+        <junit.server.jetty.version>3.3.1</junit.server.jetty.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <jakarta.annotations.version>1.3.5</jakarta.annotations.version>
-        <lombok.version>1.18.32</lombok.version>
+        <lombok.version>1.18.38</lombok.version>
 
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
 
         <!-- checkstyle -->
         <checkstyle.configLocation>${root.dir}/src/checkstyle.xml</checkstyle.configLocation>
         <checkstyle.supressionsLocation>${root.dir}/src/suppressions.xml</checkstyle.supressionsLocation>
+        <fluido-skin.version>2.1.0</fluido-skin.version>
     </properties>
 
     <modules>
@@ -150,7 +153,7 @@
         <module>bom</module>
         <module>integration-tests</module>
         <module>samples</module>
-        <module>test-coverage</module>
+        <!-- <module>test-coverage</module> -->
     </modules>
 
     <mailingLists>
@@ -273,15 +276,15 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
-                        <argLine>@{jacocoAgent} @{surefire.argLine}</argLine>
+                        <argLine>-XX:+IgnoreUnrecognizedVMOptions @{jacocoAgent} @{surefire.argLine} -Xshare:off</argLine>
                         <shutdown>kill</shutdown>
                         <enableProcessChecker>native</enableProcessChecker>
                         <trimStackTrace>false</trimStackTrace>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         <properties>
                             <configurationParameters>
-                                junit.jupiter.execution.parallel.enabled = true
-                                junit.jupiter.execution.parallel.mode.default = concurrent
+                                junit.jupiter.execution.parallel.enabled = ${junit5.parallel.tests.enabled}
+                                junit.jupiter.execution.parallel.mode.default = ${junit5.parallel.tests.mode}
                             </configurationParameters>
                         </properties>
                     </configuration>
@@ -290,7 +293,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <configuration>
-                        <argLine>@{jacocoAgent} @{failsafe.argLine}</argLine>
+                        <argLine>-XX:+IgnoreUnrecognizedVMOptions @{jacocoAgent} @{failsafe.argLine}</argLine>
                         <trimStackTrace>false</trimStackTrace>
                         <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     </configuration>
@@ -306,9 +309,9 @@
                         <excludePackageNames>org.apache.shiro.samples.*</excludePackageNames>
                         <linksource>true</linksource>
                         <links>
-                            <link>https://docs.oracle.com/javase/${jdk.version}/docs/api/</link>
+                            <link>https://docs.oracle.com/en/java/javase/${jdk.version}/docs/api/</link>
                             <link>https://www.slf4j.org/api/</link>
-                            <link>https://docs.spring.io/spring/docs/${spring.version}/javadoc-api/</link>
+                            <link>https://docs.spring.io/spring-framework/docs/${spring.version}/javadoc-api/</link>
                             <link>https://docs.spring.io/spring-boot/docs/${spring-boot.version}/api/</link>
                             <link>https://junit.org/junit5/docs/${junit.version}/api/</link>
                             <link>https://www.quartz-scheduler.org/api/${quartz.docs.version}/</link>
@@ -323,7 +326,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-help-plugin</artifactId>
-                    <version>3.4.1</version>
+                    <version>3.5.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
@@ -333,6 +336,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
+                    <version>4.0.0-M16</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -361,13 +365,14 @@
                             <exclude>**/faces-config.NavData</exclude>
                             <exclude>**/org.mockito.plugins.MockMaker</exclude>
                             <exclude>.mvn/*</exclude>
+                            <exclude>.jenkins_maven_args</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.16.2</version>
+                    <version>2.18.0</version>
                 </plugin>
                 <!-- Allow writing tests in Groovy: -->
                 <plugin>
@@ -387,17 +392,17 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.6.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.12</version>
+                    <version>0.8.13</version>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
                     <artifactId>license-maven-plugin</artifactId>
-                    <version>4.5</version>
+                    <version>5.0.0</version>
                     <configuration>
                         <aggregate>true</aggregate>
                         <header>${root.dir}/src/license/header.txt</header>
@@ -431,12 +436,12 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>9.2.0</version>
+                    <version>12.1.3</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.siom79.japicmp</groupId>
                     <artifactId>japicmp-maven-plugin</artifactId>
-                    <version>0.21.2</version>
+                    <version>0.23.1</version>
                     <configuration>
                         <oldVersion>
                             <dependency>
@@ -448,16 +453,17 @@
                         </oldVersion>
                         <parameter>
                             <onlyModified>true</onlyModified>
+                            <breakBuildOnSourceIncompatibleModifications>true</breakBuildOnSourceIncompatibleModifications>
                             <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
-                            <breakBuildBasedOnSemanticVersioning>true</breakBuildBasedOnSemanticVersioning>
-                            <postAnalysisScript>${root.dir}/src/japicmp/postAnalysisScript.groovy</postAnalysisScript>
+                            <breakBuildBasedOnSemanticVersioning>false</breakBuildBasedOnSemanticVersioning>
+<!--                            <postAnalysisScript>${root.dir}/src/japicmp/postAnalysisScript.groovy</postAnalysisScript>-->
                         </parameter>
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
+                    <groupId>dev.aspectj</groupId>
                     <artifactId>aspectj-maven-plugin</artifactId>
-                    <version>1.15.0</version>
+                    <version>1.14.1</version>
                     <configuration>
                         <source>${maven.compiler.release}</source>
                         <target>${maven.compiler.release}</target>
@@ -556,7 +562,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.6.0</version>
                     <configuration>
                         <configLocation>${checkstyle.configLocation}</configLocation>
                         <suppressionsLocation>${checkstyle.supressionsLocation}</suppressionsLocation>
@@ -581,7 +587,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>10.17.0</version>
+                            <version>10.25.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -673,12 +679,21 @@
                         <exclude>org/apache/shiro/**/*IT</exclude>
                         <exclude>org/apache/shiro/**/*IT$*</exclude>
                         <exclude>org/apache/shiro/testing/jakarta/ee/PropertyPrincipal</exclude>
+                        <exclude>org/apache/shiro/testing/cdi/ComponentInjectionBean</exclude>
                         <exclude>org/apache/shiro/**/__EJB31_Generated*</exclude>
                         <!-- cause too many coverage misses -->
                         <exclude>org/apache/shiro/**/Deployments</exclude>
                     </excludes>
                     <propertyName>jacocoAgent</propertyName>
-                    <classDumpDir>${project.build.directory}/classes-jacoco</classDumpDir>
+                    <classDumpDir>${root.dir}/target/classes</classDumpDir>
+                    <fileSets>
+                        <fileSet>
+                            <directory>${project.basedir}</directory>
+                            <includes>
+                                <include>**/*.exec</include>
+                            </includes>
+                        </fileSet>
+                    </fileSets>
                 </configuration>
                 <executions>
                     <execution>
@@ -717,7 +732,7 @@
                 -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -856,6 +871,19 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.github.siom79.japicmp</groupId>
+                <artifactId>japicmp-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>japicmp</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>cmp</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -868,23 +896,25 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
-            <version>2.2</version>
+            <version>3.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.26.0</version>
+            <version>3.27.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -1075,16 +1105,9 @@
 
             <!-- ... -->
             <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
                 <groupId>org.junit-pioneer</groupId>
                 <artifactId>junit-pioneer</artifactId>
-                <version>2.2.0</version>
+                <version>2.3.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1160,6 +1183,20 @@
                 <artifactId>log4j-core-test</artifactId>
                 <version>${log4j.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>junit</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -1438,6 +1475,12 @@
                 <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven.skins</groupId>
+                <artifactId>maven-fluido-skin</artifactId>
+                <version>${fluido-skin.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -1479,7 +1522,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>3.6.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                 </configuration>
@@ -1493,7 +1536,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.23.0</version>
+                <version>3.26.0</version>
             </plugin>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -1527,6 +1570,7 @@
                         <exclude>**/faces-config.NavData</exclude>
                         <exclude>**/org.mockito.plugins.MockMaker</exclude>
                         <exclude>.mvn/*</exclude>
+                        <exclude>.jenkins_maven_args</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -1543,7 +1587,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>taglist-maven-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.2.1</version>
                 <configuration>
                     <tagListOptions>
                         <tagClasses>
@@ -1576,7 +1620,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
-                <version>2.0</version>
+                <version>2.1</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -1634,16 +1678,6 @@
                     </plugins>
                 </pluginManagement>
             </build>
-        </profile>
-        <profile>
-            <id>jdk11plus</id>
-            <activation>
-                <jdk>[11,)</jdk>
-            </activation>
-            <properties>
-                <!-- Prevent warnings from surefire plugin every time tests are executed -->
-                <surefire.argLine>-XX:+IgnoreUnrecognizedVMOptions -Xshare:off</surefire.argLine>
-            </properties>
         </profile>
         <profile>
             <id>docs</id>
@@ -1782,24 +1816,6 @@
             <properties>
                 <jacoco.skip>false</jacoco.skip>
             </properties>
-            <build>
-                <plugins>
-                    <!-- TODO: re-enable after first 2.0 release -->
-                    <!-- it's a 2.0 release breaking changes are expected -->
-                    <!--                    <plugin>-->
-                    <!--                        <groupId>com.github.siom79.japicmp</groupId>-->
-                    <!--                        <artifactId>japicmp-maven-plugin</artifactId>-->
-                    <!--                        <executions>-->
-                    <!--                            <execution>-->
-                    <!--                                <id>japicmp</id>-->
-                    <!--                                <goals>-->
-                    <!--                                    <goal>cmp</goal>-->
-                    <!--                                </goals>-->
-                    <!--                            </execution>-->
-                    <!--                        </executions>-->
-                    <!--                    </plugin>-->
-                </plugins>
-            </build>
         </profile>
         <profile>
             <id>skip-checkstyle</id>
