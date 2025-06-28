@@ -240,7 +240,7 @@ public class FormResubmitSupport {
 
     /**
      * Redirects the user to saved request after login, if available
-     * Resubmits the form that caused the logout upon successfull login.Form resumnission supports JSF and Ajax forms
+     * Resubmits the form that caused the logout upon successful login.Form resubmission supports JSF and Ajax forms
      * @param request
      * @param response
      * @param useFallbackPath predicate whether to use fall back path
