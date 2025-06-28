@@ -79,7 +79,7 @@ public class ReflectionBuilder {
     private static final String HEX_BEGIN_TOKEN = "0x";
     private static final String NULL_VALUE_TOKEN = "null";
     private static final String EMPTY_STRING_VALUE_TOKEN = "\"\"";
-    private static final char STRING_VALUE_DELIMETER = '"';
+    private static final char STRING_VALUE_DELIMITER = '"';
     private static final char MAP_PROPERTY_BEGIN_TOKEN = '[';
     private static final char MAP_PROPERTY_END_TOKEN = ']';
 

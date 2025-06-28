@@ -22,7 +22,7 @@ import javax.faces.view.facelets.TagConfig;
  * string permissions specified in name attribute.
  */
 public class HasAnyPermissionTag extends PermissionTagHandler {
-    private static final String PERMISSIONS_DELIMETER = ",";
+    private static final String PERMISSIONS_DELIMITER = ",";
 
     public HasAnyPermissionTag(TagConfig config) {
         super(config);
@@ -36,7 +36,7 @@ public class HasAnyPermissionTag extends PermissionTagHandler {
 
         if (subject != null) {
             // Iterate through permissions and check to see if the user has one of the permission
-            for (String permission : permissions.split(PERMISSIONS_DELIMETER)) {
+            for (String permission : permissions.split(PERMISSIONS_DELIMITER)) {
                 if (subject.isPermitted(permission.trim())) {
                     hasAnyPermission = true;
                     break;
