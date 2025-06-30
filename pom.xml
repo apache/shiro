@@ -136,7 +136,7 @@
 
         <!-- checkstyle -->
         <checkstyle.configLocation>${root.dir}/src/checkstyle.xml</checkstyle.configLocation>
-        <checkstyle.supressionsLocation>${root.dir}/src/suppressions.xml</checkstyle.supressionsLocation>
+        <checkstyle.suppressionsLocation>${root.dir}/src/suppressions.xml</checkstyle.suppressionsLocation>
         <fluido-skin.version>2.1.0</fluido-skin.version>
     </properties>
 
@@ -565,7 +565,7 @@
                     <version>3.6.0</version>
                     <configuration>
                         <configLocation>${checkstyle.configLocation}</configLocation>
-                        <suppressionsLocation>${checkstyle.supressionsLocation}</suppressionsLocation>
+                        <suppressionsLocation>${checkstyle.suppressionsLocation}</suppressionsLocation>
                         <linkXRef>true</linkXRef>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
