@@ -87,12 +87,12 @@ public class SecureBankServiceTest {
         _subject.login(new UsernamePasswordToken("dan", "123"));
     }
 
-    protected void loginAsSuperviser() {
+    protected void loginAsSupervisor() {
         if (_subject == null) {
             _subject = SecurityUtils.getSubject();
         }
 
-        // use sally to run as a superviser (which cannot operate an account)
+        // use sally to run as a supervisor (which cannot operate an account)
         _subject.login(new UsernamePasswordToken("sally", "1234"));
     }
 
@@ -173,7 +173,7 @@ public class SecureBankServiceTest {
         long accountId = createAndValidateAccountFor("Chris Smith");
 
         logoutCurrentSubject();
-        loginAsSuperviser();
+        loginAsSupervisor();
         double closingBalance = service.closeAccount(accountId);
         assertEquals(0, (int) closingBalance);
         assertAccount("Chris Smith", false, 0, 1, accountId);
@@ -186,7 +186,7 @@ public class SecureBankServiceTest {
         makeDepositAndValidateAccount(accountId, 385, "Gerry Smith");
 
         logoutCurrentSubject();
-        loginAsSuperviser();
+        loginAsSupervisor();
         double closingBalance = service.closeAccount(accountId);
         assertEquals(385, (int) closingBalance);
         assertAccount("Gerry Smith", false, 0, 2, accountId);
@@ -199,7 +199,7 @@ public class SecureBankServiceTest {
             long accountId = createAndValidateAccountFor("Chris Smith");
 
             logoutCurrentSubject();
-            loginAsSuperviser();
+            loginAsSupervisor();
             double closingBalance = service.closeAccount(accountId);
             assertEquals(0, (int) closingBalance);
             assertAccount("Chris Smith", false, 0, 1, accountId);
