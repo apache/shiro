@@ -73,11 +73,11 @@
                             *
                         </Import-Package>
                         <Require-Capability>
-                          osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"                         
-                        </Require-Capability>                        
+                          osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+                        </Require-Capability>
                         <Provide-Capability>
                           osgi.serviceloader; osgi.serviceloader=org.apache.shiro.crypto.hash.HashSpi
-                        </Provide-Capability>                        
+                        </Provide-Capability>
                         <_removeheaders>Bnd-LastModified</_removeheaders>
                         <_reproducible>true</_reproducible>
                     </instructions>

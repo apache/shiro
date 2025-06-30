@@ -17,7 +17,7 @@ http://shiro.apache.org
 Tutorials
 ---------
 * [10 Minute Tutorial](http://shiro.apache.org/10-minute-tutorial.html)
-* [Web Application](http://shiro.apache.org/webapp-tutorial.html) 
+* [Web Application](http://shiro.apache.org/webapp-tutorial.html)
 
 License
 -------
