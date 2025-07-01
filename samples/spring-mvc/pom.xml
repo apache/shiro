@@ -17,7 +17,7 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<!--suppress osmorcNonOsgiMavenDependency	-->
+<!--suppress osmorcNonOsgiMavenDependency -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 
@@ -39,7 +39,7 @@
     <build>
         <plugins>
             <plugin>
-                <!-- Note	that you need	to run mvn jetty:run-war	to test	the	webstart application -->
+                <!-- Note that you need to run mvn jetty:run-war to test the webstart application -->
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
