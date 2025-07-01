@@ -17,10 +17,10 @@ import static org.apache.shiro.SecurityUtils.getSecurityManager;
 import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
 import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.CONTENT_TYPE;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.COOKIE;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.LOCATION;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.SET_COOKIE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.CONTENT_TYPE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.COOKIE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.LOCATION;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.SET_COOKIE;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.AUTHFAIL;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.FOUND;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.OK;
@@ -111,7 +111,7 @@ public class FormResubmitSupport {
         static final String POST = "POST";
     }
 
-    static class HttpHeaderContstants {
+    static class HttpHeaderConstants {
         static final String CONTENT_TYPE = "Content-Type";
         static final String LOCATION = "Location";
         static final String COOKIE = "Cookie";
@@ -240,7 +240,7 @@ public class FormResubmitSupport {
 
     /**
      * Redirects the user to saved request after login, if available
-     * Resubmits the form that caused the logout upon successfull login.Form resumnission supports JSF and Ajax forms
+     * Resubmits the form that caused the logout upon successful login.Form resubmission supports JSF and Ajax forms
      * @param request
      * @param response
      * @param useFallbackPath predicate whether to use fall back path

@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>34</version>
+        <version>35</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -90,7 +90,7 @@
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
         <aspectj.version>1.9.20.1</aspectj.version>
-        <commons.beanutils.version>1.10.1</commons.beanutils.version>
+        <commons.beanutils.version>1.11.0</commons.beanutils.version>
         <commons.cli.version>1.9.0</commons.cli.version>
         <commons.collection.version>3.2.2</commons.collection.version>
         <commons.configuration2.version>2.12.0</commons.configuration2.version>
@@ -113,7 +113,7 @@
         <quartz.version>2.5.0</quartz.version>
         <quartz.docs.version>2.3.0</quartz.docs.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <log4j.version>2.24.3</log4j.version>
+        <log4j.version>2.25.0</log4j.version>
         <spring.version>5.3.39</spring.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <guice.version>4.2.3</guice.version>
@@ -126,8 +126,8 @@
         <mockito.version>5.18.0</mockito.version>
         <bytebuddy.version>1.17.6</bytebuddy.version>
         <gmaven.version>4.2.0</gmaven.version>
-        <groovy.version>4.0.26</groovy.version>
-        <junit.version>5.13.1</junit.version>
+        <groovy.version>4.0.27</groovy.version>
+        <junit.version>5.13.2</junit.version>
         <junit.server.jetty.version>3.3.1</junit.server.jetty.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
@@ -138,7 +138,7 @@
 
         <!-- checkstyle -->
         <checkstyle.configLocation>${root.dir}/src/checkstyle.xml</checkstyle.configLocation>
-        <checkstyle.supressionsLocation>${root.dir}/src/suppressions.xml</checkstyle.supressionsLocation>
+        <checkstyle.suppressionsLocation>${root.dir}/src/suppressions.xml</checkstyle.suppressionsLocation>
         <fluido-skin.version>2.1.0</fluido-skin.version>
     </properties>
 
@@ -567,7 +567,7 @@
                     <version>3.6.0</version>
                     <configuration>
                         <configLocation>${checkstyle.configLocation}</configLocation>
-                        <suppressionsLocation>${checkstyle.supressionsLocation}</suppressionsLocation>
+                        <suppressionsLocation>${checkstyle.suppressionsLocation}</suppressionsLocation>
                         <linkXRef>true</linkXRef>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
@@ -589,7 +589,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>10.25.0</version>
+                            <version>10.26.1</version>
                         </dependency>
                     </dependencies>
                 </plugin>

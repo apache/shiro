@@ -141,12 +141,12 @@ public class ShiroBeansIT {
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void beanDestroyCalled() {
-        exersizeViewAndSessionScoped(facesViewScoped, "api/statistics/pc_fv", "api/statistics/pd_fv", !isJakarta());
+        exerciseViewAndSessionScoped(facesViewScoped, "api/statistics/pc_fv", "api/statistics/pd_fv", !isJakarta());
         webDriver.get(baseURL + "api/statistics/clear");
-        exersizeViewAndSessionScoped(omniViewScoped, "api/statistics/pc_ofv", "api/statistics/pd_ofv", false);
+        exerciseViewAndSessionScoped(omniViewScoped, "api/statistics/pc_ofv", "api/statistics/pd_ofv", false);
     }
 
-    private void exersizeViewAndSessionScoped(WebElement elem, String createStatistic, String destroyStatistic,
+    private void exerciseViewAndSessionScoped(WebElement elem, String createStatistic, String destroyStatistic,
                                               boolean isBrokenDestructor) {
         webDriver.get(baseURL + "shiro/auth/loginform");
         login();
