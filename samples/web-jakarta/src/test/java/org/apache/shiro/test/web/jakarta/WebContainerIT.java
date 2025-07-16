@@ -23,6 +23,7 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Cookie;
 import jakarta.ws.rs.core.Response;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -31,6 +32,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static jakarta.ws.rs.core.MediaType.TEXT_HTML_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled("Needs meecrowave 2.0.0")
 public class WebContainerIT extends JakartaAbstractContainerIT {
 
     @SuppressWarnings("checkstyle:MagicNumber")

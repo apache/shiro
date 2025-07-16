@@ -90,7 +90,7 @@ public class BCryptProvider implements HashSpi {
             final Optional<String> optCostStr = Optional.ofNullable(parameters.get(Parameters.PARAMETER_COST))
                     .map(obj -> (String) obj);
 
-            if (!optCostStr.isPresent()) {
+            if (optCostStr.isEmpty()) {
                 return BCryptHash.DEFAULT_COST;
             }
 
@@ -117,7 +117,7 @@ public class BCryptProvider implements HashSpi {
             final Optional<String> optSaltBase64 = Optional.ofNullable(parameters.get(Parameters.PARAMETER_SALT))
                     .map(obj -> (String) obj);
 
-            if (!optSaltBase64.isPresent()) {
+            if (optSaltBase64.isEmpty()) {
                 return BCryptHash.createSalt(random);
             }
 

@@ -38,7 +38,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
-          java-version: 11
+          java-version: 17
           distribution: temurin
 
       - name: License Check

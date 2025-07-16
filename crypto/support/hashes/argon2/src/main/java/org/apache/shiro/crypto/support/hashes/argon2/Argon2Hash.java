@@ -28,6 +28,7 @@ import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64.Encoder;
@@ -86,6 +87,7 @@ class Argon2Hash extends AbstractCryptHash {
      */
     public static final int DEFAULT_MEMORY_KIB = 64 * 1024;
 
+    @Serial
     private static final long serialVersionUID = 2647354947284558921L;
 
     private static final Logger LOG = LoggerFactory.getLogger(Argon2Hash.class);

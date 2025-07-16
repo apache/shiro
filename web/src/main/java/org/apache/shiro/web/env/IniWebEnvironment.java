@@ -36,7 +36,7 @@ import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -290,8 +290,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         if (!CollectionUtils.isEmpty(ini)) {
             @SuppressWarnings("unchecked")
             Factory<FilterChainResolver> factory = (Factory<FilterChainResolver>) this.objects.get(FILTER_CHAIN_RESOLVER_NAME);
-            if (factory instanceof IniFactorySupport) {
-                var iniFactory = (IniFactorySupport<?>) factory;
+            if (factory instanceof IniFactorySupport<?> iniFactory) {
                 iniFactory.setIni(ini);
                 iniFactory.setDefaults(this.objects);
             }
@@ -343,7 +342,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      * <p/>
      * If the path does not have a resource prefix as defined by {@link ResourceUtils#hasResourcePrefix(String)},
      * the path is expected to be resolvable by the {@code ServletContext} via
-     * {@link javax.servlet.ServletContext#getResourceAsStream(String)}.
+     * {@link jakarta.servlet.ServletContext#getResourceAsStream(String)}.
      *
      * @param path     the path of the INI resource to load into an INI instance.
      * @param required if the specified path must exist

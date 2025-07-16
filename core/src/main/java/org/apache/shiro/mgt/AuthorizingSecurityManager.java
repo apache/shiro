@@ -98,8 +98,8 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
      */
     protected void afterRealmsSet() {
         super.afterRealmsSet();
-        if (this.authorizer instanceof ModularRealmAuthorizer) {
-            ((ModularRealmAuthorizer) this.authorizer).setRealms(getRealms());
+        if (this.authorizer instanceof ModularRealmAuthorizer realmAuthorizer) {
+            realmAuthorizer.setRealms(getRealms());
         }
     }
 
