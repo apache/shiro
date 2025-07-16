@@ -37,7 +37,7 @@
         <!-- override older compiler source / target flags set by Apache parent POM -->
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
-        <arquillian.core.version>1.9.4.Final</arquillian.core.version>
+        <arquillian.core.version>1.10.0.Final</arquillian.core.version>
         <arquillian.payara5.version>2.5</arquillian.payara5.version>
         <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
         <shrinkwrap.resolver.version>3.3.4</shrinkwrap.resolver.version>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.8</version>
+            <version>3.14.11</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -419,7 +419,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.5.1</version>
                 <configuration>
                     <executable>${project.build.directory}/dependency/payara5/bin/${asadmin.cmd}</executable>
                     <skip>${payara.start.skip}</skip>

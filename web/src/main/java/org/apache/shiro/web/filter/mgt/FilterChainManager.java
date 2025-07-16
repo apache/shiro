@@ -212,7 +212,7 @@ public interface FilterChainManager {
      * Configures the set of named filters that will match all paths.  These filters will match BEFORE explicitly
      * configured filter chains i.e. by calling {@link #createChain(String, String)}, {@link #addToChain(String, String)}, etc.
      * <br>
-     * <strong>Filters configured in this list wll apply to ALL requests.</strong>
+     * <strong>Filters configured in this list will apply to ALL requests.</strong>
      *
      * @param globalFilterNames the list of filter names to match ALL paths.
      * @throws ConfigurationException if one of the filter names is invalid and cannot be loaded from the set of

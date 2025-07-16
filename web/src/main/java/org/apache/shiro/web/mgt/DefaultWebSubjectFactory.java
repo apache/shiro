@@ -51,7 +51,7 @@ public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
         //SHIRO-646
         //Check if the existing subject is NOT a WebSubject. If it isn't, then call super.createSubject instead.
         //Creating a WebSubject from a non-web Subject will cause the ServletRequest and ServletResponse to be null,
-        // which wil fail when creating a session.
+        // which will fail when creating a session.
         boolean isNotBasedOnWebSubject = context.getSubject() != null && !(context.getSubject() instanceof WebSubject);
         if (!(context instanceof WebSubjectContext) || isNotBasedOnWebSubject) {
             return super.createSubject(context);

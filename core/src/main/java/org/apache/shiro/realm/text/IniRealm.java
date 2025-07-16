@@ -196,7 +196,7 @@ public class IniRealm extends TextConfigurationRealm {
             processUserDefinitions(usersSection);
         } else {
             LOGGER.info("{} defined, but there is no [{}] section defined.  This realm will not be populated with any "
-                    + "users and it is assumed that they will be populated programatically.  Users must be defined "
+                    + "users and it is assumed that they will be populated programmatically.  Users must be defined "
                     + "for this Realm instance to be useful.", getClass().getSimpleName(), USERS_SECTION_NAME);
         }
     }

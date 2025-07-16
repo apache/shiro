@@ -22,8 +22,8 @@ import jakarta.faces.view.facelets.TagConfig;
  * Displays body content if the current user has any of the roles specified.
  */
 public class HasAnyRolesTag extends PermissionTagHandler {
-    // Delimeter that separates role names in tag attribute
-    private static final String ROLE_NAMES_DELIMETER = ",";
+    // Delimiter that separates role names in tag attribute
+    private static final String ROLE_NAMES_DELIMITER = ",";
 
     public HasAnyRolesTag(TagConfig config) {
         super(config);
@@ -37,7 +37,7 @@ public class HasAnyRolesTag extends PermissionTagHandler {
 
         if (subject != null) {
             // Iterate through roles and check to see if the user has one of the roles
-            for (String role : roleNames.split(ROLE_NAMES_DELIMETER)) {
+            for (String role : roleNames.split(ROLE_NAMES_DELIMITER)) {
                 if (subject.hasRole(role.trim())) {
                     hasAnyRole = true;
                     break;
