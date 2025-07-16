@@ -155,15 +155,15 @@ public final class ClassUtils {
                 LOGGER.trace("Resource [" + name + "] was not found via the thread context ClassLoader.  Trying the "
                         + "current ClassLoader...");
             }
-            url = CLASS_LANG_CL_ACCESSOR.getResourceStream(name);
+            url = CLASS_LANG_CL_ACCESSOR.getResource(name);
         }
 
-        if (is == null) {
+        if (url == null) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Resource [" + name + "] was not found via the org.apache.shiro.lang ClassLoader.  Trying the "
                         + "additionally set ClassLoader...");
             }
-            is = ADDITIONAL_CL_ACCESSOR.getResource(name);
+            url = ADDITIONAL_CL_ACCESSOR.getResource(name);
         }
 
         if (url == null) {
