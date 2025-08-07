@@ -42,8 +42,8 @@ import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -127,18 +127,18 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     //since 1.2.1 for fixing SHIRO-350:
     private void applySessionManagerToSessionStorageEvaluatorIfPossible() {
         SubjectDAO subjectDAO = getSubjectDAO();
-        if (subjectDAO instanceof DefaultSubjectDAO) {
-            SessionStorageEvaluator evaluator = ((DefaultSubjectDAO) subjectDAO).getSessionStorageEvaluator();
-            if (evaluator instanceof DefaultWebSessionStorageEvaluator) {
-                ((DefaultWebSessionStorageEvaluator) evaluator).setSessionManager(getSessionManager());
+        if (subjectDAO instanceof DefaultSubjectDAO aO) {
+            SessionStorageEvaluator evaluator = aO.getSessionStorageEvaluator();
+            if (evaluator instanceof DefaultWebSessionStorageEvaluator storageEvaluator) {
+                storageEvaluator.setSessionManager(getSessionManager());
             }
         }
     }
 
     @Override
     protected SubjectContext copy(SubjectContext subjectContext) {
-        if (subjectContext instanceof WebSubjectContext) {
-            return new DefaultWebSubjectContext((WebSubjectContext) subjectContext);
+        if (subjectContext instanceof WebSubjectContext context) {
+            return new DefaultWebSubjectContext(context);
         }
         return super.copy(subjectContext);
     }
@@ -206,7 +206,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
      */
     public boolean isHttpSessionMode() {
         SessionManager sessionManager = getSessionManager();
-        return sessionManager instanceof WebSessionManager && ((WebSessionManager) sessionManager).isServletContainerSessions();
+        return sessionManager instanceof WebSessionManager wsm && wsm.isServletContainerSessions();
     }
 
     protected SessionManager createSessionManager(String sessionMode) {
@@ -222,8 +222,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     @Override
     protected SessionContext createSessionContext(SubjectContext subjectContext) {
         SessionContext sessionContext = super.createSessionContext(subjectContext);
-        if (subjectContext instanceof WebSubjectContext) {
-            WebSubjectContext wsc = (WebSubjectContext) subjectContext;
+        if (subjectContext instanceof WebSubjectContext wsc) {
             ServletRequest request = wsc.resolveServletRequest();
             ServletResponse response = wsc.resolveServletResponse();
             DefaultWebSessionContext webSessionContext = new DefaultWebSessionContext(sessionContext);
@@ -259,8 +258,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     }
 
     protected void removeRequestIdentity(Subject subject) {
-        if (subject instanceof WebSubject) {
-            WebSubject webSubject = (WebSubject) subject;
+        if (subject instanceof WebSubject webSubject) {
             ServletRequest request = webSubject.getServletRequest();
             if (request != null) {
                 request.setAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY, Boolean.TRUE);

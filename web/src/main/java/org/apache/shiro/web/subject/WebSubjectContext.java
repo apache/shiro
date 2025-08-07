@@ -21,8 +21,8 @@ package org.apache.shiro.web.subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.util.RequestPairSource;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * A {@code WebSubjectContext} is a {@link SubjectContext} that additionally provides for type-safe

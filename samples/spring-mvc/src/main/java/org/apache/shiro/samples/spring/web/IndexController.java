@@ -25,8 +25,9 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.LinkedHashMap;
@@ -69,7 +70,7 @@ public class IndexController {
     |               M E T H O D S               |
     ============================================*/
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     protected String doGet(Model model) {
 
         buildModel(model);
@@ -98,7 +99,7 @@ public class IndexController {
         return model;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     protected String doPost(@RequestParam("value") String newSessionValue, Model model) {
 
         sampleManager.setValue(newSessionValue);

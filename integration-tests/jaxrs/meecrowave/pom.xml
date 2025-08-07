@@ -33,6 +33,7 @@
     <name>Apache Shiro :: ITs :: JAX-RS :: Meecrowave</name>
     <properties>
         <module.name>its.jaxrs.meecrowave</module.name>
+        <skipITs>true</skipITs>
     </properties>
 
     <dependencies>

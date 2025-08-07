@@ -201,8 +201,7 @@ public class DefaultEventBus implements EventBus {
 
             for (EventListener listener : this.listeners) {
                 Object target = listener;
-                if (listener instanceof SingleArgumentMethodEventListener) {
-                    SingleArgumentMethodEventListener singleArgListener = (SingleArgumentMethodEventListener) listener;
+                if (listener instanceof SingleArgumentMethodEventListener singleArgListener) {
                     target = singleArgListener.getTarget();
                 }
                 if (listener.accepts(event) && !delivered.contains(target)) {

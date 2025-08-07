@@ -564,8 +564,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 LOGGER.debug("Logging out subject with primary principal {}", principals.getPrimaryPrincipal());
             }
             Authenticator authc = getAuthenticator();
-            if (authc instanceof LogoutAware) {
-                ((LogoutAware) authc).onLogout(principals);
+            if (authc instanceof LogoutAware aware) {
+                aware.onLogout(principals);
             }
         }
 
