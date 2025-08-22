@@ -117,7 +117,7 @@
         <gmaven.version>4.2.1</gmaven.version>
         <groovy.version>2.5.23</groovy.version>
         <junit.version>4.13.2</junit.version>
-        <junit.server.jetty.version>0.11.0</junit.server.jetty.version>
+        <junit.server.jetty.version>3.4.0</junit.server.jetty.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <!-- so we can mock static methods in 3rd party libraries that sometimes don't use proper interfaces
