@@ -61,6 +61,7 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
+      <classifier>jakarta</classifier>
         </dependency>
 
         <!-- configure logging -->

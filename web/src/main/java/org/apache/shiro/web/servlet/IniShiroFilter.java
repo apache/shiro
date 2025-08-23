@@ -74,7 +74,7 @@ import java.util.Map;
  * &lt;/filter&gt;
  * </pre>
  * Unqualified (schemeless or 'non-prefixed') paths are assumed to be {@code ServletContext} resource paths, resolvable
- * via {@link javax.servlet.ServletContext#getResourceAsStream(String) ServletContext#getResourceAsStream}.
+ * via {@link jakarta.servlet.ServletContext#getResourceAsStream(String) ServletContext#getResourceAsStream}.
  * <p/>
  * Non-ServletContext resources may be loaded from qualified locations by specifying prefixes indicating the source,
  * e.g. {@code file:}, {@code url:}, and {@code classpath:}.  See the
@@ -337,7 +337,7 @@ public class IniShiroFilter extends AbstractShiroFilter {
      * <p/>
      * If the path does not have a resource prefix as defined by {@link ResourceUtils#hasResourcePrefix(String)}, the
      * path is expected to be resolvable by the {@code ServletContext} via
-     * {@link javax.servlet.ServletContext#getResourceAsStream(String)}.
+     * {@link jakarta.servlet.ServletContext#getResourceAsStream(String)}.
      *
      * @param path the path of the INI resource to load into an INI instance.
      * @return an INI instance populated based on the given INI resource path.

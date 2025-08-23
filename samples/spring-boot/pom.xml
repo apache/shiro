@@ -40,6 +40,7 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring-boot-starter</artifactId>
             <version>${project.version}</version>
+      <classifier>jakarta</classifier>
         </dependency>
 
         <!-- Spring -->
@@ -53,8 +54,8 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
         </dependency>
 
         <dependency>

@@ -26,15 +26,15 @@ import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Locale;
 
 /**
  * Simple Filter that, upon receiving a request, will immediately log-out the currently executing
- * {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) subject}
+ * {@link #getSubject(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) subject}
  * and then redirect them to a configured {@link #getRedirectUrl() redirectUrl}.
  *
  * @since 1.2
@@ -62,7 +62,7 @@ public class LogoutFilter extends AdviceFilter {
     private boolean postOnlyLogout;
 
     /**
-     * Acquires the currently executing {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) subject},
+     * Acquires the currently executing {@link #getSubject(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) subject},
      * a potentially Subject or request-specific
      * {@link #getRedirectUrl(ServletRequest, ServletResponse, org.apache.shiro.subject.Subject) redirectUrl},
      * and redirects the end-user to that redirect url.
@@ -112,7 +112,7 @@ public class LogoutFilter extends AdviceFilter {
 
     /**
      * Issues an HTTP redirect to the specified URL after subject logout.  This implementation simply calls
-     * {@code WebUtils.}{@link WebUtils#issueRedirect(javax.servlet.ServletRequest, javax.servlet.ServletResponse, String)
+     * {@code WebUtils.}{@link WebUtils#issueRedirect(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, String)
      * issueRedirect(request,response,redirectUrl)}.
      *
      * @param request     the incoming Servlet request

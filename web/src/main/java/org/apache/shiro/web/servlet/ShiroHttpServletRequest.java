@@ -24,10 +24,10 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DisabledSessionException;
 import org.apache.shiro.web.util.WebUtils;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 
 

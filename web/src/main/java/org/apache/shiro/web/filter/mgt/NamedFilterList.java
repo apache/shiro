@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.web.filter.mgt;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
 import java.util.List;
 
 /**

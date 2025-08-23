@@ -69,10 +69,12 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-lang</artifactId>
+      <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-crypto-core</artifactId>
+      <classifier>jakarta</classifier>
         </dependency>
 
         <dependency>

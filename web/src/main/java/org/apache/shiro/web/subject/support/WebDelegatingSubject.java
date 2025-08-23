@@ -29,8 +29,8 @@ import org.apache.shiro.web.session.mgt.WebSessionContext;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.util.WebUtils;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * Default {@link WebSubject WebSubject} implementation that additional ensures the ability to retain a

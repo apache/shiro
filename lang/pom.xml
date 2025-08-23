@@ -57,9 +57,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
             <optional>true</optional>
+      <version>3.0.0</version>
         </dependency>
     </dependencies>
 

@@ -77,14 +77,17 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-lang</artifactId>
+      <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-config-core</artifactId>
+      <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-event</artifactId>
+      <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>

@@ -15,8 +15,8 @@
  */
 package org.apache.shiro.web.util;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * A {@code RequestPairSource} is a component that can supply a {@link ServletRequest ServletRequest} and

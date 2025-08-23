@@ -103,7 +103,7 @@
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
         <hazelcast.version>5.3.8</hazelcast.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <javax.annotation.api.version>1.3.2</javax.annotation.api.version>
+        <javax.annotation.api.version>2.0.0</javax.annotation.api.version>
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>11</jdk.version>
         <jetty.version>9.4.57.v20241219</jetty.version>
@@ -117,7 +117,7 @@
         <spring.version>5.3.39</spring.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <guice.version>4.2.3</guice.version>
-        <jaxrs.api.version>2.1.6</jaxrs.api.version>
+        <jaxrs.api.version>3.1.0</jaxrs.api.version>
         <htmlunit.version>4.13.0</htmlunit.version>
         <bouncycastle.version>1.81</bouncycastle.version>
 
@@ -131,7 +131,7 @@
         <junit.server.jetty.version>3.3.1</junit.server.jetty.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
-        <jakarta.annotations.version>1.3.5</jakarta.annotations.version>
+        <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
         <lombok.version>1.18.38</lombok.version>
 
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
@@ -321,16 +321,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>3.4.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-help-plugin</artifactId>
-                    <version>3.5.1</version>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>5.1.9</version>
@@ -339,11 +329,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>4.0.0-M16</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-scm-publish-plugin</artifactId>
-                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.rat</groupId>
@@ -564,7 +549,6 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.6.0</version>
                     <configuration>
                         <configLocation>${checkstyle.configLocation}</configLocation>
                         <suppressionsLocation>${checkstyle.suppressionsLocation}</suppressionsLocation>
@@ -1135,8 +1119,8 @@
                 <version>${commons.cli.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
                 <version>${javax.annotation.api.version}</version>
             </dependency>
             <dependency>
@@ -1259,9 +1243,9 @@
                 <optional>true</optional>
             </dependency>
             <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>2.2</version>
+                <groupId>jakarta.servlet.jsp</groupId>
+                <artifactId>jakarta.servlet.jsp-api</artifactId>
+                <version>3.0.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -1277,9 +1261,9 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>4.0.1</version>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>5.0.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

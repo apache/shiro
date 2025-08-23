@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.web.filter;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 
 /**
  * A PathConfigProcessor processes configuration entries on a per path (url) basis.

@@ -26,9 +26,9 @@ import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Requires the requesting user to be authenticated for the request to continue, and if they are not, forces the user
@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletRequest;
  * and {@link #setRememberMeParam(String) rememberMe} request parameters.  It then calls
  * {@link Subject#login(AuthenticationToken) Subject.login(usernamePasswordToken)},
  * effectively automatically performing a login attempt.  Note that the login attempt will only occur when the
- * {@link #isLoginSubmission(javax.servlet.ServletRequest, javax.servlet.ServletResponse) isLoginSubmission(request,response)}
+ * {@link #isLoginSubmission(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) isLoginSubmission(request,response)}
  * is <code>true</code>, which by default occurs when the request is for the {@link #setLoginUrl(String) loginUrl} and
  * is a POST request.
  * <p/>

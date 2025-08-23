@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.web.filter.session
 
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.ServletResponse
 import org.apache.shiro.subject.support.DefaultSubjectContext
 import org.junit.jupiter.api.Test
 

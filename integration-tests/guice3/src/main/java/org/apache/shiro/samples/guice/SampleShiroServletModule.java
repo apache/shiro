@@ -30,8 +30,8 @@ import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 
-import javax.inject.Singleton;
-import javax.servlet.ServletContext;
+import jakarta.inject.Singleton;
+import jakarta.servlet.ServletContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 

@@ -19,9 +19,9 @@
 
 package org.apache.shiro.testing.jaxrs.app.config;
 
-import javax.enterprise.context.Dependent;
-import javax.servlet.DispatcherType;
-import javax.servlet.annotation.WebFilter;
+import jakarta.enterprise.context.Dependent;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.annotation.WebFilter;
 
 @Dependent
 @WebFilter(
