@@ -30,11 +30,11 @@ import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -89,7 +89,7 @@ public final class WebUtils {
      * Default character encoding to use when <code>request.getCharacterEncoding</code>
      * returns <code>null</code>, according to the Servlet spec.
      *
-     * @see javax.servlet.ServletRequest#getCharacterEncoding
+     * @see jakarta.servlet.ServletRequest#getCharacterEncoding
      */
     public static final String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
 
@@ -366,7 +366,7 @@ public final class WebUtils {
      * @param source  the String to decode
      * @return the decoded String
      * @see #DEFAULT_CHARACTER_ENCODING
-     * @see javax.servlet.ServletRequest#getCharacterEncoding
+     * @see jakarta.servlet.ServletRequest#getCharacterEncoding
      * @see java.net.URLDecoder#decode(String, String)
      * @see java.net.URLDecoder#decode(String)
      */
@@ -394,7 +394,7 @@ public final class WebUtils {
      *
      * @param request current HTTP request
      * @return the encoding for the request (never <code>null</code>)
-     * @see javax.servlet.ServletRequest#getCharacterEncoding()
+     * @see jakarta.servlet.ServletRequest#getCharacterEncoding()
      */
     protected static String determineEncoding(HttpServletRequest request) {
         String enc = request.getCharacterEncoding();
@@ -671,13 +671,13 @@ public final class WebUtils {
 
     /**
      * Redirects the to the request url from a previously
-     * {@link #saveRequest(javax.servlet.ServletRequest) saved} request, or if there is no saved request, redirects the
+     * {@link #saveRequest(jakarta.servlet.ServletRequest) saved} request, or if there is no saved request, redirects the
      * end user to the specified {@code fallbackUrl}.  If there is no saved request or fallback url, this method
      * throws an {@link IllegalStateException}.
      * <p/>
      * This method is primarily used to support a common login scenario - if an unauthenticated user accesses a
      * page that requires authentication, it is expected that request is
-     * {@link #saveRequest(javax.servlet.ServletRequest) saved} first and then redirected to the login page. Then,
+     * {@link #saveRequest(jakarta.servlet.ServletRequest) saved} first and then redirected to the login page. Then,
      * after a successful login, this method can be called to redirect them back to their originally requested URL, a
      * nice usability feature.
      *
