@@ -83,7 +83,6 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-servlet-plugin</artifactId>
-      <classifier>jakarta</classifier>
         </dependency>
 
         <dependency>

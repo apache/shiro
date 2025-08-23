@@ -46,7 +46,6 @@
                     <artifactId>commons-beanutils</artifactId>
                 </exclusion>
             </exclusions>
-      <classifier>jakarta</classifier>
         </dependency>
         <!-- explicitly use the compile scopes for the algorithms, so we can access the parameter names. -->
         <dependency>

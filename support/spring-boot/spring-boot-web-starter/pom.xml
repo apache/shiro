@@ -41,7 +41,6 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring-boot-starter</artifactId>
             <version>${project.version}</version>
-      <classifier>jakarta</classifier>
         </dependency>
 
         <!-- Spring -->

@@ -53,7 +53,6 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
-      <classifier>jakarta</classifier>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -108,30 +107,6 @@
                         <_removeheaders>Bnd-LastModified</_removeheaders>
                         <_reproducible>true</_reproducible>
                     </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <configuration>
-                    <relocations combine.children="append">
-                        <relocation>
-                            <pattern>javax.faces</pattern>
-                            <shadedPattern>jakarta.faces</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.el</pattern>
-                            <shadedPattern>jakarta.el</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.interceptor</pattern>
-                            <shadedPattern>jakarta.interceptor</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.activation</pattern>
-                            <shadedPattern>jakarta.activation</shadedPattern>
-                        </relocation>
-                    </relocations>
                 </configuration>
             </plugin>
             <plugin>

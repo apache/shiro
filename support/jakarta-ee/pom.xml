@@ -55,23 +55,19 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
-      <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-web</artifactId>
-      <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-jaxrs</artifactId>
-      <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-cdi</artifactId>
             <version>${project.version}</version>
-      <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.omnifaces</groupId>
@@ -130,38 +126,6 @@
                         <_removeheaders>Bnd-LastModified</_removeheaders>
                         <_reproducible>true</_reproducible>
                     </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <configuration>
-                    <relocations combine.children="append">
-                        <relocation>
-                            <pattern>javax.faces</pattern>
-                            <shadedPattern>jakarta.faces</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.el</pattern>
-                            <shadedPattern>jakarta.el</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.interceptor</pattern>
-                            <shadedPattern>jakarta.interceptor</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.activation</pattern>
-                            <shadedPattern>jakarta.activation</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>window.jsf</pattern>
-                            <shadedPattern>window.faces</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>jsf.ajax</pattern>
-                            <shadedPattern>faces.ajax</shadedPattern>
-                        </relocation>
-                    </relocations>
                 </configuration>
             </plugin>
             <plugin>

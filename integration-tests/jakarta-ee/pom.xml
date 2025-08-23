@@ -61,7 +61,6 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-jakarta-ee</artifactId>
             <version>${project.version}</version>
-      <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.omnifaces</groupId>
@@ -98,12 +97,10 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
-      <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-web</artifactId>
-      <classifier>jakarta</classifier>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
