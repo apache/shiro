@@ -88,7 +88,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ windows-latest, macOS-latest ]
+        os: [ windows-2022, macOS-latest ]
         java:
           #  8
           - version: 8
