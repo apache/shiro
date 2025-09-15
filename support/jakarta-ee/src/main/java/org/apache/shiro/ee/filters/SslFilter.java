@@ -15,9 +15,9 @@ package org.apache.shiro.ee.filters;
 
 import static org.apache.shiro.ee.filters.FormResubmitSupport.hasFacesContext;
 import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.omnifaces.util.Faces;

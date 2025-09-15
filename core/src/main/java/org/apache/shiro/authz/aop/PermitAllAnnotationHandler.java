@@ -18,13 +18,13 @@
  */
 package org.apache.shiro.authz.aop;
 
-import javax.annotation.security.PermitAll;
+import jakarta.annotation.security.PermitAll;
 import java.lang.annotation.Annotation;
 
 /**
  * This {@link org.apache.shiro.aop.AnnotationHandler AnnotationHandler} allows access from any subject
  * (anonymous or logged in user).  It is largely a no-op or for documentation. However, this annotation WILL override
- * a {@link javax.annotation.security.DenyAll DenyAll} or {@link javax.annotation.security.RolesAllowed RolesAllowed}
+ * a {@link jakarta.annotation.security.DenyAll DenyAll} or {@link jakarta.annotation.security.RolesAllowed RolesAllowed}
  * annotation if those annotations are placed at the class level and {@link PermitAll} is placed on a method.
  *
  * @since 2.0

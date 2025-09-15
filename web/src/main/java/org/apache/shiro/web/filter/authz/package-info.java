@@ -17,7 +17,7 @@
  * under the License.
  */
 /**
- * Servlet {@link javax.servlet.Filter Filter} implementations that perform authorization (access control)
+ * Servlet {@link jakarta.servlet.Filter Filter} implementations that perform authorization (access control)
  * checks based on the Subject's abilities (for example, role or permission checks).
  */
 package org.apache.shiro.web.filter.authz;

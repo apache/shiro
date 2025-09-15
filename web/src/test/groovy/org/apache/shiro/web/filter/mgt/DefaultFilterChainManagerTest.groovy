@@ -24,10 +24,10 @@ import org.apache.shiro.web.servlet.ShiroFilter
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.BeforeEach
 
-import javax.servlet.Filter
-import javax.servlet.FilterChain
-import javax.servlet.FilterConfig
-import javax.servlet.ServletContext
+import jakarta.servlet.Filter
+import jakarta.servlet.FilterChain
+import jakarta.servlet.FilterConfig
+import jakarta.servlet.ServletContext
 import org.junit.jupiter.api.Test
 
 import static org.easymock.EasyMock.*

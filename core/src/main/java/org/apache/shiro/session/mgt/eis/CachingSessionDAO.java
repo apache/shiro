@@ -275,8 +275,8 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      */
     public void update(Session session) throws UnknownSessionException {
         doUpdate(session);
-        if (session instanceof ValidatingSession) {
-            if (((ValidatingSession) session).isValid()) {
+        if (session instanceof ValidatingSession validatingSession) {
+            if (validatingSession.isValid()) {
                 cache(session, session.getId());
             } else {
                 uncache(session);
