@@ -20,7 +20,7 @@ package org.apache.shiro.authz.aop;
 
 import org.apache.shiro.authz.AuthorizationException;
 
-import javax.annotation.security.RolesAllowed;
+import jakarta.annotation.security.RolesAllowed;
 import java.lang.annotation.Annotation;
 
 /**

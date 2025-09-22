@@ -23,8 +23,8 @@ import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -35,7 +35,7 @@ import java.util.TimeZone;
 /**
  * Default {@link Cookie Cookie} implementation.  'HttpOnly' is supported out of the box, even on
  * Servlet {@code 2.4} and {@code 2.5} container implementations, using raw header writing logic and not
- * {@link javax.servlet.http.Cookie javax.servlet.http.Cookie} objects (which only has 'HttpOnly' support in Servlet
+ * {@link jakarta.servlet.http.Cookie javax.servlet.http.Cookie} objects (which only has 'HttpOnly' support in Servlet
  * {@code 2.6} specifications and above).
  *
  * @since 1.0
@@ -219,8 +219,8 @@ public class SimpleCookie implements Cookie {
     }
 
     /**
-     * Returns the Cookie's calculated path setting.  If the {@link javax.servlet.http.Cookie#getPath() path} is {@code null},
-     * then the {@code request}'s {@link javax.servlet.http.HttpServletRequest#getContextPath() context path}
+     * Returns the Cookie's calculated path setting.  If the {@link jakarta.servlet.http.Cookie#getPath() path} is {@code null},
+     * then the {@code request}'s {@link jakarta.servlet.http.HttpServletRequest#getContextPath() context path}
      * will be returned. If getContextPath() is the empty string or null then the ROOT_PATH constant is returned.
      *
      * @param request the incoming HttpServletRequest
@@ -445,7 +445,7 @@ public class SimpleCookie implements Cookie {
     public String readValue(HttpServletRequest request, HttpServletResponse ignored) {
         String name = getName();
         String value = null;
-        javax.servlet.http.Cookie cookie = getCookie(request, name);
+        jakarta.servlet.http.Cookie cookie = getCookie(request, name);
         if (cookie != null) {
             // Validate that the cookie is used at the correct place.
             String path = StringUtils.clean(getPath());
@@ -472,10 +472,10 @@ public class SimpleCookie implements Cookie {
      * @return the cookie with the given name from the request or {@code null} if no cookie
      * with that name could be found.
      */
-    private static javax.servlet.http.Cookie getCookie(HttpServletRequest request, String cookieName) {
-        javax.servlet.http.Cookie[] cookies = request.getCookies();
+    private static jakarta.servlet.http.Cookie getCookie(HttpServletRequest request, String cookieName) {
+        jakarta.servlet.http.Cookie[] cookies = request.getCookies();
         if (cookies != null) {
-            for (javax.servlet.http.Cookie cookie : cookies) {
+            for (jakarta.servlet.http.Cookie cookie : cookies) {
                 if (cookie.getName().equals(cookieName)) {
                     return cookie;
                 }

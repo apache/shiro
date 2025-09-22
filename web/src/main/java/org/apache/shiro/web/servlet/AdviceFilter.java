@@ -21,17 +21,17 @@ package org.apache.shiro.web.servlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import java.io.IOException;
 
 /**
  * A Servlet Filter that enables AOP-style &quot;around&quot; advice for a ServletRequest via
- * {@link #preHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse) preHandle},
- * {@link #postHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse) postHandle},
- * and {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) afterCompletion}
+ * {@link #preHandle(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) preHandle},
+ * {@link #postHandle(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) postHandle},
+ * and {@link #afterCompletion(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, Exception) afterCompletion}
  * hooks.
  *
  * @since 0.9
@@ -62,7 +62,7 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
      * Allows 'post' advice logic to be called, but only if no exception occurs during filter chain execution.  That
      * is, if {@link #executeChain executeChain} throws an exception, this method will never be called.  Be aware of
      * this when implementing logic.  Most resource 'cleanup' behavior is often done in the
-     * {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception)
+     * {@link #afterCompletion(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, Exception)
      *      afterCompletion(request,response,exception)}
      * implementation, which is guaranteed to be called for every request, even when the chain processing throws
      * an Exception.
@@ -111,9 +111,9 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
 
     /**
      * Actually implements the chain execution logic, utilizing
-     * {@link #preHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse) pre},
-     * {@link #postHandle(javax.servlet.ServletRequest, javax.servlet.ServletResponse) post}, and
-     * {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) after}
+     * {@link #preHandle(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) pre},
+     * {@link #postHandle(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) post}, and
+     * {@link #afterCompletion(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, Exception) after}
      * advice hooks.
      *
      * @param request  the incoming ServletRequest
@@ -152,12 +152,12 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
 
     /**
      * Executes cleanup logic in the {@code finally} code block in the
-     * {@link #doFilterInternal(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
+     * {@link #doFilterInternal(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, jakarta.servlet.FilterChain)
      *      doFilterInternal(request, response, filterChain)}
      * implementation.
      * <p/>
      * This implementation specifically calls
-     * {@link #afterCompletion(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Exception) afterCompletion}
+     * {@link #afterCompletion(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, Exception) afterCompletion}
      * as well as handles any exceptions properly.
      *
      * @param request  the incoming {@code ServletRequest}
