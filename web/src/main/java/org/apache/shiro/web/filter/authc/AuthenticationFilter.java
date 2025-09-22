@@ -22,8 +22,8 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * Base class for all Filters that require the current user to be authenticated. This class encapsulates the
@@ -69,7 +69,7 @@ public abstract class AuthenticationFilter extends AccessControlFilter {
     /**
      * Determines whether the current subject is authenticated.
      * <p/>
-     * The default implementation {@link #getSubject(javax.servlet.ServletRequest, javax.servlet.ServletResponse) acquires}
+     * The default implementation {@link #getSubject(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) acquires}
      * the currently executing Subject and then returns
      * {@link org.apache.shiro.subject.Subject#isAuthenticated() subject.isAuthenticated()};
      *

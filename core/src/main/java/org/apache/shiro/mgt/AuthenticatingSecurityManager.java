@@ -94,8 +94,8 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      */
     protected void afterRealmsSet() {
         super.afterRealmsSet();
-        if (this.authenticator instanceof ModularRealmAuthenticator) {
-            ((ModularRealmAuthenticator) this.authenticator).setRealms(getRealms());
+        if (this.authenticator instanceof ModularRealmAuthenticator realmAuthenticator) {
+            realmAuthenticator.setRealms(getRealms());
         }
     }
 

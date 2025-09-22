@@ -24,10 +24,10 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DisabledSessionException;
 import org.apache.shiro.web.util.WebUtils;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 
 
@@ -77,10 +77,10 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         String remoteUser;
         Object scPrincipal = getSubjectPrincipal();
         if (scPrincipal != null) {
-            if (scPrincipal instanceof String) {
-                return (String) scPrincipal;
-            } else if (scPrincipal instanceof Principal) {
-                remoteUser = ((Principal) scPrincipal).getName();
+            if (scPrincipal instanceof String string) {
+                return string;
+            } else if (scPrincipal instanceof Principal principal) {
+                remoteUser = principal.getName();
             } else {
                 remoteUser = scPrincipal.toString();
             }
@@ -116,8 +116,8 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         Principal userPrincipal;
         Object scPrincipal = getSubjectPrincipal();
         if (scPrincipal != null) {
-            if (scPrincipal instanceof Principal) {
-                userPrincipal = (Principal) scPrincipal;
+            if (scPrincipal instanceof Principal principal) {
+                userPrincipal = principal;
             } else {
                 userPrincipal = new ObjectPrincipal(scPrincipal);
             }
@@ -247,8 +247,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         }
 
         public boolean equals(Object o) {
-            if (o instanceof ObjectPrincipal) {
-                ObjectPrincipal op = (ObjectPrincipal) o;
+            if (o instanceof ObjectPrincipal op) {
                 return getObject().equals(op.getObject());
             }
             return false;

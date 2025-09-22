@@ -13,7 +13,7 @@
  */
 package org.apache.shiro.testing.jakarta.ee;
 
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 
 import org.apache.shiro.authz.annotation.RequiresUser;
 

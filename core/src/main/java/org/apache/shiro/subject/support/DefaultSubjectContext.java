@@ -265,8 +265,8 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
         if (host == null) {
             //check to see if there is an AuthenticationToken from which to retrieve it:
             AuthenticationToken token = getAuthenticationToken();
-            if (token instanceof HostAuthenticationToken) {
-                host = ((HostAuthenticationToken) token).getHost();
+            if (token instanceof HostAuthenticationToken authenticationToken) {
+                host = authenticationToken.getHost();
             }
         }
 
