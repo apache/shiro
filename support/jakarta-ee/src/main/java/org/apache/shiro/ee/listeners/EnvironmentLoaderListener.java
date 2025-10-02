@@ -19,8 +19,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import static javax.servlet.SessionTrackingMode.COOKIE;
-
+import javax.servlet.SessionTrackingMode;
 import javax.servlet.annotation.WebListener;
 
 import org.apache.shiro.web.env.EnvironmentLoader;
@@ -34,6 +33,9 @@ import org.apache.shiro.web.env.WebEnvironment;
 public class EnvironmentLoaderListener extends EnvironmentLoader implements ServletContextListener {
     private static final String SHIRO_EE_DISABLED_PARAM = "org.apache.shiro.ee.disabled";
     private static final String SHIRO_EE_REDIRECT_DISABLED_PARAM = "org.apache.shiro.ee.redirect.disabled";
+    private static final String SHIRO_EE_ENABLE_URL_SESSION_TRACKING_PARAM = "org.apache.shiro.ee.enable-url-session-tracking";
+    private static final String SHIRO_EE_SESSION_TRACKING_CONFIGURATION_DISABLED_PARAM =
+            "org.apache.shiro.ee.session-tracking-configuration.disabled";
     private static final String FORM_RESUBMIT_DISABLED_PARAM = "org.apache.shiro.form-resubmit.disabled";
     private static final String FORM_RESUBMIT_SECURE_COOKIES = "org.apache.shiro.form-resubmit.secure-cookies";
     private static final String SHIRO_WEB_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.disable-principal";
@@ -80,7 +82,11 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
             sce.getServletContext().setAttribute(SHIRO_WEB_DISABLE_PRINCIPAL_PARAM, Boolean.TRUE);
         }
         if (!isShiroEEDisabled(sce.getServletContext())) {
-            sce.getServletContext().setSessionTrackingModes(Set.of(COOKIE));
+            if (!Boolean.parseBoolean(sce.getServletContext()
+                    .getInitParameter(SHIRO_EE_SESSION_TRACKING_CONFIGURATION_DISABLED_PARAM))) {
+                modifySessionTrackingConfiguration(sce);
+            }
+
             initEnvironment(sce.getServletContext());
         }
     }
@@ -99,5 +105,15 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
         } else {
             return IniEnvironment.class;
         }
+    }
+
+    private static void modifySessionTrackingConfiguration(ServletContextEvent sce) {
+        Set<SessionTrackingMode> effectiveModes = sce.getServletContext().getEffectiveSessionTrackingModes();
+        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_ENABLE_URL_SESSION_TRACKING_PARAM))) {
+            effectiveModes.add(SessionTrackingMode.URL);
+        } else {
+            effectiveModes.remove(SessionTrackingMode.URL);
+        }
+        sce.getServletContext().setSessionTrackingModes(effectiveModes);
     }
 }
