@@ -123,7 +123,7 @@
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.6.0</easymock.version>
-        <mockito.version>5.19.0</mockito.version>
+        <mockito.version>5.20.0</mockito.version>
         <bytebuddy.version>1.17.7</bytebuddy.version>
         <gmaven.version>4.2.1</gmaven.version>
         <groovy.version>4.0.27</groovy.version>
@@ -374,7 +374,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.19.0</version>
+                    <version>2.19.1</version>
                 </plugin>
                 <!-- Allow writing tests in Groovy: -->
                 <plugin>
@@ -438,7 +438,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>12.1.3</version>
+                    <version>12.1.6</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.siom79.japicmp</groupId>
@@ -916,7 +916,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.27.5</version>
+            <version>3.27.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
