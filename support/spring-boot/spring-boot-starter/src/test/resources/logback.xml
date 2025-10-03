@@ -24,7 +24,7 @@
               class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
-                %black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1.}): %msg%n%throwable
+                %black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1}): %msg%n%throwable
             </Pattern>
         </layout>
     </appender>
@@ -35,7 +35,7 @@
     <logger name="org.apache" warn="warn" additivity="false">
         <appender-ref ref="Console" />
     </logger>
-    <logger name="net.sf.ehcache" warn="warn" additivity="false">
+    <logger name="org.ehcache" warn="warn" additivity="false">
         <appender-ref ref="Console" />
     </logger>
     <logger name="org.apache.shiro" warn="warn" additivity="false">

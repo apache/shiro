@@ -20,6 +20,7 @@ package org.apache.shiro.authz.permission;
 
 import org.apache.shiro.lang.util.StringUtils;
 
+import java.io.Serial;
 import java.util.Set;
 
 /**
@@ -32,6 +33,7 @@ import java.util.Set;
  */
 public class DomainPermission extends WildcardPermission {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String domain;
