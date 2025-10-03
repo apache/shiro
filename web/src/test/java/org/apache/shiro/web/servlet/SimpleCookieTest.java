@@ -21,8 +21,8 @@ package org.apache.shiro.web.servlet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Locale;
 
 import static org.easymock.EasyMock.createMock;
@@ -131,7 +131,7 @@ public class SimpleCookieTest {
     public void testReadValueInvalidPath() throws Exception {
         expect(mockRequest.getRequestURI()).andStubReturn("/foo/index.jsp");
         expect(mockRequest.getCookies()).andStubReturn(
-                new javax.servlet.http.Cookie[] {new javax.servlet.http.Cookie(this.cookie.getName(), "value")});
+                new jakarta.servlet.http.Cookie[] {new jakarta.servlet.http.Cookie(this.cookie.getName(), "value")});
         replay(mockRequest);
         replay(mockResponse);
 
@@ -143,7 +143,7 @@ public class SimpleCookieTest {
     public void testReadValuePrefixPath() throws Exception {
         expect(mockRequest.getRequestURI()).andStubReturn("/bar/index.jsp");
         expect(mockRequest.getCookies()).andStubReturn(
-                new javax.servlet.http.Cookie[] {new javax.servlet.http.Cookie(this.cookie.getName(), "value")});
+                new jakarta.servlet.http.Cookie[] {new jakarta.servlet.http.Cookie(this.cookie.getName(), "value")});
         replay(mockRequest);
         replay(mockResponse);
 
@@ -155,7 +155,7 @@ public class SimpleCookieTest {
     public void testReadValueInvalidPrefixPath() throws Exception {
         expect(mockRequest.getRequestURI()).andStubReturn("/foobar/index.jsp");
         expect(mockRequest.getCookies()).andStubReturn(
-                new javax.servlet.http.Cookie[] {new javax.servlet.http.Cookie(this.cookie.getName(), "value")});
+                new jakarta.servlet.http.Cookie[] {new jakarta.servlet.http.Cookie(this.cookie.getName(), "value")});
         replay(mockRequest);
         replay(mockResponse);
 

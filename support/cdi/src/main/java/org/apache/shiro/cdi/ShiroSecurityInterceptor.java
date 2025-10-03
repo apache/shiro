@@ -15,11 +15,11 @@ package org.apache.shiro.cdi;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.annotation.Priority;
-import javax.enterprise.context.Dependent;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.context.Dependent;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
 
 import org.apache.shiro.cdi.AopHelper.SecurityInterceptor;
 

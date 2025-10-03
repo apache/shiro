@@ -373,7 +373,7 @@ public class ShiroAuthFormsIT {
                 .as(WebArchive.class)
                 .deletePackage("org.apache.shiro.testing.jaxrs");
         var productionList = List.of(new Action(
-                getContextParamValue(jakartify("javax.faces.PROJECT_STAGE")),
+                getContextParamValue(jakartify("jakarta.faces.PROJECT_STAGE")),
                 node -> node.setTextContent("Production")));
         new ShrinkWrapManipulator().webXmlXPath(archive, Stream.concat(productionList.stream(),
                 standardActions.stream()).collect(Collectors.toList()));

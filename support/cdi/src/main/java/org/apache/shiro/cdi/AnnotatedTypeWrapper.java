@@ -17,7 +17,7 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.enterprise.inject.spi.AnnotatedType;
+import jakarta.enterprise.inject.spi.AnnotatedType;
 
 import lombok.Getter;
 import lombok.experimental.Delegate;
