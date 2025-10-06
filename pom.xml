@@ -441,7 +441,7 @@
                 <plugin>
                     <groupId>com.github.siom79.japicmp</groupId>
                     <artifactId>japicmp-maven-plugin</artifactId>
-                    <version>0.23.1</version>
+                    <version>0.24.0</version>
                     <configuration>
                         <oldVersion>
                             <dependency>
@@ -456,6 +456,9 @@
                             <breakBuildOnSourceIncompatibleModifications>true</breakBuildOnSourceIncompatibleModifications>
                             <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
                             <breakBuildBasedOnSemanticVersioning>false</breakBuildBasedOnSemanticVersioning>
+                            <ignoreMissingClassesByRegularExpressions>
+                                <ignoreMissingClassesByRegularExpression>javax.annotation.Nullable</ignoreMissingClassesByRegularExpression>
+                            </ignoreMissingClassesByRegularExpressions>
 <!--                            <postAnalysisScript>${root.dir}/src/japicmp/postAnalysisScript.groovy</postAnalysisScript>-->
                         </parameter>
                     </configuration>
