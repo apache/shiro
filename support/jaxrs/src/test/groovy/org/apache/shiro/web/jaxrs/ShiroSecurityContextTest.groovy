@@ -24,8 +24,8 @@ import org.apache.shiro.util.ThreadContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
-import javax.ws.rs.container.ContainerRequestContext
-import javax.ws.rs.core.SecurityContext
+import jakarta.ws.rs.container.ContainerRequestContext
+import jakarta.ws.rs.core.SecurityContext
 import java.security.Principal
 
 import static org.easymock.EasyMock.*

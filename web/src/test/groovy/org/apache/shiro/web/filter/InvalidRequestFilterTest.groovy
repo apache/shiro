@@ -23,7 +23,7 @@ import org.apache.shiro.web.RestoreSystemProperties
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Isolated
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 import static org.easymock.EasyMock.expect
 import static org.easymock.EasyMock.mock

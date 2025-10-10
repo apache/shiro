@@ -13,11 +13,11 @@
  */
 package org.apache.shiro.testing.jaxrs;
 
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.enterprise.context.ApplicationScoped;
-import javax.ws.rs.core.Response;
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.core.Response;
 
 @ApplicationScoped
 public class RolesAllowedBean {

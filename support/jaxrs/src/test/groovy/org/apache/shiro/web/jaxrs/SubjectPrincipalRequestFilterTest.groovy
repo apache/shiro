@@ -21,8 +21,8 @@ package org.apache.shiro.web.jaxrs
 import org.easymock.Capture
 import org.junit.jupiter.api.Test
 
-import javax.ws.rs.container.ContainerRequestContext
-import javax.ws.rs.core.SecurityContext
+import jakarta.ws.rs.container.ContainerRequestContext
+import jakarta.ws.rs.core.SecurityContext
 
 import static org.easymock.EasyMock.*
 import static org.junit.jupiter.api.Assertions.*

@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Target;
-import javax.interceptor.InterceptorBinding;
+import jakarta.interceptor.InterceptorBinding;
 
 /**
  * CDI Marker Annotation to use Shiro
