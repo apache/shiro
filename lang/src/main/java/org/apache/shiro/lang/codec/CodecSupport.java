@@ -204,18 +204,18 @@ public abstract class CodecSupport {
             String msg = "Argument for byte conversion cannot be null.";
             throw new IllegalArgumentException(msg);
         }
-        if (object instanceof byte[]) {
-            return (byte[]) object;
-        } else if (object instanceof ByteSource) {
-            return ((ByteSource) object).getBytes();
-        } else if (object instanceof char[]) {
-            return toBytes((char[]) object);
-        } else if (object instanceof String) {
-            return toBytes((String) object);
-        } else if (object instanceof File) {
-            return toBytes((File) object);
-        } else if (object instanceof InputStream) {
-            return toBytes((InputStream) object);
+        if (object instanceof byte[] bytes) {
+            return bytes;
+        } else if (object instanceof ByteSource source) {
+            return source.getBytes();
+        } else if (object instanceof char[] chars) {
+            return toBytes(chars);
+        } else if (object instanceof String string) {
+            return toBytes(string);
+        } else if (object instanceof File file) {
+            return toBytes(file);
+        } else if (object instanceof InputStream stream) {
+            return toBytes(stream);
         } else {
             return objectToBytes(object);
         }
@@ -238,12 +238,12 @@ public abstract class CodecSupport {
             String msg = "Argument for String conversion cannot be null.";
             throw new IllegalArgumentException(msg);
         }
-        if (o instanceof byte[]) {
-            return toString((byte[]) o);
-        } else if (o instanceof char[]) {
-            return new String((char[]) o);
-        } else if (o instanceof String) {
-            return (String) o;
+        if (o instanceof byte[] bytes) {
+            return toString(bytes);
+        } else if (o instanceof char[] chars) {
+            return new String(chars);
+        } else if (o instanceof String string) {
+            return string;
         } else {
             return objectToString(o);
         }

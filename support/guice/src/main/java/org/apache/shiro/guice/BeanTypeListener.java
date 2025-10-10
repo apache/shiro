@@ -147,8 +147,7 @@ class BeanTypeListener implements TypeListener {
     }
 
     private static boolean requiresName(Type propertyType) {
-        if (propertyType instanceof Class) {
-            Class<?> aClass = (Class<?>) propertyType;
+        if (propertyType instanceof Class<?> aClass) {
             return aClass.isPrimitive()
                     || aClass.isEnum()
                     || WRAPPER_TYPES.contains(aClass)

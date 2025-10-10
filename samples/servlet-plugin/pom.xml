@@ -35,16 +35,18 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-maven-plugin</artifactId>
                 <version>${jetty.version}</version>
                 <configuration>
-                    <contextPath>/</contextPath>
+                    <webApp>
+                        <contextPath>/</contextPath>
+                    </webApp>
                     <httpConnector>
                         <port>9080</port>
                         <idleTimeout>60000</idleTimeout>
                     </httpConnector>
-                    <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+                    <requestLog implementation="org.eclipse.jetty.server.RequestLogWriter">
                         <filename>./target/yyyy_mm_dd.request.log</filename>
                         <retainDays>90</retainDays>
                         <append>true</append>
@@ -96,8 +98,8 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -117,18 +119,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jsp</artifactId>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-apache-jsp</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jstl</artifactId>
-            <version>${jetty.version}</version>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.eclipse.jetty</groupId>-->
+        <!--    <artifactId>apache-jstl</artifactId>-->
+        <!--    <version>${jetty.version}</version>-->
+        <!--    <type>pom</type>-->
+        <!--    <scope>test</scope>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.shiro.integrationtests</groupId>
             <artifactId>shiro-its-support</artifactId>

@@ -13,13 +13,12 @@
  */
 package org.apache.shiro.testing.cdi;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
-import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.shiro.testing.jakarta.ee.PropertyPrincipal;
@@ -119,7 +118,7 @@ public class ComponentInjectionIT {
         var webArchive = ShrinkWrap.create(WebArchive.class, archive)
                 .addAsResource("META-INF/beans.xml")
                 .addAsResource(new StringAsset("org.apache.shiro.cdi.ShiroSecurityExtension"),
-                        jakartify("META-INF/services/javax.enterprise.inject.spi.Extension"))
+                        "META-INF/services/jakarta.enterprise.inject.spi.Extension")
                 .addAsResource("META-INF/services/org.slf4j.spi.SLF4JServiceProvider")
                 .addAsWebInfResource(new StringAsset(
                         "<payara-web-app><class-loader delegate=\"false\"/></payara-web-app>"),
