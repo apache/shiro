@@ -16,41 +16,52 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<ehcache>
+<config xmlns="http://www.ehcache.org/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.ehcache.org/v3 https://www.ehcache.org/schema/ehcache-core-3.3.xsd">
+    <persistence directory="${java.io.tmpdir}/shiro-sprhib-ehcache"/>
 
-    <diskStore path="java.io.tmpdir/shiro-sprhib-ehcache"/>
-
-
-    <defaultCache
-            maxElementsInMemory="1000"
-            eternal="false"
-            timeToLiveSeconds="600"
-            overflowToDisk="true"
-            diskPersistent="false"
-    />
+    <cache-template name="default">
+        <key-type>java.io.Serializable</key-type>
+        <value-type>java.io.Serializable</value-type>
+        <expiry>
+            <ttl unit="minutes">10</ttl>
+        </expiry>
+        <resources>
+            <heap>1000</heap>
+            <disk unit="MB">50</disk>
+        </resources>
+    </cache-template>
 
     <!--=================================================================
         Hibernate Object Caches
         =================================================================-->
 
-    <cache name="org.apache.shiro.samples.sprhib.model.Role"
-           maxElementsInMemory="100"
-           timeToLiveSeconds="0"
-           overflowToDisk="true"/>
+    <cache alias="org.apache.shiro.samples.sprhib.model.Role" uses-template="default">
+        <expiry>
+            <none/>
+        </expiry>
+        <heap>100</heap>
+    </cache>
 
-    <cache name="org.apache.shiro.samples.sprhib.model.Role.permissions"
-           maxElementsInMemory="100"
-           timeToLiveSeconds="0"
-           overflowToDisk="true"/>
+    <cache alias="org.apache.shiro.samples.sprhib.model.Role.permissions" uses-template="default">
+        <expiry>
+            <none/>
+        </expiry>
+        <heap>100</heap>
+    </cache>
 
-    <cache name="org.apache.shiro.samples.sprhib.model.User"
-           maxElementsInMemory="1000"
-           timeToLiveSeconds="3600"
-           overflowToDisk="true"/>
+    <cache alias="org.apache.shiro.samples.sprhib.model.User" uses-template="default">
+        <expiry>
+            <ttl unit="hours">1</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
 
-    <cache name="org.apache.shiro.samples.sprhib.model.User.roles"
-           maxElementsInMemory="1000"
-           timeToLiveSeconds="3600"
-           overflowToDisk="true"/>
-
-</ehcache>
+    <cache alias="org.apache.shiro.samples.sprhib.model.User.roles" uses-template="default">
+        <expiry>
+            <ttl unit="hours">1</ttl>
+        </expiry>
+        <heap>1000</heap>
+    </cache>
+</config>

@@ -18,9 +18,7 @@
  */
 package org.apache.shiro.spring.security.interceptor;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * All the tests in the parent class are run.  This class exists to ensure that Shiro
@@ -31,7 +29,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
  *
  * @since 1.1
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration
+@SpringJUnitConfig
 public class SchemaAuthorizationAnnotationTest extends AbstractAuthorizationAnnotationTest {
 }

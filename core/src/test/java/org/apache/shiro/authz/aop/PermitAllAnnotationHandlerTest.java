@@ -21,7 +21,7 @@ package org.apache.shiro.authz.aop;
 import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.security.PermitAll;
+import jakarta.annotation.security.PermitAll;
 import java.lang.annotation.Annotation;
 
 /**

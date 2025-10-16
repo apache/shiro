@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.web.util;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -57,7 +57,7 @@ import java.util.Map;
  *
  * @see #setContextRelative
  * @see #setHttp10Compatible
- * @see javax.servlet.http.HttpServletResponse#sendRedirect
+ * @see jakarta.servlet.http.HttpServletResponse#sendRedirect
  * @since 0.2
  */
 public class RedirectView {
@@ -143,7 +143,7 @@ public class RedirectView {
      * @param contextRelative whether to interpret a given URL that starts with a slash ("/")
      *                        as relative to the current ServletContext, i.e. as relative to the
      *                        web application root.
-     * @see javax.servlet.http.HttpServletRequest#getContextPath
+     * @see jakarta.servlet.http.HttpServletRequest#getContextPath
      */
     public void setContextRelative(boolean contextRelative) {
         this.contextRelative = contextRelative;
@@ -160,7 +160,7 @@ public class RedirectView {
      * after a POST request; turn this flag off in such a scenario.
      *
      * @param http10Compatible whether to stay compatible with HTTP 1.0 clients.
-     * @see javax.servlet.http.HttpServletResponse#sendRedirect
+     * @see jakarta.servlet.http.HttpServletResponse#sendRedirect
      */
     public void setHttp10Compatible(boolean http10Compatible) {
         this.http10Compatible = http10Compatible;
@@ -262,6 +262,7 @@ public class RedirectView {
      * @param encodingScheme the encoding scheme
      * @return the encoded output String
      * @throws UnsupportedEncodingException if thrown by the JDK URLEncoder
+     * @see java.net.URLEncoder#encode(String, java.nio.charset.Charset)
      * @see java.net.URLEncoder#encode(String, String)
      * @see java.net.URLEncoder#encode(String)
      */

@@ -18,8 +18,8 @@
  */
 package org.apache.shiro.web.tags;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 /**
  * @since 0.1

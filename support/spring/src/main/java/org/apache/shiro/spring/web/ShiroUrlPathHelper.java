@@ -21,7 +21,7 @@ package org.apache.shiro.spring.web;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.web.util.UrlPathHelper;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A Spring UrlPathHelper that uses Shiro's path resolution logic.

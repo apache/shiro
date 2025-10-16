@@ -57,8 +57,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
             <optional>true</optional>
         </dependency>
     </dependencies>
@@ -73,9 +73,9 @@
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.lang</Bundle-SymbolicName>
                         <Export-Package>org.apache.shiro.lang.*;version=${project.version}</Export-Package>
-                        <!-- javax.servlet.jsp* marked as optional per SHIRO-390: -->
+                        <!-- jakarta.servlet.jsp* marked as optional per SHIRO-390: -->
                         <Import-Package>
-                            javax.servlet.jsp*;resolution:=optional,
+                            jakarta.servlet.jsp*;resolution:=optional,
                             *
                         </Import-Package>
                         <_removeheaders>Bnd-LastModified</_removeheaders>

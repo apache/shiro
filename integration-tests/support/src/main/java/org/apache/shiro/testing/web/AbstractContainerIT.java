@@ -18,11 +18,11 @@
  */
 package org.apache.shiro.testing.web;
 
-import org.apache.shiro.lang.codec.Base64;
+import java.nio.charset.StandardCharsets;
 
-import com.github.mjeanroy.junit.servers.jetty9.EmbeddedJetty;
+import com.github.mjeanroy.junit.servers.jetty12.EmbeddedJetty;
 import com.github.mjeanroy.junit.servers.jetty.EmbeddedJettyConfiguration;
-import org.eclipse.jetty.annotations.AnnotationConfiguration;
+import java.util.Base64;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -30,15 +30,7 @@ import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.util.resource.PathResource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.eclipse.jetty.webapp.Configuration;
-import org.eclipse.jetty.webapp.FragmentConfiguration;
-import org.eclipse.jetty.webapp.JettyWebXmlConfiguration;
-import org.eclipse.jetty.webapp.MetaInfConfiguration;
-import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.webapp.WebInfConfiguration;
-import org.eclipse.jetty.webapp.WebXmlConfiguration;
 import org.htmlunit.WebClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -47,14 +39,12 @@ import org.junit.jupiter.api.BeforeEach;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
@@ -77,64 +67,14 @@ public abstract class AbstractContainerIT {
                 .withWebapp(getWarDir())
                 .build();
 
-        jetty = new EmbeddedJetty(config) {
-
-            /**
-             * Overriding with contents of this pull request, to make fragment scanning work.
-             * <a href="https://github.com/mjeanroy/junit-servers/pull/3"></a>
-             */
-            @SuppressWarnings("checkstyle:LineLength")
-            protected WebAppContext createdWebAppContext() throws Exception {
-                final String path = configuration.getPath();
-                final String webapp = configuration.getWebapp();
-                final String classpath = configuration.getClasspath();
-
-                WebAppContext ctx = new WebAppContext();
-                ctx.setClassLoader(Thread.currentThread().getContextClassLoader());
-                ctx.setContextPath(path);
-
-                // Useful for WebXmlConfiguration
-                ctx.setBaseResource(newResource(ctx, webapp));
-
-                ctx.setConfigurations(new Configuration[] {
-                        new WebInfConfiguration(),
-                        new WebXmlConfiguration(),
-                        new AnnotationConfiguration(),
-                        new JettyWebXmlConfiguration(),
-                        new MetaInfConfiguration(),
-                        new FragmentConfiguration(),
-                });
-
-                if (isNotBlank(classpath)) {
-                    // Fix to scan Spring WebApplicationInitializer
-                    // This will add compiled classes to jetty classpath
-                    // See: http://stackoverflow.com/questions/13222071/spring-3-1-webapplicationinitializer-embedded-jetty-8-annotationconfiguration
-                    // And more precisely: http://stackoverflow.com/a/18449506/1215828
-                    File classes = new File(classpath);
-                    var containerResources = new PathResource(classes.toURI());
-                    ctx.getMetaData().addContainerResource(containerResources);
-                }
-
-                Server server = getDelegate();
-
-                // web app
-                ctx.setParentLoaderPriority(true);
-                ctx.setWar(webapp);
-                ctx.setServer(server);
-
-                // Add server context
-                server.setHandler(ctx);
-
-                return ctx;
-            }
-        };
+        jetty = new EmbeddedJetty(config);
 
         Server server = jetty.getDelegate();
 
         // TLS
         tlsPort = getFreePort();
 
-        final SslContextFactory sslContextFactory = new SslContextFactory.Server();
+        final SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setKeyStorePath(TEST_KEYSTORE_PATH.getAbsolutePath());
         sslContextFactory.setKeyStorePassword(TEST_KEYSTORE_PASSWORD);
         sslContextFactory.setKeyManagerPassword(TEST_KEYSTORE_PASSWORD);
@@ -178,12 +118,11 @@ public abstract class AbstractContainerIT {
         return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
     }
 
-    protected static String getBasicAuthorizationHeaderValue(String username, String password)
-            throws UnsupportedEncodingException {
+    protected static String getBasicAuthorizationHeaderValue(String username, String password) {
         String authorizationHeader = username + ":" + password;
         byte[] valueBytes;
-        valueBytes = authorizationHeader.getBytes("UTF-8");
-        authorizationHeader = new String(Base64.encode(valueBytes));
+        valueBytes = authorizationHeader.getBytes(StandardCharsets.UTF_8);
+        authorizationHeader = new String(Base64.getEncoder().encode(valueBytes));
         return "Basic " + authorizationHeader;
     }
 
