@@ -23,7 +23,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;

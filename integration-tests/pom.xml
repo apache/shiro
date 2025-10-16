@@ -42,13 +42,13 @@
     </properties>
 
     <modules>
-        <module>support</module>
-        <module>guice3</module>
-        <module>guice4</module>
+        <!--module>support</module-->
+        <!--module>guice3</module-->
+        <!--module>guice4</module-->
         <module>meecrowave-support</module>
-        <module>jaxrs</module>
-        <module>jakarta-ee-support</module>
-        <module>jakarta-ee</module>
+        <!--module>jaxrs</module-->
+        <!--module>jakarta-ee-support</module-->
+        <!--module>jakarta-ee</module-->
     </modules>
 
     <dependencyManagement>
