@@ -200,7 +200,7 @@ public class SimpleHashProvider implements HashSpi {
         }
     }
 
-    static final class Parameters {
+    public static final class Parameters {
         public static final String PARAMETER_ITERATIONS = "SimpleHash.iterations";
 
         /**

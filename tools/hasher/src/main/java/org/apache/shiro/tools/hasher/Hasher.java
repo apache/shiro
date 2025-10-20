@@ -30,6 +30,7 @@ import org.apache.shiro.crypto.UnknownAlgorithmException;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.HashRequest;
+import org.apache.shiro.crypto.hash.SimpleHashProvider;
 import org.apache.shiro.crypto.hash.SimpleHashRequest;
 import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HashFormat;
@@ -51,7 +52,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-import static java.util.Collections.emptyMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Commandline line utility to hash data such as strings, passwords, resources (files, urls, etc.).
@@ -244,6 +245,8 @@ public final class Hasher {
                 }
             }
 
+            ConcurrentHashMap<String, Object> parameters = new ConcurrentHashMap<>();
+
             if (iterations < DEFAULT_NUM_ITERATIONS) {
                 //Iterations were not specified.  Default to 350,000 when password hashing, and 1 for everything else:
                 if (password) {
@@ -251,11 +254,13 @@ public final class Hasher {
                 } else {
                     iterations = DEFAULT_NUM_ITERATIONS;
                 }
+            } else {
+                //Iterations were specified, so add the iterations parameter:
+                parameters.put(SimpleHashProvider.Parameters.PARAMETER_ITERATIONS, iterations);
             }
 
             ByteSource publicSalt = getSalt(saltString, saltBytesString, generateSalt, generatedSaltSize);
-            // FIXME: add options here.
-            HashRequest hashRequest = new SimpleHashRequest(algorithm, ByteSource.Util.bytes(source), publicSalt, emptyMap());
+            HashRequest hashRequest = new SimpleHashRequest(algorithm, ByteSource.Util.bytes(source), publicSalt, parameters);
 
             DefaultHashService hashService = new DefaultHashService();
             Hash hash = hashService.computeHash(hashRequest);
