@@ -239,7 +239,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
         }
 
         /**
-         * Removes all elements in the cache, but leaves the cache in a useable state.
+         * Removes all elements in the cache, but leaves the cache in a usable state.
          */
         public void clear() throws CacheException {
             LOGGER.trace("Clearing all objects from cache [{}]", cache.getName());
