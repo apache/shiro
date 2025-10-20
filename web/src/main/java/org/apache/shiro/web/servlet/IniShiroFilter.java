@@ -47,8 +47,8 @@ import java.util.Map;
  * <a href="http://en.wikipedia.org/wiki/INI_file">INI</a> configuration format.
  * <p/>
  * The actual INI configuration contents are not covered here, but instead in Shiro's
- * <a href="http://shiro.apache.org/configuration.html">Configuration Documentation</a> and additional web-specific
- * <a href="http://shiro.apache.org/web.html">Web Documentation</a>.
+ * <a href="https://shiro.apache.org/configuration.html">Configuration Documentation</a> and additional web-specific
+ * <a href="https://shiro.apache.org/web.html">Web Documentation</a>.
  * <h2>Usage</h2>
  * <h3>Default</h3>
  * By default, the simplest filter declaration expects a {@code shiro.ini} resource to be located at
@@ -98,11 +98,11 @@ import java.util.Map;
  * 'noise' in the web.xml file.
  * <p/>
  * When creating the shiro.ini configuration itself, please see Shiro's
- * <a href="http://shiro.apache.org/configuration.html">Configuration Documentation</a> and
- * <a href="http://shiro.apache.org/web.html">Web Documentation</a>.
+ * <a href="https://shiro.apache.org/configuration.html">Configuration Documentation</a> and
+ * <a href="https://shiro.apache.org/web.html">Web Documentation</a>.
  *
- * @see <a href="http://shiro.apache.org/configuration.html">Apache Shiro INI Configuration</a>
- * @see <a href="http://shiro.apache.org/web.html">Apache Shiro Web Documentation</a>
+ * @see <a href="https://shiro.apache.org/configuration.html">Apache Shiro INI Configuration</a>
+ * @see <a href="https://shiro.apache.org/web.html">Apache Shiro Web Documentation</a>
  * @since 1.0
  * @deprecated in 1.2 in favor of using the {@link ShiroFilter}
  */
