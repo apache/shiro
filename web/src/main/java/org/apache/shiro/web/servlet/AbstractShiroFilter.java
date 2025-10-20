@@ -67,10 +67,10 @@ import java.util.concurrent.Callable;
  *     &lt;/init-param&gt;
  * &lt;/filter&gt;
  * </pre>
- * See the Shiro <a href="http://shiro.apache.org/subject.html">Subject documentation</a> for more information as to
+ * See the Shiro <a href="https://shiro.apache.org/subject.html">Subject documentation</a> for more information as to
  * if you would do this, particularly the sections on the {@code Subject.Builder} and Thread Association.
  *
- * @see <a href="http://shiro.apache.org/subject.html">Subject documentation</a>
+ * @see <a href="https://shiro.apache.org/subject.html">Subject documentation</a>
  * @since 1.0
  */
 public abstract class AbstractShiroFilter extends OncePerRequestFilter {

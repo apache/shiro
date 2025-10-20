@@ -473,7 +473,7 @@ Bug:
 Bug:
 
     [SHIRO-341] - ReflectionBuilder has invalid log message format
-    [SHIRO-342] - Running the example as described at http://shiro.apache.org/10-minute-tutorial.html fails
+    [SHIRO-342] - Running the example as described at https://shiro.apache.org/10-minute-tutorial.html fails
     [SHIRO-344] - runAs feature doesn't work
     [SHIRO-350] - Creating a subject should not create a session
     [SHIRO-353] - DefaultSecurityManager has invalid SLF4J log instruction
@@ -502,7 +502,7 @@ Backwards Incompatible Changes
   If you overrode this method in Shiro 1.0 or 1.1, please look at the new
   org.apache.shiro.mgt.DefaultSubjectDAO implementation, which performs compatible logic.
   Documentation for this is covered here:
-  http://shiro.apache.org/session-management.html#SessionManagement-SessionsandSubjectState
+  https://shiro.apache.org/session-management.html#SessionManagement-SessionsandSubjectState
 
 - The org.apache.shiro.web.session.mgt.ServletContainerSessionManager implementation
   (enabled by default for all web applications) no longer subclasses
