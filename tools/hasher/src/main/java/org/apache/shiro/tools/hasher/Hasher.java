@@ -50,8 +50,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
+import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -245,7 +246,7 @@ public final class Hasher {
                 }
             }
 
-            ConcurrentHashMap<String, Object> parameters = new ConcurrentHashMap<>();
+            Map<String, Object> parameters = new ConcurrentHashMap<>();
 
             if (iterations < DEFAULT_NUM_ITERATIONS) {
                 //Iterations were not specified.  Default to 350,000 when password hashing, and 1 for everything else:
