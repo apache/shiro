@@ -37,7 +37,6 @@ import org.apache.shiro.crypto.hash.format.HashFormat;
 import org.apache.shiro.crypto.hash.format.HashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HexFormat;
 import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat;
-import org.apache.shiro.crypto.support.hashes.argon2.Argon2HashProvider;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.lang.io.ResourceUtils;
@@ -75,7 +74,7 @@ public final class Hasher {
     private static final String DEFAULT_PASSWORD_ALGORITHM_NAME = DefaultPasswordService.DEFAULT_HASH_ALGORITHM;
     private static final int DEFAULT_GENERATED_SALT_SIZE = 128;
     private static final int DEFAULT_NUM_ITERATIONS = 1;
-    private static final int DEFAULT_PASSWORD_NUM_ITERATIONS = Argon2HashProvider.Parameters.DEFAULT_ITERATIONS;
+    private static final int DEFAULT_PASSWORD_NUM_ITERATIONS = 350_000;
 
     private static final Option ALGORITHM =
             new Option("a", "algorithm", true,
@@ -255,10 +254,9 @@ public final class Hasher {
                 } else {
                     iterations = DEFAULT_NUM_ITERATIONS;
                 }
-            } else {
-                //Iterations were specified, so add the iterations parameter:
-                parameters.put(SimpleHashProvider.Parameters.PARAMETER_ITERATIONS, iterations);
             }
+            //Iterations were specified, so add the iterations parameter:
+            parameters.put(SimpleHashProvider.Parameters.PARAMETER_ITERATIONS, iterations);
 
             ByteSource publicSalt = getSalt(saltString, saltBytesString, generateSalt, generatedSaltSize);
             HashRequest hashRequest = new SimpleHashRequest(algorithm, ByteSource.Util.bytes(source), publicSalt, parameters);
