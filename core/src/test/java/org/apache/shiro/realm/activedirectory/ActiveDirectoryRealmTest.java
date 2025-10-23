@@ -19,7 +19,7 @@
 package org.apache.shiro.realm.activedirectory;
 
 import org.apache.shiro.SecurityUtils;
-
+import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -28,6 +28,9 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.ini.IniSecurityManagerFactory;
+import org.apache.shiro.lang.util.Factory;
+import org.apache.shiro.lang.util.LifecycleUtils;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -131,6 +134,21 @@ public class ActiveDirectoryRealmTest {
         // suffix matches user entry
         assertExistingUserSuffix(USERNAME + "@example.com", "testuser@example.com");
         assertExistingUserSuffix(USERNAME + "@EXAMPLE.com", "testuser@EXAMPLE.com");
+    }
+
+    @Test
+    void testInitialization() {
+        try {
+            // Initialize AD Realm
+            Factory<SecurityManager> factory = new IniSecurityManagerFactory(
+                    "classpath:org/apache/shiro/realm/activedirectory/AdRealm.withPrincipalSuffix.ini");
+            SecurityUtils.setSecurityManager(factory.getInstance());
+            // Destroy Realm
+            SecurityManager securityManager = SecurityUtils.getSecurityManager();
+            LifecycleUtils.destroy(securityManager);
+        } catch (UnavailableSecurityManagerException e) {
+        }
+        SecurityUtils.setSecurityManager(null);
     }
 
     public void assertExistingUserSuffix(String username, String expectedPrincipalName) throws Exception {
