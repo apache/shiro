@@ -364,6 +364,7 @@
                             <exclude>**/nb-configuration.xml</exclude>
                             <exclude>**/faces-config.NavData</exclude>
                             <exclude>**/org.mockito.plugins.MockMaker</exclude>
+                            <exclude>.github/linters/codespell.txt</exclude>
                             <exclude>.mvn/*</exclude>
                             <exclude>.jenkins_maven_args</exclude>
                         </excludes>
