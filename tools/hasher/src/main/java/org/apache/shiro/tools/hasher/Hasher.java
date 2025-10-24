@@ -70,7 +70,7 @@ public final class Hasher {
     private static final Logger LOG = LoggerFactory.getLogger(Hasher.class);
 
     private static final String HEX_PREFIX = "0x";
-    private static final String DEFAULT_ALGORITHM_NAME = "MD5";
+    private static final String DEFAULT_ALGORITHM_NAME = "SHA-256";
     private static final String DEFAULT_PASSWORD_ALGORITHM_NAME = DefaultPasswordService.DEFAULT_HASH_ALGORITHM;
     private static final int DEFAULT_GENERATED_SALT_SIZE = 128;
     private static final int DEFAULT_NUM_ITERATIONS = 1;
