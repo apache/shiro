@@ -78,7 +78,7 @@ public final class Hasher {
 
     private static final Option ALGORITHM =
             new Option("a", "algorithm", true,
-                    "hash algorithm name.  Defaults to Argon2 when password hashing, SHA-512 otherwise.");
+                    "hash algorithm name.  Defaults to Argon2 when password hashing, SHA-256 otherwise.");
     private static final Option DEBUG = new Option("d", "debug", false, "show additional error (stack trace) information.");
     private static final Option FORMAT = new Option("f", "format", true,
             "hash output format. Defaults to 'shiro2' when password hashing, 'hex' otherwise.  See below for more information.");
