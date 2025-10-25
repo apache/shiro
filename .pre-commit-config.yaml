@@ -32,3 +32,9 @@ repos:
         name: run codespell
         description: Check spelling with codespell
         args: [--ignore-words=.github/linters/codespell.txt]
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.28.0
+    hooks:
+      - id: gitleaks
+        name: run gitleaks
+        description: check for secrets with gitleaks
