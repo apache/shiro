@@ -32,3 +32,10 @@ repos:
         name: run codespell
         description: Check spelling with codespell
         args: [--ignore-words=.github/linters/codespell.txt]
+  - repo: https://github.com/oxipng/oxipng
+    rev: v9.1.5
+    hooks:
+      - id: oxipng
+        name: run oxipng
+        description: check PNG files with oxipng
+        args: ['--fix', '-o', '4', '--strip', 'safe', '--alpha']
