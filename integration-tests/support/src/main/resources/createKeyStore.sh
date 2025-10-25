@@ -30,9 +30,10 @@ set -e
 # programmatically: `System.setProperty("javax.net.ssl.trustStore", "/path/to/keystore")`
 
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+# shellcheck disable=SC2034
 keystore_file="${dir}/test-keystore.jks"
 file_prefix="${dir}/test-keystore"
-rm -f ${file_prefix}*
+rm -f "${file_prefix}"*
 
 echo "generate new keystore"
 keytool -genkey \
