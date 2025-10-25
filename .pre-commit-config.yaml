@@ -32,3 +32,9 @@ repos:
         name: run codespell
         description: Check spelling with codespell
         args: [--ignore-words=.github/linters/codespell.txt]
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+        name: run shellcheck
+        description: check Shell scripts with shellcheck
