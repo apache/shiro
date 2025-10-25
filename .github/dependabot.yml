@@ -112,6 +112,10 @@ updates:
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 10
+    groups:
+      github-dependencies:
+        patterns:
+          - '*'
 
   # Dependencies for GitHub Actions - on 1.13.x
   - package-ecosystem: 'github-actions'
@@ -120,3 +124,7 @@ updates:
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 10
+    groups:
+      github-dependencies:
+        patterns:
+          - '*'
