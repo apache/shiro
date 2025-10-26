@@ -21,3 +21,16 @@ github_actions:
       - changed-files:
           - any-glob-to-any-file:
               - .github/**/*
+
+java:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - '**/*.java'
+
+tests:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - '**/src/test/groovy/**/*'
+              - '**/src/test/java/**/*'
