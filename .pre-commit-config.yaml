@@ -41,3 +41,9 @@ repos:
         args: [--strict, -c=.github/linters/.yaml-lint.yml]
         types: [yaml]
         files: \.ya?ml$
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.28.0
+    hooks:
+      - id: gitleaks
+        name: run gitleaks
+        description: check for secrets with gitleaks

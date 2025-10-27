@@ -15,22 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# https://github.com/actions/labeler
-github_actions:
-  - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              - .github/**/*
+# EditorConfig is awesome: https://editorconfig.org
 
-java:
-  - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              - '**/*.java'
+# top-most EditorConfig file
+root = true
 
-tests:
-  - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              - '**/src/test/groovy/**/*'
-              - '**/src/test/java/**/*'
+# Unix-style newlines with a newline ending every file
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
