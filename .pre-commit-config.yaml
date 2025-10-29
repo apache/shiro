@@ -47,6 +47,16 @@ repos:
         args: [--allow-missing-credentials]
       - id: detect-private-key
       - id: forbid-submodules
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
+    hooks:
+      - id: markdownlint
+        name: run markdownlint
+        description: check Markdown files with markdownlint
+        args: [--config=.github/linters/.markdown-lint.yml]
+        exclude: ^\.github/.*$
+        types: [markdown]
+        files: \.md$
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.37.1
     hooks:
