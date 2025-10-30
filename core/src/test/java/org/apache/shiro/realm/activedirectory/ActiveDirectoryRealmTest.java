@@ -140,6 +140,7 @@ public class ActiveDirectoryRealmTest {
     void testInitialization() {
         try {
             // Initialize AD Realm
+            @SuppressWarnings("deprecation")
             Factory<SecurityManager> factory = new IniSecurityManagerFactory(
                     "classpath:org/apache/shiro/realm/activedirectory/AdRealm.withPrincipalSuffix.ini");
             SecurityUtils.setSecurityManager(factory.getInstance());
