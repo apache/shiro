@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
         <artifactId>shiro-its-jaxrs</artifactId>
-        <version>2.0.6</version>
+        <version>2.0.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>shiro-its-jaxrs-tests</artifactId>
