@@ -382,7 +382,9 @@
                                         int portbase = 4900 + (executor_number as int) * port_increment
                                         int adminPort
                                         // find a free port
-                                        for (; portbase < 10000; portbase += port_increment) { def server_socket adminPort = portbase + admin_port_increment
+                                        for (; portbase < 10000; portbase += port_increment) {
+                                        def server_socket
+                                        adminPort = portbase + admin_port_increment
                                             try {
                                                 server_socket = new ServerSocket()
                                                 server_socket.setReuseAddress true
