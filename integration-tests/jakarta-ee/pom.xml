@@ -374,7 +374,7 @@
                         </goals>
                         <configuration>
                             <scripts>
-                                <script>${project.basedir}/src/main/resources/script.groovy</script>
+                                <script>${project.basedir}/src/main/resources/setPayaraPort.groovy</script>
                             </scripts>
                         </configuration>
                     </execution>
