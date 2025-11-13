@@ -27,7 +27,7 @@ import org.apache.shiro.lang.util.UnknownClassException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -279,7 +279,7 @@ public class EnvironmentLoader {
     /**
      * Instantiates a {@link WebEnvironment} based on the specified ServletContext.
      * <p/>
-     * This implementation {@link #determineWebEnvironmentClass(javax.servlet.ServletContext) determines} a
+     * This implementation {@link #determineWebEnvironmentClass(jakarta.servlet.ServletContext) determines} a
      * {@link WebEnvironment} implementation class to use.  That class is instantiated, configured, and returned.
      * <p/>
      * This allows custom {@code WebEnvironment} implementations to be specified via a ServletContext init-param if

@@ -41,8 +41,9 @@
             <artifactId>shiro-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+      <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.taglibs</groupId>
@@ -53,8 +54,9 @@
             <artifactId>taglibs-standard-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+      <version>6.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.owasp.encoder</groupId>

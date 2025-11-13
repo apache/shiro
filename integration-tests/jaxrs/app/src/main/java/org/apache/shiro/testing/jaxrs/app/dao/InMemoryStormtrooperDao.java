@@ -27,8 +27,8 @@ import org.apache.shiro.testing.jaxrs.app.model.Stormtrooper;
 import org.apache.shiro.testing.jaxrs.app.model.StormtrooperId;
 import org.apache.shiro.testing.jaxrs.app.model.StormtrooperTemplate;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Default;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Default;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Locale;

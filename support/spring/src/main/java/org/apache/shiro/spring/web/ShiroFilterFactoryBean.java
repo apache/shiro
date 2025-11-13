@@ -44,7 +44,7 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -78,7 +78,7 @@ import java.util.Map;
  * optional.
  * <p/>
  * This implementation is also a {@link BeanPostProcessor} and will acquire
- * any {@link javax.servlet.Filter Filter} beans defined independently in your Spring application context.  Upon
+ * any {@link jakarta.servlet.Filter Filter} beans defined independently in your Spring application context.  Upon
  * discovery, they will be automatically added to the {@link #setFilters(java.util.Map) map} keyed by the bean ID.
  * That ID can then be used in the filter chain definitions, for example:
  *
