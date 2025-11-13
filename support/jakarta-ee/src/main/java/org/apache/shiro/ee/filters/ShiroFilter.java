@@ -20,9 +20,12 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFClientStateSa
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isPostRequest;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.resubmitSavedForm;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.DONT_ADD_ANY_MORE_COOKIES;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.getCharacterEncoding;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isCharEncodingEnabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isShiroEEDisabled;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -233,14 +236,12 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
 
     @Override
     @SneakyThrows
-    @SuppressWarnings("LineLength")
     protected void executeChain(ServletRequest request, ServletResponse response,
             FilterChain origChain) throws IOException, ServletException {
         if (isShiroEEDisabled(getServletContext())) {
             origChain.doFilter(request, response);
         } else if (Boolean.TRUE.equals(request.getAttribute(FORM_IS_RESUBMITTED)) && isPostRequest(request)) {
-            // See https://stackoverflow.com/questions/7643484/how-to-get-rid-of-warning-pwc4011-unable-to-set-request-character-encoding-to
-            request.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            setCharacterEncodingIfNeeded(request);
             request.removeAttribute(FORM_IS_RESUBMITTED);
             String postData = getPostData(request);
             log.debug("Resubmitting Post Data: {}", postData);
@@ -252,8 +253,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
                     request.getServletContext(), rememberedAjaxResubmit))
                     .ifPresent(url -> sendRedirect(response, url));
         } else {
-            // See https://stackoverflow.com/questions/7643484/how-to-get-rid-of-warning-pwc4011-unable-to-set-request-character-encoding-to
-            request.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            setCharacterEncodingIfNeeded(request);
             super.executeChain(request, response, origChain);
         }
     }
@@ -261,5 +261,17 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
     @SneakyThrows(IOException.class)
     private static void sendRedirect(ServletResponse response, String url) {
         WebUtils.toHttp(response).sendRedirect(url);
+    }
+
+    @SuppressWarnings("LineLength")
+    private static void setCharacterEncodingIfNeeded(ServletRequest request)
+            throws UnsupportedEncodingException {
+        // See https://stackoverflow.com/questions/7643484/how-to-get-rid-of-warning-pwc4011-unable-to-set-request-character-encoding-to
+        if (isCharEncodingEnabled(request.getServletContext())) {
+            Charset encoding = getCharacterEncoding(request.getServletContext());
+            if (!encoding.name().equals(request.getCharacterEncoding())) {
+                request.setCharacterEncoding(encoding.name());
+            }
+        }
     }
 }
