@@ -13,6 +13,7 @@
  */
 package org.apache.shiro.testing.jaxrs;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JsonPojo implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String userId;

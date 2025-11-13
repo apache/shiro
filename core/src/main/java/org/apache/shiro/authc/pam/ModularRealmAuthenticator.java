@@ -294,8 +294,8 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
         Collection<Realm> realms = getRealms();
         if (!CollectionUtils.isEmpty(realms)) {
             for (Realm realm : realms) {
-                if (realm instanceof LogoutAware) {
-                    ((LogoutAware) realm).onLogout(principals);
+                if (realm instanceof LogoutAware aware) {
+                    aware.onLogout(principals);
                 }
             }
         }

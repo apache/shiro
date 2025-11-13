@@ -23,7 +23,8 @@ import org.apache.shiro.web.RestoreSystemProperties
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.Isolated
 
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.RequestDispatcher
+import jakarta.servlet.http.HttpServletRequest
 
 import static org.easymock.EasyMock.expect
 import static org.easymock.EasyMock.mock
@@ -245,8 +246,8 @@ class InvalidRequestFilterTest {
         expect(request.getRequestURI()).andReturn(requestUri)
         expect(request.getServletPath()).andReturn(servletPath).anyTimes()
         expect(request.getPathInfo()).andReturn(pathInfo).anyTimes()
-        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn(servletPath)
-        expect(request.getAttribute("javax.servlet.include.path_info")).andReturn(pathInfo)
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn(servletPath)
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_PATH_INFO)).andReturn(pathInfo)
         replay(request)
         return request
     }

@@ -18,14 +18,14 @@
  */
 package org.apache.shiro.web.jaxrs;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.PreMatching;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.PreMatching;
+import jakarta.ws.rs.ext.Provider;
 import java.io.IOException;
 
 /**
- * A {@link ContainerRequestFilter} that replaces the {@link javax.ws.rs.core.SecurityContext}
+ * A {@link ContainerRequestFilter} that replaces the {@link jakarta.ws.rs.core.SecurityContext}
  * with a {@link ShiroSecurityContext}.
  *
  * @since 1.4

@@ -30,7 +30,7 @@
         <Logger name="org.apache" level="trace" additivity="false">
             <AppenderRef ref="List"/>
         </Logger>
-        <Logger name="net.sf.ehcache" level="trace" additivity="false">
+        <Logger name="org.ehcache" level="trace" additivity="false">
             <AppenderRef ref="List"/>
         </Logger>
         <Logger name="org.apache.shiro" level="trace" additivity="false">
