@@ -122,7 +122,7 @@ updates:
     directory: '/'
     target-branch: '1.13.x'
     schedule:
-      interval: 'montly'
+      interval: 'monthly'
     open-pull-requests-limit: 10
     groups:
       github-dependencies:
