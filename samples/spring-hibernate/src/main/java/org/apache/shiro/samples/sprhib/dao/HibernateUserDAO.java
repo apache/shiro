@@ -58,4 +58,3 @@ public class HibernateUserDAO extends HibernateDao implements UserDAO {
     }
 
 }
-
