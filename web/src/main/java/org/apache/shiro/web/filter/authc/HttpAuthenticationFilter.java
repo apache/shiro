@@ -19,6 +19,7 @@
 package org.apache.shiro.web.filter.authc;
 
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.web.util.CorsUtils;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpAuthenticationFilter.class);
 
     /**
-     * The name that is displayed during the challenge process of authentication, defaults to <code>application</code>
+     * The name displayed during the challenge process of authentication, defaults to <code>application</code>
      * and can be overridden by the {@link #setApplicationName(String) setApplicationName} method.
      */
     private String applicationName = "application";
@@ -78,10 +79,12 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      */
     private String authzScheme;
 
+    private boolean allowPreFlightRequests;
+
     /**
      * Returns the name to use in the ServletResponse's <b><code>WWW-Authenticate</code></b> header.
      * <p/>
-     * Per RFC 2617, this name name is displayed to the end user when they are asked to authenticate.  Unless overridden
+     * Per RFC 2617, this name is displayed to the end user when they are asked to authenticate.  Unless overridden
      * by the {@link #setApplicationName(String) setApplicationName(String)} method, the default value is 'application'.
      * <p/>
      * Please see {@link #setApplicationName(String) setApplicationName(String)} for an example of how this functions.
@@ -95,7 +98,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
     /**
      * Sets the name to use in the ServletResponse's <b><code>WWW-Authenticate</code></b> header.
      * <p/>
-     * Per RFC 2617, this name name is displayed to the end user when they are asked to authenticate.  Unless overridden
+     * Per RFC 2617, this name is displayed to the end user when they are asked to authenticate.  Unless overridden
      * by this method, the default value is &quot;application&quot;
      * <p/>
      * For example, setting this property to the value <b><code>Awesome Webapp</code></b> will result in the
@@ -163,6 +166,10 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
         this.authcScheme = authcScheme;
     }
 
+    public void setAllowPreFlightRequests(boolean allowPreFlightRequests) {
+        this.allowPreFlightRequests = allowPreFlightRequests;
+    }
+
     /**
      * The Basic authentication filter can be configured with a list of HTTP methods to which it should apply. This
      * method ensures that authentication is <em>only</em> required for those HTTP methods specified. For example,
@@ -171,14 +178,26 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      *    [urls]
      *    /basic/** = authcBasic[POST,PUT,DELETE]
      * </pre>
-     * then a GET request would not required authentication but a POST would.
+     * then a GET request would not require authentication but a POST would.
+     * <p>
+     * Additionally, when {@code allowPreflightRequests} is enabled, any CORS preflight
+     * ({@code OPTIONS}) requests are automatically allowed without authentication.
+     * This ensures that browsers can properly perform CORS handshakes before
+     * sending actual cross-origin requests.
+     * </p>
      *
      * @param request     The current HTTP servlet request.
      * @param response    The current HTTP servlet response.
      * @param mappedValue The array of configured HTTP methods as strings. This is empty if no methods are configured.
      */
+    @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         HttpServletRequest httpRequest = WebUtils.toHttp(request);
+
+        if (allowPreFlightRequests && CorsUtils.isPreFlightRequest(httpRequest)) {
+            return true;
+        }
+
         String httpMethod = httpRequest.getMethod();
 
         // Check whether the current request's method requires authentication.
@@ -186,7 +205,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
         // otherwise only the declared ones need authentication.
 
         Set<String> methods = httpMethodsFromOptions((String[]) mappedValue);
-        boolean authcRequired = methods.size() == 0;
+        boolean authcRequired = methods.isEmpty();
         for (String m : methods) {
             // list of methods is in upper case
             if (httpMethod.toUpperCase(Locale.ENGLISH).equals(m)) {
@@ -203,7 +222,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
     }
 
     private Set<String> httpMethodsFromOptions(String[] options) {
-        Set<String> methods = new HashSet<String>();
+        Set<String> methods = new HashSet<>();
 
         if (options != null) {
             for (String option : options) {
@@ -239,7 +258,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
     /**
      * Determines whether the incoming request is an attempt to log in.
      * <p/>
-     * The default implementation obtains the value of the request's
+     * The default implementation gets the value of the request's
      * {@link #AUTHORIZATION_HEADER AUTHORIZATION_HEADER}, and if it is not <code>null</code>, delegates
      * to {@link #isLoginAttempt(String) isLoginAttempt(authzHeaderValue)}. If the header is <code>null</code>,
      * <code>false</code> is returned.
