@@ -17,7 +17,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.shiro.integrationtests</groupId>
     <artifactId>shiro-its-jakarta-ee</artifactId>
@@ -46,7 +47,7 @@
         <payara.start.skip>${skipITs}</payara.start.skip>
         <asadmin.cmd>asadmin</asadmin.cmd>
         <unix-sed-skip>${payara.start.skip}</unix-sed-skip>
-        <mac-backup-file />
+        <mac-backup-file/>
         <create-domain-skip>true</create-domain-skip>
         <domain.name>domain1</domain.name>
         <payara.https.port>8181</payara.https.port>
@@ -407,7 +408,7 @@
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <executable>sed</executable>
-                            <commandlineArgs>-i ${mac-backup-file} -e 's/jvm-options&gt;\[17|/jvm-options&gt;\[16|/g'
+                            <commandlineArgs>-i ${mac-backup-file} -e 's/jvm-options>\[17|/jvm-options>\[16|/g'
                                 -e 's/property name="HZ_LISTENER_PORT" value="5900/property name="HZ_LISTENER_PORT" value="5920/g'
                                 -e 's/hazelcast-runtime-configuration start-port="5900/hazelcast-runtime-configuration start-port="5920/g'
                                 ${project.build.directory}/dependency/payara5/glassfish/domains/${domain.name}/config/domain.xml
@@ -518,7 +519,7 @@
             <id>payara-server-local</id>
             <properties>
                 <payara.start.skip>true</payara.start.skip>
-                <payara.argLine />
+                <payara.argLine/>
             </properties>
         </profile>
         <profile>
