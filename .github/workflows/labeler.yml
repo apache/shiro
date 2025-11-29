@@ -19,6 +19,9 @@
 name: Pull Request Labeler
 on:
   - pull_request_target
+permissions:
+  contents: read
+
 jobs:
   triage:
     permissions:
@@ -26,7 +29,12 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v6
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
+        with:
+          egress-policy: audit
+
+      - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           sync-labels: true

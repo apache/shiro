@@ -35,6 +35,8 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
       - id: check-case-conflict
       - id: check-executables-have-shebangs
       - id: check-illegal-windows-names
@@ -89,3 +91,7 @@ repos:
       - id: shellcheck
         name: run shellcheck
         description: check Shell scripts with shellcheck
+  - repo: https://github.com/gherynos/pre-commit-java
+    rev: v0.2.4
+    hooks:
+      - id: Checkstyle

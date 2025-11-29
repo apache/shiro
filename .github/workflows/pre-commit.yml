@@ -31,9 +31,14 @@ jobs:
     name: Run pre-commit # https://pre-commit.com/
     runs-on: ubuntu-latest
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
+        with:
+          egress-policy: audit
+
       - name: 'Checkout ${{ github.ref }} ( ${{ github.sha }} )'
-        uses: actions/checkout@v5
-      - uses: actions/setup-python@v6 # https://www.python.org/
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
         with:
           python-version: '3.13' # Version range or exact version of a Python version to use, using SemVer's version range syntax
           architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
@@ -43,7 +48,7 @@ jobs:
           pip install pre-commit
       - name: set PY
         run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> "$GITHUB_ENV"
-      - uses: actions/cache@v4
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: ~/.cache/pre-commit
           key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
