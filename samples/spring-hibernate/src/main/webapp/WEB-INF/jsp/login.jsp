@@ -52,7 +52,7 @@
     "admin" role.
 </p>
 
-<script type="text/javascript">
+<script>
     document.getElementById('username').focus();
 </script>
 
