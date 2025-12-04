@@ -50,6 +50,8 @@ repos:
       - id: detect-private-key
       - id: end-of-file-fixer
       - id: forbid-submodules
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.45.0
     hooks:
