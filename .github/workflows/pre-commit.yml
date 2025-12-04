@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout ${{ github.ref }} ( ${{ github.sha }} )'
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6 # https://www.python.org/
         with:
           python-version: '3.13' # Version range or exact version of a Python version to use, using SemVer's version range syntax
