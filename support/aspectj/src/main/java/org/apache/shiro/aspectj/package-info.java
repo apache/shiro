@@ -21,6 +21,3 @@
  * dynamic authorization using Shiro's annotations.
  */
 package org.apache.shiro.aspectj;
-
-
-

@@ -17,7 +17,8 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- pick up Apache distributionManagement for releasing (snapshots, releases, etc.): -->
@@ -68,17 +69,17 @@
         <shiro.previousVersion>2.0.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
-        <project.build.outputTimestamp>2025-11-02T13:37:35Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2025-11-18T02:53:12Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
         <!--suppress CheckTagEmptyBody -->
-        <surefire.argLine />
+        <surefire.argLine/>
         <!--suppress CheckTagEmptyBody -->
-        <failsafe.argLine />
+        <failsafe.argLine/>
         <junit5.parallel.tests.enabled>true</junit5.parallel.tests.enabled>
         <junit5.parallel.tests.mode>concurrent</junit5.parallel.tests.mode>
         <nexus.deploy.skip>false</nexus.deploy.skip>
         <nexus-staging-profile>nexus-staging</nexus-staging-profile>
-        <jacocoAgent />
+        <jacocoAgent/>
         <!-- non-dependency-based properties: -->
         <shiro.osgi.importRange>[2, 3)</shiro.osgi.importRange>
         <jcache.osgi.importRange>[1.1,2)</jcache.osgi.importRange>
@@ -104,10 +105,10 @@
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>11</jdk.version>
         <jetty.version>9.4.58.v20250814</jetty.version>
-        <owasp.java.encoder.version>1.3.1</owasp.java.encoder.version>
+        <owasp.java.encoder.version>1.4.0</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
-        <quartz.version>2.5.1</quartz.version>
+        <quartz.version>2.5.2</quartz.version>
         <quartz.docs.version>2.3.0</quartz.docs.version>
         <slf4j.version>2.0.17</slf4j.version>
         <log4j.version>2.25.0</log4j.version>
@@ -115,13 +116,13 @@
         <spring-boot.version>2.7.18</spring-boot.version>
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
-        <htmlunit.version>4.18.0</htmlunit.version>
+        <htmlunit.version>4.19.0</htmlunit.version>
         <bouncycastle.version>1.82</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.6.0</easymock.version>
         <mockito.version>5.20.0</mockito.version>
-        <bytebuddy.version>1.18.1</bytebuddy.version>
+        <bytebuddy.version>1.18.2</bytebuddy.version>
         <gmaven.version>4.2.1</gmaven.version>
         <groovy.version>4.0.27</groovy.version>
         <junit.version>5.13.4</junit.version>
@@ -380,7 +381,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.19.1</version>
+                    <version>2.20.1</version>
                 </plugin>
                 <!-- Allow writing tests in Groovy: -->
                 <plugin>
@@ -1601,7 +1602,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>taglist-maven-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.2</version>
                 <configuration>
                     <tagListOptions>
                         <tagClasses>

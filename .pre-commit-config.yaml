@@ -43,9 +43,12 @@ repos:
       - id: check-shebang-scripts-are-executable
       - id: check-vcs-permalinks
       - id: check-xml
+      - id: check-yaml
+      - id: destroyed-symlinks
       - id: detect-aws-credentials
         args: [--allow-missing-credentials]
       - id: detect-private-key
+      - id: end-of-file-fixer
       - id: forbid-submodules
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.45.0

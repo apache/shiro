@@ -328,4 +328,3 @@ public abstract class ThreadContext {
         return (Subject) remove(SUBJECT_KEY);
     }
 }
-
