@@ -75,4 +75,3 @@ public class AnnotationResolverTest {
         assertNull(annotationResolver.getAnnotation(methodInvocation, RequiresUser.class));
     }
 }
-
