@@ -16,6 +16,9 @@
 # under the License.
 
 # https://github.com/actions/labeler
+permissions:
+  contents: read
+
 github_actions:
   - any:
       - changed-files:
