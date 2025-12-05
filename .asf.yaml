@@ -34,4 +34,5 @@ notifications:
   pullrequests: commits@shiro.apache.org
   commits: commits@shiro.apache.org
   issues: issues@shiro.apache.org
+  discussions: issues@shiro.apache.org
   jira_options: link label worklog
