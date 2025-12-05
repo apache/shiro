@@ -24,8 +24,9 @@ github:
     wiki: false
     issues: true
     projects: true
+    discussions: true
   enabled_merge_buttons:
-    squash: false
+    squash: true
     merge: true
     rebase: false
 
