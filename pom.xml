@@ -310,7 +310,6 @@
                         <linksource>true</linksource>
                         <links>
                             <link>https://docs.oracle.com/en/java/javase/${jdk.version}/docs/api/</link>
-                            <link>https://www.slf4j.org/api/</link>
                             <link>https://docs.spring.io/spring-framework/docs/${spring.version}/javadoc-api/</link>
                             <link>https://docs.spring.io/spring-boot/docs/${spring-boot.version}/api/</link>
                             <link>https://junit.org/junit5/docs/${junit.version}/api/</link>
