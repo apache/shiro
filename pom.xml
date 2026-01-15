@@ -31,7 +31,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.7-SNAPSHOT</version>
+    <version>999-SNAPSHOT</version>
 
     <name>Apache Shiro</name>
     <url>https://shiro.apache.org/</url>
@@ -69,7 +69,7 @@
         <shiro.previousVersion>2.0.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
-        <project.build.outputTimestamp>2025-11-18T02:53:12Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-01-15T21:40:21Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
         <!--suppress CheckTagEmptyBody -->
         <surefire.argLine/>

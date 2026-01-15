@@ -26,7 +26,7 @@
     <parent>
         <artifactId>shiro-integration-tests</artifactId>
         <groupId>org.apache.shiro.integrationtests</groupId>
-        <version>2.0.7-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <artifactId>shiro-its-meecrowave-support</artifactId>
