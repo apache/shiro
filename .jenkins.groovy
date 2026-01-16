@@ -96,7 +96,7 @@ pipeline {
                             echo 'Setting next -SNAPSHOT version'
                             script {
                                 def latestRelease = sh(script: """
-                                    curl -sf https://repo1.maven.org/maven2/org/apache/shiro/shiro-root/maven-metadata.xml \
+                                    curl -sf https://repo.maven.apache.org/maven2/org/apache/shiro/shiro-root/maven-metadata.xml \
                                     | xmllint --xpath '//metadata/versioning/latest/text()' - 2>/dev/null || echo '$builtinVersion'
                                     """, returnStdout: true
                                 ).trim()
