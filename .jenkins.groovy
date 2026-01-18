@@ -38,7 +38,7 @@ pipeline {
                     axis {
                         // https://cwiki.apache.org/confluence/display/INFRA/JDK+Installation+Matrix
                         name 'MATRIX_JDK'
-                        values 'jdk_11_latest', 'jdk_17_latest', 'jdk_21_latest', 'jdk_25_latest'
+                        values 'jdk_17_latest', 'jdk_21_latest', 'jdk_25_latest'
                     }
                     // Additional axes, like OS and maven version can be configured here.
                 }
@@ -88,7 +88,7 @@ pipeline {
                     stage('Use next -SNAPSHOT version') {
                         when {
                             expression { deployableBranch }
-                            expression { MATRIX_JDK == 'jdk_11_latest' }
+                            expression { MATRIX_JDK == 'jdk_17_latest' }
                             // is not a PR (GitHub) / MergeRequest (GitLab) / Change (Gerrit)?
                             not { changeRequest() }
                         }
@@ -124,7 +124,7 @@ pipeline {
                         steps {
                             echo 'Building'
                             sh './mvnw clean verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs \
-                            -Dmaven.test.failure.ignore=true -Pskip_jakarta_ee_tests'
+                            -Dmaven.test.failure.ignore=true -Pskip_jakarta_ee_tests -Dmaven.compiler.release=17 -Djapicmp.skip=true'
                         }
                         post {
                             always {
@@ -139,7 +139,7 @@ pipeline {
                         when {
                             allOf {
                                 expression { deployableBranch }
-                                expression { MATRIX_JDK == 'jdk_11_latest' }
+                                expression { MATRIX_JDK == 'jdk_17_latest' }
                                 // is not a PR (GitHub) / MergeRequest (GitLab) / Change (Gerrit)?
                                 not { changeRequest() }
                             }
