@@ -31,7 +31,7 @@
     <groupId>org.apache.shiro</groupId>
     <artifactId>shiro-root</artifactId>
     <packaging>pom</packaging>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>999-SNAPSHOT</version>
 
     <name>Apache Shiro</name>
     <url>https://shiro.apache.org/</url>
@@ -67,16 +67,15 @@
 
     <properties>
         <!-- *** Remove the line below when 3.0.0 is released -->
-        <japicmp.skip>true</japicmp.skip>
         <shiro.previousVersion>3.0.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
-        <project.build.outputTimestamp>2024-08-12T08:14:05Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-01-15T21:40:21Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
         <!--suppress CheckTagEmptyBody -->
-        <surefire.argLine></surefire.argLine>
+        <surefire.argLine/>
         <!--suppress CheckTagEmptyBody -->
-        <failsafe.argLine></failsafe.argLine>
+        <failsafe.argLine/>
         <junit5.parallel.tests.enabled>true</junit5.parallel.tests.enabled>
         <junit5.parallel.tests.mode>concurrent</junit5.parallel.tests.mode>
         <nexus.deploy.skip>false</nexus.deploy.skip>
@@ -94,7 +93,7 @@
         <commons.cli.version>1.9.0</commons.cli.version>
         <commons.collection.version>3.2.2</commons.collection.version>
         <commons.configuration2.version>2.12.0</commons.configuration2.version>
-        <commons.lang3.version>3.17.0</commons.lang3.version>
+        <commons.lang3.version>3.20.0</commons.lang3.version>
         <commons.logging.version>1.3.5</commons.logging.version>
         <commons.text.version>1.8</commons.text.version>
         <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
@@ -107,27 +106,27 @@
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>11</jdk.version>
         <jetty.version>9.4.58.v20250814</jetty.version>
-        <owasp.java.encoder.version>1.3.1</owasp.java.encoder.version>
+        <owasp.java.encoder.version>1.4.0</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
-        <quartz.version>2.5.0</quartz.version>
+        <quartz.version>2.5.2</quartz.version>
         <quartz.docs.version>2.3.0</quartz.docs.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <log4j.version>2.25.0</log4j.version>
+        <log4j.version>2.25.3</log4j.version>
         <spring.version>5.3.39</spring.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
-        <htmlunit.version>4.17.0</htmlunit.version>
+        <htmlunit.version>4.21.0</htmlunit.version>
         <bouncycastle.version>1.82</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.6.0</easymock.version>
-        <mockito.version>5.20.0</mockito.version>
-        <bytebuddy.version>1.17.8</bytebuddy.version>
+        <mockito.version>5.21.0</mockito.version>
+        <bytebuddy.version>1.18.3</bytebuddy.version>
         <gmaven.version>4.2.1</gmaven.version>
         <groovy.version>4.0.27</groovy.version>
-        <junit.version>6.0.1</junit.version>
+        <junit.version>5.13.4</junit.version>
         <junit.server.jetty.version>3.4.0</junit.server.jetty.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
@@ -312,7 +311,6 @@
                         <linksource>true</linksource>
                         <links>
                             <link>https://docs.oracle.com/en/java/javase/${jdk.version}/docs/api/</link>
-                            <link>https://www.slf4j.org/api/</link>
                             <link>https://docs.spring.io/spring-framework/docs/${spring.version}/javadoc-api/</link>
                             <link>https://docs.spring.io/spring-boot/docs/${spring-boot.version}/api/</link>
                             <link>https://junit.org/junit5/docs/${junit.version}/api/</link>
@@ -349,7 +347,7 @@
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
                     <configuration>
-                        <!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
+                        <!-- note that this configuration needs to be maintained both in pluginManagement and reporting sections -->
                         <excludes>
                             <exclude>**/.externalToolBuilders/*</exclude>
                             <exclude>**/infinitest.filters</exclude>
@@ -366,15 +364,24 @@
                             <exclude>**/nb-configuration.xml</exclude>
                             <exclude>**/faces-config.NavData</exclude>
                             <exclude>**/org.mockito.plugins.MockMaker</exclude>
+                            <exclude>.github/linters/codespell.txt</exclude>
                             <exclude>.mvn/*</exclude>
                             <exclude>.jenkins_maven_args</exclude>
                         </excludes>
                     </configuration>
+<!--                This can be removed when RAT plugin is updated to use commons-lang3 3.20.0 or above -->
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.commons</groupId>
+                            <artifactId>commons-lang3</artifactId>
+                            <version>${commons.lang3.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.19.1</version>
+                    <version>2.20.1</version>
                 </plugin>
                 <!-- Allow writing tests in Groovy: -->
                 <plugin>
@@ -438,12 +445,12 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>12.1.6</version>
+                    <version>12.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.siom79.japicmp</groupId>
                     <artifactId>japicmp-maven-plugin</artifactId>
-                    <version>0.24.2</version>
+                    <version>0.25.4</version>
                     <configuration>
                         <oldVersion>
                             <dependency>
@@ -510,10 +517,8 @@
                                 <shadedClassifierName>jakarta</shadedClassifierName>
                                 <createDependencyReducedPom>false</createDependencyReducedPom>
                                 <transformers>
-                                    <transformer
-                                            implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                    <transformer
-                                            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer" />
                                 </transformers>
                                 <artifactSet>
                                     <includes>
@@ -1116,12 +1121,6 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>3.25.3</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
                 <version>${bytebuddy.version}</version>
@@ -1136,6 +1135,11 @@
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
                 <version>${commons.cli.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons.lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.annotation</groupId>
@@ -1208,6 +1212,16 @@
                         <artifactId>*</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.5.24</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.5.24</version>
             </dependency>
 
             <dependency>
@@ -1563,7 +1577,7 @@
                 <!-- only run at the root -->
                 <inherited>false</inherited>
                 <configuration>
-                    <!-- note that this configuration needs to be maintain both in pluginManagement and reporting sections -->
+                    <!-- note that this configuration needs to be maintained both in pluginManagement and reporting sections -->
                     <excludes>
                         <exclude>**/.externalToolBuilders/*</exclude>
                         <exclude>**/infinitest.filters</exclude>
@@ -1598,7 +1612,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>taglist-maven-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.2</version>
                 <configuration>
                     <tagListOptions>
                         <tagClasses>

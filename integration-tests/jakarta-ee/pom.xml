@@ -22,14 +22,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.shiro.integrationtests</groupId>
     <artifactId>shiro-its-jakarta-ee</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>999-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Apache Shiro :: ITs :: Jakarta EE</name>
 
     <parent>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <artifactId>shiro-integration-tests</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.11</version>
+            <version>3.14.12</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -375,42 +375,7 @@
                         </goals>
                         <configuration>
                             <scripts>
-                                <script><![CDATA[
-                                    def executor_number = System.getenv('EXECUTOR_NUMBER')
-                                    if (executor_number != null) {
-                                        final int port_increment = 100
-                                        final int admin_port_increment = 48
-                                        int portbase = 4900 + (executor_number as int) * port_increment
-                                        int adminPort
-                                        // find a free port
-                                        for (; portbase < 10000; portbase += port_increment) {
-                                            def server_socket
-                                            adminPort = portbase + admin_port_increment
-                                            try {
-                                                server_socket = new ServerSocket()
-                                                server_socket.setReuseAddress true
-                                                server_socket.bind(new InetSocketAddress(adminPort))
-                                                break
-                                            } catch (IOException e) {
-                                                println "Admin port $adminPort is busy, trying next"
-                                            } finally {
-                                                server_socket?.close()
-                                            }
-                                        }
-
-                                        int httpsPort = portbase + 81
-
-                                        project.properties.'payara.portbase' = portbase as String
-                                        project.properties.'payara.adminport' = adminPort as String
-                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -Dpayara.https.port=$httpsPort" as String
-                                        project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
-                                        println "Payara: portbase = ${project.properties.'payara.portbase'}, " +
-                                                "argLine = ${project.properties.'payara.argLine'}"
-                                    } else {
-                                        project.properties.'payara.argLine' = ''
-                                        project.properties.'payara.restart.skip' = 'true'
-                                    }
-                                    ]]></script>
+                                <script>${project.basedir}/src/main/resources/setPayaraPort.groovy</script>
                             </scripts>
                         </configuration>
                     </execution>
@@ -419,7 +384,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.6.3</version>
                 <configuration>
                     <executable>${project.build.directory}/dependency/payara5/bin/${asadmin.cmd}</executable>
                     <skip>${payara.start.skip}</skip>

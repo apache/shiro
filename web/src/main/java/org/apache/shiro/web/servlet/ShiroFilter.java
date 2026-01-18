@@ -56,7 +56,7 @@ import org.apache.shiro.web.util.WebUtils;
  *
  * @see org.apache.shiro.web.env.EnvironmentLoader EnvironmentLoader
  * @see org.apache.shiro.web.env.EnvironmentLoaderListener EnvironmentLoaderListener
- * @see <a href="http://shiro.apache.org/web.html">Apache Shiro Web Documentation</a>
+ * @see <a href="https://shiro.apache.org/web.html">Apache Shiro Web Documentation</a>
  * @since 1.2
  */
 public class ShiroFilter extends AbstractShiroFilter {

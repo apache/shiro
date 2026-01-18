@@ -218,7 +218,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * originally requested URL, don't use this method directly.  Instead you should call
      * {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
      * saveRequestAndRedirectToLogin(request,response)}, which will save the current request state so that it can
-     * be reconstructed and re-used after a successful login.
+     * be reconstructed and reused after a successful login.
      *
      * @param request  the incoming <code>ServletRequest</code>
      * @param response the outgoing <code>ServletResponse</code>

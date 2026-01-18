@@ -21,7 +21,7 @@ updates:
   - package-ecosystem: 'maven'
     directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
     open-pull-requests-limit: 50
     ignore:
       - dependency-name: "jakarta.platform:*"
@@ -71,7 +71,7 @@ updates:
     directory: '/'
     target-branch: '1.13.x'
     schedule:
-      interval: 'daily'
+      interval: 'monthly'
     open-pull-requests-limit: 50
     ignore:
       - dependency-name: "jakarta.servlet.*:*"
@@ -110,13 +110,21 @@ updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
     open-pull-requests-limit: 10
+    groups:
+      github-dependencies:
+        patterns:
+          - '*'
 
   # Dependencies for GitHub Actions - on 1.13.x
   - package-ecosystem: 'github-actions'
     directory: '/'
     target-branch: '1.13.x'
     schedule:
-      interval: 'daily'
+      interval: 'monthly'
     open-pull-requests-limit: 10
+    groups:
+      github-dependencies:
+        patterns:
+          - '*'

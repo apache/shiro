@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <artifactId>shiro-integration-tests</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <artifactId>shiro-its-support</artifactId>
@@ -122,13 +122,6 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
             <scope>compile</scope>
         </dependency>
 

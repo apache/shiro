@@ -67,4 +67,3 @@ public class Sha512Hash extends SimpleHash {
         return hash;
     }
 }
-
