@@ -28,6 +28,7 @@ import com.google.inject.name.Names;
 import com.google.inject.spi.Message;
 import com.google.inject.spi.TypeEncounter;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.aop.DefaultAnnotationResolver;
 import org.apache.shiro.crypto.cipher.BlowfishCipherService;
 import org.apache.shiro.guice.aop.ShiroAopModule;
