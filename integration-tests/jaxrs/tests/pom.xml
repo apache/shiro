@@ -92,7 +92,12 @@
             <artifactId>javax.json-api</artifactId>
             <version>1.1.4</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
 
     </dependencies>
 
