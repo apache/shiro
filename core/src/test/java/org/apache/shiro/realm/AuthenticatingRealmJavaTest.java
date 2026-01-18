@@ -63,10 +63,10 @@ public class AuthenticatingRealmJavaTest {
     @DisplayName("should create BCrypt hash when user does not exist")
     void authenticatingRealmShouldCreateBcryptHashWhenUserDoesNotExist() {
         // given
-        DefaultHashService bcraptHashService = new DefaultHashService();
-        bcraptHashService.setDefaultAlgorithmName("2y");
+        DefaultHashService bcryptHashService = new DefaultHashService();
+        bcryptHashService.setDefaultAlgorithmName("2y");
         DefaultPasswordService defaultPasswordService = new DefaultPasswordService();
-        defaultPasswordService.setHashService(bcraptHashService);
+        defaultPasswordService.setHashService(bcryptHashService);
         PasswordMatcher matcher = new PasswordMatcher();
         matcher.setPasswordService(defaultPasswordService);
 
@@ -85,7 +85,8 @@ public class AuthenticatingRealmJavaTest {
 
         Object simulatedCredentials = spiedRealm.authInfo.getCredentials();
         assertThat(simulatedCredentials).isInstanceOf(Hash.class);
-        assertThat(simulatedCredentials.getClass().getName()).contains("BCrypt");
+        assertThat(simulatedCredentials.getClass().getName())
+                .matches(name -> name.contains("Argon") || name.contains("BCrypt"));
     }
 
     /**
