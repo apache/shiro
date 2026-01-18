@@ -99,7 +99,7 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * @return {@code true} if the {@code tokenCredentials} are equal to the {@code accountCredentials}.
      */
     protected boolean equals(Object tokenCredentials, Object accountCredentials) {
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled() && tokenCredentials != null) {
             LOGGER.debug("Performing credentials equality check for tokenCredentials of type ["
                     + tokenCredentials.getClass().getName() + " and accountCredentials of type ["
                     + accountCredentials.getClass().getName() + "]");
