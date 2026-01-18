@@ -149,7 +149,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
         // create the default chain, to match anything the path matching would have missed
         // TODO this assumes ANT path matching
-        manager.createDefaultChain("/**");
+        manager.createDefaultChain("/**", DefaultFilter.noAccess.name());
     }
 
     protected void registerFilters(Map<String, Filter> filters, FilterChainManager manager) {

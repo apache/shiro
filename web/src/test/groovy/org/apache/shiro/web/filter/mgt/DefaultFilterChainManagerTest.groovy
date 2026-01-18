@@ -232,11 +232,12 @@ class DefaultFilterChainManagerTest {
         // the  "default" chain doesn't exist until it is created
         assertThat(manager.getChain("/**"), Matchers.nullValue())
         // create it
-        manager.createDefaultChain("/**")
+        manager.createDefaultChain("/**", DefaultFilter.noAccess.name())
         // verify it
         assertThat(manager.getChain("/**"), Matchers.contains(
                 Matchers.instanceOf(DefaultFilter.invalidRequest.getFilterClass()),
-                Matchers.instanceOf(DefaultFilter.port.getFilterClass())
+                Matchers.instanceOf(DefaultFilter.port.getFilterClass()),
+                Matchers.instanceOf(DefaultFilter.noAccess.getFilterClass())
         ))
     }
 
@@ -250,7 +251,7 @@ class DefaultFilterChainManagerTest {
         manager.createChain("test", "authc")
 
         // create the default chain with the same name
-        manager.createDefaultChain("test")
+        manager.createDefaultChain("test", DefaultFilter.noAccess.name())
 
         // since the "default" chain was created with the same name as an existing chain, we could end up adding the
         // global filters to the chain twice, test to verify it is only once

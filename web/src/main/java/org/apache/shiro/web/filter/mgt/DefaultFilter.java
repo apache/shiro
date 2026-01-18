@@ -25,6 +25,7 @@ import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.BearerHttpAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.LogoutFilter;
+import org.apache.shiro.web.filter.authc.NoAccessFilter;
 import org.apache.shiro.web.filter.authc.UserFilter;
 import org.apache.shiro.web.filter.authz.HttpMethodPermissionFilter;
 import org.apache.shiro.web.filter.authz.IpFilter;
@@ -112,11 +113,14 @@ public enum DefaultFilter {
      * user filter.
      */
     user(UserFilter.class),
-
     /**
      * invalid request filter.
      */
-    invalidRequest(InvalidRequestFilter.class);
+    invalidRequest(InvalidRequestFilter.class),
+    /**
+     * no access filter.
+     */
+    noAccess(NoAccessFilter.class);
 
     private final Class<? extends Filter> filterClass;
 

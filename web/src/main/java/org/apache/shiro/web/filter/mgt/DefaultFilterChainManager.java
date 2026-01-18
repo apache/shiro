@@ -129,12 +129,11 @@ public class DefaultFilterChainManager implements FilterChainManager {
         addFilter(name, filter, init, true);
     }
 
-    public void createDefaultChain(String chainName) {
+    public void createDefaultChain(String chainName, String chainDefinition) {
         // only create the defaultChain if we don't have a chain with this name already
         // (the global filters will already be in that chain)
-        if (!getChainNames().contains(chainName) && !CollectionUtils.isEmpty(globalFilterNames)) {
-            // add each of global filters
-            globalFilterNames.stream().forEach(filterName -> addToChain(chainName, filterName));
+        if (!getChainNames().contains(chainName)) {
+            createChain(chainName, chainDefinition);
         }
     }
 

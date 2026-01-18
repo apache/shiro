@@ -46,7 +46,7 @@
         <property name="securityManager" ref="securityManager"/>
         <property name="filterChainDefinitions">
             <value>
-                /test = testFilter, authc
+                /test = testFilter
             </value>
         </property>
 

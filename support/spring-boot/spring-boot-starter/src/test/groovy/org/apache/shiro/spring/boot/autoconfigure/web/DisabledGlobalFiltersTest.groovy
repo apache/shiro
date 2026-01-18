@@ -19,6 +19,7 @@
 package org.apache.shiro.spring.boot.autoconfigure.web
 
 import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication
+import org.apache.shiro.web.filter.mgt.DefaultFilter
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager
 import org.apache.shiro.web.servlet.AbstractShiroFilter
 import org.junit.jupiter.api.Test
@@ -30,7 +31,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.*
+import static org.hamcrest.Matchers.contains
+import static org.hamcrest.Matchers.equalTo
+import static org.hamcrest.Matchers.instanceOf
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = [ShiroWebAutoConfigurationTestApplication, Config])
@@ -57,6 +60,6 @@ class DisabledGlobalFiltersTest {
         // default config set
         assertThat filterChainManager.globalFilterNames, equalTo([])
         // default route configured
-        assertThat filterChainManager.getChain("/**"), nullValue()
+        assertThat filterChainManager.getChain("/**"), contains(instanceOf(DefaultFilter.noAccess.filterClass))
     }
 }

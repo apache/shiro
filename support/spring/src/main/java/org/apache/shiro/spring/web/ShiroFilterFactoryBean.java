@@ -446,7 +446,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
         // create the default chain, to match anything the path matching would have missed
         // TODO this assumes ANT path matching, which might be OK here
-        manager.createDefaultChain("/**");
+        manager.createDefaultChain("/**", DefaultFilter.noAccess.name());
 
         return manager;
     }
