@@ -18,12 +18,14 @@
  */
 package org.apache.shiro.realm.activedirectory;
 
+import java.util.Optional;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAccount;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -195,6 +197,11 @@ public class ActiveDirectoryRealmTest {
             credentialsMatcher = new CredentialsMatcher() {
                 public boolean doCredentialsMatch(AuthenticationToken object, AuthenticationInfo object1) {
                     return true;
+                }
+
+                @Override
+                public Optional<AuthenticationInfo> createSimulatedCredentials() {
+                    return Optional.of(new SimpleAuthenticationInfo(USERNAME, PASSWORD, "ad"));
                 }
             };
 
