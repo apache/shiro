@@ -117,7 +117,7 @@ public class DelegatingSubject implements Subject {
         if (session == null) {
             throw new IllegalArgumentException("session cannot be null");
         }
-        return new StoppingAwareProxiedSession(session, this);
+        return session instanceof StoppingAwareProxiedSession ? session : new StoppingAwareProxiedSession(session, this);
     }
 
     public SecurityManager getSecurityManager() {
