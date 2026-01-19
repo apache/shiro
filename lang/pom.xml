@@ -59,8 +59,8 @@
         <dependency>
             <groupId>jakarta.servlet.jsp</groupId>
             <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <version>4.0.0</version>
             <optional>true</optional>
-      <version>4.0.0</version>
         </dependency>
     </dependencies>
 
