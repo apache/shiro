@@ -79,7 +79,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      */
     private String authzScheme;
 
-    private boolean allowPreFlightRequests;
+    private boolean allowPreFlightRequests = true;
 
     /**
      * Returns the name to use in the ServletResponse's <b><code>WWW-Authenticate</code></b> header.
