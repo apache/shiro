@@ -61,7 +61,7 @@ import java.util.ServiceLoader;
  * &lt;/context-param&gt;
  * </pre>
  * If not specified, the default value is the {@link IniWebEnvironment} class, which assumes Shiro's default
- * <a href="http://shiro.apache.org/configuration.html">INI configuration format</a>
+ * <a href="https://shiro.apache.org/configuration.html">INI configuration format</a>
  * <h3>shiroConfigLocations</h3>
  * The {@code shiroConfigLocations} {@code context-param}, if it exists, allows you to specify the config location(s)
  * (resource path(s)) that will be relayed to the instantiated {@link WebEnvironment}.  For example:

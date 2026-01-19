@@ -59,7 +59,7 @@
         <input type="button" id="invalidate" value="Invalidate Session"
                onclick="invalidateSession('#{request.contextPath}/invalidatesession', 'Session invalidated!')" />
     </h:body>
-    <script type="text/javascript">
+    <script>
         const invalidateSession = async (path, alertText) => {
             const response = await fetch(path);
             const strresp = await response.text();

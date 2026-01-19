@@ -100,6 +100,15 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     |               M E T H O D S               |
     ============================================*/
 
+    /**
+     * Used when initializing the default {@link LdapContextFactory}.  This property is ignored if a custom
+     * <tt>LdapContextFactory</tt> is specified.
+     *
+     * @param principalSuffix the suffix.
+     */
+    public void setPrincipalSuffix(String principalSuffix) {
+        this.principalSuffix = principalSuffix;
+    }
 
     /**
      * Used when initializing the default {@link LdapContextFactory}.  This property is ignored if a custom

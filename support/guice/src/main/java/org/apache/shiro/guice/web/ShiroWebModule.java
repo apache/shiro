@@ -288,7 +288,7 @@ public abstract class ShiroWebModule extends ShiroModule {
      * For example, a path of '/my_private_resource/**' to 'filterConfig(AUTHC)' would require
      * any resource under the path '/my_private_resource' would be processed through the {@link FormAuthenticationFilter}.
      *
-     * @param pattern       URL patter to be mapped to a FilterConfig, e.g. '/my_private-path/**'
+     * @param pattern       URL pattern to be mapped to a FilterConfig, e.g. '/my_private-path/**'
      * @param filterConfigs FilterConfiguration representing the Filter
      *                      and config to be used when processing resources on <code>pattern</code>.
      * @since 1.4

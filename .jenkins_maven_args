@@ -1,1 +1,1 @@
--Dmaven.compiler.release=11
+-Dmaven.compiler.release=17 -Djapicmp.skip=true

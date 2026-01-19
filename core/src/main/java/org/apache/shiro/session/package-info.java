@@ -27,7 +27,7 @@
  * <p/>
  * This design decision opens up a new world to Java applications - most notably the ability to participate in
  * a session regardless if the client is using HTTP, custom sockets, web services, or even non-Java programming
- * languages. Aside from Shiro, there is currently no technology in Java today allows this heterogenous
+ * languages. Aside from Shiro, there is currently no technology in Java today allows this heterogeneous
  * client-session capability.
  * <p/>
  * Also because of this freedom, Shiro naturally supports Single Sign-On for any application as well, using

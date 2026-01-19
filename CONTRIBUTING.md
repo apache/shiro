@@ -3,10 +3,10 @@ Contributing to Apache Shiro
 
 Summary
 -------
+
 This document covers how to contribute to the Apache Shiro project. These instructions assume you have a GitHub.com account, so if you don't have one you will have to create one. Your proposed code changes will be published to your own fork of the Apache Shiro project and you will submit a Pull Request for your changes to be added.
 
-_Lets get started!!!_
-
+_Let's get started!!!_
 
 Fork the code
 -------------
@@ -29,7 +29,6 @@ $ git fetch upstream
 $ git rebase upstream/main
 ```
 
-
 Making changes
 --------------
 
@@ -49,7 +48,6 @@ $ git commit -a -m "descriptive commit message for your changes"
 
 > The `-b` specifies that you want to create a new branch called `feature_x`.  You only specify `-b` the first time you checkout because you are creating a new branch.  
 > Once the `feature_x` branch exists, you can later switch to it with only `git checkout feature_x`.
-
 
 Rebase `feature_x` to include updates from `upstream/main`
 ------------------------------------------------------------
@@ -73,7 +71,6 @@ $ git rebase main
 ```
 
 > Now your `feature_x` branch is up-to-date with all the code in `upstream/main`.
-
 
 Make a GitHub Pull Request to contribute your changes
 -----------------------------------------------------
@@ -99,7 +96,6 @@ To initiate the pull request, do the following:
 
 If you are requested to make modifications to your proposed changes, make the changes locally on your `feature_x` branch, re-push the `feature_x` branch to your fork.  
 The existing pull request should automatically pick up the change and update accordingly.
-
 
 Cleaning up after a successful pull request
 -------------------------------------------

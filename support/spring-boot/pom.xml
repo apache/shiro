@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -36,17 +36,21 @@
         <module>spring-boot-web-starter</module>
     </modules>
 
+    <properties>
+        <junit.engine.version>1.13.4</junit.engine.version>
+    </properties>
+
     <dependencies>
         <dependency>
              <groupId>org.junit.platform</groupId>
              <artifactId>junit-platform-engine</artifactId>
-             <version>${junit.version}</version>
+             <version>${junit.engine.version}</version>
              <scope>test</scope>
          </dependency>
         <dependency>
              <groupId>org.junit.platform</groupId>
              <artifactId>junit-platform-commons</artifactId>
-             <version>${junit.version}</version>
+             <version>${junit.engine.version}</version>
              <scope>test</scope>
          </dependency>
     </dependencies>
