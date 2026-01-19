@@ -64,8 +64,8 @@ public interface NativeSessionManager extends SessionManager {
      * the reason for invalidation.
      *
      * @param key the session key to use to look up the target session.
-     * @throws org.apache.shiro.session.InvalidSessionException
-     *          if the session id is invalid (it does not exist or it is stopped or expired).
+     * @throws org.apache.shiro.session.InvalidSessionException if the session id is invalid
+     * (it does not exist, or it is stopped or expired).
      */
     void checkValid(SessionKey key) throws InvalidSessionException;
 
@@ -79,8 +79,8 @@ public interface NativeSessionManager extends SessionManager {
      *
      * @param key the session key to use to look up the target session.
      * @return the time in milliseconds that the associated session may remain idle before expiring.
-     * @throws org.apache.shiro.session.InvalidSessionException
-     *          if the session has been stopped or expired prior to calling this method.
+     * @throws org.apache.shiro.session.InvalidSessionException if the session has been stopped or
+     *      expired prior to calling this method.
      */
     long getTimeout(SessionKey key) throws InvalidSessionException;
 
@@ -94,8 +94,8 @@ public interface NativeSessionManager extends SessionManager {
      *
      * @param key                 the session key to use to look up the target session.
      * @param maxIdleTimeInMillis the time in milliseconds that the associated session may remain idle before expiring.
-     * @throws org.apache.shiro.session.InvalidSessionException
-     *          if the session has been stopped or expired prior to calling this method.
+     * @throws org.apache.shiro.session.InvalidSessionException if the session has been stopped
+     *          or expired prior to calling this method.
      */
     void setTimeout(SessionKey key, long maxIdleTimeInMillis) throws InvalidSessionException;
 
@@ -104,8 +104,8 @@ public interface NativeSessionManager extends SessionManager {
      * can be used to explicitly ensure that a session does not time out.
      *
      * @param key the session key to use to look up the target session.
-     * @throws org.apache.shiro.session.InvalidSessionException
-     *          if the session has been stopped or expired prior to calling this method.
+     * @throws org.apache.shiro.session.InvalidSessionException if the session has been stopped
+     *      or expired prior to calling this method.
      * @see org.apache.shiro.session.Session#touch
      */
     void touch(SessionKey key) throws InvalidSessionException;
@@ -116,7 +116,7 @@ public interface NativeSessionManager extends SessionManager {
      *
      * @param key the session key to use to look up the target session.
      * @return the host name or ip address of the host where the session originated, if known.  If unknown,
-     *         this method returns {@code null}.
+     * this method returns {@code null}.
      */
     String getHost(SessionKey key);
 

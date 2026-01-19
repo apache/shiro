@@ -61,7 +61,7 @@ import java.util.ServiceLoader;
  * &lt;/context-param&gt;
  * </pre>
  * If not specified, the default value is the {@link IniWebEnvironment} class, which assumes Shiro's default
- * <a href="http://shiro.apache.org/configuration.html">INI configuration format</a>
+ * <a href="https://shiro.apache.org/configuration.html">INI configuration format</a>
  * <h3>shiroConfigLocations</h3>
  * The {@code shiroConfigLocations} {@code context-param}, if it exists, allows you to specify the config location(s)
  * (resource path(s)) that will be relayed to the instantiated {@link WebEnvironment}.  For example:
@@ -108,9 +108,12 @@ public class EnvironmentLoader {
      */
     public static final String CONFIG_LOCATIONS_PARAM = "shiroConfigLocations";
 
+    /**
+     * environment attribute key.
+     */
     public static final String ENVIRONMENT_ATTRIBUTE_KEY = EnvironmentLoader.class.getName() + ".ENVIRONMENT_ATTRIBUTE_KEY";
 
-    private static final Logger log = LoggerFactory.getLogger(EnvironmentLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EnvironmentLoader.class);
 
     /**
      * Initializes Shiro's {@link WebEnvironment} instance for the specified {@code ServletContext} based on the
@@ -124,38 +127,34 @@ public class EnvironmentLoader {
     public WebEnvironment initEnvironment(ServletContext servletContext) throws IllegalStateException {
 
         if (servletContext.getAttribute(ENVIRONMENT_ATTRIBUTE_KEY) != null) {
-            String msg = "There is already a Shiro environment associated with the current ServletContext.  " +
-                    "Check if you have multiple EnvironmentLoader* definitions in your web.xml!";
+            String msg = "There is already a Shiro environment associated with the current ServletContext.  "
+                    + "Check if you have multiple EnvironmentLoader* definitions in your web.xml!";
             throw new IllegalStateException(msg);
         }
 
         servletContext.log("Initializing Shiro environment");
-        log.info("Starting Shiro environment initialization.");
+        LOGGER.info("Starting Shiro environment initialization.");
 
         long startTime = System.currentTimeMillis();
 
         try {
 
             WebEnvironment environment = createEnvironment(servletContext);
-            servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY,environment);
+            servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY, environment);
 
-            log.debug("Published WebEnvironment as ServletContext attribute with name [{}]",
+            LOGGER.debug("Published WebEnvironment as ServletContext attribute with name [{}]",
                     ENVIRONMENT_ATTRIBUTE_KEY);
 
-            if (log.isInfoEnabled()) {
+            if (LOGGER.isInfoEnabled()) {
                 long elapsed = System.currentTimeMillis() - startTime;
-                log.info("Shiro environment initialized in {} ms.", elapsed);
+                LOGGER.info("Shiro environment initialized in {} ms.", elapsed);
             }
 
             return environment;
-        } catch (RuntimeException ex) {
-            log.error("Shiro environment initialization failed", ex);
+        } catch (RuntimeException | Error ex) {
+            LOGGER.error("Shiro environment initialization failed", ex);
             servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY, ex);
             throw ex;
-        } catch (Error err) {
-            log.error("Shiro environment initialization failed", err);
-            servletContext.setAttribute(ENVIRONMENT_ATTRIBUTE_KEY, err);
-            throw err;
         }
     }
 
@@ -175,7 +174,7 @@ public class EnvironmentLoader {
     @Deprecated
     protected Class<?> determineWebEnvironmentClass(ServletContext servletContext) {
         Class<? extends WebEnvironment> webEnvironmentClass = webEnvironmentClassFromServletContext(servletContext);
-        if( webEnvironmentClass != null) {
+        if (webEnvironmentClass != null) {
             return webEnvironmentClass;
         } else {
 
@@ -215,9 +214,9 @@ public class EnvironmentLoader {
             while (iterator.hasNext()) {
                 allWebEnvironments.add(iterator.next().getClass().getName());
             }
-            throw new ConfigurationException("ServiceLoader for class [" + WebEnvironment.class + "] returned more then one " +
-                    "result.  ServiceLoader must return zero or exactly one result for this class. Select one using the " +
-                    "servlet init parameter '"+ ENVIRONMENT_CLASS_PARAM +"'. Found: " + allWebEnvironments);
+            throw new ConfigurationException("ServiceLoader for class [" + WebEnvironment.class + "] returned more then one "
+                    + "result.  ServiceLoader must return zero or exactly one result for this class. Select one using the "
+                    + "servlet init parameter '" + ENVIRONMENT_CLASS_PARAM + "'. Found: " + allWebEnvironments);
         }
         return webEnvironment;
     }
@@ -230,6 +229,7 @@ public class EnvironmentLoader {
 
     /**
      * Returns the default WebEnvironment class, which is unless overridden: {@link IniWebEnvironment}.
+     *
      * @param ctx servlet context
      * @return the default WebEnvironment class.
      */
@@ -240,16 +240,18 @@ public class EnvironmentLoader {
     /**
      * Return the WebEnvironment implementation class to use, based on the order of:
      * <ul>
-     *     <li>A custom WebEnvironment class - specified in the {@code servletContext} {@link #ENVIRONMENT_ATTRIBUTE_KEY} property</li>
-     *     <li>{@code ServiceLoader.load(WebEnvironment.class)} - (if more then one instance is found a {@link ConfigurationException} will be thrown</li>
+     *     <li>A custom WebEnvironment class
+     *              - specified in the {@code servletContext} {@link #ENVIRONMENT_ATTRIBUTE_KEY} property</li>
+     *     <li>{@code ServiceLoader.load(WebEnvironment.class)} -
+     *     (if more then one instance is found a {@link ConfigurationException} will be thrown</li>
      *     <li>A call to {@link #getDefaultWebEnvironmentClass(ServletContext)} (default: {@link IniWebEnvironment})</li>
      * </ul>
      *
      * @param servletContext current servlet context
-     * @return the WebEnvironment implementation class to use
-     * @see #ENVIRONMENT_CLASS_PARAM
      * @param servletContext the {@code servletContext} to query the {@code ENVIRONMENT_ATTRIBUTE_KEY} property from
+     * @return the WebEnvironment implementation class to use
      * @return the {@code WebEnvironment} to be used
+     * @see #ENVIRONMENT_CLASS_PARAM
      */
     protected WebEnvironment determineWebEnvironment(ServletContext servletContext) {
 
@@ -292,17 +294,17 @@ public class EnvironmentLoader {
 
         WebEnvironment webEnvironment = determineWebEnvironment(sc);
         if (!MutableWebEnvironment.class.isInstance(webEnvironment)) {
-            throw new ConfigurationException("Custom WebEnvironment class [" + webEnvironment.getClass().getName() +
-                    "] is not of required type [" + MutableWebEnvironment.class.getName() + "]");
+            throw new ConfigurationException("Custom WebEnvironment class [" + webEnvironment.getClass().getName()
+                    + "] is not of required type [" + MutableWebEnvironment.class.getName() + "]");
         }
 
         String configLocations = sc.getInitParameter(CONFIG_LOCATIONS_PARAM);
         boolean configSpecified = StringUtils.hasText(configLocations);
 
         if (configSpecified && !(ResourceConfigurable.class.isInstance(webEnvironment))) {
-            String msg = "WebEnvironment class [" + webEnvironment.getClass().getName() + "] does not implement the " +
-                    ResourceConfigurable.class.getName() + "interface.  This is required to accept any " +
-                    "configured " + CONFIG_LOCATIONS_PARAM + "value(s).";
+            String msg = "WebEnvironment class [" + webEnvironment.getClass().getName() + "] does not implement the "
+                    + ResourceConfigurable.class.getName() + "interface.  This is required to accept any "
+                    + "configured " + CONFIG_LOCATIONS_PARAM + "value(s).";
             throw new ConfigurationException(msg);
         }
 
@@ -324,6 +326,7 @@ public class EnvironmentLoader {
     /**
      * Any additional customization of the Environment can be by overriding this method. For example setup shared
      * resources, etc. By default this method does nothing.
+     *
      * @param environment
      */
     protected void customizeEnvironment(WebEnvironment environment) {
@@ -350,6 +353,7 @@ public class EnvironmentLoader {
     /**
      * Any additional cleanup of the Environment can be done by overriding this method.  For example clean up shared
      * resources, etc. By default this method does nothing.
+     *
      * @param environment
      * @since 1.3
      */

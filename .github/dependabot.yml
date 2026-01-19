@@ -21,91 +21,110 @@ updates:
   - package-ecosystem: 'maven'
     directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
     open-pull-requests-limit: 50
     ignore:
       - dependency-name: "jakarta.platform:*"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "jakarta.activation:jakarta.activation-api"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "jakarta.annotation:jakarta.annotation-api"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "jakarta.enterprise:*"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "jakarta.xml.bind:jakarta.xml.bind-api"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "jakarta.servlet.*:*"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "jakarta.ws.rs:jakarta.ws.rs-api"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "jakarta.validation:jakarta.validation-api"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "org.glassfish.web:jakarta.servlet.jsp.jstl"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "org.glassfish.jaxb:jaxb-runtime"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "org.omnifaces:omnifaces"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
+
+      - dependency-name: "org.aspectj:*"
+        update-types: [ "version-update:semver-patch" ]
 
       - dependency-name: "org.springframework*:*"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "com.flowlogix:flowlogix-jee"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
 
       - dependency-name: "org.eclipse.jetty:*"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "org.apache.cxf:*"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "org.apache.johnzon:*"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "com.hazelcast:*"
+        update-types: [ "version-update:semver-minor" ]
 
-  # Dependencies for Maven - on 1.12.x
+  # Dependencies for Maven - on 1.13.x
   - package-ecosystem: 'maven'
     directory: '/'
-    target-branch: '1.12.x'
+    target-branch: '1.13.x'
     schedule:
-      interval: 'daily'
+      interval: 'monthly'
     open-pull-requests-limit: 50
     ignore:
       - dependency-name: "jakarta.servlet.*:*"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "javax.servlet:javax.servlet-api"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "org.glassfish.web:jakarta.servlet.jsp.jstl"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "org.glassfish.jersey.*:*"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
 
       - dependency-name: "org.jasig.cas.client:*"
-        update-types: ["version-update:semver-minor"]
+        update-types: [ "version-update:semver-minor" ]
       - dependency-name: "org.slf4j:*"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "org.codehaus.groovy:*"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "ch.qos.logback:logback-classic"
-        update-types: ["version-update:semver-minor"]
+        update-types: [ "version-update:semver-minor" ]
       - dependency-name: "com.hazelcast:hazelcast"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "org.aspectj:*"
-        update-types: ["version-update:semver-patch"]
+        update-types: [ "version-update:semver-patch" ]
 
       - dependency-name: "org.springframework*:*"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
 
       - dependency-name: "org.eclipse.jetty:*"
-        update-types: ["version-update:semver-major"]
+        update-types: [ "version-update:semver-major" ]
       - dependency-name: "com.github.mjeanroy:junit-servers-jetty"
-        update-types: ["version-update:semver-minor"]
+        update-types: [ "version-update:semver-minor" ]
+      - dependency-name: "com.hazelcast:*"
+        update-types: [ "version-update:semver-minor" ]
 
   # Dependencies for GitHub Actions
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
     open-pull-requests-limit: 10
+    groups:
+      github-dependencies:
+        patterns:
+          - '*'
 
-  # Dependencies for GitHub Actions - on 1.12.x
+  # Dependencies for GitHub Actions - on 1.13.x
   - package-ecosystem: 'github-actions'
     directory: '/'
-    target-branch: '1.12.x'
+    target-branch: '1.13.x'
     schedule:
-      interval: 'daily'
+      interval: 'monthly'
     open-pull-requests-limit: 10
+    groups:
+      github-dependencies:
+        patterns:
+          - '*'

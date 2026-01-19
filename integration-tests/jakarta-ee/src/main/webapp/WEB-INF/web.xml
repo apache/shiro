@@ -59,6 +59,10 @@
         <param-value>/*.xhtml</param-value>
     </context-param>
     <context-param>
+        <param-name>com.flowlogix.add-unmapped-resources</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
         <param-name>org.apache.shiro.ee.disabled</param-name>
         <param-value>false</param-value>
     </context-param>

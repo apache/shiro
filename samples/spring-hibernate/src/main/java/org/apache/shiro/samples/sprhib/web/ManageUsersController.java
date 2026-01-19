@@ -32,12 +32,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * Web MVC controller that handles operations related to managing users, such as editing them and deleting them. 
+ * Web MVC controller that handles operations related to managing users, such as editing them and deleting them.
  */
 @Controller
 public class ManageUsersController {
 
-    private EditUserValidator editUserValidator = new EditUserValidator();
+    private final EditUserValidator editUserValidator = new EditUserValidator();
 
     private UserService userService;
 
@@ -52,30 +52,31 @@ public class ManageUsersController {
         model.addAttribute("users", userService.getAllUsers());
     }
 
-    @RequestMapping(value="/editUser",method= RequestMethod.GET)
+    @RequestMapping(value = "/editUser", method = RequestMethod.GET)
     @RequiresPermissions("user:edit")
     public String showEditUserForm(Model model, @RequestParam Long userId, @ModelAttribute EditUserCommand command) {
 
-        User user = userService.getUser( userId );
+        User user = userService.getUser(userId);
         command.setUserId(userId);
         command.setUsername(user.getUsername());
         command.setEmail(user.getEmail());
         return "editUser";
     }
 
-    @RequestMapping(value="/editUser",method= RequestMethod.POST)
+    @RequestMapping(value = "/editUser", method = RequestMethod.POST)
     @RequiresPermissions("user:edit")
-    public String editUser(Model model, @RequestParam Long userId, @ModelAttribute EditUserCommand command, BindingResult errors) {
-        editUserValidator.validate( command, errors );
+    public String editUser(Model model, @RequestParam Long userId,
+                           @ModelAttribute EditUserCommand command, BindingResult errors) {
+        editUserValidator.validate(command, errors);
 
-        if( errors.hasErrors() ) {
+        if (errors.hasErrors()) {
             return "editUser";
         }
 
-        User user = userService.getUser( userId );
-        command.updateUser( user );
+        User user = userService.getUser(userId);
+        command.updateUser(user);
 
-        userService.updateUser( user );
+        userService.updateUser(user);
 
         return "redirect:/s/manageUsers";
     }
@@ -83,8 +84,8 @@ public class ManageUsersController {
     @RequestMapping("/deleteUser")
     @RequiresPermissions("user:delete")
     public String deleteUser(@RequestParam Long userId) {
-        Assert.isTrue( userId != 1, "Cannot delete admin user" );
-        userService.deleteUser( userId );
+        Assert.isTrue(userId != 1, "Cannot delete admin user");
+        userService.deleteUser(userId);
         return "redirect:/s/manageUsers";
     }
 

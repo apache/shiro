@@ -24,13 +24,15 @@ github:
     wiki: false
     issues: true
     projects: true
+    discussions: true
   enabled_merge_buttons:
-    squash:  false
-    merge:   true
-    rebase:  false
+    squash: true
+    merge: true
+    rebase: false
 
 notifications:
   pullrequests: commits@shiro.apache.org
   commits: commits@shiro.apache.org
-  issues:  issues@shiro.apache.org
+  issues: issues@shiro.apache.org
+  discussions: issues@shiro.apache.org
   jira_options: link label worklog

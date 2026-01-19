@@ -23,11 +23,11 @@ import java.util.Map;
 /**
  * Event triggered when a configured bean has been instantiated but before it is configured or initialized.
  *
- * @since 1.3
  * @see ConfiguredBeanEvent
  * @see InitializedBeanEvent
  * @see DestroyedBeanEvent
  * @see org.apache.shiro.lang.util.Initializable Initializable
+ * @since 1.3
  */
 public class InstantiatedBeanEvent extends BeanEvent {
 

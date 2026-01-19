@@ -67,7 +67,7 @@ public class DefaultWebEnvironment extends DefaultEnvironment implements Mutable
     public WebSecurityManager getWebSecurityManager() {
         SecurityManager sm = super.getSecurityManager();
         assertWebSecurityManager(sm);
-        return (WebSecurityManager)sm;
+        return (WebSecurityManager) sm;
     }
 
     public void setWebSecurityManager(WebSecurityManager wsm) {

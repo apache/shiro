@@ -18,37 +18,44 @@
  */
 package org.apache.shiro.web.filter.authz;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.easymock.Capture;
+import org.easymock.IAnswer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.shiro.web.filter.authz.SslFilter.HSTS.*;
-import org.easymock.Capture;
-import org.easymock.CaptureType;
-import static org.easymock.EasyMock.*;
-import org.easymock.IAnswer;
-import static org.junit.jupiter.api.Assertions.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.shiro.web.filter.authz.SslFilter.HSTS.DEFAULT_MAX_AGE;
+import static org.apache.shiro.web.filter.authz.SslFilter.HSTS.HTTP_HEADER;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.newCapture;
+import static org.easymock.EasyMock.replay;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SslFilterTest {
-    
+
     private HttpServletRequest request;
     private HttpServletResponse response;
     private SslFilter sslFilter;
-    
+
     @BeforeEach
     public void before() {
         request = createNiceMock(HttpServletRequest.class);
         response = createNiceMock(HttpServletResponse.class);
         sslFilter = new SslFilter();
-        
-        final Map<String,String> headers = new HashMap<String,String>();
-        
+
+        final Map<String, String> headers = new HashMap<String, String>();
+
         final Capture<String> capturedName = newCapture();
         final Capture<String> capturedValue = newCapture();
-        
+
         // mock HttpServletResponse.getHeader
         expect(response.getHeader(capture(capturedName))).andAnswer(new IAnswer<String>() {
             @Override
@@ -56,9 +63,9 @@ public class SslFilterTest {
                 String name = capturedName.getValue();
                 return headers.get(name);
             }
-            
+
         });
-        
+
         // mock HttpServletResponse.addHeader
         response.addHeader(capture(capturedName), capture(capturedValue));
         expectLastCall().andAnswer(new IAnswer<Void>() {
@@ -70,7 +77,7 @@ public class SslFilterTest {
                 return (null);
             }
         });
-        
+
         replay(response);
     }
 
@@ -87,16 +94,17 @@ public class SslFilterTest {
         assertEquals("max-age=" + DEFAULT_MAX_AGE, response.getHeader(HTTP_HEADER));
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testSetProperties() {
         sslFilter.getHsts().setEnabled(true);
         sslFilter.getHsts().setMaxAge(7776000);
         sslFilter.getHsts().setIncludeSubDomains(true);
         sslFilter.postHandle(request, response);
-        
+
         String expected = "max-age=" + 7776000 + "; includeSubDomains";
 
         assertEquals(expected, response.getHeader(HTTP_HEADER));
     }
-    
+
 }

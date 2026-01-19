@@ -51,7 +51,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     /**
      * This class's private log instance.
      */
-    private static final Logger log = LoggerFactory.getLogger(EhCacheManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EhCacheManager.class);
 
     /**
      * The EhCache cache manager used by this implementation to create caches.
@@ -62,7 +62,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * Indicates if the CacheManager instance was implicitly/automatically created by this instance, indicating that
      * it should be automatically cleaned up as well on shutdown.
      */
-    private boolean cacheManagerImplicitlyCreated = false;
+    private boolean cacheManagerImplicitlyCreated;
 
     /**
      * Classpath file location of the ehcache CacheManager config file.
@@ -102,7 +102,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * lazily create a CacheManager if one is not already provided.
      *
      * @return the resource location of the config file used to initialize the wrapped
-     *         EhCache CacheManager instance.
+     * EhCache CacheManager instance.
      */
     public String getCacheManagerConfigFile() {
         return this.cacheManagerConfigFile;
@@ -135,8 +135,8 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
         try {
             return ResourceUtils.getInputStreamForPath(configFile);
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to obtain input stream for cacheManagerConfigFile [" +
-                    configFile + "]", e);
+            throw new IllegalStateException("Unable to obtain input stream for cacheManagerConfigFile ["
+                    + configFile + "]", e);
         }
     }
 
@@ -147,26 +147,26 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      */
     public final <K, V> Cache<K, V> getCache(String name) throws CacheException {
 
-        if (log.isTraceEnabled()) {
-            log.trace("Acquiring EhCache instance named [" + name + "]");
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Acquiring EhCache instance named [" + name + "]");
         }
 
         try {
             net.sf.ehcache.Ehcache cache = ensureCacheManager().getEhcache(name);
             if (cache == null) {
-                if (log.isInfoEnabled()) {
-                    log.info("Cache with name '{}' does not yet exist.  Creating now.", name);
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Cache with name '{}' does not yet exist.  Creating now.", name);
                 }
                 this.manager.addCache(name);
 
                 cache = manager.getCache(name);
 
-                if (log.isInfoEnabled()) {
-                    log.info("Added EhCache named [" + name + "]");
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Added EhCache named [" + name + "]");
                 }
             } else {
-                if (log.isInfoEnabled()) {
-                    log.info("Using existing EHCache named [" + cache.getName() + "]");
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Using existing EHCache named [" + cache.getName() + "]");
                 }
             }
             return new EhCache<K, V>(cache);
@@ -190,8 +190,7 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
      * something not desirable for Shiro sessions), this class manages an internal default configuration for
      * this case.
      *
-     * @throws org.apache.shiro.cache.CacheException
-     *          if there are any CacheExceptions thrown by EhCache.
+     * @throws org.apache.shiro.cache.CacheException if there are any CacheExceptions thrown by EhCache.
      * @see net.sf.ehcache.CacheManager#create
      */
     public final void init() throws CacheException {
@@ -201,8 +200,8 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
     private net.sf.ehcache.CacheManager ensureCacheManager() {
         try {
             if (this.manager == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("cacheManager property not set.  Constructing CacheManager instance... ");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("cacheManager property not set.  Constructing CacheManager instance... ");
                 }
                 //using the CacheManager constructor, the resulting instance is _not_ a VM singleton
                 //(as would be the case by calling CacheManager.getInstance().  We do not use the getInstance here
@@ -210,12 +209,12 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
                 //we don't know which component is responsible for shutting it down.  By using a single EhCacheManager,
                 //it will always know to shut down the instance if it was responsible for creating it.
                 this.manager = new net.sf.ehcache.CacheManager(getCacheManagerConfigFileInputStream());
-                if (log.isTraceEnabled()) {
-                    log.trace("instantiated Ehcache CacheManager instance.");
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace("instantiated Ehcache CacheManager instance.");
                 }
                 cacheManagerImplicitlyCreated = true;
-                if (log.isDebugEnabled()) {
-                    log.debug("implicit cacheManager created successfully.");
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("implicit cacheManager created successfully.");
                 }
             }
             return this.manager;
@@ -237,9 +236,9 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
                 net.sf.ehcache.CacheManager cacheMgr = getCacheManager();
                 cacheMgr.shutdown();
             } catch (Throwable t) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Unable to cleanly shutdown implicitly created CacheManager instance.  " +
-                            "Ignoring (shutting down)...", t);
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("Unable to cleanly shutdown implicitly created CacheManager instance.  "
+                            + "Ignoring (shutting down)...", t);
                 }
             } finally {
                 this.manager = null;

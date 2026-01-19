@@ -45,7 +45,7 @@ public class BearerHttpAuthenticationFilter extends HttpAuthenticationFilter {
     /**
      * This class's private logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(BearerHttpAuthenticationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BearerHttpAuthenticationFilter.class);
 
     private static final String BEARER = "Bearer";
 
@@ -78,7 +78,7 @@ public class BearerHttpAuthenticationFilter extends HttpAuthenticationFilter {
             return createBearerToken("", request);
         }
 
-        log.debug("Attempting to execute login with auth header");
+        LOGGER.debug("Attempting to execute login with auth header");
 
         String[] prinCred = getPrincipalsAndCredentials(authorizationHeader, request);
         if (prinCred == null || prinCred.length < 1) {
@@ -90,6 +90,7 @@ public class BearerHttpAuthenticationFilter extends HttpAuthenticationFilter {
         String token = prinCred[0] != null ? prinCred[0] : "";
         return createBearerToken(token, request);
     }
+
     @Override
     protected String[] getPrincipalsAndCredentials(String scheme, String token) {
         return new String[] {token};

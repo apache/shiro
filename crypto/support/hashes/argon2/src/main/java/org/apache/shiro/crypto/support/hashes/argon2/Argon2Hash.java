@@ -51,17 +51,26 @@ import static java.util.Objects.requireNonNull;
  * <a href="https://argon2-cffi.readthedocs.io/en/stable/parameters.html">argon2-cffi.readthedocs.io</a>.
  * The RFC suggests to use 1 GiB of memory for frontend and 4 GiB for backend authentication.</p>
  *
- * <p>Example crypt string is: {@code $argon2i$v=19$m=16384,t=100,p=2$M3ByeyZKLjFRREJqQi87WQ$5kRCtDjL6RoIWGq9bL27DkFNunucg1hW280PmP0XDtY}.</p>
+ * <p>Example crypt string is:
+ *      {@code $argon2i$v=19$m=16384,t=100,p=2$M3ByeyZKLjFRREJqQi87WQ$5kRCtDjL6RoIWGq9bL27DkFNunucg1hW280PmP0XDtY}.</p>
  *
- * <p>Default values are taken from <a href="https://datatracker.ietf.org/doc/draft-irtf-cfrg-argon2/?include_text=1">draft-irtf-cfrg-argon2-13</a>.
+ * <p>Default values are taken from
+ *      <a href="https://datatracker.ietf.org/doc/draft-irtf-cfrg-argon2/?include_text=1">draft-irtf-cfrg-argon2-13</a>.
  * This implementation is using the parameters from section 4, paragraph 2 (memory constrained environment).</p>
  *
  * @since 2.0
  */
 class Argon2Hash extends AbstractCryptHash {
-    private static final long serialVersionUID = 2647354947284558921L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(Argon2Hash.class);
+    /**
+     * Number of default lanes, p=4 is the default recommendation, taken from draft-irtf-cfrg-argon2-13, 4.2.
+     */
+    public static final int DEFAULT_PARALLELISM = 4;
+
+    /**
+     * 256 bits tag size is the default recommendation, taken from draft-irtf-cfrg-argon2-13, 4.2.
+     */
+    public static final int DEFAULT_OUTPUT_LENGTH_BITS = 256;
 
     public static final String DEFAULT_ALGORITHM_NAME = "argon2id";
 
@@ -77,20 +86,14 @@ class Argon2Hash extends AbstractCryptHash {
      */
     public static final int DEFAULT_MEMORY_KIB = 64 * 1024;
 
-    private static final Set<String> ALGORITHMS_ARGON2 = new HashSet<>(Arrays.asList("argon2id", "argon2i", "argon2d"));
+    private static final long serialVersionUID = 2647354947284558921L;
+
+    private static final Logger LOG = LoggerFactory.getLogger(Argon2Hash.class);
+
+    private static final Set<String> ALGORITHMS_ARGON2 = new HashSet<>(
+            Arrays.asList(DEFAULT_ALGORITHM_NAME, "argon2i", "argon2d"));
 
     private static final Pattern DELIMITER_COMMA = Pattern.compile(",");
-
-    /**
-     * Number of default lanes, p=4 is the default recommendation, taken from draft-irtf-cfrg-argon2-13, 4.2.
-     */
-    public static final int DEFAULT_PARALLELISM = 4;
-
-    /**
-     * 256 bits tag size is the default recommendation, taken from draft-irtf-cfrg-argon2-13, 4.2.
-     */
-    public static final int DEFAULT_OUTPUT_LENGTH_BITS = 256;
-
 
     /**
      * 128 bits of salt is the recommended salt length, taken from draft-irtf-cfrg-argon2-13, 4.2.
@@ -105,7 +108,8 @@ class Argon2Hash extends AbstractCryptHash {
 
     private final int parallelism;
 
-    public Argon2Hash(String algorithmName, int argonVersion, byte[] hashedData, ByteSource salt, int iterations, int memoryAsKB, int parallelism) {
+    Argon2Hash(String algorithmName, int argonVersion, byte[] hashedData,
+               ByteSource salt, int iterations, int memoryAsKB, int parallelism) {
         super(algorithmName, hashedData, salt);
         this.argonVersion = argonVersion;
         this.iterations = iterations;
@@ -123,6 +127,7 @@ class Argon2Hash extends AbstractCryptHash {
         return createSalt(new SecureRandom());
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     public static ByteSource createSalt(SecureRandom random) {
         return new SimpleByteSource(random.generateSeed(SALT_LENGTH_BITS / 8));
     }
@@ -138,7 +143,8 @@ class Argon2Hash extends AbstractCryptHash {
         final String algorithmName = parts[0].trim();
 
         if (!ALGORITHMS_ARGON2.contains(algorithmName)) {
-            throw new UnsupportedOperationException("Unsupported algorithm: " + algorithmName + ". Expected one of: " + ALGORITHMS_ARGON2);
+            throw new UnsupportedOperationException("Unsupported algorithm: " + algorithmName
+                    + ". Expected one of: " + ALGORITHMS_ARGON2);
         }
 
         final int version = parseVersion(parts[1]);
@@ -156,7 +162,8 @@ class Argon2Hash extends AbstractCryptHash {
         String parameter = DELIMITER_COMMA.splitAsStream(parameters)
                 .filter(parm -> parm.startsWith("p="))
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Did not found memory parameter 'p='. Got: [" + parameters + "]."));
+                .orElseThrow(() -> new IllegalArgumentException("Did not found memory parameter 'p='. Got: ["
+                        + parameters + "]."));
         return Integer.parseInt(parameter.substring(2));
     }
 
@@ -164,7 +171,8 @@ class Argon2Hash extends AbstractCryptHash {
         String parameter = DELIMITER_COMMA.splitAsStream(parameters)
                 .filter(parm -> parm.startsWith("t="))
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Did not found memory parameter 't='. Got: [" + parameters + "]."));
+                .orElseThrow(() -> new IllegalArgumentException("Did not found memory parameter 't='. Got: ["
+                        + parameters + "]."));
 
         return Integer.parseInt(parameter.substring(2));
     }
@@ -173,7 +181,8 @@ class Argon2Hash extends AbstractCryptHash {
         String parameter = DELIMITER_COMMA.splitAsStream(parameters)
                 .filter(parm -> parm.startsWith("m="))
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Did not found memory parameter 'm='. Got: [" + parameters + "]."));
+                .orElseThrow(() -> new IllegalArgumentException("Did not found memory parameter 'm='. Got: ["
+                        + parameters + "]."));
 
         return Integer.parseInt(parameter.substring(2));
     }
@@ -195,7 +204,8 @@ class Argon2Hash extends AbstractCryptHash {
     }
 
     public static Argon2Hash generate(String algorithmName, ByteSource source, ByteSource salt, int iterations) {
-        return generate(algorithmName, DEFAULT_ALGORITHM_VERSION, source, salt, iterations, DEFAULT_MEMORY_KIB, DEFAULT_PARALLELISM, DEFAULT_OUTPUT_LENGTH_BITS);
+        return generate(algorithmName, DEFAULT_ALGORITHM_VERSION, source, salt, iterations,
+                DEFAULT_MEMORY_KIB, DEFAULT_PARALLELISM, DEFAULT_OUTPUT_LENGTH_BITS);
     }
 
     public static Argon2Hash generate(
@@ -218,7 +228,7 @@ class Argon2Hash extends AbstractCryptHash {
                 break;
             case "argon2":
                 // fall through
-            case "argon2id":
+            case DEFAULT_ALGORITHM_NAME:
                 type = Argon2Parameters.ARGON2_id;
                 break;
             default:
@@ -236,7 +246,7 @@ class Argon2Hash extends AbstractCryptHash {
         final Argon2BytesGenerator gen = new Argon2BytesGenerator();
         gen.init(parameters);
 
-        final byte[] hash = new byte[outputLengthBits / 8];
+        @SuppressWarnings("checkstyle:MagicNumber") final byte[] hash = new byte[outputLengthBits / 8];
         gen.generateBytes(source.getBytes(), hash);
 
         return new Argon2Hash(algorithmName, argonVersion, hash, new SimpleByteSource(salt), iterations, memoryAsKB, parallelism);
@@ -247,8 +257,8 @@ class Argon2Hash extends AbstractCryptHash {
         if (!ALGORITHMS_ARGON2.contains(getAlgorithmName())) {
             final String message = String.format(
                     Locale.ENGLISH,
-                    "Given algorithm name [%s] not valid for argon2. " +
-                            "Valid algorithms: [%s].",
+                    "Given algorithm name [%s] not valid for argon2. "
+                            + "Valid algorithms: [%s].",
                     getAlgorithmName(),
                     ALGORITHMS_ARGON2
             );
@@ -276,6 +286,7 @@ class Argon2Hash extends AbstractCryptHash {
     @Override
     public boolean matchesPassword(ByteSource plaintextBytes) {
         try {
+            @SuppressWarnings("checkstyle:MagicNumber")
             Argon2Hash compare = generate(
                     this.getAlgorithmName(),
                     this.argonVersion,
@@ -295,6 +306,7 @@ class Argon2Hash extends AbstractCryptHash {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:MagicNumber")
     public int getSaltLength() {
         return SALT_LENGTH_BITS / 8;
     }
@@ -350,7 +362,8 @@ class Argon2Hash extends AbstractCryptHash {
             return false;
         }
         Argon2Hash that = (Argon2Hash) other;
-        return argonVersion == that.argonVersion && iterations == that.iterations && memoryKiB == that.memoryKiB && parallelism == that.parallelism;
+        return argonVersion == that.argonVersion && iterations == that.iterations
+                    && memoryKiB == that.memoryKiB && parallelism == that.parallelism;
     }
 
     @Override

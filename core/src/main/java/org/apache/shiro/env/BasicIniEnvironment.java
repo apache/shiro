@@ -19,6 +19,7 @@
 package org.apache.shiro.env;
 
 import java.util.function.Function;
+
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.ini.IniSecurityManagerFactory;
 
@@ -32,11 +33,15 @@ import org.apache.shiro.ini.IniSecurityManagerFactory;
  * @since 1.5
  */
 public class BasicIniEnvironment extends DefaultEnvironment {
+    @SuppressWarnings({"deprecation", "checkstyle:JavadocVariable"})
+    public static final String INI_REALM_NAME = IniSecurityManagerFactory.INI_REALM_NAME;
+
     public BasicIniEnvironment(Ini ini) {
         this(ini, (name) -> null);
     }
 
     public BasicIniEnvironment(Ini ini, Function<String, ?> alternateObjectSupplier) {
+        @SuppressWarnings("deprecation")
         var securityManagerFactory = new IniSecurityManagerFactory(ini);
         securityManagerFactory.getReflectionBuilder().setAlternateObjectSupplier(alternateObjectSupplier);
         setSecurityManager(securityManagerFactory.getInstance());

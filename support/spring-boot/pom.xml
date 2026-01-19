@@ -17,12 +17,13 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -35,8 +36,48 @@
         <module>spring-boot-web-starter</module>
     </modules>
 
+    <properties>
+        <junit.engine.version>1.13.4</junit.engine.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+             <groupId>org.junit.platform</groupId>
+             <artifactId>junit-platform-engine</artifactId>
+             <version>${junit.engine.version}</version>
+             <scope>test</scope>
+         </dependency>
+        <dependency>
+             <groupId>org.junit.platform</groupId>
+             <artifactId>junit-platform-commons</artifactId>
+             <version>${junit.engine.version}</version>
+             <scope>test</scope>
+         </dependency>
+    </dependencies>
+
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
             <!--
             The spring test API uses mockito, as much as I prefer mockito over easymock, one mock framework is
             probably enough, so putting in this pom makes that more obvious.

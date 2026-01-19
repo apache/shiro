@@ -18,23 +18,25 @@
  */
 package org.apache.shiro.mgt;
 
-import java.util.function.Supplier;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.RememberMeAuthenticationToken;
-import org.apache.shiro.crypto.cipher.ByteSourceBroker;
 import org.apache.shiro.crypto.cipher.AesCipherService;
+import org.apache.shiro.crypto.cipher.ByteSourceBroker;
 import org.apache.shiro.crypto.cipher.CipherService;
 import org.apache.shiro.lang.io.DefaultSerializer;
 import org.apache.shiro.lang.io.Serializer;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.ByteUtils;
+import org.apache.shiro.lang.util.ClassUtils;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.function.Supplier;
 
 /**
  * Abstract implementation of the {@code RememberMeManager} interface that handles
@@ -68,7 +70,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     /**
      * private inner log instance.
      */
-    private static final Logger log = LoggerFactory.getLogger(AbstractRememberMeManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRememberMeManager.class);
 
     /**
      * Serializer to use for converting PrincipalCollection instances to/from byte arrays
@@ -78,7 +80,8 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     /**
      * Cipher to use for encrypting/decrypting serialized byte arrays for added security
      */
-    private CipherService cipherService = new AesCipherService();;
+    private CipherService cipherService = new AesCipherService();
+    ;
 
     /**
      * Cipher encryption key to use with the Cipher when encrypting data
@@ -117,7 +120,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * {@link org.apache.shiro.lang.io.DefaultSerializer}.
      *
      * @return the {@code Serializer} used to serialize and deserialize {@link PrincipalCollection} instances for
-     *         persistent remember me storage.
+     * persistent remember me storage.
      */
     public Serializer<PrincipalCollection> getSerializer() {
         return serializer;
@@ -143,7 +146,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * Unless overridden by the {@link #setCipherService} method, the default instance is an {@link AesCipherService}.
      *
      * @return the {@code Cipher} to use for encrypting and decrypting serialized identity data to prevent easy
-     *         inspection of Subject identity data
+     * inspection of Subject identity data
      */
     public CipherService getCipherService() {
         return cipherService;
@@ -273,15 +276,15 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return true if remember me services should be performed as a result of the successful authentication attempt.
      */
     protected boolean isRememberMe(AuthenticationToken token) {
-        return token != null && (token instanceof RememberMeAuthenticationToken) &&
-                ((RememberMeAuthenticationToken) token).isRememberMe();
+        return token instanceof RememberMeAuthenticationToken && ((RememberMeAuthenticationToken) token).isRememberMe();
     }
 
     /**
      * Reacts to the successful login attempt by first always {@link #forgetIdentity(Subject) forgetting} any previously
      * stored identity.  Then if the {@code token}
      * {@link #isRememberMe(org.apache.shiro.authc.AuthenticationToken) is a RememberMe} token, the associated identity
-     * will be {@link #rememberIdentity(org.apache.shiro.subject.Subject, org.apache.shiro.authc.AuthenticationToken, org.apache.shiro.authc.AuthenticationInfo) remembered}
+     * will be {@link #rememberIdentity(org.apache.shiro.subject.Subject, org.apache.shiro.authc.AuthenticationToken,
+     * org.apache.shiro.authc.AuthenticationInfo) remembered}
      * for later retrieval during a new user session.
      *
      * @param subject the subject for which the principals are being remembered.
@@ -296,9 +299,9 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
         if (isRememberMe(token)) {
             rememberIdentity(subject, token, info);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("AuthenticationToken did not indicate RememberMe is requested.  " +
-                        "RememberMe functionality will not be executed for corresponding account.");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("AuthenticationToken did not indicate RememberMe is requested.  "
+                        + "RememberMe functionality will not be executed for corresponding account.");
             }
         }
     }
@@ -414,7 +417,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      *                       is being used to construct a {@link Subject} instance.  To be used to assist with data
      *                       lookup.
      * @return the previously persisted serialized identity, or {@code null} if there is no available data for the
-     *         Subject.
+     * Subject.
      */
     protected abstract byte[] getRememberedSerializedIdentity(SubjectContext subjectContext);
 
@@ -453,13 +456,14 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      */
     protected PrincipalCollection onRememberedPrincipalFailure(RuntimeException e, SubjectContext context) {
 
-        if (log.isWarnEnabled()) {
-            String message = "There was a failure while trying to retrieve remembered principals.  This could be due to a " +
-                    "configuration problem or corrupted principals.  This could also be due to a recently " +
-                    "changed encryption key, if you are using a shiro.ini file, this property would be " +
-                    "'securityManager.rememberMeManager.cipherKey' see: http://shiro.apache.org/web.html#Web-RememberMeServices. " +
-                    "The remembered identity will be forgotten and not used for this request.";
-            log.warn(message);
+        if (LOGGER.isWarnEnabled()) {
+            String message = "There was a failure while trying to retrieve remembered principals.  This could be due to a "
+                    + "configuration problem or corrupted principals.  This could also be due to a recently "
+                    + "changed encryption key, if you are using a shiro.ini file, this property would be "
+                    + "'securityManager.rememberMeManager.cipherKey'"
+                    + "see: https://shiro.apache.org/web.html#Web-RememberMeServices. "
+                    + "The remembered identity will be forgotten and not used for this request.";
+            LOGGER.warn(message);
         }
         forgetIdentity(context);
         //propagate - security manager implementation will handle and warn appropriately
@@ -506,7 +510,12 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return the serialized principal collection in the form of a byte array
      */
     protected byte[] serialize(PrincipalCollection principals) {
-        return getSerializer().serialize(principals);
+        ClassUtils.setAdditionalClassLoader(AbstractRememberMeManager.class.getClassLoader());
+        try {
+            return getSerializer().serialize(principals);
+        } finally {
+            ClassUtils.removeAdditionalClassLoader();
+        }
     }
 
     /**
@@ -517,7 +526,12 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return the deserialized (reconstituted) {@code PrincipalCollection}
      */
     protected PrincipalCollection deserialize(byte[] serializedIdentity) {
-        return getSerializer().deserialize(serializedIdentity);
+        ClassUtils.setAdditionalClassLoader(AbstractRememberMeManager.class.getClassLoader());
+        try {
+            return getSerializer().deserialize(serializedIdentity);
+        } finally {
+            ClassUtils.removeAdditionalClassLoader();
+        }
     }
 
     /**

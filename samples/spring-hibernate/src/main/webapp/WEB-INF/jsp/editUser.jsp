@@ -25,28 +25,35 @@
     <link rel="stylesheet" type="text/css" href="<c:url value="/styles/sample.css"/>"/>
 </head>
 <body>
-    <div id="box">
-        <div class="title">Apache Shiro Sample App - Edit User</div>
+<div id="box">
+    <div class="title">Apache Shiro Sample App - Edit User</div>
 
-        <div class="content">
-            <form:form modelAttribute="editUserCommand">
+    <div class="content">
+        <form:form modelAttribute="editUserCommand">
 
-                <form:errors path="*" element="div" cssClass="errors"/>
-                <div><div class="form-label">Username:</div><form:input path="username"/></div>
-                <div><div class="form-label">Email:</div><form:input path="email"/></div>
-                <div><div class="form-label">Password:</div><form:password path="password"/></div>
-                <div><input type="button" onclick="document.location.href='<c:url value="/s/manageUsers"/>'" value="Cancel"/>&nbsp;<input type="submit" value="Save Changes"/></div>
-            </form:form>
+            <form:errors path="*" element="div" cssClass="errors"/>
+            <div>
+                <div class="form-label">Username:</div>
+                <form:input path="username"/></div>
+            <div>
+                <div class="form-label">Email:</div>
+                <form:input path="email"/></div>
+            <div>
+                <div class="form-label">Password:</div>
+                <form:password path="password"/></div>
+            <div><input type="button" onclick="document.location.href='<c:url value="/s/manageUsers"/>'"
+                        value="Cancel"/>&nbsp;<input type="submit" value="Save Changes"/></div>
+        </form:form>
 
-            <p>Only edit the password field if you want to change the user's password.  Otherwise leave password blank.</p>
-            
-        </div>
+        <p>Only edit the password field if you want to change the user's password. Otherwise leave password blank.</p>
 
     </div>
 
-    <script type="text/javascript">
-        document.getElementById('username').focus();
-    </script>
+</div>
+
+<script>
+    document.getElementById('username').focus();
+</script>
 
 </body>
 </html>

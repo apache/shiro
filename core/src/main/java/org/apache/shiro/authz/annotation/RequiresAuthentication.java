@@ -30,7 +30,8 @@ import java.lang.annotation.Target;
  * {@link RequiresUser RequiresUser} annotation.
  * <p/>
  * This annotation basically ensures that
- * <code>{@link org.apache.shiro.subject.Subject subject}.{@link org.apache.shiro.subject.Subject#isAuthenticated() isAuthenticated()} === true</code>
+ * <code>{@link org.apache.shiro.subject.Subject subject}.
+ * {@link org.apache.shiro.subject.Subject#isAuthenticated() isAuthenticated()} === true</code>
  * <p/>
  * See the {@link RequiresUser RequiresUser} and
  * {@link org.apache.shiro.authc.RememberMeAuthenticationToken RememberMeAuthenticationToken} JavaDoc for an
@@ -38,7 +39,6 @@ import java.lang.annotation.Target;
  *
  * @see RequiresUser
  * @see RequiresGuest
- *
  * @since 0.9.0
  */
 @Target({ElementType.TYPE, ElementType.METHOD})

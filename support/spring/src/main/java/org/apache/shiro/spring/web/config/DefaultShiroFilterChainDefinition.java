@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class DefaultShiroFilterChainDefinition implements ShiroFilterChainDefinition {
 
-    final private Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
+    private final Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
 
     public void addPathDefinition(String antPath, String definition) {
         filterChainDefinitionMap.put(antPath, definition);

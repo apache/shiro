@@ -38,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue
 class AesCipherServiceTest {
 
     private static final String[] PLAINTEXTS = [
-        "Hello, this is a test.",
-        "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            "Hello, this is a test.",
+            "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
     ]
 
     AesCipherServiceTest() {

@@ -13,31 +13,33 @@
  */
 package org.apache.shiro.ee.filters;
 
-import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_PREDICATE_ATTR_NAME;
-import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
-import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_WAITTIME_ATTR_NAME;
-import static org.apache.shiro.ee.filters.FormAuthenticationFilter.NO_PREDICATE;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.savePostDataForResubmit;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.saveRequestReferer;
-import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
-import static org.apache.shiro.ee.filters.LogoutFilter.LOGOUT_PREDICATE_ATTR_NAME;
-import static org.apache.shiro.ee.filters.LogoutFilter.YES_PREDICATE;
-import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResumbitDisabled;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
-import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
+import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 import org.apache.shiro.subject.Subject;
-import static org.apache.shiro.web.jaxrs.SubjectPrincipalRequestFilter.SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM;
 import org.apache.shiro.web.util.WebUtils;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_PREDICATE_ATTR_NAME;
+import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
+import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_WAITTIME_ATTR_NAME;
+import static org.apache.shiro.ee.filters.FormAuthenticationFilter.NO_PREDICATE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.savePostDataForResubmit;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.saveRequestReferer;
+import static org.apache.shiro.ee.filters.LogoutFilter.LOGOUT_PREDICATE_ATTR_NAME;
+import static org.apache.shiro.ee.filters.LogoutFilter.YES_PREDICATE;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
+import static org.apache.shiro.web.jaxrs.SubjectPrincipalRequestFilter.SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM;
 
 /**
  * common functionality for both Form and PassThru authentication filters
@@ -46,24 +48,32 @@ import org.apache.shiro.web.util.WebUtils;
 class AuthenticationFilterDelegate {
     interface MethodsFromFilter {
         Subject getSubject(ServletRequest request, ServletResponse response);
+
         boolean isLoginRequest(ServletRequest request, ServletResponse response);
+
         String getLoginUrl();
+
         boolean preHandle(ServletRequest request, ServletResponse response) throws Exception;
+
         boolean onLoginFailure(AuthenticationToken token, AuthenticationException e,
-            ServletRequest request, ServletResponse response);
+                               ServletRequest request, ServletResponse response);
     }
 
     private final MethodsFromFilter methods;
     /**
      * true if rememberMe cookie is set and valid
      */
-    private @Getter @Setter boolean useRemembered;
+    private @Getter
+    @Setter boolean useRemembered;
     /**
      * number of seconds to sleep if authentication fails
      */
-    private @Getter @Setter int loginFailedWaitTime;
-    private @Getter @Setter FallbackPredicate loginFallbackType = NO_PREDICATE;
-    private @Getter @Setter FallbackPredicate logoutFallbackType = YES_PREDICATE;
+    private @Getter
+    @Setter int loginFailedWaitTime;
+    private @Getter
+    @Setter FallbackPredicate loginFallbackType = NO_PREDICATE;
+    private @Getter
+    @Setter FallbackPredicate logoutFallbackType = YES_PREDICATE;
 
     public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
         request.setAttribute(LOGIN_PREDICATE_ATTR_NAME, loginFallbackType);
@@ -102,7 +112,7 @@ class AuthenticationFilterDelegate {
      * @throws IOException
      */
     public void redirectToLogin(ServletRequest request, ServletResponse response) throws IOException {
-        if (request instanceof HttpServletRequest && !isFormResumbitDisabled(request.getServletContext())) {
+        if (request instanceof HttpServletRequest && !isFormResubmitDisabled(request.getServletContext())) {
             savePostDataForResubmit(WebUtils.toHttp(request), WebUtils.toHttp(response),
                     methods.getLoginUrl());
         }
@@ -126,7 +136,7 @@ class AuthenticationFilterDelegate {
 
     @SneakyThrows(InterruptedException.class)
     public boolean onLoginFailure(AuthenticationToken token, AuthenticationException e,
-            ServletRequest request, ServletResponse response) {
+                                  ServletRequest request, ServletResponse response) {
         if (loginFailedWaitTime != 0) {
             TimeUnit.SECONDS.sleep(loginFailedWaitTime);
         }
@@ -135,6 +145,7 @@ class AuthenticationFilterDelegate {
 
     /**
      * combine the two because response is unavailable in saveRequest()
+     *
      * @param request
      * @param response
      * @throws IOException

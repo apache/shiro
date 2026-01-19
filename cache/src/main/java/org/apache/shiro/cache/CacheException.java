@@ -26,8 +26,7 @@ import org.apache.shiro.lang.ShiroException;
  *
  * @since 0.2
  */
-public class CacheException extends ShiroException
-{
+public class CacheException extends ShiroException {
 
     /**
      * Creates a new <code>CacheException</code>.

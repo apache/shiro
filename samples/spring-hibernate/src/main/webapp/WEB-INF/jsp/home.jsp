@@ -27,7 +27,10 @@
 <body>
 
 <div id="bigbox">
-    <div class="title clearfix"><div style="float: left">Apache Shiro Sample App - Home</div><div class="info" >Logged in as ${currentUser.username} (<a href="<c:url value="/s/logout"/>">Logout</a>)</div></div>
+    <div class="title clearfix">
+        <div style="float: left">Apache Shiro Sample App - Home</div>
+        <div class="info">Logged in as ${currentUser.username} (<a href="<c:url value="/s/logout"/>">Logout</a>)</div>
+    </div>
 
 
     <div class="content">
@@ -40,12 +43,13 @@
         </ul>
 
         <p>
-        <shiro:hasPermission name="user:manage">
-            Since you are logged in as the admin user, you can <a href="<c:url value="/s/manageUsers"/>">manage site users</a>.
-        </shiro:hasPermission>
-        <shiro:lacksPermission name="user:manage">
-            Since you are not logged in as the admin user, you can't manage site users.
-        </shiro:lacksPermission>
+            <shiro:hasPermission name="user:manage">
+                Since you are logged in as the admin user, you can <a href="<c:url value="/s/manageUsers"/>">manage site
+                users</a>.
+            </shiro:hasPermission>
+            <shiro:lacksPermission name="user:manage">
+                Since you are not logged in as the admin user, you can't manage site users.
+            </shiro:lacksPermission>
         </p>
     </div>
 

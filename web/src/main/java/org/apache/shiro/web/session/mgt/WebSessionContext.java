@@ -38,7 +38,7 @@ public interface WebSessionContext extends SessionContext, RequestPairSource {
      * {@code Session} instance.
      *
      * @return the {@code ServletRequest} received by the servlet container triggering the creation of the
-     *         {@code Session} instance.
+     * {@code Session} instance.
      */
     ServletRequest getServletRequest();
 
@@ -55,7 +55,7 @@ public interface WebSessionContext extends SessionContext, RequestPairSource {
      * The paired {@code ServletResponse} corresponding to the associated {@link #getServletRequest servletRequest}.
      *
      * @return the paired {@code ServletResponse} corresponding to the associated
-     *         {@link #getServletRequest servletRequest}.
+     * {@link #getServletRequest servletRequest}.
      */
     ServletResponse getServletResponse();
 

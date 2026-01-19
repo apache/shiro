@@ -75,7 +75,7 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
      * an annotation discovered at runtime.
      *
      * @return the {@code AnnotationHandler} used to perform authorization behavior based on
-     *         an annotation discovered at runtime.
+     * an annotation discovered at runtime.
      */
     public AnnotationHandler getHandler() {
         return handler;
@@ -98,7 +98,7 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
      * perform authorization logic.
      *
      * @return the {@code AnnotationResolver} to use to acquire annotations from intercepted
-     *         methods at runtime.
+     * methods at runtime.
      * @since 1.1
      */
     public AnnotationResolver getResolver() {
@@ -128,7 +128,7 @@ public abstract class AnnotationMethodInterceptor extends MethodInterceptorSuppo
      *
      * @param mi the <code>MethodInvocation</code> for the method being invoked.
      * @return <code>true</code> if this interceptor supports, that is, should inspect, the specified
-     *         <code>MethodInvocation</code>, <code>false</code> otherwise.
+     * <code>MethodInvocation</code>, <code>false</code> otherwise.
      */
     public boolean supports(MethodInvocation mi) {
         return getAnnotation(mi) != null;

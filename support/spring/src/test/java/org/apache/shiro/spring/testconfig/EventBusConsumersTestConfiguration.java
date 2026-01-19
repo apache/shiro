@@ -34,7 +34,7 @@ public class EventBusConsumersTestConfiguration {
     }
 
     @Bean
-    protected EventSubscriber subscriber(){
+    protected EventSubscriber subscriber() {
         return new EventSubscriber();
     }
 
@@ -54,7 +54,8 @@ public class EventBusConsumersTestConfiguration {
     public class EventSubscriber {
 
         @Subscribe
-        public void listen(Object object) {}
+        public void listen(Object object) {
+        }
 
     }
 

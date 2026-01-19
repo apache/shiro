@@ -33,10 +33,12 @@ import java.util.Set;
  *
  * @since 0.9
  */
-public class CollectionUtils {
+public final class CollectionUtils {
 
-    //TODO - complete JavaDoc
+    private CollectionUtils() {
+    }
 
+    @SafeVarargs
     public static <E> Set<E> asSet(E... elements) {
         if (elements == null || elements.length == 0) {
             return Collections.emptySet();
@@ -57,7 +59,7 @@ public class CollectionUtils {
      *
      * @param c the collection to check
      * @return {@code true} if the specified {@code Collection} is {@code null} or {@link Collection#isEmpty empty},
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      * @since 1.0
      */
     public static boolean isEmpty(Collection c) {
@@ -70,7 +72,7 @@ public class CollectionUtils {
      *
      * @param m the {@code Map} to check
      * @return {@code true} if the specified {@code Map} is {@code null} or {@link Map#isEmpty empty},
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      * @since 1.0
      */
     public static boolean isEmpty(Map m) {
@@ -106,7 +108,7 @@ public class CollectionUtils {
      *
      * @param principals the principals to check.
      * @return {@code true} if the specified {@code PrincipalCollection} is {@code null} or
-     *         {@link PrincipalCollection#isEmpty empty}, {@code false} otherwise.
+     * {@link PrincipalCollection#isEmpty empty}, {@code false} otherwise.
      * @since 1.0
      * @deprecated Use PrincipalCollection.isEmpty() directly.
      */
@@ -115,6 +117,7 @@ public class CollectionUtils {
         return principals == null || principals.isEmpty();
     }
 
+    @SafeVarargs
     public static <E> List<E> asList(E... elements) {
         if (elements == null || elements.length == 0) {
             return Collections.emptyList();
@@ -134,7 +137,7 @@ public class CollectionUtils {
         Collections.addAll(deque, elements);
         return deque;
     }*/
-
+    @SuppressWarnings("checkstyle:MagicNumber")
     static int computeListCapacity(int arraySize) {
         return (int) Math.min(5L + arraySize + (arraySize / 10), Integer.MAX_VALUE);
     }

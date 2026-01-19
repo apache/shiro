@@ -17,13 +17,14 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<!--suppress osmorcNonOsgiMavenDependency	-->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+<!--suppress osmorcNonOsgiMavenDependency -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.apache.shiro.samples</groupId>
         <artifactId>shiro-samples</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -31,14 +32,14 @@
     <name>Apache Shiro :: Samples :: Spring MVC</name>
     <packaging>war</packaging>
     <description>
-    	Spring-based web application sample demonstrating Shiro's capabilities. Uses samples-spring module
-    	as the web start application.
+        Spring-based web application sample demonstrating Shiro's capabilities. Uses samples-spring module
+        as the web start application.
     </description>
 
     <build>
         <plugins>
             <plugin>
-                <!-- Note	that you need	to run mvn jetty:run-war	to test	the	webstart application -->
+                <!-- Note that you need to run mvn jetty:run-war to test the webstart application -->
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty.version}</version>

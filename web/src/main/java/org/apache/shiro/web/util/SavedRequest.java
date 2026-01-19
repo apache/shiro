@@ -60,6 +60,12 @@ public class SavedRequest implements Serializable {
 
     public String getRequestUrl() {
         StringBuilder requestUrl = new StringBuilder(getRequestURI());
+
+        // remove duplicate leading slashes
+        while (requestUrl.length() > 1 && requestUrl.charAt(1) == '/') {
+            requestUrl.deleteCharAt(0);
+        }
+
         if (getQueryString() != null) {
             requestUrl.append("?").append(getQueryString());
         }

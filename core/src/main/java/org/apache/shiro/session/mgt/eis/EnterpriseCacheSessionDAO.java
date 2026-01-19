@@ -54,8 +54,8 @@ public class EnterpriseCacheSessionDAO extends CachingSessionDAO {
     public EnterpriseCacheSessionDAO() {
         setCacheManager(new AbstractCacheManager() {
             @Override
-            protected Cache<Serializable, Session> createCache(String name) throws CacheException {
-                return new MapCache<Serializable, Session>(name, new ConcurrentHashMap<Serializable, Session>());
+            protected <Serializable, Session> Cache<Serializable, Session> createCache(String name) throws CacheException {
+                return new MapCache<>(name, new ConcurrentHashMap<>());
             }
         });
     }
@@ -67,9 +67,10 @@ public class EnterpriseCacheSessionDAO extends CachingSessionDAO {
     }
 
     protected Session doReadSession(Serializable sessionId) {
-        return null; //should never execute because this implementation relies on parent class to access cache, which
+        //should never execute because this implementation relies on parent class to access cache, which
         //is where all sessions reside - it is the cache implementation that determines if the
         //cache is memory only or disk-persistent, etc.
+        return null;
     }
 
     protected void doUpdate(Session session) {

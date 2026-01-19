@@ -38,7 +38,10 @@ import org.mockito.ArgumentCaptor;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -70,8 +73,10 @@ public class BeanTypeListenerTest {
 
     @Test
     void testPropertySetting() throws Exception {
+        @SuppressWarnings("unchecked")
         TypeEncounter<SomeInjectableBean> encounter = mock(TypeEncounter.class);
 
+        @SuppressWarnings("unchecked")
         Provider<Injector> injectorProvider = mock(Provider.class);
         Injector injector = mock(Injector.class);
 
@@ -79,6 +84,7 @@ public class BeanTypeListenerTest {
 
         when(injectorProvider.get()).then(args -> injector);
 
+        @SuppressWarnings("unchecked")
         ArgumentCaptor<MembersInjector<SomeInjectableBean>> captor = ArgumentCaptor.forClass(MembersInjector.class);
 
         SecurityManager securityManager = mock(SecurityManager.class);

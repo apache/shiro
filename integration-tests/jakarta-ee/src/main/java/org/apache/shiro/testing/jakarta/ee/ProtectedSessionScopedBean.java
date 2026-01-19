@@ -14,12 +14,14 @@
 package org.apache.shiro.testing.jakarta.ee;
 
 import static org.apache.shiro.testing.jakarta.ee.StatisticsResource.increment;
+
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresUser;
 

@@ -20,9 +20,12 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFClientStateSa
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isPostRequest;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.resubmitSavedForm;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.DONT_ADD_ANY_MORE_COOKIES;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.getCharacterEncoding;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isCharEncodingEnabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isShiroEEDisabled;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -45,10 +48,12 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
 import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isShiroEERedirectDisabled;
 import static org.apache.shiro.web.filter.authz.SslFilter.HTTPS_SCHEME;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
@@ -57,6 +62,7 @@ import org.apache.shiro.web.session.mgt.WebSessionKey;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.util.WebUtils;
 import org.omnifaces.util.Servlets;
+import org.omnifaces.util.Utils;
 
 /**
  * Stops JEE server from interpreting Shiro principal as direct EJB principal,
@@ -82,7 +88,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
         @Getter(value = AccessLevel.PRIVATE, lazy = true)
         private final boolean httpsNeeded = createHttpButNeedHttps();
         @Getter(value = AccessLevel.PRIVATE, lazy = true)
-        private final StringBuffer secureRequestURL = rewriteHttpToHttps();
+        private final StringBuffer secureRequestURL = httpsRequestURL();
 
         WrappedRequest(HttpServletRequest wrapped, ServletContext servletContext, boolean httpSessions) {
             super(wrapped, servletContext, httpSessions);
@@ -126,7 +132,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
                             .getHeader(X_FORWARDED_PROTO));
         }
 
-        private StringBuffer rewriteHttpToHttps() {
+        private StringBuffer httpsRequestURL() {
             return new StringBuffer(HTTP_TO_HTTPS.matcher(super.getRequestURL())
                     .replaceFirst(HTTPS_SCHEME + "$1"));
         }
@@ -146,10 +152,19 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
                 super.addCookie(cookie);
             }
         }
+
+        @Override
+        public void sendRedirect(String location) throws IOException {
+            if (!Utils.startsWithOneOf(location, "http://", "https://")
+                    && !isShiroEERedirectDisabled(request.getServletContext())) {
+                location = Servlets.getRequestDomainURL(WebUtils.toHttp(request)) + location;
+            }
+            super.sendRedirect(location);
+        }
     }
 
     @RequiredArgsConstructor
-    static class WrappedSecurityManager implements WebSecurityManager {
+    static class WrappedSecurityManager implements WebSecurityManager, org.apache.shiro.mgt.WrappedSecurityManager {
         final @Delegate WebSecurityManager wrapped;
 
         @Override
@@ -174,6 +189,12 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             } else {
                 return wrapped.createSubject(context);
             }
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <SM extends SecurityManager> SM unwrap() {
+            return (SM) wrapped;
         }
     }
 
@@ -216,14 +237,12 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
 
     @Override
     @SneakyThrows
-    @SuppressWarnings("LineLength")
     protected void executeChain(ServletRequest request, ServletResponse response,
             FilterChain origChain) throws IOException, ServletException {
         if (isShiroEEDisabled(getServletContext())) {
             origChain.doFilter(request, response);
         } else if (Boolean.TRUE.equals(request.getAttribute(FORM_IS_RESUBMITTED)) && isPostRequest(request)) {
-            // See https://stackoverflow.com/questions/7643484/how-to-get-rid-of-warning-pwc4011-unable-to-set-request-character-encoding-to
-            request.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            setCharacterEncodingIfNeeded(request);
             request.removeAttribute(FORM_IS_RESUBMITTED);
             String postData = getPostData(request);
             log.debug("Resubmitting Post Data: {}", postData);
@@ -235,8 +254,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
                     request.getServletContext(), rememberedAjaxResubmit))
                     .ifPresent(url -> sendRedirect(response, url));
         } else {
-            // See https://stackoverflow.com/questions/7643484/how-to-get-rid-of-warning-pwc4011-unable-to-set-request-character-encoding-to
-            request.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            setCharacterEncodingIfNeeded(request);
             super.executeChain(request, response, origChain);
         }
     }
@@ -244,5 +262,17 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
     @SneakyThrows(IOException.class)
     private static void sendRedirect(ServletResponse response, String url) {
         WebUtils.toHttp(response).sendRedirect(url);
+    }
+
+    @SuppressWarnings("LineLength")
+    private static void setCharacterEncodingIfNeeded(ServletRequest request)
+            throws UnsupportedEncodingException {
+        // See https://stackoverflow.com/questions/7643484/how-to-get-rid-of-warning-pwc4011-unable-to-set-request-character-encoding-to
+        if (isCharEncodingEnabled(request.getServletContext())) {
+            Charset encoding = getCharacterEncoding(request.getServletContext());
+            if (!encoding.name().equals(request.getCharacterEncoding())) {
+                request.setCharacterEncoding(encoding.name());
+            }
+        }
     }
 }

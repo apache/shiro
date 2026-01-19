@@ -19,6 +19,6 @@
 /**
  * Spring-specific components for use in Spring-based web applications.
  *
- * @see ShiroFilterFactoryBean ShiroFilterFactoryBean
+ * @see org.apache.shiro.spring.web.ShiroFilterFactoryBean ShiroFilterFactoryBean
  */
 package org.apache.shiro.spring.web;

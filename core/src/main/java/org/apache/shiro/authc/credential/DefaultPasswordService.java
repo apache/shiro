@@ -47,15 +47,21 @@ import static java.util.Objects.requireNonNull;
  */
 public class DefaultPasswordService implements HashingPasswordService {
 
+    /**
+     * default hash algorithm.
+     */
     public static final String DEFAULT_HASH_ALGORITHM = "argon2id";
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultPasswordService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPasswordService.class);
 
     private HashService hashService;
     private HashFormat hashFormat;
     private HashFormatFactory hashFormatFactory;
 
-    private volatile boolean hashFormatWarned; //used to avoid excessive log noise
+    /**
+     * used to avoid excessive log noise
+     */
+    private volatile boolean hashFormatWarned;
 
     /**
      * Constructs a new PasswordService with a default hash service and the default
@@ -122,20 +128,22 @@ public class DefaultPasswordService implements HashingPasswordService {
 
             HashFormat format = this.hashFormat;
 
-            if (!(format instanceof ParsableHashFormat) && log.isWarnEnabled()) {
-                String msg = "The configured hashFormat instance [" + format.getClass().getName() + "] is not a " +
-                        ParsableHashFormat.class.getName() + " implementation.  This is " +
-                        "required if you wish to support backwards compatibility for saved password checking (almost " +
-                        "always desirable).  Without a " + ParsableHashFormat.class.getSimpleName() + " instance, " +
-                        "any hashService configuration changes will break previously hashed/saved passwords.";
-                log.warn(msg);
+            if (!(format instanceof ParsableHashFormat) && LOGGER.isWarnEnabled()) {
+                String msg = "The configured hashFormat instance [" + format.getClass().getName() + "] is not a "
+                        + ParsableHashFormat.class.getName() + " implementation.  This is "
+                        + "required if you wish to support backwards compatibility for saved password checking (almost "
+                        + "always desirable).  Without a " + ParsableHashFormat.class.getSimpleName() + " instance, "
+                        + "any hashService configuration changes will break previously hashed/saved passwords.";
+                LOGGER.warn(msg);
                 this.hashFormatWarned = true;
             }
         }
     }
 
     protected HashRequest createHashRequest(ByteSource plaintext) {
-        return new HashRequest.Builder().setSource(plaintext).build();
+        return new HashRequest.Builder().setSource(plaintext)
+                .setAlgorithmName(getHashService().getDefaultAlgorithmName())
+                .build();
     }
 
     protected ByteSource createByteSource(Object o) {

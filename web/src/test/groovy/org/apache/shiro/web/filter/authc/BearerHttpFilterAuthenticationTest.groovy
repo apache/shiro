@@ -28,8 +28,10 @@ import org.junit.jupiter.api.Test
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+import static org.assertj.core.api.Assertions.assertThat
 import static org.easymock.EasyMock.*
-import static org.hamcrest.MatcherAssert.assertThat
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 /**
  * Test case for {@link BearerHttpAuthenticationFilter}.
@@ -100,15 +102,15 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
 
         verify(request, response)
     }
-    
+
     @Test
     void httpMethodDoesNotRequireAuthentication() throws Exception {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
-        
+
         HttpServletRequest request = createMock(HttpServletRequest.class)
         expect(request.getMethod()).andReturn("GET")
         replay(request)
-        
+
         HttpServletResponse response = createMock(HttpServletResponse.class)
         replay(response)
 
@@ -119,21 +121,58 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         })
         verify(request, response)
     }
-    
+
     @Test
     void httpMethodRequiresAuthentication() throws Exception {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
-        
+
         HttpServletRequest request = mockRequest("valid-token", "localhost", {
             expect(it.getMethod()).andReturn("POST")
         })
-        
+
         HttpServletResponse response = mockResponse()
 
         runWithSubject({
             String[] methods = ["POST", "PUT", "DELETE"]
             boolean accessAllowed = testFilter.isAccessAllowed(request, response, methods)
             assertThat("Access allowed for POST", !accessAllowed)
+        })
+    }
+
+    @Test
+    void allowedPreflightRequestsAndOptionsRequest() {
+        BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
+        testFilter.setAllowPreFlightRequests(true)
+
+        HttpServletRequest request = mock(HttpServletRequest)
+        when(request.getMethod()).thenReturn("OPTIONS")
+        when(request.getHeader("Origin")).thenReturn("localhost")
+        when(request.getHeader("Access-Control-Request-Method")).thenReturn("GET,OPTIONS")
+
+        HttpServletResponse response = mock(HttpServletResponse.class)
+
+        runWithSubject({
+            String[] methods = ["OPTIONS"]
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, methods)
+            assertThat("Access allowed for OPTIONS", accessAllowed)
+        })
+    }
+
+    @Test
+    void notAllowedPreFlightRequests() {
+        BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
+
+        HttpServletRequest request = mock(HttpServletRequest.class)
+        when(request.getHeader("Authorization")).thenReturn(createAuthorizationHeader("valid-token"))
+        when(request.getRemoteHost()).thenReturn("localhosst")
+        when(request.getMethod()).thenReturn("OPTIONS")
+
+        HttpServletResponse response = mock(HttpServletResponse.class)
+
+        runWithSubject({
+            String[] methods = ["OPTIONS"]
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, methods)
+            assertThat("Access not allowed for OPTIONS", !accessAllowed)
         })
     }
 

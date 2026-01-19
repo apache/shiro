@@ -39,7 +39,7 @@ public class HomeController {
 
     @RequestMapping("/home")
     public void viewHome(Model model) {
-        model.addAttribute( "users", userService.getAllUsers() );
+        model.addAttribute("users", userService.getAllUsers());
     }
 
 }

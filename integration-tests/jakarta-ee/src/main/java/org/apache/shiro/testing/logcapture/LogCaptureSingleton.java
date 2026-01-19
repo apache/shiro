@@ -21,7 +21,8 @@ import javax.ejb.Startup;
 /**
  * Entry point for capturing logs and exceptions via servlet
  */
-@Singleton @Startup
+@Singleton
+@Startup
 @SuppressWarnings("MagicNumber")
 public class LogCaptureSingleton {
     @PostConstruct

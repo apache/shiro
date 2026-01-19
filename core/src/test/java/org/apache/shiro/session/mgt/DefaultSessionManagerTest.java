@@ -30,18 +30,29 @@ import org.easymock.IArgumentMatcher;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.util.UUID;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
+import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for the {@link DefaultSessionManager DefaultSessionManager} implementation.
  */
+@Isolated
 public class DefaultSessionManagerTest {
 
-    DefaultSessionManager sm = null;
+    DefaultSessionManager sm;
 
     @BeforeEach
     public void setup() {
@@ -63,6 +74,7 @@ public class DefaultSessionManagerTest {
         }
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testGlobalTimeout() {
         long timeout = 1000;
@@ -110,7 +122,7 @@ public class DefaultSessionManagerTest {
         SessionListener listener = new SessionListenerAdapter() {
             public void onStop(Session session) {
                 stopped[0] = true;
-                value[0] = (String)session.getAttribute("foo");
+                value[0] = (String) session.getAttribute("foo");
             }
         };
         sm.getSessionListeners().add(listener);
@@ -123,6 +135,7 @@ public class DefaultSessionManagerTest {
         assertEquals("bar", value[0]);
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testSessionListenerExpiredNotification() {
         final boolean[] expired = new boolean[1];
@@ -144,6 +157,7 @@ public class DefaultSessionManagerTest {
         assertTrue(expired[0]);
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testSessionDeleteOnExpiration() {
         sm.setGlobalSessionTimeout(100);
@@ -155,7 +169,7 @@ public class DefaultSessionManagerTest {
         final SimpleSession session1 = new SimpleSession();
         session1.setId(sessionId1);
 
-        final Session[] activeSession = new SimpleSession[]{session1};
+        final Session[] activeSession = new SimpleSession[] {session1};
         sm.setSessionFactory(new SessionFactory() {
             public Session createSession(SessionContext initData) {
                 return activeSession[0];
@@ -181,7 +195,8 @@ public class DefaultSessionManagerTest {
         sleep(20);
 
         expect(sessionDAO.readSession(sessionId1)).andReturn(session1);
-        sessionDAO.update(eq(session1)); //update's the stop timestamp
+        //update's the stop timestamp
+        sessionDAO.update(eq(session1));
         sessionDAO.delete(session1);
         replay(sessionDAO);
 
@@ -193,7 +208,8 @@ public class DefaultSessionManagerTest {
             //expected
         }
 
-        verify(sessionDAO); //verify that the delete call was actually made on the DAO
+        //verify that the delete call was actually made on the DAO
+        verify(sessionDAO);
     }
 
     /**
@@ -214,8 +230,7 @@ public class DefaultSessionManagerTest {
 
             // now sessionValidationScheduler should be enabled
             assertTrue(sessionValidationScheduler.isEnabled(), "sessionValidationScheduler was not enabled");
-        }
-        finally {
+        } finally {
             // cleanup after test
             sessionManager.destroy();
         }
@@ -230,7 +245,7 @@ public class DefaultSessionManagerTest {
 
         private final long timeout;
 
-        public SessionTimeoutMatcher(long timeout) {
+        SessionTimeoutMatcher(long timeout) {
             this.timeout = timeout;
         }
 

@@ -19,7 +19,6 @@
 package org.apache.shiro.crypto.hash;
 
 import java.security.SecureRandom;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 
@@ -78,7 +77,7 @@ public class DefaultHashService implements ConfigurableHashService {
      *
      * @param request the request to process
      * @return the response containing the result of the hash computation, as well as any hash salt used that should be
-     *         exposed to the caller.
+     * exposed to the caller.
      */
     @Override
     public Hash computeHash(HashRequest request) {
@@ -90,7 +89,7 @@ public class DefaultHashService implements ConfigurableHashService {
 
         Optional<HashSpi> kdfHash = HashProvider.getByAlgorithmName(algorithmName);
         if (kdfHash.isPresent()) {
-            HashSpi hashSpi = kdfHash.orElseThrow(NoSuchElementException::new);
+            HashSpi hashSpi = kdfHash.get();
 
             return hashSpi.newHashFactory(random).generate(request);
         }
@@ -108,6 +107,7 @@ public class DefaultHashService implements ConfigurableHashService {
         this.defaultAlgorithmName = name;
     }
 
+    @Override
     public String getDefaultAlgorithmName() {
         return this.defaultAlgorithmName;
     }

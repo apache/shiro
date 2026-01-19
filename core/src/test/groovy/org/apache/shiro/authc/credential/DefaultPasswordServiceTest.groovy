@@ -29,6 +29,7 @@ import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
+import org.junit.jupiter.api.parallel.Isolated
 
 import static org.easymock.EasyMock.*
 import static org.junit.jupiter.api.Assertions.*
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*
  *
  * @since 1.2
  */
+@Isolated
 class DefaultPasswordServiceTest {
 
     @Test

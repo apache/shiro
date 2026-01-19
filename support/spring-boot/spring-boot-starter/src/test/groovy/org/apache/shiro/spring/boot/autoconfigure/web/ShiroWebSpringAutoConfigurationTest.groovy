@@ -73,7 +73,7 @@ class ShiroWebSpringAutoConfigurationTest extends AbstractJUnit4SpringContextTes
         assertNotNull shiroFilter
         assertTrue(eventBus.registry.containsKey(subscribedListener))
         assertSame(eventBusAwareObject.getEventBus(), eventBus)
-        assertSame(((DefaultSecurityManager)securityManager).getEventBus(), eventBus)
+        assertSame(((DefaultSecurityManager) securityManager).getEventBus(), eventBus)
 
         // make sure global chains are configured
         assertThat shiroFilter.filterChainResolver.filterChainManager, instanceOf(DefaultFilterChainManager)

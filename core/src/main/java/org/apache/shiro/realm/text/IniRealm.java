@@ -44,13 +44,23 @@ import org.slf4j.LoggerFactory;
  */
 public class IniRealm extends TextConfigurationRealm {
 
+    /**
+     * users section name
+     */
     public static final String USERS_SECTION_NAME = "users";
+    /**
+     * roles section name
+     */
     public static final String ROLES_SECTION_NAME = "roles";
 
-    private static transient final Logger log = LoggerFactory.getLogger(IniRealm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IniRealm.class);
 
     private String resourcePath;
-    private Ini ini; //reference added in 1.2 for SHIRO-322
+
+    /**
+     * reference added in 1.2 for SHIRO-322
+     */
+    private Ini ini;
 
     public IniRealm() {
         super();
@@ -107,7 +117,7 @@ public class IniRealm extends TextConfigurationRealm {
     /**
      * Returns the Ini instance used to configure this realm.  Provided for JavaBeans-style configuration of this
      * realm, particularly useful in Dependency Injection environments.
-     * 
+     *
      * @return the Ini instance which will be inspected to create accounts, groups and permissions for this realm.
      */
     public Ini getIni() {
@@ -117,7 +127,7 @@ public class IniRealm extends TextConfigurationRealm {
     /**
      * Sets the Ini instance used to configure this realm.  Provided for JavaBeans-style configuration of this
      * realm, particularly useful in Dependency Injection environments.
-     * 
+     *
      * @param ini the Ini instance which will be inspected to create accounts, groups and permissions for this realm.
      */
     public void setIni(Ini ini) {
@@ -130,38 +140,38 @@ public class IniRealm extends TextConfigurationRealm {
 
         // This is an in-memory realm only - no need for an additional cache when we're already
         // as memory-efficient as we can be.
-        
+
         Ini ini = getIni();
         String resourcePath = getResourcePath();
-                
+
         if (!CollectionUtils.isEmpty(this.users) || !CollectionUtils.isEmpty(this.roles)) {
             if (!CollectionUtils.isEmpty(ini)) {
-                log.warn("Users or Roles are already populated.  Configured Ini instance will be ignored.");
+                LOGGER.warn("Users or Roles are already populated.  Configured Ini instance will be ignored.");
             }
             if (StringUtils.hasText(resourcePath)) {
-                log.warn("Users or Roles are already populated.  resourcePath '{}' will be ignored.", resourcePath);
+                LOGGER.warn("Users or Roles are already populated.  resourcePath '{}' will be ignored.", resourcePath);
             }
-            
-            log.debug("Instance is already populated with users or roles.  No additional user/role population " +
-                    "will be performed.");
+
+            LOGGER.debug("Instance is already populated with users or roles.  No additional user/role population "
+                    + "will be performed.");
             return;
         }
-        
+
         if (CollectionUtils.isEmpty(ini)) {
-            log.debug("No INI instance configuration present.  Checking resourcePath...");
-            
+            LOGGER.debug("No INI instance configuration present.  Checking resourcePath...");
+
             if (StringUtils.hasText(resourcePath)) {
-                log.debug("Resource path {} defined.  Creating INI instance.", resourcePath);
+                LOGGER.debug("Resource path {} defined.  Creating INI instance.", resourcePath);
                 ini = Ini.fromResourcePath(resourcePath);
                 if (!CollectionUtils.isEmpty(ini)) {
                     setIni(ini);
                 }
             }
         }
-        
+
         if (CollectionUtils.isEmpty(ini)) {
-            String msg = "Ini instance and/or resourcePath resulted in null or empty Ini configuration.  Cannot " +
-                    "load account data.";
+            String msg = "Ini instance and/or resourcePath resulted in null or empty Ini configuration.  Cannot "
+                    + "load account data.";
             throw new IllegalStateException(msg);
         }
 
@@ -170,24 +180,24 @@ public class IniRealm extends TextConfigurationRealm {
 
     private void processDefinitions(Ini ini) {
         if (CollectionUtils.isEmpty(ini)) {
-            log.warn("{} defined, but the ini instance is null or empty.", getClass().getSimpleName());
+            LOGGER.warn("{} defined, but the ini instance is null or empty.", getClass().getSimpleName());
             return;
         }
 
         Ini.Section rolesSection = ini.getSection(ROLES_SECTION_NAME);
         if (!CollectionUtils.isEmpty(rolesSection)) {
-            log.debug("Discovered the [{}] section.  Processing...", ROLES_SECTION_NAME);
+            LOGGER.debug("Discovered the [{}] section.  Processing...", ROLES_SECTION_NAME);
             processRoleDefinitions(rolesSection);
         }
 
         Ini.Section usersSection = ini.getSection(USERS_SECTION_NAME);
         if (!CollectionUtils.isEmpty(usersSection)) {
-            log.debug("Discovered the [{}] section.  Processing...", USERS_SECTION_NAME);
+            LOGGER.debug("Discovered the [{}] section.  Processing...", USERS_SECTION_NAME);
             processUserDefinitions(usersSection);
         } else {
-            log.info("{} defined, but there is no [{}] section defined.  This realm will not be populated with any " +
-                    "users and it is assumed that they will be populated programatically.  Users must be defined " +
-                    "for this Realm instance to be useful.", getClass().getSimpleName(), USERS_SECTION_NAME);
+            LOGGER.info("{} defined, but there is no [{}] section defined.  This realm will not be populated with any "
+                    + "users and it is assumed that they will be populated programmatically.  Users must be defined "
+                    + "for this Realm instance to be useful.", getClass().getSimpleName(), USERS_SECTION_NAME);
         }
     }
 }

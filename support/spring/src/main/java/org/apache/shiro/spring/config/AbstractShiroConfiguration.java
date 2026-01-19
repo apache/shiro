@@ -29,7 +29,16 @@ import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.event.EventBus;
-import org.apache.shiro.mgt.*;
+
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
+import org.apache.shiro.mgt.DefaultSubjectDAO;
+import org.apache.shiro.mgt.DefaultSubjectFactory;
+import org.apache.shiro.mgt.RememberMeManager;
+import org.apache.shiro.mgt.SessionStorageEvaluator;
+import org.apache.shiro.mgt.SessionsSecurityManager;
+import org.apache.shiro.mgt.SubjectDAO;
+import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
@@ -154,6 +163,6 @@ public class AbstractShiroConfiguration {
 
     protected Realm iniRealmFromLocation(String iniLocation) {
         Ini ini = Ini.fromResourcePath(iniLocation);
-        return new IniRealm( ini );
+        return new IniRealm(ini);
     }
 }

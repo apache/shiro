@@ -36,9 +36,9 @@ public interface HostAuthenticationToken extends AuthenticationToken {
      * {@code ServletRequest.getRemoteHost()} value.
      *
      * @return the fully qualified name of the client from where the
-     *         authentication attempt originates or the String representation
-     *         of the client's IP address is hostname resolution is not
-     *         available or disabled.
+     * authentication attempt originates or the String representation
+     * of the client's IP address is hostname resolution is not
+     * available or disabled.
      */
     String getHost();
 }

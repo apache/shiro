@@ -43,6 +43,7 @@ import java.io.IOException;
  *
  * @since 1.0
  */
+@SuppressWarnings("checkstyle:JavadocVariable")
 public class PortFilter extends AuthorizationFilter {
 
     public static final int DEFAULT_HTTP_PORT = 80;
@@ -64,8 +65,8 @@ public class PortFilter extends AuthorizationFilter {
             return getPort();
         }
         if (ports.length > 1) {
-            throw new ConfigurationException("PortFilter can only be configured with a single port.  You have " +
-                    "configured " + ports.length + ": " + StringUtils.toString(ports));
+            throw new ConfigurationException("PortFilter can only be configured with a single port.  You have "
+                    + "configured " + ports.length + ": " + StringUtils.toString(ports));
         }
         return Integer.parseInt(ports[0]);
     }

@@ -58,8 +58,8 @@ public class ImmutableProxiedSession extends ProxiedSession {
      * @throws InvalidSessionException in all cases - used by the Session 'write' method implementations.
      */
     protected void throwImmutableException() throws InvalidSessionException {
-        String msg = "This session is immutable and read-only - it cannot be altered.  This is usually because " +
-                "the session has been stopped or expired already.";
+        String msg = "This session is immutable and read-only - it cannot be altered.  This is usually because "
+                + "the session has been stopped or expired already.";
         throw new InvalidSessionException(msg);
     }
 

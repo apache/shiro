@@ -16,27 +16,97 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-body { background: #f6f6f6}
-body, td, th { font-family:"Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif; color: #333; font-size: 12px; }
-#box { width: 500px; }
-#bigbox { width: 940px; }
-#bigbox, #box { margin: 30px; padding: 0; border: thin black solid; background: #fff}
-#bigbox .title, #box .title { display: block; margin: 0 0 5px 0; padding: 5px 5px 5px 15px; background: #ddd; font-size: 18px}
-#bigbox .title .info { float: right; padding-right: 10px; font-size: 12px}
+body {
+    background: #f6f6f6
+}
 
-.errors { color: red; padding: 10px 0 10px 0; }
-.form-label { float: left; width: 100px;}
+body, td, th {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Verdana, sans-serif;
+    color: #333;
+    font-size: 12px;
+}
 
-.content { padding: 10px;}
-.content div { padding: 5px 0 5px 0 }
+#box {
+    width: 500px;
+}
 
-#manageUsers { width: 800px }
-#manageUsers th { text-align: left }
+#bigbox {
+    width: 940px;
+}
 
-a:active, a:visited, a:link { color: #6666DD; text-decoration: none; }
-a:hover { color: #6666FF; text-decoration: underline; }
+#bigbox, #box {
+    margin: 30px;
+    padding: 0;
+    border: thin black solid;
+    background: #fff
+}
 
-.clearfix:after {content:".";display:block;height:0;clear:both;visibility:hidden;}
-.clearfix {display:inline-block;}
-* html .clearfix {height:1%;}
-.clearfix {display:block;}
+#bigbox .title, #box .title {
+    display: block;
+    margin: 0 0 5px 0;
+    padding: 5px 5px 5px 15px;
+    background: #ddd;
+    font-size: 18px
+}
+
+#bigbox .title .info {
+    float: right;
+    padding-right: 10px;
+    font-size: 12px
+}
+
+.errors {
+    color: red;
+    padding: 10px 0 10px 0;
+}
+
+.form-label {
+    float: left;
+    width: 100px;
+}
+
+.content {
+    padding: 10px;
+}
+
+.content div {
+    padding: 5px 0 5px 0
+}
+
+#manageUsers {
+    width: 800px
+}
+
+#manageUsers th {
+    text-align: left
+}
+
+a:active, a:visited, a:link {
+    color: #6666DD;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #6666FF;
+    text-decoration: underline;
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.clearfix {
+    display: inline-block;
+}
+
+* html .clearfix {
+    height: 1%;
+}
+
+.clearfix {
+    display: block;
+}

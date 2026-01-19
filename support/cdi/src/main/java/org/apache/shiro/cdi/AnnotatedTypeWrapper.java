@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.enterprise.inject.spi.AnnotatedType;
+
 import lombok.Getter;
 import lombok.experimental.Delegate;
 
@@ -28,7 +29,9 @@ import lombok.experimental.Delegate;
  */
 public class AnnotatedTypeWrapper<T> implements AnnotatedType<T> {
     // the below is so the compiler doesn't complain about unchecked casts
-    private abstract class AT implements AnnotatedType<T> { }
+    private abstract class AT implements AnnotatedType<T> {
+    }
+
     private final @Delegate(types = AT.class) AnnotatedType<T> wrapped;
     private final @Getter Set<Annotation> annotations;
 
@@ -39,7 +42,7 @@ public class AnnotatedTypeWrapper<T> implements AnnotatedType<T> {
 
 
     public AnnotatedTypeWrapper(AnnotatedType<T> wrapped, boolean keepOriginalAnnotations,
-            Set<Annotation> additionalAnnotations, Set<Annotation> annotationsToRemove) {
+                                Set<Annotation> additionalAnnotations, Set<Annotation> annotationsToRemove) {
         this.wrapped = wrapped;
         Stream.Builder<Annotation> builder = Stream.builder();
         if (keepOriginalAnnotations) {
@@ -47,7 +50,7 @@ public class AnnotatedTypeWrapper<T> implements AnnotatedType<T> {
                     .map(AnnotatedTypeWrapper::checkIfAnnotation)
                     .map(Annotation::annotationType).collect(Collectors.toSet());
             wrapped.getAnnotations().stream().filter(ann ->
-                    !annotationTypesToExclude.contains(ann.annotationType()))
+                            !annotationTypesToExclude.contains(ann.annotationType()))
                     .forEach(builder::add);
         }
         additionalAnnotations.forEach(annotation -> addToBuilder(builder, annotation));
@@ -56,7 +59,7 @@ public class AnnotatedTypeWrapper<T> implements AnnotatedType<T> {
 
     @Override
     public boolean isAnnotationPresent(Class<? extends Annotation> annotationType) {
-        return annotations.stream().anyMatch(annotation -> annotationType.isInstance(annotation));
+        return annotations.stream().anyMatch(annotationType::isInstance);
     }
 
     private void addToBuilder(Stream.Builder<Annotation> builder, Annotation ann) {

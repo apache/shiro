@@ -27,7 +27,6 @@ import java.sql.Timestamp;
 
 /**
  * Secured implementation of te dummy service that requires some permissions to execute.
- *
  */
 public class SecuredDummyService implements DummyService {
 
@@ -60,7 +59,8 @@ public class SecuredDummyService implements DummyService {
 
     public void log(String aMessage) {
         if (aMessage != null) {
-            System.out.println(new Timestamp(System.currentTimeMillis()).toString() + " [" + Thread.currentThread() + "] * LOG * " + aMessage);
+            System.out.println(new Timestamp(System.currentTimeMillis())
+                    + " [" + Thread.currentThread() + "] * LOG * " + aMessage);
         } else {
             System.out.println("\n\n");
         }

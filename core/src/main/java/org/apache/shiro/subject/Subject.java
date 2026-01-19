@@ -57,6 +57,7 @@ import java.util.concurrent.Callable;
  *
  * @since 0.1
  */
+@SuppressWarnings("checkstyle:MethodCount")
 public interface Subject {
 
     /**
@@ -83,7 +84,8 @@ public interface Subject {
      * or any other similar suitable unique mechanism valuable to your application.
      * <p/>
      * Most implementations will simply return
-     * <code>{@link #getPrincipals()}.{@link org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal() getPrimaryPrincipal()}</code>
+     * <code>{@link #getPrincipals()}.
+     * {@link org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal() getPrimaryPrincipal()}</code>
      *
      * @return this Subject's application-specific unique identity.
      * @see org.apache.shiro.subject.PrincipalCollection#getPrimaryPrincipal()
@@ -140,9 +142,9 @@ public interface Subject {
      *
      * @param permissions the String representations of the Permissions that are being checked.
      * @return a boolean array where indices correspond to the index of the
-     *         permissions in the given list.  A true value at an index indicates this Subject is permitted for
-     *         for the associated {@code Permission} string in the list.  A false value at an index
-     *         indicates otherwise.
+     * permissions in the given list.  A true value at an index indicates this Subject is permitted for
+     * for the associated {@code Permission} string in the list.  A false value at an index
+     * indicates otherwise.
      * @since 0.9
      */
     boolean[] isPermitted(String... permissions);
@@ -160,9 +162,9 @@ public interface Subject {
      *
      * @param permissions the permissions that are being checked.
      * @return a boolean array where indices correspond to the index of the
-     *         permissions in the given list.  A true value at an index indicates this Subject is permitted for
-     *         for the associated {@code Permission} object in the list.  A false value at an index
-     *         indicates otherwise.
+     * permissions in the given list.  A true value at an index indicates this Subject is permitted for
+     * for the associated {@code Permission} object in the list.  A false value at an index
+     * indicates otherwise.
      */
     boolean[] isPermitted(List<Permission> permissions);
 
@@ -200,8 +202,7 @@ public interface Subject {
      * Please see the class-level JavaDoc for more information on these String-based permission methods.
      *
      * @param permission the String representation of the Permission to check.
-     * @throws org.apache.shiro.authz.AuthorizationException
-     *          if the user does not have the permission.
+     * @throws org.apache.shiro.authz.AuthorizationException if the user does not have the permission.
      * @since 0.9
      */
     void checkPermission(String permission) throws AuthorizationException;
@@ -213,8 +214,7 @@ public interface Subject {
      * the given permission, an {@link org.apache.shiro.authz.AuthorizationException} will be thrown.
      *
      * @param permission the Permission to check.
-     * @throws org.apache.shiro.authz.AuthorizationException
-     *          if this Subject does not have the permission.
+     * @throws org.apache.shiro.authz.AuthorizationException if this Subject does not have the permission.
      */
     void checkPermission(Permission permission) throws AuthorizationException;
 
@@ -267,8 +267,8 @@ public interface Subject {
      *
      * @param roleIdentifiers the application-specific role identifiers to check (usually role ids or role names).
      * @return a boolean array where indices correspond to the index of the
-     *         roles in the given identifiers.  A true value indicates this Subject has the
-     *         role at that index.  False indicates this Subject does not have the role at that index.
+     * roles in the given identifiers.  A true value indicates this Subject has the
+     * role at that index.  False indicates this Subject does not have the role at that index.
      */
     boolean[] hasRoles(List<String> roleIdentifiers);
 
@@ -285,8 +285,7 @@ public interface Subject {
      * {@link org.apache.shiro.authz.AuthorizationException} if they do not.
      *
      * @param roleIdentifier the application-specific role identifier (usually a role id or role name ).
-     * @throws org.apache.shiro.authz.AuthorizationException
-     *          if this Subject does not have the role.
+     * @throws org.apache.shiro.authz.AuthorizationException if this Subject does not have the role.
      */
     void checkRole(String roleIdentifier) throws AuthorizationException;
 
@@ -295,8 +294,7 @@ public interface Subject {
      * {@link org.apache.shiro.authz.AuthorizationException} if they do not.
      *
      * @param roleIdentifiers the application-specific role identifiers to check (usually role ids or role names).
-     * @throws org.apache.shiro.authz.AuthorizationException
-     *          if this Subject does not have all of the specified roles.
+     * @throws org.apache.shiro.authz.AuthorizationException if this Subject does not have all of the specified roles.
      */
     void checkRoles(Collection<String> roleIdentifiers) throws AuthorizationException;
 
@@ -308,7 +306,7 @@ public interface Subject {
      *
      * @param roleIdentifiers roleIdentifiers the application-specific role identifiers to check (usually role ids or role names).
      * @throws AuthorizationException org.apache.shiro.authz.AuthorizationException
-     *          if this Subject does not have all of the specified roles.
+     *                                if this Subject does not have all of the specified roles.
      * @since 1.1.0
      */
     void checkRoles(String... roleIdentifiers) throws AuthorizationException;
@@ -325,8 +323,7 @@ public interface Subject {
      *
      * @param token the token encapsulating the subject's principals and credentials to be passed to the
      *              Authentication subsystem for verification.
-     * @throws org.apache.shiro.authc.AuthenticationException
-     *          if the authentication attempt fails.
+     * @throws org.apache.shiro.authc.AuthenticationException if the authentication attempt fails.
      * @since 0.9
      */
     void login(AuthenticationToken token) throws AuthenticationException;
@@ -340,7 +337,7 @@ public interface Subject {
      * current session</em>.  See the {@link #isRemembered() isRemembered()} method JavaDoc for more.
      *
      * @return {@code true} if this Subject proved their identity during their current session
-     *         by providing valid credentials matching those known to the system, {@code false} otherwise.
+     * by providing valid credentials matching those known to the system, {@code false} otherwise.
      * @since 0.9
      */
     boolean isAuthenticated();
@@ -354,7 +351,7 @@ public interface Subject {
      * Although the underlying implementation determines exactly how this method functions, most implementations have
      * this method act as the logical equivalent to this code:
      * <pre>
-     * {@link #getPrincipal() getPrincipal()} != null && !{@link #isAuthenticated() isAuthenticated()}</pre>
+     * {@link #getPrincipal() getPrincipal()} != null &amp;&amp; !{@link #isAuthenticated() isAuthenticated()}</pre>
      * <p/>
      * Note as indicated by the above code example, if a {@code Subject} is remembered, they are
      * <em>NOT</em> considered authenticated.  A check against {@link #isAuthenticated() isAuthenticated()} is a more
@@ -392,7 +389,7 @@ public interface Subject {
      * check this guarantee via the {@link #isAuthenticated() isAuthenticated()} method and not via this method.
      *
      * @return {@code true} if this {@code Subject}'s identity (aka {@link #getPrincipals() principals}) is
-     *         remembered from a successful authentication during a previous session, {@code false} otherwise.
+     * remembered from a successful authentication during a previous session, {@code false} otherwise.
      * @since 1.0
      */
     boolean isRemembered();
@@ -420,7 +417,7 @@ public interface Subject {
      *
      * @param create boolean argument determining if a new session should be created or not if there is no existing session.
      * @return the application {@code Session} associated with this {@code Subject} or {@code null} based
-     *         on the above described logic.
+     * on the above described logic.
      * @since 0.2
      */
     Session getSession(boolean create);
@@ -534,7 +531,7 @@ public interface Subject {
      * information.
      *
      * @return {@code true} if this {@code Subject} is 'running as' another identity other than its original one or
-     *         {@code false} otherwise (normal {@code Subject} state).
+     * {@code false} otherwise (normal {@code Subject} state).
      * @see #runAs
      * @since 1.0
      */
@@ -546,8 +543,8 @@ public interface Subject {
      * identity (normal state). See the {@link #runAs runAs} method for more information.
      *
      * @return the previous 'pre run as' identity of this {@code Subject} before assuming the current
-     *         {@link #runAs runAs} identity, or {@code null} if this {@code Subject} is not operating under an assumed
-     *         identity (normal state).
+     * {@link #runAs runAs} identity, or {@code null} if this {@code Subject} is not operating under an assumed
+     * identity (normal state).
      * @see #runAs
      * @since 1.0
      */
@@ -561,7 +558,7 @@ public interface Subject {
      * operating under an assumed identity.
      *
      * @return the 'run as' (assumed) identity being released or {@code null} if this {@code Subject} is not operating
-     *         under an assumed identity.
+     * under an assumed identity.
      * @see #runAs
      * @since 1.0
      */
@@ -604,7 +601,7 @@ public interface Subject {
      *
      * @since 1.0
      */
-    public static class Builder {
+    class Builder {
 
         /**
          * Hold all contextual data via the Builder instance's method invocations to be sent to the
@@ -639,8 +636,8 @@ public interface Subject {
             this.securityManager = securityManager;
             this.subjectContext = newSubjectContextInstance();
             if (this.subjectContext == null) {
-                throw new IllegalStateException("Subject instance returned from 'newSubjectContextInstance' " +
-                        "cannot be null.");
+                throw new IllegalStateException("Subject instance returned from 'newSubjectContextInstance' "
+                        + "cannot be null.");
             }
             this.subjectContext.setSecurityManager(securityManager);
         }
@@ -737,7 +734,8 @@ public interface Subject {
          * was named &quot;{@code myRealm}&quot;, you might create the '{@code jsmith} {@code Subject} instance this
          * way:
          * <pre>
-         * PrincipalCollection identity = new {@link org.apache.shiro.subject.SimplePrincipalCollection#SimplePrincipalCollection(Object, String) SimplePrincipalCollection}(&quot;jsmith&quot;, &quot;myRealm&quot;);
+         * PrincipalCollection identity = new {@link SimplePrincipalCollection#SimplePrincipalCollection(Object, String)
+         *                                  SimplePrincipalCollection}(&quot;jsmith&quot;, &quot;myRealm&quot;);
          * Subject jsmith = new Subject.Builder().principals(identity).buildSubject();</pre>
          * <p/>
          * Similarly, if your application's unique identifier for users is a {@code long} value (such as might be used
@@ -746,7 +744,8 @@ public interface Subject {
          * instance this way:
          * <pre>
          * long userId = //get user ID from somewhere
-         * PrincipalCollection userIdentity = new {@link org.apache.shiro.subject.SimplePrincipalCollection#SimplePrincipalCollection(Object, String) SimplePrincipalCollection}(<em>userId</em>, &quot;jdbcRealm&quot;);
+         * PrincipalCollection userIdentity = new {@link SimplePrincipalCollection#SimplePrincipalCollection(Object, String)
+         *                                  SimplePrincipalCollection}(<em>userId</em>, &quot;jdbcRealm&quot;);
          * Subject user = new Subject.Builder().principals(identity).buildSubject();</pre>
          *
          * @param principals the principals to use as the {@code Subject}'s identity.
@@ -839,7 +838,7 @@ public interface Subject {
          * framework developer to bind the returned {@code Subject} for continued use if desired.
          *
          * @return a new {@code Subject} instance reflecting the cumulative state acquired by the
-         *         other methods in this class.
+         * other methods in this class.
          */
         public Subject buildSubject() {
             return this.securityManager.createSubject(this.subjectContext);

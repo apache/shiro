@@ -18,7 +18,7 @@ import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_WAITTIM
 import static org.apache.shiro.ee.filters.FormResubmitSupport.FORM_IS_RESUBMITTED;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.SESSION_EXPIRED_PARAMETER;
 import static org.apache.shiro.ee.filters.LogoutFilter.LOGOUT_PREDICATE_ATTR_NAME;
-import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResumbitDisabled;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.util.concurrent.TimeUnit;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
@@ -93,7 +93,7 @@ public class Forms {
         }
 
         public boolean redirectIfLoggedIn() {
-            return redirectIfLoggedIn("");
+            return redirectIfLoggedIn("/");
         }
 
         public boolean redirectIfLoggedIn(String view) {
@@ -130,7 +130,7 @@ public class Forms {
      */
     public static void redirectToSaved(FallbackPredicate useFallbackPath, String fallbackPath) {
         FormResubmitSupport.redirectToSaved(Faces.getRequest(), Faces.getResponse(), useFallbackPath, fallbackPath,
-                !isFormResumbitDisabled(Faces.getRequest().getServletContext()));
+                !isFormResubmitDisabled(Faces.getRequest().getServletContext()));
     }
 
     /**
@@ -155,7 +155,7 @@ public class Forms {
     public static void login(String username, String password, boolean rememberMe) {
         try {
             SecurityUtils.getSubject().login(new UsernamePasswordToken(username, password, rememberMe));
-            redirectToSaved(Faces.getRequestAttribute(LOGIN_PREDICATE_ATTR_NAME), "");
+            redirectToSaved(Faces.getRequestAttribute(LOGIN_PREDICATE_ATTR_NAME), "/");
         } catch (AuthenticationException e) {
             Faces.setFlashAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME, e);
             int loginFailedWaitTime = Faces.getRequestAttribute(LOGIN_WAITTIME_ATTR_NAME);

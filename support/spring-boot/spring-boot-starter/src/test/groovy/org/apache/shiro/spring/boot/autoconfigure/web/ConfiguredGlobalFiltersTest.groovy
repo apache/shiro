@@ -75,7 +75,7 @@ class ConfiguredGlobalFiltersTest {
 
         // default config set
         assertThat filterChainManager.globalFilterNames, contains(DefaultFilter.invalidRequest.name(),
-                                                                  DefaultFilter.port.name())
+                DefaultFilter.port.name())
         // default route configured
         NamedFilterList allChain = filterChainManager.getChain("/**")
         assertThat allChain, contains(
@@ -84,7 +84,8 @@ class ConfiguredGlobalFiltersTest {
 
         InvalidRequestFilter invalidRequest = allChain.get(0)
         assertThat "Expected invalidRequest.blockBackslash to be false", !invalidRequest.isBlockBackslash()
-        PortFilter portFilter = allChain.get(1) // an ugly line, but we want to make sure that we can override the filters
+        PortFilter portFilter = allChain.get(1)
+        // an ugly line, but we want to make sure that we can override the filters
         // defined in Shiro's DefaultFilter
         assertThat portFilter.port, equalTo(9999)
 

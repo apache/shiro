@@ -31,6 +31,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @since 2.0
  */
+@Isolated("Uses System Input")
 public class HasherTest {
 
     private final InputStream systemIn = System.in;
@@ -54,7 +56,7 @@ public class HasherTest {
     public void setUpOutput(TestInfo testInfo) {
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
         Configuration configuration = loggerContext.getConfiguration();
-        ((Logger)loggerContext.getLogger(Hasher.class)).setLevel(Level.INFO);
+        ((Logger) loggerContext.getLogger(Hasher.class)).setLevel(Level.INFO);
         LoggerConfig rootLoggerConfig = configuration.getLoggerConfig("");
         rootLoggerConfig.getAppenders().clear();
 
@@ -94,6 +96,21 @@ public class HasherTest {
 
     @Test
     public void testBCryptHash() {
+        // given
+        String[] args = {"--debug", "--password", "--pnoconfirm", "--algorithm", "bcrypt2y"};
+        provideInput("secret#shiro,password;Jo8opech");
+
+        // when
+        Hasher.main(args);
+
+        // when
+        assertEquals(1, listAppender.getEvents().size());
+        LogEvent iLoggingEvent = listAppender.getEvents().get(0);
+        assertTrue(iLoggingEvent.getMessage().getFormattedMessage().contains("$shiro2$2y$10$"));
+    }
+
+    @Test
+    public void testBCryptHashShortName() {
         // given
         String[] args = {"--debug", "--password", "--pnoconfirm", "--algorithm", "2y"};
         provideInput("secret#shiro,password;Jo8opech");

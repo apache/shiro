@@ -141,6 +141,7 @@ class AuthenticatingRealmTest {
 
         def token = createStrictMock(AuthenticationToken)
         def info = createStrictMock(AuthenticationInfo)
+        expect(token.getCredentials()).andReturn(null).anyTimes()
 
         replay token, info
 

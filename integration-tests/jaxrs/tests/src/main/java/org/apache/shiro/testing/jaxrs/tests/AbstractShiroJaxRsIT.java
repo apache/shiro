@@ -53,7 +53,7 @@ public abstract class AbstractShiroJaxRsIT {
 
 
     @Test
-    public void testGetUsersUnauthenticated()  {
+    public void testGetUsersUnauthenticated() {
         final WebTarget usersTarget = client.target(getBaseUri()).path("troopers");
         final Response usersResponse = usersTarget.request(MediaType.APPLICATION_JSON_TYPE)
                 .buildGet()
@@ -61,6 +61,7 @@ public abstract class AbstractShiroJaxRsIT {
         assertEquals(Status.UNAUTHORIZED.getStatusCode(), usersResponse.getStatus());
     }
 
+    @SuppressWarnings({"checkstyle:MagicNumber"})
     @Test
     public void testGetUsersBasicAuthenticated() {
         final WebTarget usersTarget = client.target(getBaseUri()).path("troopers");
@@ -72,8 +73,8 @@ public abstract class AbstractShiroJaxRsIT {
         assertEquals(Status.OK.getStatusCode(), usersResponse.getStatus());
         final Stormtrooper[] stormtroopers = usersResponse.readEntity(Stormtrooper[].class);
         assertEquals(50, stormtroopers.length);
-        Arrays.stream(stormtroopers).forEach(stormtrooper -> assertTrue(stormtrooper.getStormtrooperId().getValue().startsWith("u")));
+        Arrays.stream(stormtroopers).forEach(stormtrooper
+                -> assertTrue(stormtrooper.getStormtrooperId().getValue().startsWith("u")));
     }
 
 }
-

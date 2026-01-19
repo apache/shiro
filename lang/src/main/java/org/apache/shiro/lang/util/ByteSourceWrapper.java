@@ -19,8 +19,6 @@
 
 package org.apache.shiro.lang.util;
 
-import org.apache.shiro.lang.util.ByteSource;
-
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -28,8 +26,8 @@ import java.io.IOException;
  * To use try-with-resources idiom, this class supports wrapping existing ByteSource
  * object or byte array. At end of try block, it gets zeroed out automatically.
  */
-public class ByteSourceWrapper implements Closeable {
-    private byte[] bytes;
+public final class ByteSourceWrapper implements Closeable {
+    private final byte[] bytes;
 
     private ByteSourceWrapper(byte[] bytes) {
         this.bytes = bytes;

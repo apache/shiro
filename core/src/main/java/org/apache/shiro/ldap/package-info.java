@@ -17,10 +17,9 @@
  * under the License.
  */
 
-package org.apache.shiro.ldap;
-
 /**
  * Support for accessing <a href="http://en.wikipedia.org/wiki/LDAP">LDAP</a> data sources.
  *
  * @since 1.2
  */
+package org.apache.shiro.ldap;

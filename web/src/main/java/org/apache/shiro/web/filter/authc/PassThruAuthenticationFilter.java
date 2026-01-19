@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.web.filter.authc;
 
+import org.apache.shiro.subject.Subject;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -35,7 +37,7 @@ import javax.servlet.ServletResponse;
  * <p/>
  * Conversely, this controller always passes all requests to the {@link #setLoginUrl loginUrl} through, both GETs and
  * POSTs.  This is useful in cases where the developer wants to write their own login behavior, which should include a
- * call to {@link org.apache.shiro.subject.Subject#login(org.apache.shiro.authc.AuthenticationToken) Subject.login(AuthenticationToken)}
+ * call to {@link Subject#login(org.apache.shiro.authc.AuthenticationToken) Subject.login(AuthenticationToken)}
  * at some point.  For example,  if the developer has their own custom MVC login controller or validator,
  * this <code>PassThruAuthenticationFilter</code> may be appropriate.
  *

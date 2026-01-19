@@ -19,7 +19,6 @@
 package org.apache.shiro.samples;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
@@ -28,9 +27,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.ServletWebRequest;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Map;
+import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.MESSAGE;
+import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.STATUS;
+import static org.springframework.boot.web.error.ErrorAttributeOptions.of;
 
 /**
+ *
  */
 @Controller
 public class RestrictedErrorController implements ErrorController {
@@ -46,8 +50,7 @@ public class RestrictedErrorController implements ErrorController {
     @RequestMapping(ERROR_PATH)
     String error(HttpServletRequest request, Model model) {
         Map<String, Object> errorMap = errorAttributes.getErrorAttributes(
-                new ServletWebRequest(request),
-                ErrorAttributeOptions.of(ErrorAttributeOptions.Include.MESSAGE));
+                new ServletWebRequest(request), of(STATUS, MESSAGE));
         model.addAttribute("errors", errorMap);
         return "error";
     }

@@ -29,7 +29,8 @@ import javax.ws.rs.ext.ExceptionMapper;
 
 /**
  * JAX-RS exception mapper used to map Shiro {@link UnauthorizedException} to HTTP status codes.
- * {@link UnauthorizedException} will be mapped to 401.
+ * {@link UnauthorizedException} will be mapped to 403.
+ *
  * @since 1.4
  */
 public class UnauthorizedExceptionExceptionMapper implements ExceptionMapper<UnauthorizedException> {
@@ -40,9 +41,9 @@ public class UnauthorizedExceptionExceptionMapper implements ExceptionMapper<Una
     public Response toResponse(UnauthorizedException exception) {
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("unauthenticated.", exception);
+            LOG.debug("unauthorized.", exception);
         }
 
-        return Response.status(Status.UNAUTHORIZED).build();
+        return Response.status(Status.FORBIDDEN).build();
     }
 }

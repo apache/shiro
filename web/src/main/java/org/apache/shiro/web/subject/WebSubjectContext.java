@@ -37,7 +37,7 @@ public interface WebSubjectContext extends SubjectContext, RequestPairSource {
      * {@code Subject} instance.
      *
      * @return the {@code ServletRequest} received by the servlet container triggering the creation of the
-     *         {@code Subject} instance.
+     * {@code Subject} instance.
      */
     ServletRequest getServletRequest();
 
@@ -56,7 +56,7 @@ public interface WebSubjectContext extends SubjectContext, RequestPairSource {
      * The paired {@code ServletResponse} corresponding to the associated {@link #getServletRequest servletRequest}.
      *
      * @return the paired {@code ServletResponse} corresponding to the associated
-     *         {@link #getServletRequest servletRequest}.
+     * {@link #getServletRequest servletRequest}.
      */
     ServletResponse getServletResponse();
 

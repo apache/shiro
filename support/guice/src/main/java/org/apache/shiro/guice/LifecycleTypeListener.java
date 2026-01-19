@@ -26,12 +26,14 @@ import com.google.inject.spi.TypeListener;
 import org.apache.shiro.lang.util.Destroyable;
 import org.apache.shiro.lang.util.Initializable;
 
-
 class LifecycleTypeListener implements TypeListener {
-    public static final Matcher<TypeLiteral> MATCHER = InitializableInjectionListener.MATCHER.or(DestroyableInjectionListener.MATCHER);
+
+    public static final Matcher<TypeLiteral> MATCHER
+            = InitializableInjectionListener.MATCHER.or(DestroyableInjectionListener.MATCHER);
+
     private DestroyableInjectionListener.DestroyableRegistry registry;
 
-    public LifecycleTypeListener(DestroyableInjectionListener.DestroyableRegistry registry) {
+    LifecycleTypeListener(DestroyableInjectionListener.DestroyableRegistry registry) {
         this.registry = registry;
     }
 

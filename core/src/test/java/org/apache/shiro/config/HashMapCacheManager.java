@@ -31,11 +31,12 @@ import java.util.HashMap;
  *
  * @since 1.0
  */
+@SuppressWarnings("checkstyle:JavadocType")
 public class HashMapCacheManager<K, V> extends AbstractCacheManager {
 
     @Override
-    protected Cache createCache(String name) throws CacheException {
-        return new HashMapCache<K, V>(name);
+    protected <K, V> Cache<K, V> createCache(String name) throws CacheException {
+        return new HashMapCache<>(name);
     }
 
     //This class is not strictly necessary - it exists to verify a test case only.

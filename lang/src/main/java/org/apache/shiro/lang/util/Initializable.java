@@ -30,8 +30,7 @@ public interface Initializable {
     /**
      * Initializes this object.
      *
-     * @throws ShiroException
-     *          if an exception occurs during initialization.
+     * @throws ShiroException if an exception occurs during initialization.
      */
     void init() throws ShiroException;
 

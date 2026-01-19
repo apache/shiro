@@ -18,8 +18,10 @@
  */
 package org.apache.shiro.authc.credential;
 
+import java.util.Optional;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 
 /**
  * A credentials matcher that always returns {@code true} when matching credentials no matter what arguments
@@ -33,11 +35,16 @@ public class AllowAllCredentialsMatcher implements CredentialsMatcher {
     /**
      * Returns <code>true</code> <em>always</em> no matter what the method arguments are.
      *
-     * @param token   the token submitted for authentication.
-     * @param info    the account being verified for access
+     * @param token the token submitted for authentication.
+     * @param info  the account being verified for access
      * @return <code>true</code> <em>always</em>.
      */
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         return true;
+    }
+
+    @Override
+    public Optional<AuthenticationInfo> createSimulatedCredentials() {
+        return Optional.of(new SimpleAuthenticationInfo("user", "password", "realm"));
     }
 }

@@ -82,9 +82,8 @@ public interface SessionDAO {
      * errors.
      *
      * @param session the Session to update
-     * @throws org.apache.shiro.session.UnknownSessionException
-     *          if no existing EIS session record exists with the
-     *          identifier of {@link Session#getId() session.getSessionId()}
+     * @throws org.apache.shiro.session.UnknownSessionException if no existing EIS session record exists with the
+     *                                                          identifier of {@link Session#getId() session.getSessionId()}
      */
     void update(Session session) throws UnknownSessionException;
 
@@ -118,13 +117,13 @@ public interface SessionDAO {
      * return something similar to the results returned by this query (assuming
      * {@link org.apache.shiro.session.mgt.SimpleSession SimpleSession}s were being stored):
      * <pre>
-     * select * from sessions s where s.lastAccessTimestamp < ? and s.stopTimestamp is null
+     * select * from sessions s where s.lastAccessTimestamp &lt; ? and s.stopTimestamp is null
      * </pre>
      * where the {@code ?} parameter is a date instance equal to 'now' minus the session timeout
      * (e.g. now - 30 minutes).
      *
      * @return a Collection of {@code Session}s that are considered active, or an
-     *         empty collection or {@code null} if there are no active sessions.
+     * empty collection or {@code null} if there are no active sessions.
      */
     Collection<Session> getActiveSessions();
 }

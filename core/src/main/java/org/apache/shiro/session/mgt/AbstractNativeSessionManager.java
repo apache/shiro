@@ -42,9 +42,10 @@ import java.util.Date;
  *
  * @since 1.0
  */
+@SuppressWarnings({"checkstyle:MethodCount"})
 public abstract class AbstractNativeSessionManager extends AbstractSessionManager implements NativeSessionManager, EventBusAware {
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractSessionManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSessionManager.class);
 
     private EventBus eventBus;
 
@@ -112,11 +113,11 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
      * @param context the initialization data that can be used by the implementation or underlying
      *                {@link SessionFactory} when instantiating the internal {@code Session} instance.
      * @return the new {@code Session} instance.
-     * @throws org.apache.shiro.authz.HostUnauthorizedException
-     *                                if the system access control policy restricts access based
-     *                                on client location/IP and the specified hostAddress hasn't been enabled.
-     * @throws AuthorizationException if the system access control policy does not allow the currently executing
-     *                                caller to start sessions.
+     * @throws org.apache.shiro.authz.HostUnauthorizedException if the system access control policy restricts access based
+     *                                                          on client location/IP and
+     *                                                          the specified hostAddress hasn't been enabled.
+     * @throws AuthorizationException                           if the system access control policy does not allow
+     *                                                          the currently executing caller to start sessions.
      */
     protected abstract Session createSession(SessionContext context) throws AuthorizationException;
 
@@ -280,8 +281,8 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
     public void stop(SessionKey key) throws InvalidSessionException {
         Session session = lookupRequiredSession(key);
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Stopping session with id [" + session.getId() + "]");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Stopping session with id [" + session.getId() + "]");
             }
             session.stop();
             onStop(session, key);

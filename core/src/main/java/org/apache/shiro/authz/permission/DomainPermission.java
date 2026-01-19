@@ -32,11 +32,11 @@ import java.util.Set;
  */
 public class DomainPermission extends WildcardPermission {
 
+    private static final long serialVersionUID = 1L;
+
     private String domain;
     private Set<String> actions;
     private Set<String> targets;
-
-    private static final long serialVersionUID = 1l;
 
     /**
      * Creates a domain permission with *all* actions for *all* targets;

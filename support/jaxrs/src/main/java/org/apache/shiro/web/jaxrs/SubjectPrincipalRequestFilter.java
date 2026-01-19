@@ -27,11 +27,13 @@ import java.io.IOException;
 /**
  * A {@link ContainerRequestFilter} that replaces the {@link javax.ws.rs.core.SecurityContext}
  * with a {@link ShiroSecurityContext}.
+ *
  * @since 1.4
  */
 @Provider
 @PreMatching
 public class SubjectPrincipalRequestFilter implements ContainerRequestFilter {
+    @SuppressWarnings("checkstyle:JavadocVariable")
     public static final String SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.jaxrs.disable-principal";
 
     @Override

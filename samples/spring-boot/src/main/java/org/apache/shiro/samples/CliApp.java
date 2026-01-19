@@ -29,13 +29,14 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Spring Boot Application that show the usage of a user login, checking permissions, and annotation protected methods.
+ * NOPMD
  *
  * @see QuickStart
  * @see SimpleService
  */
 @Configuration
 @SpringBootApplication
-public class CliApp { //NOPMD
+public class CliApp {
 
     public static void main(String[] args) {
 
@@ -47,16 +48,15 @@ public class CliApp { //NOPMD
 
     /**
      * Example hard coded Realm bean.
+     *
      * @return hard coded Realm bean
      */
     @Bean
     public Realm realm() {
         TextConfigurationRealm realm = new TextConfigurationRealm();
-        realm.setUserDefinitions("joe.coder=password,user\n" +
-                                 "jill.coder=password,admin");
+        realm.setUserDefinitions("joe.coder=password,user\n" + "jill.coder=password,admin");
 
-        realm.setRoleDefinitions("admin=read,write\n" +
-                                 "user=read");
+        realm.setRoleDefinitions("admin=read,write\n" + "user=read");
         realm.setCachingEnabled(true);
         return realm;
     }

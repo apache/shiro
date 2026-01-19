@@ -33,6 +33,7 @@ import org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter;
 public class RemotingServletConfig {
 
     @Bean(name = "/sampleManager")
+    @SuppressWarnings("deprecation")
     public HttpInvokerServiceExporter accountServiceExporter(SampleManager sampleManager,
                                                              SecureRemoteInvocationExecutor secureRemoteInvocationExecutor) {
 

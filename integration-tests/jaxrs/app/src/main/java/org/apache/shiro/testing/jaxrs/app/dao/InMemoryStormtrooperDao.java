@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings("checkstyle:MagicNumber")
 @Dependent
 @Default
 public class InMemoryStormtrooperDao implements StormtrooperDao {
@@ -61,7 +62,7 @@ public class InMemoryStormtrooperDao implements StormtrooperDao {
 
     @Override
     public Optional<Stormtrooper> getStormtrooper(StormtrooperId id) {
-            return Optional.ofNullable(TROOPERS.get(id));
+        return Optional.ofNullable(TROOPERS.get(id));
     }
 
     @Override
@@ -87,6 +88,7 @@ public class InMemoryStormtrooperDao implements StormtrooperDao {
     @Override
     public boolean deleteStormtrooper(StormtrooperId id) {
         // TODO: implement
-        throw new UnsupportedOperationException("not yet implemented: [org.apache.shiro.testing.meecrowave.jaxrs.dao.InMemoryStormtrooperDao::deleteStormtrooper].");
+        throw new UnsupportedOperationException("not yet implemented: "
+                + "[org.apache.shiro.testing.meecrowave.jaxrs.dao.InMemoryStormtrooperDao::deleteStormtrooper].");
     }
 }

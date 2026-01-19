@@ -24,7 +24,7 @@ permissions:
   pull-requests: write
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch: { }
   schedule:
     # every day 5min after midnight, UTC.
     - cron: "5 0 * * *"
@@ -34,7 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Close Stale Issues
-        uses: actions/stale@v8
+        uses: actions/stale@997185467fa4f803885201cee163a9f38240193d # v10.1.1
         with:
           # default is 60
           days-before-stale: 90
+          exempt-issue-labels: valid
+          exempt-pr-labels: valid

@@ -26,6 +26,7 @@ import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
+
 import org.apache.shiro.cdi.AnnotatedTypeWrapper;
 import org.apache.shiro.cdi.ShiroSecurityExtension.ShiroSecureAnnotated;
 import org.apache.shiro.mgt.SecurityManager;
@@ -39,34 +40,45 @@ public class ShiroSessionScopeExtension implements Extension, Serializable {
     private static final long serialVersionUID = 1L;
     @SuppressWarnings("ConstantName")
     private static final List<ShiroScopeContext> contexts = Stream.of(
-            new ShiroScopeContext(ShiroSessionScoped.class, SessionScoped.class),
-            new ShiroScopeContext(ShiroFacesViewScoped.class, javax.faces.view.ViewScoped.class),
-            new ShiroScopeContext(ShiroOmniViewScoped.class, org.omnifaces.cdi.ViewScoped.class))
+                    new ShiroScopeContext(ShiroSessionScoped.class, SessionScoped.class),
+                    new ShiroScopeContext(ShiroFacesViewScoped.class, javax.faces.view.ViewScoped.class),
+                    new ShiroScopeContext(ShiroOmniViewScoped.class, org.omnifaces.cdi.ViewScoped.class))
             .collect(Collectors.toList());
 
     @SessionScoped
     @SuppressWarnings("serial")
-    private static final class SessionScopedAnnotated implements Serializable { }
+    private static final class SessionScopedAnnotated implements Serializable {
+    }
+
     @javax.faces.view.ViewScoped
     @SuppressWarnings("serial")
-    private static final class FacesViewScopedAnnotated implements Serializable { }
+    private static final class FacesViewScopedAnnotated implements Serializable {
+    }
+
     @org.omnifaces.cdi.ViewScoped
     @SuppressWarnings("serial")
-    private static final class OmniViewScopedAnnotated implements Serializable { }
+    private static final class OmniViewScopedAnnotated implements Serializable {
+    }
 
     @ShiroSessionScoped
     @SuppressWarnings("serial")
-    private static final class ShiroSessionScopedAnnotated implements Serializable { }
+    private static final class ShiroSessionScopedAnnotated implements Serializable {
+    }
+
     @ShiroFacesViewScoped
     @SuppressWarnings("serial")
-    private static final class ShiroFacesViewScopedAnnotated implements Serializable { }
+    private static final class ShiroFacesViewScopedAnnotated implements Serializable {
+    }
+
     @ShiroOmniViewScoped
     @SuppressWarnings("serial")
-    private static final class ShiroOmniViewScopedAnnotated implements Serializable { }
+    private static final class ShiroOmniViewScopedAnnotated implements Serializable {
+    }
 
 
     /**
      * intercept session destroy session listeners and destroy the beans
+     *
      * @param sessionListeners
      * @param sm
      */

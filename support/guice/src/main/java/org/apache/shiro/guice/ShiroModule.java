@@ -18,6 +18,35 @@
  */
 package org.apache.shiro.guice;
 
+import com.google.inject.Key;
+import com.google.inject.PrivateModule;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
+import com.google.inject.binder.AnnotatedBindingBuilder;
+import com.google.inject.binder.LinkedBindingBuilder;
+import com.google.inject.matcher.Matchers;
+import com.google.inject.multibindings.Multibinder;
+import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
+import com.google.inject.util.Types;
+import org.apache.shiro.config.ConfigurationException;
+import org.apache.shiro.env.Environment;
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.EventBusAware;
+import org.apache.shiro.event.Subscribe;
+import org.apache.shiro.event.support.DefaultEventBus;
+import org.apache.shiro.lang.util.ClassUtils;
+import org.apache.shiro.lang.util.Destroyable;
+import org.apache.shiro.mgt.DefaultSecurityManager;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.mgt.DefaultSessionManager;
+import org.apache.shiro.session.mgt.SessionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PreDestroy;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,48 +54,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import javax.annotation.PreDestroy;
-
-import com.google.inject.Provider;
-import com.google.inject.matcher.Matchers;
-import com.google.inject.spi.InjectionListener;
-import com.google.inject.spi.TypeEncounter;
-import com.google.inject.spi.TypeListener;
-import org.apache.shiro.config.ConfigurationException;
-import org.apache.shiro.env.Environment;
-import org.apache.shiro.event.EventBus;
-import org.apache.shiro.event.EventBusAware;
-import org.apache.shiro.event.Subscribe;
-import org.apache.shiro.event.support.DefaultEventBus;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.realm.Realm;
-import org.apache.shiro.session.mgt.DefaultSessionManager;
-import org.apache.shiro.session.mgt.SessionManager;
-import org.apache.shiro.lang.util.ClassUtils;
-import org.apache.shiro.lang.util.Destroyable;
-
-import com.google.inject.Key;
-import com.google.inject.PrivateModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.binder.AnnotatedBindingBuilder;
-import com.google.inject.binder.LinkedBindingBuilder;
-import com.google.inject.multibindings.Multibinder;
-import com.google.inject.util.Types;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
 /**
  * Sets up Shiro lifecycles within Guice, enables the injecting of Shiro objects, and binds a default
- * {@link org.apache.shiro.mgt.SecurityManager} and {@link org.apache.shiro.session.mgt.SessionManager}.  At least one realm must be added by using
+ * {@link org.apache.shiro.mgt.SecurityManager} and {@link org.apache.shiro.session.mgt.SessionManager}.
+ * At least one realm must be added by using
  * {@link #bindRealm() bindRealm}.
  */
 public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
     private final Logger log = LoggerFactory.getLogger(ShiroModule.class);
 
-	private Set<Destroyable> destroyables = Collections.newSetFromMap(new WeakHashMap<Destroyable, Boolean>());
+    private final Set<Destroyable> destroyables = Collections.newSetFromMap(new WeakHashMap<Destroyable, Boolean>());
+
     public void configure() {
         // setup security manager
         bindSecurityManager(bind(SecurityManager.class));
@@ -115,7 +114,8 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
     protected abstract void configureShiro();
 
     /**
-     * This is the preferred manner to bind a realm.  The {@link org.apache.shiro.mgt.SecurityManager} will be injected with any Realm bound
+     * This is the preferred manner to bind a realm.
+     * The {@link org.apache.shiro.mgt.SecurityManager} will be injected with any Realm bound
      * with this method.
      *
      * @return a binding builder for a realm
@@ -136,7 +136,9 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         try {
             bind.toConstructor(DefaultSecurityManager.class.getConstructor(Collection.class)).asEagerSingleton();
         } catch (NoSuchMethodException e) {
-            throw new ConfigurationException("This really shouldn't happen.  Either something has changed in Shiro, or there's a bug in " + ShiroModule.class.getSimpleName(), e);
+            throw new ConfigurationException("This really shouldn't happen."
+                    + " Either something has changed in Shiro, or there's a bug in "
+                    + ShiroModule.class.getSimpleName(), e);
         }
     }
 
@@ -164,8 +166,9 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
     /**
      * Binds a key to use for injecting setters in shiro classes.
+     *
      * @param typeLiteral the bean property type
-     * @param key the key to use to satisfy the bean property dependency
+     * @param key         the key to use to satisfy the bean property dependency
      * @param <T>
      */
     protected final <T> void bindBeanType(TypeLiteral<T> typeLiteral, Key<? extends T> key) {
@@ -174,6 +177,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
     /**
      * Binds the EventBus.  Override this method in order to provide your own {@link EventBus} binding.
+     *
      * @param bind
      * @since 1.4
      */
@@ -182,8 +186,8 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
     }
 
     /**
-     * Destroys all beans created within this module that implement {@link org.apache.shiro.lang.util.Destroyable}.  Should be called when this
-     * module will no longer be used.
+     * Destroys all beans created within this module that implement {@link org.apache.shiro.lang.util.Destroyable}.
+     * Should be called when this module will no longer be used.
      *
      * @throws Exception
      */
@@ -191,8 +195,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         for (Destroyable destroyable : destroyables) {
             try {
                 destroyable.destroy();
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 log.warn("Error destroying component class: " + destroyable.getClass(), e);
             }
         }
@@ -202,7 +205,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         this.destroyables.add(destroyable);
     }
 
-    private class SubscribedEventTypeListener implements TypeListener {
+    private final class SubscribedEventTypeListener implements TypeListener {
         @Override
         public <I> void hear(TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
 
@@ -210,7 +213,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
             List<Method> methods = ClassUtils.getAnnotatedMethods(typeLiteral.getRawType(), Subscribe.class);
             if (methods != null && !methods.isEmpty()) {
-                typeEncounter.register( new InjectionListener<I>() {
+                typeEncounter.register(new InjectionListener<I>() {
                     @Override
                     public void afterInjection(Object o) {
                         eventBusProvider.get().register(o);
@@ -220,17 +223,17 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         }
     }
 
-    private class EventBusAwareTypeListener implements TypeListener {
+    private final class EventBusAwareTypeListener implements TypeListener {
         @Override
         public <I> void hear(TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
 
             final Provider<EventBus> eventBusProvider = typeEncounter.getProvider(EventBus.class);
 
             if (EventBusAware.class.isAssignableFrom(typeLiteral.getRawType())) {
-                typeEncounter.register( new InjectionListener<I>() {
+                typeEncounter.register(new InjectionListener<I>() {
                     @Override
                     public void afterInjection(Object o) {
-                        ((EventBusAware)o).setEventBus(eventBusProvider.get());
+                        ((EventBusAware) o).setEventBus(eventBusProvider.get());
                     }
                 });
             }

@@ -21,10 +21,11 @@ package org.apache.shiro.samples.guice;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
-import org.apache.shiro.guice.web.ShiroWebModule;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+
+import static org.apache.shiro.guice.web.ShiroWebModule.guiceFilterModule;
 
 public class SampleShiroGuiceBootstrap extends GuiceServletContextListener {
 
@@ -39,6 +40,6 @@ public class SampleShiroGuiceBootstrap extends GuiceServletContextListener {
     @Override
     protected Injector getInjector() {
 //        return Guice.createInjector(new SampleShiroServletModule(servletContext), ShiroWebModule.guiceFilterModule());
-        return Guice.createInjector(new SampleShiroNativeSessionsServletModule(servletContext), ShiroWebModule.guiceFilterModule());
+        return Guice.createInjector(new SampleShiroNativeSessionsServletModule(servletContext), guiceFilterModule());
     }
 }

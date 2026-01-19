@@ -22,10 +22,10 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.env.BasicIniEnvironment;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.CodecSupport;
 import org.apache.shiro.config.Ini;
-import org.apache.shiro.ini.IniSecurityManagerFactory;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -36,10 +36,8 @@ import org.hsqldb.jdbc.JDBCDataSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import javax.sql.DataSource;
 
@@ -50,26 +48,32 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Optional;
 
+import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 
 /**
  * Test case for JDBCRealm.
  */
+@ResourceLock(GLOBAL_SECURITY_MANAGER_RESOURCE)
 public class JDBCRealmTest {
 
-    protected DefaultSecurityManager securityManager = null;
+    protected DefaultSecurityManager securityManager;
     protected AuthorizingRealm realm;
     protected final String username = "testUser";
     protected final String plainTextPassword = "testPassword";
-    protected final String salt = username;  //Default impl of getSaltForUser returns username
+    //Default impl of getSaltForUser returns username
+    protected final String salt = username;
     protected final String testRole = "testRole";
     protected final String testPermissionString = "testDomain:testTarget:testAction";
-    
+
     // Maps keyed on test method name so setup/teardown can manage per test resources
     protected HashMap<String, JdbcRealm> realmMap = new HashMap<String, JdbcRealm>();
     protected HashMap<String, DataSource> dsMap = new HashMap<String, DataSource>();
 
-     
-    public String name;
+    private String name;
 
     @BeforeEach
     public void setup(TestInfo testInfo) {
@@ -80,16 +84,18 @@ public class JDBCRealmTest {
         ThreadContext.remove();
         Ini config = new Ini();
         config.setSectionProperty("main", "myRealm", "org.apache.shiro.realm.jdbc.JdbcRealm");
-        config.setSectionProperty("main", "myRealmCredentialsMatcher", "org.apache.shiro.authc.credential.Sha256CredentialsMatcher");
+        config.setSectionProperty("main",
+                "myRealmCredentialsMatcher",
+                "org.apache.shiro.authc.credential.Sha256CredentialsMatcher");
         config.setSectionProperty("main", "myRealm.credentialsMatcher", "$myRealmCredentialsMatcher");
         config.setSectionProperty("main", "securityManager.sessionManager.sessionValidationSchedulerEnabled", "false");
 
-        IniSecurityManagerFactory factory = new IniSecurityManagerFactory(config);
-        securityManager = (DefaultSecurityManager) factory.createInstance();
+        var basicIniEnvironment = new BasicIniEnvironment(config);
+        securityManager = (DefaultSecurityManager) basicIniEnvironment.getSecurityManager();
         SecurityUtils.setSecurityManager(securityManager);
 
         // Create a database and realm for the test
-        createRealm( name);
+        createRealm(name);
     }
 
     @AfterEach
@@ -107,7 +113,7 @@ public class JDBCRealmTest {
         JdbcRealm realm = realmMap.get(testMethodName);
         createDefaultSchema(testMethodName, false);
         realm.setSaltStyle(JdbcRealm.SaltStyle.NO_SALT);
-        
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
@@ -121,7 +127,7 @@ public class JDBCRealmTest {
         JdbcRealm realm = realmMap.get(testMethodName);
         createDefaultSchema(testMethodName, false);
         realm.setSaltStyle(JdbcRealm.SaltStyle.NO_SALT);
-        
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, "passwrd");
@@ -141,7 +147,7 @@ public class JDBCRealmTest {
         Connection conn = dsMap.get(testMethodName).getConnection();
         Statement sql = conn.createStatement();
         sql.executeUpdate("insert into users values ('" + username + "', 'dupe')");
-        
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, "passwrd");
@@ -159,7 +165,7 @@ public class JDBCRealmTest {
         createSaltColumnSchema(testMethodName, false);
         realm.setSaltStyle(JdbcRealm.SaltStyle.COLUMN);
         realm.setSaltIsBase64Encoded(false);
-        
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
@@ -188,7 +194,7 @@ public class JDBCRealmTest {
         createSaltColumnSchema(testMethodName, false);
         realm.setSaltStyle(JdbcRealm.SaltStyle.COLUMN);
         realm.setSaltIsBase64Encoded(false);
-        
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, "passwrd");
@@ -223,7 +229,7 @@ public class JDBCRealmTest {
         JdbcRealm realm = realmMap.get(testMethodName);
         createDefaultSchema(testMethodName, true);
         realm.setSaltStyle(JdbcRealm.SaltStyle.EXTERNAL);
-        
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
@@ -237,7 +243,7 @@ public class JDBCRealmTest {
         JdbcRealm realm = realmMap.get(testMethodName);
         createDefaultSchema(testMethodName, true);
         realm.setSaltStyle(JdbcRealm.SaltStyle.EXTERNAL);
-        
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, "passwrd");
@@ -254,12 +260,12 @@ public class JDBCRealmTest {
         JdbcRealm realm = realmMap.get(testMethodName);
         createDefaultSchema(testMethodName, false);
         realm.setSaltStyle(JdbcRealm.SaltStyle.NO_SALT);
-        
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        Assertions.assertTrue(currentUser.hasRole(testRole));
+        assertTrue(currentUser.hasRole(testRole));
     }
 
     @Test
@@ -268,12 +274,12 @@ public class JDBCRealmTest {
         JdbcRealm realm = realmMap.get(testMethodName);
         createDefaultSchema(testMethodName, false);
         realm.setSaltStyle(JdbcRealm.SaltStyle.NO_SALT);
-        
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        Assertions.assertFalse(currentUser.hasRole("Game Overall Director"));
+        assertFalse(currentUser.hasRole("Game Overall Director"));
     }
 
     @Test
@@ -283,12 +289,12 @@ public class JDBCRealmTest {
         createDefaultSchema(testMethodName, false);
         realm.setSaltStyle(JdbcRealm.SaltStyle.NO_SALT);
         realm.setPermissionsLookupEnabled(true);
-        
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        Assertions.assertTrue(currentUser.isPermitted(testPermissionString));
+        assertTrue(currentUser.isPermitted(testPermissionString));
     }
 
     @Test
@@ -298,14 +304,14 @@ public class JDBCRealmTest {
         createDefaultSchema(testMethodName, false);
         realm.setSaltStyle(JdbcRealm.SaltStyle.NO_SALT);
         realm.setPermissionsLookupEnabled(true);
-        
+
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, plainTextPassword);
         currentUser.login(token);
-        Assertions.assertFalse(currentUser.isPermitted("testDomain:testTarget:specialAction"));
+        assertFalse(currentUser.isPermitted("testDomain:testTarget:specialAction"));
     }
-    
+
     /**
      * Creates a realm for a test method and puts it in the realMap.
      */
@@ -313,7 +319,7 @@ public class JDBCRealmTest {
         JdbcRealm realm = (JdbcRealm) securityManager.getRealms().iterator().next();
         realmMap.put(testMethodName, realm);
     }
-    
+
     /**
      * Shuts down the database and removes the realm from the realm map.
      */
@@ -334,7 +340,7 @@ public class JDBCRealmTest {
             realmMap.remove(testName);
         }
     }
-    
+
     /**
      * Creates a test database with the default (no separate salt column) schema, salting with
      * username if salted is true. Sets the DataSource of the realm associated with the test
@@ -352,12 +358,12 @@ public class JDBCRealmTest {
             conn = ds.getConnection();
             sql = conn.createStatement();
             sql.executeUpdate("create table users (username varchar(20), password varchar(100))");
-            Sha256Hash sha256Hash = salted ? new Sha256Hash(plainTextPassword, salt) :
-                new Sha256Hash(plainTextPassword);
+            Sha256Hash sha256Hash = salted ? new Sha256Hash(plainTextPassword, salt)
+                    : new Sha256Hash(plainTextPassword);
             String password = sha256Hash.toHex();
             sql.executeUpdate("insert into users values ('" + username + "', '" + password + "')");
         } catch (SQLException ex) {
-            Assertions.fail("Exception creating test database");
+            fail("Exception creating test database");
         } finally {
             JdbcUtils.closeStatement(sql);
             JdbcUtils.closeConnection(conn);
@@ -366,12 +372,13 @@ public class JDBCRealmTest {
         realmMap.get(testName).setDataSource(ds);
         dsMap.put(testName, ds);
     }
-    
+
     /**
      * Creates a test database with a separate salt column in the users table. Sets the
      * DataSource of the realm associated with the test to a DataSource connected to the database.
-     * @param The name of the test which is used as the key when saving the created realm in the realmMap
-     * @param base64EncodeSalt if true, the salt will be base64 encoded before it's stored in the database
+     *
+     * @param testName          name of the test which is used as the key when saving the created realm in the realmMap
+     * @param base64EncodeSalt  if true, the salt will be base64 encoded before it's stored in the database
      */
     protected void createSaltColumnSchema(String testName, boolean base64EncodeSalt) {
         JDBCDataSource ds = new JDBCDataSource();
@@ -388,9 +395,11 @@ public class JDBCRealmTest {
             Sha256Hash sha256Hash = new Sha256Hash(plainTextPassword, salt);
             String password = sha256Hash.toHex();
             String maybeBase64EncodedSalt = base64EncodeSalt ? Base64.encodeToString(CodecSupport.toBytes(salt)) : salt;
-            sql.executeUpdate("insert into users values ('" + username + "', '" + password + "', '" + maybeBase64EncodedSalt + "')");
+            sql.executeUpdate(
+                    "insert into users values ('" + username + "', '" + password + "', '"
+                            + maybeBase64EncodedSalt + "')");
         } catch (SQLException ex) {
-            Assertions.fail("Exception creating test database");
+            fail("Exception creating test database");
         } finally {
             JdbcUtils.closeStatement(sql);
             JdbcUtils.closeConnection(conn);
@@ -399,12 +408,12 @@ public class JDBCRealmTest {
         realmMap.get(testName).setDataSource(ds);
         dsMap.put(testName, ds);
     }
-    
+
     /**
      * Creates and adds test data to user_role and roles_permissions tables.
      */
     protected void createRolesAndPermissions(DataSource ds) {
-        Connection conn = null;;
+        Connection conn = null;
         Statement sql = null;
         try {
             conn = ds.getConnection();
@@ -415,7 +424,7 @@ public class JDBCRealmTest {
             sql.executeUpdate(
                     "insert into roles_permissions values ('" + testRole + "', '" + testPermissionString + "')");
         } catch (SQLException ex) {
-            Assertions.fail("Exception adding test role and permission");
+            fail("Exception adding test role and permission");
         } finally {
             JdbcUtils.closeStatement(sql);
             JdbcUtils.closeConnection(conn);

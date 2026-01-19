@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * A Spring UrlPathHelper that uses Shiro's path resolution logic.
+ *
  * @since 1.7.0
  */
 public class ShiroUrlPathHelper extends UrlPathHelper {

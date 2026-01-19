@@ -17,18 +17,19 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.shiro.integrationtests</groupId>
     <artifactId>shiro-its-jakarta-ee</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>999-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Apache Shiro :: ITs :: Jakarta EE</name>
 
     <parent>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <artifactId>shiro-integration-tests</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -36,21 +37,20 @@
         <!-- override older compiler source / target flags set by Apache parent POM -->
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
-        <arquillian.version>1.7.0.Final</arquillian.version>
-        <failsafe.argLine>
-            --add-opens java.base/java.lang=ALL-UNNAMED
-            --add-opens java.base/java.net=ALL-UNNAMED
-            --add-opens java.base/sun.net.www=ALL-UNNAMED
-        </failsafe.argLine>
-        <webdriver.browser>firefox</webdriver.browser>
+        <arquillian.core.version>1.10.0.Final</arquillian.core.version>
+        <arquillian.payara5.version>2.5</arquillian.payara5.version>
+        <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
+        <shrinkwrap.resolver.version>3.3.4</shrinkwrap.resolver.version>
+        <drone.browser>firefox</drone.browser>
 
-        <payara.version>5.2022.5</payara.version>
+        <payara.version>5.2022.5.jdk21</payara.version>
         <payara.start.skip>${skipITs}</payara.start.skip>
         <asadmin.cmd>asadmin</asadmin.cmd>
         <unix-sed-skip>${payara.start.skip}</unix-sed-skip>
         <mac-backup-file/>
         <create-domain-skip>true</create-domain-skip>
         <domain.name>domain1</domain.name>
+        <payara.https.port>8181</payara.https.port>
 
         <jakartaee.it.skip>${skipITs}</jakartaee.it.skip>
         <integration.modes.skip>${jakartaee.it.skip}</integration.modes.skip>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.3</version>
+            <version>3.14.12</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -138,12 +138,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
-            <version>${mockito-inline.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>${slf4j.version}</version>
@@ -152,21 +146,66 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>5.5</version>
-            <scope>test</scope>
+            <version>5.5.6</version>
         </dependency>
 
         <!-- Arquillian test dependencies -->
         <dependency>
             <groupId>org.jboss.arquillian.junit5</groupId>
             <artifactId>arquillian-junit5-container</artifactId>
-            <version>${arquillian.version}</version>
+            <version>${arquillian.core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>fish.payara.arquillian</groupId>
             <artifactId>arquillian-payara-server-remote</artifactId>
-            <version>2.5</version>
+            <version>${arquillian.payara5.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.arquillian.testenricher</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.arquillian.protocol</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-spi</artifactId>
+            <version>${arquillian.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+            <version>${arquillian.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-cdi</artifactId>
+            <version>${arquillian.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-ejb</artifactId>
+            <version>${arquillian.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-resource</artifactId>
+            <version>${arquillian.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.testenricher</groupId>
+            <artifactId>arquillian-testenricher-initialcontext</artifactId>
+            <version>${arquillian.core.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -176,9 +215,27 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>6.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.eu.ingwar.tools</groupId>
             <artifactId>arquillian-suite-extension</artifactId>
             <version>1.2.2</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.30.2-GA</version>
             <scope>test</scope>
         </dependency>
 
@@ -186,7 +243,7 @@
         <dependency>
             <groupId>org.jboss.arquillian.graphene</groupId>
             <artifactId>graphene-webdriver</artifactId>
-            <version>2.5.4</version>
+            <version>${arquillian.graphene.version}</version>
             <scope>test</scope>
             <type>pom</type>
         </dependency>
@@ -195,23 +252,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${arquillian.version}</version>
-                <type>pom</type>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-drone-bom</artifactId>
-                <version>2.5.6</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.shrinkwrap.resolver</groupId>
                 <artifactId>shrinkwrap-resolver-bom</artifactId>
-                <version>3.2.1</version>
+                <version>${shrinkwrap.resolver.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -220,6 +263,18 @@
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <annotationProcessorPath>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </annotationProcessorPath>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
             </plugin>
@@ -233,10 +288,12 @@
                         <integration.test.mode>${integration.test.mode}</integration.test.mode>
                         <gh_user>${gh_user}</gh_user>
                         <gh_token>${gh_token}</gh_token>
-                        <webdriver.browser>${webdriver.browser}</webdriver.browser>
-                        <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
-                        <webdriver.chrome.binary>${webdriver.chrome.binary}</webdriver.chrome.binary>
-                        <webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
+                        <httpsPort>${payara.https.port}</httpsPort>
+                        <webdriver.browser>${drone.browser}</webdriver.browser>
+                        <webdriver.chrome.binary>${drone.chrome.binary}</webdriver.chrome.binary>
+                        <webdriver.firefox.binary>${drone.firefox.binary}</webdriver.firefox.binary>
+                        <org.jboss.shrinkwrap.resolver.maven.skipCompilation>true</org.jboss.shrinkwrap.resolver.maven.skipCompilation>
+                        <org.jboss.shrinkwrap.resolver.maven.ignoreDecryptionProblems>true</org.jboss.shrinkwrap.resolver.maven.ignoreDecryptionProblems>
                     </systemPropertyVariables>
                     <argLine>${failsafe.argLine} ${payara.argLine}</argLine>
                     <skip>${jakartaee.it.skip}</skip>
@@ -271,27 +328,15 @@
             <plugin>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok-maven-plugin</artifactId>
-                <version>1.18.20.0</version>
                 <configuration>
-                    <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
                     <addOutputDirectory>false</addOutputDirectory>
-                    <skip>true</skip>
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>delombok</goal>
-                        </goals>
+                        <id>lombok-preprocess</id>
+                        <phase>none</phase>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.projectlombok</groupId>
-                        <artifactId>lombok</artifactId>
-                        <version>${lombok.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -301,7 +346,7 @@
                     <overWriteIfNewer>false</overWriteIfNewer>
                     <artifactItems>
                         <artifactItem>
-                            <groupId>fish.payara.distributions</groupId>
+                            <groupId>com.flowlogix.payara</groupId>
                             <artifactId>payara</artifactId>
                             <version>${payara.version}</version>
                             <type>zip</type>
@@ -330,42 +375,7 @@
                         </goals>
                         <configuration>
                             <scripts>
-                                <script><![CDATA[
-                                    def executor_number = System.getenv('EXECUTOR_NUMBER')
-                                    if (executor_number != null) {
-                                        final int port_increment = 100
-                                        final int admin_port_increment = 48
-                                        int portbase = 4900 + (executor_number as int) * port_increment
-                                        int adminPort
-                                        // find a free port
-                                        for (; portbase < 10000; portbase += port_increment) {
-                                            def server_socket
-                                            adminPort = portbase + admin_port_increment
-                                            try {
-                                                server_socket = new ServerSocket()
-                                                server_socket.setReuseAddress true
-                                                server_socket.bind(new InetSocketAddress(adminPort))
-                                                break
-                                            } catch (IOException e) {
-                                                println "Admin port $adminPort is busy, trying next"
-                                            } finally {
-                                                server_socket?.close()
-                                            }
-                                        }
-
-                                        int sslPort = portbase + 81
-
-                                        project.properties.'payara.portbase' = portbase as String
-                                        project.properties.'payara.adminport' = adminPort as String
-                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -DsslPort=$sslPort" as String
-                                        project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
-                                        println "Payara: portbase = ${project.properties.'payara.portbase'}, " +
-                                                "argLine = ${project.properties.'payara.argLine'}"
-                                    } else {
-                                        project.properties.'payara.argLine' = ''
-                                        project.properties.'payara.restart.skip' = 'true'
-                                    }
-                                    ]]></script>
+                                <script>${project.basedir}/src/main/resources/setPayaraPort.groovy</script>
                             </scripts>
                         </configuration>
                     </execution>
@@ -374,7 +384,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.6.3</version>
                 <configuration>
                     <executable>${project.build.directory}/dependency/payara5/bin/${asadmin.cmd}</executable>
                     <skip>${payara.start.skip}</skip>
@@ -385,7 +395,8 @@
                         <phase>pre-integration-test</phase>
                         <configuration>
                             <commandlineArgs>create-domain --nopassword --checkports=false
-                                --portbase ${payara.portbase} ${domain.name}</commandlineArgs>
+                                --portbase ${payara.portbase} ${domain.name}
+                            </commandlineArgs>
                             <skip>${create-domain-skip}</skip>
                         </configuration>
                         <goals>
@@ -400,7 +411,8 @@
                             <commandlineArgs>-i ${mac-backup-file} -e 's/jvm-options>\[17|/jvm-options>\[16|/g'
                                 -e 's/property name="HZ_LISTENER_PORT" value="5900/property name="HZ_LISTENER_PORT" value="5920/g'
                                 -e 's/hazelcast-runtime-configuration start-port="5900/hazelcast-runtime-configuration start-port="5920/g'
-                                ${project.build.directory}/dependency/payara5/glassfish/domains/${domain.name}/config/domain.xml</commandlineArgs>
+                                ${project.build.directory}/dependency/payara5/glassfish/domains/${domain.name}/config/domain.xml
+                            </commandlineArgs>
                             <skip>${unix-sed-skip}</skip>
                         </configuration>
                         <goals>
@@ -436,7 +448,9 @@
                         <id>payara-config-tmpdir</id>
                         <phase>pre-integration-test</phase>
                         <configuration>
-                            <commandlineArgs>-p ${payara.adminport} create-system-properties java.io.tmpdir=${project.build.directory}/payara_tmp</commandlineArgs>
+                            <commandlineArgs>-p ${payara.adminport} create-system-properties
+                                java.io.tmpdir=${project.build.directory}/payara_tmp
+                            </commandlineArgs>
                             <skip>${payara.restart.skip}</skip>
                         </configuration>
                         <goals>
@@ -469,16 +483,40 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok-maven-plugin</artifactId>
+                    <version>1.18.20.0</version>
+                    <configuration>
+                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>lombok-preprocess</id>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>delombok</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
     <profiles>
         <profile>
-            <id>payara-server-remote</id>
+            <id>payara-server-local</id>
             <properties>
                 <payara.start.skip>true</payara.start.skip>
                 <payara.argLine/>

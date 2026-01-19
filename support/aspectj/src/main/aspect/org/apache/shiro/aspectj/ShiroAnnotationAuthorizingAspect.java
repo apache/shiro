@@ -25,7 +25,6 @@ import org.aspectj.lang.annotation.Pointcut;
 
 /**
  * Aspect that adds a before advice for each invocation of an annotated method.
- *
  */
 @Aspect()
 public class ShiroAnnotationAuthorizingAspect {
@@ -38,7 +37,8 @@ public class ShiroAnnotationAuthorizingAspect {
                     "execution(@org.apache.shiro.authz.annotation.RequiresUser * *(..))";
 
     @Pointcut(pointCupExpression)
-    public void anyShiroAnnotatedMethod(){}
+    public void anyShiroAnnotatedMethod() {
+    }
 
     @Pointcut(pointCupExpression)
     void anyShiroAnnotatedMethodCall(JoinPoint thisJoinPoint) {

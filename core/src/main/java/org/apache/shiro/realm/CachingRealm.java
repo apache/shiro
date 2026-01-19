@@ -47,9 +47,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware, LogoutAware {
 
-    private static final Logger log = LoggerFactory.getLogger(CachingRealm.class);
-
-    //TODO - complete JavaDoc
+    private static final Logger LOGGER = LoggerFactory.getLogger(CachingRealm.class);
 
     private static final AtomicInteger INSTANCE_COUNT = new AtomicInteger();
 
@@ -78,7 +76,7 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
      * caching is disabled.
      *
      * @return the <tt>CacheManager</tt> used for data caching to reduce EIS round trips, or <tt>null</tt> if
-     *         caching is disabled.
+     * caching is disabled.
      */
     public CacheManager getCacheManager() {
         return this.cacheManager;
@@ -105,7 +103,7 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
      * manage account data in memory already lookups would already be as efficient as possible.
      *
      * @return {@code true} if caching will be globally enabled if a {@link CacheManager} has been
-     *         configured, {@code false} otherwise
+     * configured, {@code false} otherwise
      */
     public boolean isCachingEnabled() {
         return cachingEnabled;
@@ -168,7 +166,7 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
     protected void clearCache(PrincipalCollection principals) {
         if (!isEmpty(principals)) {
             doClearCache(principals);
-            log.trace("Cleared cache entries for account with principals [{}]", principals);
+            LOGGER.trace("Cleared cache entries for account with principals [{}]", principals);
         }
     }
 
@@ -196,7 +194,7 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
      *
      * @param principals the PrincipalCollection holding all principals (from all realms) associated with a single Subject.
      * @return the 'primary' principal attributed to this particular realm, or the fallback 'master' principal if it
-     *         exists, or if not {@code null}.
+     * exists, or if not {@code null}.
      * @since 1.2
      */
     protected Object getAvailablePrincipal(PrincipalCollection principals) {

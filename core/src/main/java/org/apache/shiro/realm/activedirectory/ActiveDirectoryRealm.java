@@ -39,7 +39,12 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -52,15 +57,13 @@ import java.util.*;
  */
 public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
-    //TODO - complete JavaDoc
-
     /*--------------------------------------------
     |             C O N S T A N T S             |
     ============================================*/
 
-    private static final Logger log = LoggerFactory.getLogger(ActiveDirectoryRealm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActiveDirectoryRealm.class);
 
-    private static final String ROLE_NAMES_DELIMETER = ",";
+    private static final String ROLE_NAMES_DELIMITER = ",";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -85,11 +88,10 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
     |               M E T H O D S               |
     ============================================*/
 
-
     /**
      * Builds an {@link AuthenticationInfo} object by querying the active directory LDAP context for the
      * specified username.  This method binds to the LDAP server using the provided username and password -
-     * which if successful, indicates that the password is correct.
+     * which, if successful, indicates that the password is correct.
      * <p/>
      * This method can be overridden by subclasses to query the LDAP server in a more complex way.
      *
@@ -98,14 +100,16 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      * @return an {@link AuthenticationInfo} instance containing information retrieved from LDAP.
      * @throws NamingException if any LDAP errors occur during the search.
      */
-    protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory) throws NamingException {
+    protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory)
+            throws NamingException {
 
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
 
         // Binds using the username and password provided by the user.
         LdapContext ctx = null;
         try {
-            ctx = ldapContextFactory.getLdapContext(upToken.getUsername(), String.valueOf(upToken.getPassword()));
+            ctx = ldapContextFactory.getLdapContext(getUsernameWithSuffix(upToken.getUsername()),
+                    String.valueOf(upToken.getPassword()));
         } finally {
             LdapUtils.closeContext(ctx);
         }
@@ -133,7 +137,8 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      * @return the AuthorizationInfo for the given Subject principal.
      * @throws NamingException if an error occurs when searching the LDAP server.
      */
-    protected AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principals, LdapContextFactory ldapContextFactory) throws NamingException {
+    protected AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principals,
+                                                          LdapContextFactory ldapContextFactory) throws NamingException {
 
         String username = (String) getAvailablePrincipal(principals);
 
@@ -162,20 +167,17 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-        String userPrincipalName = username;
-        if (principalSuffix != null && !userPrincipalName.toLowerCase(Locale.ROOT).endsWith(principalSuffix.toLowerCase(Locale.ROOT))) {
-            userPrincipalName += principalSuffix;
-        }
+        String userPrincipalName = getUsernameWithSuffix(username);
 
-        Object[] searchArguments = new Object[]{userPrincipalName};
+        Object[] searchArguments = new Object[] {userPrincipalName};
 
         NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchArguments, searchControls);
 
         while (answer.hasMoreElements()) {
             SearchResult sr = (SearchResult) answer.next();
 
-            if (log.isDebugEnabled()) {
-                log.debug("Retrieving group names for user [" + sr.getName() + "]");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Retrieving group names for user [" + sr.getName() + "]");
             }
 
             Attributes attrs = sr.getAttributes();
@@ -189,8 +191,8 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
                         Collection<String> groupNames = LdapUtils.getAllAttributeValues(attr);
 
-                        if (log.isDebugEnabled()) {
-                            log.debug("Groups found for user [" + username + "]: " + groupNames);
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Groups found for user [" + username + "]: " + groupNames);
                         }
 
                         Collection<String> rolesForGroups = getRoleNamesForGroups(groupNames);
@@ -216,10 +218,10 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             for (String groupName : groupNames) {
                 String strRoleNames = groupRolesMap.get(groupName);
                 if (strRoleNames != null) {
-                    for (String roleName : strRoleNames.split(ROLE_NAMES_DELIMETER)) {
+                    for (String roleName : strRoleNames.split(ROLE_NAMES_DELIMITER)) {
 
-                        if (log.isDebugEnabled()) {
-                            log.debug("User is member of group [" + groupName + "] so adding role [" + roleName + "]");
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("User is member of group [" + groupName + "] so adding role [" + roleName + "]");
                         }
 
                         roleNames.add(roleName);
@@ -229,6 +231,14 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             }
         }
         return roleNames;
+    }
+
+    protected String getUsernameWithSuffix(String username) {
+        if (principalSuffix != null
+                && !username.toLowerCase(Locale.ROOT).endsWith(principalSuffix.toLowerCase(Locale.ROOT))) {
+            return username + principalSuffix;
+        }
+        return username;
     }
 
 }

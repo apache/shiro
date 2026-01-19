@@ -31,12 +31,25 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AbstractInjectionProviderTest {
 
+    static Key keyC1 = Key.get(Object.class, Names.named("constructor1"));
+    static Key keyC2 = Key.get(Object.class, Names.named("constructor2"));
+    static Key keyV1 = Key.get(Object.class, Names.named("val1"));
+    static Key keyV2 = Key.get(Object.class, Names.named("val2"));
+    static Key keyF1 = Key.get(Object.class, Names.named("field1"));
+
     @Test
+    @SuppressWarnings("unchecked")
     void testGet() throws Exception {
         Injector mockInjector = createMock(Injector.class);
 
@@ -89,7 +102,8 @@ public class AbstractInjectionProviderTest {
                 } else if (dependency.getParameterIndex() == 1 && dependency.getKey().equals(keyC2)) {
                     foundC2 = true;
                 } else {
-                    fail("Did not expect constructor dependency with key " + dependency.getKey() + " at parameter index " + dependency.getParameterIndex());
+                    fail("Did not expect constructor dependency with key " + dependency.getKey() + " at parameter index "
+                            + dependency.getParameterIndex());
                 }
             } else if (dependency.getInjectionPoint().getMember() instanceof Method) {
                 if (dependency.getKey().equals(keyV1)) {
@@ -117,13 +131,6 @@ public class AbstractInjectionProviderTest {
         assertTrue(foundF1, "Did not find dependency F1");
     }
 
-    static Key keyC1 = Key.get(Object.class, Names.named("constructor1"));
-    static Key keyC2 = Key.get(Object.class, Names.named("constructor2"));
-    static Key keyV1 = Key.get(Object.class, Names.named("val1"));
-    static Key keyV2 = Key.get(Object.class, Names.named("val2"));
-    static Key keyF1 = Key.get(Object.class, Names.named("field1"));
-
-
     static class SomeInjectedClass {
 
         @Inject
@@ -133,7 +140,7 @@ public class AbstractInjectionProviderTest {
         private Object c2;
 
         @Inject
-        public SomeInjectedClass(@Named("constructor1") Object c1, @Named("constructor2") Object c2) {
+        SomeInjectedClass(@Named("constructor1") Object c1, @Named("constructor2") Object c2) {
 
             this.c1 = c1;
             this.c2 = c2;

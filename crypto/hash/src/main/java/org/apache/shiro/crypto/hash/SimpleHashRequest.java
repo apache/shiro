@@ -34,18 +34,28 @@ import static java.util.Objects.requireNonNull;
  */
 public class SimpleHashRequest implements HashRequest {
 
-    private final ByteSource source; //cannot be null - this is the source to hash.
-    private final ByteSource salt; //null = no salt specified
-    private final String algorithmName; //null = let the HashService decide.
+    /**
+     * cannot be null - this is the source to hash.
+     */
+    private final ByteSource source;
+    /**
+     * can be null = no salt specified
+     */
+    private final ByteSource salt;
+    /**
+     * can be null = let the HashService decide.
+     */
+    private final String algorithmName;
     private final Map<String, Object> parameters = new ConcurrentHashMap<>();
 
     /**
      * Creates a new SimpleHashRequest instance.
      *
      * @param algorithmName the name of the hash algorithm to use.  This is often null as the
-     *                      {@link HashService} implementation is usually configured with an appropriate algorithm name, but this
-     *                      can be non-null if the hash service's algorithm should be overridden with a specific one for the duration
-     *                      of the request.
+     *                      {@link HashService} implementation is usually configured with an
+     *                      appropriate algorithm name, but this can be non-null
+     *                      if the hash service's algorithm should be overridden with a
+     *                      specific one for the duration of the request.
      * @param source        the source to be hashed
      * @param salt          any public salt which should be used when computing the hash
      * @param parameters    e.g. the number of hash iterations to execute or other parameters.

@@ -30,13 +30,13 @@ import org.apache.shiro.crypto.UnknownAlgorithmException;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.HashRequest;
+import org.apache.shiro.crypto.hash.SimpleHashProvider;
 import org.apache.shiro.crypto.hash.SimpleHashRequest;
 import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HashFormat;
 import org.apache.shiro.crypto.hash.format.HashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HexFormat;
 import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat;
-import org.apache.shiro.crypto.support.hashes.argon2.Argon2HashProvider;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.Hex;
 import org.apache.shiro.lang.io.ResourceUtils;
@@ -49,9 +49,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
-import static java.util.Collections.emptyMap;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Commandline line utility to hash data such as strings, passwords, resources (files, urls, etc.).
@@ -69,27 +70,42 @@ public final class Hasher {
     private static final Logger LOG = LoggerFactory.getLogger(Hasher.class);
 
     private static final String HEX_PREFIX = "0x";
-    private static final String DEFAULT_ALGORITHM_NAME = "MD5";
+    private static final String DEFAULT_ALGORITHM_NAME = "SHA-256";
     private static final String DEFAULT_PASSWORD_ALGORITHM_NAME = DefaultPasswordService.DEFAULT_HASH_ALGORITHM;
     private static final int DEFAULT_GENERATED_SALT_SIZE = 128;
     private static final int DEFAULT_NUM_ITERATIONS = 1;
-    private static final int DEFAULT_PASSWORD_NUM_ITERATIONS = Argon2HashProvider.Parameters.DEFAULT_ITERATIONS;
+    private static final int DEFAULT_PASSWORD_NUM_ITERATIONS = 350_000;
 
-    private static final Option ALGORITHM = new Option("a", "algorithm", true, "hash algorithm name.  Defaults to Argon2 when password hashing, SHA-512 otherwise.");
+    private static final Option ALGORITHM =
+            new Option("a", "algorithm", true,
+                    "hash algorithm name.  Defaults to Argon2 when password hashing, SHA-256 otherwise.");
     private static final Option DEBUG = new Option("d", "debug", false, "show additional error (stack trace) information.");
-    private static final Option FORMAT = new Option("f", "format", true, "hash output format. Defaults to 'shiro2' when password hashing, 'hex' otherwise.  See below for more information.");
+    private static final Option FORMAT = new Option("f", "format", true,
+            "hash output format. Defaults to 'shiro2' when password hashing, 'hex' otherwise.  See below for more information.");
     private static final Option HELP = new Option("help", "help", false, "show this help message.");
-    private static final Option ITERATIONS = new Option("i", "iterations", true, "number of hash iterations.  Defaults to " + DEFAULT_PASSWORD_NUM_ITERATIONS + " when password hashing, 1 otherwise.");
+    private static final Option ITERATIONS = new Option("i", "iterations", true, "number of hash iterations.  Defaults to "
+                    + DEFAULT_PASSWORD_NUM_ITERATIONS + " when password hashing, 1 otherwise.");
     private static final Option PASSWORD = new Option("p", "password", false, "hash a password (disable typing echo)");
-    private static final Option PASSWORD_NC = new Option("pnc", "pnoconfirm", false, "hash a password (disable typing echo) but disable password confirmation prompt.");
-    private static final Option RESOURCE = new Option("r", "resource", false, "read and hash the resource located at <value>.  See below for more information.");
+    private static final Option PASSWORD_NC =
+            new Option("pnc", "pnoconfirm", false, "hash a password (disable typing echo)"
+                    + " but disable password confirmation prompt.");
+    private static final Option RESOURCE =
+            new Option("r", "resource", false, "read and hash the resource located at <value>.  See below for more information.");
     private static final Option SALT = new Option("s", "salt", true, "use the specified salt.  <arg> is plaintext.");
-    private static final Option SALT_BYTES = new Option("sb", "saltbytes", true, "use the specified salt bytes.  <arg> is hex or base64 encoded text.");
-    private static final Option SALT_GEN = new Option("gs", "gensalt", false, "generate and use a random salt. Defaults to true when password hashing, false otherwise.");
-    private static final Option NO_SALT_GEN = new Option("ngs", "nogensalt", false, "do NOT generate and use a random salt (valid during password hashing).");
-    private static final Option SALT_GEN_SIZE = new Option("gss", "gensaltsize", true, "the number of salt bits (not bytes!) to generate.  Defaults to 128.");
-    private static final Option PRIVATE_SALT = new Option("ps", "privatesalt", true, "use the specified private salt.  <arg> is plaintext.");
-    private static final Option PRIVATE_SALT_BYTES = new Option("psb", "privatesaltbytes", true, "use the specified private salt bytes.  <arg> is hex or base64 encoded text.");
+    private static final Option SALT_BYTES =
+            new Option("sb", "saltbytes", true, "use the specified salt bytes.  <arg> is hex or base64 encoded text.");
+    private static final Option SALT_GEN =
+            new Option("gs", "gensalt", false,
+                    "generate and use a random salt. Defaults to true when password hashing, false otherwise.");
+    private static final Option NO_SALT_GEN =
+            new Option("ngs", "nogensalt", false, "do NOT generate and use a random salt (valid during password hashing).");
+    private static final Option SALT_GEN_SIZE =
+            new Option("gss", "gensaltsize", true, "the number of salt bits (not bytes!) to generate.  Defaults to 128.");
+    private static final Option PRIVATE_SALT = new Option("ps", "privatesalt", true,
+            "use the specified private salt.  <arg> is plaintext.");
+    private static final Option PRIVATE_SALT_BYTES =
+            new Option("psb", "privatesaltbytes", true,
+                    "use the specified private salt bytes.  <arg> is hex or base64 encoded text.");
 
     private static final String SALT_MUTEX_MSG = createMutexMessage(SALT, SALT_BYTES);
 
@@ -103,8 +119,12 @@ public final class Hasher {
         SALT_BYTES.setArgName("encTxt");
     }
 
-    public static void main(String[] args) {
+    private Hasher() {
+    }
 
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity",
+            "checkstyle:MagicNumber", "checkstyle:MethodLength"})
+    public static void main(String[] args) {
         CommandLineParser parser = new DefaultParser();
 
         Options options = new Options();
@@ -115,8 +135,10 @@ public final class Hasher {
         options.addOption(FORMAT);
 
         boolean debug = false;
-        String algorithm = null; //user unspecified
-        int iterations = 0; //0 means unspecified by the end-user
+        //user unspecified
+        String algorithm = null;
+        //0 means unspecified by the end-user
+        int iterations = 0;
         boolean resource = false;
         boolean password = false;
         boolean passwordConfirm = true;
@@ -174,7 +196,8 @@ public final class Hasher {
                 generateSalt = true;
                 generatedSaltSize = getRequiredPositiveInt(line, SALT_GEN_SIZE);
                 if (generatedSaltSize % 8 != 0) {
-                    throw new IllegalArgumentException("Generated salt size must be a multiple of 8 (e.g. 128, 192, 256, 512, etc.).");
+                    throw new IllegalArgumentException("Generated salt size must be"
+                            + "a multiple of 8 (e.g. 128, 192, 256, 512, etc.).");
                 }
             }
             if (line.hasOption(PRIVATE_SALT.getOpt())) {
@@ -222,6 +245,8 @@ public final class Hasher {
                 }
             }
 
+            Map<String, Object> parameters = new ConcurrentHashMap<>();
+
             if (iterations < DEFAULT_NUM_ITERATIONS) {
                 //Iterations were not specified.  Default to 350,000 when password hashing, and 1 for everything else:
                 if (password) {
@@ -230,10 +255,11 @@ public final class Hasher {
                     iterations = DEFAULT_NUM_ITERATIONS;
                 }
             }
+            //Iterations were specified, so add the iterations parameter:
+            parameters.put(SimpleHashProvider.Parameters.PARAMETER_ITERATIONS, iterations);
 
             ByteSource publicSalt = getSalt(saltString, saltBytesString, generateSalt, generatedSaltSize);
-            // FIXME: add options here.
-            HashRequest hashRequest = new SimpleHashRequest(algorithm, ByteSource.Util.bytes(source), publicSalt, emptyMap());
+            HashRequest hashRequest = new SimpleHashRequest(algorithm, ByteSource.Util.bytes(source), publicSalt, parameters);
 
             DefaultHashService hashService = new DefaultHashService();
             Hash hash = hashService.computeHash(hashRequest);
@@ -244,7 +270,7 @@ public final class Hasher {
                 if (password) {
                     formatString = Shiro2CryptFormat.class.getName();
                 } else {
-                    formatString = HexFormat.class.getName();
+                    formatString = getHexFormatString();
                 }
             }
 
@@ -273,6 +299,11 @@ public final class Hasher {
                 }
             }
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static String getHexFormatString() {
+        return HexFormat.class.getName();
     }
 
     private static String createMutexMessage(Option... options) {
@@ -305,6 +336,7 @@ public final class Hasher {
         }
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     private static ByteSource getSalt(String saltString, String saltBytesString, boolean generateSalt, int generatedSaltSize) {
 
         if (saltString != null) {
@@ -337,7 +369,8 @@ public final class Hasher {
 
         if (generateSalt) {
             SecureRandomNumberGenerator generator = new SecureRandomNumberGenerator();
-            int byteSize = generatedSaltSize / 8; //generatedSaltSize is in *bits* - convert to byte size:
+            //generatedSaltSize is in *bits* - convert to byte size:
+            int byteSize = generatedSaltSize / 8;
             return generator.nextBytes(byteSize);
         }
 
@@ -361,84 +394,82 @@ public final class Hasher {
         }
     }
 
+    @SuppressWarnings("checkstyle:MethodLength")
     private static void printHelp(Options options, Exception e, boolean debug) {
         HelpFormatter help = new HelpFormatter();
         String command = "java -jar shiro-tools-hasher-<version>.jar [options] [<value>]";
         String header = "\nPrint a cryptographic hash (aka message digest) of the specified <value>.\n--\nOptions:";
-        String footer = "\n" +
-                "<value> is optional only when hashing passwords (see below).  It is\n" +
-                "required all other times." +
-                "\n\n" +
-                "Password Hashing:\n" +
-                "---------------------------------\n" +
-                "Specify the -p/--password option and DO NOT enter a <value>.  You will\n" +
-                "be prompted for a password and characters will not echo as you type." +
-                "\n\n" +
-                "Salting:\n" +
-                "---------------------------------\n" +
-                "Specifying a salt:" +
-                "\n\n" +
-                "You may specify a salt using the -s/--salt option followed by the salt\n" +
-                "value.  If the salt value is a base64 or hex string representing a\n" +
-                "byte array, you must specify the -sb/--saltbytes option to indicate this,\n" +
-                "otherwise the text value bytes will be used directly." +
-                "\n\n" +
-                "When using -sb/--saltbytes, the -s/--salt value is expected to be a\n" +
-                "base64-encoded string by default.  If the value is a hex-encoded string,\n" +
-                "you must prefix the string with 0x (zero x) to indicate a hex value." +
-                "\n\n" +
-                "Generating a salt:" +
-                "\n\n" +
-                "Use the -gs/--gensalt option if you don't want to specify a salt,\n" +
-                "but want a strong random salt to be generated and used during hashing.\n" +
-                "The generated salt size defaults to 128 bits.  You may specify\n" +
-                "a different size by using the -gss/--gensaltsize option followed by\n" +
-                "a positive integer (size is in bits, not bytes)." +
-                "\n\n" +
-                "Because a salt must be specified if computing the hash later,\n" +
-                "generated salts are only useful with the shiro1/shiro2 output format;\n" +
-                "the other formats do not include the generated salt." +
-                "\n\n" +
-                "Specifying a private salt:" +
-                "\n\n" +
-                "You may specify a private salt using the -ps/--privatesalt option followed\n" +
-                "by the private salt value.  If the private salt value is a base64 or hex \n" +
-                "string representing a byte array, you must specify the -psb/--privatesaltbytes\n" +
-                "option to indicate this, otherwise the text value bytes will be used directly." +
-                "\n\n" +
-                "When using -psb/--privatesaltbytes, the -ps/--privatesalt value is expected to\n" +
-                "be a base64-encoded string by default.  If the value is a hex-encoded string,\n" +
-                "you must prefix the string with 0x (zero x) to indicate a hex value." +
-                "\n\n" +
-                "Files, URLs and classpath resources:\n" +
-                "---------------------------------\n" +
-                "If using the -r/--resource option, the <value> represents a resource path.\n" +
-                "By default this is expected to be a file path, but you may specify\n" +
-                "classpath or URL resources by using the classpath: or url: prefix\n" +
-                "respectively." +
-                "\n\n" +
-                "Some examples:" +
-                "\n\n" +
-                "<command> -r fileInCurrentDirectory.txt\n" +
-                "<command> -r ../../relativePathFile.xml\n" +
-                "<command> -r ~/documents/myfile.pdf\n" +
-                "<command> -r /usr/local/logs/absolutePathFile.log\n" +
-                "<command> -r url:http://foo.com/page.html\n" +
-                "<command> -r classpath:/WEB-INF/lib/something.jar" +
-                "\n\n" +
-                "Output Format:\n" +
-                "---------------------------------\n" +
-                "Specify the -f/--format option followed by either 1) the format ID (as defined\n" +
-                "by the " + DefaultHashFormatFactory.class.getName() + "\n" +
-                "JavaDoc) or 2) the fully qualified " + HashFormat.class.getName() + "\n" +
-                "implementation class name to instantiate and use for formatting.\n\n" +
-                "The default output format is 'shiro2' which is a Modular Crypt Format (MCF)\n" +
-                "that shows all relevant information as a dollar-sign ($) delimited string.\n" +
-                "This format is ideal for use in Shiro's text-based user configuration (e.g.\n" +
-                "shiro.ini or a properties file).";
-
+        String footer = "\n<value> is optional only when hashing passwords (see below).  It is\n"
+                + "required all other times."
+                + "\n\n"
+                + "Password Hashing:\n"
+                + "---------------------------------\n"
+                + "Specify the -p/--password option and DO NOT enter a <value>.  You will\n"
+                + "be prompted for a password and characters will not echo as you type."
+                + "\n\n"
+                + "Salting:\n"
+                + "---------------------------------\n"
+                + "Specifying a salt:"
+                + "\n\n"
+                + "You may specify a salt using the -s/--salt option followed by the salt\n"
+                + "value.  If the salt value is a base64 or hex string representing a\n"
+                + "byte array, you must specify the -sb/--saltbytes option to indicate this,\n"
+                + "otherwise the text value bytes will be used directly."
+                + "\n\n"
+                + "When using -sb/--saltbytes, the -s/--salt value is expected to be a\n"
+                + "base64-encoded string by default.  If the value is a hex-encoded string,\n"
+                + "you must prefix the string with 0x (zero x) to indicate a hex value."
+                + "\n\n"
+                + "Generating a salt:"
+                + "\n\n"
+                + "Use the -gs/--gensalt option if you don't want to specify a salt,\n"
+                + "but want a strong random salt to be generated and used during hashing.\n"
+                + "The generated salt size defaults to 128 bits.  You may specify\n"
+                + "a different size by using the -gss/--gensaltsize option followed by\n"
+                + "a positive integer (size is in bits, not bytes)."
+                + "\n\n"
+                + "Because a salt must be specified if computing the hash later,\n"
+                + "generated salts are only useful with the shiro1/shiro2 output format;\n"
+                + "the other formats do not include the generated salt."
+                + "\n\n"
+                + "Specifying a private salt:"
+                + "\n\n"
+                + "You may specify a private salt using the -ps/--privatesalt option followed\n"
+                + "by the private salt value.  If the private salt value is a base64 or hex \n"
+                + "string representing a byte array, you must specify the -psb/--privatesaltbytes\n"
+                + "option to indicate this, otherwise the text value bytes will be used directly."
+                + "\n\n"
+                + "When using -psb/--privatesaltbytes, the -ps/--privatesalt value is expected to\n"
+                + "be a base64-encoded string by default.  If the value is a hex-encoded string,\n"
+                + "you must prefix the string with 0x (zero x) to indicate a hex value."
+                + "\n\n"
+                + "Files, URLs and classpath resources:\n"
+                + "---------------------------------\n"
+                + "If using the -r/--resource option, the <value> represents a resource path.\n"
+                + "By default this is expected to be a file path, but you may specify\n"
+                + "classpath or URL resources by using the classpath: or url: prefix\n"
+                + "respectively."
+                + "\n\n"
+                + "Some examples:"
+                + "\n\n"
+                + "<command> -r fileInCurrentDirectory.txt\n"
+                + "<command> -r ../../relativePathFile.xml\n"
+                + "<command> -r ~/documents/myfile.pdf\n"
+                + "<command> -r /usr/local/logs/absolutePathFile.log\n"
+                + "<command> -r url:http://foo.com/page.html\n"
+                + "<command> -r classpath:/WEB-INF/lib/something.jar"
+                + "\n\n"
+                + "Output Format:\n"
+                + "---------------------------------\n"
+                + "Specify the -f/--format option followed by either 1) the format ID (as defined\n"
+                + "by the " + DefaultHashFormatFactory.class.getName() + "\n"
+                + "JavaDoc) or 2) the fully qualified " + HashFormat.class.getName() + "\n"
+                + "implementation class name to instantiate and use for formatting.\n\n"
+                + "The default output format is 'shiro2' which is a Modular Crypt Format (MCF)\n"
+                + "that shows all relevant information as a dollar-sign ($) delimited string.\n"
+                + "This format is ideal for use in Shiro's text-based user configuration (e.g.\n"
+                + "shiro.ini or a properties file).";
         printException(e, debug);
-
         LOG.info("");
         help.printHelp(command, header, options, null);
         LOG.info(footer);
@@ -452,21 +483,21 @@ public final class Hasher {
     private static char[] readPassword(boolean confirm) throws IOException {
         java.io.Console console = System.console();
         char[] first;
-        if (console != null) {
+        if (isTerminal(console)) {
             first = console.readPassword("%s", "Password to hash: ");
-            //throw new IllegalStateException("java.io.Console is not available on the current JVM.  Cannot read passwords.");
         } else if (System.in != null) {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String readLine = br.readLine();
             first = readLine.toCharArray();
         } else {
-            throw new IllegalStateException("java.io.Console and java.lang.System.in are not available on the current JVM. Cannot read passwords.");
+            throw new IllegalStateException("java.io.Console and java.lang.System.in are not available on the current JVM."
+                    + " Cannot read passwords.");
         }
 
         if (first == null || first.length == 0) {
             throw new IllegalArgumentException("No password specified.");
         }
-        if (confirm) {
+        if (confirm && isTerminal(console)) {
             char[] second = console.readPassword("%s", "Password to hash (confirm): ");
             if (!Arrays.equals(first, second)) {
                 String msg = "Password entries do not match.";
@@ -474,6 +505,15 @@ public final class Hasher {
             }
         }
         return first;
+    }
+
+    private static boolean isTerminal(java.io.Console console) {
+        try {
+            // isTerminal() is only available in Java 22 or later
+            return console != null && (Boolean) console.getClass().getMethod("isTerminal").invoke(console);
+        } catch (ReflectiveOperationException e) {
+            return true;
+        }
     }
 
     private static File toFile(String path) {

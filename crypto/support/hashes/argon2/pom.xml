@@ -26,7 +26,7 @@
     <parent>
         <groupId>org.apache.shiro.crypto</groupId>
         <artifactId>shiro-crypto-support</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -43,6 +43,17 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-crypto-hash</artifactId>
         </dependency>
+        <dependency>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+            <version>1.0</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
@@ -54,13 +65,19 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.hashes.argon2</Bundle-SymbolicName>
-                        <Export-Package>org.apache.hashes.argon2*;version=${project.version}</Export-Package>
+                        <Export-Package>org.apache.shiro.crypto.support.hashes.argon2*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
                             org.aopalliance*;version="[1.0.0, 2.0.0)",
                             com.google.inject*;version="1.3",
                             *
                         </Import-Package>
+                        <Require-Capability>
+                          osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)"
+                        </Require-Capability>
+                        <Provide-Capability>
+                          osgi.serviceloader; osgi.serviceloader=org.apache.shiro.crypto.hash.HashSpi
+                        </Provide-Capability>
                         <_removeheaders>Bnd-LastModified</_removeheaders>
                         <_reproducible>true</_reproducible>
                     </instructions>

@@ -29,6 +29,7 @@ public interface Nameable {
 
     /**
      * Sets the (preferably application unique) name for this component.
+     *
      * @param name the preferably application unique name for this component.
      */
     void setName(String name);

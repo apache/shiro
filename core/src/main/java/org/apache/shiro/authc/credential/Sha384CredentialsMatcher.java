@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.authc.credential;
 
-import org.apache.shiro.crypto.hash.AbstractHash;
-import org.apache.shiro.crypto.hash.Hash;
 import org.apache.shiro.crypto.hash.Sha384Hash;
 
 
@@ -29,8 +27,9 @@ import org.apache.shiro.crypto.hash.Sha384Hash;
  *
  * @since 0.9
  * @deprecated since 1.1 - use the HashedCredentialsMatcher directly and set its
- *             {@link HashedCredentialsMatcher#setHashAlgorithmName(String) hashAlgorithmName} property.
+ * {@link HashedCredentialsMatcher#setHashAlgorithmName(String) hashAlgorithmName} property.
  */
+@Deprecated
 public class Sha384CredentialsMatcher extends HashedCredentialsMatcher {
 
     public Sha384CredentialsMatcher() {

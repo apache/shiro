@@ -26,10 +26,11 @@ class SimpleBean {
     byte[] byteArrayProp;
     List<SimpleBean> simpleBeans;
     List<String> stringList;
-    Map<String,Object> mapProp = new LinkedHashMap<String,Object>();
+    Map<String, Object> mapProp = new LinkedHashMap<String, Object>();
     SimpleEnum simpleEnum;
 
-    public SimpleBean(){}
+    public SimpleBean() {}
+
     public SimpleBean(String name) {
         this.name = name
     }

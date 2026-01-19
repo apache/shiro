@@ -18,10 +18,10 @@
  */
 package org.apache.shiro.authz.aop;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
+
+import java.lang.annotation.Annotation;
 
 
 /**
@@ -42,15 +42,16 @@ public class AuthenticatedAnnotationHandler extends AuthorizingAnnotationHandler
 
     /**
      * Ensures that the calling <code>Subject</code> is authenticated, and if not, throws an
-     * {@link org.apache.shiro.authz.UnauthenticatedException UnauthenticatedException} indicating the method is not allowed to be executed.
+     * {@link org.apache.shiro.authz.UnauthenticatedException UnauthenticatedException}
+     * indicating the method is not allowed to be executed.
      *
      * @param a the annotation to inspect
      * @throws org.apache.shiro.authz.UnauthenticatedException if the calling <code>Subject</code> has not yet
-     * authenticated.
+     *                                                         authenticated.
      */
     public void assertAuthorized(Annotation a) throws UnauthenticatedException {
-        if (a instanceof RequiresAuthentication && !getSubject().isAuthenticated() ) {
-            throw new UnauthenticatedException( "The current Subject is not authenticated.  Access denied." );
+        if (a instanceof RequiresAuthentication && !getSubject().isAuthenticated()) {
+            throw new UnauthenticatedException("The current Subject is not authenticated.  Access denied.");
         }
     }
 }

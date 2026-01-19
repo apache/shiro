@@ -25,10 +25,14 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 public class PathMatchingFilterProviderTest {
     @Test
+    @SuppressWarnings("unchecked")
     void testPostProcess() {
         PathMatchingFilter filter = createMock(PathMatchingFilter.class);
 

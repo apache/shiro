@@ -21,7 +21,6 @@ package org.apache.shiro.web.filter.authz;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -41,25 +40,25 @@ public class AuthorizationFilterTest extends SecurityManagerTestSupport {
     @Test
     public void testUserOnAccessDeniedWithResponseError() {
         // Tests when a user (known identity) is denied access and no unauthorizedUrl has been configured.
-        // This should trigger an HTTP response error code.
+        // This should trigger an HTTP response error code 403
 
         //log in the user using the account provided by the superclass for tests:
         runWithSubject(subject -> {
             subject.login(new UsernamePasswordToken("test", "test"));
-        
+
             AuthorizationFilter filter = new AuthorizationFilter() {
                 @Override
                 protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-                    return false; //for this test case
+                    //for this test case
+                    return false;
                 }
             };
 
             HttpServletRequest request = mock(HttpServletRequest.class);
             HttpServletResponse response = mock(HttpServletResponse.class);
 
-            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             filter.onAccessDenied(request, response);
-            verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            verify(response).sendError(HttpServletResponse.SC_FORBIDDEN);
         });
     }
 
@@ -77,7 +76,8 @@ public class AuthorizationFilterTest extends SecurityManagerTestSupport {
             AuthorizationFilter filter = new AuthorizationFilter() {
                 @Override
                 protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-                    return false; //for this test case
+                    //for this test case
+                    return false;
                 }
             };
             filter.setUnauthorizedUrl(unauthorizedUrl);

@@ -25,6 +25,7 @@ import org.apache.shiro.web.util.WebUtils;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -36,21 +37,22 @@ import java.util.List;
  * <ul>
  *     <li>Semicolon - can be disabled by setting {@code blockSemicolon = false}</li>
  *     <li>Backslash - can be disabled by setting {@code blockBackslash = false}</li>
- *     <li>Non-ASCII characters - can be disabled by setting {@code blockNonAscii = false}, the ability to disable this check will be removed in future version.</li>
+ *     <li>Non-ASCII characters - can be disabled by setting {@code blockNonAscii = false},
+ *     the ability to disable this check will be removed in future version.</li>
  *     <li>Path traversals - can be disabled by setting {@code blockTraversal = false}</li>
  * </ul>
  *
- * @see <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/web/firewall/StrictHttpFirewall.html">This class was inspired by Spring Security StrictHttpFirewall</a>
+ * This class was inspired by Spring Security StrictHttpFirewall
  * @since 1.6
  */
 public class InvalidRequestFilter extends AccessControlFilter {
 
-	static enum PathTraversalBlockMode {
-		STRICT,
-		NORMAL,
-		NO_BLOCK;
-	}
-	
+    enum PathTraversalBlockMode {
+        STRICT,
+        NORMAL,
+        NO_BLOCK;
+    }
+
     private static final List<String> SEMICOLON = Collections.unmodifiableList(Arrays.asList(";", "%3b", "%3B"));
 
     private static final List<String> BACKSLASH = Collections.unmodifiableList(Arrays.asList("\\", "%5c", "%5C"));
@@ -71,22 +73,26 @@ public class InvalidRequestFilter extends AccessControlFilter {
     protected boolean isAccessAllowed(ServletRequest req, ServletResponse response, Object mappedValue) throws Exception {
         HttpServletRequest request = WebUtils.toHttp(req);
         // check the original and decoded values
-        return isValid(request.getRequestURI())      // user request string (not decoded)
-                && isValid(request.getServletPath()) // decoded servlet part
-                && isValid(request.getPathInfo());   // decoded path info (may be null)
+
+        // user request string (not decoded)
+        return isValid(request.getRequestURI())
+                // decoded servlet part
+                && isValid(request.getServletPath())
+                // decoded path info (maybe null)
+                && isValid(request.getPathInfo());
     }
 
     private boolean isValid(String uri) {
         return !StringUtils.hasText(uri)
-               || ( !containsSemicolon(uri)
-                 && !containsBackslash(uri)
-                 && !containsNonAsciiCharacters(uri))
-                 && !containsTraversal(uri);
+                || (!containsSemicolon(uri)
+                && !containsBackslash(uri)
+                && !containsNonAsciiCharacters(uri))
+                && !containsTraversal(uri);
     }
 
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        WebUtils.toHttp(response).sendError(400, "Invalid request");
+        WebUtils.toHttp(response).sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request");
         return false;
     }
 
@@ -137,6 +143,7 @@ public class InvalidRequestFilter extends AccessControlFilter {
     /**
      * Checks whether a path is normalized (doesn't contain path traversal sequences like
      * "./", "/../" or "/.")
+     *
      * @param path the path to test
      * @return true if the path doesn't contain any path-traversal character sequences.
      */
@@ -144,11 +151,12 @@ public class InvalidRequestFilter extends AccessControlFilter {
         if (path == null) {
             return true;
         }
-        for (int i = path.length(); i > 0;) {
+        for (int i = path.length(); i > 0; ) {
             int slashIndex = path.lastIndexOf('/', i - 1);
             int gap = i - slashIndex;
             if (gap == 2 && path.charAt(slashIndex + 1) == '.') {
-                return false; // ".", "/./" or "/."
+                // ".", "/./" or "/."
+                return false;
             }
             if (gap == 3 && path.charAt(slashIndex + 1) == '.' && path.charAt(slashIndex + 2) == '.') {
                 return false;
@@ -195,7 +203,7 @@ public class InvalidRequestFilter extends AccessControlFilter {
     }
 
     /**
-     * 
+     *
      * @deprecated Use {@link #setPathTraversalBlockMode(PathTraversalBlockMode)}
      */
     @Deprecated

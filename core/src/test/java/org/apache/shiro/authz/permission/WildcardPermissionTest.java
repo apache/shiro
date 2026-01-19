@@ -20,8 +20,10 @@ package org.apache.shiro.authz.permission;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @since 0.9
@@ -56,6 +58,7 @@ public class WildcardPermissionTest {
         });
     }
 
+    @SuppressWarnings("checkstyle:MultipleVariableDeclarations")
     @Test
     void testNamed() {
         WildcardPermission p1, p2;
@@ -98,6 +101,7 @@ public class WildcardPermissionTest {
 
     }
 
+    @SuppressWarnings("checkstyle:MultipleVariableDeclarations")
     @Test
     void testLists() {
         WildcardPermission p1, p2, p3;
@@ -144,9 +148,10 @@ public class WildcardPermissionTest {
 
         WildcardPermission p6 = new WildcardPermission("one,two:three,four");
         WildcardPermission p6DiffOrder = new WildcardPermission("two,one:four,three");
-        assertTrue(p6.equals(p6DiffOrder));
+        assertEquals(p6, p6DiffOrder);
     }
 
+    @SuppressWarnings({"checkstyle:MultipleVariableDeclarations", "checkstyle:MethodLength"})
     @Test
     void testWildcards() {
         WildcardPermission p1, p2, p3, p4, p5, p6, p7, p8, p9;
@@ -236,18 +241,19 @@ public class WildcardPermissionTest {
         WildcardPermission p4 = new WildcardPermission("one,two:three,four");
         WildcardPermission p5 = new WildcardPermission("one,two:three,four,five:six:seven,eight");
 
-        assertTrue("*".equals(p1.toString()));
-        assertTrue(p1.equals(new WildcardPermission(p1.toString())));
-        assertTrue("one".equals(p2.toString()));
-        assertTrue(p2.equals(new WildcardPermission(p2.toString())));
-        assertTrue("one:two".equals(p3.toString()));
-        assertTrue(p3.equals(new WildcardPermission(p3.toString())));
-        assertTrue("one,two:three,four".equals(p4.toString()));
-        assertTrue(p4.equals(new WildcardPermission(p4.toString())));
-        assertTrue("one,two:three,four,five:six:seven,eight".equals(p5.toString()));
-        assertTrue(p5.equals(new WildcardPermission(p5.toString())));
+        assertEquals("*", p1.toString());
+        assertEquals(p1, new WildcardPermission(p1.toString()));
+        assertEquals("one", p2.toString());
+        assertEquals(p2, new WildcardPermission(p2.toString()));
+        assertEquals("one:two", p3.toString());
+        assertEquals(p3, new WildcardPermission(p3.toString()));
+        assertEquals("one,two:three,four", p4.toString());
+        assertEquals(p4, new WildcardPermission(p4.toString()));
+        assertEquals("one,two:three,four,five:six:seven,eight", p5.toString());
+        assertEquals(p5, new WildcardPermission(p5.toString()));
     }
 
+    @SuppressWarnings("checkstyle:MultipleVariableDeclarations")
     @Test
     void testWildcardLeftTermination() {
         WildcardPermission p1, p2, p3, p4;

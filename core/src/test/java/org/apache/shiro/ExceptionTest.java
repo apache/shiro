@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 
 /**
+ *
  */
 @SuppressWarnings({"ThrowableInstanceNeverThrown"})
 public abstract class ExceptionTest {

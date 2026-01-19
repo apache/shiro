@@ -34,6 +34,7 @@ import org.apache.shiro.web.subject.WebSubject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -42,7 +43,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -51,11 +57,13 @@ import static org.mockito.Mockito.when;
 /**
  * @since 0.9
  */
+@Isolated
 public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTest {
 
     private DefaultWebSecurityManager sm;
 
     @BeforeEach
+    @SuppressWarnings("deprecation")
     public void setup() {
         sm = new DefaultWebSecurityManager();
         sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
@@ -77,20 +85,22 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     void checkSessionManagerDeterminesContainerSessionMode() {
-		sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
-		WebSessionManager sessionManager = mock(WebSessionManager.class);
+        sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
+        WebSessionManager sessionManager = mock(WebSessionManager.class);
 
-		when(sessionManager.isServletContainerSessions()).thenReturn(true);
+        when(sessionManager.isServletContainerSessions()).thenReturn(true);
 
-		sm.setSessionManager(sessionManager);
+        sm.setSessionManager(sessionManager);
 
-		assertTrue(sm.isHttpSessionMode(), "The set SessionManager is not being used to determine isHttpSessionMode.");
+        assertTrue(sm.isHttpSessionMode(), "The set SessionManager is not being used to determine isHttpSessionMode.");
 
-		verify(sessionManager).isServletContainerSessions();
-	}
+        verify(sessionManager).isServletContainerSessions();
+    }
 
     @Test
+    @SuppressWarnings("deprecation")
     void shiroSessionModeInit() {
         sm.setSessionMode(DefaultWebSecurityManager.NATIVE_SESSION_MODE);
     }
@@ -123,6 +133,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         assertEquals("lonestarr", subject.getPrincipal());
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testSessionTimeout() {
         shiroSessionModeInit();
@@ -140,7 +151,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         Session session = subject.getSession();
         assertEquals(session.getTimeout(), globalTimeout);
         session.setTimeout(125);
-        assertEquals(session.getTimeout(), 125);
+        assertEquals(125, session.getTimeout());
         sleep(200);
         try {
             session.getTimeout();
@@ -184,7 +195,7 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         mockRequest = mock(HttpServletRequest.class);
         mockResponse = mock(HttpServletResponse.class);
         //now simulate the cookie going with the request and the Subject should be acquired based on that:
-        Cookie[] cookies = new Cookie[]{new Cookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME, sessionId.toString())};
+        Cookie[] cookies = new Cookie[] {new Cookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME, sessionId.toString())};
         when(mockRequest.getCookies()).thenReturn(cookies);
         when(mockRequest.getParameter(any(String.class))).thenReturn(null);
 
@@ -205,9 +216,10 @@ public class DefaultWebSecurityManagerTest extends AbstractWebSecurityManagerTes
         Ini.Section section = ini.addSection(IniRealm.USERS_SECTION_NAME);
         section.put("user1", "user1");
 
+        @SuppressWarnings("deprecation")
         WebIniSecurityManagerFactory factory = new WebIniSecurityManagerFactory(ini);
 
-        WebSecurityManager securityManager = (WebSecurityManager)factory.getInstance();
+        WebSecurityManager securityManager = (WebSecurityManager) factory.getInstance();
 
         PrincipalCollection principals = new SimplePrincipalCollection("user1", "iniRealm");
         Subject subject = new Subject.Builder(securityManager).principals(principals).buildSubject();

@@ -20,7 +20,6 @@ package org.apache.shiro.web.env;
 
 import org.apache.shiro.config.ConfigurationException;
 import org.easymock.EasyMock;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.servlet.ServletContext;
@@ -35,6 +34,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.mockito.Mockito.mock;
+
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -96,7 +97,7 @@ public class EnvironmentLoaderServiceTest {
 
         try {
             environmentLoader.createEnvironment(servletContext);
-            Assertions.fail("Expected ConfigurationException to be thrown");
+            fail("Expected ConfigurationException to be thrown");
         } catch (ConfigurationException e) {
             assertThat(e.getMessage(), stringContainsInOrder("zero or exactly one", "shiroEnvironmentClass"));
         }
@@ -109,7 +110,8 @@ public class EnvironmentLoaderServiceTest {
     void loadFromInitParamTest() throws Exception {
 
         ServletContext servletContext = EasyMock.mock(ServletContext.class);
-        expect(servletContext.getInitParameter(EnvironmentLoader.ENVIRONMENT_CLASS_PARAM)).andReturn(WebEnvironmentStub.class.getName());
+        expect(servletContext.getInitParameter(EnvironmentLoader.ENVIRONMENT_CLASS_PARAM))
+                    .andReturn(WebEnvironmentStub.class.getName());
         expect(servletContext.getInitParameter("shiroConfigLocations")).andReturn(null);
 
         EasyMock.replay(servletContext);

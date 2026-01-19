@@ -46,8 +46,9 @@ import java.io.Serializable;
  * preferences.
  * <p/>
  * <p><b>Please note:</b>  Since Shiro sometimes logs authentication operations, please ensure your AuthenticationInfo's
- * <code>toString()</code> implementation does <em>not</em> print out account credentials (password, etc.), as these might be viewable to
- * someone reading your logs.  This is good practice anyway, and account credentials should rarely (if ever) be printed
+ * <code>toString()</code> implementation does <em>not</em> print out account credentials (password, etc.),
+ * as these might be viewable to someone reading your logs.
+ * This is good practice anyway, and account credentials should rarely (if ever) be printed
  * out for any reason.  If you're using Shiro's default implementations of this interface, they only ever print the
  * account {@link #getPrincipals() principals}, so you do not need to do anything additional.</p>
  *

@@ -20,6 +20,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
+
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -31,12 +32,13 @@ import org.apache.shiro.authz.annotation.RequiresUser;
  */
 public class ShiroSecurityExtension implements Extension {
     @ShiroSecureAnnotation
-    public static class ShiroSecureAnnotated { };
+    public static class ShiroSecureAnnotated {
+    }
 
     public <T> void addSecurity(@Observes @WithAnnotations({
-        RequiresAuthentication.class, RequiresGuest.class, RequiresPermissions.class,
-        RequiresRoles.class, RequiresUser.class, RolesAllowed.class,
-        PermitAll.class, DenyAll.class}) ProcessAnnotatedType<T> pat) {
+            RequiresAuthentication.class, RequiresGuest.class, RequiresPermissions.class,
+            RequiresRoles.class, RequiresUser.class, RolesAllowed.class,
+            PermitAll.class, DenyAll.class}) ProcessAnnotatedType<T> pat) {
         pat.setAnnotatedType(new AnnotatedTypeWrapper<>(pat.getAnnotatedType(),
                 ShiroSecureAnnotated.class.getDeclaredAnnotations()[0]));
     }

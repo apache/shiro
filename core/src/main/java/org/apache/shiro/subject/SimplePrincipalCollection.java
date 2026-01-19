@@ -24,8 +24,16 @@ import org.apache.shiro.lang.util.StringUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A simple implementation of the {@link MutablePrincipalCollection} interface that tracks principals internally
@@ -44,10 +52,10 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     private static final long serialVersionUID = -6305224034025797558L;
 
     //TODO - complete JavaDoc
-
     private Map<String, Set> realmPrincipals;
 
-    private transient String cachedToString; //cached toString() result, as this can be printed many times in logging
+    //cached toString() result, as this can be printed many times in logging
+    private transient String cachedToString;
 
     public SimplePrincipalCollection() {
     }
@@ -229,7 +237,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         }
         if (o instanceof SimplePrincipalCollection) {
             SimplePrincipalCollection other = (SimplePrincipalCollection) o;
-            return this.realmPrincipals != null ? this.realmPrincipals.equals(other.realmPrincipals) : other.realmPrincipals == null;
+            return Objects.equals(this.realmPrincipals, other.realmPrincipals);
         }
         return false;
     }

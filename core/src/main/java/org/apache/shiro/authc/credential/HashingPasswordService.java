@@ -79,13 +79,13 @@ public interface HashingPasswordService extends PasswordService {
      * as they can be cleared/nulled-out after use.  Any argument type supported by
      * {@link ByteSource.Util#isCompatible(Object)} is valid.
      *
-     * @param plaintext a raw/plaintext password submitted by an end user/Subject.
-     * @param savedPasswordHash  the previously hashed password known to be associated with an account.
-     *                           This value is expected to have been previously generated from the
-     *                           {@link #hashPassword(Object) hashPassword} method (typically
-     *                           when the account is created or the account's password is reset).
+     * @param plaintext         a raw/plaintext password submitted by an end user/Subject.
+     * @param savedPasswordHash the previously hashed password known to be associated with an account.
+     *                          This value is expected to have been previously generated from the
+     *                          {@link #hashPassword(Object) hashPassword} method (typically
+     *                          when the account is created or the account's password is reset).
      * @return {@code true} if the {@code plaintext} password matches the existing {@code savedPasswordHash},
-     *         {@code false} otherwise.
+     * {@code false} otherwise.
      */
     boolean passwordsMatch(Object plaintext, Hash savedPasswordHash);
 }

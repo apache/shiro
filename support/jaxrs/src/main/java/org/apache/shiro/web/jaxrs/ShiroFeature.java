@@ -18,8 +18,6 @@
  */
 package org.apache.shiro.web.jaxrs;
 
-import org.apache.shiro.authz.UnauthenticatedException;
-
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
@@ -29,15 +27,15 @@ import javax.ws.rs.ext.Provider;
 /**
  * Shiro JAX-RS feature which includes {@link UnauthorizedExceptionExceptionMapper}, {@link SubjectPrincipalRequestFilter}, and
  * {@link ShiroAnnotationFilterFeature}.
- *
- * Typically a JAX-RS {@link Application} class will include this Feature class in the
+ * <p>
+ * Typically, a JAX-RS {@link Application} class will include this Feature class in the
  * classes returned from {@link Application#getClasses()} method, for example:
  * <blockquote><pre>
  *     public class SampleApplication extends Application {
  *
- *         @Override
- *         public Set<Class<?>> getClasses() {
- *             Set<Class<?>> classes = new HashSet<Class<?>>();
+ *         {@code @Override}
+ *         {@code public Set<Class<?>>} getClasses() {
+ *             {@code Set<Class<?>> classes = new HashSet<Class<?>>();}
  *
  *             // register Shiro
  *             classes.add(ShiroFeature.class);
@@ -46,16 +44,17 @@ import javax.ws.rs.ext.Provider;
  *         }
  *     }
  * </pre></blockquote>
+ * NOTE: Apache CXF requires this annotation on this feature (jersey and resteasy do not)
+ *
  * @since 1.4
  */
-@Provider // NOTE: Apache CXF requires this annotation on this feature (jersey and resteasy do not)
+@Provider
 public class ShiroFeature implements Feature {
 
     @Override
     public boolean configure(FeatureContext context) {
-
+        context.register(UnauthenticatedExceptionExceptionMapper.class);
         context.register(UnauthorizedExceptionExceptionMapper.class);
-        context.register(UnauthenticatedException.class);
         context.register(SubjectPrincipalRequestFilter.class);
         context.register(ShiroAnnotationFilterFeature.class);
 

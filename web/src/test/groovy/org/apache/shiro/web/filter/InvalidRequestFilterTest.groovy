@@ -21,6 +21,7 @@ package org.apache.shiro.web.filter
 
 import org.apache.shiro.web.RestoreSystemProperties
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.parallel.Isolated
 
 import javax.servlet.http.HttpServletRequest
 
@@ -29,6 +30,7 @@ import static org.easymock.EasyMock.mock
 import static org.easymock.EasyMock.replay
 import static org.hamcrest.MatcherAssert.assertThat
 
+@Isolated("Uses System Properties")
 class InvalidRequestFilterTest {
 
     @Test
@@ -91,20 +93,18 @@ class InvalidRequestFilterTest {
         assertPathBlocked(filter, "/something/.")
         assertPathBlocked(filter, "/.")
         assertPathBlocked(filter, "/something/../something/.")
-        assertPathBlocked(filter, "/something/../something/.")
-		
+
         assertPathAllowed(filter, "%2E./")
         assertPathAllowed(filter, "%2F./")
         assertPathAllowed(filter, "/something/%2e/bar/")
         assertPathAllowed(filter, "/something/%2f/bar/")
         assertPathAllowed(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
-        assertPathAllowed(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
         assertPathAllowed(filter, "/something/%2e%2E/bar/")
         assertPathAllowed(filter, "/something/http:%2f%2fmydomain%2eexample%2ecom%2foidc/bar/")
     }
-	
-	@Test
-	void testBlocksTraversalStrict() {
+
+    @Test
+    void testBlocksTraversalStrict() {
         InvalidRequestFilter filter = new InvalidRequestFilter()
         filter.setPathTraversalBlockMode(InvalidRequestFilter.PathTraversalBlockMode.STRICT)
         assertPathBlocked(filter, "/something/../")
@@ -121,17 +121,15 @@ class InvalidRequestFilterTest {
         assertPathBlocked(filter, "/something/.")
         assertPathBlocked(filter, "/.")
         assertPathBlocked(filter, "/something/../something/.")
-        assertPathBlocked(filter, "/something/../something/.")
 
         assertPathBlocked(filter, "%2E./")
         assertPathBlocked(filter, "%2F./")
         assertPathBlocked(filter, "/something/%2e/bar/")
         assertPathBlocked(filter, "/something/%2f/bar/")
         assertPathBlocked(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
-        assertPathBlocked(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
         assertPathBlocked(filter, "/something/%2e%2E/bar/")
         assertPathBlocked(filter, "/something/http:%2f%2fmydomain%2eexample%2ecom%2foidc/bar/")
-	}
+    }
 
     @Test
     void testFilterAllowsBackslash() {
@@ -164,6 +162,7 @@ class InvalidRequestFilterTest {
         assertPathAllowed(filter, "/something", "/\u0019something")
         assertPathAllowed(filter, "/something", "/something", "/\u0019")
     }
+
     @Test
     void testFilterAllowsSemicolon() {
         InvalidRequestFilter filter = new InvalidRequestFilter()
@@ -200,12 +199,11 @@ class InvalidRequestFilterTest {
         assertPathAllowed(filter, "/something/.")
         assertPathAllowed(filter, "/.")
         assertPathAllowed(filter, "/something/../something/.")
-        
+
         assertPathAllowed(filter, "%2E./")
         assertPathAllowed(filter, "%2F./")
         assertPathAllowed(filter, "/something/%2e/bar/")
         assertPathAllowed(filter, "/something/%2f/bar/")
-        assertPathAllowed(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
         assertPathAllowed(filter, "/something/http:%2f%2fmydomain.example.com%2foidc/bar/")
         assertPathAllowed(filter, "/something/%2e%2E/bar/")
         assertPathAllowed(filter, "/something/http:%2f%2fmydomain%2eexample%2ecom%2foidc/bar/")

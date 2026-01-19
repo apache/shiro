@@ -17,16 +17,15 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<project name="${project.artifactId}">
-
-    <bannerLeft>
-        <name>Shiro</name>
-        <src>http://shiro.apache.org/images/apache-shiro-logo.png</src>
-        <href>http://shiro.apache.org</href>
+<site xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd"
+  name="Shiro">
+    <bannerLeft name="Shiro" href="https://shiro.apache.org">
+        <image src="https://shiro.apache.org/images/apache-shiro-logo.png"/>
     </bannerLeft>
 
     <bannerRight>
-        <src>http://shiro.apache.org/images/asf_logo.png</src>
+        <image src="https://shiro.apache.org/images/asf_logo.png"/>
     </bannerRight>
 
     <publishDate position="right"/>
@@ -47,7 +46,6 @@
     <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
-        <version>1.5</version>
+        <version>${fluido-skin.version}</version>
     </skin>
-
-</project>
+</site>

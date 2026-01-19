@@ -47,7 +47,7 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
         Annotation requiresRolesAnnotation = new RequiresRoles() {
             @Override
             public String[] value() {
-                return new String[]{"blah"};
+                return new String[] {"blah"};
             }
 
             @Override
@@ -75,7 +75,7 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
         Annotation requiresRolesAnnotation = new RequiresRoles() {
             @Override
             public String[] value() {
-                return new String[]{"blah", "blah2"};
+                return new String[] {"blah", "blah2"};
             }
 
             @Override
@@ -110,7 +110,7 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
         Annotation requiresRolesAnnotation = new RequiresRoles() {
             @Override
             public String[] value() {
-                return new String[]{"blah", "blah2"};
+                return new String[] {"blah", "blah2"};
             }
 
             @Override

@@ -38,28 +38,32 @@ import java.util.stream.Stream;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+
 import static org.apache.shiro.web.jaxrs.SubjectPrincipalRequestFilter.SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM;
 
 /**
  * Wraps {@link AuthorizationFilter filters} around JAX-RS resources that are annotated with Shiro annotations.
+ *
  * @since 1.4
  */
 public class ShiroAnnotationFilterFeature implements DynamicFeature {
-    private static final List<Class<? extends Annotation>> shiroAnnotations = List.of(
+
+    private static final List<Class<? extends Annotation>> SHIRO_ANNOTATIONS = List.of(
             RequiresPermissions.class,
             RequiresRoles.class,
             RequiresAuthentication.class,
             RequiresUser.class,
             RequiresGuest.class);
-    private static final List<Class<? extends Annotation>> jsr250Annotations = List.of(
+
+    private static final List<Class<? extends Annotation>> JSR_250_ANNOTATIONS = List.of(
             RolesAllowed.class, PermitAll.class, DenyAll.class);
 
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext context) {
         List<Annotation> authzSpecs = new ArrayList<>();
-        var annotations = shiroAnnotations;
+        var annotations = SHIRO_ANNOTATIONS;
         if (Boolean.TRUE.equals(context.getConfiguration().getProperty(SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM))) {
-            annotations = Stream.concat(shiroAnnotations.stream(), jsr250Annotations.stream())
+            annotations = Stream.concat(SHIRO_ANNOTATIONS.stream(), JSR_250_ANNOTATIONS.stream())
                     .collect(Collectors.toList());
         }
 
@@ -68,8 +72,12 @@ public class ShiroAnnotationFilterFeature implements DynamicFeature {
             Annotation classAuthzSpec = resourceInfo.getResourceClass().getAnnotation(annotationClass);
             Annotation methodAuthzSpec = resourceInfo.getResourceMethod().getAnnotation(annotationClass);
 
-            if (classAuthzSpec != null) authzSpecs.add(classAuthzSpec);
-            if (methodAuthzSpec != null) authzSpecs.add(methodAuthzSpec);
+            if (classAuthzSpec != null) {
+                authzSpecs.add(classAuthzSpec);
+            }
+            if (methodAuthzSpec != null) {
+                authzSpecs.add(methodAuthzSpec);
+            }
         }
 
         if (!authzSpecs.isEmpty()) {

@@ -37,12 +37,12 @@ class UnauthorizedExceptionExceptionMapperTest {
 
     @Test
     void testUnauthorizedException() {
-        doTest(new UnauthorizedException("expected test exception."), Response.Status.UNAUTHORIZED, new UnauthorizedExceptionExceptionMapper())
-        doTest(new HostUnauthorizedException("expected test exception."), Response.Status.UNAUTHORIZED, new UnauthorizedExceptionExceptionMapper())
-        doTest(new UnauthenticatedException("expected test exception."), Response.Status.FORBIDDEN, new UnauthenticatedExceptionExceptionMapper())
+        doTest(new UnauthorizedException("expected test exception."), Response.Status.FORBIDDEN, new UnauthorizedExceptionExceptionMapper())
+        doTest(new HostUnauthorizedException("expected test exception."), Response.Status.FORBIDDEN, new UnauthorizedExceptionExceptionMapper())
+        doTest(new UnauthenticatedException("expected test exception."), Response.Status.UNAUTHORIZED, new UnauthenticatedExceptionExceptionMapper())
     }
 
-    private static void doTest(AuthorizationException exception , Response.StatusType expectedStatus, ExceptionMapper<? extends Throwable> exceptionMapper) {
+    private static void doTest(AuthorizationException exception, Response.StatusType expectedStatus, ExceptionMapper<? extends Throwable> exceptionMapper) {
         final var response = exceptionMapper.toResponse(exception);
         assertEquals(expectedStatus.statusCode, response.status);
     }

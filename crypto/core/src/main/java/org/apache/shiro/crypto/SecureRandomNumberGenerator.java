@@ -34,7 +34,8 @@ import java.security.SecureRandom;
  */
 public class SecureRandomNumberGenerator implements RandomNumberGenerator {
 
-    protected static final int DEFAULT_NEXT_BYTES_SIZE = 16; //16 bytes == 128 bits (a common number in crypto)
+    //16 bytes == 128 bits (a common number in crypto)
+    protected static final int DEFAULT_NEXT_BYTES_SIZE = 16;
 
     private int defaultNextBytesSize;
     private SecureRandom secureRandom;
@@ -99,7 +100,7 @@ public class SecureRandomNumberGenerator implements RandomNumberGenerator {
      * @throws IllegalArgumentException if the argument is 0 or negative
      */
     public void setDefaultNextBytesSize(int defaultNextBytesSize) throws IllegalArgumentException {
-        if ( defaultNextBytesSize <= 0) {
+        if (defaultNextBytesSize <= 0) {
             throw new IllegalArgumentException("size value must be a positive integer (1 or larger)");
         }
         this.defaultNextBytesSize = defaultNextBytesSize;

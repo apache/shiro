@@ -18,7 +18,11 @@
  */
 package org.apache.shiro.spring.security.interceptor;
 
-import org.apache.shiro.authz.annotation.*;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresGuest;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.authz.annotation.RequiresUser;
 
 /**
  * @since 1.1
@@ -27,26 +31,31 @@ public interface TestService {
 
     // Guest operations
     void guestImplementation();
+
     @RequiresGuest
     void guestInterface();
 
     // User operations
     void userImplementation();
+
     @RequiresUser
     void userInterface();
 
     // Authenticated User operations
     void authenticatedImplementation();
+
     @RequiresAuthentication
     void authenticatedInterface();
 
     // Role operations
     void roleImplementation();
+
     @RequiresRoles("test")
     void roleInterface();
 
     // Permission operations
     void permissionImplementation();
+
     @RequiresPermissions("test:execute")
     void permissionInterface();
 }

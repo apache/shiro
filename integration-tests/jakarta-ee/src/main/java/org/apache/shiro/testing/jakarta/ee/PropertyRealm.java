@@ -16,6 +16,7 @@ package org.apache.shiro.testing.jakarta.ee;
 import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.shiro.authc.SimpleAccount;
@@ -27,7 +28,8 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 @Named
 @ApplicationScoped
 public class PropertyRealm extends IniRealm {
-    @Getter @Setter
+    @Getter
+    @Setter
     private IniRealm iniRealm;
 
     @Override

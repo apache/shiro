@@ -31,8 +31,11 @@ import javax.inject.Inject;
  * {@link ShiroWebModule#bindGuiceFilter(com.google.inject.Binder) bindGuiceFilter}.
  */
 public class GuiceShiroFilter extends AbstractShiroFilter {
+
     @Inject
-    GuiceShiroFilter(WebSecurityManager webSecurityManager, FilterChainResolver filterChainResolver, ShiroFilterConfiguration filterConfiguration) {
+    GuiceShiroFilter(WebSecurityManager webSecurityManager,
+                     FilterChainResolver filterChainResolver,
+                     ShiroFilterConfiguration filterConfiguration) {
         this.setSecurityManager(webSecurityManager);
         this.setFilterChainResolver(filterChainResolver);
         this.setShiroFilterConfiguration(filterConfiguration);

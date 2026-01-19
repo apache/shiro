@@ -37,7 +37,7 @@ import javax.servlet.ServletException;
  */
 public abstract class AbstractFilter extends ServletContextSupport implements Filter {
 
-    private static transient final Logger log = LoggerFactory.getLogger(AbstractFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFilter.class);
 
     /**
      * FilterConfig provided by the Servlet container at start-up.
@@ -74,7 +74,7 @@ public abstract class AbstractFilter extends ServletContextSupport implements Fi
      *
      * @param paramName the name of the {@code init-param}
      * @return the value for the named {@code init-param}, or {@code null} if there was no {@code init-param}
-     *         specified by that name.
+     * specified by that name.
      */
     protected String getInitParam(String paramName) {
         FilterConfig config = getFilterConfig();
@@ -99,8 +99,8 @@ public abstract class AbstractFilter extends ServletContextSupport implements Fi
             if (e instanceof ServletException) {
                 throw (ServletException) e;
             } else {
-                if (log.isErrorEnabled()) {
-                    log.error("Unable to start Filter: [" + e.getMessage() + "].", e);
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Unable to start Filter: [" + e.getMessage() + "].", e);
                 }
                 throw new ServletException(e);
             }
@@ -126,6 +126,5 @@ public abstract class AbstractFilter extends ServletContextSupport implements Fi
      */
     public void destroy() {
     }
-
 
 }

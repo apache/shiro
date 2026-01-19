@@ -41,14 +41,14 @@ class IniWebEnvironmentTest {
      */
     @Test
     void testObjectsAfterSecurityManagerCreation() {
-        
+
         def ini = new Ini()
         ini.load("""
         [main]
         compositeBean = org.apache.shiro.config.ogdl.CompositeBean
         """)
-        
-        def env = new IniWebEnvironment(ini:  ini)
+
+        def env = new IniWebEnvironment(ini: ini)
         env.init()
 
         assertNotNull env.objects
@@ -110,7 +110,7 @@ class IniWebEnvironmentTest {
         /index.html = anon
         """)
 
-        def env = new IniWebEnvironment(ini:  ini)
+        def env = new IniWebEnvironment(ini: ini)
         env.init()
         assertThat env.getFilterChainResolver().filterChainManager.globalFilterNames, Matchers.empty()
     }
@@ -125,9 +125,9 @@ class IniWebEnvironmentTest {
         /index.html = anon
         """)
 
-        def env = new IniWebEnvironment(ini:  ini)
+        def env = new IniWebEnvironment(ini: ini)
         env.init()
-        def resolver =  env.getFilterChainResolver()
+        def resolver = env.getFilterChainResolver()
         FilterChainManager manager = resolver.filterChainManager
         assertThat manager.globalFilterNames, Matchers.contains(DefaultFilter.invalidRequest.name())
 
@@ -148,9 +148,9 @@ class IniWebEnvironmentTest {
         /index.html = authc
         """)
 
-        def env = new IniWebEnvironment(ini:  ini)
+        def env = new IniWebEnvironment(ini: ini)
         env.init()
-        def resolver =  env.getFilterChainResolver()
+        def resolver = env.getFilterChainResolver()
         FilterChainManager manager = resolver.filterChainManager
         assertThat manager.globalFilterNames, Matchers.contains(
                 DefaultFilter.port.name(),

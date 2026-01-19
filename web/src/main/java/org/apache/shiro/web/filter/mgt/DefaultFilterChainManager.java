@@ -31,7 +31,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,15 +47,24 @@ import java.util.Set;
  */
 public class DefaultFilterChainManager implements FilterChainManager {
 
-    private static transient final Logger log = LoggerFactory.getLogger(DefaultFilterChainManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultFilterChainManager.class);
 
     private FilterConfig filterConfig;
 
-    private Map<String, Filter> filters; //pool of filters available for creating chains
+    /**
+     * pool of filters available for creating chains
+     */
+    private Map<String, Filter> filters;
 
-    private List<String> globalFilterNames; // list of filters to prepend to every chain
+    /**
+     * list of filters to prepend to every chain
+     */
+    private List<String> globalFilterNames;
 
-    private Map<String, NamedFilterList> filterChains; //key: chain name, value: chain
+    /**
+     * key: chain name, value: chain
+     */
+    private Map<String, NamedFilterList> filterChains;
 
     public DefaultFilterChainManager() {
         this.filters = new LinkedHashMap<String, Filter>();
@@ -138,8 +146,10 @@ public class DefaultFilterChainManager implements FilterChainManager {
             throw new NullPointerException("chainDefinition cannot be null or empty.");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Creating chain [" + chainName + "] with global filters " + globalFilterNames + " and from String definition [" + chainDefinition + "]");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Creating chain [" + chainName + "] with global filters "
+                    + globalFilterNames + " and from String definition ["
+                    + chainDefinition + "]");
         }
 
         // first add each of global filters
@@ -182,10 +192,11 @@ public class DefaultFilterChainManager implements FilterChainManager {
      *     output[1] == bar[baz]
      *     output[2] == blah[x, y]
      * </pre>
+     *
      * @param chainDefinition the comma-delimited filter chain definition.
      * @return an array of filter definition tokens
-     * @since 1.2
      * @see <a href="https://issues.apache.org/jira/browse/SHIRO-205">SHIRO-205</a>
+     * @since 1.2
      */
     protected String[] splitChainDefinition(String chainDefinition) {
         return StringUtils.split(chainDefinition, StringUtils.DEFAULT_DELIMITER_CHAR, '[', ']', true, true);
@@ -208,11 +219,12 @@ public class DefaultFilterChainManager implements FilterChainManager {
      *         <td>returned[0] == {@code foo}<br/>returned[1] == {@code bar, baz}</td>
      *     </tr>
      * </table>
+     *
      * @param token the filter chain definition token
      * @return A name/value pair representing the filter name and a (possibly null) config value.
      * @throws ConfigurationException if the token cannot be parsed
-     * @since 1.2
      * @see <a href="https://issues.apache.org/jira/browse/SHIRO-205">SHIRO-205</a>
+     * @since 1.2
      */
     protected String[] toNameConfigPair(String token) throws ConfigurationException {
 
@@ -250,8 +262,8 @@ public class DefaultFilterChainManager implements FilterChainManager {
                     //So we ignore the stripped value.
                 }
             }
-            
-            return new String[]{name, config};
+
+            return new String[] {name, config};
 
         } catch (Exception e) {
             String msg = "Unable to parse filter chain definition token: " + token;
@@ -282,9 +294,9 @@ public class DefaultFilterChainManager implements FilterChainManager {
         }
         Filter filter = getFilter(filterName);
         if (filter == null) {
-            throw new IllegalArgumentException("There is no filter with name '" + filterName +
-                    "' to apply to chain [" + chainName + "] in the pool of available Filters.  Ensure a " +
-                    "filter with that name/path has first been registered with the addFilter method(s).");
+            throw new IllegalArgumentException("There is no filter with name '" + filterName
+                    + "' to apply to chain [" + chainName + "] in the pool of available Filters.  Ensure a "
+                    + "filter with that name/path has first been registered with the addFilter method(s).");
         }
 
         applyChainConfig(chainName, filter, chainSpecificFilterConfig);
@@ -299,9 +311,9 @@ public class DefaultFilterChainManager implements FilterChainManager {
             for (String filterName : globalFilterNames) {
                 Filter filter = filters.get(filterName);
                 if (filter == null) {
-                    throw new ConfigurationException("There is no filter with name '" + filterName +
-                                                     "' to apply to the global filters in the pool of available Filters.  Ensure a " +
-                                                     "filter with that name/path has first been registered with the addFilter method(s).");
+                    throw new ConfigurationException("There is no filter with name '" + filterName
+                            + "' to apply to the global filters in the pool of available Filters.  Ensure a "
+                            + "filter with that name/path has first been registered with the addFilter method(s).");
                 }
                 this.globalFilterNames.add(filterName);
             }
@@ -309,9 +321,9 @@ public class DefaultFilterChainManager implements FilterChainManager {
     }
 
     protected void applyChainConfig(String chainName, Filter filter, String chainSpecificFilterConfig) {
-        if (log.isDebugEnabled()) {
-            log.debug("Attempting to apply path [" + chainName + "] to filter [" + filter + "] " +
-                    "with config [" + chainSpecificFilterConfig + "]");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Attempting to apply path [" + chainName + "] to filter [" + filter + "] "
+                    + "with config [" + chainSpecificFilterConfig + "]");
         }
         if (filter instanceof PathConfigProcessor) {
             ((PathConfigProcessor) filter).processPathConfig(chainName, chainSpecificFilterConfig);
@@ -319,10 +331,10 @@ public class DefaultFilterChainManager implements FilterChainManager {
             if (StringUtils.hasText(chainSpecificFilterConfig)) {
                 //they specified a filter configuration, but the Filter doesn't implement PathConfigProcessor
                 //this is an erroneous config:
-                String msg = "chainSpecificFilterConfig was specified, but the underlying " +
-                        "Filter instance is not an 'instanceof' " +
-                        PathConfigProcessor.class.getName() + ".  This is required if the filter is to accept " +
-                        "chain-specific configuration.";
+                String msg = "chainSpecificFilterConfig was specified, but the underlying "
+                        + "Filter instance is not an 'instanceof' "
+                        + PathConfigProcessor.class.getName() + ".  This is required if the filter is to accept "
+                        + "chain-specific configuration.";
                 throw new ConfigurationException(msg);
             }
         }
@@ -346,8 +358,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
     }
 
     public Set<String> getChainNames() {
-        //noinspection unchecked
-        return this.filterChains != null ? this.filterChains.keySet() : Collections.EMPTY_SET;
+        return this.filterChains != null ? this.filterChains.keySet() : Set.of();
     }
 
     public FilterChain proxy(FilterChain original, String chainName) {
@@ -367,8 +378,8 @@ public class DefaultFilterChainManager implements FilterChainManager {
     protected void initFilter(Filter filter) {
         FilterConfig filterConfig = getFilterConfig();
         if (filterConfig == null) {
-            throw new IllegalStateException("FilterConfig attribute has not been set.  This must occur before filter " +
-                    "initialization can occur.");
+            throw new IllegalStateException("FilterConfig attribute has not been set.  This must occur before filter "
+                    + "initialization can occur.");
         }
         try {
             filter.init(filterConfig);

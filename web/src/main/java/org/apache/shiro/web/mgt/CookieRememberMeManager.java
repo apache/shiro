@@ -19,6 +19,7 @@
 package org.apache.shiro.web.mgt;
 
 import java.util.function.Supplier;
+
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.mgt.AbstractRememberMeManager;
 import org.apache.shiro.subject.Subject;
@@ -71,14 +72,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CookieRememberMeManager extends AbstractRememberMeManager {
 
-    //TODO - complete JavaDoc
-
-    private static transient final Logger log = LoggerFactory.getLogger(CookieRememberMeManager.class);
-
     /**
      * The default name of the underlying rememberMe cookie which is {@code rememberMe}.
      */
     public static final String DEFAULT_REMEMBER_ME_COOKIE_NAME = "rememberMe";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CookieRememberMeManager.class);
 
     private Cookie cookie;
 
@@ -108,7 +107,7 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      * Please see the class-level JavaDoc for the default cookie's attribute values.
      *
      * @return the cookie 'template' that will be used to set all attributes of outgoing rememberMe cookies created by
-     *         this {@code RememberMeManager}.
+     * this {@code RememberMeManager}.
      */
     public Cookie getCookie() {
         return cookie;
@@ -142,11 +141,11 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
     protected void rememberSerializedIdentity(Subject subject, byte[] serialized) {
 
         if (!WebUtils.isHttp(subject)) {
-            if (log.isDebugEnabled()) {
-                String msg = "Subject argument is not an HTTP-aware instance.  This is required to obtain a servlet " +
-                        "request and response in order to set the rememberMe cookie. Returning immediately and " +
-                        "ignoring rememberMe operation.";
-                log.debug(msg);
+            if (LOGGER.isDebugEnabled()) {
+                String msg = "Subject argument is not an HTTP-aware instance.  This is required to obtain a servlet "
+                        + "request and response in order to set the rememberMe cookie. Returning immediately and "
+                        + "ignoring rememberMe operation.";
+                LOGGER.debug(msg);
             }
             return;
         }
@@ -158,11 +157,13 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
         //base 64 encode it and store as a cookie:
         String base64 = Base64.encodeToString(serialized);
 
-        Cookie template = getCookie(); //the class attribute is really a template for the outgoing cookies
+        //the class attribute is really a template for the outgoing cookies
+        Cookie template = getCookie();
         Cookie cookie = new SimpleCookie(template);
         cookie.setValue(base64);
         cookie.saveTo(request, response);
     }
+
 
     private boolean isIdentityRemoved(WebSubjectContext subjectContext) {
         ServletRequest request = subjectContext.resolveServletRequest();
@@ -192,11 +193,11 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
     protected byte[] getRememberedSerializedIdentity(SubjectContext subjectContext) {
 
         if (!WebUtils.isHttp(subjectContext)) {
-            if (log.isDebugEnabled()) {
-                String msg = "SubjectContext argument is not an HTTP-aware instance.  This is required to obtain a " +
-                        "servlet request and response in order to retrieve the rememberMe cookie. Returning " +
-                        "immediately and ignoring rememberMe operation.";
-                log.debug(msg);
+            if (LOGGER.isDebugEnabled()) {
+                String msg = "SubjectContext argument is not an HTTP-aware instance.  This is required to obtain a "
+                        + "servlet request and response in order to retrieve the rememberMe cookie. Returning "
+                        + "immediately and ignoring rememberMe operation.";
+                LOGGER.debug(msg);
             }
             return null;
         }
@@ -212,12 +213,14 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
         String base64 = getCookie().readValue(request, response);
         // Browsers do not always remove cookies immediately (SHIRO-183)
         // ignore cookies that are scheduled for removal
-        if (Cookie.DELETED_COOKIE_VALUE.equals(base64)) return null;
+        if (Cookie.DELETED_COOKIE_VALUE.equals(base64)) {
+            return null;
+        }
 
         if (base64 != null) {
             base64 = ensurePadding(base64);
-            if (log.isTraceEnabled()) {
-                log.trace("Acquired Base64 encoded identity [" + base64 + "]");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Acquired Base64 encoded identity [" + base64 + "]");
             }
             byte[] decoded;
             try {
@@ -228,12 +231,12 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
                  * If the base64 string cannot be decoded, just assume there is no valid cookie value.
                  * */
                 getCookie().removeFrom(request, response);
-                log.warn("Unable to decode existing base64 encoded entity: [" + base64 + "].", rtEx);
+                LOGGER.warn("Unable to decode existing base64 encoded entity: [" + base64 + "].", rtEx);
                 return null;
             }
 
-            if (log.isTraceEnabled()) {
-                log.trace("Base64 decoded byte array length: " + decoded.length + " bytes.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Base64 decoded byte array length: " + decoded.length + " bytes.");
             }
             return decoded;
         } else {
@@ -251,11 +254,11 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      * @param base64 the base64 encoded String that may need to be padded
      * @return the base64 String padded if necessary.
      */
-    private String ensurePadding(String base64) {
+    protected String ensurePadding(String base64) {
         int length = base64.length();
         if (length % 4 != 0) {
             StringBuilder sb = new StringBuilder(base64);
-            for (int i = 0; i < length % 4; ++i) {
+            while (sb.length() % 4 != 0) {
                 sb.append('=');
             }
             base64 = sb.toString();

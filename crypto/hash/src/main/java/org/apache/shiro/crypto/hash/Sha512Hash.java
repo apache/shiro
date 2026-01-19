@@ -34,8 +34,9 @@ import org.apache.shiro.lang.codec.Hex;
  */
 public class Sha512Hash extends SimpleHash {
 
-    //TODO - complete JavaDoc
-
+    /**
+     * Sha512 algorithm name.
+     */
     public static final String ALGORITHM_NAME = "SHA-512";
 
     public Sha512Hash() {
@@ -66,4 +67,3 @@ public class Sha512Hash extends SimpleHash {
         return hash;
     }
 }
-

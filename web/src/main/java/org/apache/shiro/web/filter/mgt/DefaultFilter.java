@@ -20,8 +20,18 @@ package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.lang.util.ClassUtils;
 import org.apache.shiro.web.filter.InvalidRequestFilter;
-import org.apache.shiro.web.filter.authc.*;
-import org.apache.shiro.web.filter.authz.*;
+import org.apache.shiro.web.filter.authc.AnonymousFilter;
+import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
+import org.apache.shiro.web.filter.authc.BearerHttpAuthenticationFilter;
+import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.apache.shiro.web.filter.authc.LogoutFilter;
+import org.apache.shiro.web.filter.authc.UserFilter;
+import org.apache.shiro.web.filter.authz.HttpMethodPermissionFilter;
+import org.apache.shiro.web.filter.authz.IpFilter;
+import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
+import org.apache.shiro.web.filter.authz.PortFilter;
+import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
+import org.apache.shiro.web.filter.authz.SslFilter;
 import org.apache.shiro.web.filter.session.NoSessionCreationFilter;
 
 import javax.servlet.Filter;
@@ -38,24 +48,79 @@ import java.util.Map;
  */
 public enum DefaultFilter {
 
+    /**
+     * anno filter
+     */
     anon(AnonymousFilter.class),
+
+    /**
+     * authc filter.
+     */
     authc(FormAuthenticationFilter.class),
+
+    /**
+     * authc basic filter.
+     */
     authcBasic(BasicHttpAuthenticationFilter.class),
+
+    /**
+     * authc bearer filter.
+     */
     authcBearer(BearerHttpAuthenticationFilter.class),
+
+    /**
+     * ip filter.
+     */
     ip(IpFilter.class),
+
+    /**
+     * logout filter.
+     */
     logout(LogoutFilter.class),
+
+    /**
+     * no session creation filter.
+     */
     noSessionCreation(NoSessionCreationFilter.class),
+
+    /**
+     * perms filter.
+     */
     perms(PermissionsAuthorizationFilter.class),
+
+    /**
+     * port filter.
+     */
     port(PortFilter.class),
+
+    /**
+     * rest filter.
+     */
     rest(HttpMethodPermissionFilter.class),
+
+    /**
+     * roles filter.
+     */
     roles(RolesAuthorizationFilter.class),
+
+    /**
+     * ssl filter.
+     */
     ssl(SslFilter.class),
+
+    /**
+     * user filter.
+     */
     user(UserFilter.class),
+
+    /**
+     * invalid request filter.
+     */
     invalidRequest(InvalidRequestFilter.class);
 
     private final Class<? extends Filter> filterClass;
 
-    private DefaultFilter(Class<? extends Filter> filterClass) {
+    DefaultFilter(Class<? extends Filter> filterClass) {
         this.filterClass = filterClass;
     }
 
@@ -75,8 +140,8 @@ public enum DefaultFilter {
                 try {
                     filter.init(config);
                 } catch (ServletException e) {
-                    String msg = "Unable to correctly init default filter instance of type " +
-                            filter.getClass().getName();
+                    String msg = "Unable to correctly init default filter instance of type "
+                            + filter.getClass().getName();
                     throw new IllegalStateException(msg, e);
                 }
             }

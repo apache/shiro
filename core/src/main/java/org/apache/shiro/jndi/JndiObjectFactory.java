@@ -24,6 +24,7 @@ import javax.naming.NamingException;
 
 /**
  * A factory implementation intended to be used to look up objects in jndi.
+ *
  * @param <T>
  * @since 1.2
  */
@@ -32,9 +33,10 @@ public class JndiObjectFactory<T> extends JndiLocator implements Factory<T> {
     private String resourceName;
     private Class<? extends T> requiredType;
 
+    @SuppressWarnings("unchecked")
     public T getInstance() {
         try {
-            if(requiredType != null) {
+            if (requiredType != null) {
                 return requiredType.cast(this.lookup(resourceName, requiredType));
             } else {
                 return (T) this.lookup(resourceName);

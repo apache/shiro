@@ -36,7 +36,8 @@ public abstract class JakartaAbstractContainerIT {
         final File root = new File(getWarDir());
         try {
             meecrowave = new Meecrowave(new Meecrowave.Builder().randomHttpPort());
-            meecrowave.getConfiguration().addGlobalContextCustomizer(ctx -> ctx.setJarScanner(new org.apache.tomcat.util.scan.StandardJarScanner()));
+            meecrowave.getConfiguration().addGlobalContextCustomizer(
+                    ctx -> ctx.setJarScanner(new org.apache.tomcat.util.scan.StandardJarScanner()));
             meecrowave.start();
             meecrowave.deployWebapp("/", root);
         } catch (final Exception e) {

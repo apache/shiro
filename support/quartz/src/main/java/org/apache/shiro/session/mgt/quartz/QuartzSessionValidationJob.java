@@ -48,7 +48,7 @@ public class QuartzSessionValidationJob implements Job {
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
     ============================================*/
-    private static final Logger log = LoggerFactory.getLogger(QuartzSessionValidationJob.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuartzSessionValidationJob.class);
 
     /*--------------------------------------------
     |         C O N S T R U C T O R S           |
@@ -73,14 +73,14 @@ public class QuartzSessionValidationJob implements Job {
         JobDataMap jobDataMap = context.getMergedJobDataMap();
         ValidatingSessionManager sessionManager = (ValidatingSessionManager) jobDataMap.get(SESSION_MANAGER_KEY);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Executing session validation Quartz job...");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Executing session validation Quartz job...");
         }
 
         sessionManager.validateSessions();
 
-        if (log.isDebugEnabled()) {
-            log.debug("Session validation Quartz job complete.");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Session validation Quartz job complete.");
         }
     }
 }

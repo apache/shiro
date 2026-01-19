@@ -34,14 +34,16 @@ import java.io.ByteArrayOutputStream;
  * JavaBeans compatible!
  *
  * @since 0.9
- * @deprecated This class should not be used directly because of unsecure XMLEncoder/XMLDecoder usage.
+ * @deprecated This class should not be used directly because of insecure XMLEncoder/XMLDecoder usage.
  */
+@Deprecated(forRemoval = true)
 public class XmlSerializer implements Serializer {
 
     /**
      * Serializes the specified <code>source</code> into a byte[] array by using the
      * {@link java.beans.XMLEncoder XMLEncoder} to encode the object out to a
      * {@link java.io.ByteArrayOutputStream ByteArrayOutputStream}, where the resulting byte[] array is returned.
+     *
      * @param source the Object to convert into a byte[] array.
      * @return the byte[] array representation of the XML encoded output.
      */
@@ -64,6 +66,7 @@ public class XmlSerializer implements Serializer {
      * {@link java.io.ByteArrayInputStream ByteArrayInputStream} to wrap the argument and then decode this
      * stream via an {@link java.beans.XMLDecoder XMLDecoder}, where the
      * {@link java.beans.XMLDecoder#readObject() readObject} call results in the original Object to return.
+     *
      * @param serialized the byte[] array representation of the XML encoded output.
      * @return the original source Object in reconstituted form.
      */

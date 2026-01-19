@@ -32,15 +32,15 @@ import com.google.inject.spi.InjectionPoint;
 import com.google.inject.spi.ProviderWithDependencies;
 
 class AbstractInjectionProvider<T> implements ProviderWithDependencies<T> {
-    private Key<T> key;
 
     @Inject
     Injector injector;
 
+    private Key<T> key;
     private InjectionPoint constructorInjectionPoint;
     private Set<Dependency<?>> dependencies;
 
-    public AbstractInjectionProvider(Key<T> key) {
+    AbstractInjectionProvider(Key<T> key) {
         this.key = key;
         constructorInjectionPoint = InjectionPoint.forConstructorOf(key.getTypeLiteral());
 

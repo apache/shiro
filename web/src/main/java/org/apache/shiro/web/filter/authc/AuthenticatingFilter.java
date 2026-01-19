@@ -37,15 +37,18 @@ import java.util.Arrays;
  * @since 0.9
  */
 public abstract class AuthenticatingFilter extends AuthenticationFilter {
+
+    /**
+     * permissive key.
+     */
     public static final String PERMISSIVE = "permissive";
 
-    //TODO - complete JavaDoc
 
     protected boolean executeLogin(ServletRequest request, ServletResponse response) throws Exception {
         AuthenticationToken token = createToken(request, response);
         if (token == null) {
-            String msg = "createToken method implementation returned null. A valid non-null AuthenticationToken " +
-                    "must be created in order to execute a login attempt.";
+            String msg = "createToken method implementation returned null. A valid non-null AuthenticationToken "
+                    + "must be created in order to execute a login attempt.";
             throw new IllegalStateException(msg);
         }
         try {
@@ -104,7 +107,7 @@ public abstract class AuthenticatingFilter extends AuthenticationFilter {
      *
      * @param request the incoming ServletRequest
      * @return <code>true</code> if &quot;rememberMe&quot; should be enabled for the login attempt associated with the
-     *         current <code>request</code>, <code>false</code> otherwise.
+     * current <code>request</code>, <code>false</code> otherwise.
      */
     protected boolean isRememberMe(ServletRequest request) {
         return false;
@@ -120,8 +123,8 @@ public abstract class AuthenticatingFilter extends AuthenticationFilter {
      */
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        return super.isAccessAllowed(request, response, mappedValue) ||
-                (!isLoginRequest(request, response) && isPermissive(mappedValue));
+        return super.isAccessAllowed(request, response, mappedValue)
+                || (!isLoginRequest(request, response) && isPermissive(mappedValue));
     }
 
     /**
@@ -130,7 +133,7 @@ public abstract class AuthenticatingFilter extends AuthenticationFilter {
      * @return <code>true</code> if this filter should be permissive
      */
     protected boolean isPermissive(Object mappedValue) {
-        if(mappedValue != null) {
+        if (mappedValue != null) {
             String[] values = (String[]) mappedValue;
             return Arrays.binarySearch(values, PERMISSIVE) >= 0;
         }
@@ -142,9 +145,10 @@ public abstract class AuthenticatingFilter extends AuthenticationFilter {
      * {@link UnauthenticatedException}.
      */
     @Override
-    protected void cleanup(ServletRequest request, ServletResponse response, Exception existing) throws ServletException, IOException {
-        if (existing instanceof UnauthenticatedException || (existing instanceof ServletException && existing.getCause() instanceof UnauthenticatedException))
-        {
+    protected void cleanup(ServletRequest request,
+                           ServletResponse response, Exception existing) throws ServletException, IOException {
+        if (existing instanceof UnauthenticatedException
+                || (existing instanceof ServletException && existing.getCause() instanceof UnauthenticatedException)) {
             try {
                 onAccessDenied(request, response);
                 existing = null;

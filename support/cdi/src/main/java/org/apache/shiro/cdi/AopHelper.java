@@ -25,6 +25,7 @@ import java.util.concurrent.Callable;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -55,16 +56,17 @@ class AopHelper {
      * List annotations classes which can be applied (either method or a class).
      */
     @SuppressWarnings("ConstantName")
-    static final Map<Class<? extends Annotation>, Callable<AuthorizingAnnotationHandler>> autorizationAnnotationClasses
+    static final Map<Class<? extends Annotation>, Callable<AuthorizingAnnotationHandler>> authorizationAnnotationClasses
             = Map.of(
-                    RequiresPermissions.class, PermissionAnnotationHandler::new,
-                    RequiresRoles.class, RoleAnnotationHandler::new,
-                    RequiresUser.class, UserAnnotationHandler::new,
-                    RequiresGuest.class, GuestAnnotationHandler::new,
-                    RequiresAuthentication.class, AuthenticatedAnnotationHandler::new,
-                    RolesAllowed.class, RolesAllowedAnnotationHandler::new,
-                    PermitAll.class, PermitAllAnnotationHandler::new,
-                    DenyAll.class, DenyAllAnnotationHandler::new);
+            RequiresPermissions.class, PermissionAnnotationHandler::new,
+            RequiresRoles.class, RoleAnnotationHandler::new,
+            RequiresUser.class, UserAnnotationHandler::new,
+            RequiresGuest.class, GuestAnnotationHandler::new,
+            RequiresAuthentication.class, AuthenticatedAnnotationHandler::new,
+            RolesAllowed.class, RolesAllowedAnnotationHandler::new,
+            PermitAll.class, PermitAllAnnotationHandler::new,
+            DenyAll.class, DenyAllAnnotationHandler::new);
+
     /**
      * Create list of
      * {@link SecurityInterceptor}
@@ -84,7 +86,7 @@ class AopHelper {
 
         if (isInterceptOnClassAnnotation(method.getModifiers())) {
             for (Class<? extends Annotation> ac
-                    : getAutorizationAnnotationClasses()) {
+                    : getAuthorizationAnnotationClasses()) {
                 Annotation annotationOnClass = clazz.getAnnotation(ac);
                 if (annotationOnClass != null) {
                     result.add(new SecurityInterceptor(annotationOnClass));
@@ -93,7 +95,7 @@ class AopHelper {
         }
 
         for (Class<? extends Annotation> ac
-                : getAutorizationAnnotationClasses()) {
+                : getAuthorizationAnnotationClasses()) {
             Annotation annotation = method.getAnnotation(ac);
             if (annotation != null) {
                 result.add(new SecurityInterceptor(annotation));
@@ -112,13 +114,14 @@ class AopHelper {
      */
     @SneakyThrows
     static AuthorizingAnnotationHandler createHandler(Annotation annotation) {
-        return autorizationAnnotationClasses.get(annotation.annotationType()).call();
+        return authorizationAnnotationClasses.get(annotation.annotationType()).call();
     }
 
     /**
      * Rule under which determined the fate of the class contains annotation.
      * <p/>
      * All public and protected methods.
+     *
      * @param modifiers
      * @return
      */
@@ -127,8 +130,8 @@ class AopHelper {
                 || Modifier.isProtected(modifiers);
     }
 
-    private static Collection<Class<? extends Annotation>> getAutorizationAnnotationClasses() {
-        return autorizationAnnotationClasses.keySet();
+    private static Collection<Class<? extends Annotation>> getAuthorizationAnnotationClasses() {
+        return authorizationAnnotationClasses.keySet();
     }
 
     @RequiredArgsConstructor
@@ -140,7 +143,7 @@ class AopHelper {
          * Initialize {@link #handler} field use annotation.
          *
          * @param annotation annotation for create handler and use during
-         * {@link #intercept()} invocation.
+         *                   {@link #intercept()} invocation.
          */
         SecurityInterceptor(Annotation annotation) {
             this.annotation = annotation;

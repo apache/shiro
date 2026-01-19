@@ -36,15 +36,16 @@ import static java.util.stream.Collectors.toSet;
 /**
  * Creates a hash provider for salt (+pepper) and Hash-based KDFs, i.e. where the algorithm name
  * is a SHA algorithm or similar.
+ *
  * @since 2.0
  */
 public class SimpleHashProvider implements HashSpi {
 
-    private static final Set<String> IMPLEMENTED_ALGORITHMS = Arrays.stream(new String[]{
-            Sha256Hash.ALGORITHM_NAME,
-            Sha384Hash.ALGORITHM_NAME,
-            Sha512Hash.ALGORITHM_NAME
-    })
+    private static final Set<String> IMPLEMENTED_ALGORITHMS = Arrays.stream(new String[] {
+                    Sha256Hash.ALGORITHM_NAME,
+                    Sha384Hash.ALGORITHM_NAME,
+                    Sha512Hash.ALGORITHM_NAME
+            })
             .collect(toSet());
 
     @Override
@@ -72,7 +73,7 @@ public class SimpleHashProvider implements HashSpi {
 
         private final Random random;
 
-        public SimpleHashFactory(Random random) {
+        SimpleHashFactory(Random random) {
             this.random = random;
         }
 
@@ -113,6 +114,7 @@ public class SimpleHashProvider implements HashSpi {
             }
 
             // generate salt if absent from the request.
+            @SuppressWarnings("checkstyle:MagicNumber")
             byte[] ps = new byte[16];
             random.nextBytes(ps);
 
@@ -129,7 +131,8 @@ public class SimpleHashProvider implements HashSpi {
                     .orElse(null);
         }
 
-        private SimpleHash createSimpleHash(String algorithmName, ByteSource source, int iterations, ByteSource publicSalt, ByteSource salt) {
+        private SimpleHash createSimpleHash(String algorithmName, ByteSource source,
+                                            int iterations, ByteSource publicSalt, ByteSource salt) {
             Hash computed = new SimpleHash(algorithmName, source, salt, iterations);
 
             SimpleHash result = new SimpleHash(algorithmName);
@@ -197,13 +200,14 @@ public class SimpleHashProvider implements HashSpi {
         }
     }
 
-    static final class Parameters {
+    public static final class Parameters {
         public static final String PARAMETER_ITERATIONS = "SimpleHash.iterations";
 
         /**
          * A secret part added to the salt. Sometimes also referred to as {@literal "Pepper"}.
          *
-         * <p>For more information, see <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">Pepper (cryptography) on Wikipedia</a>.</p>
+         * <p>For more information, see <a href="https://en.wikipedia.org/wiki/Pepper_(cryptography)">
+         * Pepper (cryptography) on Wikipedia</a>.</p>
          */
         public static final String PARAMETER_SECRET_SALT = "SimpleHash.secretSalt";
 

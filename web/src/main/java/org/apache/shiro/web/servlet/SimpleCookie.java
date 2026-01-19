@@ -40,6 +40,7 @@ import java.util.TimeZone;
  *
  * @since 1.0
  */
+@SuppressWarnings({"checkstyle:MethodCount", "checkstyle:ParameterNumber"})
 public class SimpleCookie implements Cookie {
 
     /**
@@ -55,7 +56,8 @@ public class SimpleCookie implements Cookie {
     //These constants are protected on purpose so that the test case can use them
     protected static final String NAME_VALUE_DELIMITER = "=";
     protected static final String ATTRIBUTE_DELIMITER = "; ";
-    protected static final long DAY_MILLIS = 86400000; //1 day = 86,400,000 milliseconds
+    //1 day = 86,400,000 milliseconds
+    protected static final long DAY_MILLIS = 86400000;
     protected static final String GMT_TIME_ZONE_ID = "GMT";
     protected static final String COOKIE_DATE_FORMAT_STRING = "EEE, dd-MMM-yyyy HH:mm:ss z";
 
@@ -70,7 +72,7 @@ public class SimpleCookie implements Cookie {
     protected static final String HTTP_ONLY_ATTRIBUTE_NAME = "HttpOnly";
     protected static final String SAME_SITE_ATTRIBUTE_NAME = "SameSite";
 
-    private static final transient Logger log = LoggerFactory.getLogger(SimpleCookie.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCookie.class);
 
     private String name;
     private String value;
@@ -86,7 +88,8 @@ public class SimpleCookie implements Cookie {
     public SimpleCookie() {
         this.maxAge = DEFAULT_MAX_AGE;
         this.version = DEFAULT_VERSION;
-        this.httpOnly = true; //most of the cookies ever used by Shiro should be as secure as possible.
+        //most of the cookies ever used by Shiro should be as secure as possible.
+        this.httpOnly = true;
         this.sameSite = SameSiteOptions.LAX;
     }
 
@@ -216,8 +219,8 @@ public class SimpleCookie implements Cookie {
     }
 
     /**
-     * Returns the Cookie's calculated path setting.  If the {@link javax.servlet.http.Cookie#getPath() path} is {@code null}, then the
-     * {@code request}'s {@link javax.servlet.http.HttpServletRequest#getContextPath() context path}
+     * Returns the Cookie's calculated path setting.  If the {@link javax.servlet.http.Cookie#getPath() path} is {@code null},
+     * then the {@code request}'s {@link javax.servlet.http.HttpServletRequest#getContextPath() context path}
      * will be returned. If getContextPath() is the empty string or null then the ROOT_PATH constant is returned.
      *
      * @param request the incoming HttpServletRequest
@@ -233,7 +236,7 @@ public class SimpleCookie implements Cookie {
         if (path == null) {
             path = ROOT_PATH;
         }
-        log.trace("calculated path: {}", path);
+        LOGGER.trace("calculated path: {}", path);
         return path;
     }
 
@@ -261,8 +264,8 @@ public class SimpleCookie implements Cookie {
         String headerValue = buildHeaderValue(name, value, comment, domain, path, maxAge, version, secure, httpOnly, sameSite);
         response.addHeader(COOKIE_HEADER_NAME, headerValue);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Added HttpServletResponse Cookie [{}]", headerValue);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Added HttpServletResponse Cookie [{}]", headerValue);
         }
     }
 
@@ -330,11 +333,11 @@ public class SimpleCookie implements Cookie {
 
     private void appendExpires(StringBuilder sb, int maxAge) {
         // if maxAge is negative, cookie should should expire when browser closes
-	// Don't write the maxAge cookie value if it's negative - at least on Firefox it'll cause the 
-	// cookie to be deleted immediately
+        // Don't write the maxAge cookie value if it's negative - at least on Firefox it'll cause the
+        // cookie to be deleted immediately
         // Write the expires header used by older browsers, but may be unnecessary
         // and it is not by the spec, see http://www.faqs.org/rfcs/rfc2965.html
-        // TODO consider completely removing the following 
+        // TODO consider completely removing the following
         if (maxAge >= 0) {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(MAXAGE_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(maxAge);
@@ -364,30 +367,34 @@ public class SimpleCookie implements Cookie {
     private void appendSecure(StringBuilder sb, boolean secure) {
         if (secure) {
             sb.append(ATTRIBUTE_DELIMITER);
-            sb.append(SECURE_ATTRIBUTE_NAME); //No value for this attribute
+            //No value for this attribute
+            sb.append(SECURE_ATTRIBUTE_NAME);
         }
     }
 
     private void appendHttpOnly(StringBuilder sb, boolean httpOnly) {
         if (httpOnly) {
             sb.append(ATTRIBUTE_DELIMITER);
-            sb.append(HTTP_ONLY_ATTRIBUTE_NAME); //No value for this attribute
+            //No value for this attribute
+            sb.append(HTTP_ONLY_ATTRIBUTE_NAME);
         }
     }
 
     private void appendSameSite(StringBuilder sb, SameSiteOptions sameSite) {
         if (sameSite != null) {
             sb.append(ATTRIBUTE_DELIMITER);
-            sb.append(SAME_SITE_ATTRIBUTE_NAME).append(NAME_VALUE_DELIMITER).append(sameSite.toString().toLowerCase(Locale.ENGLISH));
+            sb.append(SAME_SITE_ATTRIBUTE_NAME)
+                    .append(NAME_VALUE_DELIMITER)
+                    .append(sameSite.toString().toLowerCase(Locale.ENGLISH));
         }
     }
 
     /**
      * Check whether the given {@code cookiePath} matches the {@code requestPath}
      *
-     * @param cookiePath
-     * @param requestPath
-     * @return
+     * @param cookiePath  cookiePath
+     * @param requestPath requestPath
+     * @return boolean
      * @see <a href="https://tools.ietf.org/html/rfc6265#section-5.1.4">RFC 6265, Section 5.1.4 "Paths and Path-Match"</a>
      */
     private boolean pathMatches(String cookiePath, String requestPath) {
@@ -396,8 +403,8 @@ public class SimpleCookie implements Cookie {
         }
 
         return requestPath.length() == cookiePath.length()
-            || cookiePath.charAt(cookiePath.length() - 1) == '/'
-            || requestPath.charAt(cookiePath.length()) == '/';
+                || cookiePath.charAt(cookiePath.length() - 1) == '/'
+                || requestPath.charAt(cookiePath.length()) == '/';
     }
 
     /**
@@ -417,18 +424,21 @@ public class SimpleCookie implements Cookie {
     public void removeFrom(HttpServletRequest request, HttpServletResponse response) {
         String name = getName();
         String value = DELETED_COOKIE_VALUE;
-        String comment = null; //don't need to add extra size to the response - comments are irrelevant for deletions
+        //don't need to add extra size to the response - comments are irrelevant for deletions
+        String comment = null;
         String domain = getDomain();
         String path = calculatePath(request);
-        int maxAge = 0; //always zero for deletion
+        //always zero for deletion
+        int maxAge = 0;
         int version = getVersion();
         boolean secure = isSecure();
-        boolean httpOnly = false; //no need to add the extra text, plus the value 'deleteMe' is not sensitive at all
+        //no need to add the extra text, plus the value 'deleteMe' is not sensitive at all
+        boolean httpOnly = false;
         SameSiteOptions sameSite = getSameSite();
 
-        addCookieHeader(response, name, value, comment, domain, path, maxAge, version, secure, httpOnly, sameSite);
+        addCookieHeader(response, name, value, null, domain, path, maxAge, version, secure, httpOnly, sameSite);
 
-        log.trace("Removed '{}' cookie by setting maxAge=0", name);
+        LOGGER.trace("Removed '{}' cookie by setting maxAge=0", name);
     }
 
     @Override
@@ -440,14 +450,14 @@ public class SimpleCookie implements Cookie {
             // Validate that the cookie is used at the correct place.
             String path = StringUtils.clean(getPath());
             if (path != null && !pathMatches(path, request.getRequestURI())) {
-                log.warn("Found '{}' cookie at path '{}', but should be only used for '{}'", 
-                		new Object[] { name, Encode.forHtml(request.getRequestURI()), path});
+                LOGGER.warn("Found '{}' cookie at path '{}', but should be only used for '{}'",
+                        name, Encode.forHtml(request.getRequestURI()), path);
             } else {
                 value = cookie.getValue();
-                log.debug("Found '{}' cookie value [{}]", name, Encode.forHtml(value));
+                LOGGER.debug("Found '{}' cookie value [{}]", name, Encode.forHtml(value));
             }
         } else {
-            log.trace("No '{}' cookie value", name);
+            LOGGER.trace("No '{}' cookie value", name);
         }
 
         return value;
@@ -460,10 +470,10 @@ public class SimpleCookie implements Cookie {
      * @param request    the current executing http request.
      * @param cookieName the name of the cookie to find and return.
      * @return the cookie with the given name from the request or {@code null} if no cookie
-     *         with that name could be found.
+     * with that name could be found.
      */
     private static javax.servlet.http.Cookie getCookie(HttpServletRequest request, String cookieName) {
-        javax.servlet.http.Cookie cookies[] = request.getCookies();
+        javax.servlet.http.Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (javax.servlet.http.Cookie cookie : cookies) {
                 if (cookie.getName().equals(cookieName)) {

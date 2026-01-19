@@ -18,6 +18,7 @@
     xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
     <extension qualifier="webdriver">
         <property name="browser">${webdriver.browser}</property>
+        <property name="firefoxBinary">${webdriver.firefox.binary}</property>
         <property name="firefoxArguments">-headless</property>
         <property name="chromeBinary">${webdriver.chrome.binary}</property>
         <property name="chromeArguments">--ignore-certificate-errors</property>

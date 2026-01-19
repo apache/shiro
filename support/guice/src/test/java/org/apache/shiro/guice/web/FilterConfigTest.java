@@ -23,7 +23,6 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 import org.apache.shiro.guice.ShiroModuleTest;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
-import org.apache.shiro.web.util.WebUtils;
 import org.junit.jupiter.api.Test;
 
 import javax.servlet.FilterChain;
@@ -31,7 +30,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FilterConfigTest {

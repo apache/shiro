@@ -26,19 +26,20 @@ import java.util.Arrays;
  * Both IPv6 and IPv4 addresses are supported, but a matcher which is configured with an
  * IPv4 address will never match a request which returns an IPv6 address, and vice-versa.
  *
- * @see <a href="https://github.com/spring-projects/spring-security/blob/master/web/src/main/java/org/springframework/security/web/util/matcher/IpAddressMatcher.java">Original Spring Security version</a>
- * @since 2.0 
+ * @see <a href="https://github.com/spring-projects/spring-security/blob/master/web/src/main/java/
+ * org/springframework/security/web/util/matcher/IpAddressMatcher.java">Original Spring Security version</a>
+ * @since 2.0
  */
 public final class IpAddressMatcher {
     private final int nMaskBits;
     private final InetAddress requiredAddress;
-   
+
     /**
      * Takes a specific IP address or a range specified using the IP/Netmask (e.g.
      * 192.168.1.0/24 or 202.24.0.0/14).
      *
      * @param ipAddress the address or range of addresses from which the request must
-     * come.
+     *                  come.
      */
     public IpAddressMatcher(String ipAddress) {
         int i = ipAddress.indexOf('/');
@@ -51,6 +52,7 @@ public final class IpAddressMatcher {
         requiredAddress = parseAddress(ipAddress);
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     public boolean matches(String address) {
         InetAddress remoteAddress = parseAddress(address);
 
@@ -89,8 +91,7 @@ public final class IpAddressMatcher {
     private InetAddress parseAddress(String address) {
         try {
             return InetAddress.getByName(address);
-        }
-        catch (UnknownHostException e) {
+        } catch (UnknownHostException e) {
             throw new IllegalArgumentException("Failed to parse address" + address, e);
         }
     }

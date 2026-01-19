@@ -19,7 +19,11 @@
 package org.apache.shiro.util;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A {@code MapContext} provides a common base for context-based data storage in a {@link Map}.  Type-safe attribute
@@ -61,9 +65,9 @@ public class MapContext implements Map<String, Object>, Serializable {
         Object o = backingMap.get(key);
         if (o != null) {
             if (!type.isAssignableFrom(o.getClass())) {
-                String msg = "Invalid object found in SubjectContext Map under key [" + key + "].  Expected type " +
-                        "was [" + type.getName() + "], but the object under that key is of type " +
-                        "[" + o.getClass().getName() + "].";
+                String msg = "Invalid object found in SubjectContext Map under key [" + key + "].  Expected type "
+                        + "was [" + type.getName() + "], but the object under that key is of type "
+                        + "[" + o.getClass().getName() + "].";
                 throw new IllegalArgumentException(msg);
             }
             found = (E) o;

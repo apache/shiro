@@ -71,7 +71,7 @@ public class RedirectView {
 
     private String url;
 
-    private boolean contextRelative = false;
+    private boolean contextRelative;
 
     private boolean http10Compatible = true;
 
@@ -300,7 +300,7 @@ public class RedirectView {
             response.sendRedirect(encodedRedirectURL);
         } else {
             // Correct HTTP status code is 303, in particular for POST requests.
-            response.setStatus(303);
+            response.setStatus(HttpServletResponse.SC_SEE_OTHER);
             response.setHeader("Location", encodedRedirectURL);
         }
     }

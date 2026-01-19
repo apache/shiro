@@ -48,9 +48,9 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
 
     private static final String DEFAULT_SESSION_ID_PARAMETER_NAME = ShiroHttpSession.DEFAULT_SESSION_ID_NAME;
 
-    private ServletContext context = null;
+    private ServletContext context;
     //the associated request
-    private ShiroHttpServletRequest request = null;
+    private ShiroHttpServletRequest request;
 
     public ShiroHttpServletResponse(HttpServletResponse wrapped, ServletContext context, ShiroHttpServletRequest request) {
         super(wrapped);
@@ -91,7 +91,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         }
     }
 
-
+    @Deprecated
     public String encodeRedirectUrl(String s) {
         return encodeRedirectURL(s);
     }
@@ -116,6 +116,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         }
     }
 
+    @Deprecated
     public String encodeUrl(String s) {
         return encodeURL(s);
     }
@@ -137,27 +138,33 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
     protected boolean isEncodeable(final String location) {
 
         // First check if URL rewriting is disabled globally
-        if (Boolean.FALSE.equals(request.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED)))
+        if (Boolean.FALSE.equals(request.getAttribute(ShiroHttpServletRequest.SESSION_ID_URL_REWRITING_ENABLED))) {
             return (false);
+        }
 
-        if (location == null)
+        if (location == null) {
             return (false);
+        }
 
         // Is this an intra-document reference?
-        if (location.startsWith("#"))
+        if (location.startsWith("#")) {
             return (false);
+        }
 
         // Are we in a valid session that is not using cookies?
         final HttpServletRequest hreq = request;
         final HttpSession session = hreq.getSession(false);
-        if (session == null)
+        if (session == null) {
             return (false);
-        if (hreq.isRequestedSessionIdFromCookie())
+        }
+        if (hreq.isRequestedSessionIdFromCookie()) {
             return (false);
+        }
 
         return doIsEncodeable(hreq, session, location);
     }
 
+    @SuppressWarnings({"checkstyle:CyclomaticComplexity", "checkstyle:NPathComplexity", "checkstyle:MagicNumber"})
     private boolean doIsEncodeable(HttpServletRequest hreq, HttpSession session, String location) {
         // Is this a valid absolute URL?
         URL url;
@@ -168,35 +175,42 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         }
 
         // Does this URL match down to (and including) the context path?
-        if (!hreq.getScheme().equalsIgnoreCase(url.getProtocol()))
+        if (!hreq.getScheme().equalsIgnoreCase(url.getProtocol())) {
             return (false);
-        if (!hreq.getServerName().equalsIgnoreCase(url.getHost()))
+        }
+        if (!hreq.getServerName().equalsIgnoreCase(url.getHost())) {
             return (false);
+        }
         int serverPort = hreq.getServerPort();
         if (serverPort == -1) {
-            if ("https".equals(hreq.getScheme()))
+            if ("https".equals(hreq.getScheme())) {
                 serverPort = 443;
-            else
+            } else {
                 serverPort = 80;
+            }
         }
         int urlPort = url.getPort();
         if (urlPort == -1) {
-            if ("https".equals(url.getProtocol()))
+            if ("https".equals(url.getProtocol())) {
                 urlPort = 443;
-            else
+            } else {
                 urlPort = 80;
+            }
         }
-        if (serverPort != urlPort)
+        if (serverPort != urlPort) {
             return (false);
+        }
 
         String contextPath = getRequest().getContextPath();
         if (contextPath != null) {
             String file = url.getFile();
-            if ((file == null) || !file.startsWith(contextPath))
+            if ((file == null) || !file.startsWith(contextPath)) {
                 return (false);
+            }
             String tok = ";" + DEFAULT_SESSION_ID_PARAMETER_NAME + "=" + session.getId();
-            if (file.indexOf(tok, contextPath.length()) >= 0)
+            if (file.indexOf(tok, contextPath.length()) >= 0) {
                 return (false);
+            }
         }
 
         // This URL belongs to our web application, so it is encodeable
@@ -215,10 +229,12 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      * @throws IllegalArgumentException if a MalformedURLException is
      *                                  thrown when converting the relative URL to an absolute one
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     private String toAbsolute(String location) {
 
-        if (location == null)
+        if (location == null) {
             return (location);
+        }
 
         boolean leadingSlash = location.startsWith("/");
 
@@ -266,8 +282,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      * @return {@code true} if the character is allowed in a URI scheme, {@code false} otherwise.
      */
     public static boolean isSchemeChar(char c) {
-        return Character.isLetterOrDigit(c) ||
-                c == '+' || c == '-' || c == '.';
+        return Character.isLetterOrDigit(c) || c == '+' || c == '-' || c == '.';
     }
 
 
@@ -299,8 +314,9 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      */
     protected String toEncoded(String url, String sessionId) {
 
-        if ((url == null) || (sessionId == null))
+        if ((url == null) || (sessionId == null)) {
             return (url);
+        }
 
         String path = url;
         String query = "";
@@ -316,7 +332,8 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
             path = path.substring(0, pound);
         }
         StringBuilder sb = new StringBuilder(path);
-        if (sb.length() > 0) { // session id param can't be first.
+        // session id param can't be first.
+        if (sb.length() > 0) {
             sb.append(";");
             sb.append(DEFAULT_SESSION_ID_PARAMETER_NAME);
             sb.append("=");

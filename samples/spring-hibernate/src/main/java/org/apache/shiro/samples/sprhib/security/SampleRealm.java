@@ -16,9 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.shiro.samples.sprhib.security;
 
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.Sha256CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -42,10 +47,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class SampleRealm extends AuthorizingRealm {
 
-    protected UserDAO userDAO = null;
+    protected UserDAO userDAO;
 
+    @SuppressWarnings("deprecation")
     public SampleRealm() {
-        setName("SampleRealm"); //This name must match the name in the User class's getPrincipals() method
+        //This name must match the name in the User class's getPrincipals() method
+        setName("SampleRealm");
         setCredentialsMatcher(new Sha256CredentialsMatcher());
     }
 
@@ -57,7 +64,7 @@ public class SampleRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
         UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
         User user = userDAO.findUser(token.getUsername());
-        if( user != null ) {
+        if (user != null) {
             return new SimpleAuthenticationInfo(user.getId(), user.getPassword(), getName());
         } else {
             return null;
@@ -68,11 +75,11 @@ public class SampleRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         Long userId = (Long) principals.fromRealm(getName()).iterator().next();
         User user = userDAO.getUser(userId);
-        if( user != null ) {
+        if (user != null) {
             SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-            for( Role role : user.getRoles() ) {
+            for (Role role : user.getRoles()) {
                 info.addRole(role.getName());
-                info.addStringPermissions( role.getPermissions() );
+                info.addStringPermissions(role.getPermissions());
             }
             return info;
         } else {
@@ -81,4 +88,3 @@ public class SampleRealm extends AuthorizingRealm {
     }
 
 }
-

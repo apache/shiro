@@ -45,7 +45,7 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
     protected Collection<AuthorizingAnnotationMethodInterceptor> methodInterceptors;
 
     /**
-     * Default no-argument constructor that defaults the 
+     * Default no-argument constructor that defaults the
      * {@link #methodInterceptors methodInterceptors} attribute to contain two interceptors by default - the
      * {@link RoleAnnotationMethodInterceptor RoleAnnotationMethodInterceptor} and the
      * {@link PermissionAnnotationMethodInterceptor PermissionAnnotationMethodInterceptor} to
@@ -68,6 +68,7 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
      * {@link RoleAnnotationMethodInterceptor RoleAnnotationMethodInterceptor} and a
      * {@link PermissionAnnotationMethodInterceptor PermissionAnnotationMethodInterceptor} to
      * support role and permission annotations automatically.
+     *
      * @return the method interceptors to execute for the annotated method.
      */
     public Collection<AuthorizingAnnotationMethodInterceptor> getMethodInterceptors() {
@@ -76,6 +77,7 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
 
     /**
      * Sets the method interceptors to execute for the annotated method.
+     *
      * @param methodInterceptors the method interceptors to execute for the annotated method.
      * @see #getMethodInterceptors()
      */

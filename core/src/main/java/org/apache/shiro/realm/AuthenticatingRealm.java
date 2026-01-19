@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.realm;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -28,12 +30,10 @@ import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.lang.util.Initializable;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -110,11 +110,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @since 0.2
  */
+@SuppressWarnings("checkstyle:MethodCount")
 public abstract class AuthenticatingRealm extends CachingRealm implements Initializable {
 
-    //TODO - complete JavaDoc
-
-    private static final Logger log = LoggerFactory.getLogger(AuthenticatingRealm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticatingRealm.class);
 
     private static final AtomicInteger INSTANCE_COUNT = new AtomicInteger();
 
@@ -124,6 +123,12 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @since 1.2
      */
     private static final String DEFAULT_AUTHENTICATION_CACHE_SUFFIX = ".authenticationCache";
+
+    /**
+     * Simulated authentication info, should only be set once to avoid wasting useless CPU cycles.
+     */
+    private final AtomicReference<AuthenticationInfo> simulatedAuthenticationInfo =
+        new AtomicReference<>();
 
     /**
      * Credentials matcher used to determine if the provided credentials match the credentials stored in the data store.
@@ -191,7 +196,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * value is a {@link org.apache.shiro.authc.credential.SimpleCredentialsMatcher SimpleCredentialsMatcher} instance.
      *
      * @return the <code>CredentialsMatcher</code> used during an authentication attempt to verify submitted
-     *         credentials with those stored in the system.
+     * credentials with those stored in the system.
      */
     public CredentialsMatcher getCredentialsMatcher() {
         return credentialsMatcher;
@@ -225,7 +230,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @return the authenticationToken class supported by this realm.
      * @see #setAuthenticationTokenClass
      */
-    public Class getAuthenticationTokenClass() {
+    public Class<? extends AuthenticationToken> getAuthenticationTokenClass() {
         return authenticationTokenClass;
     }
 
@@ -264,7 +269,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * set.
      *
      * @return a {@link Cache} instance to use for authentication caching, or {@code null} if no cache has been
-     *         set.
+     * set.
      * @see #setAuthenticationCache(org.apache.shiro.cache.Cache)
      * @see #isAuthenticationCachingEnabled()
      * @since 1.2
@@ -284,7 +289,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * of this page in the class-level JavaDoc.
      *
      * @return the name of a {@link Cache} to lookup from any available {@link #getCacheManager() cacheManager} if
-     *         a cache is not explicitly configured via {@link #setAuthenticationCache(org.apache.shiro.cache.Cache)}.
+     * a cache is not explicitly configured via {@link #setAuthenticationCache(org.apache.shiro.cache.Cache)}.
      * @see #isAuthenticationCachingEnabled()
      * @since 1.2
      */
@@ -393,7 +398,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @since 1.2
      */
     public final void init() {
-        //trigger obtaining the authorization cache if possible
+        //trigger obtaining the authentication cache if possible
         getAvailableAuthenticationCache();
         onInit();
     }
@@ -413,7 +418,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @since 1.2
      */
     protected void afterCacheManagerSet() {
-        //trigger obtaining the authorization cache if possible
+        //trigger obtaining the authentication cache if possible
         getAvailableAuthenticationCache();
     }
 
@@ -455,13 +460,13 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
 
         if (this.authenticationCache == null) {
 
-            log.trace("No authenticationCache instance set.  Checking for a cacheManager...");
+            LOGGER.trace("No authenticationCache instance set.  Checking for a cacheManager...");
 
             CacheManager cacheManager = getCacheManager();
 
             if (cacheManager != null) {
                 String cacheName = getAuthenticationCacheName();
-                log.debug("CacheManager [{}] configured.  Building authentication cache '{}'", cacheManager, cacheName);
+                LOGGER.debug("CacheManager [{}] configured.  Building authentication cache '{}'", cacheManager, cacheName);
                 this.authenticationCache = cacheManager.getCache(cacheName);
             }
         }
@@ -475,7 +480,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      *
      * @param token the token submitted during the authentication attempt.
      * @return any cached AuthenticationInfo corresponding to the specified token or {@code null} if there currently
-     *         isn't any cached data.
+     * isn't any cached data.
      * @since 1.2
      */
     private AuthenticationInfo getCachedAuthenticationInfo(AuthenticationToken token) {
@@ -483,13 +488,13 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
 
         Cache<Object, AuthenticationInfo> cache = getAvailableAuthenticationCache();
         if (cache != null && token != null) {
-            log.trace("Attempting to retrieve the AuthenticationInfo from cache.");
+            LOGGER.trace("Attempting to retrieve the AuthenticationInfo from cache.");
             Object key = getAuthenticationCacheKey(token);
             info = cache.get(key);
             if (info == null) {
-                log.trace("No AuthorizationInfo found in cache for key [{}]", key);
+                LOGGER.trace("No AuthenticationInfo found in cache for key [{}]", key);
             } else {
-                log.trace("Found cached AuthorizationInfo for key [{}]", key);
+                LOGGER.trace("Found cached AuthenticationInfo for key [{}]", key);
             }
         }
 
@@ -498,7 +503,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
 
     /**
      * Caches the specified info if authentication caching
-     * {@link #isAuthenticationCachingEnabled(org.apache.shiro.authc.AuthenticationToken, org.apache.shiro.authc.AuthenticationInfo) isEnabled}
+     * {@link #isAuthenticationCachingEnabled(AuthenticationToken, AuthenticationInfo) isEnabled}
      * for the specific token/info pair and a cache instance is available to be used.
      *
      * @param token the authentication token submitted which resulted in a successful authentication attempt.
@@ -507,7 +512,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      */
     private void cacheAuthenticationInfoIfPossible(AuthenticationToken token, AuthenticationInfo info) {
         if (!isAuthenticationCachingEnabled(token, info)) {
-            log.debug("AuthenticationInfo caching is disabled for info [{}].  Submitted token: [{}].", info, token);
+            LOGGER.debug("AuthenticationInfo caching is disabled for info [{}].  Submitted token: [{}].", info, token);
             //return quietly, caching is disabled for this token/info pair:
             return;
         }
@@ -516,7 +521,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
         if (cache != null) {
             Object key = getAuthenticationCacheKey(token);
             cache.put(key, info);
-            log.trace("Cached AuthenticationInfo for continued authentication.  key=[{}], value=[{}].", key, info);
+            LOGGER.trace("Cached AuthenticationInfo for continued authentication.  key=[{}], value=[{}].", key, info);
         }
     }
 
@@ -532,7 +537,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @param info  the {@code AuthenticationInfo} acquired from data source lookup via
      *              {@link #doGetAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken)}
      * @return {@code true} if authentication caching should be utilized based on the specified
-     *         {@link AuthenticationToken} and/or {@link AuthenticationInfo}, {@code false} otherwise.
+     * {@link AuthenticationToken} and/or {@link AuthenticationInfo}, {@code false} otherwise.
      * @since 1.2
      */
     protected boolean isAuthenticationCachingEnabled(AuthenticationToken token, AuthenticationInfo info) {
@@ -548,7 +553,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * <li>If there is no cached {@link AuthenticationInfo} found, delegate to the
      * {@link #doGetAuthenticationInfo(org.apache.shiro.authc.AuthenticationToken)} method to perform the actual
      * lookup.  If authentication caching is enabled and possible, any returned info object will be
-     * {@link #cacheAuthenticationInfoIfPossible(org.apache.shiro.authc.AuthenticationToken, org.apache.shiro.authc.AuthenticationInfo) cached}
+     * {@link #cacheAuthenticationInfoIfPossible(AuthenticationToken, AuthenticationInfo) cached}
      * to be used in future authentication attempts.</li>
      * <li>If an AuthenticationInfo instance is not found in the cache or by lookup, {@code null} is returned to
      * indicate an account cannot be found.</li>
@@ -560,7 +565,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      *
      * @param token the submitted account principal and credentials.
      * @return the AuthenticationInfo corresponding to the given {@code token}, or {@code null} if no
-     *         AuthenticationInfo could be found.
+     * AuthenticationInfo could be found.
      * @throws AuthenticationException if authentication failed.
      */
     public final AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
@@ -569,20 +574,54 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
         if (info == null) {
             //otherwise not cached, perform the lookup:
             info = doGetAuthenticationInfo(token);
-            log.debug("Looked up AuthenticationInfo [{}] from doGetAuthenticationInfo", info);
+            LOGGER.debug("Looked up AuthenticationInfo [{}] from doGetAuthenticationInfo", info);
             if (token != null && info != null) {
                 cacheAuthenticationInfoIfPossible(token, info);
             }
         } else {
-            log.debug("Using cached authentication info [{}] to perform credentials matching.", info);
+            LOGGER.debug("Using cached authentication info [{}] to perform credentials matching.", info);
         }
 
         if (info != null) {
             assertCredentialsMatch(token, info);
         } else {
-            log.debug("No AuthenticationInfo found for submitted AuthenticationToken [{}].  Returning null.", token);
+            simulateFailedLogin(token);
         }
 
+        return info;
+    }
+
+    private void simulateFailedLogin(AuthenticationToken token) {
+        try {
+            AuthenticationInfo simulated = ensureSimulatedAuthenticationInfo();
+            if (simulated != null && assertCredentialsMatchWithoutException(token, simulated)) {
+                    String msg = "Submitted credentials for token [" + token + "] matched the simulated credentials. "
+                        + "This indicates a misconfiguration of the realm's "
+                        + "CredentialsMatcher or simulated credentials.  Please review your configuration.";
+                    throw new IncorrectCredentialsException(msg);
+            }
+        } catch (AuthenticationException authenticationException) {
+            // should not happen as the auth info comes directly from the credential service,
+            // but log to ensure implementations can find their flaw.
+            LOGGER.error(
+                "CredentialsMatcher [{}] threw exception on method 'doCredentialsMatch'",
+                    getCredentialsMatcher(), authenticationException);
+        }
+    }
+
+    /**
+     * Make sure some AuthenticationInfo for simulated checks does exist. If not, it will be generated.
+     * @return simulated AuthenticationInfo
+     */
+    AuthenticationInfo ensureSimulatedAuthenticationInfo() {
+        var info = simulatedAuthenticationInfo.get();
+        if (info == null) {
+            getCredentialsMatcher().createSimulatedCredentials()
+                    .ifPresentOrElse(simulatedAuthenticationInfo::set, () -> LOGGER.warn(
+                            "CredentialsMatcher [{}] did not supply simulated credentials. Please update the implementation.",
+                            getCredentialsMatcher()));
+            return simulatedAuthenticationInfo.get();
+        }
         return info;
     }
 
@@ -595,17 +634,10 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @throws AuthenticationException if the token's credentials do not match the stored account credentials.
      */
     protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
-        CredentialsMatcher cm = getCredentialsMatcher();
-        if (cm != null) {
-            if (!cm.doCredentialsMatch(token, info)) {
-                //not successful - throw an exception to indicate this:
-                String msg = "Submitted credentials for token [" + token + "] did not match the expected credentials.";
-                throw new IncorrectCredentialsException(msg);
-            }
-        } else {
-            throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify " +
-                    "credentials during authentication.  If you do not wish for credentials to be examined, you " +
-                    "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
+        if (!assertCredentialsMatchWithoutException(token, info)) {
+            //not successful - throw an exception to indicate this:
+            String msg = "Submitted credentials for token [" + token + "] did not match the expected credentials.";
+            throw new IncorrectCredentialsException(msg);
         }
     }
 
@@ -679,7 +711,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * {@link #clearCache(org.apache.shiro.subject.PrincipalCollection)} method instead (which will in turn call this
      * method by default).
      *
-     * @param principals the principals of the account for which to clear the cached AuthorizationInfo.
+     * @param principals the principals of the account for which to clear the cached AuthenticationInfo.
      * @see #clearCache(org.apache.shiro.subject.PrincipalCollection)
      * @since 1.2
      */
@@ -706,10 +738,30 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      *
      * @param token the authentication token containing the user's principal and credentials.
      * @return an {@link AuthenticationInfo} object containing account data resulting from the
-     *         authentication ONLY if the lookup is successful (i.e. account exists and is valid, etc.)
+     * authentication ONLY if the lookup is successful (i.e. account exists and is valid, etc.)
      * @throws AuthenticationException if there is an error acquiring data or performing
      *                                 realm-specific authentication logic for the specified <tt>token</tt>
      */
     protected abstract AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException;
 
+    /**
+     * Asserts that the submitted {@code AuthenticationToken}'s credentials match the stored account
+     * needed for simulated checks that do not need to throw exceptions.
+     *
+     * @param token the submitted authentication token
+     * @param info  the AuthenticationInfo corresponding to the given {@code token}
+     * @return true if the token's credentials match the stored account credentials, false otherwise.
+     * @throws AuthenticationException only for configuration problems.
+     */
+    private boolean assertCredentialsMatchWithoutException(AuthenticationToken token,
+                                                           AuthenticationInfo info) throws AuthenticationException {
+        CredentialsMatcher cm = getCredentialsMatcher();
+        if (cm != null) {
+            return cm.doCredentialsMatch(token, info);
+        } else {
+            throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify "
+                    + "credentials during authentication.  If you do not wish for credentials to be examined, you "
+                    + "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
+        }
+    }
 }

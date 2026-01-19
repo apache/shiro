@@ -25,6 +25,7 @@ import javax.ws.rs.core.Application;
 
 /**
  * Simple JAX-RS {@link Application} that is implementation agnostic.
+ *
  * @since 2.0.0
  */
 @Dependent

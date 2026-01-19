@@ -54,6 +54,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
 
     /**
      * Creates a new instance with the specified roles and no permissions.
+     *
      * @param roles the roles assigned to the realm account.
      */
     public SimpleAuthorizationInfo(Set<String> roles) {
@@ -66,6 +67,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
 
     /**
      * Sets the roles assigned to the account.
+     *
      * @param roles the roles assigned to the account.
      */
     public void setRoles(Set<String> roles) {
@@ -75,6 +77,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
     /**
      * Adds (assigns) a role to those associated with the account.  If the account doesn't yet have any roles, a
      * new roles collection (a Set) will be created automatically.
+     *
      * @param role the role to add to those associated with the account.
      */
     public void addRole(String role) {
@@ -87,6 +90,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
     /**
      * Adds (assigns) multiple roles to those associated with the account.  If the account doesn't yet have any roles, a
      * new roles collection (a Set) will be created automatically.
+     *
      * @param roles the roles to add to those associated with the account.
      */
     public void addRoles(Collection<String> roles) {
@@ -114,6 +118,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
     /**
      * Adds (assigns) a permission to those directly associated with the account.  If the account doesn't yet have any
      * direct permissions, a new permission collection (a Set&lt;String&gt;) will be created automatically.
+     *
      * @param permission the permission to add to those directly assigned to the account.
      */
     public void addStringPermission(String permission) {
@@ -126,6 +131,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
     /**
      * Adds (assigns) multiple permissions to those associated directly with the account.  If the account doesn't yet
      * have any string-based permissions, a  new permissions collection (a Set&lt;String&gt;) will be created automatically.
+     *
      * @param permissions the permissions to add to those associated directly with the account.
      */
     public void addStringPermissions(Collection<String> permissions) {
@@ -153,6 +159,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
     /**
      * Adds (assigns) a permission to those directly associated with the account.  If the account doesn't yet have any
      * direct permissions, a new permission collection (a Set&lt;{@link Permission Permission}&gt;) will be created automatically.
+     *
      * @param permission the permission to add to those directly assigned to the account.
      */
     public void addObjectPermission(Permission permission) {
@@ -166,6 +173,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
      * Adds (assigns) multiple permissions to those associated directly with the account.  If the account doesn't yet
      * have any object-based permissions, a  new permissions collection (a Set&lt;{@link Permission Permission}&gt;)
      * will be created automatically.
+     *
      * @param permissions the permissions to add to those associated directly with the account.
      */
     public void addObjectPermissions(Collection<Permission> permissions) {

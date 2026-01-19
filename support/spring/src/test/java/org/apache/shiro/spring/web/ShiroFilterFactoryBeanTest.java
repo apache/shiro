@@ -27,13 +27,25 @@ import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 /**
  * Unit tests for the {@link ShiroFilterFactoryBean} implementation.
@@ -56,10 +68,11 @@ public class ShiroFilterFactoryBeanTest {
         DefaultFilterChainManager fcManager = (DefaultFilterChainManager) resolver.getFilterChainManager();
         NamedFilterList chain = fcManager.getChain("/test");
         assertNotNull(chain);
-        assertEquals(chain.size(), 3);
+        assertEquals(3, chain.size());
         Filter[] filters = new Filter[chain.size()];
         filters = chain.toArray(filters);
-        assertTrue(filters[0] instanceof InvalidRequestFilter); // global filter
+        // global filter
+        assertTrue(filters[0] instanceof InvalidRequestFilter);
         assertTrue(filters[1] instanceof DummyFilter);
         assertTrue(filters[2] instanceof FormAuthenticationFilter);
     }
@@ -92,7 +105,8 @@ public class ShiroFilterFactoryBeanTest {
         verify(mockFilterConfig);
 
         FilterChain filterChain = new FilterChain() {
-            public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException, ServletException {
+            public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse)
+                    throws IOException, ServletException {
                 HttpServletRequest request = (HttpServletRequest) servletRequest;
                 assertNotNull(request.getSession());
                 //this line asserts the fix for the user-reported issue:

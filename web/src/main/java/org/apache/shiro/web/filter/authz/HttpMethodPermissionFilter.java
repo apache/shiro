@@ -80,12 +80,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
     /**
      * This class's private logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(HttpMethodPermissionFilter.class);
-
-    /**
-     * Map that contains a mapping between http methods to permission actions (verbs)
-     */
-    private final Map<String, String> httpMethodActions = new HashMap<String, String>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpMethodPermissionFilter.class);
 
     //Actions representing HTTP Method values (GET -> read, POST -> create, etc.)
     private static final String CREATE_ACTION = "create";
@@ -94,23 +89,53 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
     private static final String DELETE_ACTION = "delete";
 
     /**
+     * Map that contains a mapping between http methods to permission actions (verbs)
+     */
+    private final Map<String, String> httpMethodActions = new HashMap<String, String>();
+
+    /**
      * Enum of constants for well-defined mapping values.  Used in the Filter's constructor to perform the map instance
      * used at runtime.
      */
-    private static enum HttpMethodAction {
+    private enum HttpMethodAction {
 
+        /**
+         * DELETE
+         */
         DELETE(DELETE_ACTION),
+        /**
+         * GET
+         */
         GET(READ_ACTION),
+        /**
+         * HEAD
+         */
         HEAD(READ_ACTION),
-        MKCOL(CREATE_ACTION), //webdav, but useful here
+        /**
+         * MKCOL
+         */
+        MKCOL(CREATE_ACTION),
+        /**
+         * OPTIONS
+         * webdav, but useful here
+         */
         OPTIONS(READ_ACTION),
+        /**
+         * POST
+         */
         POST(CREATE_ACTION),
+        /**
+         * PUT
+         */
         PUT(UPDATE_ACTION),
+        /**
+         * TRACE
+         */
         TRACE(READ_ACTION);
 
         private final String action;
 
-        private HttpMethodAction(String action) {
+        HttpMethodAction(String action) {
             this.action = action;
         }
 
@@ -180,7 +205,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
      * @param configuredPerms any url-specific permissions mapped to this filter in the URL rules mappings.
      * @param action          the application-friendly action (verb) resolved based on the HTTP Method name.
      * @return a collection of String permissions with which to perform a permission check to determine if the filter
-     *         will allow the request to continue.
+     * will allow the request to continue.
      */
     protected String[] buildPermissions(HttpServletRequest request, String[] configuredPerms, String action) {
         return buildPermissions(configuredPerms, action);
@@ -226,7 +251,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
             mappedPerms[i] = configuredPerms[i] + ":" + action;
         }
 
-        if (log.isTraceEnabled()) {
+        if (LOGGER.isTraceEnabled()) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < mappedPerms.length; i++) {
                 if (i > 0) {
@@ -234,7 +259,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
                 }
                 sb.append(mappedPerms[i]);
             }
-            log.trace("MAPPED '{}' action to permission(s) '{}'", action, sb);
+            LOGGER.trace("MAPPED '{}' action to permission(s) '{}'", action, sb);
         }
 
         return mappedPerms;
@@ -244,15 +269,15 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
      * Resolves an 'application friendly' action verb based on the {@code HttpServletRequest}'s method, appends that
      * action to each configured permission (the {@code mappedValue} argument is a {@code String[]} array), and
      * delegates the permission check for the newly constructed permission(s) to the superclass
-     * {@link PermissionsAuthorizationFilter#isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed}
+     * {@link PermissionsAuthorizationFilter#isAccessAllowed(ServletRequest, ServletResponse, Object) isAccessAllowed}
      * implementation to perform the actual permission check.
      *
      * @param request     the inbound {@code ServletRequest}
      * @param response    the outbound {@code ServletResponse}
      * @param mappedValue the filter-specific config value mapped to this filter in the URL rules mappings.
      * @return {@code true} if the request should proceed through the filter normally, {@code false} if the
-     *         request should be processed by this filter's
-     *         {@link #onAccessDenied(ServletRequest,ServletResponse,Object)} method instead.
+     * request should be processed by this filter's
+     * {@link #onAccessDenied(ServletRequest, ServletResponse, Object)} method instead.
      * @throws IOException
      */
     @Override

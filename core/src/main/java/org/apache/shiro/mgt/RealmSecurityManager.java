@@ -139,9 +139,9 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         EventBus eventBus = getEventBus();
         Collection<Realm> realms = getRealms();
         if (eventBus != null && realms != null && !realms.isEmpty()) {
-            for(Realm realm : realms) {
+            for (Realm realm : realms) {
                 if (realm instanceof EventBusAware) {
-                    ((EventBusAware)realm).setEventBus(eventBus);
+                    ((EventBusAware) realm).setEventBus(eventBus);
                 }
             }
         }
@@ -149,8 +149,8 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
 
     /**
      * Simply calls {@link #applyCacheManagerToRealms() applyCacheManagerToRealms()} to allow the
-     * newly set {@link org.apache.shiro.cache.CacheManager CacheManager} to be propagated to the internal collection of <code>Realm</code>
-     * that would need to use it.
+     * newly set {@link org.apache.shiro.cache.CacheManager CacheManager} to be propagated to the
+     * internal collection of <code>Realm</code> that would need to use it.
      */
     protected void afterCacheManagerSet() {
         super.afterCacheManagerSet();

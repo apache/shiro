@@ -30,8 +30,7 @@ public class SimplePrincipalCollectionTest {
     private static final Logger LOG = LoggerFactory.getLogger(SimplePrincipalCollectionTest.class);
 
     @Test
-    void multiplePrincipalsTest()
-    {
+    void multiplePrincipalsTest() {
         SimplePrincipalCollection principalCollection = new SimplePrincipalCollection();
         principalCollection.add("frank", "realm1");
         principalCollection.add("johnny", "realm1");

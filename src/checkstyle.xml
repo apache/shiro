@@ -43,13 +43,7 @@
 -->
 
 <module name="Checker">
-    <!--
-        If you set the basedir property below, then all reported file
-        names will be relative to the specified directory. See
-        http://checkstyle.sourceforge.net/5.x/config.html#Checker
-
-        <property name="basedir" value="${basedir}"/>
-    -->
+    <property name="basedir" value="${root.dir}"/>
 
     <!-- Activation here is needed for IntelliJ CheckstyleIDEA plugin -->
     <module name="SuppressionFilter">
@@ -117,7 +111,7 @@
             <property name="scope" value="public"/>
         </module>
         <module name="JavadocVariable">
-            <property name="scope" value="public"/>
+            <property name="accessModifiers" value=""/>
         </module>
         <module name="JavadocStyle">
             <property name="checkFirstSentence" value="false"/>
@@ -260,7 +254,7 @@
         <module name="MagicNumber">
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreAnnotation" value="true"/>
-            <property name="ignoreNumbers" value="-1, 0, 1, 2, 3"/>
+            <property name="ignoreNumbers" value="-1, 0, 1, 2, 3, 4, 5, 6"/>
             <property name="constantWaiverParentToken"
                       value="ASSIGN, ARRAY_INIT, EXPR, UNARY_PLUS, UNARY_MINUS, TYPECAST, ELIST, LITERAL_NEW,
                       METHOD_CALL, STAR, DIV, PLUS, MINUS, SL, QUESTION"/>

@@ -63,7 +63,7 @@ public interface SubjectContext extends Map<String, Object> {
      * {@code null} if one has not yet been provided to this context.
      *
      * @return the SecurityManager instance that should be used to back the constructed {@link Subject} instance or
-     *         {@code null} if one has not yet been provided to this context.
+     * {@code null} if one has not yet been provided to this context.
      */
     SecurityManager getSecurityManager();
 
@@ -78,10 +78,11 @@ public interface SubjectContext extends Map<String, Object> {
 
     /**
      * Resolves the {@code SecurityManager} instance that should be used to back the constructed {@link Subject}
-     * instance (typically used to support {@link org.apache.shiro.subject.support.DelegatingSubject DelegatingSubject} implementations).
+     * instance (typically used to support
+     * {@link org.apache.shiro.subject.support.DelegatingSubject DelegatingSubject} implementations).
      *
      * @return the {@code SecurityManager} instance that should be used to back the constructed {@link Subject}
-     *         instance
+     * instance
      */
     SecurityManager resolveSecurityManager();
 
@@ -116,7 +117,7 @@ public interface SubjectContext extends Map<String, Object> {
      * newly authenticated instance.
      *
      * @return any existing {@code Subject} that may be in use at the time the new {@code Subject} instance is
-     *         being created.
+     * being created.
      */
     Subject getSubject();
 
@@ -176,7 +177,7 @@ public interface SubjectContext extends Map<String, Object> {
      * reason for ignoring Shiro's default authentication state mechanisms.
      *
      * @return {@code true} if the constructed {@code Subject} should be considered authenticated, {@code false}
-     *         otherwise.
+     * otherwise.
      */
     boolean isAuthenticated();
 
@@ -204,7 +205,7 @@ public interface SubjectContext extends Map<String, Object> {
      * {@code false} otherwise.
      *
      * @param enabled whether or not the constructed {@code Subject} instance should be allowed to create a session,
-     * {@code false} otherwise.
+     *                {@code false} otherwise.
      * @since 1.2
      */
     void setSessionCreationEnabled(boolean enabled);

@@ -45,7 +45,9 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import javax.inject.Named;
 import javax.servlet.Filter;
@@ -62,12 +64,20 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
+@Isolated("System property usage")
 public class ShiroWebModuleTest {
 
 
@@ -90,14 +100,14 @@ public class ShiroWebModuleTest {
 
         });
         // we're not getting a WebSecurityManager here b/c it's not exposed.  There didn't seem to be a good reason to
-        // expose it outside of the Shiro module.
+        // expose it outside the Shiro module.
         SecurityManager securityManager = injector.getInstance(SecurityManager.class);
         assertNotNull(securityManager);
         assertTrue(securityManager instanceof WebSecurityManager);
         SessionManager sessionManager = injector.getInstance(SessionManager.class);
         assertNotNull(sessionManager);
         assertTrue(sessionManager instanceof ServletContainerSessionManager);
-        assertTrue(((DefaultWebSecurityManager)securityManager).getSessionManager() instanceof ServletContainerSessionManager);
+        assertTrue(((DefaultWebSecurityManager) securityManager).getSessionManager() instanceof ServletContainerSessionManager);
     }
 
     @Test
@@ -134,7 +144,7 @@ public class ShiroWebModuleTest {
         assertNotNull(webSecurityManager);
         assertTrue(webSecurityManager instanceof MyDefaultWebSecurityManager);
         // SHIRO-435: Check both keys SecurityManager and WebSecurityManager are bound to the same instance
-        assertTrue( securityManager == webSecurityManager );
+        assertTrue(securityManager == webSecurityManager);
     }
 
     @Test
@@ -167,12 +177,13 @@ public class ShiroWebModuleTest {
         assertNotNull(webEnvironment);
         assertTrue(webEnvironment instanceof MyWebEnvironment);
         // SHIRO-435: Check both keys Environment and WebEnvironment are bound to the same instance
-        assertTrue( environment == webEnvironment );
+        assertTrue(environment == webEnvironment);
     }
 
     /**
      * @since 1.4
      */
+    @SuppressWarnings("checkstyle:MethodLength")
     @Test
     void testAddFilterChainGuice3and4() {
 
@@ -201,7 +212,8 @@ public class ShiroWebModuleTest {
                 this.addFilterChain("/test_custom_filter/**", Key.get(CustomFilter.class));
                 this.addFilterChain("/test_authc_basic/**", AUTHC_BASIC);
                 this.addFilterChain("/test_perms/**", filterConfig(PERMS, "remote:invoke:lan,wan"));
-                this.addFilterChain("/multiple_configs/**", filterConfig(AUTHC), filterConfig(ROLES, "b2bClient"), filterConfig(PERMS, "remote:invoke:lan,wan"));
+                this.addFilterChain("/multiple_configs/**", filterConfig(AUTHC), filterConfig(ROLES, "b2bClient"),
+                        filterConfig(PERMS, "remote:invoke:lan,wan"));
             }
 
             @Provides
@@ -261,6 +273,7 @@ public class ShiroWebModuleTest {
      * @since 1.4
      */
     @Test
+    @Tag("Guice3")
     void testAddFilterChainGuice3Only() {
 
         Assumptions.assumeTrue(ShiroWebModule.isGuiceVersion3(), "This test only runs against Guice 3.x");
@@ -279,14 +292,20 @@ public class ShiroWebModuleTest {
         replay(servletContext, request);
 
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
+
             @Override
+            @SuppressWarnings("unchecked")
+            @Deprecated
             protected void configureShiroWeb() {
                 bindRealm().to(ShiroModuleTest.MockRealm.class);
                 expose(FilterChainResolver.class);
                 this.addFilterChain("/test_authc/**", AUTHC);
                 this.addFilterChain("/test_custom_filter/**", Key.get(CustomFilter.class));
                 this.addFilterChain("/test_perms/**", config(PERMS, "remote:invoke:lan,wan"));
-                this.addFilterChain("/multiple_configs/**", AUTHC, config(ROLES, "b2bClient"), config(PERMS, "remote:invoke:lan,wan"));
+                this.addFilterChain("/multiple_configs/**",
+                                            AUTHC,
+                                            config(ROLES, "b2bClient"),
+                                            config(PERMS, "remote:invoke:lan,wan"));
             }
 
             @Provides
@@ -489,7 +508,8 @@ public class ShiroWebModuleTest {
 
     public static class MyWebEnvironment extends WebGuiceEnvironment {
         @Inject
-        MyWebEnvironment(FilterChainResolver filterChainResolver, @Named(ShiroWebModule.NAME) ServletContext servletContext, WebSecurityManager securityManager, ShiroFilterConfiguration filterConfiguration) {
+        MyWebEnvironment(FilterChainResolver filterChainResolver, @Named(ShiroWebModule.NAME) ServletContext servletContext,
+                         WebSecurityManager securityManager, ShiroFilterConfiguration filterConfiguration) {
             super(filterChainResolver, servletContext, securityManager, filterConfiguration);
         }
     }
@@ -497,12 +517,16 @@ public class ShiroWebModuleTest {
     public static class CustomFilter implements Filter {
 
         @Override
-        public void init(FilterConfig filterConfig) throws ServletException {}
+        public void init(FilterConfig filterConfig) throws ServletException {
+        }
 
         @Override
-        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {}
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+                throws IOException, ServletException {
+        }
 
         @Override
-        public void destroy() {}
+        public void destroy() {
+        }
     }
 }

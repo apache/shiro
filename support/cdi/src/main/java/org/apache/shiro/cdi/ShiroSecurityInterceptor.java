@@ -20,12 +20,16 @@ import javax.enterprise.context.Dependent;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+
 import org.apache.shiro.cdi.AopHelper.SecurityInterceptor;
 
 /**
  * Enforce Shiro security on EJBs and CDI Beans
  */
-@Interceptor @ShiroSecureAnnotation @Dependent @Priority(Interceptor.Priority.LIBRARY_BEFORE)
+@Interceptor
+@ShiroSecureAnnotation
+@Dependent
+@Priority(Interceptor.Priority.LIBRARY_BEFORE)
 public class ShiroSecurityInterceptor implements Serializable {
     private static final long serialVersionUID = 1L;
 

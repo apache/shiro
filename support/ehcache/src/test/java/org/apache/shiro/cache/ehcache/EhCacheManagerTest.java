@@ -23,8 +23,12 @@ import org.apache.shiro.lang.util.LifecycleUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.Set;
@@ -34,6 +38,7 @@ import java.util.Set;
  *
  * @since May 11, 2010 12:41:38 PM
  */
+@Isolated
 public class EhCacheManagerTest {
 
     private EhCacheManager cacheManager;
@@ -75,7 +80,7 @@ public class EhCacheManagerTest {
         cache.put("hello", "world");
         String value = cache.get("hello");
         assertNotNull(value);
-        assertEquals(value, "world");
+        assertEquals("world", value);
     }
 
     @Test
@@ -93,7 +98,7 @@ public class EhCacheManagerTest {
         cache.put("hello2", "world2");
         String value = cache.get("hello");
         assertNotNull(value);
-        assertEquals(value, "world");
+        assertEquals("world", value);
         assertEquals("world2", cache.get("hello2"));
         assertEquals(2, cache.size());
 
@@ -120,7 +125,7 @@ public class EhCacheManagerTest {
         cache.put("hello2", "world2");
         String value = cache.get("hello");
         assertNotNull(value);
-        assertEquals(value, "world");
+        assertEquals("world", value);
         assertEquals("world2", cache.get("hello2"));
         assertEquals(2, cache.size());
 
@@ -145,7 +150,7 @@ public class EhCacheManagerTest {
         cache.put("hello2", "world2");
         String value = cache.get("hello");
         assertNotNull(value);
-        assertEquals(value, "world");
+        assertEquals("world", value);
         assertEquals("world2", cache.get("hello2"));
         assertEquals(2, cache.size());
 
@@ -179,7 +184,7 @@ public class EhCacheManagerTest {
         cache.put("hello2", "world2");
         String value = cache.get("hello");
         assertNotNull(value);
-        assertEquals(value, "world");
+        assertEquals("world", value);
         assertEquals("world2", cache.get("hello2"));
         assertEquals(2, cache.size());
 

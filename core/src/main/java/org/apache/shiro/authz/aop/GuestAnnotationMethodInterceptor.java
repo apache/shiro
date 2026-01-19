@@ -25,7 +25,8 @@ import org.apache.shiro.aop.AnnotationResolver;
  * is declared, and if so, ensures the calling <code>Subject</code> does <em>not</em>
  * have an {@link org.apache.shiro.subject.Subject#getPrincipal() identity} before invoking the method.
  * <p>
- * This annotation essentially ensures that <code>subject.{@link org.apache.shiro.subject.Subject#getPrincipal() getPrincipal()} == null</code>.
+ * This annotation essentially ensures that <code>subject.
+ * {@link org.apache.shiro.subject.Subject#getPrincipal() getPrincipal()} == null</code>.
  *
  * @since 0.9.0
  */

@@ -22,35 +22,35 @@
 
 
     <defaultCache
-        maxElementsInMemory="1000"
-        eternal="false"
-        timeToLiveSeconds="600"
-        overflowToDisk="true"
-        diskPersistent="false"
-        />
+            maxElementsInMemory="1000"
+            eternal="false"
+            timeToLiveSeconds="600"
+            overflowToDisk="true"
+            diskPersistent="false"
+    />
 
     <!--=================================================================
         Hibernate Object Caches
         =================================================================-->
 
     <cache name="org.apache.shiro.samples.sprhib.model.Role"
-        maxElementsInMemory="100"
-        timeToLiveSeconds="0"
-        overflowToDisk="true"/>
+           maxElementsInMemory="100"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"/>
 
     <cache name="org.apache.shiro.samples.sprhib.model.Role.permissions"
-        maxElementsInMemory="100"
-        timeToLiveSeconds="0"
-        overflowToDisk="true"/>
+           maxElementsInMemory="100"
+           timeToLiveSeconds="0"
+           overflowToDisk="true"/>
 
     <cache name="org.apache.shiro.samples.sprhib.model.User"
-        maxElementsInMemory="1000"
-        timeToLiveSeconds="3600"
-        overflowToDisk="true"/>
+           maxElementsInMemory="1000"
+           timeToLiveSeconds="3600"
+           overflowToDisk="true"/>
 
     <cache name="org.apache.shiro.samples.sprhib.model.User.roles"
-        maxElementsInMemory="1000"
-        timeToLiveSeconds="3600"
-        overflowToDisk="true"/>
+           maxElementsInMemory="1000"
+           timeToLiveSeconds="3600"
+           overflowToDisk="true"/>
 
 </ehcache>
