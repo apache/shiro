@@ -311,6 +311,7 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
     @Test
     public void notAllowedPreFlightRequests() {
         testFilter = new BasicHttpAuthenticationFilter();
+        testFilter.setAllowPreFlightRequests(false);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 

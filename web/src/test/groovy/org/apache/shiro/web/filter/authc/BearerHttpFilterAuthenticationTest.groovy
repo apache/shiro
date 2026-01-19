@@ -108,7 +108,7 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
 
         HttpServletRequest request = createMock(HttpServletRequest.class)
-        expect(request.getMethod()).andReturn("GET")
+        expect(request.getMethod()).andReturn("GET").times(2)
         replay(request)
 
         HttpServletResponse response = createMock(HttpServletResponse.class)
@@ -127,7 +127,7 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
 
         HttpServletRequest request = mockRequest("valid-token", "localhost", {
-            expect(it.getMethod()).andReturn("POST")
+            expect(it.getMethod()).andReturn("POST").times(2)
         })
 
         HttpServletResponse response = mockResponse()
@@ -181,7 +181,7 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
 
         HttpServletRequest request = mockRequest("valid-token", "localhost", {
-            expect(it.getMethod()).andReturn("GET")
+            expect(it.getMethod()).andReturn("GET").times(2)
         })
 
         HttpServletResponse response = mockResponse()
@@ -199,7 +199,7 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
 
         HttpServletRequest request = createMock(HttpServletRequest.class)
         expect(request.getHeader("Authorization")).andReturn(null)
-        expect(request.getMethod()).andReturn("GET")
+        expect(request.getMethod()).andReturn("GET").times(2)
         expect(request.getRemoteHost()).andReturn("localhost")
         replay(request)
 
@@ -217,7 +217,7 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
 
         HttpServletRequest request = mockRequest("a-valid-token", "localhost", {
-            expect(it.getMethod()).andReturn("POST")
+            expect(it.getMethod()).andReturn("POST").times(2)
         })
 
         HttpServletResponse response = mockResponse()
