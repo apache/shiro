@@ -23,8 +23,8 @@ import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import org.apache.shiro.guice.web.ShiroWebModule;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
 
 public class SampleShiroGuiceBootstrap extends GuiceServletContextListener {
 
