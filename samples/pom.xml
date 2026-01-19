@@ -41,16 +41,16 @@
     <modules>
         <module>aspectj</module>
         <module>quickstart</module>
-        <!--module>web</module-->
-        <!--module>spring</module-->
-        <!--module>spring-mvc</module-->
-        <!--module>spring-hibernate</module-->
-        <!--module>spring-boot</module-->
-        <!--module>spring-boot-web</module-->
-        <!--module>guice</module-->
-        <!--module>quickstart-guice</module-->
-        <!--module>servlet-plugin</module-->
-        <!--module>web-jakarta</module-->
+        <module>web</module>
+        <module>spring</module>
+        <module>spring-mvc</module>
+        <module>spring-hibernate</module>
+        <module>spring-boot</module>
+        <module>spring-boot-web</module>
+        <module>guice</module>
+        <module>quickstart-guice</module>
+        <module>servlet-plugin</module>
+        <module>web-jakarta</module>
     </modules>
 
     <profiles>
@@ -60,7 +60,7 @@
                 <jdk>[17,)</jdk>
             </activation>
             <modules>
-                <!--module>spring-boot-3-web</module-->
+                <module>spring-boot-3-web</module>
             </modules>
         </profile>
     </profiles>

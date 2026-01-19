@@ -37,13 +37,13 @@
         <module>ehcache</module>
         <module>hazelcast</module>
         <module>quartz</module>
-        <!--module>spring</module-->
-        <!--module>guice</module-->
-        <!--module>spring-boot</module-->
+        <module>spring</module>
+        <module>guice</module>
+        <module>spring-boot</module>
         <module>servlet-plugin</module>
-        <!--module>jaxrs</module-->
+        <module>jaxrs</module>
         <module>features</module>
-        <!--module>cdi</module-->
-        <!--module>jakarta-ee</module-->
+        <module>cdi</module>
+        <module>jakarta-ee</module>
     </modules>
 </project>
