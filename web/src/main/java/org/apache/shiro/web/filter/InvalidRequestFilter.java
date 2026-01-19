@@ -46,8 +46,7 @@ import java.util.List;
  * @since 1.6
  */
 public class InvalidRequestFilter extends AccessControlFilter {
-
-    enum PathTraversalBlockMode {
+    public enum PathTraversalBlockMode {
         STRICT,
         NORMAL,
         NO_BLOCK;
@@ -129,10 +128,10 @@ public class InvalidRequestFilter extends AccessControlFilter {
     }
 
     private boolean containsTraversal(String uri) {
-        if (isBlockTraversalNormal()) {
+        if (pathTraversalBlockMode == PathTraversalBlockMode.NORMAL) {
             return !(isNormalized(uri));
         }
-        if (isBlockTraversalStrict()) {
+        if (pathTraversalBlockMode == PathTraversalBlockMode.STRICT) {
             return !(isNormalized(uri)
                     && PERIOD.stream().noneMatch(uri::contains)
                     && FORWARDSLASH.stream().noneMatch(uri::contains));
@@ -190,21 +189,49 @@ public class InvalidRequestFilter extends AccessControlFilter {
         this.blockNonAscii = blockNonAscii;
     }
 
-    public boolean isBlockTraversalNormal() {
-        return pathTraversalBlockMode == PathTraversalBlockMode.NORMAL;
+    public PathTraversalBlockMode getPathTraversalBlockMode() {
+        return pathTraversalBlockMode;
     }
 
-    public boolean isBlockTraversalStrict() {
+    public void setBlockPathTraversal(PathTraversalBlockMode mode) {
+        this.pathTraversalBlockMode = mode;
+    }
+
+    public boolean isBlockEncodedPeriod() {
         return pathTraversalBlockMode == PathTraversalBlockMode.STRICT;
     }
 
-    public void setPathTraversalBlockMode(PathTraversalBlockMode mode) {
-        this.pathTraversalBlockMode = mode;
+    public void setBlockEncodedPeriod(boolean blockEncodedPeriod) {
+        setBlockPathTraversal(blockEncodedPeriod ? PathTraversalBlockMode.STRICT : PathTraversalBlockMode.NORMAL);
+    }
+
+    public boolean isBlockEncodedForwardSlash() {
+        return pathTraversalBlockMode == PathTraversalBlockMode.STRICT;
+    }
+
+    public void setBlockEncodedForwardSlash(boolean blockEncodedForwardSlash) {
+        setBlockPathTraversal(blockEncodedForwardSlash ? PathTraversalBlockMode.STRICT : PathTraversalBlockMode.NORMAL);
+    }
+
+    public boolean isBlockRewriteTraversal() {
+        return pathTraversalBlockMode == PathTraversalBlockMode.NORMAL;
+    }
+
+    public void setBlockRewriteTraversal(boolean blockRewriteTraversal) {
+        setBlockPathTraversal(blockRewriteTraversal ? PathTraversalBlockMode.NORMAL : PathTraversalBlockMode.NO_BLOCK);
+    }
+
+    /**
+     * @deprecated use {@link #getPathTraversalBlockMode()} instead
+     */
+    @Deprecated
+    public boolean isBlockTraversal() {
+        return pathTraversalBlockMode != PathTraversalBlockMode.NO_BLOCK;
     }
 
     /**
      *
-     * @deprecated Use {@link #setPathTraversalBlockMode(PathTraversalBlockMode)}
+     * @deprecated Use {@link #setBlockPathTraversal(PathTraversalBlockMode)}
      */
     @Deprecated
     public void setBlockTraversal(boolean blockTraversal) {
