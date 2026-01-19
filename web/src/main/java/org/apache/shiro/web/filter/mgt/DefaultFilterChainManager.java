@@ -26,10 +26,10 @@ import org.apache.shiro.web.filter.PathConfigProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

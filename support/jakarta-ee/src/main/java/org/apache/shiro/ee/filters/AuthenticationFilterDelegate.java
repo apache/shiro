@@ -23,9 +23,9 @@ import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.WebUtils;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 

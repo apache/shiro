@@ -40,7 +40,7 @@
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>8.0.0</version>
+            <version>10.0.0</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.12</version>
+            <version>5.0</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -126,38 +126,6 @@
                         <_removeheaders>Bnd-LastModified</_removeheaders>
                         <_reproducible>true</_reproducible>
                     </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <configuration>
-                    <relocations combine.children="append">
-                        <relocation>
-                            <pattern>javax.faces</pattern>
-                            <shadedPattern>jakarta.faces</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.el</pattern>
-                            <shadedPattern>jakarta.el</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.interceptor</pattern>
-                            <shadedPattern>jakarta.interceptor</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax.activation</pattern>
-                            <shadedPattern>jakarta.activation</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>window.jsf</pattern>
-                            <shadedPattern>window.faces</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>jsf.ajax</pattern>
-                            <shadedPattern>faces.ajax</shadedPattern>
-                        </relocation>
-                    </relocations>
                 </configuration>
             </plugin>
             <plugin>

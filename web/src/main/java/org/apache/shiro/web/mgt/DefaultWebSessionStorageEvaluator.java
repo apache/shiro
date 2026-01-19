@@ -33,7 +33,7 @@ import org.apache.shiro.web.util.WebUtils;
  * This implementation usually works in conjunction with the
  * {@link org.apache.shiro.web.filter.session.NoSessionCreationFilter}:  If the {@code NoSessionCreationFilter}
  * is configured in a filter chain, that filter will set a specific
- * {@code ServletRequest} {@link javax.servlet.ServletRequest#setAttribute attribute} indicating that session creation
+ * {@code ServletRequest} {@link jakarta.servlet.ServletRequest#setAttribute attribute} indicating that session creation
  * should be disabled.
  * <p/>
  * This {@code DefaultWebSessionStorageEvaluator} will then inspect this attribute, and if it has been set, will return

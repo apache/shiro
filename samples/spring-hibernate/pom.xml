@@ -61,9 +61,10 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
+      <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -114,8 +115,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jsp</artifactId>
+            <groupId>org.eclipse.jetty.ee9</groupId>
+            <artifactId>jetty-ee9-apache-jsp</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>

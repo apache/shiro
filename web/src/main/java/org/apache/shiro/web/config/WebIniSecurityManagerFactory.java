@@ -24,7 +24,7 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 import java.util.Map;
 
 /**

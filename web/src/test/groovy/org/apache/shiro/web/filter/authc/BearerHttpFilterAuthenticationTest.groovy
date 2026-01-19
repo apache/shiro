@@ -25,8 +25,8 @@ import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 import static org.assertj.core.api.Assertions.assertThat
 import static org.easymock.EasyMock.*

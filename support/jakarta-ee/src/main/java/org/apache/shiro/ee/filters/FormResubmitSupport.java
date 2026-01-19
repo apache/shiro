@@ -52,13 +52,13 @@ import java.util.UUID;
 import static java.util.function.Predicate.not;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import static javax.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
-import static javax.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import static jakarta.faces.view.StateManagementStrategy.STATE_SAVING_METHOD_CLIENT;
+import static jakarta.faces.view.StateManagementStrategy.STATE_SAVING_METHOD_PARAM_NAME;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -91,11 +91,11 @@ public class FormResubmitSupport {
     static final String SESSION_EXPIRED_PARAMETER = "org.apache.shiro.sessionExpired";
     static final String FORM_IS_RESUBMITTED = "org.apache.shiro.form-is-resubmitted";
     // encoded view state
-    private static final String FACES_VIEW_STATE = jakartify("javax.faces.ViewState");
+    private static final String FACES_VIEW_STATE = jakartify("jakarta.faces.ViewState");
     private static final String FACES_VIEW_STATE_EQUALS = FACES_VIEW_STATE + "=";
     private static final Pattern VIEW_STATE_PATTERN
             = Pattern.compile(String.format("(.*)(%s[-]?[\\d]+:[-]?[\\d]+)(.*)", FACES_VIEW_STATE_EQUALS));
-    private static final String PARTIAL_VIEW = jakartify("javax.faces.partial");
+    private static final String PARTIAL_VIEW = jakartify("jakarta.faces.partial");
     private static final Pattern PARTIAL_REQUEST_PATTERN
             = Pattern.compile(String.format("[\\&]?%s.\\w+=[\\w\\s:%%\\d]*", PARTIAL_VIEW));
     private static final Pattern INITIAL_AMPERSAND = Pattern.compile("^\\&");

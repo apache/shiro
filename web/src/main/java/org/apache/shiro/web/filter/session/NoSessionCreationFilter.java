@@ -21,8 +21,8 @@ package org.apache.shiro.web.filter.session;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.apache.shiro.web.filter.PathMatchingFilter;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * A {@code PathMatchingFilter} that will disable creating new Sessions during the request.  This is a useful

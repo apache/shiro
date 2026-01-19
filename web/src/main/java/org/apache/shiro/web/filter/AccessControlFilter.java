@@ -22,14 +22,14 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.WebUtils;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import java.io.IOException;
 
 /**
  * Superclass for any filter that controls access to a resource and may redirect the user to the login page
  * if they are not authenticated.  This superclass provides the method
- * {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
+ * {@link #saveRequestAndRedirectToLogin(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)}
  * which is used by many subclasses as the behavior when a user is unauthenticated.
  *
  * @since 0.9
@@ -116,7 +116,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
 
     /**
      * Processes requests where the subject was denied access as determined by the
-     * {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed}
+     * {@link #isAccessAllowed(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, Object) isAccessAllowed}
      * method, retaining the {@code mappedValue} that was used during configuration.
      * <p/>
      * This method immediately delegates to {@link #onAccessDenied(ServletRequest, ServletResponse)} as a
@@ -136,7 +136,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
 
     /**
      * Processes requests where the subject was denied access as determined by the
-     * {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed}
+     * {@link #isAccessAllowed(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, Object) isAccessAllowed}
      * method.
      *
      * @param request  the incoming <code>ServletRequest</code>
@@ -154,9 +154,9 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * {@link #onAccessDenied(ServletRequest, ServletResponse, Object) onAccessDenied(Request,Response,Object)}.
      *
      * @return <code>true</code> if
-     * {@link #isAccessAllowed(javax.servlet.ServletRequest, javax.servlet.ServletResponse, Object) isAccessAllowed},
+     * {@link #isAccessAllowed(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, Object) isAccessAllowed},
      * otherwise returns the result of
-     * {@link #onAccessDenied(javax.servlet.ServletRequest, javax.servlet.ServletResponse) onAccessDenied}.
+     * {@link #onAccessDenied(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) onAccessDenied}.
      * @throws Exception if an error occurs.
      */
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
@@ -182,7 +182,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
     /**
      * Convenience method for subclasses to use when a login redirect is required.
      * <p/>
-     * This implementation simply calls {@link #saveRequest(javax.servlet.ServletRequest) saveRequest(request)}
+     * This implementation simply calls {@link #saveRequest(jakarta.servlet.ServletRequest) saveRequest(request)}
      * and then {@link #redirectToLogin(ServletRequest, ServletResponse) redirectToLogin(request,response)}.
      *
      * @param request  the incoming <code>ServletRequest</code>
@@ -196,12 +196,12 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
 
     /**
      * Convenience method merely delegates to
-     * {@link WebUtils#saveRequest(javax.servlet.ServletRequest) WebUtils.saveRequest(request)} to save the request
+     * {@link WebUtils#saveRequest(jakarta.servlet.ServletRequest) WebUtils.saveRequest(request)} to save the request
      * state for reuse later.  This is mostly used to retain user request state when a redirect is issued to
      * return the user to their originally requested url/resource.
      * <p/>
      * If you need to save and then immediately redirect the user to login, consider using
-     * {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
+     * {@link #saveRequestAndRedirectToLogin(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)
      * saveRequestAndRedirectToLogin(request,response)} directly.
      *
      * @param request the incoming ServletRequest to save for re-use later (for example, after a redirect).
@@ -216,7 +216,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * <p/>
      * <b>N.B.</b>  If you want to issue a redirect with the intention of allowing the user to then return to their
      * originally requested URL, don't use this method directly.  Instead you should call
-     * {@link #saveRequestAndRedirectToLogin(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
+     * {@link #saveRequestAndRedirectToLogin(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)
      * saveRequestAndRedirectToLogin(request,response)}, which will save the current request state so that it can
      * be reconstructed and reused after a successful login.
      *
