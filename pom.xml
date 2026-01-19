@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>35</version>
+        <version>37</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -88,11 +88,11 @@
         <!-- Compile 3rd party dependencies: -->
         <!-- Don't change this version without also changing the shiro-aspect and shiro-features
              modules' OSGi metadata: -->
-        <aspectj.version>1.9.20.1</aspectj.version>
+        <aspectj.version>1.9.25.1</aspectj.version>
         <commons.beanutils.version>1.11.0</commons.beanutils.version>
-        <commons.cli.version>1.9.0</commons.cli.version>
+        <commons.cli.version>1.11.0</commons.cli.version>
         <commons.collection.version>3.2.2</commons.collection.version>
-        <commons.configuration2.version>2.12.0</commons.configuration2.version>
+        <commons.configuration2.version>2.13.0</commons.configuration2.version>
         <commons.lang3.version>3.20.0</commons.lang3.version>
         <commons.logging.version>1.3.5</commons.logging.version>
         <commons.text.version>1.8</commons.text.version>
@@ -100,12 +100,12 @@
              modules' OSGi metadata: -->
         <ehcache.version>2.6.11</ehcache.version>
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
-        <hazelcast.version>5.3.8</hazelcast.version>
+        <hazelcast.version>5.6.0</hazelcast.version>
         <hsqldb.version>2.7.4</hsqldb.version>
         <jakarta.annotation.api.version>3.0.0</jakarta.annotation.api.version>
         <jcache.api.version>1.1.1</jcache.api.version>
-        <jdk.version>11</jdk.version>
-        <jetty.version>9.4.58.v20250814</jetty.version>
+        <jdk.version>17</jdk.version>
+        <jetty.version>12.1.5</jetty.version>
         <owasp.java.encoder.version>1.4.0</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
@@ -113,24 +113,23 @@
         <quartz.docs.version>2.3.0</quartz.docs.version>
         <slf4j.version>2.0.17</slf4j.version>
         <log4j.version>2.25.3</log4j.version>
-        <spring.version>5.3.39</spring.version>
-        <spring-boot.version>2.7.18</spring-boot.version>
-        <guice.version>4.2.3</guice.version>
-        <jaxrs.api.version>3.1.0</jaxrs.api.version>
+        <spring.version>7.0.3</spring.version>
+        <spring-boot.version>4.0.1</spring-boot.version>
+        <guice.version>7.0.0</guice.version>
+        <jaxrs.api.version>4.0.0</jaxrs.api.version>
         <htmlunit.version>4.17.0</htmlunit.version>
-        <jaxrs.api.version>2.1.6</jaxrs.api.version>
         <htmlunit.version>4.21.0</htmlunit.version>
-        <bouncycastle.version>1.82</bouncycastle.version>
+        <bouncycastle.version>1.83</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.6.0</easymock.version>
         <mockito.version>5.21.0</mockito.version>
-        <bytebuddy.version>1.18.3</bytebuddy.version>
+        <bytebuddy.version>1.18.4</bytebuddy.version>
         <gmaven.version>4.2.1</gmaven.version>
-        <groovy.version>4.0.27</groovy.version>
-        <junit.version>5.13.4</junit.version>
+        <groovy.version>5.0.3</groovy.version>
+        <junit.version>6.0.2</junit.version>
         <junit.server.jetty.version>3.4.0</junit.server.jetty.version>
-        <hibernate.version>5.6.15.Final</hibernate.version>
+        <hibernate.version>7.2.1.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
         <lombok.version>1.18.42</lombok.version>
@@ -375,6 +374,9 @@
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
                     <version>${gmaven.version}</version>
+                    <configuration>
+                        <targetBytecode>${jdk.version}</targetBytecode>
+                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.groovy</groupId>
@@ -1138,12 +1140,12 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.5.24</version>
+                <version>1.5.25</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.5.24</version>
+                <version>1.5.25</version>
             </dependency>
 
             <dependency>
@@ -1200,7 +1202,7 @@
             <dependency>
                 <groupId>jakarta.servlet.jsp</groupId>
                 <artifactId>jakarta.servlet.jsp-api</artifactId>
-                <version>3.0.0</version>
+                <version>4.0.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -1218,7 +1220,7 @@
             <dependency>
                 <groupId>jakarta.servlet</groupId>
                 <artifactId>jakarta.servlet-api</artifactId>
-                <version>5.0.0</version>
+                <version>6.1.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

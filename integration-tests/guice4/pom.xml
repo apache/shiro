@@ -68,7 +68,7 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
-      <version>5.0.0</version>
+      <version>6.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

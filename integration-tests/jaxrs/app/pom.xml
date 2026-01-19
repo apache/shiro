@@ -36,7 +36,7 @@
 
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
-        <jaxrs.api.version>3.1.0</jaxrs.api.version>
+        <jaxrs.api.version>4.0.0</jaxrs.api.version>
     </properties>
 
 
@@ -74,19 +74,19 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
+            <version>6.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <version>4.0.1</version>
+            <version>4.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.json.bind</groupId>
-            <artifactId>javax.json.bind-api</artifactId>
-            <version>1.0</version>
+            <groupId>jakarta.json.bind</groupId>
+            <artifactId>jakarta.json.bind-api</artifactId>
+            <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -99,7 +99,7 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
-      <version>5.0.0</version>
+      <version>6.1.0</version>
         </dependency>
         <dependency>
             <!-- Required for any libraries that expect to call the commons logging APIs -->

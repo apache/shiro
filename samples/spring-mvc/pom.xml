@@ -67,7 +67,7 @@
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
-      <version>2.1.1</version>
+      <version>3.0.0</version>
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
@@ -86,7 +86,7 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
-      <version>6.0.0</version>
+      <version>6.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

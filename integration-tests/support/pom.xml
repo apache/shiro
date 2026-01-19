@@ -48,7 +48,7 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
-      <version>5.0.0</version>
+      <version>6.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -84,19 +84,19 @@
             <version>${jetty.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.ee9</groupId>
-            <artifactId>jetty-ee9-webapp</artifactId>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-webapp</artifactId>
             <version>${jetty.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.ee9</groupId>
-            <artifactId>jetty-ee9-apache-jsp</artifactId>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-apache-jsp</artifactId>
             <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>apache-jstl</artifactId>
-            <version>${jetty.version}</version>
+            <version>10.0.26</version>
             <type>pom</type>
         </dependency>
         <dependency>

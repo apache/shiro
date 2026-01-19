@@ -35,9 +35,9 @@
 
     <properties>
         <module.name>samples.spring.boot3.web</module.name>
-        <spring-boot3.version>3.5.0</spring-boot3.version>
+        <spring-boot3.version>4.0.1</spring-boot3.version>
         <!--    below versions are not necessary in "real" applications -->
-        <spring.version>6.2.8</spring.version>
+        <spring.version>7.0.3</spring.version>
     </properties>
 
     <dependencies>
@@ -130,17 +130,17 @@
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-core</artifactId>
-                <version>10.1.49</version>
+                <version>11.0.15</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-el</artifactId>
-                <version>10.1.49</version>
+                <version>11.0.15</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-websocket</artifactId>
-                <version>10.1.49</version>
+                <version>11.0.15</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

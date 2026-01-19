@@ -34,7 +34,7 @@
 
     <properties>
         <module.name>its.jaxrs.tests</module.name>
-        <jaxrs.api.version>3.0.0</jaxrs.api.version>
+        <jaxrs.api.version>4.0.0</jaxrs.api.version>
         <johnzon.version>2.0.2</johnzon.version>
     </properties>
 
@@ -67,19 +67,19 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-client</artifactId>
-            <version>3.6.7</version>
+            <version>4.1.4</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.2</version>
+            <version>4.0.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>3.0.2</version>
+            <version>4.0.6</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>

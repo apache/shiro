@@ -20,7 +20,7 @@ package org.apache.shiro.web.util;
 
 import org.apache.shiro.lang.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Utility class for CORS request handling based on the W3.

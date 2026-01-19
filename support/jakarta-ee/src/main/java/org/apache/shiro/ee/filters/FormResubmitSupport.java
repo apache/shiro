@@ -13,6 +13,8 @@
  */
 package org.apache.shiro.ee.filters;
 
+import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
+import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
 import static org.apache.shiro.SecurityUtils.getSecurityManager;
 import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
 import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
@@ -52,8 +54,6 @@ import java.util.UUID;
 import static java.util.function.Predicate.not;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import static jakarta.faces.view.StateManagementStrategy.STATE_SAVING_METHOD_CLIENT;
-import static jakarta.faces.view.StateManagementStrategy.STATE_SAVING_METHOD_PARAM_NAME;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.Cookie;

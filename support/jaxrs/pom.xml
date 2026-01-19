@@ -63,7 +63,7 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.2</version>
+            <version>4.0.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -74,7 +74,7 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-            <version>3.6.7</version>
+            <version>4.1.4</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>

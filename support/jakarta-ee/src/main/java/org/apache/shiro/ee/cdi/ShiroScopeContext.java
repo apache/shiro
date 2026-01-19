@@ -62,10 +62,10 @@ public class ShiroScopeContext implements Context, Serializable {
         } else {
             synchronized (contextual) {
                 if (isViewScoped) {
-                    return Beans.getReference(ViewScopeManager.class).createBean(contextual, creationalContext);
+                    return Beans.getReference(ViewScopeManager.class).getBean(contextual, creationalContext);
                 } else {
                     return getBeanStorage(SecurityUtils.getSubject().getSession())
-                            .createBean(contextual, creationalContext);
+                            .getBean(contextual, creationalContext);
                 }
             }
         }

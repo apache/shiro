@@ -32,8 +32,8 @@
     <packaging>war</packaging>
 
     <properties>
-        <meecrowave.version>1.2.15</meecrowave.version>
-        <tomcat.version>10.1.49</tomcat.version>
+        <meecrowave.version>2.0.0</meecrowave.version>
+        <tomcat.version>11.0.15</tomcat.version>
         <jacoco.skip>true</jacoco.skip>
     </properties>
 
@@ -49,39 +49,39 @@
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-bom</artifactId>
-                <version>3.6.7</version>
+                <version>4.1.4</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.apache.johnzon</groupId>
                 <artifactId>johnzon-jsonb</artifactId>
-                <version>1.2.21</version>
+                <version>2.0.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-core</artifactId>
-                <version>9.0.112</version>
+                <version>11.0.15</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-el</artifactId>
-                <version>9.0.112</version>
+                <version>11.0.15</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jaspic-api</artifactId>
-                <version>9.0.112</version>
+                <version>11.0.15</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-websocket</artifactId>
-                <version>9.0.112</version>
+                <version>11.0.15</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-catalina</artifactId>
-                <version>9.0.112</version>
+                <version>11.0.15</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -121,7 +121,7 @@
         <dependency>
             <groupId>jakarta.servlet.jsp</groupId>
             <artifactId>jakarta.servlet.jsp-api</artifactId>
-            <version>3.1.1</version>
+            <version>4.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
