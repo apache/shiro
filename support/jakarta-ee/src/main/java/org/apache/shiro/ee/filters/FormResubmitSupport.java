@@ -13,6 +13,8 @@
  */
 package org.apache.shiro.ee.filters;
 
+import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
+import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
 import static org.apache.shiro.SecurityUtils.getSecurityManager;
 import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
 import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
@@ -52,8 +54,6 @@ import java.util.UUID;
 import static java.util.function.Predicate.not;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
-import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.Cookie;
@@ -93,7 +93,7 @@ public class FormResubmitSupport {
     private static final String FACES_VIEW_STATE = "jakarta.faces.ViewState";
     private static final String FACES_VIEW_STATE_EQUALS = FACES_VIEW_STATE + "=";
     private static final Pattern VIEW_STATE_PATTERN
-            = Pattern.compile("(.*)(%s[-]?[\\d]+:[-]?[\\d]+)(.*)".formatted(FACES_VIEW_STATE_EQUALS));
+            = Pattern.compile(String.format("(.*)(%s[-]?[\\d]+:[-]?[\\d]+)(.*)", FACES_VIEW_STATE_EQUALS));
     private static final String PARTIAL_VIEW = "jakarta.faces.partial";
     private static final Pattern PARTIAL_REQUEST_PATTERN
             = Pattern.compile("[\\&]?%s.\\w+=[\\w\\s:%%\\d]*".formatted(PARTIAL_VIEW));

@@ -26,7 +26,7 @@
     <parent>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <artifactId>shiro-integration-tests</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
@@ -41,8 +41,15 @@
 
         <!-- app servers -->
         <module>meecrowave</module>
-        <module>openliberty</module>
     </modules>
 
+    <profiles>
+        <profile>
+            <id>deferred-for-3x</id>
+            <modules>
+                <module>openliberty</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>

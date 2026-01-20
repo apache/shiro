@@ -118,5 +118,3 @@ public class User {
     }
 
 }
-
-

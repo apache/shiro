@@ -28,8 +28,10 @@ import org.junit.jupiter.api.Test
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 
+import static org.assertj.core.api.Assertions.assertThat
 import static org.easymock.EasyMock.*
-import static org.hamcrest.MatcherAssert.assertThat
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 /**
  * Test case for {@link BearerHttpAuthenticationFilter}.
@@ -106,7 +108,7 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
 
         HttpServletRequest request = createMock(HttpServletRequest.class)
-        expect(request.getMethod()).andReturn("GET")
+        expect(request.getMethod()).andReturn("GET").times(2)
         replay(request)
 
         HttpServletResponse response = createMock(HttpServletResponse.class)
@@ -125,7 +127,7 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
 
         HttpServletRequest request = mockRequest("valid-token", "localhost", {
-            expect(it.getMethod()).andReturn("POST")
+            expect(it.getMethod()).andReturn("POST").times(2)
         })
 
         HttpServletResponse response = mockResponse()
@@ -138,11 +140,48 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
     }
 
     @Test
+    void allowedPreflightRequestsAndOptionsRequest() {
+        BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
+        testFilter.setAllowPreFlightRequests(true)
+
+        HttpServletRequest request = mock(HttpServletRequest)
+        when(request.getMethod()).thenReturn("OPTIONS")
+        when(request.getHeader("Origin")).thenReturn("localhost")
+        when(request.getHeader("Access-Control-Request-Method")).thenReturn("GET,OPTIONS")
+
+        HttpServletResponse response = mock(HttpServletResponse.class)
+
+        runWithSubject({
+            String[] methods = ["OPTIONS"]
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, methods)
+            assertThat("Access allowed for OPTIONS", accessAllowed)
+        })
+    }
+
+    @Test
+    void notAllowedPreFlightRequests() {
+        BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
+
+        HttpServletRequest request = mock(HttpServletRequest.class)
+        when(request.getHeader("Authorization")).thenReturn(createAuthorizationHeader("valid-token"))
+        when(request.getRemoteHost()).thenReturn("localhosst")
+        when(request.getMethod()).thenReturn("OPTIONS")
+
+        HttpServletResponse response = mock(HttpServletResponse.class)
+
+        runWithSubject({
+            String[] methods = ["OPTIONS"]
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, methods)
+            assertThat("Access not allowed for OPTIONS", !accessAllowed)
+        })
+    }
+
+    @Test
     void permissiveEnabledWithLoginTest() {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
 
         HttpServletRequest request = mockRequest("valid-token", "localhost", {
-            expect(it.getMethod()).andReturn("GET")
+            expect(it.getMethod()).andReturn("GET").times(2)
         })
 
         HttpServletResponse response = mockResponse()
@@ -160,7 +199,7 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
 
         HttpServletRequest request = createMock(HttpServletRequest.class)
         expect(request.getHeader("Authorization")).andReturn(null)
-        expect(request.getMethod()).andReturn("GET")
+        expect(request.getMethod()).andReturn("GET").times(2)
         expect(request.getRemoteHost()).andReturn("localhost")
         replay(request)
 
@@ -178,7 +217,7 @@ class BearerHttpFilterAuthenticationTest extends SecurityManagerTestSupport {
         BearerHttpAuthenticationFilter testFilter = new BearerHttpAuthenticationFilter()
 
         HttpServletRequest request = mockRequest("a-valid-token", "localhost", {
-            expect(it.getMethod()).andReturn("POST")
+            expect(it.getMethod()).andReturn("POST").times(2)
         })
 
         HttpServletResponse response = mockResponse()

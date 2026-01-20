@@ -23,6 +23,7 @@ import org.apache.shiro.crypto.hash.AbstractCryptHash;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
 import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,15 +35,15 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
-
-import static java.util.Collections.unmodifiableSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @since 2.0
  */
 class BCryptHash extends AbstractCryptHash {
 
-    public static final String DEFAULT_ALGORITHM_NAME = "2y";
+    public static final String DEFAULT_ALGORITHM_NAME =  "bcrypt2y";
 
     public static final int DEFAULT_COST = 10;
 
@@ -53,14 +54,17 @@ class BCryptHash extends AbstractCryptHash {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCryptHash.class);
 
-    private static final Set<String> ALGORITHMS_BCRYPT = new HashSet<>(Arrays.asList("2", "2a", "2b", "2y"));
+    private static final String BCRYPT_ALGORITHM_BASE = "bcrypt";
+    private static final Set<String> ALGORITHMS_BCRYPT = new HashSet<>(
+            Arrays.asList(BCRYPT_ALGORITHM_BASE + "2", BCRYPT_ALGORITHM_BASE + "2a",
+                    BCRYPT_ALGORITHM_BASE + "2b", DEFAULT_ALGORITHM_NAME));
 
     private final int cost;
 
     private final int iterations;
 
-    BCryptHash(final String version, final byte[] hashedData, final ByteSource salt, final int cost) {
-        super(version, hashedData, salt);
+    BCryptHash(final String algorithmName, final byte[] hashedData, final ByteSource salt, final int cost) {
+        super(algorithmName, hashedData, salt);
         this.cost = cost;
         this.iterations = (int) Math.pow(2, cost);
         checkValidCost();
@@ -103,7 +107,9 @@ class BCryptHash extends AbstractCryptHash {
     }
 
     public static Set<String> getAlgorithmsBcrypt() {
-        return unmodifiableSet(ALGORITHMS_BCRYPT);
+        return ALGORITHMS_BCRYPT.stream()
+                .flatMap(algo -> Stream.of(algo, algo.substring(BCRYPT_ALGORITHM_BASE.length())))
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     public static BCryptHash fromString(String input) {
@@ -118,7 +124,10 @@ class BCryptHash extends AbstractCryptHash {
         if (parts.length != 3) {
             throw new IllegalArgumentException("Expected string containing three '$' but got: '" + Arrays.toString(parts) + "'.");
         }
-        final String algorithmName = parts[0].trim();
+        String algorithmName = parts[0].trim();
+        if (algorithmName.length() < BCRYPT_ALGORITHM_BASE.length()) {
+            algorithmName = BCRYPT_ALGORITHM_BASE + algorithmName;
+        }
         final int cost = Integer.parseInt(parts[1].trim(), 10);
 
         final String dataSection = parts[2];
@@ -143,7 +152,8 @@ class BCryptHash extends AbstractCryptHash {
 
     public static BCryptHash generate(String algorithmName, ByteSource source, ByteSource salt, int cost) {
         checkValidCost(cost);
-        final String cryptString = OpenBSDBCrypt.generate(algorithmName, source.getBytes(), salt.getBytes(), cost);
+        final String cryptString = OpenBSDBCrypt.generate(getBcryptVersion(algorithmName),
+                source.getBytes(), salt.getBytes(), cost);
 
         return fromString(cryptString);
     }
@@ -168,7 +178,7 @@ class BCryptHash extends AbstractCryptHash {
         String dataBase64 = new String(bsdBase64.encode(this.getBytes()), StandardCharsets.ISO_8859_1);
 
         return new StringJoiner("$", "$", "")
-                .add(this.getAlgorithmName())
+                .add(getBcryptVersion(this.getAlgorithmName()))
                 .add("" + this.cost)
                 .add(saltBase64 + dataBase64)
                 .toString();
@@ -182,7 +192,7 @@ class BCryptHash extends AbstractCryptHash {
     @Override
     public boolean matchesPassword(ByteSource plaintextBytes) {
         try {
-            final String cryptString = OpenBSDBCrypt.generate(this.getAlgorithmName(),
+            final String cryptString = OpenBSDBCrypt.generate(getBcryptVersion(this.getAlgorithmName()),
                     plaintextBytes.getBytes(),
                     this.getSalt().getBytes(),
                     this.getCost());
@@ -202,5 +212,12 @@ class BCryptHash extends AbstractCryptHash {
                 .add("super=" + super.toString())
                 .add("cost=" + this.cost)
                 .toString();
+    }
+
+    private static @NonNull String getBcryptVersion(String algorithmName) {
+        if (algorithmName.startsWith(BCRYPT_ALGORITHM_BASE)) {
+            algorithmName = algorithmName.substring(BCRYPT_ALGORITHM_BASE.length());
+        }
+        return algorithmName;
     }
 }

@@ -23,7 +23,7 @@ package org.apache.shiro.crypto.hash;
  * <p/>
  * A {@code HashService} sits at a higher architectural level than Shiro's simple {@link Hash} classes:  it allows
  * for salting and iteration-related strategies to be configured and internalized in a
- * single component that can be re-used in multiple places in the application.
+ * single component that can be reused in multiple places in the application.
  * <p/>
  * For example, for the most secure hashes, it is highly recommended to use a randomly generated salt, potentially
  * paired with an configuration-specific private salt, in addition to using multiple hash iterations.

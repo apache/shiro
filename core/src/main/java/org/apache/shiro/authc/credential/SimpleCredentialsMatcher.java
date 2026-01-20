@@ -20,12 +20,17 @@ package org.apache.shiro.authc.credential;
 
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat;
+import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.lang.codec.CodecSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Optional;
 
 
 /**
@@ -42,6 +47,8 @@ import java.util.Arrays;
 public class SimpleCredentialsMatcher extends CodecSupport implements CredentialsMatcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleCredentialsMatcher.class);
+    /** Default number of bytes for a simulated password. */
+    private static final int DEFAULT_PASSWORD_BYTES = 18;
 
     /**
      * Returns the {@code token}'s credentials.
@@ -92,7 +99,7 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * @return {@code true} if the {@code tokenCredentials} are equal to the {@code accountCredentials}.
      */
     protected boolean equals(Object tokenCredentials, Object accountCredentials) {
-        if (LOGGER.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled() && tokenCredentials != null) {
             LOGGER.debug("Performing credentials equality check for tokenCredentials of type ["
                     + tokenCredentials.getClass().getName() + " and accountCredentials of type ["
                     + accountCredentials.getClass().getName() + "]");
@@ -129,4 +136,31 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
         return equals(tokenCredentials, accountCredentials);
     }
 
+    @Override
+    public Optional<AuthenticationInfo> createSimulatedCredentials() {
+        return SimpleCredentialsMatcher.makeSimulatedAuthenticationInfo(null);
+    }
+
+    /**
+     * default implementation which creates a simulated AuthenticationInfo with a random password
+     * NOTE: the returned AuthenticationInfo must never validate successfully
+     * NOTE: make sure this is not called from performance-critical paths, as it uses SecureRandom
+     * @return simulated AuthenticationInfo, created for non-existent users.
+     */
+    static Optional<AuthenticationInfo> makeSimulatedAuthenticationInfo(PasswordService passwordService) {
+        final SecureRandom random = new SecureRandom();
+        final var bytes = new byte[DEFAULT_PASSWORD_BYTES];
+        random.nextBytes(bytes);
+        final var encode = Base64.encode(bytes);
+
+        Object parsedPassword;
+        if (passwordService == null) {
+            parsedPassword = encode;
+        } else {
+            parsedPassword = new Shiro2CryptFormat().parse(passwordService.encryptPassword(encode));
+        }
+
+        return Optional.of(
+            new SimpleAuthenticationInfo("__principal__", parsedPassword, ""));
+    }
 }

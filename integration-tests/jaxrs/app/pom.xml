@@ -26,17 +26,17 @@
     <parent>
         <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
         <artifactId>shiro-its-jaxrs</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <artifactId>shiro-its-jaxrs-app</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>999-SNAPSHOT</version>
     <name>Apache Shiro :: ITs :: JAX-RS :: App</name>
     <packaging>war</packaging>
 
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
-        <jaxrs.api.version>3.1.0</jaxrs.api.version>
+        <jaxrs.api.version>4.0.0</jaxrs.api.version>
     </properties>
 
 
@@ -74,12 +74,13 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <version>4.0.1</version>
+            <version>4.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

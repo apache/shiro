@@ -461,7 +461,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
                     + "configuration problem or corrupted principals.  This could also be due to a recently "
                     + "changed encryption key, if you are using a shiro.ini file, this property would be "
                     + "'securityManager.rememberMeManager.cipherKey'"
-                    + "see: http://shiro.apache.org/web.html#Web-RememberMeServices. "
+                    + "see: https://shiro.apache.org/web.html#Web-RememberMeServices. "
                     + "The remembered identity will be forgotten and not used for this request.";
             LOGGER.warn(message);
         }

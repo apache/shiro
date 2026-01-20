@@ -92,7 +92,8 @@ class Argon2Hash extends AbstractCryptHash {
 
     private static final Logger LOG = LoggerFactory.getLogger(Argon2Hash.class);
 
-    private static final Set<String> ALGORITHMS_ARGON2 = new HashSet<>(Arrays.asList("argon2id", "argon2i", "argon2d"));
+    private static final Set<String> ALGORITHMS_ARGON2 = new HashSet<>(
+            Arrays.asList(DEFAULT_ALGORITHM_NAME, "argon2i", "argon2d"));
 
     private static final Pattern DELIMITER_COMMA = Pattern.compile(",");
 
@@ -229,7 +230,7 @@ class Argon2Hash extends AbstractCryptHash {
                 break;
             case "argon2":
                 // fall through
-            case "argon2id":
+            case DEFAULT_ALGORITHM_NAME:
                 type = Argon2Parameters.ARGON2_id;
                 break;
             default:

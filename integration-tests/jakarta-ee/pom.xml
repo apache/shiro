@@ -22,14 +22,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.shiro.integrationtests</groupId>
     <artifactId>shiro-its-jakarta-ee</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>999-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Apache Shiro :: ITs :: Jakarta EE</name>
 
     <parent>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <artifactId>shiro-integration-tests</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -38,8 +38,8 @@
         <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
         <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
         <arquillian.core.version>1.10.0.Final</arquillian.core.version>
-        <arquillian.payara5.version>2.5</arquillian.payara5.version>
-        <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
+        <arquillian.payara5.version>3.1</arquillian.payara5.version>
+        <arquillian.graphene.version>3.0.0-20250814</arquillian.graphene.version>
         <shrinkwrap.resolver.version>3.3.4</shrinkwrap.resolver.version>
         <drone.browser>firefox</drone.browser>
 
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.11</version>
+            <version>5.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -77,19 +77,19 @@
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>10.0.0</version>
+            <version>11.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.activation</groupId>
             <artifactId>jakarta.activation-api</artifactId>
-            <version>2.1.3</version>
+            <version>2.1.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.2</version>
+            <version>4.0.4</version>
             <scope>provided</scope>
         </dependency>
 
@@ -146,7 +146,12 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>5.5.6</version>
+            <version>11.1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>4.0.0</version>
         </dependency>
 
         <!-- Arquillian test dependencies -->
@@ -217,7 +222,7 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>${guice.version}</version>
+            <version>7.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -375,42 +380,7 @@
                         </goals>
                         <configuration>
                             <scripts>
-                                <script><![CDATA[
-                                    def executor_number = System.getenv('EXECUTOR_NUMBER')
-                                    if (executor_number != null) {
-                                        final int port_increment = 100
-                                        final int admin_port_increment = 48
-                                        int portbase = 4900 + (executor_number as int) * port_increment
-                                        int adminPort
-                                        // find a free port
-                                        for (; portbase < 10000; portbase += port_increment) {
-                                            def server_socket
-                                            adminPort = portbase + admin_port_increment
-                                            try {
-                                                server_socket = new ServerSocket()
-                                                server_socket.setReuseAddress true
-                                                server_socket.bind(new InetSocketAddress(adminPort))
-                                                break
-                                            } catch (IOException e) {
-                                                println "Admin port $adminPort is busy, trying next"
-                                            } finally {
-                                                server_socket?.close()
-                                            }
-                                        }
-
-                                        int httpsPort = portbase + 81
-
-                                        project.properties.'payara.portbase' = portbase as String
-                                        project.properties.'payara.adminport' = adminPort as String
-                                        project.properties.'payara.argLine' = "-DadminPort=$adminPort -Dpayara.https.port=$httpsPort" as String
-                                        project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
-                                        println "Payara: portbase = ${project.properties.'payara.portbase'}, " +
-                                                "argLine = ${project.properties.'payara.argLine'}"
-                                    } else {
-                                        project.properties.'payara.argLine' = ''
-                                        project.properties.'payara.restart.skip' = 'true'
-                                    }
-                                    ]]></script>
+                                <script>${project.basedir}/src/main/resources/setPayaraPort.groovy</script>
                             </scripts>
                         </configuration>
                     </execution>
@@ -419,7 +389,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.6.3</version>
                 <configuration>
                     <executable>${project.build.directory}/dependency/payara5/bin/${asadmin.cmd}</executable>
                     <skip>${payara.start.skip}</skip>

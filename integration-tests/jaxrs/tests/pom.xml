@@ -26,7 +26,7 @@
     <parent>
         <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
         <artifactId>shiro-its-jaxrs</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <artifactId>shiro-its-jaxrs-tests</artifactId>
@@ -34,8 +34,8 @@
 
     <properties>
         <module.name>its.jaxrs.tests</module.name>
-        <jaxrs.api.version>3.1.0</jaxrs.api.version>
-        <johnzon.version>2.0.1</johnzon.version>
+        <jaxrs.api.version>4.0.0</jaxrs.api.version>
+        <johnzon.version>2.0.2</johnzon.version>
     </properties>
 
     <dependencies>
@@ -67,19 +67,19 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-client</artifactId>
-            <version>4.0.6</version>
+            <version>4.1.4</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.2</version>
+            <version>4.0.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>4.0.5</version>
+            <version>4.0.6</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -92,11 +92,11 @@
             <artifactId>jakarta.json-api</artifactId>
             <version>2.1.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
 
     </dependencies>

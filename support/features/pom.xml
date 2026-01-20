@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -40,7 +40,7 @@
         <!-- Not a Shiro dependency - used for quartz bundle resolution only (see features.xml): -->
         <commons.collections.version>3.2.2</commons.collections.version>
         <!-- karaf plugin version -->
-        <karaf.version>4.4.7</karaf.version>
+        <karaf.version>4.4.9</karaf.version>
     </properties>
 
     <dependencies>

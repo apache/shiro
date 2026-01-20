@@ -113,11 +113,6 @@ public class ShiroHttpSession implements HttpSession {
         }
     }
 
-    @Deprecated
-    public Object getValue(String s) {
-        return getAttribute(s);
-    }
-
     protected Set<String> getKeyNames() {
         Collection<Object> keySet;
         try {
@@ -163,14 +158,16 @@ public class ShiroHttpSession implements HttpSession {
     }
 
     protected void afterBound(String s, Object o) {
-        if (o instanceof HttpSessionBindingListener listener) {
+        if (o instanceof HttpSessionBindingListener) {
+            HttpSessionBindingListener listener = (HttpSessionBindingListener) o;
             HttpSessionBindingEvent event = new HttpSessionBindingEvent(this, s, o);
             listener.valueBound(event);
         }
     }
 
     protected void afterUnbound(String s, Object o) {
-        if (o instanceof HttpSessionBindingListener listener) {
+        if (o instanceof HttpSessionBindingListener) {
+            HttpSessionBindingListener listener = (HttpSessionBindingListener) o;
             HttpSessionBindingEvent event = new HttpSessionBindingEvent(this, s, o);
             listener.valueUnbound(event);
         }

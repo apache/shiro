@@ -14,8 +14,6 @@
 package org.apache.shiro.testing.jakarta.ee.servlets;
 
 import java.io.IOException;
-import java.io.Serial;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -29,7 +27,6 @@ import org.apache.shiro.SecurityUtils;
  */
 @WebServlet("/logoutservlet")
 public class LogoutServlet extends HttpServlet {
-    @Serial
     private static final long serialVersionUID = 1L;
 
     @Override

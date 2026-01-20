@@ -65,3 +65,5 @@
         <heap>1000</heap>
     </cache>
 </config>
+
+</ehcache>

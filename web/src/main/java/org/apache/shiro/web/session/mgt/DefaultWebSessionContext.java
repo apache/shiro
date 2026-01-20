@@ -22,8 +22,6 @@ import org.apache.shiro.session.mgt.DefaultSessionContext;
 
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-
-import java.io.Serial;
 import java.util.Map;
 
 /**
@@ -34,7 +32,6 @@ import java.util.Map;
  */
 public class DefaultWebSessionContext extends DefaultSessionContext implements WebSessionContext {
 
-    @Serial
     private static final long serialVersionUID = -3974604687792523072L;
 
     private static final String SERVLET_REQUEST = DefaultWebSessionContext.class.getName() + ".SERVLET_REQUEST";

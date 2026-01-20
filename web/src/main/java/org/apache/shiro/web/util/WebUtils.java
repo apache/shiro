@@ -343,14 +343,14 @@ public final class WebUtils {
         if (attr == null) {
             return null;
         }
-        if (attr instanceof RuntimeException exception) {
-            throw exception;
+        if (attr instanceof RuntimeException) {
+            throw (RuntimeException) attr;
         }
-        if (attr instanceof Error error) {
-            throw error;
+        if (attr instanceof Error) {
+            throw (Error) attr;
         }
-        if (attr instanceof Exception exception) {
-            throw new IllegalStateException(exception);
+        if (attr instanceof Exception) {
+            throw new IllegalStateException((Exception) attr);
         }
         if (!(attr instanceof WebEnvironment)) {
             throw new IllegalStateException("Context attribute is not of type WebEnvironment: " + attr);
@@ -397,7 +397,7 @@ public final class WebUtils {
      *
      * @param request current HTTP request
      * @return the encoding for the request (never <code>null</code>)
-     * @see jakarta.servlet.ServletRequest#getCharacterEncoding()
+     * @see javax.servlet.ServletRequest#getCharacterEncoding()
      */
     protected static String determineEncoding(HttpServletRequest request) {
         String enc = request.getCharacterEncoding();
@@ -422,39 +422,39 @@ public final class WebUtils {
      */
 
     public static boolean isWeb(Object requestPairSource) {
-        return requestPairSource instanceof RequestPairSource rps && isWeb(rps);
+        return requestPairSource instanceof RequestPairSource && isWeb((RequestPairSource) requestPairSource);
     }
 
     public static boolean isHttp(Object requestPairSource) {
-        return requestPairSource instanceof RequestPairSource rps && isHttp(rps);
+        return requestPairSource instanceof RequestPairSource && isHttp((RequestPairSource) requestPairSource);
     }
 
     public static ServletRequest getRequest(Object requestPairSource) {
-        if (requestPairSource instanceof RequestPairSource source) {
-            return source.getServletRequest();
+        if (requestPairSource instanceof RequestPairSource) {
+            return ((RequestPairSource) requestPairSource).getServletRequest();
         }
         return null;
     }
 
     public static ServletResponse getResponse(Object requestPairSource) {
-        if (requestPairSource instanceof RequestPairSource source) {
-            return source.getServletResponse();
+        if (requestPairSource instanceof RequestPairSource) {
+            return ((RequestPairSource) requestPairSource).getServletResponse();
         }
         return null;
     }
 
     public static HttpServletRequest getHttpRequest(Object requestPairSource) {
         ServletRequest request = getRequest(requestPairSource);
-        if (request instanceof HttpServletRequest servletRequest) {
-            return servletRequest;
+        if (request instanceof HttpServletRequest) {
+            return (HttpServletRequest) request;
         }
         return null;
     }
 
     public static HttpServletResponse getHttpResponse(Object requestPairSource) {
         ServletResponse response = getResponse(requestPairSource);
-        if (response instanceof HttpServletResponse servletResponse) {
-            return servletResponse;
+        if (response instanceof HttpServletResponse) {
+            return (HttpServletResponse) response;
         }
         return null;
     }
@@ -484,7 +484,8 @@ public final class WebUtils {
      * otherwise.
      */
     public static boolean isSessionCreationEnabled(Object requestPairSource) {
-        if (requestPairSource instanceof RequestPairSource source) {
+        if (requestPairSource instanceof RequestPairSource) {
+            RequestPairSource source = (RequestPairSource) requestPairSource;
             return isSessionCreationEnabled(source.getServletRequest());
         }
         //by default
@@ -505,8 +506,8 @@ public final class WebUtils {
     public static boolean isSessionCreationEnabled(ServletRequest request) {
         if (request != null) {
             Object val = request.getAttribute(DefaultSubjectContext.SESSION_CREATION_ENABLED);
-            if (val != null && val instanceof Boolean boolean1) {
-                return boolean1;
+            if (val != null && val instanceof Boolean) {
+                return (Boolean) val;
             }
         }
         //by default

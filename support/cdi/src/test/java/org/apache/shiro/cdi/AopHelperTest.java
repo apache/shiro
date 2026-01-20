@@ -25,7 +25,7 @@ import jakarta.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import static org.apache.shiro.cdi.AopHelper.autorizationAnnotationClasses;
+import static org.apache.shiro.cdi.AopHelper.authorizationAnnotationClasses;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -88,9 +88,9 @@ class AopHelperTest {
     @SneakyThrows
     @SuppressWarnings("MagicNumber")
     void checkAllAnnotationTypes() {
-        assertThat(autorizationAnnotationClasses.keySet().stream().distinct().count()).isEqualTo(8);
-        for (Class<? extends Annotation> clz : autorizationAnnotationClasses.keySet()) {
-            assertThat(autorizationAnnotationClasses.get(clz).call().getAnnotationClass()).isEqualTo(clz);
+        assertThat(authorizationAnnotationClasses.keySet().stream().distinct().count()).isEqualTo(8);
+        for (Class<? extends Annotation> clz : authorizationAnnotationClasses.keySet()) {
+            assertThat(authorizationAnnotationClasses.get(clz).call().getAnnotationClass()).isEqualTo(clz);
         }
     }
 }

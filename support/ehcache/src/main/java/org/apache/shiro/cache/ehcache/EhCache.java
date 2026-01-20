@@ -132,7 +132,7 @@ public class EhCache<K, V> implements Cache<K, V> {
     }
 
     /**
-     * Removes all elements in the cache, but leaves the cache in a useable state.
+     * Removes all elements in the cache, but leaves the cache in a usable state.
      */
     public void clear() throws CacheException {
         if (LOGGER.isTraceEnabled()) {

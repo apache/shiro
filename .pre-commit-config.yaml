@@ -1,0 +1,114 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+---
+default_stages: [pre-commit, pre-push]
+default_language_version:
+  # force all unspecified Python hooks to run python3
+  python: python3
+minimum_pre_commit_version: "3.2.0"
+repos:
+  - repo: meta
+    hooks:
+      - id: identity
+        description: A simple hook which prints all arguments passed to it, useful for debugging
+      - id: check-hooks-apply
+        description: Useful when testing new hooks to see if they apply to the repository
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        name: run codespell
+        description: Check spelling with codespell
+        args: [--ignore-words=.github/linters/codespell.txt]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-case-conflict
+        description: Check for files with names that would conflict on a case-insensitive filesystem like MacOS HFS+ or Windows FAT
+      - id: check-executables-have-shebangs
+        description: Checks that non-binary executables have a proper shebang
+      - id: check-illegal-windows-names
+        description: Check for files that cannot be created on Windows
+      - id: check-json
+        description: Attempts to load all json files to verify syntax
+      - id: check-merge-conflict
+        description: Check for files that contain merge conflict strings
+      - id: check-shebang-scripts-are-executable
+        description: Checks that scripts with shebangs are executable
+      - id: check-vcs-permalinks
+        description: Ensures that links to vcs websites are permalinks
+      - id: check-xml
+        description: Attempts to load all xml files to verify syntax
+      - id: check-yaml
+        description: Attempts to load all yaml files to verify syntax
+      - id: destroyed-symlinks
+        description: Detects symlinks which are changed to regular files with a content of a path which that symlink was pointing to
+      - id: detect-aws-credentials
+        description: Checks for the existence of AWS secrets that you have set up with the AWS CLI
+        args: [--allow-missing-credentials]
+      - id: detect-private-key
+        description: Checks for the existence of private keys
+      - id: end-of-file-fixer
+        description: Makes sure files end in a newline and only a newline
+      - id: forbid-submodules
+        description: Forbids any submodules in the repository
+      - id: trailing-whitespace
+        description: Trims trailing whitespace
+        args: [--markdown-linebreak-ext=md]
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
+    hooks:
+      - id: markdownlint
+        name: run markdownlint
+        description: check Markdown files with markdownlint
+        args: [--config=.github/linters/.markdown-lint.yml]
+        exclude: ^\.github/.*$
+        types: [markdown]
+        files: \.md$
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.37.1
+    hooks:
+      - id: yamllint
+        name: run yamllint
+        description: check YAML files with yamllint
+        args: [--strict, -c=.github/linters/.yaml-lint.yml]
+        types: [yaml]
+        files: \.ya?ml$
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.28.0
+    hooks:
+      - id: gitleaks
+        name: run gitleaks
+        description: check for secrets with gitleaks
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.8
+    hooks:
+      - id: actionlint
+        description: actionlint is a static checker for GitHub Actions workflow files
+  - repo: https://github.com/oxipng/oxipng
+    rev: v9.1.5
+    hooks:
+      - id: oxipng
+        name: run oxipng
+        description: check PNG files with oxipng
+        args: ['--fix', '-o', '4', '--strip', 'safe', '--alpha']
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+        name: run shellcheck
+        description: check Shell scripts with shellcheck

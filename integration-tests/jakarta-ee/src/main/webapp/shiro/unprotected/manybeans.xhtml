@@ -18,9 +18,9 @@
   ~ under the License.
   -->
   <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:jsf="http://xmlns.jcp.org/jsf"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:f="jakarta.faces.core"
+      xmlns:jsf="jakarta.faces"
+      xmlns:h="jakarta.faces.html">
     <h:head>
         <title>Many Beans Unprotected</title>
     </h:head>
@@ -59,7 +59,7 @@
         <input type="button" id="invalidate" value="Invalidate Session"
                onclick="invalidateSession('#{request.contextPath}/invalidatesession', 'Session invalidated!')" />
     </h:body>
-    <script type="text/javascript">
+    <script>
         const invalidateSession = async (path, alertText) => {
             const response = await fetch(path);
             const strresp = await response.text();

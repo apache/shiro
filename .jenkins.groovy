@@ -18,6 +18,8 @@
  */
 
 def deployableBranch = env.BRANCH_NAME ==~ /(1.12.x|1.11.x|1.10.x|main)/
+def builtinVersion = '999-SNAPSHOT'
+def nextVersion
 
 pipeline {
 
@@ -36,7 +38,7 @@ pipeline {
                     axis {
                         // https://cwiki.apache.org/confluence/display/INFRA/JDK+Installation+Matrix
                         name 'MATRIX_JDK'
-                        values 'jdk_11_latest', 'jdk_17_latest', 'jdk_21_latest', 'jdk_24_latest'
+                        values 'jdk_17_latest', 'jdk_21_latest', 'jdk_25_latest'
                     }
                     // Additional axes, like OS and maven version can be configured here.
                 }
@@ -83,6 +85,34 @@ pipeline {
                         }
                     }
 
+                    stage('Use next -SNAPSHOT version') {
+                        when {
+                            expression { deployableBranch }
+                            expression { MATRIX_JDK == 'jdk_17_latest' }
+                            // is not a PR (GitHub) / MergeRequest (GitLab) / Change (Gerrit)?
+                            not { changeRequest() }
+                        }
+                        steps {
+                            echo 'Setting next -SNAPSHOT version'
+                            script {
+                                def latestRelease = sh(script: """
+                                    curl -sf https://repo.maven.apache.org/maven2/org/apache/shiro/shiro-root/maven-metadata.xml \
+                                    | xmllint --xpath '//metadata/versioning/latest/text()' - 2>/dev/null || echo '$builtinVersion'
+                                    """, returnStdout: true
+                                ).trim()
+
+                                def parts = latestRelease.tokenize('.')
+                                def nextPatch = parts[2].toInteger() + 1
+                                nextVersion = "${parts[0]}.${parts[1]}.${nextPatch}-SNAPSHOT"
+
+                                echo "Latest release: ${latestRelease}, next SNAPSHOT: ${nextVersion}"
+                            }
+
+                            sh "./mvnw -B versions:set -DprocessAllModules=true -DgenerateBackupPoms=false \
+                                -DoldVersion=${builtinVersion} -DnewVersion=${nextVersion}"
+                        }
+                    }
+
                     stage('License check') {
                         steps {
                             echo 'License check'
@@ -94,7 +124,7 @@ pipeline {
                         steps {
                             echo 'Building'
                             sh './mvnw clean verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs \
-                            -Dmaven.test.failure.ignore=true -Pskip_jakarta_ee_tests'
+                            -Dmaven.test.failure.ignore=true -Pskip_jakarta_ee_tests -Dmaven.compiler.release=17 -Djapicmp.skip=true'
                         }
                         post {
                             always {
@@ -109,7 +139,7 @@ pipeline {
                         when {
                             allOf {
                                 expression { deployableBranch }
-                                expression { MATRIX_JDK == 'jdk_11_latest' }
+                                expression { MATRIX_JDK == 'jdk_17_latest' }
                                 // is not a PR (GitHub) / MergeRequest (GitLab) / Change (Gerrit)?
                                 not { changeRequest() }
                             }

@@ -96,6 +96,21 @@ public class HasherTest {
     @Test
     public void testBCryptHash() {
         // given
+        String[] args = {"--debug", "--password", "--pnoconfirm", "--algorithm", "bcrypt2y"};
+        provideInput("secret#shiro,password;Jo8opech");
+
+        // when
+        Hasher.main(args);
+
+        // when
+        assertThat(listAppender.getEvents()).hasSize(1);
+        LogEvent iLoggingEvent = listAppender.getEvents().get(0);
+        assertThat(iLoggingEvent.getMessage().getFormattedMessage()).contains("$shiro2$2y$10$");
+    }
+
+    @Test
+    public void testBCryptHashShortName() {
+        // given
         String[] args = {"--debug", "--password", "--pnoconfirm", "--algorithm", "2y"};
         provideInput("secret#shiro,password;Jo8opech");
 
