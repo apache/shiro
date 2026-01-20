@@ -40,7 +40,6 @@
 
     <modules>
         <module>aspectj</module>
-        <module>spring</module>
         <module>quickstart-guice</module>
     </modules>
 
@@ -49,6 +48,7 @@
             <id>deferred-for-3x</id>
             <modules>
                 <module>quickstart</module>
+                <module>spring</module>
                 <module>spring-boot</module>
                 <module>spring-boot-3-web</module>
                 <module>spring-mvc</module>
