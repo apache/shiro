@@ -37,13 +37,21 @@
         <module>ehcache</module>
         <module>hazelcast</module>
         <module>quartz</module>
-        <module>spring</module>
         <module>guice</module>
-        <module>spring-boot</module>
         <module>servlet-plugin</module>
         <module>jaxrs</module>
         <module>features</module>
         <module>cdi</module>
         <module>jakarta-ee</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>deferred-for-3x</id>
+            <modules>
+                <module>spring</module>
+                <module>spring-boot</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

@@ -41,8 +41,15 @@
 
         <!-- app servers -->
         <module>meecrowave</module>
-        <module>openliberty</module>
     </modules>
 
+    <profiles>
+        <profile>
+            <id>deferred-for-3x</id>
+            <modules>
+                <module>openliberty</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>

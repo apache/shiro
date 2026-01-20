@@ -346,6 +346,7 @@
                             <exclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</exclude>
                             <exclude>**/spring.provides</exclude>
                             <exclude>**/*.iml</exclude>
+                            <exclude>**/*.idea/**</exclude>
                             <exclude>**/target/**</exclude>
                             <exclude>**/nb-configuration.xml</exclude>
                             <exclude>**/faces-config.NavData</exclude>
@@ -1514,6 +1515,7 @@
                         <exclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</exclude>
                         <exclude>**/spring.provides</exclude>
                         <exclude>**/*.iml</exclude>
+                        <exclude>**/*.idea/**</exclude>
                         <exclude>**/target/**</exclude>
                         <exclude>**/nb-configuration.xml</exclude>
                         <exclude>**/faces-config.NavData</exclude>
@@ -1786,6 +1788,14 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>deferred-for-3x</id>
+            <activation>
+                <property>
+                    <name>!skip.deferred.modules</name>
+                </property>
+            </activation>
         </profile>
     </profiles>
     <!--Disable snapshot repositories because they download snapshots
