@@ -397,7 +397,7 @@ public final class WebUtils {
      *
      * @param request current HTTP request
      * @return the encoding for the request (never <code>null</code>)
-     * @see javax.servlet.ServletRequest#getCharacterEncoding()
+     * @see jakarta.servlet.ServletRequest#getCharacterEncoding()
      */
     protected static String determineEncoding(HttpServletRequest request) {
         String enc = request.getCharacterEncoding();
