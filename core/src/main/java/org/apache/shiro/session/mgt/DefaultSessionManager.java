@@ -145,8 +145,8 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
      * @since 1.0
      */
     private void applyCacheManagerToSessionDAO() {
-        if (this.cacheManager != null && this.sessionDAO != null && this.sessionDAO instanceof CacheManagerAware) {
-            ((CacheManagerAware) this.sessionDAO).setCacheManager(this.cacheManager);
+        if (this.cacheManager != null && this.sessionDAO != null && this.sessionDAO instanceof CacheManagerAware aware) {
+            aware.setCacheManager(this.cacheManager);
         }
     }
 
@@ -179,8 +179,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
 
     @Override
     protected void onStop(Session session) {
-        if (session instanceof SimpleSession) {
-            SimpleSession ss = (SimpleSession) session;
+        if (session instanceof SimpleSession ss) {
             Date stopTs = ss.getStopTimestamp();
             ss.setLastAccessTime(stopTs);
         }
@@ -195,8 +194,8 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
     }
 
     protected void onExpiration(Session session) {
-        if (session instanceof SimpleSession) {
-            ((SimpleSession) session).setExpired(true);
+        if (session instanceof SimpleSession simpleSession) {
+            simpleSession.setExpired(true);
         }
         onChange(session);
     }

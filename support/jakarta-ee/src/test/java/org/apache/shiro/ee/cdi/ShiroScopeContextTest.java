@@ -116,7 +116,7 @@ public class ShiroScopeContextTest {
 
 
     private void setupWebSessions() {
-        when(SecurityUtils.getSecurityManager()).thenReturn(mock(WebSecurityManager.class));
+        secMock.when(SecurityUtils::getSecurityManager).thenReturn(mock(WebSecurityManager.class));
         WebSecurityManager wsm = (WebSecurityManager) SecurityUtils.getSecurityManager();
         when(wsm.isHttpSessionMode()).thenReturn(true);
     }

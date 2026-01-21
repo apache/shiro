@@ -46,7 +46,7 @@ public interface SessionContext extends Map<String, Object> {
      * {@code Session}.
      * <p/>
      * In web-based systems, this host can be inferred from the incoming request, e.g.
-     * {@code javax.servlet.ServletRequest#getRemoteAddr()} or {@code javax.servlet.ServletRequest#getRemoteHost()}
+     * {@code jakarta.servlet.ServletRequest#getRemoteAddr()} or {@code jakarta.servlet.ServletRequest#getRemoteHost()}
      * methods, or in socket-based systems, it can be obtained via inspecting the socket
      * initiator's host IP.
      * <p/>

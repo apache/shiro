@@ -27,19 +27,28 @@
         <version>999-SNAPSHOT</version>
     </parent>
 
-    <artifactId>shiro-its-guice3</artifactId>
-    <name>Apache Shiro :: ITs :: Guice 3</name>
+    <artifactId>shiro-its-guice</artifactId>
+    <name>Apache Shiro :: ITs :: Guice</name>
     <packaging>war</packaging>
 
     <properties>
-        <guice.version>4.2.3</guice.version>
+        <groups>none()</groups>
     </properties>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee11</groupId>
+                <artifactId>jetty-ee11-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <dependenciesToScan>
+                        <dependency>org.apache.shiro:shiro-guice</dependency>
+                    </dependenciesToScan>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -59,7 +68,7 @@
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
-      <version>6.1.0</version>
+            <version>6.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -134,8 +143,8 @@
             </activation>
             <properties>
                 <!-- needed by guice until it is compatible with jdk17+. -->
-                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</surefire.argLine>
-                <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</failsafe.argLine>
+                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</surefire.argLine>
+                <failsafe.argLine>${surefire.argLine}</failsafe.argLine>
             </properties>
         </profile>
     </profiles>

@@ -109,10 +109,10 @@
                     <instructions>
                         <Bundle-SymbolicName>org.apache.shiro.web</Bundle-SymbolicName>
                         <Export-Package>org.apache.shiro.web*;version=${project.version}</Export-Package>
-                        <!-- javax.servlet.jsp* marked as optional per SHIRO-390: -->
+                        <!-- jakarta.servlet.jsp* marked as optional per SHIRO-390: -->
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            javax.servlet.jsp*;resolution:=optional,
+                            jakarta.servlet.jsp*;resolution:=optional,
                             *
                         </Import-Package>
                         <_removeheaders>Bnd-LastModified</_removeheaders>

@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.lang.util;
 
+import java.io.IOException;
+import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,42 +120,66 @@ public final class ClassUtils {
      * @param name the name of the resource to acquire from the classloader(s).
      * @return the InputStream of the resource found, or <code>null</code> if the resource cannot be found from any
      * of the three mentioned ClassLoaders.
+     * @see #getResource(String)
      * @since 0.9
      */
     public static InputStream getResourceAsStream(String name) {
+        URL url = getResource(name);
+        if (url == null) {
+            return null;
+        }
 
-        InputStream is = THREAD_CL_ACCESSOR.getResourceStream(name);
+        try {
+            return url.openStream();
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
-        if (is == null) {
+    /**
+     * Returns the specified resource by checking the current thread's
+     * {@link Thread#getContextClassLoader() context class loader}, then the
+     * current ClassLoader (<code>ClassUtils.class.getClassLoader()</code>), then the system/application
+     * ClassLoader (<code>ClassLoader.getSystemClassLoader()</code>, in that order, using
+     * {@link ClassLoader#getResource(String) getResource(name)}.
+     *
+     * @param name the name of the resource to acquire from the classloader(s).
+     * @return the URL of the resource found, or <code>null</code> if the resource cannot be found from any
+     * of the three mentioned ClassLoaders.
+     * @since 3.0
+     */
+    public static URL getResource(String name) {
+        URL url = THREAD_CL_ACCESSOR.getResource(name);
+        if (url == null) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Resource [" + name + "] was not found via the thread context ClassLoader.  Trying the "
                         + "current ClassLoader...");
             }
-            is = CLASS_LANG_CL_ACCESSOR.getResourceStream(name);
+            url = CLASS_LANG_CL_ACCESSOR.getResource(name);
         }
 
-        if (is == null) {
+        if (url == null) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Resource [" + name + "] was not found via the org.apache.shiro.lang ClassLoader.  Trying the "
                         + "additionally set ClassLoader...");
             }
-            is = ADDITIONAL_CL_ACCESSOR.getResourceStream(name);
+            url = ADDITIONAL_CL_ACCESSOR.getResource(name);
         }
 
-        if (is == null) {
+        if (url == null) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Resource [" + name + "] was not found via the current class loader.  Trying the "
                         + "system/application ClassLoader...");
             }
-            is = SYSTEM_CL_ACCESSOR.getResourceStream(name);
+            url = SYSTEM_CL_ACCESSOR.getResource(name);
         }
 
-        if (is == null && LOGGER.isTraceEnabled()) {
+        if (url == null && LOGGER.isTraceEnabled()) {
             LOGGER.trace("Resource [" + name + "] was not found via the thread context, current, or "
                     + "system/application ClassLoaders.  All heuristics have been exhausted.  Returning null.");
         }
 
-        return is;
+        return url;
     }
 
     /**
@@ -315,6 +341,8 @@ public final class ClassUtils {
         Class<?> loadClass(String fqcn);
 
         InputStream getResourceStream(String name);
+
+        URL getResource(String name);
     }
 
     /**
@@ -345,6 +373,15 @@ public final class ClassUtils {
                 is = cl.getResourceAsStream(name);
             }
             return is;
+        }
+
+        public URL getResource(String name) {
+            URL url = null;
+            ClassLoader cl = getClassLoader();
+            if (cl != null) {
+                url = cl.getResource(name);
+            }
+            return url;
         }
 
         protected final ClassLoader getClassLoader() {

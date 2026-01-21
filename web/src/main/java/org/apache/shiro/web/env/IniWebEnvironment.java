@@ -290,8 +290,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         if (!CollectionUtils.isEmpty(ini)) {
             @SuppressWarnings("unchecked")
             Factory<FilterChainResolver> factory = (Factory<FilterChainResolver>) this.objects.get(FILTER_CHAIN_RESOLVER_NAME);
-            if (factory instanceof IniFactorySupport) {
-                var iniFactory = (IniFactorySupport<?>) factory;
+            if (factory instanceof IniFactorySupport<?> iniFactory) {
                 iniFactory.setIni(ini);
                 iniFactory.setDefaults(this.objects);
             }

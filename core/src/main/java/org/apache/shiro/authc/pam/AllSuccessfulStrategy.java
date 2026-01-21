@@ -80,9 +80,9 @@ public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {
                                            AuthenticationInfo info, AuthenticationInfo aggregate, Throwable t)
             throws AuthenticationException {
         if (t != null) {
-            if (t instanceof AuthenticationException) {
+            if (t instanceof AuthenticationException exception) {
                 //propagate:
-                throw ((AuthenticationException) t);
+                throw exception;
             } else {
                 String msg = "Unable to acquire account data from realm [" + realm + "].  The ["
                         + getClass().getName() + " implementation requires all configured realm(s) to operate successfully "

@@ -68,7 +68,6 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
-import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import org.apache.shiro.mgt.AbstractRememberMeManager;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
@@ -91,13 +90,13 @@ public class FormResubmitSupport {
     static final String SESSION_EXPIRED_PARAMETER = "org.apache.shiro.sessionExpired";
     static final String FORM_IS_RESUBMITTED = "org.apache.shiro.form-is-resubmitted";
     // encoded view state
-    private static final String FACES_VIEW_STATE = jakartify("jakarta.faces.ViewState");
+    private static final String FACES_VIEW_STATE = "jakarta.faces.ViewState";
     private static final String FACES_VIEW_STATE_EQUALS = FACES_VIEW_STATE + "=";
     private static final Pattern VIEW_STATE_PATTERN
             = Pattern.compile(String.format("(.*)(%s[-]?[\\d]+:[-]?[\\d]+)(.*)", FACES_VIEW_STATE_EQUALS));
-    private static final String PARTIAL_VIEW = jakartify("jakarta.faces.partial");
+    private static final String PARTIAL_VIEW = "jakarta.faces.partial";
     private static final Pattern PARTIAL_REQUEST_PATTERN
-            = Pattern.compile(String.format("[\\&]?%s.\\w+=[\\w\\s:%%\\d]*", PARTIAL_VIEW));
+            = Pattern.compile("[\\&]?%s.\\w+=[\\w\\s:%%\\d]*".formatted(PARTIAL_VIEW));
     private static final Pattern INITIAL_AMPERSAND = Pattern.compile("^\\&");
     private static final String FORM_DATA_CACHE = "org.apache.shiro.form-data-cache";
     private static final String FORM_RESUBMIT_HOST = "org.apache.shiro.form-resubmit-host";
@@ -535,11 +534,10 @@ public class FormResubmitSupport {
     public static DefaultWebSessionManager getNativeSessionManager(SecurityManager securityManager) {
         DefaultWebSessionManager rv = null;
         SecurityManager unwrapped = unwrapSecurityManager(securityManager, SecurityManager.class, type -> false);
-        if (unwrapped instanceof SessionsSecurityManager) {
-            var ssm = (SessionsSecurityManager) unwrapped;
+        if (unwrapped instanceof SessionsSecurityManager ssm) {
             var sm = ssm.getSessionManager();
-            if (sm instanceof DefaultWebSessionManager) {
-                rv = (DefaultWebSessionManager) sm;
+            if (sm instanceof DefaultWebSessionManager manager) {
+                rv = manager;
             }
         }
         return rv;
@@ -556,13 +554,13 @@ public class FormResubmitSupport {
     }
 
     static String extractJSFNewViewState(@NonNull String responseBody, @NonNull String savedFormData) {
-        Elements elts = Jsoup.parse(responseBody).select(String.format("input[name=%s]", FACES_VIEW_STATE));
+        Elements elts = Jsoup.parse(responseBody).select("input[name=%s]".formatted(FACES_VIEW_STATE));
         if (!elts.isEmpty()) {
             String viewState = elts.first().attr("value");
 
             var matcher = VIEW_STATE_PATTERN.matcher(savedFormData);
             if (matcher.matches()) {
-                savedFormData = matcher.replaceFirst(String.format("$1%s%s$3",
+                savedFormData = matcher.replaceFirst("$1%s%s$3".formatted(
                         FACES_VIEW_STATE_EQUALS, viewState));
                 log.debug("Encoded w/Replaced ViewState: {}", savedFormData);
             }

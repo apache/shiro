@@ -53,6 +53,7 @@ import jakarta.inject.Named;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -188,15 +189,15 @@ public class ShiroWebModuleTest {
         HttpServletRequest request = createMock(HttpServletRequest.class);
 
         servletContext.setAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY), EasyMock.anyObject());
-        expect(request.getAttribute("javax.servlet.include.context_path")).andReturn("").anyTimes();
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("").anyTimes();
         expect(request.getCharacterEncoding()).andReturn("UTF-8").anyTimes();
-        expect(request.getAttribute("javax.servlet.include.path_info")).andReturn(null).anyTimes();
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_PATH_INFO)).andReturn(null).anyTimes();
         expect(request.getPathInfo()).andReturn(null).anyTimes();
-        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/test_authc");
-        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/test_custom_filter");
-        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/test_authc_basic");
-        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/test_perms");
-        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/multiple_configs");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test_authc");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test_custom_filter");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test_authc_basic");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test_perms");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/multiple_configs");
         replay(servletContext, request);
 
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
@@ -279,12 +280,12 @@ public class ShiroWebModuleTest {
         HttpServletRequest request = createMock(HttpServletRequest.class);
 
         servletContext.setAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY), EasyMock.anyObject());
-        expect(request.getAttribute("javax.servlet.include.context_path")).andReturn("").anyTimes();
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("").anyTimes();
         expect(request.getCharacterEncoding()).andReturn("UTF-8").anyTimes();
-        expect(request.getAttribute("javax.servlet.include.request_uri")).andReturn("/test_authc");
-        expect(request.getAttribute("javax.servlet.include.request_uri")).andReturn("/test_custom_filter");
-        expect(request.getAttribute("javax.servlet.include.request_uri")).andReturn("/test_perms");
-        expect(request.getAttribute("javax.servlet.include.request_uri")).andReturn("/multiple_configs");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("/test_authc");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("/test_custom_filter");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("/test_perms");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("/multiple_configs");
         replay(servletContext, request);
 
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
@@ -350,11 +351,11 @@ public class ShiroWebModuleTest {
         HttpServletRequest request = createMock(HttpServletRequest.class);
 
         servletContext.setAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY), EasyMock.anyObject());
-        expect(request.getAttribute("javax.servlet.include.context_path")).andReturn("").anyTimes();
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("").anyTimes();
         expect(request.getCharacterEncoding()).andReturn("UTF-8").anyTimes();
-        expect(request.getAttribute("javax.servlet.include.path_info")).andReturn(null).anyTimes();
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_PATH_INFO)).andReturn(null).anyTimes();
         expect(request.getPathInfo()).andReturn(null).anyTimes();
-        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/test/foobar");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test/foobar");
         replay(servletContext, request);
 
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
@@ -393,11 +394,11 @@ public class ShiroWebModuleTest {
         HttpServletRequest request = createMock(HttpServletRequest.class);
 
         servletContext.setAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY), EasyMock.anyObject());
-        expect(request.getAttribute("javax.servlet.include.context_path")).andReturn("").anyTimes();
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("").anyTimes();
         expect(request.getCharacterEncoding()).andReturn("UTF-8").anyTimes();
-        expect(request.getAttribute("javax.servlet.include.path_info")).andReturn(null).anyTimes();
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_PATH_INFO)).andReturn(null).anyTimes();
         expect(request.getPathInfo()).andReturn(null).anyTimes();
-        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/test/foobar");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test/foobar");
         replay(servletContext, request);
 
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
@@ -441,11 +442,11 @@ public class ShiroWebModuleTest {
         HttpServletRequest request = createMock(HttpServletRequest.class);
 
         servletContext.setAttribute(eq(EnvironmentLoader.ENVIRONMENT_ATTRIBUTE_KEY), EasyMock.anyObject());
-        expect(request.getAttribute("javax.servlet.include.context_path")).andReturn("").anyTimes();
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("").anyTimes();
         expect(request.getCharacterEncoding()).andReturn("UTF-8").anyTimes();
-        expect(request.getAttribute("javax.servlet.include.path_info")).andReturn(null).anyTimes();
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_PATH_INFO)).andReturn(null).anyTimes();
         expect(request.getPathInfo()).andReturn(null).anyTimes();
-        expect(request.getAttribute("javax.servlet.include.servlet_path")).andReturn("/test/foobar");
+        expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test/foobar");
         replay(servletContext, request);
 
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {

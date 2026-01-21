@@ -63,8 +63,7 @@
             <id>deferred-for-3x</id>
             <modules>
                 <module>support</module>
-                <module>guice3</module>
-                <module>guice4</module>
+                <module>guice</module>
                 <module>jakarta-ee</module>
             </modules>
         </profile>

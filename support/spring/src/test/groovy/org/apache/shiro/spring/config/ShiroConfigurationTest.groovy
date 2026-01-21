@@ -29,8 +29,8 @@ import org.apache.shiro.subject.Subject
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 
 import static org.hamcrest.MatcherAssert.assertThat
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*
 /**
  * @since 1.4.0
  */
-@ContextConfiguration(classes = [RealmTestConfiguration, ShiroConfiguration])
+@SpringJUnitConfig(classes = [RealmTestConfiguration, ShiroConfiguration])
 @ExtendWith(SpringExtension.class)
 class ShiroConfigurationTest extends AbstractJUnit4SpringContextTests {
 

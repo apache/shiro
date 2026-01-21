@@ -25,7 +25,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository("userDAO")
-@SuppressWarnings("unchecked")
 public class HibernateUserDAO extends HibernateDao implements UserDAO {
 
     public User getUser(Long userId) {
@@ -35,26 +34,26 @@ public class HibernateUserDAO extends HibernateDao implements UserDAO {
     public User findUser(String username) {
         Assert.hasText(username);
         String query = "from User u where u.username = :username";
-        return (User) getSession().createQuery(query).setParameter("username", username).uniqueResult();
+        return getSession().createQuery(query, User.class).setParameter("username", username).uniqueResult();
     }
 
     public void createUser(User user) {
-        getSession().save(user);
+        getSession().persist(user);
     }
 
     public List<User> getAllUsers() {
-        return getSession().createQuery("from User order by username").list();
+        return getSession().createQuery("from User order by username", User.class).list();
     }
 
     public void deleteUser(Long userId) {
         User user = getUser(userId);
         if (user != null) {
-            getSession().delete(user);
+            getSession().remove(user);
         }
     }
 
     public void updateUser(User user) {
-        getSession().update(user);
+        getSession().merge(user);
     }
 
 }

@@ -169,8 +169,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
 
         @Override
         public Subject createSubject(SubjectContext context) {
-            if (context instanceof WebSubjectContext && wrapped instanceof DefaultSecurityManager) {
-                WebSubjectContext webContext = (WebSubjectContext) context;
+            if (context instanceof WebSubjectContext webContext && wrapped instanceof DefaultSecurityManager) {
                 DefaultWebSecurityManager wsm = (DefaultWebSecurityManager) wrapped;
                 Session session = null;
                 try {

@@ -30,6 +30,7 @@ import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -38,6 +39,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -68,22 +70,22 @@ public final class WebUtils {
      * <p>If included via a RequestDispatcher, the current resource will see the
      * originating request. Its own URI and paths are exposed as request attributes.
      */
-    public static final String INCLUDE_REQUEST_URI_ATTRIBUTE = "javax.servlet.include.request_uri";
-    public static final String INCLUDE_CONTEXT_PATH_ATTRIBUTE = "javax.servlet.include.context_path";
-    public static final String INCLUDE_SERVLET_PATH_ATTRIBUTE = "javax.servlet.include.servlet_path";
-    public static final String INCLUDE_PATH_INFO_ATTRIBUTE = "javax.servlet.include.path_info";
-    public static final String INCLUDE_QUERY_STRING_ATTRIBUTE = "javax.servlet.include.query_string";
+    public static final String INCLUDE_REQUEST_URI_ATTRIBUTE = RequestDispatcher.INCLUDE_REQUEST_URI;
+    public static final String INCLUDE_CONTEXT_PATH_ATTRIBUTE = RequestDispatcher.INCLUDE_CONTEXT_PATH;
+    public static final String INCLUDE_SERVLET_PATH_ATTRIBUTE = RequestDispatcher.INCLUDE_SERVLET_PATH;
+    public static final String INCLUDE_PATH_INFO_ATTRIBUTE = RequestDispatcher.INCLUDE_PATH_INFO;
+    public static final String INCLUDE_QUERY_STRING_ATTRIBUTE = RequestDispatcher.INCLUDE_QUERY_STRING;
 
     /**
      * Standard Servlet 2.4+ spec request attributes for forward URI and paths.
      * <p>If forwarded to via a RequestDispatcher, the current resource will see its
      * own URI and paths. The originating URI and paths are exposed as request attributes.
      */
-    public static final String FORWARD_REQUEST_URI_ATTRIBUTE = "javax.servlet.forward.request_uri";
-    public static final String FORWARD_CONTEXT_PATH_ATTRIBUTE = "javax.servlet.forward.context_path";
-    public static final String FORWARD_SERVLET_PATH_ATTRIBUTE = "javax.servlet.forward.servlet_path";
-    public static final String FORWARD_PATH_INFO_ATTRIBUTE = "javax.servlet.forward.path_info";
-    public static final String FORWARD_QUERY_STRING_ATTRIBUTE = "javax.servlet.forward.query_string";
+    public static final String FORWARD_REQUEST_URI_ATTRIBUTE = RequestDispatcher.FORWARD_REQUEST_URI;
+    public static final String FORWARD_CONTEXT_PATH_ATTRIBUTE = RequestDispatcher.FORWARD_CONTEXT_PATH;
+    public static final String FORWARD_SERVLET_PATH_ATTRIBUTE = RequestDispatcher.FORWARD_SERVLET_PATH;
+    public static final String FORWARD_PATH_INFO_ATTRIBUTE = RequestDispatcher.FORWARD_PATH_INFO;
+    public static final String FORWARD_QUERY_STRING_ATTRIBUTE = RequestDispatcher.FORWARD_QUERY_STRING;
 
     /**
      * Default character encoding to use when <code>request.getCharacterEncoding</code>
@@ -367,6 +369,7 @@ public final class WebUtils {
      * @return the decoded String
      * @see #DEFAULT_CHARACTER_ENCODING
      * @see jakarta.servlet.ServletRequest#getCharacterEncoding
+     * @see java.net.URLDecoder#decode(String, java.nio.charset.Charset)
      * @see java.net.URLDecoder#decode(String, String)
      * @see java.net.URLDecoder#decode(String)
      */
@@ -381,7 +384,7 @@ public final class WebUtils {
                         + "] with encoding '" + Encode.forHtml(enc)
                         + "': falling back to platform default encoding; exception message: " + ex.getMessage());
             }
-            return URLDecoder.decode(source);
+            return URLDecoder.decode(source, StandardCharsets.UTF_8);
         }
     }
 

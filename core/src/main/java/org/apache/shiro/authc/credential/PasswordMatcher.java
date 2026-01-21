@@ -49,8 +49,7 @@ public class PasswordMatcher implements CredentialsMatcher {
         Object storedCredentials = getStoredPassword(info);
         assertStoredCredentialsType(storedCredentials);
 
-        if (storedCredentials instanceof Hash) {
-            Hash hashedPassword = (Hash) storedCredentials;
+        if (storedCredentials instanceof Hash hashedPassword) {
             return hashedPassword.matchesPassword(ByteSource.Util.bytes(submittedPassword));
         }
         //otherwise they are a String (asserted in the 'assertStoredCredentialsType' method call above):
@@ -89,8 +88,8 @@ public class PasswordMatcher implements CredentialsMatcher {
     protected Object getStoredPassword(AuthenticationInfo storedAccountInfo) {
         Object stored = storedAccountInfo != null ? storedAccountInfo.getCredentials() : null;
         //fix for https://issues.apache.org/jira/browse/SHIRO-363
-        if (stored instanceof char[]) {
-            stored = new String((char[]) stored);
+        if (stored instanceof char[] chars) {
+            stored = new String(chars);
         }
         return stored;
     }

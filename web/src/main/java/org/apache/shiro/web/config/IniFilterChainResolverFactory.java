@@ -92,8 +92,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     protected FilterChainResolver createInstance(Ini ini) {
         FilterChainResolver filterChainResolver = createDefaultInstance();
-        if (filterChainResolver instanceof PathMatchingFilterChainResolver) {
-            PathMatchingFilterChainResolver resolver = (PathMatchingFilterChainResolver) filterChainResolver;
+        if (filterChainResolver instanceof PathMatchingFilterChainResolver resolver) {
             FilterChainManager manager = resolver.getFilterChainManager();
             buildChains(manager, ini);
         }
@@ -193,8 +192,8 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         for (Map.Entry<String, ?> entry : objects.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-            if (value instanceof Filter) {
-                filterMap.put(key, (Filter) value);
+            if (value instanceof Filter filter) {
+                filterMap.put(key, filter);
             }
         }
         return filterMap;

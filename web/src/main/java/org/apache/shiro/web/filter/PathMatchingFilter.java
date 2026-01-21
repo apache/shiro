@@ -255,12 +255,12 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     @SuppressWarnings("UnusedParameters")
     /**
      * Path-matching version of the parent class's
-     * {@link #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse)} method, but additionally allows
+     * {@link #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)} method, but additionally allows
      * for inspection of any path-specific configuration values corresponding to the specified request.  Subclasses
      * may wish to inspect this additional mapped configuration to determine if the filter is enabled or not.
      * <p/>
      * This method's default implementation ignores the {@code path} and {@code mappedValue} arguments and merely
-     * returns the value from a call to {@link #isEnabled(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}.
+     * returns the value from a call to {@link #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)}.
      * It is expected that subclasses override this method if they need to perform enable/disable logic for a specific
      * request based on any path-specific config for the filter instance.
      *

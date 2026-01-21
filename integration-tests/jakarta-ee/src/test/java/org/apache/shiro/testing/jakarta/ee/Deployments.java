@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.shiro.testing.cdi.ComponentInjectionIT;
 
-import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import static org.apache.shiro.testing.cdi.ComponentInjectionIT.TESTABLE_MODE;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_DEV_MODE;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_PROD_MODE;

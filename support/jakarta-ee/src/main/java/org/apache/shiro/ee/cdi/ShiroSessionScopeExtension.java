@@ -13,6 +13,7 @@
  */
 package org.apache.shiro.ee.cdi;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.apache.shiro.session.SessionListener;
  * Entry point for Shiro Session scope CDI extension
  */
 public class ShiroSessionScopeExtension implements Extension, Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
     @SuppressWarnings("ConstantName")
     private static final List<ShiroScopeContext> contexts = Stream.of(

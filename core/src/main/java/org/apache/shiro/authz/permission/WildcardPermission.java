@@ -252,8 +252,7 @@ public class WildcardPermission implements Permission, Serializable {
     }
 
     public boolean equals(Object o) {
-        if (o instanceof WildcardPermission) {
-            WildcardPermission wp = (WildcardPermission) o;
+        if (o instanceof WildcardPermission wp) {
             return parts.equals(wp.parts);
         }
         return false;

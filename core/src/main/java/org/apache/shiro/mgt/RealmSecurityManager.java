@@ -114,8 +114,8 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         Collection<Realm> realms = getRealms();
         if (cacheManager != null && realms != null && !realms.isEmpty()) {
             for (Realm realm : realms) {
-                if (realm instanceof CacheManagerAware) {
-                    ((CacheManagerAware) realm).setCacheManager(cacheManager);
+                if (realm instanceof CacheManagerAware aware) {
+                    aware.setCacheManager(cacheManager);
                 }
             }
         }
@@ -140,8 +140,8 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         Collection<Realm> realms = getRealms();
         if (eventBus != null && realms != null && !realms.isEmpty()) {
             for (Realm realm : realms) {
-                if (realm instanceof EventBusAware) {
-                    ((EventBusAware) realm).setEventBus(eventBus);
+                if (realm instanceof EventBusAware aware) {
+                    aware.setEventBus(eventBus);
                 }
             }
         }

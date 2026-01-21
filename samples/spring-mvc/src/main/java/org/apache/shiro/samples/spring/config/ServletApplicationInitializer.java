@@ -49,11 +49,6 @@ public class ServletApplicationInitializer implements WebApplicationInitializer 
         shiroFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), false, "/*");
 
 
-        ServletRegistration.Dynamic remotingDispatcher = container.addServlet("remoting", new DispatcherServlet(appContext));
-        remotingDispatcher.setLoadOnStartup(1);
-        remotingDispatcher.addMapping("/remoting/*");
-
-
         ServletRegistration.Dynamic dispatcher = container.addServlet("DispatcherServlet", new DispatcherServlet(appContext));
         dispatcher.setLoadOnStartup(1);
         dispatcher.addMapping("/");

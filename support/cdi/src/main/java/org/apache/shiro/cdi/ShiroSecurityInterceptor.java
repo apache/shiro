@@ -13,6 +13,7 @@
  */
 package org.apache.shiro.cdi;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import jakarta.annotation.Priority;
@@ -31,6 +32,7 @@ import org.apache.shiro.cdi.AopHelper.SecurityInterceptor;
 @Dependent
 @Priority(Interceptor.Priority.LIBRARY_BEFORE)
 public class ShiroSecurityInterceptor implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @AroundInvoke

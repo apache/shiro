@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 
-import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
@@ -81,12 +80,12 @@ public class FormSupportTest {
     void viewStatePattern() {
         String statefulFormData
                 = "j_idt5%3Dj_idt5%26j_idt5%3Aj_idt7%3Daaa%26j_idt5%3Aj_idt9%3Dbbb%26j_idt5%3A"
-                + "j_idt11%3DSubmit+...%26" + jakartify("jakarta.faces.ViewState")
+                + "j_idt11%3DSubmit+...%26jakarta.faces.ViewState"
                 + "%3D-8335355445345003673%3A-6008443334776649058";
         assertThat(isJSFStatefulForm(decode(statefulFormData))).isTrue();
         String statelessFormData
                 = "j_idt5%3Dj_idt5%26j_idt5%3Aj_idt7%3Daaa%26j_idt5%3Aj_idt9%3Dbbb%26j_idt5%3A"
-                + "j_idt11%3DSubmit+...%26" + jakartify("jakarta.faces.ViewState") + "%3Dstateless";
+                + "j_idt11%3DSubmit+...%26jakarta.faces.ViewState%3Dstateless";
         assertThat(isJSFStatefulForm(statelessFormData)).isFalse();
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> isJSFStatefulForm(null));
         String nonJSFFormData
@@ -100,49 +99,49 @@ public class FormSupportTest {
     void extractViewState() {
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> extractJSFNewViewState(null, null));
         assertThat(extractJSFNewViewState("", "hello")).isEqualTo("hello");
-        assertThat(extractJSFNewViewState("xxx", jakartify("jakarta.faces.ViewState=stateless&hello=bye")))
-            .isEqualTo(jakartify("jakarta.faces.ViewState=stateless&hello=bye"));
-        assertThat(extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>"),
-                jakartify("jakarta.faces.ViewState=stateless&hello=bye")))
-            .isEqualTo(jakartify("jakarta.faces.ViewState=stateless&hello=bye"));
-        assertThat(extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>"),
-                jakartify("aaa=bbb&jakarta.faces.ViewState=xxx:yyy&hello=bye")))
-            .isEqualTo(jakartify("aaa=bbb&jakarta.faces.ViewState=xxx:yyy&hello=bye"));
-        assertThat(extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>"),
-                jakartify("jakarta.faces.ViewState=987:654&hello=bye")))
-            .isEqualTo(jakartify("jakarta.faces.ViewState=123:456&hello=bye"));
-        assertThat(extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>"),
-                jakartify("jakarta.faces.ViewState=987:654&hello=bye")))
-            .isEqualTo(jakartify("jakarta.faces.ViewState=-123:-456&hello=bye"));
-        assertThat(extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>"),
-                jakartify("jakarta.faces.ViewState=-987:-654&hello=bye")))
-            .isEqualTo(jakartify("jakarta.faces.ViewState=-123:-456&hello=bye"));
-        assertThat(extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>"),
-                jakartify("aaa=bbb&jakarta.faces.ViewState=-987:-654&hello=bye")))
-            .isEqualTo(jakartify("aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye"));
-        assertThat(extractJSFNewViewState(jakartify("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>"),
-                jakartify("aaa=bbb&jakarta.faces.ViewState=-987:-654")))
-            .isEqualTo(jakartify("aaa=bbb&jakarta.faces.ViewState=-123:-456"));
+        assertThat(extractJSFNewViewState("xxx", "jakarta.faces.ViewState=stateless&hello=bye"))
+                .isEqualTo("jakarta.faces.ViewState=stateless&hello=bye");
+        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>",
+                        "jakarta.faces.ViewState=stateless&hello=bye"))
+                .isEqualTo("jakarta.faces.ViewState=stateless&hello=bye");
+        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>",
+                        "aaa=bbb&jakarta.faces.ViewState=xxx:yyy&hello=bye"))
+                .isEqualTo("aaa=bbb&jakarta.faces.ViewState=xxx:yyy&hello=bye");
+        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>",
+                        "jakarta.faces.ViewState=987:654&hello=bye"))
+                .isEqualTo("jakarta.faces.ViewState=123:456&hello=bye");
+        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
+                        "jakarta.faces.ViewState=987:654&hello=bye"))
+                .isEqualTo("jakarta.faces.ViewState=-123:-456&hello=bye");
+        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
+                        "jakarta.faces.ViewState=-987:-654&hello=bye"))
+                .isEqualTo("jakarta.faces.ViewState=-123:-456&hello=bye");
+        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
+                        "aaa=bbb&jakarta.faces.ViewState=-987:-654&hello=bye"))
+                .isEqualTo("aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye");
+        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
+                        "aaa=bbb&jakarta.faces.ViewState=-987:-654"))
+                .isEqualTo("aaa=bbb&jakarta.faces.ViewState=-123:-456");
     }
 
     @Test
     void noAjaxRequests() {
-        assertThat(noJSFAjaxRequests(jakartify("aaa=bbb&jakarta.faces.ViewState=-123:-456")
-                + jakartify("&jakarta.faces.partial.ajax=true&hello=bye"), false)).isEqualTo(new PartialAjaxResult(
-                jakartify("aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye"),
-                true, false));
+        assertThat(noJSFAjaxRequests("aaa=bbb&jakarta.faces.ViewState=-123:-456"
+                        + "&jakarta.faces.partial.ajax=true&hello=bye", false)).isEqualTo(new PartialAjaxResult(
+                        "aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye",
+                        true, false));
         assertThat(noJSFAjaxRequests("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
-                + jakartify("&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917")
-                + jakartify("&jakarta.faces.source=j_idt12:j_idt18")
-                + jakartify("&jakarta.faces.partial.event=click")
-                + jakartify("&jakarta.faces.partial.execute=j_idt12:j_idt18 j_idt12")
-                + jakartify("&jakarta.faces.partial.render=j_idt12")
-                + jakartify("&jakarta.faces.behavior.event=action")
-                + jakartify("&jakarta.faces.partial.ajax=false"), false))
-            .isEqualTo(new PartialAjaxResult("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
-                + jakartify("&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917")
-                + jakartify("&jakarta.faces.source=j_idt12:j_idt18")
-                + jakartify("&jakarta.faces.behavior.event=action"), true, false));
+                        + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917"
+                        + "&jakarta.faces.source=j_idt12:j_idt18"
+                        + "&jakarta.faces.partial.event=click"
+                        + "&jakarta.faces.partial.execute=j_idt12:j_idt18 j_idt12"
+                        + "&jakarta.faces.partial.render=j_idt12"
+                        + "&jakarta.faces.behavior.event=action"
+                        + "&jakarta.faces.partial.ajax=false", false))
+                .isEqualTo(new PartialAjaxResult("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
+                        + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917"
+                        + "&jakarta.faces.source=j_idt12:j_idt18"
+                        + "&jakarta.faces.behavior.event=action", true, false));
     }
 
     @Test

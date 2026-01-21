@@ -27,6 +27,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -48,6 +49,7 @@ class BCryptHash extends AbstractCryptHash {
 
     public static final int SALT_LENGTH = 16;
 
+    @Serial
     private static final long serialVersionUID = 6957869292324606101L;
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCryptHash.class);

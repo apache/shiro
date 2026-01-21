@@ -20,8 +20,8 @@ package org.apache.shiro.samples.spring.web;
 
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -38,7 +38,7 @@ import jakarta.servlet.http.HttpServletResponse;
 @RequestMapping("/s/logout")
 public class LogoutController extends AbstractController {
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         SecurityUtils.getSubject().logout();
         return new ModelAndView("redirect:login");

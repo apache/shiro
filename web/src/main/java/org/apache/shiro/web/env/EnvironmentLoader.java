@@ -312,8 +312,8 @@ public class EnvironmentLoader {
 
         environment.setServletContext(sc);
 
-        if (configSpecified && (environment instanceof ResourceConfigurable)) {
-            ((ResourceConfigurable) environment).setConfigLocations(configLocations);
+        if (configSpecified && (environment instanceof ResourceConfigurable configurable)) {
+            configurable.setConfigLocations(configLocations);
         }
 
         customizeEnvironment(environment);
@@ -341,8 +341,8 @@ public class EnvironmentLoader {
         servletContext.log("Cleaning up Shiro Environment");
         try {
             Object environment = servletContext.getAttribute(ENVIRONMENT_ATTRIBUTE_KEY);
-            if (environment instanceof WebEnvironment) {
-                finalizeEnvironment((WebEnvironment) environment);
+            if (environment instanceof WebEnvironment webEnvironment) {
+                finalizeEnvironment(webEnvironment);
             }
             LifecycleUtils.destroy(environment);
         } finally {

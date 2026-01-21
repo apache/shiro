@@ -13,6 +13,7 @@
  */
 package org.apache.shiro.testing.jakarta.ee;
 
+import java.io.Serial;
 import java.io.Serializable;
 import jakarta.enterprise.inject.Vetoed;
 
@@ -23,6 +24,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Vetoed
 public class PropertyPrincipal implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final String userName;

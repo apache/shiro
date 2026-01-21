@@ -16,7 +16,9 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<ehcache>
+<config xmlns="http://www.ehcache.org/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.ehcache.org/v3 https://www.ehcache.org/schema/ehcache-core-3.3.xsd">
 
     <!-- Sets the path to the directory where cache .data files are created.
 
@@ -27,7 +29,7 @@
             user.dir - User's current working directory
             java.io.tmpdir - Default temp file path
     -->
-    <diskStore path="java.io.tmpdir/shiro-ehcache"/>
+    <persistence directory="${java.io.tmpdir}/shiro-ehcache"/>
 
 
     <!--Default Cache configuration. These will applied to caches programmatically created through
@@ -62,15 +64,12 @@
                                      (specified as LFU)
     -->
 
-    <defaultCache
-            maxElementsInMemory="10000"
-            eternal="false"
-            timeToIdleSeconds="120"
-            timeToLiveSeconds="120"
-            overflowToDisk="false"
-            diskPersistent="false"
-            diskExpiryThreadIntervalSeconds="120"
-            />
+    <cache-template name="default">
+        <expiry>
+            <ttl>120</ttl>
+        </expiry>
+        <heap>10000</heap>
+    </cache-template>
 
     <!-- We want eternal="true" and no timeToIdle or timeToLive settings because Shiro manages session
          expirations explicitly.  If we set it to false and then set corresponding timeToIdle and timeToLive properties,
@@ -80,18 +79,28 @@
 
         diskPersistent=true since we want an enterprise session management feature - ability to use sessions after
         even after a JVM restart.  -->
-    <cache name="shiro-activeSessionCache"
-           maxElementsInMemory="10000"
-           overflowToDisk="true"
-           eternal="true"
-           timeToLiveSeconds="0"
-           timeToIdleSeconds="0"
-           diskPersistent="true"
-           diskExpiryThreadIntervalSeconds="600"/>
+    <cache alias="shiro-activeSessionCache">
+        <key-type>java.io.Serializable</key-type>
+        <value-type>java.io.Serializable</value-type>
+        <expiry>
+            <none/>
+        </expiry>
+        <resources>
+            <heap>10000</heap>
+            <disk persistent="true" unit="MB">50</disk>
+        </resources>
+    </cache>
 
-    <cache name="org.apache.shiro.realm.text.PropertiesRealm-0-accounts"
-           maxElementsInMemory="1000"
-           eternal="true"
-           overflowToDisk="true"/>
+    <cache alias="org.apache.shiro.realm.text.PropertiesRealm-0-accounts">
+        <key-type>java.io.Serializable</key-type>
+        <value-type>java.io.Serializable</value-type>
+        <expiry>
+            <none/>
+        </expiry>
+        <resources>
+            <heap>10000</heap>
+            <disk persistent="true" unit="MB">50</disk>
+        </resources>
+    </cache>
 
-</ehcache>
+</config>
