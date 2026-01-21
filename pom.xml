@@ -467,6 +467,9 @@
                             <ignoreMissingClassesByRegularExpressions>
                                 <ignoreMissingClassesByRegularExpression>javax.annotation.Nullable</ignoreMissingClassesByRegularExpression>
                             </ignoreMissingClassesByRegularExpressions>
+                            <excludes>
+                                <exclude>org.apache.shiro.subject.SimplePrincipalMap</exclude>
+                            </excludes>
 <!--                            <postAnalysisScript>${root.dir}/src/japicmp/postAnalysisScript.groovy</postAnalysisScript>-->
                         </parameter>
                     </configuration>
