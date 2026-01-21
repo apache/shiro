@@ -162,24 +162,6 @@ public final class ResourceUtils {
         }
     }
 
-    private static InputStream loadFromFile(String path) throws IOException {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Opening file [" + path + "]...");
-        }
-        return new FileInputStream(path);
-    }
-
-    private static InputStream loadFromUrl(String urlPath) throws IOException {
-        LOGGER.debug("Opening url {}", urlPath);
-        URL url = new URL(urlPath);
-        return url.openStream();
-    }
-
-    private static InputStream loadFromClassPath(String path) {
-        LOGGER.debug("Opening resource from class path [{}]", path);
-        return ClassUtils.getResourceAsStream(path);
-    }
-
     private static String stripPrefix(String resourcePath) {
         return resourcePath.substring(resourcePath.indexOf(":") + 1);
     }

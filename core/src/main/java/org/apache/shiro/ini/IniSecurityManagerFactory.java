@@ -133,6 +133,7 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
     protected boolean isAutoApplyRealms(SecurityManager securityManager) {
         boolean autoApply = true;
         if (securityManager instanceof RealmSecurityManager realmSecurityManager) {
+            // only apply realms if they haven't been explicitly set by the user:
             Collection<Realm> realms = realmSecurityManager.getRealms();
             if (!CollectionUtils.isEmpty(realms)) {
                 LOGGER.info("Realms have been explicitly set on the SecurityManager instance - auto-setting of "

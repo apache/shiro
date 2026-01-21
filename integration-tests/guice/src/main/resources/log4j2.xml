@@ -58,7 +58,7 @@
         <Logger name="org.apache.shiro.util.ThreadContext" level="info" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
-        <Logger name="org.eclipse.jetty.ee10.annotations.AnnotationParser" level="error" additivity="false">
+        <Logger name="org.eclipse.jetty.ee11.annotations.AnnotationParser" level="error" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="info">

@@ -127,8 +127,8 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     //since 1.2.1 for fixing SHIRO-350:
     private void applySessionManagerToSessionStorageEvaluatorIfPossible() {
         SubjectDAO subjectDAO = getSubjectDAO();
-        if (subjectDAO instanceof DefaultSubjectDAO aO) {
-            SessionStorageEvaluator evaluator = aO.getSessionStorageEvaluator();
+        if (subjectDAO instanceof DefaultSubjectDAO defaultSubjectDAO) {
+            SessionStorageEvaluator evaluator = defaultSubjectDAO.getSessionStorageEvaluator();
             if (evaluator instanceof DefaultWebSessionStorageEvaluator storageEvaluator) {
                 storageEvaluator.setSessionManager(getSessionManager());
             }
