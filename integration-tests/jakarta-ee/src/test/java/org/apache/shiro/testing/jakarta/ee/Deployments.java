@@ -67,7 +67,7 @@ public class Deployments {
     private static List<Action> initializeStandardActions() {
         switch (System.getProperty(INTEGRATION_TEST_MODE_PROPERTY, "none")) {
             case CLIENT_STATE_SAVING:
-                return List.of(new Action(getContextParamValue(jakartify("jakarta.faces.STATE_SAVING_METHOD")),
+                return List.of(new Action(getContextParamValue("jakarta.faces.STATE_SAVING_METHOD"),
                         node -> node.setTextContent("client")));
             case SHIRO_NATIVE_SESSIONS:
                 return List.of(new Action(getContextParamValue("shiroConfigLocations"),

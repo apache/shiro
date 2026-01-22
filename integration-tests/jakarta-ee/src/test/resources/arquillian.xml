@@ -22,6 +22,8 @@
         <property name="firefoxArguments">-headless</property>
         <property name="chromeBinary">${webdriver.chrome.binary}</property>
         <property name="chromeArguments">--ignore-certificate-errors</property>
+        <property name="enableBidi">true</property>
+        <property name="unhandledPromptBehaviour">ignore</property>
         <property name="githubUsername">${gh_user}</property>
         <property name="githubToken">${gh_token}</property>
     </extension>
