@@ -44,6 +44,7 @@
     <modules>
         <module>meecrowave-support</module>
         <module>jaxrs</module>
+        <module>support</module>
         <module>jakarta-ee-support</module>
     </modules>
 
@@ -62,7 +63,6 @@
         <profile>
             <id>deferred-for-3x</id>
             <modules>
-                <module>support</module>
                 <module>guice</module>
                 <module>jakarta-ee</module>
             </modules>
