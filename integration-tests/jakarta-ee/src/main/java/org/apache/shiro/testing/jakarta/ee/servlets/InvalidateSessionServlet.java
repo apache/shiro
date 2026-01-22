@@ -29,6 +29,6 @@ public class InvalidateSessionServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.logout();
+        request.getSession().invalidate();
     }
 }
