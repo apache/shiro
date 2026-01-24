@@ -95,9 +95,13 @@ public class FormResubmitSupport {
     private static final String FACES_VIEW_STATE_EQUALS = FACES_VIEW_STATE + "=";
     private static final Pattern VIEW_STATE_PATTERN
             = Pattern.compile(String.format("(.*)(%s[-]?[\\d]+:[-]?[\\d]+)(.*)", FACES_VIEW_STATE_EQUALS));
-    private static final String PARTIAL_VIEW = jakartify("javax.faces.partial");
+    private static final String FACES_SOURCE = jakartify("javax.faces.source");
+    private static final String FACES_SOURCE_EQUALS = FACES_SOURCE + "=";
+    static final Pattern FACES_SOURCE_PATTERN
+            = Pattern.compile(String.format("[\\&]?%s([\\w\\s:%%\\d]*)(.*)", FACES_SOURCE_EQUALS));
     private static final Pattern PARTIAL_REQUEST_PATTERN
-            = Pattern.compile(String.format("[\\&]?%s.\\w+=[\\w\\s:%%\\d]*", PARTIAL_VIEW));
+            = Pattern.compile(String.format("[\\&]?(%s.\\w+|%s.\\w+|%s)=[\\w\\s:%%\\d]*",
+            jakartify("javax.faces.partial"), jakartify("javax.faces.behavior"), FACES_SOURCE));
     private static final Pattern INITIAL_AMPERSAND = Pattern.compile("^\\&");
     private static final String FORM_DATA_CACHE = "org.apache.shiro.form-data-cache";
     private static final String FORM_RESUBMIT_HOST = "org.apache.shiro.form-resubmit-host";
@@ -573,8 +577,17 @@ public class FormResubmitSupport {
     static PartialAjaxResult noJSFAjaxRequests(String savedFormData, boolean isStateless) {
         var partialMatcher = PARTIAL_REQUEST_PATTERN.matcher(savedFormData);
         boolean hasPartialAjax = partialMatcher.find();
-        return new PartialAjaxResult(isStateless ? savedFormData : INITIAL_AMPERSAND.matcher(partialMatcher
-                .replaceAll("")).replaceFirst(""), hasPartialAjax, isStateless);
+        String appendFacesSourceString = "";
+        if (hasPartialAjax) {
+            var facesSourceMatcher = FACES_SOURCE_PATTERN.matcher(savedFormData);
+            if (facesSourceMatcher.find()) {
+                appendFacesSourceString = String.format("&%s=", facesSourceMatcher.group(1));
+            }
+        }
+
+        return new PartialAjaxResult((isStateless ? savedFormData : INITIAL_AMPERSAND.matcher(partialMatcher
+                .replaceAll("")).replaceFirst(""))
+                + appendFacesSourceString, hasPartialAjax, isStateless);
     }
 
     static boolean isJSFStatefulForm(@NonNull String savedFormData) {
