@@ -19,7 +19,6 @@
 package org.apache.shiro.guice.aop;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matchers;
 import org.apache.shiro.aop.AnnotationMethodInterceptor;
 import org.apache.shiro.aop.AnnotationResolver;
@@ -31,7 +30,6 @@ import org.apache.shiro.authz.aop.RoleAnnotationMethodInterceptor;
 import org.apache.shiro.authz.aop.UserAnnotationMethodInterceptor;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 
 /**
  * Install this module to enable Shiro AOP functionality in Guice.  You may extend it to add your own Shiro
@@ -46,12 +44,10 @@ public class ShiroAopModule extends AbstractModule {
     }
 
     protected final void bindShiroInterceptor(final AnnotationMethodInterceptor methodInterceptor) {
-        bindInterceptor(Matchers.any(), new AbstractMatcher<Method>() {
-            public boolean matches(Method method) {
-                Class<? extends Annotation> annotation = methodInterceptor.getHandler().getAnnotationClass();
-                return method.getAnnotation(annotation) != null
-                        || method.getDeclaringClass().getAnnotation(annotation) != null;
-            }
+        bindInterceptor(Matchers.any(), method -> {
+            Class<? extends Annotation> annotation = methodInterceptor.getHandler().getAnnotationClass();
+            return method.getAnnotation(annotation) != null
+                    || method.getDeclaringClass().getAnnotation(annotation) != null;
         }, new AopAllianceMethodInterceptorAdapter(methodInterceptor));
     }
 

@@ -176,12 +176,14 @@ public class EhCacheManager implements CacheManager, Initializable, Destroyable 
         }
 
         try {
+            @SuppressWarnings("unchecked")
             org.ehcache.Cache<K, V> cache = (org.ehcache.Cache<K, V>) ensureCacheManager()
                     .getCache(name, Serializable.class, Serializable.class);
             if (cache == null) {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Cache with name '{}' does not yet exist.  Creating now.", name);
                 }
+                @SuppressWarnings("unchecked")
                 CacheConfiguration<K, V> config = (CacheConfiguration<K, V>) new XmlConfiguration(getCacheManagerConfigFileUrl())
                         .newCacheConfigurationBuilderFromTemplate("default", Serializable.class, Serializable.class)
                         .build();

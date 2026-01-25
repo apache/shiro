@@ -68,7 +68,7 @@ class BeanTypeListener implements TypeListener {
 
     static final Matcher<TypeLiteral> MATCHER = ShiroMatchers.typeLiteral(CLASS_MATCHER);
 
-    private static final Set<Class<?>> WRAPPER_TYPES = new HashSet<Class<?>>(Arrays.asList(
+    private static final Set<Class<?>> WRAPPER_TYPES = new HashSet<>(Arrays.asList(
             Byte.class,
             Boolean.class,
             Character.class,
