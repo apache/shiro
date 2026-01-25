@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.crypto.hash;
 
+import java.util.Map;
+
 /**
  * A {@code HashService} hashes input sources utilizing a particular hashing strategy.
  * <p/>
@@ -80,4 +82,20 @@ public interface HashService {
      * @since 2.0
      */
     String getDefaultAlgorithmName();
+
+    /**
+     * Returns the various parameters that will be used when computing hashes.
+     *
+     * @return the various parameters that will be used when computing hashes.
+     */
+    default Map<String, Object> getParameters() {
+        return Map.of();
+    }
+
+    /**
+     * Sets the various parameters that will be used when computing hashes.
+     *
+     * @param parameters the various parameters that will be used when computing hashes.
+     */
+    default void setParameters(Map<String, Object> parameters) { }
 }

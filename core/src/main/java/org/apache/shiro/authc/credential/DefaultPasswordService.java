@@ -32,8 +32,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.shiro.crypto.hash.SimpleHashProvider.Parameters.PARAMETER_ITERATIONS;
 
 /**
  * Default implementation of the {@link PasswordService} interface that relies on an internal
@@ -111,7 +115,9 @@ public class DefaultPasswordService implements HashingPasswordService {
             }
         }
 
-        return saved.matchesPassword(plaintextBytes);
+        HashRequest request = createHashRequest(plaintextBytes, saved);
+        Hash computed = hashService.computeHash(request);
+        return constantEquals(saved.toString(), computed.toString());
     }
 
     private boolean constantEquals(String savedHash, String computedHash) {
@@ -143,6 +149,20 @@ public class DefaultPasswordService implements HashingPasswordService {
     protected HashRequest createHashRequest(ByteSource plaintext) {
         return new HashRequest.Builder().setSource(plaintext)
                 .setAlgorithmName(getHashService().getDefaultAlgorithmName())
+                .build();
+    }
+
+    protected HashRequest createHashRequest(ByteSource plaintext, Hash saved) {
+        Map<String, Object> parameters = Stream.concat(getHashService().getParameters().entrySet().stream(),
+                        Map.of(PARAMETER_ITERATIONS, saved.getIterations()).entrySet().stream())
+                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (value1, value2) -> value2));
+        //keep everything from the saved hash except for the source:
+        return new HashRequest.Builder().setSource(plaintext)
+                //now use the existing saved data:
+                .setAlgorithmName(saved.getAlgorithmName())
+                .setSalt(saved.getSalt())
+                .withParameters(parameters)
                 .build();
     }
 
