@@ -21,8 +21,8 @@ package org.apache.shiro.subject.support;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.SimpleSession;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +33,7 @@ class DelegatingSubjectTest {
     @Test
     void subject_decorated_only_once() throws IllegalAccessException, NoSuchFieldException {
         // given
-        PrincipalCollection principals = new SimplePrincipalCollection("Max Mustermann", "realm");
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("Max Mustermann", "realm");
         boolean authenticated = true;
         String host = "shiro.apache.org.invalid";
         Session innereSession = new SimpleSession(host);
@@ -64,7 +64,7 @@ class DelegatingSubjectTest {
     @Test
     void session_is_wrapped() {
         // given
-        PrincipalCollection principals = new SimplePrincipalCollection("Max Mustermann", "realm");
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("Max Mustermann", "realm");
         boolean authenticated = true;
         String host = "shiro.apache.org.invalid";
         Session innereSession = new SimpleSession(host);

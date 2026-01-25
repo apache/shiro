@@ -21,9 +21,9 @@ package org.apache.shiro.tools.hasher;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.help.HelpFormatter;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.UnknownAlgorithmException;
@@ -396,7 +396,6 @@ public final class Hasher {
 
     @SuppressWarnings("checkstyle:MethodLength")
     private static void printHelp(Options options, Exception e, boolean debug) {
-        HelpFormatter help = new HelpFormatter();
         String command = "java -jar shiro-tools-hasher-<version>.jar [options] [<value>]";
         String header = "\nPrint a cryptographic hash (aka message digest) of the specified <value>.\n--\nOptions:";
         String footer = "\n<value> is optional only when hashing passwords (see below).  It is\n"
@@ -471,8 +470,11 @@ public final class Hasher {
                 + "shiro.ini or a properties file).";
         printException(e, debug);
         LOG.info("");
-        help.printHelp(command, header, options, null);
-        LOG.info(footer);
+        try {
+            HelpFormatter.builder().get().printHelp(command, header, options, footer, true);
+        } catch (Exception ex) {
+            LOG.warn("Error printing help: " + ex.getMessage(), ex);
+        }
     }
 
     private static void printHelpAndExit(Options options, Exception e, boolean debug, int exitCode) {
