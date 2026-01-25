@@ -26,6 +26,7 @@ import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HashFormat;
 import org.apache.shiro.crypto.hash.format.HashFormatFactory;
 import org.apache.shiro.crypto.hash.format.ParsableHashFormat;
+import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
 import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat;
 import org.apache.shiro.lang.util.ByteSource;
 import org.slf4j.Logger;
@@ -115,9 +116,13 @@ public class DefaultPasswordService implements HashingPasswordService {
             }
         }
 
-        HashRequest request = createHashRequest(plaintextBytes, saved);
-        Hash computed = hashService.computeHash(request);
-        return constantEquals(saved.toString(), computed.toString());
+        if (hashFormat instanceof Shiro1CryptFormat) {
+            HashRequest request = createHashRequest(plaintextBytes, saved);
+            Hash computed = hashService.computeHash(request);
+            return constantEquals(saved.toString(), computed.toString());
+        } else {
+            return saved.matchesPassword(plaintextBytes);
+        }
     }
 
     private boolean constantEquals(String savedHash, String computedHash) {
