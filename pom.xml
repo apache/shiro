@@ -568,6 +568,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <showWarnings>true</showWarnings>
+                    <multiReleaseOutput>true</multiReleaseOutput>
                     <compilerArgs>
                         <arg>-Xlint:deprecation</arg>
                         <arg>-Xlint:unchecked</arg>
@@ -580,6 +581,28 @@
                         </annotationProcessorPath>
                     </annotationProcessorPaths>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>jdk21-compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <release>21</release>
+                            <compileSourceRoots>${project.build.sourceDirectory}21</compileSourceRoots>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jdk25-compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <release>25</release>
+                            <compileSourceRoots>${project.build.sourceDirectory}25</compileSourceRoots>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
