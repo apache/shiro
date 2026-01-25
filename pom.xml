@@ -568,7 +568,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <showWarnings>true</showWarnings>
-                    <multiReleaseOutput>true</multiReleaseOutput>
                     <compilerArgs>
                         <arg>-Xlint:deprecation</arg>
                         <arg>-Xlint:unchecked</arg>
@@ -588,6 +587,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
+                            <multiReleaseOutput>true</multiReleaseOutput>
                             <release>21</release>
                             <compileSourceRoots>${project.build.sourceDirectory}21</compileSourceRoots>
                         </configuration>
@@ -598,6 +598,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
+                            <multiReleaseOutput>true</multiReleaseOutput>
                             <release>25</release>
                             <compileSourceRoots>${project.build.sourceDirectory}25</compileSourceRoots>
                         </configuration>
