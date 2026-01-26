@@ -19,7 +19,6 @@
 package org.apache.shiro.crypto.hash;
 
 import java.security.SecureRandom;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
