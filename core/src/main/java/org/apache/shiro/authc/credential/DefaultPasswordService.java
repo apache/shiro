@@ -98,7 +98,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         if (plaintextBytes == null || plaintextBytes.isEmpty()) {
             return null;
         }
-        HashRequest request = createHashRequestShiro1Compatibility(plaintextBytes);
+        HashRequest request = createHashRequest(plaintextBytes);
         return hashService.computeHash(request);
     }
 
@@ -149,7 +149,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         }
     }
 
-    protected HashRequest createHashRequestShiro1Compatibility(ByteSource plaintext) {
+    protected HashRequest createHashRequest(ByteSource plaintext) {
         return new HashRequest.Builder().setSource(plaintext)
                 .setAlgorithmName(getHashService().getDefaultAlgorithmName())
                 .build();
@@ -216,7 +216,7 @@ public class DefaultPasswordService implements HashingPasswordService {
 
         //The saved text value can't be reconstituted into a Hash instance.  We need to format the
         //submittedPlaintext and then compare this formatted value with the saved value:
-        HashRequest request = createHashRequestShiro1Compatibility(plaintextBytes);
+        HashRequest request = createHashRequest(plaintextBytes);
         Hash computed = this.hashService.computeHash(request);
         String formatted = this.hashFormat.format(computed);
 
