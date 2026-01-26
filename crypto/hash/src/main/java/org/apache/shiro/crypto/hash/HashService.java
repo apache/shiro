@@ -19,6 +19,7 @@
 package org.apache.shiro.crypto.hash;
 
 import java.util.Map;
+import static org.apache.shiro.crypto.hash.SimpleHashProvider.Parameters;
 
 /**
  * A {@code HashService} hashes input sources utilizing a particular hashing strategy.
@@ -85,6 +86,14 @@ public interface HashService {
 
     /**
      * Returns the various parameters that will be used when computing hashes.
+     * This method exists primarily to support Shiro 1.x password hashing
+     * strategies what may need salts, iteration counts, or other parameters.
+     * <br><br>
+     * Each hashing algorithm may expect different parameters to be present in the returned map,
+     * or ignore the parameters altogether.
+     *
+     * @see HashRequest#getParameters()
+     * @see Parameters
      *
      * @return the various parameters that will be used when computing hashes.
      */
@@ -94,6 +103,15 @@ public interface HashService {
 
     /**
      * Sets the various parameters that will be used when computing hashes.
+     * <br><br>
+     * For example, if Shiro 1.x password hashing strategies are being used, this method
+     * may be used to supply salts, iteration counts, or other parameters.
+     * <br><br>
+     * Each hashing algorithm may expect different parameters to be present in the provided map,
+     * or ignore the parameters altogether.
+     * Shiro 2.x built-in hashing algorithms will ignore these parameters, which is why
+     * the method is defined with an empty default implementation.
+     * @see Parameters
      *
      * @param parameters the various parameters that will be used when computing hashes.
      */

@@ -117,11 +117,11 @@ public class DefaultHashService implements ConfigurableHashService {
 
     @Override
     public Map<String, Object> getParameters() {
-        return Collections.unmodifiableMap(this.parameters);
+        return Map.copyOf(this.parameters);
     }
 
     @Override
     public void setParameters(Map<String, Object> parameters) {
-        this.parameters = parameters;
+        this.parameters = Map.copyOf(parameters);
     }
 }

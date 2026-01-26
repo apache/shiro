@@ -33,9 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.HashMap;
 
 import static java.util.Objects.requireNonNull;
 import static org.apache.shiro.crypto.hash.SimpleHashProvider.Parameters.PARAMETER_ITERATIONS;
@@ -100,7 +98,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         if (plaintextBytes == null || plaintextBytes.isEmpty()) {
             return null;
         }
-        HashRequest request = createHashRequest(plaintextBytes);
+        HashRequest request = createHashRequestShiro1Compatibility(plaintextBytes);
         return hashService.computeHash(request);
     }
 
@@ -117,7 +115,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         }
 
         if (hashFormat instanceof Shiro1CryptFormat) {
-            HashRequest request = createHashRequest(plaintextBytes, saved);
+            HashRequest request = createHashRequestShiro1Compatibility(plaintextBytes, saved);
             Hash computed = hashService.computeHash(request);
             return constantEquals(saved.toString(), computed.toString());
         } else {
@@ -151,17 +149,25 @@ public class DefaultPasswordService implements HashingPasswordService {
         }
     }
 
-    protected HashRequest createHashRequest(ByteSource plaintext) {
+    protected HashRequest createHashRequestShiro1Compatibility(ByteSource plaintext) {
         return new HashRequest.Builder().setSource(plaintext)
                 .setAlgorithmName(getHashService().getDefaultAlgorithmName())
                 .build();
     }
 
-    protected HashRequest createHashRequest(ByteSource plaintext, Hash saved) {
-        Map<String, Object> parameters = Stream.concat(getHashService().getParameters().entrySet().stream(),
-                        Map.of(PARAMETER_ITERATIONS, saved.getIterations()).entrySet().stream())
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (value1, value2) -> value2));
+    /**
+     * Creates a HashRequest that is compatible with Shiro 1.x password hashing behavior by
+     * using the saved password hash's parameters.
+     * Salt is no longer applicable for stronger algorithms used by default in Shiro 2.x+,
+     * but this method is retained for compatibility with Shiro 1.x hashed passwords.
+     *
+     * @param plaintext the plaintext to hash
+     * @param saved    the saved hash
+     * @return the HashRequest
+     */
+    protected HashRequest createHashRequestShiro1Compatibility(ByteSource plaintext, Hash saved) {
+        var parameters = new HashMap<>(getHashService().getParameters());
+        parameters.put(PARAMETER_ITERATIONS, saved.getIterations());
         //keep everything from the saved hash except for the source:
         return new HashRequest.Builder().setSource(plaintext)
                 //now use the existing saved data:
@@ -210,7 +216,7 @@ public class DefaultPasswordService implements HashingPasswordService {
 
         //The saved text value can't be reconstituted into a Hash instance.  We need to format the
         //submittedPlaintext and then compare this formatted value with the saved value:
-        HashRequest request = createHashRequest(plaintextBytes);
+        HashRequest request = createHashRequestShiro1Compatibility(plaintextBytes);
         Hash computed = this.hashService.computeHash(request);
         String formatted = this.hashFormat.format(computed);
 
