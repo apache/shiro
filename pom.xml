@@ -72,6 +72,8 @@
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2026-01-15T21:40:21Z</project.build.outputTimestamp>
         <jacoco.skip>true</jacoco.skip>
+        <!-- workaround for gmavenplus plugin until maven 4 is being used -->
+        <maven.project.sourceRoots.warningsDisabled>true</maven.project.sourceRoots.warningsDisabled>
         <!--suppress CheckTagEmptyBody -->
         <surefire.argLine/>
         <!--suppress CheckTagEmptyBody -->
