@@ -81,8 +81,6 @@ public class DefaultEventBus implements EventBus {
     //this is stateless, we can retain a static final reference:
     private static final EventListenerComparator EVENT_LISTENER_COMPARATOR = new EventListenerComparator();
 
-    private EventListenerResolver eventListenerResolver;
-
     //We want to preserve registration order to deliver events to objects in the order that they are registered
     //with the event bus.  This has the nice effect that any Shiro system-level components that are registered first
     //(likely to happen upon startup) have precedence over those registered by end-user components later.
@@ -97,9 +95,10 @@ public class DefaultEventBus implements EventBus {
     //and the lock provides thread-safety in probably a much simpler mechanism than attempting to write a
     //EventBus-specific Comparator.  This technique is also likely to be faster than a ConcurrentSkipListMap, which
     //is about 3-5 times slower than a standard ConcurrentMap.
-    private final Map<Object, Subscription> registry;
+    final Map<Object, Subscription> registry;
     private final Lock registryReadLock;
     private final Lock registryWriteLock;
+    private EventListenerResolver eventListenerResolver;
 
     public DefaultEventBus() {
         //not thread safe, so we need locks:
