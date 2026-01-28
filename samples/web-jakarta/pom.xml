@@ -40,13 +40,6 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-bom</artifactId>
-                <version>${project.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-bom</artifactId>
                 <version>4.1.4</version>
@@ -121,13 +114,11 @@
         <dependency>
             <groupId>jakarta.servlet.jsp</groupId>
             <artifactId>jakarta.servlet.jsp-api</artifactId>
-            <version>4.0.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-            <version>3.0.2</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -170,7 +161,6 @@
         <dependency>
             <groupId>org.apache.meecrowave</groupId>
             <artifactId>meecrowave-core</artifactId>
-            <classifier>jakarta</classifier>
             <version>${meecrowave.version}</version>
             <scope>test</scope>
         </dependency>

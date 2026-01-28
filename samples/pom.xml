@@ -42,6 +42,7 @@
         <module>aspectj</module>
         <module>quickstart</module>
         <module>quickstart-guice</module>
+        <module>web-jakarta</module>
     </modules>
 
     <profiles>
@@ -54,10 +55,8 @@
                 <module>spring-mvc</module>
                 <module>spring-hibernate</module>
                 <module>spring-boot-web</module>
-                <module>web</module>
                 <module>guice</module>
                 <module>servlet-plugin</module>
-                <module>web-jakarta</module>
             </modules>
         </profile>
     </profiles>

@@ -44,8 +44,9 @@ public class WebContainerIT extends JakartaAbstractContainerIT {
                     .path("/login.jsp")
                     .request(TEXT_HTML_TYPE)
                     .get()) {
-                jsessionid = new Cookie("JSESSIONID",
-                        loginPage.getMetadata().get("Set-Cookie").get(0).toString().split(";")[0].split("=")[1]);
+                jsessionid = new Cookie.Builder("JSESSIONID")
+                        .value(loginPage.getMetadata().get("Set-Cookie")
+                                .get(0).toString().split(";")[0].split("=")[1]).build();
                 assertThat(loginPage.readEntity(String.class)).contains("loginform");
             }
 
