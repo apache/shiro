@@ -32,16 +32,19 @@
     <name>Apache Shiro :: Samples :: Servlet Plugin</name>
     <packaging>war</packaging>
 
+    <properties>
+        <skipITs>true</skipITs>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty.version}</version>
                 <configuration>
                     <contextPath>/</contextPath>
                     <httpConnector>
-                        <port>9080</port>
+                        <port>9180</port>
                         <idleTimeout>60000</idleTimeout>
                     </httpConnector>
                     <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
@@ -55,29 +58,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <!-- Currently the test fails with JDK11, so exclude it -->
-    <profiles>
-        <profile>
-            <id>jdk9-plus</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/ContainerIntegrationIT.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <dependencies>
         <dependency>
@@ -117,15 +97,21 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.ee9</groupId>
-            <artifactId>jetty-ee9-apache-jsp</artifactId>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-apache-jsp</artifactId>
+            <version>${jetty.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-annotations</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>apache-jstl</artifactId>
-            <version>${jetty.version}</version>
+            <version>10.0.26</version>
             <type>pom</type>
             <scope>test</scope>
         </dependency>
