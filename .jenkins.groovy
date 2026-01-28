@@ -89,7 +89,7 @@ pipeline {
                     stage('Use next -SNAPSHOT version') {
                         when {
                             expression { deployableBranch }
-                            expression { MATRIX_JDK == 'jdk_25_latest' }
+                            expression { MATRIX_JDK == latestSupportedJDK }
                             // is not a PR (GitHub) / MergeRequest (GitLab) / Change (Gerrit)?
                             not { changeRequest() }
                         }
