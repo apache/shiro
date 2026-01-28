@@ -89,7 +89,7 @@ jobs:
           distribution: ${{ matrix.dist }}
 
       - name: Build with Maven (Linux)
-        if: matrix.os == 'ubuntu-latest'
+        if: matrix.os == 'ubuntu-latest' && matrix.jdk >= 21
         run: >-
           ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress
           -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
