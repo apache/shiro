@@ -38,7 +38,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
-          java-version: 11
+          java-version: 25
           distribution: temurin
 
       - name: License Check
@@ -47,7 +47,7 @@ jobs:
       - name: Build with Maven
         run: >-
           ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
-          -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
+          -Pskip_jakarta_ee_tests -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
 
   build-all:
     needs: build
@@ -55,12 +55,12 @@ jobs:
     strategy:
       matrix:
         os: [ 'ubuntu-latest', 'windows-2022', 'macOS-latest' ]
-        jdk: [ 11, 17, 21, 25 ]
+        jdk: [ 11, 17, 21 ]
         dist: [ 'temurin', 'adopt-openj9', 'zulu' ]
         exclude:
           # was already built
           - os: 'ubuntu-latest'
-            jdk: 11
+            jdk: 25
             dist: 'temurin'
           # exclude temurin on MacOS. zulu (also hotspot) and OpenJ9 are sufficient.
           - os: 'macOS-latest'
@@ -89,15 +89,15 @@ jobs:
           distribution: ${{ matrix.dist }}
 
       - name: Build with Maven (Linux)
-        if: matrix.os == 'ubuntu-latest' && matrix.jdk <= 17
+        if: matrix.os == 'ubuntu-latest' && matrix.jdk <= 21
         run: >-
-          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress
           -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build with Maven (non-Linux or JDK > 17)
-        if: matrix.os != 'ubuntu-latest' || matrix.jdk > 17
+      - name: Build with Maven (non-Linux or JDK > 21)
+        if: matrix.os != 'ubuntu-latest' || matrix.jdk > 21
         run: >-
-          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress
           -Pskip_jakarta_ee_tests
 
       - name: Archive test run logs
