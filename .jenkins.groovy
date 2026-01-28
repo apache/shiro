@@ -17,7 +17,8 @@
  * under the License.
  */
 
-def deployableBranch = env.BRANCH_NAME ==~ /(1.12.x|1.11.x|1.10.x|main)/
+def deployableBranch = env.BRANCH_NAME ==~ /(1.12.x|1.11.x|1.10.x|main|3.x)/
+def latestSupportedJDK = 'jdk_25_latest'
 def builtinVersion = '999-SNAPSHOT'
 def nextVersion
 
@@ -38,7 +39,7 @@ pipeline {
                     axis {
                         // https://cwiki.apache.org/confluence/display/INFRA/JDK+Installation+Matrix
                         name 'MATRIX_JDK'
-                        values 'jdk_11_latest', 'jdk_17_latest', 'jdk_21_latest', 'jdk_25_latest'
+                        values 'jdk_25_latest', 'jdk_11_latest', 'jdk_17_latest', 'jdk_21_latest'
                     }
                     // Additional axes, like OS and maven version can be configured here.
                 }
@@ -88,7 +89,7 @@ pipeline {
                     stage('Use next -SNAPSHOT version') {
                         when {
                             expression { deployableBranch }
-                            expression { MATRIX_JDK == 'jdk_11_latest' }
+                            expression { MATRIX_JDK == latestSupportedJDK }
                             // is not a PR (GitHub) / MergeRequest (GitLab) / Change (Gerrit)?
                             not { changeRequest() }
                         }
@@ -104,6 +105,9 @@ pipeline {
                                 def parts = latestRelease.tokenize('.')
                                 def nextPatch = parts[2].toInteger() + 1
                                 nextVersion = "${parts[0]}.${parts[1]}.${nextPatch}-SNAPSHOT"
+                                if (env.BRANCH_NAME == '3.x') {
+                                    nextVersion = '3.0.0-SNAPSHOT'
+                                }
 
                                 echo "Latest release: ${latestRelease}, next SNAPSHOT: ${nextVersion}"
                             }
@@ -123,7 +127,7 @@ pipeline {
                     stage('Build') {
                         steps {
                             echo 'Building'
-                            sh './mvnw clean verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs \
+                            sh './mvnw verify --show-version --errors --batch-mode --no-transfer-progress \
                             -Dmaven.test.failure.ignore=true -Pskip_jakarta_ee_tests'
                         }
                         post {
@@ -139,14 +143,14 @@ pipeline {
                         when {
                             allOf {
                                 expression { deployableBranch }
-                                expression { MATRIX_JDK == 'jdk_11_latest' }
+                                expression { MATRIX_JDK == latestSupportedJDK }
                                 // is not a PR (GitHub) / MergeRequest (GitLab) / Change (Gerrit)?
                                 not { changeRequest() }
                             }
                         }
                         steps {
                             echo 'Deploying'
-                            sh './mvnw --batch-mode clean deploy -Pdocs -DskipTests -DskipITs'
+                            sh './mvnw --batch-mode deploy -Pdocs -DskipTests -DskipITs'
                         }
                     }
 
