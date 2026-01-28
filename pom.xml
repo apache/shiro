@@ -102,7 +102,6 @@
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
         <hazelcast.version>5.6.0</hazelcast.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <jakarta.annotation.api.version>3.0.0</jakarta.annotation.api.version>
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>17</jdk.version>
         <jetty.version>12.1.5</jetty.version>
@@ -130,7 +129,6 @@
         <junit.server.jetty.version>3.4.0</junit.server.jetty.version>
         <hibernate.version>7.2.1.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
-        <jakarta.annotations.version>2.1.1</jakarta.annotations.version>
         <lombok.version>1.18.42</lombok.version>
 
         <maven.compiler.release>${jdk.version}</maven.compiler.release>
@@ -1077,11 +1075,6 @@
                 <version>${commons.lang3.version}</version>
             </dependency>
             <dependency>
-                <groupId>jakarta.annotation</groupId>
-                <artifactId>jakarta.annotation-api</artifactId>
-                <version>${jakarta.annotation.api.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>
                 <version>${aspectj.version}</version>
@@ -1185,6 +1178,13 @@
             </dependency>
 
             <dependency>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-bom</artifactId>
+                <version>11.0.0</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
                 <!-- Required in the sample apps only for 3rd-party libraries that expect to call
                      the commons logging APIs -->
                 <groupId>org.slf4j</groupId>
@@ -1211,12 +1211,6 @@
                 <optional>true</optional>
             </dependency>
             <dependency>
-                <groupId>jakarta.servlet.jsp</groupId>
-                <artifactId>jakarta.servlet.jsp-api</artifactId>
-                <version>4.0.0</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.taglibs</groupId>
                 <artifactId>taglibs-standard-spec</artifactId>
                 <version>${taglibs.standard.version}</version>
@@ -1226,12 +1220,6 @@
                 <groupId>org.apache.taglibs</groupId>
                 <artifactId>taglibs-standard-impl</artifactId>
                 <version>${taglibs.standard.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>6.1.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>

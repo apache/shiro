@@ -95,7 +95,7 @@ jobs:
           -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
 
       - name: Build with Maven (non-Linux)
-        if: matrix.os != 'ubuntu-latest'
+        if: matrix.os != 'ubuntu-latest' || matrix.jdk < 21
         run: >-
           ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress
           -Pskip_jakarta_ee_tests

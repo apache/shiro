@@ -33,13 +33,7 @@
     </parent>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- override older compiler source / target flags set by Apache parent POM -->
-        <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
-        <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
-        <arquillian.core.version>1.10.0.Final</arquillian.core.version>
         <arquillian.graphene.version>3.0.0-alpha.4</arquillian.graphene.version>
-        <shrinkwrap.resolver.version>3.3.4</shrinkwrap.resolver.version>
         <drone.browser>firefox</drone.browser>
 
         <payara.version>7.2026.1</payara.version>

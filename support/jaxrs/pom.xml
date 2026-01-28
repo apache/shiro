@@ -69,7 +69,6 @@
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
-            <version>${jakarta.annotations.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
