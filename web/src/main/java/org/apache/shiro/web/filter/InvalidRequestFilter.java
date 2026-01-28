@@ -42,7 +42,8 @@ import java.util.List;
  *     <li>Path traversals - can be disabled by setting {@code blockTraversal = false}</li>
  * </ul>
  *
- * This class was inspired by Spring Security StrictHttpFirewall
+ * @see <a href="https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/web/firewall/StrictHttpFirewall.html">
+ * This class was inspired by Spring Security StrictHttpFirewall</a>
  * @since 1.6
  */
 public class InvalidRequestFilter extends AccessControlFilter {
@@ -230,7 +231,6 @@ public class InvalidRequestFilter extends AccessControlFilter {
     }
 
     /**
-     *
      * @deprecated Use {@link #setBlockPathTraversal(PathTraversalBlockMode)}
      */
     @Deprecated

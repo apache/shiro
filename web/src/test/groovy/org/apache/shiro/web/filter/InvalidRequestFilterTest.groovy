@@ -41,6 +41,7 @@ class InvalidRequestFilterTest {
         assertThat "filter.blockSemicolon expected to be true", filter.isBlockSemicolon()
         assertThat "filter.blockTraversal expected to be NORMAL",
                 filter.getPathTraversalBlockMode() == InvalidRequestFilter.PathTraversalBlockMode.NORMAL
+        assertThat "filter.blockRewriteTraversal expected to be true", filter.isBlockRewriteTraversal()
     }
 
     @Test
@@ -60,7 +61,6 @@ class InvalidRequestFilterTest {
             assertThat "filter.blockBackslash expected to be false", filter.isBlockBackslash()
         }
     }
-
 
     @Test
     void testFilterBlocks() {
@@ -108,6 +108,9 @@ class InvalidRequestFilterTest {
     void testBlocksTraversalStrict() {
         InvalidRequestFilter filter = new InvalidRequestFilter()
         filter.setBlockPathTraversal(InvalidRequestFilter.PathTraversalBlockMode.STRICT)
+        assertThat "filter.blockEncodedPeriod expected to be true", filter.isBlockEncodedPeriod()
+        assertThat "filter.blockEncodedForwardSlash expected to be true", filter.isBlockEncodedForwardSlash()
+
         assertPathBlocked(filter, "/something/../")
         assertPathBlocked(filter, "/something/../bar")
         assertPathBlocked(filter, "/something/../bar/")
