@@ -42,7 +42,7 @@
         <module>aspectj</module>
         <module>quickstart</module>
         <module>quickstart-guice</module>
-        <module>web-jakarta</module>
+        <module>web</module>
     </modules>
 
     <profiles>

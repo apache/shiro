@@ -27,8 +27,8 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>samples-web-jakarta</artifactId>
-    <name>Apache Shiro :: Samples :: Web Jakarta</name>
+    <artifactId>samples-web</artifactId>
+    <name>Apache Shiro :: Samples :: Web</name>
     <packaging>war</packaging>
 
     <properties>
@@ -171,7 +171,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <id>default-war</id>
