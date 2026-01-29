@@ -76,7 +76,7 @@ updates:
     ignore:
       - dependency-name: "jakarta.servlet.*:*"
         update-types: [ "version-update:semver-major" ]
-      - dependency-name: "jakarta.servlet:jakarta.servlet-api"
+      - dependency-name: "javax.servlet:javax.servlet-api"
         update-types: [ "version-update:semver-major" ]
       - dependency-name: "org.glassfish.web:jakarta.servlet.jsp.jstl"
         update-types: [ "version-update:semver-major" ]

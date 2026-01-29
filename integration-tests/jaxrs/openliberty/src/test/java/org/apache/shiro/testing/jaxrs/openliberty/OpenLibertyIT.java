@@ -20,18 +20,16 @@
 package org.apache.shiro.testing.jaxrs.openliberty;
 
 import org.apache.shiro.testing.jaxrs.tests.AbstractShiroJaxRsIT;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestInstance;
 
 import java.net.URI;
 
-@Disabled("Getting connection refused, and I have no idea how to troubleshoot this open liberty plugin")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OpenLibertyIT extends AbstractShiroJaxRsIT {
 
     @Override
     protected URI getBaseUri() {
-      return URI.create("http://localhost:" + System.getProperty("http.port")
+        return URI.create("http://localhost:" + System.getProperty("http.port")
                 + "/" + System.getProperty("app.context.root") + "/api");
     }
 }
