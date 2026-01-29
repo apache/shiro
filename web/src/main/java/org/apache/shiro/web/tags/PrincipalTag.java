@@ -151,12 +151,11 @@ public class PrincipalTag extends SecureTag {
         return SKIP_BODY;
     }
 
-    @SuppressWarnings({"unchecked"})
     private Object getPrincipalFromClassName() {
         Object principal = null;
 
         try {
-            Class cls = Class.forName(type);
+            Class<?> cls = Class.forName(type);
             principal = getSubject().getPrincipals().oneByType(cls);
         } catch (ClassNotFoundException e) {
             if (LOGGER.isErrorEnabled()) {

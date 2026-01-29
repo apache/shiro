@@ -39,13 +39,13 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-public class AbstractInjectionProviderTest {
+class AbstractInjectionProviderTest {
 
-    static Key keyC1 = Key.get(Object.class, Names.named("constructor1"));
-    static Key keyC2 = Key.get(Object.class, Names.named("constructor2"));
-    static Key keyV1 = Key.get(Object.class, Names.named("val1"));
-    static Key keyV2 = Key.get(Object.class, Names.named("val2"));
-    static Key keyF1 = Key.get(Object.class, Names.named("field1"));
+    static Key<Object> keyC1 = Key.get(Object.class, Names.named("constructor1"));
+    static Key<Object> keyC2 = Key.get(Object.class, Names.named("constructor2"));
+    static Key<Object> keyV1 = Key.get(Object.class, Names.named("val1"));
+    static Key<Object> keyV2 = Key.get(Object.class, Names.named("val2"));
+    static Key<Object> keyF1 = Key.get(Object.class, Names.named("field1"));
 
     @Test
     @SuppressWarnings("unchecked")

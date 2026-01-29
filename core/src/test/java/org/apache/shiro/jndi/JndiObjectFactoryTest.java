@@ -29,17 +29,17 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
  * This test makes the assumption that {@link JndiLocator} is tested elsewhere and only makes an attempt to test the
  * functionality added by {@link JndiObjectFactory}.
  */
-public class JndiObjectFactoryTest {
+class JndiObjectFactoryTest {
     @Test
     void testGetInstanceWithType() throws Exception {
         final String name = "my/jndi/resource";
         final String returnValue = "jndiString";
         JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
             @Override
-            protected Object lookup(String jndiName, Class requiredType) throws NamingException {
+            protected Object lookup(String jndiName, Class<?> requiredType) throws NamingException {
                 assertThat(jndiName).isEqualTo(name);
                 assertThat(requiredType).isEqualTo(String.class);
-                return new String(returnValue);
+                return returnValue;
             }
         };
 
@@ -57,7 +57,7 @@ public class JndiObjectFactoryTest {
             @Override
             protected Object lookup(String jndiName) throws NamingException {
                 assertThat(jndiName).isEqualTo(name);
-                return new String(returnValue);
+                return returnValue;
             }
         };
 
@@ -72,7 +72,7 @@ public class JndiObjectFactoryTest {
             final String name = "my/jndi/resource";
             JndiObjectFactory<String> underTest = new JndiObjectFactory<String>() {
                 @Override
-                protected Object lookup(String jndiName, Class requiredType) throws NamingException {
+                protected Object lookup(String jndiName, Class<?> requiredType) throws NamingException {
                     throw new NamingException("No resource named " + jndiName);
                 }
             };

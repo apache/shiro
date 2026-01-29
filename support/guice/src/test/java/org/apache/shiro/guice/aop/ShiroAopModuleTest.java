@@ -93,8 +93,8 @@ public class ShiroAopModuleTest {
         boolean calledCustom = false;
 
         for (Element e : Elements.getElements(underTest)) {
-            if (e instanceof Binding binding) {
-                Key key = binding.getKey();
+            if (e instanceof Binding<?> binding) {
+                Key<?> key = binding.getKey();
                 if (Named.class.isAssignableFrom(key.getAnnotation().annotationType())
                         && "configureInterceptors".equals(((Named) key.getAnnotation()).value())
                         && key.getTypeLiteral().getRawType().equals(Object.class)) {

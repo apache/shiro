@@ -43,7 +43,7 @@ public class HttpServletSession implements Session {
     private static final String HOST_SESSION_KEY = HttpServletSession.class.getName() + ".HOST_SESSION_KEY";
     private static final String TOUCH_OBJECT_SESSION_KEY = HttpServletSession.class.getName() + ".TOUCH_OBJECT_SESSION_KEY";
 
-    private HttpSession httpSession;
+    private final HttpSession httpSession;
 
     public HttpServletSession(HttpSession httpSession, String host) {
         if (httpSession == null) {
@@ -120,10 +120,10 @@ public class HttpServletSession implements Session {
 
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
         try {
-            Enumeration namesEnum = httpSession.getAttributeNames();
+            Enumeration<?> namesEnum = httpSession.getAttributeNames();
             Collection<Object> keys = null;
             if (namesEnum != null) {
-                keys = new ArrayList<Object>();
+                keys = new ArrayList<>();
                 while (namesEnum.hasMoreElements()) {
                     keys.add(namesEnum.nextElement());
                 }

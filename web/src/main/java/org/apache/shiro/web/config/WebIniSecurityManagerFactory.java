@@ -18,13 +18,13 @@
  */
 package org.apache.shiro.web.config;
 
+import jakarta.servlet.Filter;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.ini.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 
-import jakarta.servlet.Filter;
 import java.util.Map;
 
 /**
@@ -70,6 +70,7 @@ public class WebIniSecurityManagerFactory extends IniSecurityManagerFactory {
     @SuppressWarnings({"unchecked"})
     @Override
     protected Map<String, ?> createDefaults(Ini ini, Ini.Section mainSection) {
+        @SuppressWarnings("rawtypes")
         Map defaults = super.createDefaults(ini, mainSection);
         //add the default filters:
         Map<String, Filter> defaultFilters = DefaultFilter.createInstanceMap(null);

@@ -25,8 +25,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-public class DestroyableInjectionListenerTest {
-
+class DestroyableInjectionListenerTest {
     @Test
     void testAfterInjection() throws Exception {
         DestroyableInjectionListener.DestroyableRegistry registry =
@@ -37,7 +36,7 @@ public class DestroyableInjectionListenerTest {
 
         replay(registry, destroyable);
 
-        DestroyableInjectionListener underTest = new DestroyableInjectionListener(registry);
+        DestroyableInjectionListener<?> underTest = new DestroyableInjectionListener<>(registry);
         underTest.afterInjection(destroyable);
 
         verify(registry, destroyable);

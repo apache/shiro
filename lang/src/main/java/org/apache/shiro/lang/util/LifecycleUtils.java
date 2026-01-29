@@ -53,7 +53,7 @@ public abstract class LifecycleUtils {
      * @throws ShiroException if unable to initialize one or more instances.
      * @since 0.9
      */
-    public static void init(Collection c) throws ShiroException {
+    public static void init(Collection<?> c) throws ShiroException {
         if (c == null || c.isEmpty()) {
             return;
         }
@@ -65,7 +65,7 @@ public abstract class LifecycleUtils {
     public static void destroy(Object o) {
         if (o instanceof Destroyable destroyable) {
             destroy(destroyable);
-        } else if (o instanceof Collection collection) {
+        } else if (o instanceof Collection<?> collection) {
             destroy(collection);
         }
     }
@@ -90,7 +90,7 @@ public abstract class LifecycleUtils {
      * @param c the collection of objects to destroy.
      * @since 0.9
      */
-    public static void destroy(Collection c) {
+    public static void destroy(Collection<?> c) {
         if (c == null || c.isEmpty()) {
             return;
         }

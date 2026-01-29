@@ -49,7 +49,7 @@ public class FilterChainResolverProviderTest {
     private FilterChainResolverProvider underTest;
 
     @BeforeEach
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void setup() {
         chains = new LinkedHashMap<>();
 

@@ -578,6 +578,7 @@
                     <compilerArgs>
                         <arg>-Xlint:deprecation</arg>
                         <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:rawtypes</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
                         <annotationProcessorPath>

@@ -188,7 +188,7 @@ public class RedirectView {
      * @see #sendRedirect
      */
     public final void renderMergedOutputModel(
-            Map model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+            Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         // Prepare name URL.
         StringBuilder targetUrl = new StringBuilder();
@@ -215,7 +215,7 @@ public class RedirectView {
      * @see #queryProperties
      * @see #urlEncode(String, String)
      */
-    protected void appendQueryProperties(StringBuilder targetUrl, Map model, String encodingScheme)
+    protected void appendQueryProperties(StringBuilder targetUrl, Map<String, ?> model, String encodingScheme)
             throws UnsupportedEncodingException {
 
         // Extract anchor fragment, if any.
@@ -230,18 +230,17 @@ public class RedirectView {
 
         // If there aren't already some parameters, we need a "?".
         boolean first = (getUrl().indexOf('?') < 0);
-        Map queryProps = queryProperties(model);
+        Map<String, ?> queryProps = queryProperties(model);
 
         if (queryProps != null) {
-            for (Object o : queryProps.entrySet()) {
+            for (Map.Entry<String, ?> entry : queryProps.entrySet()) {
                 if (first) {
                     targetUrl.append('?');
                     first = false;
                 } else {
                     targetUrl.append('&');
                 }
-                Map.Entry entry = (Map.Entry) o;
-                String encodedKey = urlEncode(entry.getKey().toString(), encodingScheme);
+                String encodedKey = urlEncode(entry.getKey(), encodingScheme);
                 String encodedValue =
                         (entry.getValue() != null ? urlEncode(entry.getValue().toString(), encodingScheme) : "");
                 targetUrl.append(encodedKey).append('=').append(encodedValue);
@@ -280,7 +279,7 @@ public class RedirectView {
      * @return the name-value pairs for query strings.
      * @see #appendQueryProperties
      */
-    protected Map queryProperties(Map model) {
+    protected Map<String, ?> queryProperties(Map<String, ?> model) {
         return model;
     }
 

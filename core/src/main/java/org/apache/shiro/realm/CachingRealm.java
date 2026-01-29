@@ -200,7 +200,7 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
     protected Object getAvailablePrincipal(PrincipalCollection principals) {
         Object primary = null;
         if (!isEmpty(principals)) {
-            Collection thisPrincipals = principals.fromRealm(getName());
+            Collection<?> thisPrincipals = principals.fromRealm(getName());
             if (!CollectionUtils.isEmpty(thisPrincipals)) {
                 primary = thisPrincipals.iterator().next();
             } else {

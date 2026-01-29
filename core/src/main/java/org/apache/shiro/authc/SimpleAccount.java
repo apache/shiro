@@ -186,7 +186,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * @param permissions the permissions assigned to this account directly (not those assigned to any of the realms).
      */
 
-    public SimpleAccount(Collection principals, Object credentials, String realmName,
+    public SimpleAccount(Collection<?> principals, Object credentials, String realmName,
                          Set<String> roleNames, Set<Permission> permissions) {
         this.authcInfo = new SimpleAuthenticationInfo(ImmutablePrincipalCollection.ofSinglePrincipal(principals, realmName),
                 credentials);

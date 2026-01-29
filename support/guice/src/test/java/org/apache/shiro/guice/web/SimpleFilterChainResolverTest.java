@@ -49,7 +49,7 @@ import static org.easymock.EasyMock.same;
 public class SimpleFilterChainResolverTest {
 
     @Test
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     void testGetChain() throws Exception {
         // test that it uses the pattern matcher - check
         // test that the FIRST chain found is the one that gets returned - check

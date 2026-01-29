@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings({"ThrowableInstanceNeverThrown"})
 public abstract class ExceptionTest {
 
-    protected abstract Class getExceptionClass();
+    protected abstract Class<?> getExceptionClass();
 
     @Test
     void testNoArgConstructor() {

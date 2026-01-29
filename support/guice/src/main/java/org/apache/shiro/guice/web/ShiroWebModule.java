@@ -96,10 +96,10 @@ public abstract class ShiroWebModule extends ShiroModule {
      * FilterChainResolver uses iterator order when searching for a matching chain.
      */
     private final Map<String, FilterConfig<? extends Filter>[]> filterChains =
-            new LinkedHashMap<String, FilterConfig<? extends Filter>[]>();
+            new LinkedHashMap<>();
     private final ServletContext servletContext;
 
-    public ShiroWebModule(ServletContext servletContext) {
+    protected ShiroWebModule(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
 
@@ -143,7 +143,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         // add default matching route if not already set
         if (!filterChains.containsKey("/**")) {
             // no config, this will add only the global filters
-            this.addFilterChain("/**", new FilterConfig[0]);
+            this.addFilterChain("/**", new FilterConfig<?>[0]);
         }
 
         bind(FilterChainResolver.class).toProvider(new FilterChainResolverProvider(setupFilterChainConfigs()));
@@ -180,10 +180,7 @@ public abstract class ShiroWebModule extends ShiroModule {
                 String config = filterConfig.getConfigValue();
 
                 // initialize key in filterToPathToConfig, if it doesn't exist
-                if (filterToPathToConfig.get(key) == null) {
-                    // Fix for SHIRO-621: REST filter bypassing matched path
-                    filterToPathToConfig.put((key), new LinkedHashMap<String, String>());
-                }
+                filterToPathToConfig.computeIfAbsent(key, k -> new LinkedHashMap<>());
                 // now set the value
                 filterToPathToConfig.get(key).put(path, config);
 
@@ -200,7 +197,9 @@ public abstract class ShiroWebModule extends ShiroModule {
             }
 
             // map the current path to all of its Keys
-            resultConfigMap.put(path, keysForPath.toArray(new Key[keysForPath.size()]));
+            @SuppressWarnings("rawtypes")
+            var newKey = new Key[keysForPath.size()];
+            resultConfigMap.put(path, keysForPath.toArray(newKey));
         }
 
         // now we find only the PathMatchingFilter and configure bindings
@@ -276,7 +275,7 @@ public abstract class ShiroWebModule extends ShiroModule {
     @SuppressWarnings("unchecked")
     protected final void addFilterChain(String pattern, Key<? extends Filter> key) {
         // check for legacy API
-        if (key instanceof FilterConfigKey configKey) {
+        if (key instanceof FilterConfigKey<?> configKey) {
             addLegacyFilterChain(pattern, configKey);
         } else {
             addFilterChain(pattern, new FilterConfig<Filter>((Key<Filter>) key, ""));
@@ -387,7 +386,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void addLegacyFilterChain(String pattern, FilterConfigKey filterConfigKey) {
         FilterConfig<Filter> filterConfig = new FilterConfig<>(filterConfigKey.getKey(), filterConfigKey.getConfigValue());
         addFilterChain(pattern, filterConfig);
@@ -403,7 +402,7 @@ public abstract class ShiroWebModule extends ShiroModule {
      * @param keys
      */
     @Deprecated
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected final void addFilterChain(String pattern, Key<? extends Filter>... keys) {
 
         // We need to extract the keys and FilterConfigKey and convert to the new format.
