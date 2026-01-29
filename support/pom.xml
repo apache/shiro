@@ -40,7 +40,6 @@
         <module>guice</module>
         <module>servlet-plugin</module>
         <module>jaxrs</module>
-        <module>features</module>
         <module>cdi</module>
         <module>jakarta-ee</module>
     </modules>
@@ -51,6 +50,7 @@
             <modules>
                 <module>spring</module>
                 <module>spring-boot</module>
+                <module>features</module>
             </modules>
         </profile>
     </profiles>
