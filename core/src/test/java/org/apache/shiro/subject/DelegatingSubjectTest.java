@@ -36,13 +36,8 @@ import java.io.Serializable;
 import java.util.concurrent.Callable;
 
 import static org.apache.shiro.env.BasicIniEnvironment.INI_REALM_NAME;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @since Aug 1, 2008 2:11:17 PM
@@ -69,18 +64,18 @@ public class DelegatingSubjectTest {
 
         Session session = subject.getSession();
         session.setAttribute(key, value);
-        assertEquals(session.getAttribute(key), value);
+        assertThat(value).isEqualTo(session.getAttribute(key));
         Serializable firstSessionId = session.getId();
-        assertNotNull(firstSessionId);
+        assertThat(firstSessionId).isNotNull();
 
         session.stop();
 
         session = subject.getSession();
-        assertNotNull(session);
-        assertNull(session.getAttribute(key));
+        assertThat(session).isNotNull();
+        assertThat(session.getAttribute(key)).isNull();
         Serializable secondSessionId = session.getId();
-        assertNotNull(secondSessionId);
-        assertNotEquals(firstSessionId, secondSessionId);
+        assertThat(secondSessionId).isNotNull();
+        assertThat(secondSessionId).isNotEqualTo(firstSessionId);
 
         subject.logout();
 
@@ -93,28 +88,28 @@ public class DelegatingSubjectTest {
         String username = "jsmith";
 
         SecurityManager securityManager = createNiceMock(SecurityManager.class);
-        PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
+        PrincipalCollection identity = ImmutablePrincipalCollection.ofSinglePrincipal(username, "testRealm");
         final Subject sourceSubject = new DelegatingSubject(identity, true, null, null, securityManager);
 
-        assertNull(ThreadContext.getSubject());
-        assertNull(ThreadContext.getSecurityManager());
+        assertThat(ThreadContext.getSubject()).isNull();
+        assertThat(ThreadContext.getSecurityManager()).isNull();
 
         Callable<String> callable = new Callable<String>() {
             public String call() throws Exception {
                 Subject callingSubject = SecurityUtils.getSubject();
-                assertNotNull(callingSubject);
-                assertNotNull(SecurityUtils.getSecurityManager());
-                assertEquals(callingSubject, sourceSubject);
+                assertThat(callingSubject).isNotNull();
+                assertThat(SecurityUtils.getSecurityManager()).isNotNull();
+                assertThat(sourceSubject).isEqualTo(callingSubject);
                 return "Hello " + callingSubject.getPrincipal();
             }
         };
         String response = sourceSubject.execute(callable);
 
-        assertNotNull(response);
-        assertEquals("Hello " + username, response);
+        assertThat(response).isNotNull();
+        assertThat(response).isEqualTo("Hello " + username);
 
-        assertNull(ThreadContext.getSubject());
-        assertNull(ThreadContext.getSecurityManager());
+        assertThat(ThreadContext.getSubject()).isNull();
+        assertThat(ThreadContext.getSecurityManager()).isNull();
     }
 
     @Test
@@ -123,24 +118,24 @@ public class DelegatingSubjectTest {
         String username = "jsmith";
 
         SecurityManager securityManager = createNiceMock(SecurityManager.class);
-        PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
+        PrincipalCollection identity = ImmutablePrincipalCollection.ofSinglePrincipal(username, "testRealm");
         final Subject sourceSubject = new DelegatingSubject(identity, true, null, null, securityManager);
 
-        assertNull(ThreadContext.getSubject());
-        assertNull(ThreadContext.getSecurityManager());
+        assertThat(ThreadContext.getSubject()).isNull();
+        assertThat(ThreadContext.getSecurityManager()).isNull();
 
         Runnable runnable = new Runnable() {
             public void run() {
                 Subject callingSubject = SecurityUtils.getSubject();
-                assertNotNull(callingSubject);
-                assertNotNull(SecurityUtils.getSecurityManager());
-                assertEquals(callingSubject, sourceSubject);
+                assertThat(callingSubject).isNotNull();
+                assertThat(SecurityUtils.getSecurityManager()).isNotNull();
+                assertThat(sourceSubject).isEqualTo(callingSubject);
             }
         };
         sourceSubject.execute(runnable);
 
-        assertNull(ThreadContext.getSubject());
-        assertNull(ThreadContext.getSecurityManager());
+        assertThat(ThreadContext.getSubject()).isNull();
+        assertThat(ThreadContext.getSecurityManager()).isNull();
     }
 
     @Test
@@ -157,66 +152,66 @@ public class DelegatingSubjectTest {
         Subject subject = new Subject.Builder(sm).buildSubject();
         subject.login(new UsernamePasswordToken("user1", "user1"));
 
-        assertFalse(subject.isRunAs());
-        assertEquals("user1", subject.getPrincipal());
-        assertTrue(subject.hasRole("role1"));
-        assertFalse(subject.hasRole("role2"));
-        assertFalse(subject.hasRole("role3"));
+        assertThat(subject.isRunAs()).isFalse();
+        assertThat(subject.getPrincipal()).isEqualTo("user1");
+        assertThat(subject.hasRole("role1")).isTrue();
+        assertThat(subject.hasRole("role2")).isFalse();
+        assertThat(subject.hasRole("role3")).isFalse();
         //no previous principals since we haven't called runAs yet
-        assertNull(subject.getPreviousPrincipals());
+        assertThat(subject.getPreviousPrincipals()).isNull();
 
         //runAs user2:
-        subject.runAs(new SimplePrincipalCollection("user2", INI_REALM_NAME));
-        assertTrue(subject.isRunAs());
-        assertEquals("user2", subject.getPrincipal());
-        assertTrue(subject.hasRole("role2"));
-        assertFalse(subject.hasRole("role1"));
-        assertFalse(subject.hasRole("role3"));
+        subject.runAs(ImmutablePrincipalCollection.ofSinglePrincipal("user2", INI_REALM_NAME));
+        assertThat(subject.isRunAs()).isTrue();
+        assertThat(subject.getPrincipal()).isEqualTo("user2");
+        assertThat(subject.hasRole("role2")).isTrue();
+        assertThat(subject.hasRole("role1")).isFalse();
+        assertThat(subject.hasRole("role3")).isFalse();
 
         //assert we still have the previous (user1) principals:
         PrincipalCollection previous = subject.getPreviousPrincipals();
-        assertFalse(previous == null || previous.isEmpty());
-        assertEquals("user1", previous.getPrimaryPrincipal());
+        assertThat(previous == null || previous.isEmpty()).isFalse();
+        assertThat(previous.getPrimaryPrincipal()).isEqualTo("user1");
 
         //test the stack functionality:  While as user2, run as user3:
-        subject.runAs(new SimplePrincipalCollection("user3", INI_REALM_NAME));
-        assertTrue(subject.isRunAs());
-        assertEquals("user3", subject.getPrincipal());
-        assertTrue(subject.hasRole("role3"));
-        assertFalse(subject.hasRole("role1"));
-        assertFalse(subject.hasRole("role2"));
+        subject.runAs(ImmutablePrincipalCollection.ofSinglePrincipal("user3", INI_REALM_NAME));
+        assertThat(subject.isRunAs()).isTrue();
+        assertThat(subject.getPrincipal()).isEqualTo("user3");
+        assertThat(subject.hasRole("role3")).isTrue();
+        assertThat(subject.hasRole("role1")).isFalse();
+        assertThat(subject.hasRole("role2")).isFalse();
 
         //assert we still have the previous (user2) principals in the stack:
         previous = subject.getPreviousPrincipals();
-        assertFalse(previous == null || previous.isEmpty());
-        assertEquals("user2", previous.getPrimaryPrincipal());
+        assertThat(previous == null || previous.isEmpty()).isFalse();
+        assertThat(previous.getPrimaryPrincipal()).isEqualTo("user2");
 
         //drop down to user2:
         subject.releaseRunAs();
 
         //assert still run as:
-        assertTrue(subject.isRunAs());
-        assertEquals("user2", subject.getPrincipal());
-        assertTrue(subject.hasRole("role2"));
-        assertFalse(subject.hasRole("role1"));
-        assertFalse(subject.hasRole("role3"));
+        assertThat(subject.isRunAs()).isTrue();
+        assertThat(subject.getPrincipal()).isEqualTo("user2");
+        assertThat(subject.hasRole("role2")).isTrue();
+        assertThat(subject.hasRole("role1")).isFalse();
+        assertThat(subject.hasRole("role3")).isFalse();
 
         //assert we still have the previous (user1) principals:
         previous = subject.getPreviousPrincipals();
-        assertFalse(previous == null || previous.isEmpty());
-        assertEquals("user1", previous.getPrimaryPrincipal());
+        assertThat(previous == null || previous.isEmpty()).isFalse();
+        assertThat(previous.getPrimaryPrincipal()).isEqualTo("user1");
 
         //drop down to original user1:
         subject.releaseRunAs();
 
         //assert we're no longer runAs:
-        assertFalse(subject.isRunAs());
-        assertEquals("user1", subject.getPrincipal());
-        assertTrue(subject.hasRole("role1"));
-        assertFalse(subject.hasRole("role2"));
-        assertFalse(subject.hasRole("role3"));
+        assertThat(subject.isRunAs()).isFalse();
+        assertThat(subject.getPrincipal()).isEqualTo("user1");
+        assertThat(subject.hasRole("role1")).isTrue();
+        assertThat(subject.hasRole("role2")).isFalse();
+        assertThat(subject.hasRole("role3")).isFalse();
         //no previous principals in orig state
-        assertNull(subject.getPreviousPrincipals());
+        assertThat(subject.getPreviousPrincipals()).isNull();
 
         subject.logout();
 
@@ -229,7 +224,7 @@ public class DelegatingSubjectTest {
         String username = "jsmith";
 
         DefaultSecurityManager securityManager = new DefaultSecurityManager();
-        PrincipalCollection identity = new SimplePrincipalCollection(username, "testRealm");
+        PrincipalCollection identity = ImmutablePrincipalCollection.ofSinglePrincipal(username, "testRealm");
         final String hostname = "localhost";
         final DelegatingSubject sourceSubject = new DelegatingSubject(identity, true, hostname, null, securityManager);
 
@@ -239,8 +234,8 @@ public class DelegatingSubjectTest {
         // then
         final Session session = sourceSubject.getSession(true);
         String sessionId = (String) session.getId();
-        assertFalse(subjectToString.contains(sessionId), "toString must not leak sessionId");
-        assertFalse(subjectToString.contains(hostname), "toString must not leak host");
+        assertThat(subjectToString.contains(sessionId)).as("toString must not leak sessionId").isFalse();
+        assertThat(subjectToString.contains(hostname)).as("toString must not leak host").isFalse();
     }
 
 }

@@ -26,6 +26,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.shiro.authc.AuthenticationException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAccount;
@@ -39,17 +43,12 @@ import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.authz.permission.WildcardPermission;
 import org.apache.shiro.authz.permission.WildcardPermissionResolver;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -82,20 +81,20 @@ public class AuthorizingRealmTest {
     void testDefaultConfig() {
         AuthenticationInfo info = realm.getAuthenticationInfo(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
 
-        assertNotNull(info);
-        assertTrue(realm.hasRole(info.getPrincipals(), ROLE));
+        assertThat(info).isNotNull();
+        assertThat(realm.hasRole(info.getPrincipals(), ROLE)).isTrue();
 
         Object principal = info.getPrincipals().getPrimaryPrincipal();
-        assertTrue(principal instanceof UserIdPrincipal);
+        assertThat(principal instanceof UserIdPrincipal).isTrue();
 
         UsernamePrincipal usernamePrincipal = info.getPrincipals().oneByType(UsernamePrincipal.class);
-        assertEquals(USERNAME, usernamePrincipal.getUsername());
+        assertThat(usernamePrincipal.getUsername()).isEqualTo(USERNAME);
 
         UserIdPrincipal userIdPrincipal = info.getPrincipals().oneByType(UserIdPrincipal.class);
-        assertEquals(USER_ID, userIdPrincipal.getUserId());
+        assertThat(userIdPrincipal.getUserId()).isEqualTo(USER_ID);
 
         String stringPrincipal = info.getPrincipals().oneByType(String.class);
-        assertEquals(USER_ID + USERNAME, stringPrincipal);
+        assertThat(stringPrincipal).isEqualTo(USER_ID + USERNAME);
     }
 
     @Test
@@ -111,11 +110,11 @@ public class AuthorizingRealmTest {
         };
 
         AuthenticationInfo info = realm.getAuthenticationInfo(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
-        assertNotNull(info);
-        assertTrue(realm.hasRole(info.getPrincipals(), ROLE));
+        assertThat(info).isNotNull();
+        assertThat(realm.hasRole(info.getPrincipals(), ROLE)).isTrue();
         Object principal = info.getPrincipals().getPrimaryPrincipal();
-        assertTrue(principal instanceof UsernamePrincipal);
-        assertEquals(USERNAME, ((UsernamePrincipal) principal).getUsername());
+        assertThat(principal instanceof UsernamePrincipal).isTrue();
+        assertThat(((UsernamePrincipal) principal).getUsername()).isEqualTo(USERNAME);
 
 
     }
@@ -134,7 +133,7 @@ public class AuthorizingRealmTest {
         };
 
         Principal principal = new UsernamePrincipal("blah");
-        PrincipalCollection pCollection = new SimplePrincipalCollection(principal, "nullAuthzRealm");
+        PrincipalCollection pCollection = ImmutablePrincipalCollection.ofSinglePrincipal(principal, "nullAuthzRealm");
         List<Permission> permList = new ArrayList<Permission>();
         permList.add(new WildcardPermission("stringPerm1"));
         permList.add(new WildcardPermission("stringPerm2"));
@@ -148,7 +147,7 @@ public class AuthorizingRealmTest {
         } catch (UnauthorizedException e) {
             thrown = true;
         }
-        assertTrue(thrown);
+        assertThat(thrown).isTrue();
         thrown = false;
 
         try {
@@ -156,7 +155,7 @@ public class AuthorizingRealmTest {
         } catch (UnauthorizedException e) {
             thrown = true;
         }
-        assertTrue(thrown);
+        assertThat(thrown).isTrue();
         thrown = false;
 
         try {
@@ -164,7 +163,7 @@ public class AuthorizingRealmTest {
         } catch (UnauthorizedException e) {
             thrown = true;
         }
-        assertTrue(thrown);
+        assertThat(thrown).isTrue();
         thrown = false;
 
         try {
@@ -172,7 +171,7 @@ public class AuthorizingRealmTest {
         } catch (UnauthorizedException e) {
             thrown = true;
         }
-        assertTrue(thrown);
+        assertThat(thrown).isTrue();
         thrown = false;
 
         try {
@@ -180,7 +179,7 @@ public class AuthorizingRealmTest {
         } catch (UnauthorizedException e) {
             thrown = true;
         }
-        assertTrue(thrown);
+        assertThat(thrown).isTrue();
         thrown = false;
 
         try {
@@ -188,23 +187,24 @@ public class AuthorizingRealmTest {
         } catch (UnauthorizedException e) {
             thrown = true;
         }
-        assertTrue(thrown);
+        assertThat(thrown).isTrue();
 
-        assertFalse(realm.hasAllRoles(pCollection, roleList));
-        assertFalse(realm.hasRole(pCollection, "role1"));
+        assertThat(realm.hasAllRoles(pCollection, roleList)).isFalse();
+        assertThat(realm.hasRole(pCollection, "role1")).isFalse();
         assertArrayEquals(new boolean[] {false, false}, realm.hasRoles(pCollection, roleList));
-        assertFalse(realm.isPermitted(pCollection, "perm1"));
-        assertFalse(realm.isPermitted(pCollection, new WildcardPermission("perm1")));
+        assertThat(realm.isPermitted(pCollection, "perm1")).isFalse();
+        assertThat(realm.isPermitted(pCollection, new WildcardPermission("perm1"))).isFalse();
         assertArrayEquals(new boolean[] {false, false}, realm.isPermitted(pCollection, "perm1", "perm2"));
         assertArrayEquals(new boolean[] {false, false}, realm.isPermitted(pCollection, permList));
-        assertFalse(realm.isPermittedAll(pCollection, "perm1", "perm2"));
-        assertFalse(realm.isPermittedAll(pCollection, permList));
+        assertThat(realm.isPermittedAll(pCollection, "perm1", "perm2")).isFalse();
+        assertThat(realm.isPermittedAll(pCollection, permList)).isFalse();
     }
 
     @Test
     void testRealmWithRolePermissionResolver() {
         Principal principal = new UsernamePrincipal("rolePermResolver");
-        PrincipalCollection pCollection = new SimplePrincipalCollection(principal, "testRealmWithRolePermissionResolver");
+        PrincipalCollection pCollection = ImmutablePrincipalCollection.ofSinglePrincipal(principal,
+                "testRealmWithRolePermissionResolver");
 
         AuthorizingRealm realm = new AllowAllRealm();
         realm.setRolePermissionResolver(new RolePermissionResolver() {
@@ -219,17 +219,18 @@ public class AuthorizingRealmTest {
             }
         });
 
-        assertTrue(realm.hasRole(pCollection, ROLE));
-        assertTrue(realm.isPermitted(pCollection, ROLE + ":perm1"));
-        assertTrue(realm.isPermitted(pCollection, ROLE + ":perm2"));
-        assertFalse(realm.isPermitted(pCollection, ROLE + ":perm3"));
-        assertTrue(realm.isPermitted(pCollection, "other:bar:foo"));
+        assertThat(realm.hasRole(pCollection, ROLE)).isTrue();
+        assertThat(realm.isPermitted(pCollection, ROLE + ":perm1")).isTrue();
+        assertThat(realm.isPermitted(pCollection, ROLE + ":perm2")).isTrue();
+        assertThat(realm.isPermitted(pCollection, ROLE + ":perm3")).isFalse();
+        assertThat(realm.isPermitted(pCollection, "other:bar:foo")).isTrue();
     }
 
     @Test
     void testRealmWithEmptyOrNullPermissions() {
         Principal principal = new UsernamePrincipal("rolePermResolver");
-        PrincipalCollection pCollection = new SimplePrincipalCollection(principal, "testRealmWithRolePermissionResolver");
+        PrincipalCollection pCollection = ImmutablePrincipalCollection.ofSinglePrincipal(principal,
+                "testRealmWithRolePermissionResolver");
 
         AuthorizingRealm realm = new AllowAllRealm();
         realm.setRolePermissionResolver(new RolePermissionResolver() {
@@ -248,13 +249,13 @@ public class AuthorizingRealmTest {
 
         realm.setPermissionResolver(new WildcardPermissionResolver());
         SimpleAuthorizationInfo authorizationInfo = (SimpleAuthorizationInfo) realm.getAuthorizationInfo(pCollection);
-        assertNotNull(authorizationInfo);
+        assertThat(authorizationInfo).isNotNull();
         authorizationInfo.addStringPermission("");
         authorizationInfo.addStringPermission(" ");
         authorizationInfo.addStringPermission("\t");
         authorizationInfo.addStringPermission(null);
         Collection<Permission> permissions = realm.getPermissions(authorizationInfo);
-        assertEquals(4, permissions.size());
+        assertThat(permissions).hasSize(4);
     }
 
     private void assertArrayEquals(boolean[] expected, boolean[] actual) {

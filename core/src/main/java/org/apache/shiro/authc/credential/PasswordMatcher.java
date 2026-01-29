@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.authc.credential;
 
+import java.util.Optional;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.crypto.hash.Hash;
@@ -33,7 +34,6 @@ import org.apache.shiro.lang.util.ByteSource;
  * @since 1.2
  */
 public class PasswordMatcher implements CredentialsMatcher {
-
     private PasswordService passwordService;
 
     public PasswordMatcher() {
@@ -49,13 +49,17 @@ public class PasswordMatcher implements CredentialsMatcher {
         Object storedCredentials = getStoredPassword(info);
         assertStoredCredentialsType(storedCredentials);
 
-        if (storedCredentials instanceof Hash) {
-            Hash hashedPassword = (Hash) storedCredentials;
+        if (storedCredentials instanceof Hash hashedPassword) {
             return hashedPassword.matchesPassword(ByteSource.Util.bytes(submittedPassword));
         }
         //otherwise they are a String (asserted in the 'assertStoredCredentialsType' method call above):
         String formatted = (String) storedCredentials;
         return service.passwordsMatch(submittedPassword, formatted);
+    }
+
+    @Override
+    public Optional<AuthenticationInfo> createSimulatedCredentials() {
+        return SimpleCredentialsMatcher.makeSimulatedAuthenticationInfo(ensurePasswordService());
     }
 
     private PasswordService ensurePasswordService() {
@@ -84,8 +88,8 @@ public class PasswordMatcher implements CredentialsMatcher {
     protected Object getStoredPassword(AuthenticationInfo storedAccountInfo) {
         Object stored = storedAccountInfo != null ? storedAccountInfo.getCredentials() : null;
         //fix for https://issues.apache.org/jira/browse/SHIRO-363
-        if (stored instanceof char[]) {
-            stored = new String((char[]) stored);
+        if (stored instanceof char[] chars) {
+            stored = new String(chars);
         }
         return stored;
     }

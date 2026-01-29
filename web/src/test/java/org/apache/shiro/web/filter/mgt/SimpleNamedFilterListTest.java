@@ -33,14 +33,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.easymock.EasyMock.createNiceMock;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test case for the {@link SimpleNamedFilterList} implementation.
@@ -53,13 +49,13 @@ public class SimpleNamedFilterListTest {
     void testNewInstance() {
         @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
         SimpleNamedFilterList list = new SimpleNamedFilterList("test");
-        assertNotNull(list.getName());
-        assertEquals("test", list.getName());
+        assertThat(list.getName()).isNotNull();
+        assertThat(list.getName()).isEqualTo("test");
     }
 
     @Test
     void testNewInstanceNameless() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
             new SimpleNamedFilterList(null);
         });
     }
@@ -71,7 +67,7 @@ public class SimpleNamedFilterListTest {
 
     @Test
     void testNewInstanceNullBackingList() {
-        assertThrows(NullPointerException.class, () -> {
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> {
             new SimpleNamedFilterList("test", null);
         });
     }
@@ -89,77 +85,77 @@ public class SimpleNamedFilterListTest {
         NamedFilterList list = new SimpleNamedFilterList("test");
         list.add(filter);
         FilterChain chain = list.proxy(mock);
-        assertNotNull(chain);
+        assertThat(chain).isNotNull();
         assertNotSame(mock, chain);
 
         Filter singleFilter = new SslFilter();
         List<? extends Filter> multipleFilters = CollectionUtils.asList(new PortFilter(), new UserFilter());
 
         list.add(0, singleFilter);
-        assertEquals(2, list.size());
-        assertTrue(list.get(0) instanceof SslFilter);
-        assertArrayEquals(new Object[]{singleFilter, filter}, list.toArray());
+        assertThat(list).hasSize(2);
+        assertThat(list.get(0) instanceof SslFilter).isTrue();
+        assertThat(list.toArray()).containsExactly(new Object[]{singleFilter, filter});
 
         list.addAll(multipleFilters);
-        assertEquals(4, list.size());
-        assertTrue(list.get(2) instanceof PortFilter);
-        assertTrue(list.get(3) instanceof UserFilter);
+        assertThat(list).hasSize(4);
+        assertThat(list.get(2) instanceof PortFilter).isTrue();
+        assertThat(list.get(3) instanceof UserFilter).isTrue();
 
         list.addAll(0, CollectionUtils.asList(new PermissionsAuthorizationFilter(), new RolesAuthorizationFilter()));
-        assertEquals(6, list.size());
-        assertTrue(list.get(0) instanceof PermissionsAuthorizationFilter);
-        assertTrue(list.get(1) instanceof RolesAuthorizationFilter);
-        assertEquals(2, list.indexOf(singleFilter));
-        assertEquals(multipleFilters, list.subList(4, list.size()));
+        assertThat(list).hasSize(6);
+        assertThat(list.get(0) instanceof PermissionsAuthorizationFilter).isTrue();
+        assertThat(list.get(1) instanceof RolesAuthorizationFilter).isTrue();
+        assertThat(list.indexOf(singleFilter)).isEqualTo(2);
+        assertThat(list.subList(4, list.size())).isEqualTo(multipleFilters);
 
-        assertTrue(list.contains(singleFilter));
-        assertTrue(list.containsAll(multipleFilters));
+        assertThat(list).contains(singleFilter);
+        assertThat(list).containsAll(multipleFilters);
 
-        assertFalse(list.isEmpty());
+        assertThat(list).isNotEmpty();
         list.clear();
-        assertTrue(list.isEmpty());
+        assertThat(list).isEmpty();
 
         list.add(singleFilter);
         Iterator i = list.iterator();
-        assertTrue(i.hasNext());
-        assertEquals(i.next(), singleFilter);
+        assertThat(i.hasNext()).isTrue();
+        assertThat(singleFilter).isEqualTo(i.next());
 
         ListIterator li = list.listIterator();
-        assertTrue(li.hasNext());
-        assertEquals(li.next(), singleFilter);
+        assertThat(li.hasNext()).isTrue();
+        assertThat(singleFilter).isEqualTo(li.next());
 
         li = list.listIterator(0);
-        assertTrue(li.hasNext());
-        assertEquals(li.next(), singleFilter);
+        assertThat(li.hasNext()).isTrue();
+        assertThat(singleFilter).isEqualTo(li.next());
 
         list.set(0, singleFilter);
-        assertEquals(list.get(0), singleFilter);
+        assertThat(singleFilter).isEqualTo(list.get(0));
 
         Filter[] filters = new Filter[list.size()];
         filters = list.toArray(filters);
-        assertEquals(1, filters.length);
-        assertEquals(filters[0], singleFilter);
+        assertThat(filters.length).isEqualTo(1);
+        assertThat(singleFilter).isEqualTo(filters[0]);
 
-        assertEquals(0, list.lastIndexOf(singleFilter));
+        assertThat(list.lastIndexOf(singleFilter)).isEqualTo(0);
 
         list.remove(singleFilter);
-        assertTrue(list.isEmpty());
+        assertThat(list).isEmpty();
 
         list.add(singleFilter);
         list.remove(0);
-        assertTrue(list.isEmpty());
+        assertThat(list).isEmpty();
 
         list.add(singleFilter);
         list.addAll(multipleFilters);
-        assertEquals(3, list.size());
+        assertThat(list).hasSize(3);
         list.removeAll(multipleFilters);
-        assertEquals(1, list.size());
-        assertEquals(list.get(0), singleFilter);
+        assertThat(list).hasSize(1);
+        assertThat(singleFilter).isEqualTo(list.get(0));
 
         list.addAll(multipleFilters);
-        assertEquals(3, list.size());
+        assertThat(list).hasSize(3);
         list.retainAll(multipleFilters);
-        assertEquals(2, list.size());
-        assertEquals(new ArrayList<>(list), multipleFilters);
+        assertThat(list).hasSize(2);
+        assertThat(multipleFilters).isEqualTo(new ArrayList<>(list));
     }
 }

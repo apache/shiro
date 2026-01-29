@@ -262,6 +262,7 @@ public class RedirectView {
      * @param encodingScheme the encoding scheme
      * @return the encoded output String
      * @throws UnsupportedEncodingException if thrown by the JDK URLEncoder
+     * @see java.net.URLEncoder#encode(String, java.nio.charset.Charset)
      * @see java.net.URLEncoder#encode(String, String)
      * @see java.net.URLEncoder#encode(String)
      */

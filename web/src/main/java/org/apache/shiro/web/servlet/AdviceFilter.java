@@ -184,10 +184,10 @@ public abstract class AdviceFilter extends OncePerRequestFilter {
             }
         }
         if (exception != null) {
-            if (exception instanceof ServletException) {
-                throw (ServletException) exception;
-            } else if (exception instanceof IOException) {
-                throw (IOException) exception;
+            if (exception instanceof ServletException servletException) {
+                throw servletException;
+            } else if (exception instanceof IOException oException) {
+                throw oException;
             } else {
                 if (LOGGER.isDebugEnabled()) {
                     String msg = "Filter execution resulted in an unexpected Exception "

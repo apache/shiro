@@ -18,8 +18,9 @@
   -->
 
 <!-- EhCache XML configuration file used for Shiro spring sample application -->
-<ehcache>
-
+<config xmlns="http://www.ehcache.org/v3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.ehcache.org/v3 https://www.ehcache.org/schema/ehcache-core-3.3.xsd">
     <!-- Sets the path to the directory where cache .data files are created.
 
 If the path is a Java System Property it is replaced by
@@ -29,8 +30,7 @@ The following properties are translated:
 user.home - User's home directory
 user.dir - User's current working directory
 java.io.tmpdir - Default temp file path -->
-    <diskStore path="java.io.tmpdir/shiro-spring-sample"/>
-
+    <persistence directory="${java.io.tmpdir}/shiro-spring-sample"/>
 
     <!--Default Cache configuration. These will applied to caches programmatically created through
     the CacheManager.
@@ -64,15 +64,14 @@ java.io.tmpdir - Default temp file path -->
                                      (specified as LFU)
     -->
 
-    <defaultCache
-            maxElementsInMemory="10000"
-            eternal="false"
-            timeToIdleSeconds="120"
-            timeToLiveSeconds="120"
-            overflowToDisk="false"
-            diskPersistent="false"
-            diskExpiryThreadIntervalSeconds="120"
-            />
+    <cache-template name="default">
+        <key-type>java.io.Serializable</key-type>
+        <value-type>java.io.Serializable</value-type>
+        <expiry>
+            <tti unit="minutes">2</tti>
+        </expiry>
+        <heap>10000</heap>
+    </cache-template>
 
     <!-- We want eternal="true" (with no timeToIdle or timeToLive settings) because Shiro manages session
 expirations explicitly.  If we set it to false and then set corresponding timeToIdle and timeToLive properties,
@@ -82,17 +81,22 @@ Answer - ehcache expired it due to the timeToIdle property set to 120 seconds.)
 
 diskPersistent=true since we want an enterprise session management feature - ability to use sessions after
 even after a JVM restart.  -->
-    <cache name="shiro-activeSessionCache"
-           maxElementsInMemory="10000"
-           eternal="true"
-           overflowToDisk="true"
-           diskPersistent="true"
-           diskExpiryThreadIntervalSeconds="600"/>
+    <cache alias="shiro-activeSessionCache" uses-template="default">
+        <expiry>
+            <none/>
+        </expiry>
+        <resources>
+            <heap>10000</heap>
+            <disk persistent="true" unit="MB">50</disk>
+        </resources>
+    </cache>
 
-    <cache name="org.apache.shiro.realm.SimpleAccountRealm.authorization"
-           maxElementsInMemory="100"
-           eternal="false"
-           timeToLiveSeconds="600"
-           overflowToDisk="false"/>
+    <cache alias="org.apache.shiro.realm.SimpleAccountRealm.authorization" uses-template="default">
+        <value-type>org.apache.shiro.authz.AuthorizationInfo</value-type>
+        <expiry>
+            <tti unit="minutes">10</tti>
+        </expiry>
+        <heap>100</heap>
+    </cache>
 
-</ehcache>
+</config>

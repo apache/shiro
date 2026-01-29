@@ -140,10 +140,18 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
         try {
             doValidate(session);
         } catch (ExpiredSessionException ese) {
-            onExpiration(session, ese, key);
+            try {
+                onExpiration(session, ese, key);
+            } catch (IllegalStateException eise) {
+                LOGGER.trace("Attempting to validate an expired session with key {}", key, eise);
+            }
             throw ese;
         } catch (InvalidSessionException ise) {
-            onInvalidation(session, ise, key);
+            try {
+                onInvalidation(session, ise, key);
+            } catch (IllegalStateException eise) {
+                LOGGER.trace("Attempting to validate session with key {}", key, eise);
+            }
             throw ise;
         }
     }
@@ -166,8 +174,8 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
     }
 
     protected void onInvalidation(Session s, InvalidSessionException ise, SessionKey key) {
-        if (ise instanceof ExpiredSessionException) {
-            onExpiration(s, (ExpiredSessionException) ise, key);
+        if (ise instanceof ExpiredSessionException exception) {
+            onExpiration(s, exception, key);
             return;
         }
         LOGGER.trace("Session with id [{}] is invalid.", s.getId());
@@ -180,8 +188,8 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
     }
 
     protected void doValidate(Session session) throws InvalidSessionException {
-        if (session instanceof ValidatingSession) {
-            ((ValidatingSession) session).validate();
+        if (session instanceof ValidatingSession validatingSession) {
+            validatingSession.validate();
         } else {
             String msg = "The " + getClass().getName() + " implementation only supports validating "
                     + "Session implementations of the " + ValidatingSession.class.getName() + " interface.  "

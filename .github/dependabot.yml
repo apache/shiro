@@ -16,22 +16,13 @@
 # under the License.
 
 version: 2
-# Add Maven Central explicitly to work around:
-#   https://github.com/dependabot/dependabot-core/issues/8329
-registries:
-  maven-central:
-    type: maven-repository
-    url: https://repo.maven.apache.org/maven2
-
 updates:
   # Dependencies for Maven
   - package-ecosystem: 'maven'
     directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
     open-pull-requests-limit: 50
-    registries:
-      - maven-central
     ignore:
       - dependency-name: "jakarta.platform:*"
         update-types: [ "version-update:semver-major" ]
@@ -80,10 +71,8 @@ updates:
     directory: '/'
     target-branch: '1.13.x'
     schedule:
-      interval: 'daily'
+      interval: 'monthly'
     open-pull-requests-limit: 50
-    registries:
-      - maven-central
     ignore:
       - dependency-name: "jakarta.servlet.*:*"
         update-types: [ "version-update:semver-major" ]
@@ -121,13 +110,21 @@ updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
     open-pull-requests-limit: 10
+    groups:
+      github-dependencies:
+        patterns:
+          - '*'
 
   # Dependencies for GitHub Actions - on 1.13.x
   - package-ecosystem: 'github-actions'
     directory: '/'
     target-branch: '1.13.x'
     schedule:
-      interval: 'daily'
+      interval: 'monthly'
     open-pull-requests-limit: 10
+    groups:
+      github-dependencies:
+        patterns:
+          - '*'

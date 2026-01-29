@@ -40,7 +40,7 @@ public class AuthorizationFilterTest extends SecurityManagerTestSupport {
     @Test
     public void testUserOnAccessDeniedWithResponseError() {
         // Tests when a user (known identity) is denied access and no unauthorizedUrl has been configured.
-        // This should trigger an HTTP response error code.
+        // This should trigger an HTTP response error code 403
 
         //log in the user using the account provided by the superclass for tests:
         runWithSubject(subject -> {
@@ -57,9 +57,8 @@ public class AuthorizationFilterTest extends SecurityManagerTestSupport {
             HttpServletRequest request = mock(HttpServletRequest.class);
             HttpServletResponse response = mock(HttpServletResponse.class);
 
-            // response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             filter.onAccessDenied(request, response);
-            verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            verify(response).sendError(HttpServletResponse.SC_FORBIDDEN);
         });
     }
 

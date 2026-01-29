@@ -77,10 +77,10 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         String remoteUser;
         Object scPrincipal = getSubjectPrincipal();
         if (scPrincipal != null) {
-            if (scPrincipal instanceof String) {
-                return (String) scPrincipal;
-            } else if (scPrincipal instanceof Principal) {
-                remoteUser = ((Principal) scPrincipal).getName();
+            if (scPrincipal instanceof String string) {
+                return string;
+            } else if (scPrincipal instanceof Principal principal) {
+                remoteUser = principal.getName();
             } else {
                 remoteUser = scPrincipal.toString();
             }
@@ -116,8 +116,8 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         Principal userPrincipal;
         Object scPrincipal = getSubjectPrincipal();
         if (scPrincipal != null) {
-            if (scPrincipal instanceof Principal) {
-                userPrincipal = (Principal) scPrincipal;
+            if (scPrincipal instanceof Principal principal) {
+                userPrincipal = principal;
             } else {
                 userPrincipal = new ObjectPrincipal(scPrincipal);
             }
@@ -247,8 +247,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         }
 
         public boolean equals(Object o) {
-            if (o instanceof ObjectPrincipal) {
-                ObjectPrincipal op = (ObjectPrincipal) o;
+            if (o instanceof ObjectPrincipal op) {
                 return getObject().equals(op.getObject());
             }
             return false;

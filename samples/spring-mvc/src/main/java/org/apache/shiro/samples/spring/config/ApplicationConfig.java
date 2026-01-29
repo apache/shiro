@@ -30,6 +30,7 @@ import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroRequestMappingConfig;
 import org.apache.shiro.spring.web.config.ShiroWebConfiguration;
 import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -154,8 +155,6 @@ public class ApplicationConfig {
         chainDefinition.addPathDefinition("/s/login", "anon");
         //allow WebStart to pull the jars for the swing app
         chainDefinition.addPathDefinition("/*.jar", "anon");
-        // protected using SecureRemoteInvocationExecutor
-        chainDefinition.addPathDefinition("/remoting/**", "anon");
         chainDefinition.addPathDefinition("/**", "authc");
 
 

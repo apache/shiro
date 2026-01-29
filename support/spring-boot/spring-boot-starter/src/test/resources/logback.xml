@@ -35,7 +35,7 @@
     <logger name="org.apache" warn="warn" additivity="false">
         <appender-ref ref="Console" />
     </logger>
-    <logger name="net.sf.ehcache" warn="warn" additivity="false">
+    <logger name="org.ehcache" warn="warn" additivity="false">
         <appender-ref ref="Console" />
     </logger>
     <logger name="org.apache.shiro" warn="warn" additivity="false">

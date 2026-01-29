@@ -446,8 +446,7 @@ public final class Ini implements Map<String, Ini.Section> {
     }
 
     public boolean equals(Object obj) {
-        if (obj instanceof Ini) {
-            Ini ini = (Ini) obj;
+        if (obj instanceof Ini ini) {
             return this.sections.equals(ini.sections);
         }
         return false;
@@ -710,8 +709,7 @@ public final class Ini implements Map<String, Ini.Section> {
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof Section) {
-                Section other = (Section) obj;
+            if (obj instanceof Section other) {
                 return getName().equals(other.getName()) && this.props.equals(other.props);
             }
             return false;

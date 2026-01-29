@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.shiro.integrationtests</groupId>
@@ -36,16 +36,15 @@
 
     <properties>
         <japicmp.skip>true</japicmp.skip>
-        <dependency.meecrowave.version>1.2.15</dependency.meecrowave.version>
+        <dependency.meecrowave.version>2.0.0</dependency.meecrowave.version>
         <maven.deploy.skip>true</maven.deploy.skip>
         <nexus.deploy.skip>true</nexus.deploy.skip>
     </properties>
 
     <modules>
-        <module>support</module>
-        <module>guice</module>
         <module>meecrowave-support</module>
         <module>jaxrs</module>
+        <module>support</module>
         <module>jakarta-ee-support</module>
         <module>jakarta-ee</module>
     </modules>
@@ -56,23 +55,19 @@
                 <groupId>org.apache.meecrowave</groupId>
                 <artifactId>meecrowave-core</artifactId>
                 <version>${dependency.meecrowave.version}</version>
-                <classifier>jakarta</classifier>
-                <exclusions>
-                    <exclusion>
-                        <groupId>rg.apache.cxf</groupId>
-                        <artifactId>ocxf-rt-rs-client</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.platform</groupId>
-                <artifactId>jakarta.jakartaee-api</artifactId>
-                <version>9.0.0</version>
-                <scope>provided</scope>
-                <optional>true</optional>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>deferred-for-3x</id>
+            <modules>
+                <module>guice</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <reporting>
         <plugins>

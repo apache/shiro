@@ -13,14 +13,16 @@
  */
 package org.apache.shiro.ee.filters;
 
+import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
+import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
 import static org.apache.shiro.SecurityUtils.getSecurityManager;
 import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
 import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.CONTENT_TYPE;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.COOKIE;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.LOCATION;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderContstants.SET_COOKIE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.CONTENT_TYPE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.COOKIE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.LOCATION;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.SET_COOKIE;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.AUTHFAIL;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.FOUND;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.OK;
@@ -52,8 +54,6 @@ import java.util.UUID;
 import static java.util.function.Predicate.not;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
-import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.Cookie;
@@ -68,7 +68,6 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
-import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import org.apache.shiro.mgt.AbstractRememberMeManager;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
@@ -91,13 +90,17 @@ public class FormResubmitSupport {
     static final String SESSION_EXPIRED_PARAMETER = "org.apache.shiro.sessionExpired";
     static final String FORM_IS_RESUBMITTED = "org.apache.shiro.form-is-resubmitted";
     // encoded view state
-    private static final String FACES_VIEW_STATE = jakartify("jakarta.faces.ViewState");
+    private static final String FACES_VIEW_STATE = "jakarta.faces.ViewState";
     private static final String FACES_VIEW_STATE_EQUALS = FACES_VIEW_STATE + "=";
     private static final Pattern VIEW_STATE_PATTERN
             = Pattern.compile(String.format("(.*)(%s[-]?[\\d]+:[-]?[\\d]+)(.*)", FACES_VIEW_STATE_EQUALS));
-    private static final String PARTIAL_VIEW = jakartify("jakarta.faces.partial");
+    private static final String FACES_SOURCE = "jakarta.faces.source";
+    private static final String FACES_SOURCE_EQUALS = FACES_SOURCE + "=";
+    static final Pattern FACES_SOURCE_PATTERN
+            = Pattern.compile(String.format("[\\&]?%s([\\w\\s:%%\\d]*)(.*)", FACES_SOURCE_EQUALS));
     private static final Pattern PARTIAL_REQUEST_PATTERN
-            = Pattern.compile(String.format("[\\&]?%s.\\w+=[\\w\\s:%%\\d]*", PARTIAL_VIEW));
+            = Pattern.compile("[\\&]?(%s.\\w+|%s.\\w+|%s)=[\\w\\s:%%\\d]*".formatted(
+            "jakarta.faces.partial", "jakarta.faces.behavior", FACES_SOURCE));
     private static final Pattern INITIAL_AMPERSAND = Pattern.compile("^\\&");
     private static final String FORM_DATA_CACHE = "org.apache.shiro.form-data-cache";
     private static final String FORM_RESUBMIT_HOST = "org.apache.shiro.form-resubmit-host";
@@ -111,7 +114,7 @@ public class FormResubmitSupport {
         static final String POST = "POST";
     }
 
-    static class HttpHeaderContstants {
+    static class HttpHeaderConstants {
         static final String CONTENT_TYPE = "Content-Type";
         static final String LOCATION = "Location";
         static final String COOKIE = "Cookie";
@@ -240,7 +243,7 @@ public class FormResubmitSupport {
 
     /**
      * Redirects the user to saved request after login, if available
-     * Resubmits the form that caused the logout upon successfull login.Form resumnission supports JSF and Ajax forms
+     * Resubmits the form that caused the logout upon successful login.Form resubmission supports JSF and Ajax forms
      * @param request
      * @param response
      * @param useFallbackPath predicate whether to use fall back path
@@ -535,11 +538,10 @@ public class FormResubmitSupport {
     public static DefaultWebSessionManager getNativeSessionManager(SecurityManager securityManager) {
         DefaultWebSessionManager rv = null;
         SecurityManager unwrapped = unwrapSecurityManager(securityManager, SecurityManager.class, type -> false);
-        if (unwrapped instanceof SessionsSecurityManager) {
-            var ssm = (SessionsSecurityManager) unwrapped;
+        if (unwrapped instanceof SessionsSecurityManager ssm) {
             var sm = ssm.getSessionManager();
-            if (sm instanceof DefaultWebSessionManager) {
-                rv = (DefaultWebSessionManager) sm;
+            if (sm instanceof DefaultWebSessionManager manager) {
+                rv = manager;
             }
         }
         return rv;
@@ -556,13 +558,13 @@ public class FormResubmitSupport {
     }
 
     static String extractJSFNewViewState(@NonNull String responseBody, @NonNull String savedFormData) {
-        Elements elts = Jsoup.parse(responseBody).select(String.format("input[name=%s]", FACES_VIEW_STATE));
+        Elements elts = Jsoup.parse(responseBody).select("input[name=%s]".formatted(FACES_VIEW_STATE));
         if (!elts.isEmpty()) {
             String viewState = elts.first().attr("value");
 
             var matcher = VIEW_STATE_PATTERN.matcher(savedFormData);
             if (matcher.matches()) {
-                savedFormData = matcher.replaceFirst(String.format("$1%s%s$3",
+                savedFormData = matcher.replaceFirst("$1%s%s$3".formatted(
                         FACES_VIEW_STATE_EQUALS, viewState));
                 log.debug("Encoded w/Replaced ViewState: {}", savedFormData);
             }
@@ -573,8 +575,17 @@ public class FormResubmitSupport {
     static PartialAjaxResult noJSFAjaxRequests(String savedFormData, boolean isStateless) {
         var partialMatcher = PARTIAL_REQUEST_PATTERN.matcher(savedFormData);
         boolean hasPartialAjax = partialMatcher.find();
-        return new PartialAjaxResult(isStateless ? savedFormData : INITIAL_AMPERSAND.matcher(partialMatcher
-                .replaceAll("")).replaceFirst(""), hasPartialAjax, isStateless);
+        String appendFacesSourceString = "";
+        if (hasPartialAjax) {
+            var facesSourceMatcher = FACES_SOURCE_PATTERN.matcher(savedFormData);
+            if (facesSourceMatcher.find()) {
+                appendFacesSourceString = "&%s=".formatted(facesSourceMatcher.group(1));
+            }
+        }
+
+        return new PartialAjaxResult((isStateless ? savedFormData : INITIAL_AMPERSAND.matcher(partialMatcher
+                .replaceAll("")).replaceFirst(""))
+                + appendFacesSourceString, hasPartialAjax, isStateless);
     }
 
     static boolean isJSFStatefulForm(@NonNull String savedFormData) {

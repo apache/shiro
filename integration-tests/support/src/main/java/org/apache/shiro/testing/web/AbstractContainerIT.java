@@ -18,11 +18,11 @@
  */
 package org.apache.shiro.testing.web;
 
-import org.apache.shiro.lang.codec.Base64;
+import java.nio.charset.StandardCharsets;
 
-import com.github.mjeanroy.junit.servers.jetty9.EmbeddedJetty;
+import com.github.mjeanroy.junit.servers.jetty12.EmbeddedJetty;
 import com.github.mjeanroy.junit.servers.jetty.EmbeddedJettyConfiguration;
-import org.eclipse.jetty.annotations.AnnotationConfiguration;
+import java.util.Base64;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -30,15 +30,7 @@ import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.util.resource.PathResource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.eclipse.jetty.webapp.Configuration;
-import org.eclipse.jetty.webapp.FragmentConfiguration;
-import org.eclipse.jetty.webapp.JettyWebXmlConfiguration;
-import org.eclipse.jetty.webapp.MetaInfConfiguration;
-import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.webapp.WebInfConfiguration;
-import org.eclipse.jetty.webapp.WebXmlConfiguration;
 import org.htmlunit.WebClient;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -47,16 +39,13 @@ import org.junit.jupiter.api.BeforeEach;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 public abstract class AbstractContainerIT {
@@ -137,7 +126,7 @@ public abstract class AbstractContainerIT {
         // TLS
         tlsPort = getFreePort();
 
-        final SslContextFactory sslContextFactory = new SslContextFactory.Server();
+        final SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setKeyStorePath(TEST_KEYSTORE_PATH.getAbsolutePath());
         sslContextFactory.setKeyStorePassword(TEST_KEYSTORE_PASSWORD);
         sslContextFactory.setKeyManagerPassword(TEST_KEYSTORE_PASSWORD);
@@ -154,7 +143,7 @@ public abstract class AbstractContainerIT {
 
         jetty.start();
 
-        assertTrue(jetty.isStarted());
+        assertThat(jetty.isStarted()).isTrue();
     }
 
     protected static String getBaseUri() {
@@ -174,17 +163,18 @@ public abstract class AbstractContainerIT {
         });
 
         assert warFiles != null;
-        assertEquals(1, warFiles.length, "Expected only one war file in target directory, run 'mvn clean' and try again");
+        assertThat(warFiles.length)
+            .as("Expected only one war file in target directory, run 'mvn clean' and try again")
+            .isEqualTo(1);
 
         return warFiles[0].getAbsolutePath().replaceFirst("\\.war$", "");
     }
 
-    protected static String getBasicAuthorizationHeaderValue(String username, String password)
-            throws UnsupportedEncodingException {
+    protected static String getBasicAuthorizationHeaderValue(String username, String password) {
         String authorizationHeader = username + ":" + password;
         byte[] valueBytes;
-        valueBytes = authorizationHeader.getBytes("UTF-8");
-        authorizationHeader = new String(Base64.encode(valueBytes));
+        valueBytes = authorizationHeader.getBytes(StandardCharsets.UTF_8);
+        authorizationHeader = new String(Base64.getEncoder().encode(valueBytes));
         return "Basic " + authorizationHeader;
     }
 

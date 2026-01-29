@@ -54,10 +54,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 
 
 public class ShiroAopModuleTest {
@@ -79,13 +78,13 @@ public class ShiroAopModuleTest {
 
             @Override
             protected void configureDefaultInterceptors(AnnotationResolver resolver) {
-                assertSame(annotationResolver, resolver);
+                assertThat(resolver).isSameAs(annotationResolver);
                 bind(Object.class).annotatedWith(Names.named("configureDefaultInterceptors"));
             }
 
             @Override
             protected void configureInterceptors(AnnotationResolver resolver) {
-                assertSame(annotationResolver, resolver);
+                assertThat(resolver).isSameAs(annotationResolver);
                 bind(Object.class).annotatedWith(Names.named("configureInterceptors"));
             }
         };
@@ -94,8 +93,8 @@ public class ShiroAopModuleTest {
         boolean calledCustom = false;
 
         for (Element e : Elements.getElements(underTest)) {
-            if (e instanceof Binding) {
-                Key key = ((Binding) e).getKey();
+            if (e instanceof Binding binding) {
+                Key key = binding.getKey();
                 if (Named.class.isAssignableFrom(key.getAnnotation().annotationType())
                         && "configureInterceptors".equals(((Named) key.getAnnotation()).value())
                         && key.getTypeLiteral().getRawType().equals(Object.class)) {
@@ -124,9 +123,8 @@ public class ShiroAopModuleTest {
         List<Element> elements = Elements.getElements(underTest);
 
         for (Element element : elements) {
-            if (element instanceof InterceptorBinding) {
-                InterceptorBinding binding = (InterceptorBinding) element;
-                assertTrue(binding.getClassMatcher().matches(getClass()));
+            if (element instanceof InterceptorBinding binding) {
+                assertThat(binding.getClassMatcher().matches(getClass())).isTrue();
                 Method method = null;
                 Class<? extends Annotation> theAnnotation = null;
 
@@ -144,15 +142,15 @@ public class ShiroAopModuleTest {
                 }
 
                 List<MethodInterceptor> interceptors = binding.getInterceptors();
-                assertEquals(1, interceptors.size());
-                assertTrue(interceptors.get(0) instanceof AopAllianceMethodInterceptorAdapter);
-                assertTrue(interceptorTypes.get(theAnnotation)
-                                .isInstance(((AopAllianceMethodInterceptorAdapter) interceptors.get(0)).shiroInterceptor));
+                assertThat(interceptors).hasSize(1);
+                assertThat(interceptors.get(0) instanceof AopAllianceMethodInterceptorAdapter).isTrue();
+                assertThat(interceptorTypes.get(theAnnotation)
+                        .isInstance(((AopAllianceMethodInterceptorAdapter) interceptors.get(0)).shiroInterceptor)).isTrue();
 
             }
         }
 
-        assertTrue(protectedMethods.isEmpty(), "Not all interceptors were bound.");
+        assertThat(protectedMethods.isEmpty()).as("Not all interceptors were bound.").isTrue();
     }
 
     @Target({ElementType.TYPE, ElementType.METHOD})

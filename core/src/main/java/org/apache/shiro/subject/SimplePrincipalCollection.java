@@ -24,6 +24,7 @@ import org.apache.shiro.lang.util.StringUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,9 +39,17 @@ import java.util.Set;
 /**
  * A simple implementation of the {@link MutablePrincipalCollection} interface that tracks principals internally
  * by storing them in a {@link LinkedHashMap}.
+ * <p/>
+ * To comply with the {@link PrincipalCollection PrincipalCollection} interface, mutation of a principal
+ * collection must be restricted to the time before it is shared with other objects.
+ *
+ * @deprecated use {@link ImmutablePrincipalCollection} instead. Principal collections should not be mutable after
+ * their initial construction because they are shared by an unspecified and unpredictable number of other objects.
+ * This implementation only exists for compatibility with existing code.
  *
  * @since 0.9
  */
+@Deprecated
 @SuppressWarnings({"unchecked"})
 public class SimplePrincipalCollection implements MutablePrincipalCollection {
 
@@ -49,6 +58,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     // that is NOT serialization backwards compatible.  Serialization-compatible
     // changes do not require a change to this number.  If you need to generate
     // a new number in this case, use the JDK's 'serialver' program to generate it.
+    @Serial
     private static final long serialVersionUID = -6305224034025797558L;
 
     //TODO - complete JavaDoc
@@ -61,8 +71,8 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     }
 
     public SimplePrincipalCollection(Object principal, String realmName) {
-        if (principal instanceof Collection) {
-            addAll((Collection) principal, realmName);
+        if (principal instanceof Collection collection) {
+            addAll(collection, realmName);
         } else {
             add(principal, realmName);
         }
@@ -235,8 +245,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         if (o == this) {
             return true;
         }
-        if (o instanceof SimplePrincipalCollection) {
-            SimplePrincipalCollection other = (SimplePrincipalCollection) o;
+        if (o instanceof SimplePrincipalCollection other) {
             return Objects.equals(this.realmPrincipals, other.realmPrincipals);
         }
         return false;

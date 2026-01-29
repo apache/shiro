@@ -26,16 +26,13 @@ import jakarta.servlet.ServletContext;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.easymock.EasyMock.expect;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.mockito.Mockito.mock;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,10 +57,10 @@ public class EnvironmentLoaderServiceTest {
 
         EasyMock.verify(servletContext);
 
-        assertThat(resultEnvironment, instanceOf(IniWebEnvironment.class));
+        assertThat(resultEnvironment).isInstanceOf(IniWebEnvironment.class);
         IniWebEnvironment environmentStub = (IniWebEnvironment) resultEnvironment;
 
-        assertThat(environmentStub.getServletContext(), sameInstance(servletContext));
+        assertThat(environmentStub.getServletContext()).isSameAs(servletContext);
     }
 
     @Test
@@ -79,9 +76,9 @@ public class EnvironmentLoaderServiceTest {
 
         EasyMock.verify(servletContext);
 
-        assertThat(environment, instanceOf(DefaultWebEnvironment.class));
-        assertThat(environment.getShiroFilterConfiguration(), is(notNullValue()));
-        assertThat(environment.getServletContext(), sameInstance(servletContext));
+        assertThat(environment).isInstanceOf(DefaultWebEnvironment.class);
+        assertThat(environment.getShiroFilterConfiguration()).isNotNull();
+        assertThat(environment.getServletContext()).isSameAs(servletContext);
     }
 
     @Test
@@ -120,10 +117,10 @@ public class EnvironmentLoaderServiceTest {
 
         EasyMock.verify(servletContext);
 
-        assertThat(resultEnvironment, instanceOf(WebEnvironmentStub.class));
+        assertThat(resultEnvironment).isInstanceOf(WebEnvironmentStub.class);
         WebEnvironmentStub environmentStub = (WebEnvironmentStub) resultEnvironment;
 
-        assertThat(environmentStub.getServletContext(), sameInstance(servletContext));
+        assertThat(environmentStub.getServletContext()).isSameAs(servletContext);
     }
 
 }

@@ -27,8 +27,7 @@ import org.junit.jupiter.api.Test;
 import jakarta.servlet.Filter;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * TODO - Class JavaDoc
@@ -54,15 +53,15 @@ public class WebIniSecurityManagerFactoryTest {
         @SuppressWarnings("deprecation")
         WebIniSecurityManagerFactory factory = new WebIniSecurityManagerFactory(ini);
         org.apache.shiro.mgt.SecurityManager sm = factory.getInstance();
-        assertNotNull(sm);
-        assertTrue(sm instanceof DefaultWebSecurityManager);
+        assertThat(sm).isNotNull();
+        assertThat(sm instanceof DefaultWebSecurityManager).isTrue();
 
         //now assert that all of the default filters exist:
         Map<String, ?> beans = factory.getBeans();
         for (DefaultFilter defaultFilter : DefaultFilter.values()) {
             Filter filter = (Filter) beans.get(defaultFilter.name());
-            assertNotNull(filter);
-            assertTrue(defaultFilter.getFilterClass().isAssignableFrom(filter.getClass()));
+            assertThat(filter).isNotNull();
+            assertThat(defaultFilter.getFilterClass().isAssignableFrom(filter.getClass())).isTrue();
         }
     }
 }

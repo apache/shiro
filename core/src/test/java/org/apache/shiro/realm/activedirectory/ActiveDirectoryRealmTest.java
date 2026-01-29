@@ -18,24 +18,29 @@
  */
 package org.apache.shiro.realm.activedirectory;
 
+import java.util.Optional;
 import org.apache.shiro.SecurityUtils;
-
+import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAccount;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.ini.IniSecurityManagerFactory;
+import org.apache.shiro.lang.util.Factory;
+import org.apache.shiro.lang.util.LifecycleUtils;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.UserIdPrincipal;
 import org.apache.shiro.realm.UsernamePrincipal;
 import org.apache.shiro.realm.ldap.LdapContextFactory;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.easymock.Capture;
@@ -53,6 +58,8 @@ import javax.naming.ldap.LdapContext;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
@@ -60,14 +67,7 @@ import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.hamcrest.MatcherAssert.assertThat;
 
-import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.is;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Simple test case for ActiveDirectoryRealm.
@@ -108,17 +108,17 @@ public class ActiveDirectoryRealmTest {
         String localhost = "localhost";
         Subject subject = SecurityUtils.getSubject();
         subject.login(new UsernamePasswordToken(USERNAME, PASSWORD, localhost));
-        assertTrue(subject.isAuthenticated());
-        assertTrue(subject.hasRole(ROLE));
+        assertThat(subject.isAuthenticated()).isTrue();
+        assertThat(subject.hasRole(ROLE)).isTrue();
 
 
         UsernamePrincipal usernamePrincipal = subject.getPrincipals().oneByType(UsernamePrincipal.class);
-        assertEquals(USERNAME, usernamePrincipal.getUsername());
+        assertThat(usernamePrincipal.getUsername()).isEqualTo(USERNAME);
 
         UserIdPrincipal userIdPrincipal = subject.getPrincipals().oneByType(UserIdPrincipal.class);
-        assertEquals(USER_ID, userIdPrincipal.getUserId());
+        assertThat(userIdPrincipal.getUserId()).isEqualTo(USER_ID);
 
-        assertTrue(realm.hasRole(subject.getPrincipals(), ROLE));
+        assertThat(realm.hasRole(subject.getPrincipals(), ROLE)).isTrue();
 
         subject.logout();
     }
@@ -131,6 +131,22 @@ public class ActiveDirectoryRealmTest {
         // suffix matches user entry
         assertExistingUserSuffix(USERNAME + "@example.com", "testuser@example.com");
         assertExistingUserSuffix(USERNAME + "@EXAMPLE.com", "testuser@EXAMPLE.com");
+    }
+
+    @Test
+    void testInitialization() {
+        try {
+            // Initialize AD Realm
+            @SuppressWarnings("deprecation")
+            Factory<SecurityManager> factory = new IniSecurityManagerFactory(
+                    "classpath:org/apache/shiro/realm/activedirectory/AdRealm.withPrincipalSuffix.ini");
+            SecurityUtils.setSecurityManager(factory.getInstance());
+            // Destroy Realm
+            SecurityManager securityManager = SecurityUtils.getSecurityManager();
+            LifecycleUtils.destroy(securityManager);
+        } catch (UnavailableSecurityManagerException e) {
+        }
+        SecurityUtils.setSecurityManager(null);
     }
 
     public void assertExistingUserSuffix(String username, String expectedPrincipalName) throws Exception {
@@ -158,8 +174,8 @@ public class ActiveDirectoryRealmTest {
         });
 
         Object[] args = captureArgs.getValue();
-        assertThat(args, arrayWithSize(1));
-        assertThat(args[0], is(expectedPrincipalName));
+        assertThat(args).hasSize(1);
+        assertThat(args[0]).isEqualTo(expectedPrincipalName);
     }
 
     public static class TestActiveDirectoryRealm extends ActiveDirectoryRealm {
@@ -177,6 +193,11 @@ public class ActiveDirectoryRealmTest {
                 public boolean doCredentialsMatch(AuthenticationToken object, AuthenticationInfo object1) {
                     return true;
                 }
+
+                @Override
+                public Optional<AuthenticationInfo> createSimulatedCredentials() {
+                    return Optional.of(new SimpleAuthenticationInfo(USERNAME, PASSWORD, "ad"));
+                }
             };
 
             setCredentialsMatcher(credentialsMatcher);
@@ -190,10 +211,10 @@ public class ActiveDirectoryRealmTest {
             SimpleAccount account = (SimpleAccount) super.doGetAuthenticationInfo(token);
 
             if (account != null) {
-                SimplePrincipalCollection principals = new SimplePrincipalCollection();
-                principals.add(new UserIdPrincipal(USER_ID), getName());
-                principals.add(new UsernamePrincipal(USERNAME), getName());
-                account.setPrincipals(principals);
+                var principals = new ImmutablePrincipalCollection.Builder();
+                principals.addPrincipal(new UserIdPrincipal(USER_ID), getName());
+                principals.addPrincipal(new UsernamePrincipal(USERNAME), getName());
+                account.setPrincipals(principals.build());
             }
 
             return account;

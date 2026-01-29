@@ -29,6 +29,7 @@ import org.apache.shiro.lang.io.DefaultSerializer;
 import org.apache.shiro.lang.io.Serializer;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.ByteUtils;
+import org.apache.shiro.lang.util.ClassUtils;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
@@ -275,7 +276,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return true if remember me services should be performed as a result of the successful authentication attempt.
      */
     protected boolean isRememberMe(AuthenticationToken token) {
-        return token instanceof RememberMeAuthenticationToken && ((RememberMeAuthenticationToken) token).isRememberMe();
+        return token instanceof RememberMeAuthenticationToken rmat && rmat.isRememberMe();
     }
 
     /**
@@ -460,7 +461,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
                     + "configuration problem or corrupted principals.  This could also be due to a recently "
                     + "changed encryption key, if you are using a shiro.ini file, this property would be "
                     + "'securityManager.rememberMeManager.cipherKey'"
-                    + "see: http://shiro.apache.org/web.html#Web-RememberMeServices. "
+                    + "see: https://shiro.apache.org/web.html#Web-RememberMeServices. "
                     + "The remembered identity will be forgotten and not used for this request.";
             LOGGER.warn(message);
         }
@@ -509,7 +510,12 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return the serialized principal collection in the form of a byte array
      */
     protected byte[] serialize(PrincipalCollection principals) {
-        return getSerializer().serialize(principals);
+        ClassUtils.setAdditionalClassLoader(AbstractRememberMeManager.class.getClassLoader());
+        try {
+            return getSerializer().serialize(principals);
+        } finally {
+            ClassUtils.removeAdditionalClassLoader();
+        }
     }
 
     /**
@@ -520,7 +526,12 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @return the deserialized (reconstituted) {@code PrincipalCollection}
      */
     protected PrincipalCollection deserialize(byte[] serializedIdentity) {
-        return getSerializer().deserialize(serializedIdentity);
+        ClassUtils.setAdditionalClassLoader(AbstractRememberMeManager.class.getClassLoader());
+        try {
+            return getSerializer().deserialize(serializedIdentity);
+        } finally {
+            ClassUtils.removeAdditionalClassLoader();
+        }
     }
 
     /**

@@ -28,6 +28,7 @@ import org.bouncycastle.crypto.params.Argon2Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serial;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Base64.Encoder;
@@ -86,11 +87,13 @@ class Argon2Hash extends AbstractCryptHash {
      */
     public static final int DEFAULT_MEMORY_KIB = 64 * 1024;
 
+    @Serial
     private static final long serialVersionUID = 2647354947284558921L;
 
     private static final Logger LOG = LoggerFactory.getLogger(Argon2Hash.class);
 
-    private static final Set<String> ALGORITHMS_ARGON2 = new HashSet<>(Arrays.asList("argon2id", "argon2i", "argon2d"));
+    private static final Set<String> ALGORITHMS_ARGON2 = new HashSet<>(
+            Arrays.asList(DEFAULT_ALGORITHM_NAME, "argon2i", "argon2d"));
 
     private static final Pattern DELIMITER_COMMA = Pattern.compile(",");
 
@@ -227,7 +230,7 @@ class Argon2Hash extends AbstractCryptHash {
                 break;
             case "argon2":
                 // fall through
-            case "argon2id":
+            case DEFAULT_ALGORITHM_NAME:
                 type = Argon2Parameters.ARGON2_id;
                 break;
             default:

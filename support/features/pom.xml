@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -34,13 +34,13 @@
     <properties>
         <aspectj.bundle.version>1.9.4_1</aspectj.bundle.version>
         <c3p0-bundle-version>0.9.5.4_1</c3p0-bundle-version>
-        <ehcache.bundle.version>2.6.11_1</ehcache.bundle.version>
+        <ehcache.bundle.version>3.10.8_1</ehcache.bundle.version>
         <hikaricp-version>2.4.13</hikaricp-version>
         <quartz.bundle.version>2.3.2_1</quartz.bundle.version>
         <!-- Not a Shiro dependency - used for quartz bundle resolution only (see features.xml): -->
         <commons.collections.version>3.2.2</commons.collections.version>
         <!-- karaf plugin version -->
-        <karaf.version>4.4.7</karaf.version>
+        <karaf.version>4.4.9</karaf.version>
     </properties>
 
     <dependencies>
@@ -106,36 +106,36 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--            <plugin>-->
-            <!--                <groupId>org.apache.karaf.tooling</groupId>-->
-            <!--                <artifactId>karaf-maven-plugin</artifactId>-->
-            <!--                <version>${karaf.version}</version>-->
-            <!--                <executions>-->
-            <!--                    <execution>-->
-            <!--                        <id>verify</id>-->
-            <!--                        <phase>process-resources</phase>-->
-            <!--                        <goals>-->
-            <!--                            <goal>verify</goal>-->
-            <!--                        </goals>-->
-            <!--                        <configuration>-->
-            <!--                            <descriptors>-->
-            <!--                                <descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features</descriptor>-->
-            <!--                                <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features</descriptor>-->
-            <!--                                <descriptor>mvn:org.apache.karaf.features/spring-legacy/${karaf.version}/xml/features</descriptor>-->
-            <!--                                <descriptor>file:${project.build.directory}/classes/features.xml</descriptor>-->
-            <!--                            </descriptors>-->
-            <!--                            <distribution>org.apache.karaf.features:framework</distribution>-->
-            <!--                            <javase>1.8</javase>-->
-            <!--                            <framework>-->
-            <!--                                <feature>framework</feature>-->
-            <!--                            </framework>-->
-            <!--                            <features>-->
-            <!--                                <feature>shiro*</feature>-->
-            <!--                            </features>-->
-            <!--                        </configuration>-->
-            <!--                    </execution>-->
-            <!--                </executions>-->
-            <!--            </plugin>-->
+                        <plugin>
+                            <groupId>org.apache.karaf.tooling</groupId>
+                            <artifactId>karaf-maven-plugin</artifactId>
+                            <version>${karaf.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>verify</id>
+                                    <phase>process-resources</phase>
+                                    <goals>
+                                        <goal>verify</goal>
+                                    </goals>
+                                    <configuration>
+                                        <descriptors>
+                                            <descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features</descriptor>
+                                            <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features</descriptor>
+                                            <descriptor>mvn:org.apache.karaf.features/spring-legacy/${karaf.version}/xml/features</descriptor>
+                                            <descriptor>file:${project.build.directory}/classes/features.xml</descriptor>
+                                        </descriptors>
+                                        <distribution>org.apache.karaf.features:framework</distribution>
+                                        <javase>17</javase>
+                                        <framework>
+                                            <feature>framework</feature>
+                                        </framework>
+                                        <features>
+                                            <feature>shiro*</feature>
+                                        </features>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
         </plugins>
     </build>
 

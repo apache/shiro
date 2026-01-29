@@ -117,7 +117,7 @@ public class DelegatingSubject implements Subject {
         if (session == null) {
             throw new IllegalArgumentException("session cannot be null");
         }
-        return new StoppingAwareProxiedSession(session, this);
+        return session instanceof StoppingAwareProxiedSession ? session : new StoppingAwareProxiedSession(session, this);
     }
 
     public SecurityManager getSecurityManager() {
@@ -265,8 +265,7 @@ public class DelegatingSubject implements Subject {
 
         String host = null;
 
-        if (subject instanceof DelegatingSubject) {
-            DelegatingSubject delegating = (DelegatingSubject) subject;
+        if (subject instanceof DelegatingSubject delegating) {
             //we have to do this in case there are assumed identities - we don't want to lose the 'real' principals:
             principals = delegating.principals;
             host = delegating.host;
@@ -281,8 +280,8 @@ public class DelegatingSubject implements Subject {
         }
         this.principals = principals;
         this.authenticated = true;
-        if (token instanceof HostAuthenticationToken) {
-            host = ((HostAuthenticationToken) token).getHost();
+        if (token instanceof HostAuthenticationToken authenticationToken) {
+            host = authenticationToken.getHost();
         }
         if (host != null) {
             this.host = host;

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -40,8 +40,20 @@
             <artifactId>shiro-cache</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache-core</artifactId>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>4.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <classifier>jakarta</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.jaxb</groupId>
+                    <artifactId>jaxb-runtime</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Test dependencies -->
         <dependency>
@@ -72,7 +84,7 @@
                         <Export-Package>org.apache.shiro.cache.ehcache*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro.cache*;version="${shiro.osgi.importRange}",
-                            net.sf.ehcache*;version="[2.5, 3)",
+                            org.ehcache*;version="[3.10, 4)",
                             *
                         </Import-Package>
                         <_removeheaders>Bnd-LastModified</_removeheaders>

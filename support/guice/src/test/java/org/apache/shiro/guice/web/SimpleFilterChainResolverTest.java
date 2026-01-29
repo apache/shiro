@@ -35,11 +35,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createStrictControl;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.same;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 /**
@@ -124,8 +124,8 @@ public class SimpleFilterChainResolverTest {
 
         ctrl.replay();
 
-        assertNull(underTest.getChain(request, response, originalChain),
-                "Expected no chain to match, did not get a null value in return.");
+        assertThat(underTest.getChain(request, response, originalChain))
+            .as("Expected no chain to match, did not get a null value in return.").isNull();
 
         ctrl.verify();
     }

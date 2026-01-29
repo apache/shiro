@@ -25,12 +25,11 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for the {@link PathMatchingFilter} implementation.
@@ -96,7 +95,7 @@ public class PathMatchingFilterTest {
 
         boolean continueFilterChain = filter.preHandle(request, response);
 
-        assertTrue(continueFilterChain, "FilterChain should continue.");
+        assertThat(continueFilterChain).as("FilterChain should continue.").isTrue();
 
         verify(request);
     }
@@ -123,7 +122,7 @@ public class PathMatchingFilterTest {
 
         boolean continueFilterChain = filter.preHandle(request, response);
 
-        assertFalse(continueFilterChain, "FilterChain should NOT continue.");
+        assertThat(continueFilterChain).as("FilterChain should NOT continue.").isFalse();
 
         verify(request);
     }
@@ -140,7 +139,7 @@ public class PathMatchingFilterTest {
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/", request);
-        assertTrue(matchEnabled, "PathMatch can match URL end with Separator");
+        assertThat(matchEnabled).as("PathMatch can match URL end with Separator").isTrue();
         verify(request);
     }
 
@@ -156,7 +155,7 @@ public class PathMatchingFilterTest {
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/resource/book", request);
-        assertTrue(matchEnabled, "PathMatch can match URL end with Separator");
+        assertThat(matchEnabled).as("PathMatch can match URL end with Separator").isTrue();
         verify(request);
     }
 
@@ -172,7 +171,7 @@ public class PathMatchingFilterTest {
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/resource/book", request);
-        assertTrue(matchEnabled, "PathMatch can match URL end with Separator");
+        assertThat(matchEnabled).as("PathMatch can match URL end with Separator").isTrue();
         verify(request);
     }
 
@@ -188,7 +187,7 @@ public class PathMatchingFilterTest {
         replay(request);
 
         boolean matchEnabled = filter.pathsMatch("/resource/book", request);
-        assertTrue(matchEnabled, "PathMatch can match URL end with multi Separator");
+        assertThat(matchEnabled).as("PathMatch can match URL end with multi Separator").isTrue();
         verify(request);
     }
 

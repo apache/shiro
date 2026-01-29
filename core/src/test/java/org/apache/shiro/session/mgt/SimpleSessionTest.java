@@ -27,8 +27,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SimpleSessionTest {
 
@@ -42,22 +41,22 @@ public class SimpleSessionTest {
 
         SimpleSession deserialized = serializeAndDeserialize(session);
 
-        assertEquals(timeout, deserialized.getTimeout());
-        assertEquals(start, deserialized.getStartTimestamp());
-        assertEquals(lastAccess, deserialized.getLastAccessTime());
+        assertThat(deserialized.getTimeout()).isEqualTo(timeout);
+        assertThat(deserialized.getStartTimestamp()).isEqualTo(start);
+        assertThat(deserialized.getLastAccessTime()).isEqualTo(lastAccess);
     }
 
     @Test
     void serializeHost() throws IOException, ClassNotFoundException {
         SimpleSession session = new SimpleSession("localhost");
-        assertEquals("localhost", serializeAndDeserialize(session).getHost());
+        assertThat(serializeAndDeserialize(session).getHost()).isEqualTo("localhost");
     }
 
     @Test
     void serializeExpired() throws IOException, ClassNotFoundException {
         SimpleSession session = new SimpleSession();
         session.setExpired(true);
-        assertTrue(serializeAndDeserialize(session).isExpired());
+        assertThat(serializeAndDeserialize(session).isExpired()).isTrue();
     }
 
     private SimpleSession serializeAndDeserialize(SimpleSession session) throws IOException, ClassNotFoundException {

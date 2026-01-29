@@ -17,6 +17,7 @@ import org.apache.shiro.testing.logcapture.LogCapture;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.LogRecord;
 import jakarta.servlet.ServletException;
@@ -32,6 +33,7 @@ import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
  */
 @WebServlet("/lastException")
 public class ExceptionServlet extends HttpServlet {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Override

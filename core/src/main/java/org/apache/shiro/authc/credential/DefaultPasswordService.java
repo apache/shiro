@@ -169,9 +169,7 @@ public class DefaultPasswordService implements HashingPasswordService {
         //configuration changes.
         HashFormat discoveredFormat = this.hashFormatFactory.getInstance(saved);
 
-        if (discoveredFormat instanceof ParsableHashFormat) {
-
-            ParsableHashFormat parsableHashFormat = (ParsableHashFormat) discoveredFormat;
+        if (discoveredFormat instanceof ParsableHashFormat parsableHashFormat) {
             Hash savedHash = parsableHashFormat.parse(saved);
 
             return passwordsMatch(submittedPlaintext, savedHash);

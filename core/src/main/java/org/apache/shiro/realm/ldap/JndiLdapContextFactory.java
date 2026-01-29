@@ -197,7 +197,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      *
      * @return the base JNDI environment template to use when acquiring an LDAP connection (an {@link LdapContext})
      */
-    public Map getEnvironment() {
+    public Map<String, Object> getEnvironment() {
         return this.environment;
     }
 
@@ -213,8 +213,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      *
      * @param env the base JNDI environment template to use when acquiring LDAP connections.
      */
-    @SuppressWarnings({"unchecked"})
-    public void setEnvironment(Map env) {
+    public void setEnvironment(Map<String, Object> env) {
         this.environment = env;
     }
 
@@ -488,7 +487,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      * @return an LdapConnection
      * @throws NamingException if a problem occurs creating the connection
      */
-    protected LdapContext createLdapContext(Hashtable env) throws NamingException {
+    protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
         return new InitialLdapContext(env, null);
     }
 
@@ -519,8 +518,8 @@ public class JndiLdapContextFactory implements LdapContextFactory {
                 // from the FAQ, we need to check for empty credentials:
                 // http://docs.oracle.com/javase/tutorial/jndi/ldap/faq.html
                 if (credentials == null
-                        || (credentials instanceof byte[] && ((byte[]) credentials).length <= 0)
-                        || (credentials instanceof char[] && ((char[]) credentials).length <= 0)
+                        || (credentials instanceof byte[] bytes && bytes.length <= 0)
+                        || (credentials instanceof char[] chars && chars.length <= 0)
                         || (String.class.isInstance(credentials) && !StringUtils.hasText(String.valueOf(credentials)))) {
 
                     throw new javax.naming.AuthenticationException("LDAP Simple authentication requires both a "

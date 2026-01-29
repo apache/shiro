@@ -49,28 +49,6 @@ public class ShiroHttpSession implements HttpSession {
      */
     public static final String DEFAULT_SESSION_ID_NAME = "JSESSIONID";
 
-    private static final Enumeration<String> EMPTY_ENUMERATION = new Enumeration<>() {
-        public boolean hasMoreElements() {
-            return false;
-        }
-
-        public String nextElement() {
-            return null;
-        }
-    };
-
-    @SuppressWarnings({"deprecation"})
-    private static final jakarta.servlet.http.HttpSessionContext HTTP_SESSION_CONTEXT =
-            new jakarta.servlet.http.HttpSessionContext() {
-                public HttpSession getSession(String s) {
-                    return null;
-                }
-
-                public Enumeration<String> getIds() {
-                    return EMPTY_ENUMERATION;
-                }
-            };
-
     protected ServletContext servletContext;
     protected HttpServletRequest currentRequest;
     //'real' Shiro Session
@@ -127,23 +105,12 @@ public class ShiroHttpSession implements HttpSession {
         }
     }
 
-    @SuppressWarnings({"deprecation"})
-    public jakarta.servlet.http.HttpSessionContext getSessionContext() {
-        return HTTP_SESSION_CONTEXT;
-    }
-
     public Object getAttribute(String s) {
         try {
             return getSession().getAttribute(s);
         } catch (InvalidSessionException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    @Deprecated
-    @Override
-    public Object getValue(String s) {
-        return getAttribute(s);
     }
 
     protected Set<String> getKeyNames() {

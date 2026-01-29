@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.realm;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -28,12 +30,10 @@ import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheManager;
-import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.lang.util.Initializable;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -110,6 +110,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * @since 0.2
  */
+@SuppressWarnings("checkstyle:MethodCount")
 public abstract class AuthenticatingRealm extends CachingRealm implements Initializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticatingRealm.class);
@@ -122,6 +123,12 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @since 1.2
      */
     private static final String DEFAULT_AUTHENTICATION_CACHE_SUFFIX = ".authenticationCache";
+
+    /**
+     * Simulated authentication info, should only be set once to avoid wasting useless CPU cycles.
+     */
+    private final AtomicReference<AuthenticationInfo> simulatedAuthenticationInfo =
+        new AtomicReference<>();
 
     /**
      * Credentials matcher used to determine if the provided credentials match the credentials stored in the data store.
@@ -391,7 +398,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @since 1.2
      */
     public final void init() {
-        //trigger obtaining the authorization cache if possible
+        //trigger obtaining the authentication cache if possible
         getAvailableAuthenticationCache();
         onInit();
     }
@@ -411,7 +418,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @since 1.2
      */
     protected void afterCacheManagerSet() {
-        //trigger obtaining the authorization cache if possible
+        //trigger obtaining the authentication cache if possible
         getAvailableAuthenticationCache();
     }
 
@@ -485,9 +492,9 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
             Object key = getAuthenticationCacheKey(token);
             info = cache.get(key);
             if (info == null) {
-                LOGGER.trace("No AuthorizationInfo found in cache for key [{}]", key);
+                LOGGER.trace("No AuthenticationInfo found in cache for key [{}]", key);
             } else {
-                LOGGER.trace("Found cached AuthorizationInfo for key [{}]", key);
+                LOGGER.trace("Found cached AuthenticationInfo for key [{}]", key);
             }
         }
 
@@ -578,9 +585,43 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
         if (info != null) {
             assertCredentialsMatch(token, info);
         } else {
-            LOGGER.debug("No AuthenticationInfo found for submitted AuthenticationToken [{}].  Returning null.", token);
+            simulateFailedLogin(token);
         }
 
+        return info;
+    }
+
+    private void simulateFailedLogin(AuthenticationToken token) {
+        try {
+            AuthenticationInfo simulated = ensureSimulatedAuthenticationInfo();
+            if (simulated != null && assertCredentialsMatchWithoutException(token, simulated)) {
+                    String msg = "Submitted credentials for token [" + token + "] matched the simulated credentials. "
+                        + "This indicates a misconfiguration of the realm's "
+                        + "CredentialsMatcher or simulated credentials.  Please review your configuration.";
+                    throw new IncorrectCredentialsException(msg);
+            }
+        } catch (AuthenticationException authenticationException) {
+            // should not happen as the auth info comes directly from the credential service,
+            // but log to ensure implementations can find their flaw.
+            LOGGER.error(
+                "CredentialsMatcher [{}] threw exception on method 'doCredentialsMatch'",
+                    getCredentialsMatcher(), authenticationException);
+        }
+    }
+
+    /**
+     * Make sure some AuthenticationInfo for simulated checks does exist. If not, it will be generated.
+     * @return simulated AuthenticationInfo
+     */
+    AuthenticationInfo ensureSimulatedAuthenticationInfo() {
+        var info = simulatedAuthenticationInfo.get();
+        if (info == null) {
+            getCredentialsMatcher().createSimulatedCredentials()
+                    .ifPresentOrElse(simulatedAuthenticationInfo::set, () -> LOGGER.warn(
+                            "CredentialsMatcher [{}] did not supply simulated credentials. Please update the implementation.",
+                            getCredentialsMatcher()));
+            return simulatedAuthenticationInfo.get();
+        }
         return info;
     }
 
@@ -593,17 +634,10 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @throws AuthenticationException if the token's credentials do not match the stored account credentials.
      */
     protected void assertCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) throws AuthenticationException {
-        CredentialsMatcher cm = getCredentialsMatcher();
-        if (cm != null) {
-            if (!cm.doCredentialsMatch(token, info)) {
-                //not successful - throw an exception to indicate this:
-                String msg = "Submitted credentials for token [" + token + "] did not match the expected credentials.";
-                throw new IncorrectCredentialsException(msg);
-            }
-        } else {
-            throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify "
-                    + "credentials during authentication.  If you do not wish for credentials to be examined, you "
-                    + "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
+        if (!assertCredentialsMatchWithoutException(token, info)) {
+            //not successful - throw an exception to indicate this:
+            String msg = "Submitted credentials for token [" + token + "] did not match the expected credentials.";
+            throw new IncorrectCredentialsException(msg);
         }
     }
 
@@ -677,7 +711,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * {@link #clearCache(org.apache.shiro.subject.PrincipalCollection)} method instead (which will in turn call this
      * method by default).
      *
-     * @param principals the principals of the account for which to clear the cached AuthorizationInfo.
+     * @param principals the principals of the account for which to clear the cached AuthenticationInfo.
      * @see #clearCache(org.apache.shiro.subject.PrincipalCollection)
      * @since 1.2
      */
@@ -710,4 +744,24 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      */
     protected abstract AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException;
 
+    /**
+     * Asserts that the submitted {@code AuthenticationToken}'s credentials match the stored account
+     * needed for simulated checks that do not need to throw exceptions.
+     *
+     * @param token the submitted authentication token
+     * @param info  the AuthenticationInfo corresponding to the given {@code token}
+     * @return true if the token's credentials match the stored account credentials, false otherwise.
+     * @throws AuthenticationException only for configuration problems.
+     */
+    private boolean assertCredentialsMatchWithoutException(AuthenticationToken token,
+                                                           AuthenticationInfo info) throws AuthenticationException {
+        CredentialsMatcher cm = getCredentialsMatcher();
+        if (cm != null) {
+            return cm.doCredentialsMatch(token, info);
+        } else {
+            throw new AuthenticationException("A CredentialsMatcher must be configured in order to verify "
+                    + "credentials during authentication.  If you do not wish for credentials to be examined, you "
+                    + "can configure an " + AllowAllCredentialsMatcher.class.getName() + " instance.");
+        }
+    }
 }

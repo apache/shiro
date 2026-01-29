@@ -24,11 +24,11 @@
     <parent>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <artifactId>shiro-integration-tests</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
 	<artifactId>shiro-its-guice</artifactId>
-	<name>Apache Shiro :: ITs :: Guice 4</name>
+	<name>Apache Shiro :: ITs :: Guice</name>
 	<packaging>war</packaging>
 
     <properties>
@@ -38,8 +38,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -53,63 +53,12 @@
         </plugins>
     </build>
 
-	<dependencies>
-	    <dependency>
-		<groupId>org.apache.taglibs</groupId>
-		<artifactId>taglibs-standard-spec</artifactId>
-		<scope>compile</scope>
-	    </dependency>
-	    <dependency>
-		<groupId>org.apache.taglibs</groupId>
-		<artifactId>taglibs-standard-impl</artifactId>
-		<scope>compile</scope>
-	    </dependency>
-    <dependency>
-        <groupId>jakarta.servlet</groupId>
-        <artifactId>jakarta.servlet-api</artifactId>
-        <scope>provided</scope>
-    </dependency>
+    <dependencies>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-	    <dependency>
-	        <groupId>org.apache.shiro</groupId>
-	        <artifactId>shiro-core</artifactId>
-	    </dependency>
-	    <dependency>
-	        <groupId>org.apache.shiro</groupId>
-	        <artifactId>shiro-web</artifactId>
-	    </dependency>
-		<dependency>
-		    <groupId>org.apache.shiro</groupId>
-		    <artifactId>shiro-guice</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.inject.extensions</groupId>
-			<artifactId>guice-servlet</artifactId>
-		</dependency>
-	    <dependency>
-	        <groupId>org.slf4j</groupId>
-	        <artifactId>jcl-over-slf4j</artifactId>
-	        <scope>runtime</scope>
-	    </dependency>
-
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-spec</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-impl</artifactId>
-            <scope>compile</scope>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+            <version>6.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -157,16 +106,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jsp</artifactId>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-apache-jsp</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jstl</artifactId>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-annotations</artifactId>
             <version>${jetty.version}</version>
-            <type>pom</type>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -178,25 +126,14 @@
 
     <profiles>
         <profile>
-            <id>jdk16</id>
-            <activation>
-                <jdk>[16,)</jdk>
-            </activation>
-            <properties>
-                <!-- needed by guice until it is compatible with jdk16+. -->
-                <surefire.argLine>--illegal-access=permit</surefire.argLine>
-                <failsafe.argLine>--illegal-access=permit</failsafe.argLine>
-            </properties>
-        </profile>
-        <profile>
             <id>jdk17</id>
             <activation>
                 <jdk>[17,)</jdk>
             </activation>
             <properties>
                 <!-- needed by guice until it is compatible with jdk17+. -->
-                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</surefire.argLine>
-                <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</failsafe.argLine>
+                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</surefire.argLine>
+                <failsafe.argLine>${surefire.argLine}</failsafe.argLine>
             </properties>
         </profile>
     </profiles>

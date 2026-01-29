@@ -274,8 +274,8 @@ public class DefaultFilterChainManager implements FilterChainManager {
     protected void addFilter(String name, Filter filter, boolean init, boolean overwrite) {
         Filter existing = getFilter(name);
         if (existing == null || overwrite) {
-            if (filter instanceof Nameable) {
-                ((Nameable) filter).setName(name);
+            if (filter instanceof Nameable nameable) {
+                nameable.setName(name);
             }
             if (init) {
                 initFilter(filter);
@@ -325,8 +325,8 @@ public class DefaultFilterChainManager implements FilterChainManager {
             LOGGER.debug("Attempting to apply path [" + chainName + "] to filter [" + filter + "] "
                     + "with config [" + chainSpecificFilterConfig + "]");
         }
-        if (filter instanceof PathConfigProcessor) {
-            ((PathConfigProcessor) filter).processPathConfig(chainName, chainSpecificFilterConfig);
+        if (filter instanceof PathConfigProcessor processor) {
+            processor.processPathConfig(chainName, chainSpecificFilterConfig);
         } else {
             if (StringUtils.hasText(chainSpecificFilterConfig)) {
                 //they specified a filter configuration, but the Filter doesn't implement PathConfigProcessor

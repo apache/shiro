@@ -23,9 +23,9 @@ permissions:
 on:
   workflow_dispatch: { }
   push:
-    branches: [ main, '1.13.x', '1.12.x', '1.11.x', '1.10.x' ]
+    branches: [ main, '3.x']
   pull_request:
-    branches: [ main, '1.13.x', '1.12.x', '1.11.x', '1.10.x' ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -33,12 +33,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Set up JDK
-        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 # v4.7.0
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
-          java-version: 11
+          java-version: 25
           distribution: temurin
 
       - name: License Check
@@ -54,13 +54,13 @@ jobs:
 
     strategy:
       matrix:
-        os: [ 'ubuntu-latest', 'windows-latest', 'macOS-latest' ]
-        jdk: [ 11, 17, 21, 23 ]
+        os: [ 'ubuntu-latest', 'windows-2022', 'macOS-latest' ]
+        jdk: [ 17, 21, 25 ]
         dist: [ 'temurin', 'adopt-openj9', 'zulu' ]
         exclude:
           # was already built
           - os: 'ubuntu-latest'
-            jdk: 11
+            jdk: 25
             dist: 'temurin'
           # exclude temurin on MacOS. zulu (also hotspot) and OpenJ9 are sufficient.
           - os: 'macOS-latest'
@@ -71,37 +71,37 @@ jobs:
           # no OpenJ9 21
           - dist: adopt-openj9
             jdk: 21
-          # no OpenJ9 23
+          # no OpenJ9 25
           - dist: adopt-openj9
-            jdk: 23
+            jdk: 25
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Set up JDK
-        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 # v4.7.0
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
         with:
           java-version: ${{ matrix.jdk }}
           distribution: ${{ matrix.dist }}
 
       - name: Build with Maven (Linux)
-        if: matrix.os == 'ubuntu-latest' && matrix.jdk <= 17
+        if: matrix.os == 'ubuntu-latest' && matrix.jdk >= 21
         run: >-
-          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress
           -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build with Maven (non-Linux or JDK > 17)
-        if: matrix.os != 'ubuntu-latest' || matrix.jdk > 17
+      - name: Build with Maven (non-Linux)
+        if: matrix.os != 'ubuntu-latest' || matrix.jdk < 21
         run: >-
-          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
+          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress
           -Pskip_jakarta_ee_tests
 
       - name: Archive test run logs
-        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
           name: test-logs-${{ matrix.os }}-${{ matrix.jdk }}-${{ matrix.dist }}

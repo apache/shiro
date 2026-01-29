@@ -19,27 +19,16 @@
 package org.apache.shiro.guice;
 
 import com.google.inject.TypeLiteral;
-import com.google.inject.matcher.AbstractMatcher;
 import com.google.inject.matcher.Matcher;
 
 final class ShiroMatchers {
 
-    static Matcher<Class> anyPackage = new AbstractMatcher<Class>() {
-
-        public boolean matches(Class aClass) {
-            return aClass.getPackage() != null;
-        }
-    };
+    static Matcher<Class> anyPackage = aClass -> aClass.getPackage() != null;
 
     private ShiroMatchers() {
     }
 
     public static Matcher<TypeLiteral> typeLiteral(final Matcher<Class> classMatcher) {
-        return new AbstractMatcher<TypeLiteral>() {
-
-            public boolean matches(TypeLiteral typeLiteral) {
-                return classMatcher.matches(typeLiteral.getRawType());
-            }
-        };
+        return typeLiteral -> classMatcher.matches(typeLiteral.getRawType());
     }
 }

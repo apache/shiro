@@ -26,7 +26,7 @@
     <parent>
         <artifactId>shiro-integration-tests</artifactId>
         <groupId>org.apache.shiro.integrationtests</groupId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <artifactId>shiro-its-meecrowave-support</artifactId>
@@ -39,64 +39,17 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.meecrowave</groupId>
-            <artifactId>meecrowave-junit</artifactId>
-            <version>${dependency.meecrowave.version}</version> <!-- a least 1.2.11 is required -->
-            <classifier>jakarta</classifier>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.meecrowave</groupId>
-                    <artifactId>meecrowave-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>  <!-- strangely mecrowave junit jakarta references non-jakarta core, so fix that -->
-            <groupId>org.apache.meecrowave</groupId>
             <artifactId>meecrowave-core</artifactId>
             <version>${dependency.meecrowave.version}</version>
-            <classifier>jakarta</classifier>
-            <exclusions>
-                <exclusion>
-                    <groupId>rg.apache.cxf</groupId>
-                    <artifactId>ocxf-rt-rs-client</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>compile</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-            <version>4.0.6</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.cxf</groupId>
-                    <artifactId>cxf-rt-security</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.cxf</groupId>
-                    <artifactId>cxf-rt-transports-http</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>jakarta.xml.soap</groupId>
-                    <artifactId>jakarta.xml.soap-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.activation</groupId>
-                    <artifactId>jakarta.activation</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sun.xml.messaging.saaj</groupId>
-                    <artifactId>saaj-impl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.spec.javax.rmi</groupId>
-                    <artifactId>jboss-rmi-api_1.0_spec</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.woodstox</groupId>
-                    <artifactId>woodstox-core</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.apache.meecrowave</groupId>
+            <artifactId>meecrowave-junit</artifactId>
+            <version>${dependency.meecrowave.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -119,5 +72,32 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-bom</artifactId>
+                <version>4.1.4</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.johnzon</groupId>
+                <artifactId>johnzon-jsonb</artifactId>
+                <version>2.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jaspic-api</artifactId>
+                <version>11.0.15</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-catalina</artifactId>
+                <version>11.0.15</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

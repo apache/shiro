@@ -20,19 +20,17 @@ package org.apache.shiro.spring.security.interceptor;
 
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectThreadState;
 import org.apache.shiro.util.ThreadState;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * Common method tests across implementations.  In actuality, the methods don't change across
@@ -41,8 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  *
  * @since 1.1
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration
+@SpringJUnitConfig
 public abstract class AbstractAuthorizationAnnotationTest {
 
     @Autowired
@@ -72,12 +69,12 @@ public abstract class AbstractAuthorizationAnnotationTest {
     }
 
     protected void bindUser() {
-        PrincipalCollection principals = new SimplePrincipalCollection("test", realm.getName());
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("test", realm.getName());
         bind(new Subject.Builder(securityManager).principals(principals).buildSubject());
     }
 
     protected void bindAuthenticatedUser() {
-        PrincipalCollection principals = new SimplePrincipalCollection("test", realm.getName());
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("test", realm.getName());
         bind(new Subject.Builder(securityManager).
                 principals(principals).authenticated(true).buildSubject());
     }
@@ -92,7 +89,7 @@ public abstract class AbstractAuthorizationAnnotationTest {
 
     @Test
     void testGuestImplementationFailure() {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             bindUser();
             testService.guestImplementation();
         });
@@ -120,7 +117,7 @@ public abstract class AbstractAuthorizationAnnotationTest {
 
     @Test
     void testUserImplementationFailure() {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             bindGuest();
             testService.userImplementation();
         });
@@ -148,7 +145,7 @@ public abstract class AbstractAuthorizationAnnotationTest {
 
     @Test
     void testAuthenticatedImplementationFailure() {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             bindUser();
             testService.authenticatedImplementation();
         });

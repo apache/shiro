@@ -37,8 +37,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @since 2.0
@@ -89,13 +88,28 @@ public class HasherTest {
         Hasher.main(args);
 
         // when
-        assertEquals(1, listAppender.getEvents().size());
+        assertThat(listAppender.getEvents()).hasSize(1);
         LogEvent iLoggingEvent = listAppender.getEvents().get(0);
-        assertTrue(iLoggingEvent.getMessage().getFormattedMessage().contains("$shiro2$argon2id$v=19"));
+        assertThat(iLoggingEvent.getMessage().getFormattedMessage()).contains("$shiro2$argon2id$v=19");
     }
 
     @Test
     public void testBCryptHash() {
+        // given
+        String[] args = {"--debug", "--password", "--pnoconfirm", "--algorithm", "bcrypt2y"};
+        provideInput("secret#shiro,password;Jo8opech");
+
+        // when
+        Hasher.main(args);
+
+        // when
+        assertThat(listAppender.getEvents()).hasSize(1);
+        LogEvent iLoggingEvent = listAppender.getEvents().get(0);
+        assertThat(iLoggingEvent.getMessage().getFormattedMessage()).contains("$shiro2$2y$10$");
+    }
+
+    @Test
+    public void testBCryptHashShortName() {
         // given
         String[] args = {"--debug", "--password", "--pnoconfirm", "--algorithm", "2y"};
         provideInput("secret#shiro,password;Jo8opech");
@@ -104,8 +118,8 @@ public class HasherTest {
         Hasher.main(args);
 
         // when
-        assertEquals(1, listAppender.getEvents().size());
+        assertThat(listAppender.getEvents()).hasSize(1);
         LogEvent iLoggingEvent = listAppender.getEvents().get(0);
-        assertTrue(iLoggingEvent.getMessage().getFormattedMessage().contains("$shiro2$2y$10$"));
+        assertThat(iLoggingEvent.getMessage().getFormattedMessage()).contains("$shiro2$2y$10$");
     }
 }

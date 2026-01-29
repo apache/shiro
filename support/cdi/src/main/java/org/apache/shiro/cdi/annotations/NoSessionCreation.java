@@ -13,6 +13,7 @@
  */
 package org.apache.shiro.cdi.annotations;
 
+import jakarta.inject.Qualifier;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;

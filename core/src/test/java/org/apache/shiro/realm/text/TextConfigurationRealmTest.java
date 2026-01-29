@@ -19,16 +19,17 @@
 package org.apache.shiro.realm.text;
 
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("checkstyle:MagicNumber")
 public class TextConfigurationRealmTest {
@@ -45,7 +46,7 @@ public class TextConfigurationRealmTest {
     private void setUsers() {
         StringBuilder userDefinitions = new StringBuilder();
         for (int i = 1; i < 3; i++) {
-            userDefinitions.append(String.format("user%1$d = user%1$d_password, role1, role2%n", i));
+            userDefinitions.append("user%1$d = user%1$d_password, role1, role2%n".formatted(i));
         }
         realm.setUserDefinitions(userDefinitions.toString());
     }
@@ -114,7 +115,7 @@ public class TextConfigurationRealmTest {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
             public void run() {
-                PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
+                PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 assertTrue(realm.hasRole(principalCollection, "role2"),
                         "principal doesn't have role when it should");
                 assertTrue(realm.hasAllRoles(principalCollection, Arrays.asList(new String[] {"role1", "role2"})),
@@ -131,7 +132,7 @@ public class TextConfigurationRealmTest {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
             public void run() {
-                PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
+                PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 try {
                     realm.checkRoles(principalCollection, new String[] {"role1", "role2"});
                 } catch (AuthorizationException ae) {
@@ -149,7 +150,7 @@ public class TextConfigurationRealmTest {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
             public void run() {
-                PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
+                PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 try {
                     realm.checkPermission(principalCollection, "role1_permission1");
                     realm.checkPermissions(principalCollection, new String[] {"role1_permission1", "role2_permission2"});
@@ -169,7 +170,7 @@ public class TextConfigurationRealmTest {
         executeTest(new Runnable() {
 
             public void run() {
-                PrincipalCollection principalCollection = new SimplePrincipalCollection("user1", "realm1");
+                PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 assertTrue(realm.isPermitted(principalCollection,
                         "role1_permission1"),
                         "permission not permitted when it should be");
@@ -194,7 +195,7 @@ public class TextConfigurationRealmTest {
                     runnable.start();
                     Thread.sleep(500);
                     // No role until lock is released and role definitions are processed
-                    assertFalse(realm.roleExists("role1"), "role exists when it shouldn't");
+                    assertThat(realm.roleExists("role1")).as("role exists when it shouldn't").isFalse();
                 } finally {
                     rolesLock.writeLock().unlock();
                 }
@@ -214,7 +215,7 @@ public class TextConfigurationRealmTest {
         Thread testTask = new Thread(testThread);
         realm.test(testTask);
         testTask.join(500);
-        assertTrue(realm.roleExists("role1"), "role doesn't exist when it should");
+        assertThat(realm.roleExists("role1")).as("role doesn't exist when it should").isTrue();
         testThread.test();
     }
 
@@ -232,7 +233,7 @@ public class TextConfigurationRealmTest {
                     runnable.start();
                     Thread.sleep(500);
                     // No account until lock is released and user definitions are processed
-                    assertFalse(realm.accountExists("user1"), "account exists when it shouldn't");
+                    assertThat(realm.accountExists("user1")).as("account exists when it shouldn't").isFalse();
                 } finally {
                     usersLock.writeLock().unlock();
                 }
@@ -251,7 +252,7 @@ public class TextConfigurationRealmTest {
         Thread testTask = new Thread(testThread);
         realm.test(testTask);
         testTask.join(500);
-        assertTrue(realm.accountExists("user1"), "account doesn't exist when it should");
+        assertThat(realm.accountExists("user1")).as("account doesn't exist when it should").isTrue();
         testThread.test();
     }
 

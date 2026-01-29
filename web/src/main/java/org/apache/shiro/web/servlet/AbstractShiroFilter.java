@@ -67,10 +67,10 @@ import java.util.concurrent.Callable;
  *     &lt;/init-param&gt;
  * &lt;/filter&gt;
  * </pre>
- * See the Shiro <a href="http://shiro.apache.org/subject.html">Subject documentation</a> for more information as to
+ * See the Shiro <a href="https://shiro.apache.org/subject.html">Subject documentation</a> for more information as to
  * if you would do this, particularly the sections on the {@code Subject.Builder} and Thread Association.
  *
- * @see <a href="http://shiro.apache.org/subject.html">Subject documentation</a>
+ * @see <a href="https://shiro.apache.org/subject.html">Subject documentation</a>
  * @since 1.0
  */
 public abstract class AbstractShiroFilter extends OncePerRequestFilter {
@@ -242,8 +242,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
     @SuppressWarnings({"UnusedDeclaration"})
     protected ServletRequest prepareServletRequest(ServletRequest request, ServletResponse response, FilterChain chain) {
         ServletRequest toUse = request;
-        if (request instanceof HttpServletRequest) {
-            HttpServletRequest http = (HttpServletRequest) request;
+        if (request instanceof HttpServletRequest http) {
             toUse = wrapServletRequest(http);
         }
         return toUse;
@@ -284,11 +283,11 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
     @SuppressWarnings({"UnusedDeclaration"})
     protected ServletResponse prepareServletResponse(ServletRequest request, ServletResponse response, FilterChain chain) {
         ServletResponse toUse = response;
-        if (!isHttpSessions() && (request instanceof ShiroHttpServletRequest)
-                && (response instanceof HttpServletResponse)) {
+        if (!isHttpSessions() && (request instanceof ShiroHttpServletRequest servletRequest)
+                && (response instanceof HttpServletResponse servletResponse)) {
             //the ShiroHttpServletResponse exists to support URL rewriting for session ids.  This is only needed if
             //using Shiro sessions (i.e. not simple HttpSession based sessions):
-            toUse = wrapServletResponse((HttpServletResponse) response, (ShiroHttpServletRequest) request);
+            toUse = wrapServletResponse(servletResponse, servletRequest);
         }
         return toUse;
     }
@@ -385,11 +384,11 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
         }
 
         if (t != null) {
-            if (t instanceof ServletException) {
-                throw (ServletException) t;
+            if (t instanceof ServletException exception) {
+                throw exception;
             }
-            if (t instanceof IOException) {
-                throw (IOException) t;
+            if (t instanceof IOException exception) {
+                throw exception;
             }
             //otherwise it's not one of the two exceptions expected by the filter method signature - wrap it in one:
             String msg = "Filtered request failed.";
@@ -440,8 +439,9 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * Executes a {@link FilterChain} for the given request.
      * <p/>
      * This implementation first delegates to
-     * <code>{@link #getExecutionChain(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse,
-     * jakarta.servlet.FilterChain) getExecutionChain}</code>
+     * <code>
+     * {@link #getExecutionChain(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, jakarta.servlet.FilterChain)
+     * getExecutionChain}</code>
      * to allow the application's Shiro configuration to determine exactly how the chain should execute.  The resulting
      * value from that call is then executed directly by calling the returned {@code FilterChain}'s
      * {@link FilterChain#doFilter doFilter} method.  That is:

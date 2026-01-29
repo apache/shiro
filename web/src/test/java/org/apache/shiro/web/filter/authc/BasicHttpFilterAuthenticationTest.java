@@ -290,6 +290,41 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
         });
     }
 
+    @Test
+    public void allowedPreFlightRequestsAndOptionsRequest() {
+        testFilter = new BasicHttpAuthenticationFilter();
+        testFilter.setAllowPreFlightRequests(true);
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getMethod()).thenReturn("OPTIONS");
+        when(request.getHeader("Origin")).thenReturn("https://kaboom.com");
+        when(request.getHeader("Access-Control-Request-Method")).thenReturn("GET,OPTIONS");
+
+        runWithSubject(subject -> {
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"OPTIONS"});
+            assertTrue(accessAllowed);
+        });
+    }
+
+    @Test
+    public void notAllowedPreFlightRequests() {
+        testFilter = new BasicHttpAuthenticationFilter();
+        testFilter.setAllowPreFlightRequests(false);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+
+        when(request.getMethod()).thenReturn("OPTIONS");
+        when(request.getHeader("Origin")).thenReturn("https://kaboom.com");
+        when(request.getHeader("Access-Control-Request-Method")).thenReturn("GET,OPTIONS");
+
+        runWithSubject(subject -> {
+            boolean accessAllowed = testFilter.isAccessAllowed(request, response, new String[]{"OPTIONS"});
+            assertFalse(accessAllowed);
+        });
+    }
+
     private String createAuthorizationHeader(String username, String password) {
         return "Basic " + new String(Base64.encode((username + ":" + password).getBytes()));
     }

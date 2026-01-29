@@ -78,7 +78,8 @@ public class BasicHttpAuthenticationFilter extends HttpAuthenticationFilter {
      * {@link #getPrincipalsAndCredentials(String, jakarta.servlet.ServletRequest) getPrincipalsAndCredentials} method</li>
      * <li>The return value of that method is converted to an <code>AuthenticationToken</code> via the
      * {@link #createToken(String, String, jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)
-     * reateToken} method</li>
+     * reateToken}
+     * method</li>
      * <li>The created <code>AuthenticationToken</code> is returned.</li>
      * </ol>
      *

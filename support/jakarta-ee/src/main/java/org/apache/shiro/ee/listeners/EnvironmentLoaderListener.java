@@ -13,14 +13,15 @@
  */
 package org.apache.shiro.ee.listeners;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.Set;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 
-import static jakarta.servlet.SessionTrackingMode.COOKIE;
-
+import jakarta.servlet.SessionTrackingMode;
 import jakarta.servlet.annotation.WebListener;
 
 import org.apache.shiro.web.env.EnvironmentLoader;
@@ -34,6 +35,11 @@ import org.apache.shiro.web.env.WebEnvironment;
 public class EnvironmentLoaderListener extends EnvironmentLoader implements ServletContextListener {
     private static final String SHIRO_EE_DISABLED_PARAM = "org.apache.shiro.ee.disabled";
     private static final String SHIRO_EE_REDIRECT_DISABLED_PARAM = "org.apache.shiro.ee.redirect.disabled";
+    private static final String SHIRO_EE_ENABLE_URL_SESSION_TRACKING_PARAM = "org.apache.shiro.ee.enable-url-session-tracking";
+    private static final String SHIRO_EE_SESSION_TRACKING_CONFIGURATION_DISABLED_PARAM =
+            "org.apache.shiro.ee.session-tracking-configuration.disabled";
+    private static final String SHIRO_EE_DISABLE_CHAR_ENCODING_PARAM = "org.apache.shiro.ee.disable-character-encoding";
+    private static final String SHIRO_EE_CHAR_ENCODING_PARAM = "org.apache.shiro.ee.character-encoding";
     private static final String FORM_RESUBMIT_DISABLED_PARAM = "org.apache.shiro.form-resubmit.disabled";
     private static final String FORM_RESUBMIT_SECURE_COOKIES = "org.apache.shiro.form-resubmit.secure-cookies";
     private static final String SHIRO_WEB_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.disable-principal";
@@ -58,7 +64,17 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
         return Boolean.TRUE.equals(ctx.getAttribute(SHIRO_WEB_DISABLE_PRINCIPAL_PARAM));
     }
 
+    public static boolean isCharEncodingEnabled(ServletContext ctx) {
+        return !Boolean.TRUE.equals(ctx.getAttribute(SHIRO_EE_DISABLE_CHAR_ENCODING_PARAM));
+    }
+
+    public static Charset getCharacterEncoding(ServletContext ctx) {
+        Charset encoding = (Charset) ctx.getAttribute(SHIRO_EE_CHAR_ENCODING_PARAM);
+        return encoding != null ? encoding : StandardCharsets.UTF_8;
+    }
+
     @Override
+    @SuppressWarnings("checkstyle:NPathComplexity")
     public void contextInitialized(ServletContextEvent sce) {
         if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_DISABLED_PARAM))) {
             sce.getServletContext().setAttribute(SHIRO_EE_DISABLED_PARAM, Boolean.TRUE);
@@ -79,8 +95,19 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
         if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_WEB_DISABLE_PRINCIPAL_PARAM))) {
             sce.getServletContext().setAttribute(SHIRO_WEB_DISABLE_PRINCIPAL_PARAM, Boolean.TRUE);
         }
+        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_DISABLE_CHAR_ENCODING_PARAM))) {
+            sce.getServletContext().setAttribute(SHIRO_EE_DISABLE_CHAR_ENCODING_PARAM, Boolean.TRUE);
+        }
+        if (sce.getServletContext().getInitParameter(SHIRO_EE_CHAR_ENCODING_PARAM) != null) {
+            sce.getServletContext().setAttribute(SHIRO_EE_CHAR_ENCODING_PARAM,
+                    Charset.forName(sce.getServletContext().getInitParameter(SHIRO_EE_CHAR_ENCODING_PARAM)));
+        }
         if (!isShiroEEDisabled(sce.getServletContext())) {
-            sce.getServletContext().setSessionTrackingModes(Set.of(COOKIE));
+            if (!Boolean.parseBoolean(sce.getServletContext()
+                    .getInitParameter(SHIRO_EE_SESSION_TRACKING_CONFIGURATION_DISABLED_PARAM))) {
+                modifySessionTrackingConfiguration(sce);
+            }
+
             initEnvironment(sce.getServletContext());
         }
     }
@@ -99,5 +126,15 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
         } else {
             return IniEnvironment.class;
         }
+    }
+
+    private static void modifySessionTrackingConfiguration(ServletContextEvent sce) {
+        Set<SessionTrackingMode> effectiveModes = sce.getServletContext().getEffectiveSessionTrackingModes();
+        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_ENABLE_URL_SESSION_TRACKING_PARAM))) {
+            effectiveModes.add(SessionTrackingMode.URL);
+        } else {
+            effectiveModes.remove(SessionTrackingMode.URL);
+        }
+        sce.getServletContext().setSessionTrackingModes(effectiveModes);
     }
 }

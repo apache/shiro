@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 
-import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.shiro.testing.jakarta.ee.PropertyPrincipal;
 import org.apache.shiro.testing.jaxrs.NoIniJaxRsIT;
@@ -33,7 +33,6 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
@@ -41,19 +40,12 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 /**
  * Tests @Injecting Subject, Session, Principal and SecurityManager with CDI
  */
 @ExtendWith(ArquillianExtension.class)
 @Execution(ExecutionMode.SAME_THREAD)
 @Slf4j
-@Disabled("failing with: DeployableContainer must be specified... apparently arquillian config issue?")
 public class ComponentInjectionIT {
     @SuppressWarnings("JavadocVariable")
     public static final String TESTABLE_MODE = "TestableMode";
@@ -79,40 +71,41 @@ public class ComponentInjectionIT {
     @Test
     @OperateOnDeployment(TESTABLE_MODE)
     void securityManagerInjection() {
-        assertNotNull(injectedComponents.getSecurityManager());
-        assertNull(injectedComponents.getSecurityManager().getSession(() -> null));
+        assertThat(injectedComponents.getSecurityManager()).isNotNull();
+        assertThat(injectedComponents.getSecurityManager().getSession(() -> null)).isNull();
     }
 
     @Test
     @OperateOnDeployment(TESTABLE_MODE)
     void subjectInjection() {
-        assertNotNull(injectedComponents.getSubject());
-        assertNull(injectedComponents.getSubject().getPrincipal());
-        assertFalse(injectedComponents.getSubject().isAuthenticated());
+        assertThat(injectedComponents.getSubject()).isNotNull();
+        assertThat(injectedComponents.getSubject().getPrincipal()).isNull();
+        assertThat(injectedComponents.getSubject().isAuthenticated()).isFalse();
         UsernamePasswordToken token = new UsernamePasswordToken("user", "password");
         injectedComponents.getSubject().login(token);
-        assertTrue(injectedComponents.getSubject().isAuthenticated());
+        assertThat(injectedComponents.getSubject().isAuthenticated()).isTrue();
 
         injectedComponents.getSubject().logout();
-        assertFalse(injectedComponents.getSubject().isAuthenticated());
+        assertThat(injectedComponents.getSubject().isAuthenticated()).isFalse();
     }
 
     @Test
     @OperateOnDeployment(TESTABLE_MODE)
     void sessionInjection() {
-        assertNotNull(injectedComponents.getSession());
-        assertNotNull(injectedComponents.getNoCreateionSession());
+        assertThat(injectedComponents.getSession()).isNotNull();
+        assertThat(injectedComponents.getNoCreateionSession()).isNotNull();
         injectedComponents.getSession().setAttribute("hello", "bye");
-        assertEquals("bye", injectedComponents.getSession().getAttribute("hello"));
-        assertEquals("bye", injectedComponents.getNoCreateionSession().getAttribute("hello"));
+        assertThat(injectedComponents.getSession().getAttribute("hello")).isEqualTo("bye");
+        assertThat(injectedComponents.getNoCreateionSession().getAttribute("hello")).isEqualTo("bye");
     }
 
     @Test
     @OperateOnDeployment(TESTABLE_MODE)
     void principalInjection() {
         SecurityUtils.getSubject().login(new UsernamePasswordToken("user", "password"));
-        assertNotNull(injectedComponents.getPropertyPrincipal());
-        assertEquals("user", Optional.ofNullable(injectedComponents.getPropertyPrincipal().get()).orElseThrow().getUserName());
+        assertThat(injectedComponents.getPropertyPrincipal()).isNotNull();
+        assertThat(Optional.ofNullable(injectedComponents.getPropertyPrincipal().get()).orElseThrow().getUserName())
+            .isEqualTo("user");
         injectedComponents.getSubject().logout();
     }
 
@@ -125,7 +118,7 @@ public class ComponentInjectionIT {
         var webArchive = ShrinkWrap.create(WebArchive.class, archive)
                 .addAsResource("META-INF/beans.xml")
                 .addAsResource(new StringAsset("org.apache.shiro.cdi.ShiroSecurityExtension"),
-                        jakartify("META-INF/services/jakarta.enterprise.inject.spi.Extension"))
+                        "META-INF/services/jakarta.enterprise.inject.spi.Extension")
                 .addAsResource("META-INF/services/org.slf4j.spi.SLF4JServiceProvider")
                 .addAsWebInfResource(new StringAsset(
                         "<payara-web-app><class-loader delegate=\"false\"/></payara-web-app>"),
@@ -140,6 +133,7 @@ public class ComponentInjectionIT {
                 .addClass(NoIniJaxRsIT.class)
                 .addClass(PropertyPrincipal.class)
                 .addClass(ComponentInjectionBean.class)
+                .addPackages(true, "org.assertj.core")
                 .addPackages(true, "org.slf4j");
         log.debug("Archive contents for {}: {}", archive, webArchive.toString(true));
         return webArchive;

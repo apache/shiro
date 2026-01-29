@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -50,6 +50,10 @@
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
@@ -128,23 +132,13 @@
 
     <profiles>
         <profile>
-            <id>jdk16</id>
-            <activation>
-                <jdk>[16,17)</jdk>
-            </activation>
-            <properties>
-                <!-- needed by guice until it is compatible with jdk16+. -->
-                <surefire.argLine>--illegal-access=permit</surefire.argLine>
-            </properties>
-        </profile>
-        <profile>
             <id>jdk17</id>
             <activation>
                 <jdk>[17,)</jdk>
             </activation>
             <properties>
                 <!-- needed by guice until it is compatible with jdk17+. -->
-                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</surefire.argLine>
+                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</surefire.argLine>
             </properties>
         </profile>
     </profiles>

@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.shiro.samples</groupId>
         <artifactId>shiro-samples</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -40,16 +40,6 @@
     </build>
 
     <dependencies>
-        <dependency>
-        <groupId>org.apache.taglibs</groupId>
-        <artifactId>taglibs-standard-spec</artifactId>
-        <scope>compile</scope>
-        </dependency>
-        <dependency>
-        <groupId>org.apache.taglibs</groupId>
-        <artifactId>taglibs-standard-impl</artifactId>
-        <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
@@ -93,17 +83,22 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jsp</artifactId>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-apache-jsp</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>apache-jstl</artifactId>
-            <version>${jetty.version}</version>
+            <version>10.0.26</version>
             <type>pom</type>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.ee10</groupId>
+            <artifactId>jetty-ee10-annotations</artifactId>
+            <version>${jetty.version}</version>
         </dependency>
 
         <dependency>
@@ -115,25 +110,14 @@
 
     <profiles>
         <profile>
-            <id>jdk16</id>
-            <activation>
-                <jdk>[16,)</jdk>
-            </activation>
-            <properties>
-                <!-- needed by guice until it is compatible with jdk16+. -->
-                <surefire.argLine>--illegal-access=permit</surefire.argLine>
-                <failsafe.argLine>--illegal-access=permit</failsafe.argLine>
-            </properties>
-        </profile>
-        <profile>
             <id>jdk17</id>
             <activation>
                 <jdk>[17,)</jdk>
             </activation>
             <properties>
                 <!-- needed by guice until it is compatible with jdk17+. -->
-                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</surefire.argLine>
-                <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED</failsafe.argLine>
+                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</surefire.argLine>
+                <failsafe.argLine>${surefire.argLine}</failsafe.argLine>
             </properties>
         </profile>
     </profiles>

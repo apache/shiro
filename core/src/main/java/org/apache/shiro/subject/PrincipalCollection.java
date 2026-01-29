@@ -35,13 +35,17 @@ import java.util.Set;
  * A PrincipalCollection organizes its internal principals based on the {@code Realm} where they came from when the
  * Subject was first created.  To obtain the principal(s) for a specific Realm, see the {@link #fromRealm} method.  You
  * can also see which realms contributed to this collection via the {@link #getRealmNames() getRealmNames()} method.
+ * <p/>
+ * Principal collections are intended to be immutable after their initial construction because they are shared by an
+ * unspecified and unpredictable number of other objects. If the implementation does allow mutation, that should be
+ * restricted to the time before the collection is shared with any other object.
  *
  * @see #getPrimaryPrincipal()
  * @see #fromRealm(String realmName)
  * @see #getRealmNames()
  * @since 0.9
  */
-public interface PrincipalCollection extends Iterable, Serializable {
+public interface PrincipalCollection extends Iterable<Object>, Serializable {
 
     /**
      * Returns the primary principal used application-wide to uniquely identify the owning account/Subject.
@@ -112,7 +116,7 @@ public interface PrincipalCollection extends Iterable, Serializable {
      *
      * @return a single Subject's principals retrieved from all configured Realms as a List.
      */
-    List asList();
+    List<?> asList();
 
     /**
      * Returns a single Subject's principals retrieved from all configured Realms as a Set, or an empty Set if there
@@ -122,7 +126,7 @@ public interface PrincipalCollection extends Iterable, Serializable {
      *
      * @return a single Subject's principals retrieved from all configured Realms as a Set.
      */
-    Set asSet();
+    Set<?> asSet();
 
     /**
      * Returns a single Subject's principals retrieved from the specified Realm <em>only</em> as a Collection, or an empty
@@ -134,7 +138,7 @@ public interface PrincipalCollection extends Iterable, Serializable {
      * @return the Subject's principals from the specified Realm only as a Collection or an empty Collection if there
      * are not any principals from that realm.
      */
-    Collection fromRealm(String realmName);
+    Collection<?> fromRealm(String realmName);
 
     /**
      * Returns the realm names that this collection has principals for.

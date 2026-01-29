@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-crypto</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -50,7 +50,7 @@
                             *
                         </Import-Package>
                         <Require-Capability>
-                          osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",                         
+                          osgi.extender; filter:="(osgi.extender=osgi.serviceloader.registrar)",
                           osgi.extender; filter:="(osgi.extender=osgi.serviceloader.processor)",
                           osgi.serviceloader; filter:="(osgi.serviceloader=org.apache.shiro.crypto.hash.HashSpi)"; cardinality:=multiple
                         </Require-Capability>

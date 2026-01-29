@@ -279,8 +279,8 @@ public abstract class ShiroWebModule extends ShiroModule {
     @SuppressWarnings("unchecked")
     protected final void addFilterChain(String pattern, Key<? extends Filter> key) {
         // check for legacy API
-        if (key instanceof FilterConfigKey) {
-            addLegacyFilterChain(pattern, (FilterConfigKey) key);
+        if (key instanceof FilterConfigKey configKey) {
+            addLegacyFilterChain(pattern, configKey);
         } else {
             addFilterChain(pattern, new FilterConfig<Filter>((Key<Filter>) key, ""));
         }
@@ -291,7 +291,7 @@ public abstract class ShiroWebModule extends ShiroModule {
      * For example, a path of '/my_private_resource/**' to 'filterConfig(AUTHC)' would require
      * any resource under the path '/my_private_resource' would be processed through the {@link FormAuthenticationFilter}.
      *
-     * @param pattern       URL patter to be mapped to a FilterConfig, e.g. '/my_private-path/**'
+     * @param pattern       URL pattern to be mapped to a FilterConfig, e.g. '/my_private-path/**'
      * @param filterConfigs FilterConfiguration representing the Filter
      *                      and config to be used when processing resources on <code>pattern</code>.
      * @since 1.4
@@ -415,9 +415,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         for (int ii = 0; ii < keys.length; ii++) {
             Key<? extends Filter> key = keys[ii];
             // If this is a path matching filter, we need to remember the config
-            if (key instanceof FilterConfigKey) {
-                // legacy config
-                FilterConfigKey legacyKey = (FilterConfigKey) key;
+            if (key instanceof FilterConfigKey legacyKey) {
                 filterConfigs[ii] = new FilterConfig(legacyKey.getKey(), legacyKey.getConfigValue());
             } else {
                 // Some other type of Filter key, no config

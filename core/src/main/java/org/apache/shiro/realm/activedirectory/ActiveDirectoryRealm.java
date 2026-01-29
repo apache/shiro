@@ -63,7 +63,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActiveDirectoryRealm.class);
 
-    private static final String ROLE_NAMES_DELIMETER = ",";
+    private static final String ROLE_NAMES_DELIMITER = ",";
 
     /*--------------------------------------------
     |    I N S T A N C E   V A R I A B L E S    |
@@ -108,7 +108,8 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         // Binds using the username and password provided by the user.
         LdapContext ctx = null;
         try {
-            ctx = ldapContextFactory.getLdapContext(upToken.getUsername(), String.valueOf(upToken.getPassword()));
+            ctx = ldapContextFactory.getLdapContext(getUsernameWithSuffix(upToken.getUsername()),
+                    String.valueOf(upToken.getPassword()));
         } finally {
             LdapUtils.closeContext(ctx);
         }
@@ -166,11 +167,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-        String userPrincipalName = username;
-        if (principalSuffix != null
-                && !userPrincipalName.toLowerCase(Locale.ROOT).endsWith(principalSuffix.toLowerCase(Locale.ROOT))) {
-            userPrincipalName += principalSuffix;
-        }
+        String userPrincipalName = getUsernameWithSuffix(username);
 
         Object[] searchArguments = new Object[] {userPrincipalName};
 
@@ -221,7 +218,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             for (String groupName : groupNames) {
                 String strRoleNames = groupRolesMap.get(groupName);
                 if (strRoleNames != null) {
-                    for (String roleName : strRoleNames.split(ROLE_NAMES_DELIMETER)) {
+                    for (String roleName : strRoleNames.split(ROLE_NAMES_DELIMITER)) {
 
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("User is member of group [" + groupName + "] so adding role [" + roleName + "]");
@@ -234,6 +231,14 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             }
         }
         return roleNames;
+    }
+
+    protected String getUsernameWithSuffix(String username) {
+        if (principalSuffix != null
+                && !username.toLowerCase(Locale.ROOT).endsWith(principalSuffix.toLowerCase(Locale.ROOT))) {
+            return username + principalSuffix;
+        }
+        return username;
     }
 
 }

@@ -96,8 +96,8 @@ public abstract class AbstractFilter extends ServletContextSupport implements Fi
         try {
             onFilterConfigSet();
         } catch (Exception e) {
-            if (e instanceof ServletException) {
-                throw (ServletException) e;
+            if (e instanceof ServletException exception) {
+                throw exception;
             } else {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Unable to start Filter: [" + e.getMessage() + "].", e);
@@ -128,4 +128,3 @@ public abstract class AbstractFilter extends ServletContextSupport implements Fi
     }
 
 }
-

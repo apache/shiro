@@ -15,6 +15,7 @@ package org.apache.shiro.testing.jakarta.ee;
 
 import static org.apache.shiro.testing.jakarta.ee.StatisticsResource.increment;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 import jakarta.annotation.PostConstruct;
@@ -34,6 +35,7 @@ import org.apache.shiro.authz.annotation.RequiresUser;
 @RequiresUser
 @Slf4j
 public class ProtectedFacesViewScopedBean implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static final AtomicInteger INSTANCE_COUNT = new AtomicInteger();
@@ -50,7 +52,7 @@ public class ProtectedFacesViewScopedBean implements Serializable {
     }
 
     public String hello() {
-        return String.format("Hello from FacesViewScoped %s - %s", count,
+        return "Hello from FacesViewScoped %s - %s".formatted(count,
                 FacesContext.class.getPackage().getImplementationVersion());
     }
 }

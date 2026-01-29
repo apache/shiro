@@ -20,11 +20,9 @@ package org.apache.shiro.spring.security.interceptor;
 
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * All the tests in the parent class are run.  This class only exists to ensure that a
@@ -35,13 +33,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  *
  * @since 1.1
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration
+@SpringJUnitConfig
 public class DapcAuthorizationAnnotationTest extends AbstractAuthorizationAnnotationTest {
 
     @Test
     void testGuestInterfaceFailure() {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             bindUser();
             testService.guestInterface();
         });
@@ -49,7 +46,7 @@ public class DapcAuthorizationAnnotationTest extends AbstractAuthorizationAnnota
 
     @Test
     void testUserInterfaceFailure() {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             bindGuest();
             testService.userInterface();
         });
@@ -57,7 +54,7 @@ public class DapcAuthorizationAnnotationTest extends AbstractAuthorizationAnnota
 
     @Test
     void testAuthenticatedInterfaceFailure() {
-        assertThrows(UnauthenticatedException.class, () -> {
+        assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             bindGuest();
             testService.authenticatedInterface();
         });

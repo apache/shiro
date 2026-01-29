@@ -37,8 +37,8 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.expression.Expression
 import org.springframework.expression.ExpressionParser
 import org.springframework.expression.spel.standard.SpelExpressionParser
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.*
 /**
  * @since 1.4.0
  */
-@ContextConfiguration(classes = [EventBusTestConfiguration, RealmTestConfiguration, ShiroWebConfiguration])
+@SpringJUnitConfig(classes = [EventBusTestConfiguration, RealmTestConfiguration, ShiroWebConfiguration])
 @ExtendWith(SpringExtension.class)
 public class ShiroWebConfigurationTest {
 

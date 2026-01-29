@@ -79,7 +79,7 @@ public class ReflectionBuilder {
     private static final String HEX_BEGIN_TOKEN = "0x";
     private static final String NULL_VALUE_TOKEN = "null";
     private static final String EMPTY_STRING_VALUE_TOKEN = "\"\"";
-    private static final char STRING_VALUE_DELIMETER = '"';
+    private static final char STRING_VALUE_DELIMITER = '"';
     private static final char MAP_PROPERTY_BEGIN_TOKEN = '[';
     private static final char MAP_PROPERTY_END_TOKEN = ']';
 
@@ -232,14 +232,14 @@ public class ReflectionBuilder {
 
         //prefer a named object first:
         Object value = objects.get(EVENT_BUS_NAME);
-        if (value instanceof EventBus) {
-            return (EventBus) value;
+        if (value instanceof EventBus bus) {
+            return bus;
         }
 
         //couldn't find a named 'eventBus' EventBus object.  Try to find the first typed value we can:
         for (Object v : objects.values()) {
-            if (v instanceof EventBus) {
-                return (EventBus) v;
+            if (v instanceof EventBus bus) {
+                return bus;
             }
         }
 
@@ -247,8 +247,8 @@ public class ReflectionBuilder {
     }
 
     private boolean applyEventBusIfNecessary(Object value) {
-        if (value instanceof EventBusAware) {
-            ((EventBusAware) value).setEventBus(this.eventBus);
+        if (value instanceof EventBusAware aware) {
+            aware.setEventBus(this.eventBus);
             return true;
         }
         return false;
@@ -357,8 +357,8 @@ public class ReflectionBuilder {
         Object instance;
         try {
             instance = ClassUtils.newInstance(value);
-            if (instance instanceof Nameable) {
-                ((Nameable) instance).setName(name);
+            if (instance instanceof Nameable nameable) {
+                nameable.setName(name);
             }
         } catch (Exception e) {
             instance = alternateObjectSupplier.apply(value);
@@ -455,8 +455,8 @@ public class ReflectionBuilder {
         String id = getId(reference);
         LOGGER.debug("Encountered object reference '{}'.  Looking up object with id '{}'", reference, id);
         final Object referencedObject = getReferencedObject(id);
-        if (referencedObject instanceof Factory) {
-            return ((Factory) referencedObject).getInstance();
+        if (referencedObject instanceof Factory factory) {
+            return factory.getInstance();
         }
         return referencedObject;
     }
@@ -492,8 +492,8 @@ public class ReflectionBuilder {
         //SHIRO-423: check to see if the value is a referenced Set already, and if so, return it immediately:
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
-            if (reference instanceof Set) {
-                return (Set) reference;
+            if (reference instanceof Set set) {
+                return set;
             }
         }
 
@@ -518,8 +518,8 @@ public class ReflectionBuilder {
         //SHIRO-423: check to see if the value is a referenced Map already, and if so, return it immediately:
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
-            if (reference instanceof Map) {
-                return (Map) reference;
+            if (reference instanceof Map map) {
+                return map;
             }
         }
 
@@ -556,8 +556,8 @@ public class ReflectionBuilder {
         //SHIRO-423: check to see if the value is a referenced Collection already, and if so, return it immediately:
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
-            if (reference instanceof Collection) {
-                return (Collection) reference;
+            if (reference instanceof Collection collection) {
+                return collection;
             }
         }
 
@@ -579,8 +579,8 @@ public class ReflectionBuilder {
         //SHIRO-423: check to see if the value is a referenced List already, and if so, return it immediately:
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
-            if (reference instanceof List) {
-                return (List) reference;
+            if (reference instanceof List list) {
+                return list;
             }
         }
 
@@ -806,8 +806,7 @@ public class ReflectionBuilder {
             //we execute bean configuration statements in the order they are declared.
             statements.add(statement);
 
-            if (statement instanceof InstantiationStatement) {
-                InstantiationStatement is = (InstantiationStatement) statement;
+            if (statement instanceof InstantiationStatement is) {
                 beanConfigurations.add(new BeanConfiguration(is));
             } else {
                 AssignmentStatement as = (AssignmentStatement) statement;

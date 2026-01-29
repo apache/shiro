@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>999-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -67,7 +67,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>dev.aspectj</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <configuration>
                     <additionalCompilerArgs>
