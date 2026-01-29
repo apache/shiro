@@ -604,6 +604,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
          * @return {@link ShiroHttpServletRequest ShiroHttpServletRequest} instance wrapping the original.
          * @since 1.0
          */
+        @Override
         protected ServletRequest wrapServletRequest(HttpServletRequest orig) {
             return new ShiroHttpServletRequestEE10(orig, getServletContext(), isHttpSessions());
         }
