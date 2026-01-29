@@ -24,8 +24,6 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 
-import jakarta.inject.Qualifier;
-
 @SuppressWarnings("checkstyle:JavadocType")
 /**
  * Qualifier for @Injection of session that will not be created

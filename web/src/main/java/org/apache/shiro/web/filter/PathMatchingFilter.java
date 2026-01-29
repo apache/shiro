@@ -96,7 +96,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * <p/>
      * This implementation merely delegates to
      * {@link WebUtils#getPathWithinApplication(jakarta.servlet.http.HttpServletRequest)
-     * WebUtils.getPathWithinApplication(request)},
+     *      WebUtils.getPathWithinApplication(request)},
      * but can be overridden by subclasses for custom logic.
      *
      * @param request the incoming <code>ServletRequest</code>

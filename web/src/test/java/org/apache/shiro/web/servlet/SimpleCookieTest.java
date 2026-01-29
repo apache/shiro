@@ -131,7 +131,7 @@ public class SimpleCookieTest {
     public void testReadValueInvalidPath() throws Exception {
         expect(mockRequest.getRequestURI()).andStubReturn("/foo/index.jsp");
         expect(mockRequest.getCookies()).andStubReturn(
-            new jakarta.servlet.http.Cookie[] {new jakarta.servlet.http.Cookie(this.cookie.getName(), "value")});
+                new jakarta.servlet.http.Cookie[] {new jakarta.servlet.http.Cookie(this.cookie.getName(), "value")});
         replay(mockRequest);
         replay(mockResponse);
 
@@ -143,7 +143,7 @@ public class SimpleCookieTest {
     public void testReadValuePrefixPath() throws Exception {
         expect(mockRequest.getRequestURI()).andStubReturn("/bar/index.jsp");
         expect(mockRequest.getCookies()).andStubReturn(
-            new jakarta.servlet.http.Cookie[] {new jakarta.servlet.http.Cookie(this.cookie.getName(), "value")});
+                new jakarta.servlet.http.Cookie[] {new jakarta.servlet.http.Cookie(this.cookie.getName(), "value")});
         replay(mockRequest);
         replay(mockResponse);
 
@@ -155,7 +155,7 @@ public class SimpleCookieTest {
     public void testReadValueInvalidPrefixPath() throws Exception {
         expect(mockRequest.getRequestURI()).andStubReturn("/foobar/index.jsp");
         expect(mockRequest.getCookies()).andStubReturn(
-            new jakarta.servlet.http.Cookie[] {new jakarta.servlet.http.Cookie(this.cookie.getName(), "value")});
+                new jakarta.servlet.http.Cookie[] {new jakarta.servlet.http.Cookie(this.cookie.getName(), "value")});
         replay(mockRequest);
         replay(mockResponse);
 

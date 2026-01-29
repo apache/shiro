@@ -270,7 +270,6 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
      * action to each configured permission (the {@code mappedValue} argument is a {@code String[]} array), and
      * delegates the permission check for the newly constructed permission(s) to the superclass
      * {@link PermissionsAuthorizationFilter#isAccessAllowed(ServletRequest, ServletResponse, Object) isAccessAllowed}
-     * {@link PermissionsAuthorizationFilter#isAccessAllowed(ServletRequest, ServletResponse, Object) isAccessAllowed}
      * implementation to perform the actual permission check.
      *
      * @param request     the inbound {@code ServletRequest}

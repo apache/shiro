@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.web.servlet
 
-
 import org.apache.shiro.web.config.ShiroFilterConfiguration
 import org.apache.shiro.web.env.EnvironmentLoader
 import org.apache.shiro.web.env.WebEnvironment

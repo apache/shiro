@@ -18,9 +18,6 @@
  */
 package org.apache.shiro.guice.web;
 
-
-
-
 import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
