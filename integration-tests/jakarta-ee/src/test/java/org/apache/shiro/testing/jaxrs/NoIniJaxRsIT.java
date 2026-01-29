@@ -37,13 +37,10 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ArquillianExtension.class)
-@Disabled("Failing with Cannot invoke \"org.jboss.arquillian.container.test.impl.domain"
-    + ".ProtocolDefinition.createProtocolConfiguration()\" because \"protocolDefinition\" is null")
 public class NoIniJaxRsIT {
     @Builder
     private static final class Credentials {
