@@ -610,17 +610,16 @@ public interface Subject {
         private final SubjectContext subjectContext;
 
         /**
-         * The SecurityManager to invoke during the {@link #buildSubject} call.
-         */
-        private final SecurityManager securityManager;
-
-        /**
          * Constructs a new {@link Subject.Builder} instance, using the {@code SecurityManager} instance available
          * to the calling code as determined by a call to {@link org.apache.shiro.SecurityUtils#getSecurityManager()}
          * to build the {@code Subject} instance.
          */
         public Builder() {
-            this(SecurityUtils.getSecurityManager());
+            this.subjectContext = newSubjectContextInstance();
+            if (this.subjectContext == null) {
+                throw new IllegalStateException("Subject instance returned from 'newSubjectContextInstance' "
+                        + "cannot be null.");
+            }
         }
 
         /**
@@ -630,14 +629,9 @@ public interface Subject {
          * @param securityManager the {@code SecurityManager} to use when building the {@code Subject} instance.
          */
         public Builder(SecurityManager securityManager) {
+            this();
             if (securityManager == null) {
                 throw new NullPointerException("SecurityManager method argument cannot be null.");
-            }
-            this.securityManager = securityManager;
-            this.subjectContext = newSubjectContextInstance();
-            if (this.subjectContext == null) {
-                throw new IllegalStateException("Subject instance returned from 'newSubjectContextInstance' "
-                        + "cannot be null.");
             }
             this.subjectContext.setSecurityManager(securityManager);
         }
@@ -660,6 +654,21 @@ public interface Subject {
          */
         protected SubjectContext getSubjectContext() {
             return this.subjectContext;
+        }
+
+        /**
+         * Uses the provided security manager to build a {@link Subject} instance based on the
+         * {@link SubjectContext} information collected by this {@code Builder} instance.
+         *
+         * @return this builder
+         * @throws IllegalStateException if no {@code SecurityManager} is null
+         */
+        public Builder securityManager(SecurityManager securityManager) {
+            if (securityManager == null) {
+                throw new NullPointerException("SecurityManager method argument cannot be null.");
+            }
+            this.subjectContext.setSecurityManager(securityManager);
+            return this;
         }
 
         /**
@@ -841,8 +850,10 @@ public interface Subject {
          * other methods in this class.
          */
         public Subject buildSubject() {
-            return this.securityManager.createSubject(this.subjectContext);
+            if (this.subjectContext.getSecurityManager() == null) {
+                this.subjectContext.setSecurityManager(SecurityUtils.getSecurityManager());
+            }
+            return this.subjectContext.getSecurityManager().createSubject(this.subjectContext);
         }
     }
-
 }
