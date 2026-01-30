@@ -35,8 +35,8 @@ public class ShiroSessionScope implements Scope {
         return new Provider<T>() {
             public T get() {
                 Subject subject;
-                if (ScopedValues.SCOPED_VALUES_SUPPORTED && ScopedValues.hasSubject()) {
-                    subject = ScopedValues.getSubject();
+                if (ScopedValues.SCOPED_VALUES_SUPPORTED && ScopedValues.isBound()) {
+                    subject = ScopedValues.get().subject();
                 } else {
                     subject = ThreadContext.getSubject();
                 }

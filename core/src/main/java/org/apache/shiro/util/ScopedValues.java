@@ -26,24 +26,17 @@ import java.util.concurrent.Callable;
 
 public final class ScopedValues {
     public static final boolean SCOPED_VALUES_SUPPORTED = false;
+    public record Values(SecurityManager securityManager, Subject subject) { }
 
     private ScopedValues() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
-    public static boolean hasSecurityManager() {
+    public static boolean isBound() {
         throw new IllegalStateException("ScopedValues are not supported in this Java version");
     }
 
-    public static SecurityManager getSecurityManager() {
-        throw new IllegalStateException("ScopedValues are not supported in this Java version");
-    }
-
-    public static boolean hasSubject() {
-        throw new IllegalStateException("ScopedValues are not supported in this Java version");
-    }
-
-    public static Subject getSubject() {
+    public static Values get() {
         throw new IllegalStateException("ScopedValues are not supported in this Java version");
     }
 
