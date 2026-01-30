@@ -18,7 +18,9 @@
  */
 package org.apache.shiro.subject.support;
 
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ScopedValues;
 import org.apache.shiro.util.ThreadState;
 
 /**
@@ -58,6 +60,8 @@ public class SubjectRunnable implements Runnable {
 
     protected final ThreadState threadState;
     private final Runnable runnable;
+    private final SecurityManager securityManager;
+    private final Subject subject;
 
     /**
      * Creates a new {@code SubjectRunnable} that, when executed, will execute the target {@code delegate}, but
@@ -67,7 +71,7 @@ public class SubjectRunnable implements Runnable {
      * @param delegate the runnable to run.
      */
     public SubjectRunnable(Subject subject, Runnable delegate) {
-        this(new SubjectThreadState(subject), delegate);
+        this(subject, ScopedValues.SCOPED_VALUES_SUPPORTED ? null : new SubjectThreadState(subject), delegate);
     }
 
     /**
@@ -79,8 +83,8 @@ public class SubjectRunnable implements Runnable {
      * @param delegate    the delegate {@code Runnable} to execute when this instance is {@link #run() run()}.
      * @throws IllegalArgumentException if either the {@code ThreadState} or {@link Runnable} arguments are {@code null}.
      */
-    protected SubjectRunnable(ThreadState threadState, Runnable delegate) throws IllegalArgumentException {
-        if (threadState == null) {
+    protected SubjectRunnable(Subject subject, ThreadState threadState, Runnable delegate) throws IllegalArgumentException {
+        if (threadState == null && !ScopedValues.SCOPED_VALUES_SUPPORTED) {
             throw new IllegalArgumentException("ThreadState argument cannot be null.");
         }
         this.threadState = threadState;
@@ -88,6 +92,8 @@ public class SubjectRunnable implements Runnable {
             throw new IllegalArgumentException("Runnable argument cannot be null.");
         }
         this.runnable = delegate;
+        this.subject = subject;
+        this.securityManager = SubjectThreadState.getSecurityManager(subject);
     }
 
     /**
@@ -103,6 +109,12 @@ public class SubjectRunnable implements Runnable {
      * </pre>
      */
     public void run() {
+        if (ScopedValues.SCOPED_VALUES_SUPPORTED) {
+            ScopedValues.run(this, runnable, subject, securityManager);
+            return;
+        }
+
+        // fallback to ThreadState binding if ScopedValues are not available
         try {
             threadState.bind();
             doRun(this.runnable);
@@ -116,7 +128,7 @@ public class SubjectRunnable implements Runnable {
      *
      * @param runnable the target runnable to run.
      */
-    protected void doRun(Runnable runnable) {
+    public void doRun(Runnable runnable) {
         runnable.run();
     }
 }

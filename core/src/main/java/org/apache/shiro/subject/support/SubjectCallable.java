@@ -18,7 +18,9 @@
  */
 package org.apache.shiro.subject.support;
 
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ScopedValues;
 import org.apache.shiro.util.ThreadState;
 
 import java.util.concurrent.Callable;
@@ -62,13 +64,15 @@ public class SubjectCallable<V> implements Callable<V> {
 
     protected final ThreadState threadState;
     private final Callable<V> callable;
+    private final SecurityManager securityManager;
+    private final Subject subject;
 
     public SubjectCallable(Subject subject, Callable<V> delegate) {
-        this(new SubjectThreadState(subject), delegate);
+        this(subject, ScopedValues.SCOPED_VALUES_SUPPORTED ? null : new SubjectThreadState(subject), delegate);
     }
 
-    protected SubjectCallable(ThreadState threadState, Callable<V> delegate) {
-        if (threadState == null) {
+    protected SubjectCallable(Subject subject, ThreadState threadState, Callable<V> delegate) {
+        if (threadState == null && !ScopedValues.SCOPED_VALUES_SUPPORTED) {
             throw new IllegalArgumentException("ThreadState argument cannot be null.");
         }
         this.threadState = threadState;
@@ -76,9 +80,16 @@ public class SubjectCallable<V> implements Callable<V> {
             throw new IllegalArgumentException("Callable delegate instance cannot be null.");
         }
         this.callable = delegate;
+        this.subject = subject;
+        this.securityManager = SubjectThreadState.getSecurityManager(subject);
     }
 
     public V call() throws Exception {
+        if (ScopedValues.SCOPED_VALUES_SUPPORTED) {
+            return ScopedValues.call(this, callable, subject, securityManager);
+        }
+
+        // fallback to ThreadState binding if ScopedValues are not available
         try {
             threadState.bind();
             return doCall(this.callable);
@@ -87,7 +98,7 @@ public class SubjectCallable<V> implements Callable<V> {
         }
     }
 
-    protected V doCall(Callable<V> target) throws Exception {
+    public V doCall(Callable<V> target) throws Exception {
         return target.call();
     }
 }

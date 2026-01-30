@@ -21,6 +21,7 @@ package org.apache.shiro;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.WrappedSecurityManager;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ScopedValues;
 import org.apache.shiro.util.ThreadContext;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -50,10 +51,15 @@ public abstract class SecurityUtils {
      * @return the currently accessible {@code Subject} accessible to the calling code.
      * @throws IllegalStateException if no {@link Subject Subject} instance or
      *                               {@link SecurityManager SecurityManager} instance is available with which to obtain
-     *                               a {@code Subject}, which which is considered an invalid application configuration
+     *                               a {@code Subject}, which is considered an invalid application configuration
      *                               - a Subject should <em>always</em> be available to the caller.
      */
     public static Subject getSubject() {
+        if (ScopedValues.SCOPED_VALUES_SUPPORTED && ScopedValues.hasSubject()) {
+            return ScopedValues.getSubject();
+        }
+
+        // fallback to ThreadContext
         Subject subject = ThreadContext.getSubject();
         if (subject == null) {
             subject = (new Subject.Builder()).buildSubject();
@@ -114,6 +120,10 @@ public abstract class SecurityUtils {
      *                                             calling code, which typically indicates an invalid application configuration.
      */
     public static SecurityManager getSecurityManager() throws UnavailableSecurityManagerException {
+        if (ScopedValues.SCOPED_VALUES_SUPPORTED && ScopedValues.hasSecurityManager()) {
+            return ScopedValues.getSecurityManager();
+        }
+
         SecurityManager securityManager = ThreadContext.getSecurityManager();
         if (securityManager == null) {
             securityManager = SecurityUtils.securityManager;
