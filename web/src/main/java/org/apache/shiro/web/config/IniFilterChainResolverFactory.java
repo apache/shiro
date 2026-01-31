@@ -61,7 +61,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     private List<String> globalFilters = Collections.singletonList(DefaultFilter.invalidRequest.name());
 
-    private boolean caseInsensitive;
+    private boolean caseInsensitive = true;
 
     public IniFilterChainResolverFactory() {
         super();
