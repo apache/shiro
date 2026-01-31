@@ -61,6 +61,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     private List<String> globalFilters = Collections.singletonList(DefaultFilter.invalidRequest.name());
 
+    private boolean allowAccessByDefault;
     private boolean caseInsensitive = true;
 
     public IniFilterChainResolverFactory() {
@@ -90,6 +91,14 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     public void setGlobalFilters(List<String> globalFilters) {
         this.globalFilters = globalFilters;
+    }
+
+    public boolean isAllowAccessByDefault() {
+        return allowAccessByDefault;
+    }
+
+    public void setAllowAccessByDefault(boolean allowAccessByDefault) {
+        this.allowAccessByDefault = allowAccessByDefault;
     }
 
     public boolean isCaseInsensitive() {
@@ -158,7 +167,11 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
         // create the default chain, to match anything the path matching would have missed
         // TODO this assumes ANT path matching
-        manager.createDefaultChain("/**");
+        if (isAllowAccessByDefault()) {
+            manager.createDefaultChain("/**", DefaultFilter.anon.name());
+        } else {
+            manager.createDefaultChain("/**", DefaultFilter.noAccess.name());
+        }
     }
 
     protected void registerFilters(Map<String, Filter> filters, FilterChainManager manager) {

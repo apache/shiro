@@ -135,6 +135,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     private String loginUrl;
     private String successUrl;
     private String unauthorizedUrl;
+    private boolean allowAccessByDefault;
     private boolean caseInsensitive;
 
     private AbstractShiroFilter instance;
@@ -310,6 +311,22 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     }
 
     /**
+     * @return {@code true} if the default filter chain will allow access if no other filter chain matches.
+     */
+    public boolean isAllowAccessByDefault() {
+        return allowAccessByDefault;
+    }
+
+    /**
+     * Sets whether the default filter chain will allow access if no other filter chain matches.
+     *
+     * @param allowAccessByDefault {@code true} if the default filter chain will allow access
+     */
+    public void setAllowAccessByDefault(boolean allowAccessByDefault) {
+        this.allowAccessByDefault = allowAccessByDefault;
+    }
+
+    /**
      * Sets the filterName-to-Filter map of filters available for reference when creating
      * {@link #setFilterChainDefinitionMap(java.util.Map) filter chain definitions}.
      * <p/>
@@ -463,7 +480,11 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
         // create the default chain, to match anything the path matching would have missed
         // TODO this assumes ANT path matching, which might be OK here
-        manager.createDefaultChain("/**");
+        if (isAllowAccessByDefault()) {
+            manager.createDefaultChain("/**", DefaultFilter.anon.name());
+        } else {
+            manager.createDefaultChain("/**", DefaultFilter.noAccess.name());
+        }
 
         return manager;
     }

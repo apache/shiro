@@ -82,7 +82,9 @@ class ShiroWebSpringAutoConfigurationTest extends AbstractJUnit4SpringContextTes
         // default config set
         assertThat filterChainManager.globalFilterNames, equalTo([DefaultFilter.invalidRequest.name()])
         // default route configured
-        assertThat filterChainManager.getChain("/**"), contains(instanceOf(DefaultFilter.invalidRequest.filterClass))
+        assertThat filterChainManager.getChain("/**"), contains(
+                instanceOf(DefaultFilter.invalidRequest.filterClass),
+                instanceOf(DefaultFilter.noAccess.filterClass))
         // configured routes also contain global filters
         assertThat filterChainManager.getChain("/login.html"), contains(
                 instanceOf(DefaultFilter.invalidRequest.filterClass),
