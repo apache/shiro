@@ -18,9 +18,9 @@
  */
 package org.apache.shiro.web.session.mgt
 
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpSession
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpSession
 import org.apache.shiro.session.mgt.SessionContext
 import org.apache.shiro.session.mgt.SessionKey
 import org.apache.shiro.web.session.HttpServletSession
@@ -33,6 +33,8 @@ import static org.junit.jupiter.api.Assertions.*
  * Unit tests for the {@link ServletContainerSessionManager} implementation.
  */
 class ServletContainerSessionManagerTest {
+    private final String HOST_SESSION_KEY = HttpServletSession.class.getName() + ".HOST_SESSION_KEY";
+    private final String TOUCH_OBJECT_SESSION_KEY = HttpServletSession.class.getName() + ".TOUCH_OBJECT_SESSION_KEY";
 
     @Test
     void testStartWithNonWebSessionContext() {
@@ -66,8 +68,8 @@ class ServletContainerSessionManagerTest {
 
         expect(request.session).andReturn httpSession
 
-        httpSession.setAttribute(eq(HttpServletSession.HOST_SESSION_KEY), eq(host))
-        expect(httpSession.getAttribute(eq(HttpServletSession.HOST_SESSION_KEY))).andReturn host
+        httpSession.setAttribute(eq(HOST_SESSION_KEY), eq(host))
+        expect(httpSession.getAttribute(eq(HOST_SESSION_KEY))).andReturn host
 
         replay request, response, httpSession
 
@@ -96,8 +98,8 @@ class ServletContainerSessionManagerTest {
         expect(request.session).andReturn httpSession
         expect(request.remoteHost).andReturn host
 
-        httpSession.setAttribute(eq(HttpServletSession.HOST_SESSION_KEY), eq(host))
-        expect(httpSession.getAttribute(eq(HttpServletSession.HOST_SESSION_KEY))).andReturn host
+        httpSession.setAttribute(eq(HOST_SESSION_KEY), eq(host))
+        expect(httpSession.getAttribute(eq(HOST_SESSION_KEY))).andReturn host
 
         replay request, response, httpSession
 
@@ -139,8 +141,8 @@ class ServletContainerSessionManagerTest {
 
         expect(request.getSession(false)).andReturn httpSession
         expect(request.remoteHost).andReturn host
-        httpSession.setAttribute(eq(HttpServletSession.HOST_SESSION_KEY), eq(host))
-        expect(httpSession.getAttribute(eq(HttpServletSession.HOST_SESSION_KEY))).andReturn host
+        httpSession.setAttribute(eq(HOST_SESSION_KEY), eq(host))
+        expect(httpSession.getAttribute(eq(HOST_SESSION_KEY))).andReturn host
 
         def key = new WebSessionKey(request, response)
 

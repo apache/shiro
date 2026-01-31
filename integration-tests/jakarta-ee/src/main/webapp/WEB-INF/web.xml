@@ -17,16 +17,16 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
-         version="4.0">
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
     <distributable/>
     <welcome-file-list>
         <welcome-file>index.xhtml</welcome-file>
     </welcome-file-list>
     <error-page>
-        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <exception-type>jakarta.faces.application.ViewExpiredException</exception-type>
         <location>/WEB-INF/errorpages/invalidErrorPage.xhtml</location>
     </error-page>
     <error-page>
@@ -35,7 +35,7 @@
     </error-page>
     <context-param>
         <param-name>org.omnifaces.EXCEPTION_TYPES_TO_IGNORE_IN_LOGGING</param-name>
-        <param-value>javax.faces.application.ViewExpiredException, java.nio.channels.ClosedByInterruptException, java.sql.SQLException</param-value>
+        <param-value>jakarta.faces.application.ViewExpiredException, java.nio.channels.ClosedByInterruptException, java.sql.SQLException</param-value>
     </context-param>
     <context-param>
         <!-- 1 year cache, effects production mode only -->
@@ -47,11 +47,11 @@
         <param-value>#{environmentInfo.version}</param-value>
     </context-param>
     <context-param>
-        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-name>jakarta.faces.STATE_SAVING_METHOD</param-name>
         <param-value>server</param-value>
     </context-param>
     <context-param>
-        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-name>jakarta.faces.PROJECT_STAGE</param-name>
         <param-value>Development</param-value>
     </context-param>
     <context-param>
@@ -64,6 +64,10 @@
     </context-param>
     <context-param>
         <param-name>org.apache.shiro.ee.disabled</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    <context-param>
+        <param-name>org.apache.shiro.form-resubmit.secure-cookies</param-name>
         <param-value>false</param-value>
     </context-param>
 

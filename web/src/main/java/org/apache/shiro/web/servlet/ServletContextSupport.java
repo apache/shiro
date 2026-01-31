@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.web.servlet;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * Base implementation for any components that need to access the web application's {@link ServletContext ServletContext}.

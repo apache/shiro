@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Collection;
@@ -58,6 +59,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     // that is NOT serialization backwards compatible.  Serialization-compatible
     // changes do not require a change to this number.  If you need to generate
     // a new number in this case, use the JDK's 'serialver' program to generate it.
+    @Serial
     private static final long serialVersionUID = -7125642695178165650L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSession.class);
@@ -357,8 +359,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj instanceof SimpleSession) {
-            SimpleSession other = (SimpleSession) obj;
+        if (obj instanceof SimpleSession other) {
             Serializable thisId = getId();
             Serializable otherId = other.getId();
             if (thisId != null && otherId != null) {

@@ -203,8 +203,8 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
             }
         } catch (Throwable t) {
             AuthenticationException ae = null;
-            if (t instanceof AuthenticationException) {
-                ae = (AuthenticationException) t;
+            if (t instanceof AuthenticationException exception) {
+                ae = exception;
             }
             if (ae == null) {
                 //Exception thrown was not an expected AuthenticationException.  Therefore it is probably a little more

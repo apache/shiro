@@ -27,7 +27,7 @@ import static org.easymock.EasyMock.*;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test
 
-import javax.servlet.ServletContext
+import jakarta.servlet.ServletContext
 
 /**
  * Unit tests for the {@link EnvironmentLoaderTest} implementation.

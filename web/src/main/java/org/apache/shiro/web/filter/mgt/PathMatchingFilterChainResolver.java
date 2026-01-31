@@ -25,10 +25,10 @@ import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  * A {@code FilterChainResolver} that resolves {@link FilterChain}s based on url path
@@ -61,6 +61,11 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
         this.filterChainManager = new DefaultFilterChainManager(filterConfig);
     }
 
+    public PathMatchingFilterChainResolver caseInsensitive(boolean caseInsensitive) {
+        setCaseInsensitive(caseInsensitive);
+        return this;
+    }
+
     /**
      * Returns the {@code PatternMatcher} used when determining if an incoming request's path
      * matches a configured filter chain.  Unless overridden, the
@@ -83,6 +88,19 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      */
     public void setPathMatcher(PatternMatcher pathMatcher) {
         this.pathMatcher = pathMatcher;
+    }
+
+    public boolean isCaseInsensitive() {
+        return pathMatcher != null && pathMatcher.isCaseInsensitive();
+    }
+
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        if (pathMatcher != null) {
+            pathMatcher.setCaseInsensitive(caseInsensitive);
+        }
+        if (filterChainManager != null) {
+            filterChainManager.setCaseInsensitive(caseInsensitive);
+        }
     }
 
     public FilterChainManager getFilterChainManager() {
@@ -158,7 +176,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
 
     /**
      * Merely returns
-     * <code>WebUtils.{@link org.apache.shiro.web.util.WebUtils#getPathWithinApplication(javax.servlet.http.HttpServletRequest)
+     * <code>WebUtils.{@link org.apache.shiro.web.util.WebUtils#getPathWithinApplication(jakarta.servlet.http.HttpServletRequest)
      * getPathWithinApplication(request)}</code>
      * and can be overridden by subclasses for custom request-to-application-path resolution behavior.
      *

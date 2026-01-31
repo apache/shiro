@@ -19,8 +19,8 @@
 package org.apache.shiro.samples.spring.web;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Implements the root {@code welcome-file}j as a {@code @RequestMapping}.
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping({"/"})
 public class RootRedirectController {
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public String redirect() {
         return "redirect:/s/login";
     }

@@ -23,7 +23,7 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.security.DenyAll;
+import jakarta.annotation.security.DenyAll;
 import java.lang.annotation.Annotation;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;

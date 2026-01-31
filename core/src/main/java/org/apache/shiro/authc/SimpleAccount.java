@@ -99,7 +99,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * @since 1.1
      */
     public SimpleAccount(Object principal, Object hashedCredentials, ByteSource credentialsSalt, String realmName) {
-        this(principal instanceof PrincipalCollection ? (PrincipalCollection) principal
+        this(principal instanceof PrincipalCollection pc ? pc
                         : ImmutablePrincipalCollection.ofSinglePrincipal(principal, realmName),
                 hashedCredentials, credentialsSalt);
     }
@@ -186,7 +186,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * @param permissions the permissions assigned to this account directly (not those assigned to any of the realms).
      */
 
-    public SimpleAccount(Collection principals, Object credentials, String realmName,
+    public SimpleAccount(Collection<?> principals, Object credentials, String realmName,
                          Set<String> roleNames, Set<Permission> permissions) {
         this.authcInfo = new SimpleAuthenticationInfo(ImmutablePrincipalCollection.ofSinglePrincipal(principals, realmName),
                 credentials);
@@ -448,8 +448,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
         authcInfo.merge(info);
 
         // Merge SimpleAccount specific info
-        if (info instanceof SimpleAccount) {
-            SimpleAccount otherAccount = (SimpleAccount) info;
+        if (info instanceof SimpleAccount otherAccount) {
             if (otherAccount.isLocked()) {
                 setLocked(true);
             }
@@ -482,8 +481,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
         if (o == this) {
             return true;
         }
-        if (o instanceof SimpleAccount) {
-            SimpleAccount sa = (SimpleAccount) o;
+        if (o instanceof SimpleAccount sa) {
             //principal should be unique across the application, so only check this for equality:
             return (getPrincipals() != null ? getPrincipals().equals(sa.getPrincipals()) : sa.getPrincipals() == null);
         }

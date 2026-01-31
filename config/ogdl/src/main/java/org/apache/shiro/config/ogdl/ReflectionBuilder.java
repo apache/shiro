@@ -232,14 +232,14 @@ public class ReflectionBuilder {
 
         //prefer a named object first:
         Object value = objects.get(EVENT_BUS_NAME);
-        if (value instanceof EventBus) {
-            return (EventBus) value;
+        if (value instanceof EventBus bus) {
+            return bus;
         }
 
         //couldn't find a named 'eventBus' EventBus object.  Try to find the first typed value we can:
         for (Object v : objects.values()) {
-            if (v instanceof EventBus) {
-                return (EventBus) v;
+            if (v instanceof EventBus bus) {
+                return bus;
             }
         }
 
@@ -247,8 +247,8 @@ public class ReflectionBuilder {
     }
 
     private boolean applyEventBusIfNecessary(Object value) {
-        if (value instanceof EventBusAware) {
-            ((EventBusAware) value).setEventBus(this.eventBus);
+        if (value instanceof EventBusAware aware) {
+            aware.setEventBus(this.eventBus);
             return true;
         }
         return false;
@@ -357,8 +357,8 @@ public class ReflectionBuilder {
         Object instance;
         try {
             instance = ClassUtils.newInstance(value);
-            if (instance instanceof Nameable) {
-                ((Nameable) instance).setName(name);
+            if (instance instanceof Nameable nameable) {
+                nameable.setName(name);
             }
         } catch (Exception e) {
             instance = alternateObjectSupplier.apply(value);
@@ -371,13 +371,13 @@ public class ReflectionBuilder {
         objects.put(name, instance);
     }
 
-    protected void applyProperty(String key, String value, Map objects) {
+    protected void applyProperty(String key, String value, Map<?, ?> objects) {
 
         int index = key.indexOf('.');
 
         if (index >= 0) {
             String name = key.substring(0, index);
-            String property = key.substring(index + 1, key.length());
+            String property = key.substring(index + 1);
 
             if (GLOBAL_PROPERTY_PREFIX.equalsIgnoreCase(name)) {
                 applyGlobalProperty(objects, property, value);
@@ -391,7 +391,7 @@ public class ReflectionBuilder {
         }
     }
 
-    protected void applyGlobalProperty(Map objects, String property, String value) {
+    protected void applyGlobalProperty(Map<?, ?> objects, String property, String value) {
         for (Object instance : objects.values()) {
             try {
                 PropertyDescriptor pd = beanUtilsBean.getPropertyUtils().getPropertyDescriptor(instance, property);
@@ -407,7 +407,7 @@ public class ReflectionBuilder {
         }
     }
 
-    protected void applySingleProperty(Map objects, String name, String property, String value) {
+    protected void applySingleProperty(Map<?, ?> objects, String name, String property, String value) {
         Object instance = objects.get(name);
         if (property.equals("class")) {
             throw new IllegalArgumentException("Property keys should not contain 'class' properties since these "
@@ -455,8 +455,8 @@ public class ReflectionBuilder {
         String id = getId(reference);
         LOGGER.debug("Encountered object reference '{}'.  Looking up object with id '{}'", reference, id);
         final Object referencedObject = getReferencedObject(id);
-        if (referencedObject instanceof Factory) {
-            return ((Factory) referencedObject).getInstance();
+        if (referencedObject instanceof Factory<?> factory) {
+            return factory.getInstance();
         }
         return referencedObject;
     }
@@ -492,15 +492,15 @@ public class ReflectionBuilder {
         //SHIRO-423: check to see if the value is a referenced Set already, and if so, return it immediately:
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
-            if (reference instanceof Set) {
-                return (Set) reference;
+            if (reference instanceof Set<?> set) {
+                return set;
             }
         }
 
-        Set<String> setTokens = new LinkedHashSet<String>(Arrays.asList(tokens));
+        Set<String> setTokens = new LinkedHashSet<>(Arrays.asList(tokens));
 
         //now convert into correct values and/or references:
-        Set<Object> values = new LinkedHashSet<Object>(setTokens.size());
+        Set<Object> values = new LinkedHashSet<>(setTokens.size());
         for (String token : setTokens) {
             Object value = resolveValue(token);
             values.add(value);
@@ -518,12 +518,12 @@ public class ReflectionBuilder {
         //SHIRO-423: check to see if the value is a referenced Map already, and if so, return it immediately:
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
-            if (reference instanceof Map) {
-                return (Map) reference;
+            if (reference instanceof Map<?, ?> map) {
+                return map;
             }
         }
 
-        Map<String, String> mapTokens = new LinkedHashMap<String, String>(tokens.length);
+        Map<String, String> mapTokens = new LinkedHashMap<>(tokens.length);
         for (String token : tokens) {
             String[] kvPair = StringUtils.split(token, MAP_KEY_VALUE_DELIMITER);
             if (kvPair == null || kvPair.length != 2) {
@@ -536,7 +536,7 @@ public class ReflectionBuilder {
         }
 
         //now convert into correct values and/or references:
-        Map<Object, Object> map = new LinkedHashMap<Object, Object>(mapTokens.size());
+        Map<Object, Object> map = new LinkedHashMap<>(mapTokens.size());
         for (Map.Entry<String, String> entry : mapTokens.entrySet()) {
             Object key = resolveValue(entry.getKey());
             Object value = resolveValue(entry.getValue());
@@ -556,13 +556,13 @@ public class ReflectionBuilder {
         //SHIRO-423: check to see if the value is a referenced Collection already, and if so, return it immediately:
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
-            if (reference instanceof Collection) {
-                return (Collection) reference;
+            if (reference instanceof Collection<?> collection) {
+                return collection;
             }
         }
 
         //now convert into correct values and/or references:
-        List<Object> values = new ArrayList<Object>(tokens.length);
+        List<Object> values = new ArrayList<>(tokens.length);
         for (String token : tokens) {
             Object value = resolveValue(token);
             values.add(value);
@@ -579,13 +579,13 @@ public class ReflectionBuilder {
         //SHIRO-423: check to see if the value is a referenced List already, and if so, return it immediately:
         if (tokens.length == 1 && isReference(tokens[0])) {
             Object reference = resolveReference(tokens[0]);
-            if (reference instanceof List) {
-                return (List) reference;
+            if (reference instanceof List<?> list) {
+                return list;
             }
         }
 
         //now convert into correct values and/or references:
-        List<Object> values = new ArrayList<Object>(tokens.length);
+        List<Object> values = new ArrayList<>(tokens.length);
         for (String token : tokens) {
             Object value = resolveValue(token);
             values.add(value);
@@ -670,11 +670,10 @@ public class ReflectionBuilder {
                     @SuppressWarnings("unchecked")
                     var map = (Map<Object, Object>) getProperty(object, mapPropertyPath);
                     Object mapKey = resolveValue(keyString);
-                    //noinspection unchecked
                     map.put(mapKey, value);
                 } else {
                     //must be an array property.  Convert the key string to an index:
-                    int index = Integer.valueOf(keyString);
+                    int index = Integer.parseInt(keyString);
                     setIndexedProperty(object, mapPropertyPath, index, value);
                 }
             }
@@ -683,12 +682,12 @@ public class ReflectionBuilder {
             //recursively call this method with the remaining property path
             Object referencedValue = null;
             if (isTypedProperty(object, mapPropertyPath, Map.class)) {
-                Map map = (Map) getProperty(object, mapPropertyPath);
+                Map<?, ?> map = (Map<?, ?>) getProperty(object, mapPropertyPath);
                 Object mapKey = resolveValue(keyString);
                 referencedValue = map.get(mapKey);
             } else {
                 //must be an array property:
-                int index = Integer.valueOf(keyString);
+                int index = Integer.parseInt(keyString);
                 referencedValue = getIndexedProperty(object, mapPropertyPath, index);
             }
 
@@ -806,8 +805,7 @@ public class ReflectionBuilder {
             //we execute bean configuration statements in the order they are declared.
             statements.add(statement);
 
-            if (statement instanceof InstantiationStatement) {
-                InstantiationStatement is = (InstantiationStatement) statement;
+            if (statement instanceof InstantiationStatement is) {
                 beanConfigurations.add(new BeanConfiguration(is));
             } else {
                 AssignmentStatement as = (AssignmentStatement) statement;
@@ -1052,12 +1050,11 @@ public class ReflectionBuilder {
     //////////////////////////
     // CollectionUtils cannot be removed from shiro-core until 2.0 as it has a dependency on PrincipalCollection
 
-    private static boolean isEmpty(Map m) {
+    private static boolean isEmpty(Map<?, ?> m) {
         return m == null || m.isEmpty();
     }
 
-    private static boolean isEmpty(Collection c) {
+    private static boolean isEmpty(Collection<?> c) {
         return c == null || c.isEmpty();
     }
-
 }

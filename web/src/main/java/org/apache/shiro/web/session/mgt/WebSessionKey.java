@@ -18,8 +18,8 @@ package org.apache.shiro.web.session.mgt;
 import org.apache.shiro.session.mgt.DefaultSessionKey;
 import org.apache.shiro.web.util.RequestPairSource;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import java.io.Serializable;
 
 /**

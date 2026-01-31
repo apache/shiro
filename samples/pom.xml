@@ -41,26 +41,22 @@
     <modules>
         <module>aspectj</module>
         <module>quickstart</module>
-        <module>web</module>
-        <module>spring</module>
-        <module>spring-mvc</module>
-        <module>spring-hibernate</module>
-        <module>spring-boot</module>
-        <module>spring-boot-web</module>
-        <module>guice</module>
         <module>quickstart-guice</module>
+        <module>web</module>
         <module>servlet-plugin</module>
-        <module>web-jakarta</module>
     </modules>
 
     <profiles>
         <profile>
-            <id>jdk17plus</id>
-            <activation>
-                <jdk>[17,)</jdk>
-            </activation>
+            <id>deferred-for-3x</id>
             <modules>
+                <module>spring</module>
+                <module>spring-boot</module>
                 <module>spring-boot-3-web</module>
+                <module>spring-mvc</module>
+                <module>spring-hibernate</module>
+                <module>spring-boot-web</module>
+                <module>guice</module>
             </modules>
         </profile>
     </profiles>

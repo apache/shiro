@@ -402,8 +402,8 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      */
     protected Object hashProvidedCredentials(AuthenticationToken token, AuthenticationInfo info) {
         final Object salt;
-        if (info instanceof SaltedAuthenticationInfo) {
-            salt = ((SaltedAuthenticationInfo) info).getCredentialsSalt();
+        if (info instanceof SaltedAuthenticationInfo authenticationInfo) {
+            salt = authenticationInfo.getCredentialsSalt();
         } else if (isHashSalted()) {
             //retain 1.0 backwards compatibility:
             salt = getSalt(token);

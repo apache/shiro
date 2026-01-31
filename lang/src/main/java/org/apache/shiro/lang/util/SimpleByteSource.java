@@ -179,8 +179,7 @@ public class SimpleByteSource implements ByteSource {
         if (o == this) {
             return true;
         }
-        if (o instanceof ByteSource) {
-            ByteSource bs = (ByteSource) o;
+        if (o instanceof ByteSource bs) {
             return Arrays.equals(getBytes(), bs.getBytes());
         }
         return false;

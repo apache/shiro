@@ -46,7 +46,7 @@
         <Logger name="org.apache" level="warn" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
-        <Logger name="net.sf.ehcache" level="warn" additivity="false">
+        <Logger name="org.ehcache" level="warn" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
         <Logger name="org.apache.shiro" level="info" additivity="false">

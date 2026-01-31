@@ -15,8 +15,6 @@ package org.apache.shiro.testing.jakarta.ee;
 
 import java.net.URL;
 
-import static org.apache.shiro.ee.util.JakartaTransformer.isJakarta;
-import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_DEV_MODE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -116,7 +114,7 @@ public class ShiroBeansIT {
         webDriver.get(baseURL + "lastException");
         String exceptionText = webDriver.findElement(By.tagName("body")).getText();
         assertThat(exceptionText).startsWith(
-            jakartify("WARNING: javax.ejb.EJBException: Attempting to perform a user-only operation"));
+                "WARNING: jakarta.ejb.EJBException: Attempting to perform a user-only operation");
     }
 
     @Test
@@ -141,13 +139,12 @@ public class ShiroBeansIT {
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void beanDestroyCalled() {
-        exerciseViewAndSessionScoped(facesViewScoped, "api/statistics/pc_fv", "api/statistics/pd_fv", !isJakarta());
+        exerciseViewAndSessionScoped(facesViewScoped, "api/statistics/pc_fv", "api/statistics/pd_fv");
         webDriver.get(baseURL + "api/statistics/clear");
-        exerciseViewAndSessionScoped(omniViewScoped, "api/statistics/pc_ofv", "api/statistics/pd_ofv", false);
+        exerciseViewAndSessionScoped(omniViewScoped, "api/statistics/pc_ofv", "api/statistics/pd_ofv");
     }
 
-    private void exerciseViewAndSessionScoped(WebElement elem, String createStatistic, String destroyStatistic,
-                                              boolean isBrokenDestructor) {
+    private void exerciseViewAndSessionScoped(WebElement elem, String createStatistic, String destroyStatistic) {
         webDriver.get(baseURL + "shiro/auth/loginform");
         login();
 
@@ -164,7 +161,7 @@ public class ShiroBeansIT {
         webDriver.get(baseURL + createStatistic);
         assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("2");
         webDriver.get(baseURL + destroyStatistic);
-        assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo(isBrokenDestructor && webSessions ? "1" : "2");
+        assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("2");
         webDriver.get(baseURL + "api/statistics/pc_ss");
         assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("1");
         webDriver.get(baseURL + "api/statistics/pd_ss");

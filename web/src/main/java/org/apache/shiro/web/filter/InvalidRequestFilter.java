@@ -22,16 +22,14 @@ package org.apache.shiro.web.filter;
 import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.web.util.WebUtils;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
-@SuppressWarnings("checkstyle:LineLength")
 /**
  * A request filter that blocks malicious requests. Invalid request will respond with a 400 response code.
  * <p>
@@ -40,7 +38,7 @@ import java.util.stream.Stream;
  *     <li>Semicolon - can be disabled by setting {@code blockSemicolon = false}</li>
  *     <li>Backslash - can be disabled by setting {@code blockBackslash = false}</li>
  *     <li>Non-ASCII characters - can be disabled by setting {@code blockNonAscii = false},
- *          the ability to disable this check will be removed in future version.</li>
+ *     the ability to disable this check will be removed in future version.</li>
  *     <li>Path traversals - can be disabled by setting {@code blockTraversal = false}</li>
  * </ul>
  *
@@ -49,6 +47,11 @@ import java.util.stream.Stream;
  * @since 1.6
  */
 public class InvalidRequestFilter extends AccessControlFilter {
+    public enum PathTraversalBlockMode {
+        STRICT,
+        NORMAL,
+        NO_BLOCK;
+    }
 
     private static final List<String> SEMICOLON = Collections.unmodifiableList(Arrays.asList(";", "%3b", "%3B"));
 
@@ -64,35 +67,27 @@ public class InvalidRequestFilter extends AccessControlFilter {
 
     private boolean blockNonAscii = true;
 
-    private boolean blockTraversal = true;
-
-    private boolean blockEncodedPeriod = true;
-
-    private boolean blockEncodedForwardSlash = true;
-
-    private boolean blockRewriteTraversal = true;
+    private PathTraversalBlockMode pathTraversalBlockMode = PathTraversalBlockMode.NORMAL;
 
     @Override
     protected boolean isAccessAllowed(ServletRequest req, ServletResponse response, Object mappedValue) throws Exception {
         HttpServletRequest request = WebUtils.toHttp(req);
         // check the original and decoded values
+
         // user request string (not decoded)
         return isValid(request.getRequestURI())
                 // decoded servlet part
                 && isValid(request.getServletPath())
-                // decoded path info (may be null)
+                // decoded path info (maybe null)
                 && isValid(request.getPathInfo());
     }
 
-    @SuppressWarnings("checkstyle:BooleanExpressionComplexity")
     private boolean isValid(String uri) {
         return !StringUtils.hasText(uri)
-               || (!containsSemicolon(uri)
-                 && !containsBackslash(uri)
-                 && !containsNonAsciiCharacters(uri)
-                 && !containsTraversal(uri)
-                 && !containsEncodedPeriods(uri)
-                 && !containsEncodedForwardSlash(uri));
+                || (!containsSemicolon(uri)
+                && !containsBackslash(uri)
+                && !containsNonAsciiCharacters(uri))
+                && !containsTraversal(uri);
     }
 
     @Override
@@ -134,23 +129,13 @@ public class InvalidRequestFilter extends AccessControlFilter {
     }
 
     private boolean containsTraversal(String uri) {
-        if (isBlockTraversal()) {
-            return !isNormalized(uri)
-                || (isBlockRewriteTraversal() && Stream.of("/..;", "/.;").anyMatch(uri::contains));
+        if (pathTraversalBlockMode == PathTraversalBlockMode.NORMAL) {
+            return !(isNormalized(uri));
         }
-        return false;
-    }
-
-    private boolean containsEncodedPeriods(String uri) {
-        if (isBlockEncodedPeriod()) {
-            return PERIOD.stream().anyMatch(uri::contains);
-        }
-        return false;
-    }
-
-    private boolean containsEncodedForwardSlash(String uri) {
-        if (isBlockEncodedForwardSlash()) {
-            return FORWARDSLASH.stream().anyMatch(uri::contains);
+        if (pathTraversalBlockMode == PathTraversalBlockMode.STRICT) {
+            return !(isNormalized(uri)
+                    && PERIOD.stream().noneMatch(uri::contains)
+                    && FORWARDSLASH.stream().noneMatch(uri::contains));
         }
         return false;
     }
@@ -205,35 +190,51 @@ public class InvalidRequestFilter extends AccessControlFilter {
         this.blockNonAscii = blockNonAscii;
     }
 
-    public boolean isBlockTraversal() {
-        return blockTraversal;
+    public PathTraversalBlockMode getPathTraversalBlockMode() {
+        return pathTraversalBlockMode;
     }
 
-    public void setBlockTraversal(boolean blockTraversal) {
-        this.blockTraversal = blockTraversal;
+    public void setBlockPathTraversal(PathTraversalBlockMode mode) {
+        this.pathTraversalBlockMode = mode;
     }
 
     public boolean isBlockEncodedPeriod() {
-        return blockEncodedPeriod;
+        return pathTraversalBlockMode == PathTraversalBlockMode.STRICT;
     }
 
     public void setBlockEncodedPeriod(boolean blockEncodedPeriod) {
-        this.blockEncodedPeriod = blockEncodedPeriod;
+        setBlockPathTraversal(blockEncodedPeriod ? PathTraversalBlockMode.STRICT : PathTraversalBlockMode.NORMAL);
     }
 
     public boolean isBlockEncodedForwardSlash() {
-        return blockEncodedForwardSlash;
+        return pathTraversalBlockMode == PathTraversalBlockMode.STRICT;
     }
 
     public void setBlockEncodedForwardSlash(boolean blockEncodedForwardSlash) {
-        this.blockEncodedForwardSlash = blockEncodedForwardSlash;
+        setBlockPathTraversal(blockEncodedForwardSlash ? PathTraversalBlockMode.STRICT : PathTraversalBlockMode.NORMAL);
     }
 
     public boolean isBlockRewriteTraversal() {
-        return blockRewriteTraversal;
+        return pathTraversalBlockMode == PathTraversalBlockMode.NORMAL;
     }
 
     public void setBlockRewriteTraversal(boolean blockRewriteTraversal) {
-        this.blockRewriteTraversal = blockRewriteTraversal;
+        setBlockPathTraversal(blockRewriteTraversal ? PathTraversalBlockMode.NORMAL : PathTraversalBlockMode.NO_BLOCK);
+    }
+
+    /**
+     * @deprecated use {@link #getPathTraversalBlockMode()} instead
+     */
+    @Deprecated
+    public boolean isBlockTraversal() {
+        return pathTraversalBlockMode != PathTraversalBlockMode.NO_BLOCK;
+    }
+
+    /**
+     * @deprecated Use {@link #setBlockPathTraversal(PathTraversalBlockMode)}
+     */
+    @Deprecated
+    public void setBlockTraversal(boolean blockTraversal) {
+        this.pathTraversalBlockMode = blockTraversal ? PathTraversalBlockMode.NORMAL : PathTraversalBlockMode.NO_BLOCK;
     }
 }

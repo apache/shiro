@@ -69,6 +69,7 @@ public class AntPathMatcher implements PatternMatcher {
     public static final String DEFAULT_PATH_SEPARATOR = "/";
 
     private String pathSeparator = DEFAULT_PATH_SEPARATOR;
+    private boolean caseInsensitive;
 
 
     /**
@@ -77,6 +78,16 @@ public class AntPathMatcher implements PatternMatcher {
      */
     public void setPathSeparator(String pathSeparator) {
         this.pathSeparator = (pathSeparator != null ? pathSeparator : DEFAULT_PATH_SEPARATOR);
+    }
+
+    @Override
+    public boolean isCaseInsensitive() {
+        return caseInsensitive;
+    }
+
+    @Override
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
     }
 
     /**
@@ -281,11 +292,9 @@ public class AntPathMatcher implements PatternMatcher {
             }
             for (int i = 0; i <= patIdxEnd; i++) {
                 ch = patArr[i];
-                if (ch != '?') {
-                    if (ch != strArr[i]) {
-                        // Character mismatch
-                        return false;
-                    }
+                if (ch != '?' && checkCase(ch) != checkCase(strArr[i])) {
+                    // Character mismatch
+                    return false;
                 }
             }
             // String matches against pattern
@@ -300,12 +309,11 @@ public class AntPathMatcher implements PatternMatcher {
 
         // Process characters before first star
         while ((ch = patArr[patIdxStart]) != '*' && strIdxStart <= strIdxEnd) {
-            if (ch != '?') {
-                if (ch != strArr[strIdxStart]) {
-                    // Character mismatch
-                    return false;
-                }
+            if (ch != '?' && checkCase(ch) != checkCase(strArr[strIdxStart])) {
+                // Character mismatch
+                return false;
             }
+
             patIdxStart++;
             strIdxStart++;
         }
@@ -322,12 +330,11 @@ public class AntPathMatcher implements PatternMatcher {
 
         // Process characters after last star
         while ((ch = patArr[patIdxEnd]) != '*' && strIdxStart <= strIdxEnd) {
-            if (ch != '?') {
-                if (ch != strArr[strIdxEnd]) {
-                    // Character mismatch
-                    return false;
-                }
+            if (ch != '?' && checkCase(ch) != checkCase(strArr[strIdxEnd])) {
+                // Character mismatch
+                return false;
             }
+
             patIdxEnd--;
             strIdxEnd--;
         }
@@ -366,10 +373,8 @@ public class AntPathMatcher implements PatternMatcher {
             for (int i = 0; i <= strLength - patLength; i++) {
                 for (int j = 0; j < patLength; j++) {
                     ch = patArr[patIdxStart + j + 1];
-                    if (ch != '?') {
-                        if (ch != strArr[strIdxStart + i + j]) {
-                            continue strLoop;
-                        }
+                    if (ch != '?' && checkCase(ch) != checkCase(strArr[strIdxStart + i + j])) {
+                        continue strLoop;
                     }
                 }
 
@@ -434,5 +439,7 @@ public class AntPathMatcher implements PatternMatcher {
         return builder.toString();
     }
 
-
+    private char checkCase(char ch) {
+        return isCaseInsensitive() ? Character.toLowerCase(ch) : ch;
+    }
 }

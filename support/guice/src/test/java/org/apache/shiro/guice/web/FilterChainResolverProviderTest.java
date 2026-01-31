@@ -27,7 +27,7 @@ import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -49,7 +49,7 @@ public class FilterChainResolverProviderTest {
     private FilterChainResolverProvider underTest;
 
     @BeforeEach
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void setup() {
         chains = new LinkedHashMap<>();
 

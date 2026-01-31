@@ -25,7 +25,7 @@ import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +56,9 @@ public class AbstractShiroWebFilterConfiguration {
     @Value("#{ @environment['shiro.unauthorizedUrl'] ?: null }")
     protected String unauthorizedUrl;
 
+    @Value("#{ @environment['shiro.caseInsensitive'] ?: false }")
+    protected boolean caseInsensitive;
+
     protected List<String> globalFilters() {
         return Collections.singletonList(DefaultFilter.invalidRequest.name());
     }
@@ -72,6 +75,7 @@ public class AbstractShiroWebFilterConfiguration {
         filterFactoryBean.setLoginUrl(loginUrl);
         filterFactoryBean.setSuccessUrl(successUrl);
         filterFactoryBean.setUnauthorizedUrl(unauthorizedUrl);
+        filterFactoryBean.setCaseInsensitive(caseInsensitive);
 
         filterFactoryBean.setSecurityManager(securityManager);
         filterFactoryBean.setShiroFilterConfiguration(shiroFilterConfiguration());

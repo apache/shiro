@@ -252,7 +252,7 @@ public class DefaultSessionManagerTest {
         }
 
         public boolean matches(Object o) {
-            return o instanceof Session && ((Session) o).getTimeout() == this.timeout;
+            return o instanceof Session session && session.getTimeout() == this.timeout;
         }
     }
 }

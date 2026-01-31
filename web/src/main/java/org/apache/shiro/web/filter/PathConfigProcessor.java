@@ -18,7 +18,7 @@
  */
 package org.apache.shiro.web.filter;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 
 /**
  * A PathConfigProcessor processes configuration entries on a per path (url) basis.
@@ -36,4 +36,10 @@ public interface PathConfigProcessor {
      * @return the {@code Filter} that should execute for the given path/config combination.
      */
     Filter processPathConfig(String path, String config);
+
+    /**
+     * Sets whether the path matching performed by this processor is case insensitive.
+     * @param caseInsensitive true if case insensitive, false otherwise
+     */
+    default void setCaseInsensitive(boolean caseInsensitive) { }
 }

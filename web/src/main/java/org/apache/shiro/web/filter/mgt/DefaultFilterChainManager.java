@@ -26,10 +26,10 @@ import org.apache.shiro.web.filter.PathConfigProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -65,6 +65,8 @@ public class DefaultFilterChainManager implements FilterChainManager {
      * key: chain name, value: chain
      */
     private Map<String, NamedFilterList> filterChains;
+
+    private boolean caseInsensitive;
 
     public DefaultFilterChainManager() {
         this.filters = new LinkedHashMap<String, Filter>();
@@ -119,6 +121,11 @@ public class DefaultFilterChainManager implements FilterChainManager {
 
     public Filter getFilter(String name) {
         return this.filters.get(name);
+    }
+
+    @Override
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
     }
 
     public void addFilter(String name, Filter filter) {
@@ -273,8 +280,8 @@ public class DefaultFilterChainManager implements FilterChainManager {
     protected void addFilter(String name, Filter filter, boolean init, boolean overwrite) {
         Filter existing = getFilter(name);
         if (existing == null || overwrite) {
-            if (filter instanceof Nameable) {
-                ((Nameable) filter).setName(name);
+            if (filter instanceof Nameable nameable) {
+                nameable.setName(name);
             }
             if (init) {
                 initFilter(filter);
@@ -324,8 +331,9 @@ public class DefaultFilterChainManager implements FilterChainManager {
             LOGGER.debug("Attempting to apply path [" + chainName + "] to filter [" + filter + "] "
                     + "with config [" + chainSpecificFilterConfig + "]");
         }
-        if (filter instanceof PathConfigProcessor) {
-            ((PathConfigProcessor) filter).processPathConfig(chainName, chainSpecificFilterConfig);
+        if (filter instanceof PathConfigProcessor processor) {
+            processor.processPathConfig(chainName, chainSpecificFilterConfig);
+            processor.setCaseInsensitive(caseInsensitive);
         } else {
             if (StringUtils.hasText(chainSpecificFilterConfig)) {
                 //they specified a filter configuration, but the Filter doesn't implement PathConfigProcessor

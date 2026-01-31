@@ -59,8 +59,8 @@ public class SubjectThreadState implements ThreadState {
         this.subject = subject;
 
         SecurityManager securityManager = null;
-        if (subject instanceof DelegatingSubject) {
-            securityManager = ((DelegatingSubject) subject).getSecurityManager();
+        if (subject instanceof DelegatingSubject delegatingSubject) {
+            securityManager = delegatingSubject.getSecurityManager();
         }
         if (securityManager == null) {
             securityManager = ThreadContext.getSecurityManager();

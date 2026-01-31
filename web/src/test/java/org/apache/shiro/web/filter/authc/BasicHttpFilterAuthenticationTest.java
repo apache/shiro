@@ -24,8 +24,8 @@ import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.test.SecurityManagerTestSupport;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -311,6 +311,7 @@ public class BasicHttpFilterAuthenticationTest extends SecurityManagerTestSuppor
     @Test
     public void notAllowedPreFlightRequests() {
         testFilter = new BasicHttpAuthenticationFilter();
+        testFilter.setAllowPreFlightRequests(false);
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
 

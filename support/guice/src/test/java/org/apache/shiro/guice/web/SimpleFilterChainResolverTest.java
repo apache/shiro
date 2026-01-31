@@ -26,12 +26,12 @@ import org.apache.shiro.web.util.WebUtils;
 import org.easymock.IMocksControl;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -49,7 +49,7 @@ import static org.easymock.EasyMock.same;
 public class SimpleFilterChainResolverTest {
 
     @Test
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     void testGetChain() throws Exception {
         // test that it uses the pattern matcher - check
         // test that the FIRST chain found is the one that gets returned - check

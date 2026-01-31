@@ -61,14 +61,18 @@ class BeanTypeListener implements TypeListener {
 
     static final Key<?> MAP_KEY = Key.get(Types.mapOf(TypeLiteral.class, BeanTypeKey.class), Names.named(BEAN_TYPE_MAP_NAME));
 
+    @SuppressWarnings("rawtypes")
     private static final Matcher<Class> SHIRO_MATCHER = Matchers.inSubpackage(SHIRO_PACKAGE.getName());
+    @SuppressWarnings("rawtypes")
     private static final Matcher<Class> SHIRO_GUICE_MATCHER = Matchers.inSubpackage(SHIRO_GUICE_PACKAGE.getName());
+    @SuppressWarnings("rawtypes")
     private static final Matcher<Class> CLASS_MATCHER = ShiroMatchers.anyPackage
             .and(SHIRO_MATCHER.and(Matchers.not(SHIRO_GUICE_MATCHER)));
 
+    @SuppressWarnings("rawtypes")
     static final Matcher<TypeLiteral> MATCHER = ShiroMatchers.typeLiteral(CLASS_MATCHER);
 
-    private static final Set<Class<?>> WRAPPER_TYPES = new HashSet<Class<?>>(Arrays.asList(
+    private static final Set<Class<?>> WRAPPER_TYPES = new HashSet<>(Arrays.asList(
             Byte.class,
             Boolean.class,
             Character.class,
@@ -125,6 +129,7 @@ class BeanTypeListener implements TypeListener {
     }
 
     private static Key<?> getMappedKey(Injector injector, Key<?> key) {
+        @SuppressWarnings("rawtypes")
         Map<TypeLiteral, BeanTypeKey> beanTypeMap = getBeanTypeMap(injector);
         if (key.getAnnotation() == null && beanTypeMap.containsKey(key.getTypeLiteral())) {
             return beanTypeMap.get(key.getTypeLiteral()).key;
@@ -133,7 +138,7 @@ class BeanTypeListener implements TypeListener {
         }
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static Map<TypeLiteral, BeanTypeKey> getBeanTypeMap(Injector injector) {
         return (Map<TypeLiteral, BeanTypeKey>) injector.getInstance(MAP_KEY);
     }
@@ -147,8 +152,7 @@ class BeanTypeListener implements TypeListener {
     }
 
     private static boolean requiresName(Type propertyType) {
-        if (propertyType instanceof Class) {
-            Class<?> aClass = (Class<?>) propertyType;
+        if (propertyType instanceof Class<?> aClass) {
             return aClass.isPrimitive()
                     || aClass.isEnum()
                     || WRAPPER_TYPES.contains(aClass)
@@ -166,6 +170,7 @@ class BeanTypeListener implements TypeListener {
         beanTypeMapBinding(binder).addBinding(typeLiteral).toInstance(new BeanTypeKey(key));
     }
 
+    @SuppressWarnings("rawtypes")
     private static MapBinder<TypeLiteral, BeanTypeKey> beanTypeMapBinding(Binder binder) {
         return MapBinder.newMapBinder(binder, TypeLiteral.class, BeanTypeKey.class, Names.named(BEAN_TYPE_MAP_NAME));
     }

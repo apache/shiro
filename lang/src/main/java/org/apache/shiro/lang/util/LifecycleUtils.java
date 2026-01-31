@@ -36,8 +36,8 @@ public abstract class LifecycleUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(LifecycleUtils.class);
 
     public static void init(Object o) throws ShiroException {
-        if (o instanceof Initializable) {
-            init((Initializable) o);
+        if (o instanceof Initializable initializable) {
+            init(initializable);
         }
     }
 
@@ -53,7 +53,7 @@ public abstract class LifecycleUtils {
      * @throws ShiroException if unable to initialize one or more instances.
      * @since 0.9
      */
-    public static void init(Collection c) throws ShiroException {
+    public static void init(Collection<?> c) throws ShiroException {
         if (c == null || c.isEmpty()) {
             return;
         }
@@ -63,10 +63,10 @@ public abstract class LifecycleUtils {
     }
 
     public static void destroy(Object o) {
-        if (o instanceof Destroyable) {
-            destroy((Destroyable) o);
-        } else if (o instanceof Collection) {
-            destroy((Collection) o);
+        if (o instanceof Destroyable destroyable) {
+            destroy(destroyable);
+        } else if (o instanceof Collection<?> collection) {
+            destroy(collection);
         }
     }
 
@@ -90,7 +90,7 @@ public abstract class LifecycleUtils {
      * @param c the collection of objects to destroy.
      * @since 0.9
      */
-    public static void destroy(Collection c) {
+    public static void destroy(Collection<?> c) {
         if (c == null || c.isEmpty()) {
             return;
         }

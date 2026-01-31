@@ -173,18 +173,18 @@ public interface ByteSource {
                         + "want to write your own ByteSource implementation to extract its bytes explicitly.";
                 throw new IllegalArgumentException(msg);
             }
-            if (source instanceof byte[]) {
-                return bytes((byte[]) source);
-            } else if (source instanceof ByteSource) {
-                return (ByteSource) source;
-            } else if (source instanceof char[]) {
-                return bytes((char[]) source);
-            } else if (source instanceof String) {
-                return bytes((String) source);
-            } else if (source instanceof File) {
-                return bytes((File) source);
-            } else if (source instanceof InputStream) {
-                return bytes((InputStream) source);
+            if (source instanceof byte[] bytes) {
+                return bytes(bytes);
+            } else if (source instanceof ByteSource byteSource) {
+                return byteSource;
+            } else if (source instanceof char[] chars) {
+                return bytes(chars);
+            } else if (source instanceof String string) {
+                return bytes(string);
+            } else if (source instanceof File file) {
+                return bytes(file);
+            } else if (source instanceof InputStream stream) {
+                return bytes(stream);
             } else {
                 throw new IllegalStateException("Encountered unexpected byte source.  This is a bug - please notify "
                         + "the Shiro developer list asap (the isCompatible implementation does not reflect this "

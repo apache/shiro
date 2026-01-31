@@ -36,17 +36,15 @@
 
     <properties>
         <japicmp.skip>true</japicmp.skip>
-        <dependency.meecrowave.version>1.2.15</dependency.meecrowave.version>
+        <dependency.meecrowave.version>2.0.0</dependency.meecrowave.version>
         <maven.deploy.skip>true</maven.deploy.skip>
         <nexus.deploy.skip>true</nexus.deploy.skip>
     </properties>
 
     <modules>
-        <module>support</module>
-        <module>guice3</module>
-        <module>guice4</module>
         <module>meecrowave-support</module>
         <module>jaxrs</module>
+        <module>support</module>
         <module>jakarta-ee-support</module>
         <module>jakarta-ee</module>
     </modules>
@@ -61,6 +59,15 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>deferred-for-3x</id>
+            <modules>
+                <module>guice</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <reporting>
         <plugins>

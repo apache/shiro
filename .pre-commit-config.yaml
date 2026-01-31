@@ -70,7 +70,7 @@ repos:
         description: Trims trailing whitespace
         args: [--markdown-linebreak-ext=md]
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.45.0
+    rev: v0.47.0
     hooks:
       - id: markdownlint
         name: run markdownlint
@@ -80,7 +80,7 @@ repos:
         types: [markdown]
         files: \.md$
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.37.1
+    rev: v1.38.0
     hooks:
       - id: yamllint
         name: run yamllint
@@ -89,18 +89,18 @@ repos:
         types: [yaml]
         files: \.ya?ml$
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.28.0
+    rev: v8.30.0
     hooks:
       - id: gitleaks
         name: run gitleaks
         description: check for secrets with gitleaks
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.8
+    rev: v1.7.10
     hooks:
       - id: actionlint
         description: actionlint is a static checker for GitHub Actions workflow files
   - repo: https://github.com/oxipng/oxipng
-    rev: v9.1.5
+    rev: v10.1.0
     hooks:
       - id: oxipng
         name: run oxipng
