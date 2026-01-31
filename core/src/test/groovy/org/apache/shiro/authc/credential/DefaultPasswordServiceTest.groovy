@@ -23,6 +23,7 @@ import org.apache.shiro.crypto.hash.DefaultHashService
 import org.apache.shiro.crypto.hash.Hash
 import org.apache.shiro.crypto.hash.Sha384Hash
 import org.apache.shiro.crypto.hash.Sha512Hash
+import org.apache.shiro.crypto.hash.SimpleHashProvider
 import org.apache.shiro.crypto.hash.format.HashFormatFactory
 import org.apache.shiro.crypto.hash.format.HexFormat
 import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat
@@ -31,6 +32,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import org.junit.jupiter.api.parallel.Isolated
 
+import java.nio.charset.StandardCharsets
+
+import static org.assertj.core.api.Assertions.assertThat
 import static org.easymock.EasyMock.*
 import static org.junit.jupiter.api.Assertions.*
 
@@ -95,6 +99,19 @@ class DefaultPasswordServiceTest {
         assertTrue service.passwordsMatch("test", saved)
 
         verify factory
+    }
+
+    @Test
+    void shiro1PasswordMatch_withSalt() {
+        String storedPassword = '$shiro1$SHA-256$500000$qvBT48YD2nz+w6FishMD+w==$KmYfTMAM5/iseXAux1GCZg5qz03qlweI05alDmzBFxU='
+        var passwordService = new DefaultPasswordService();
+        passwordService.setHashFormat(new Shiro1CryptFormat());
+        var hashService = new DefaultHashService();
+        hashService.setParameters(Map.of(SimpleHashProvider.Parameters.PARAMETER_SECRET_SALT,
+                Base64.getEncoder().encodeToString("admin".getBytes(StandardCharsets.UTF_8))));
+        passwordService.setHashService(hashService);
+
+        assertThat(passwordService.passwordsMatch("admin", storedPassword)).isTrue();
     }
 
     private static DefaultPasswordService createSha256Service() {
