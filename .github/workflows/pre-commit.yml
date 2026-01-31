@@ -57,4 +57,4 @@ jobs:
           path: ~/.cache/pre-commit
           key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
       - name: Run pre-commit
-        run: pre-commit run --color=always --all-files
+        run: pre-commit run --color=always --all-files --show-diff-on-failure
