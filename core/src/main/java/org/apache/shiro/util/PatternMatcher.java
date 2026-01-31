@@ -39,4 +39,19 @@ public interface PatternMatcher {
      * <code>false</code> otherwise.
      */
     boolean matches(String pattern, String source);
+
+    /**
+     * Returns {@code true} if pattern matching should be case-insensitive.
+     */
+    default boolean isCaseInsensitive() {
+        return false;
+    }
+
+    /**
+     * Sets whether pattern matching should be case-insensitive.
+     *
+     * @param caseInsensitive {@code true} if pattern matching should be case-insensitive.
+     */
+    default void setCaseInsensitive(boolean caseInsensitive) {
+    }
 }

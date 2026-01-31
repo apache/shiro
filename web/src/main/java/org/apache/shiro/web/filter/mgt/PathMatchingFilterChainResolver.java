@@ -61,6 +61,11 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
         this.filterChainManager = new DefaultFilterChainManager(filterConfig);
     }
 
+    public PathMatchingFilterChainResolver caseInsensitive(boolean caseInsensitive) {
+        setCaseInsensitive(caseInsensitive);
+        return this;
+    }
+
     /**
      * Returns the {@code PatternMatcher} used when determining if an incoming request's path
      * matches a configured filter chain.  Unless overridden, the
@@ -83,6 +88,19 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      */
     public void setPathMatcher(PatternMatcher pathMatcher) {
         this.pathMatcher = pathMatcher;
+    }
+
+    public boolean isCaseInsensitive() {
+        return pathMatcher != null && pathMatcher.isCaseInsensitive();
+    }
+
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        if (pathMatcher != null) {
+            pathMatcher.setCaseInsensitive(caseInsensitive);
+        }
+        if (filterChainManager != null) {
+            filterChainManager.setCaseInsensitive(caseInsensitive);
+        }
     }
 
     public FilterChainManager getFilterChainManager() {

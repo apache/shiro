@@ -61,6 +61,8 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     private List<String> globalFilters = Collections.singletonList(DefaultFilter.invalidRequest.name());
 
+    private boolean caseInsensitive;
+
     public IniFilterChainResolverFactory() {
         super();
     }
@@ -90,6 +92,14 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         this.globalFilters = globalFilters;
     }
 
+    public boolean isCaseInsensitive() {
+        return caseInsensitive;
+    }
+
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
+    }
+
     protected FilterChainResolver createInstance(Ini ini) {
         FilterChainResolver filterChainResolver = createDefaultInstance();
         if (filterChainResolver instanceof PathMatchingFilterChainResolver resolver) {
@@ -102,9 +112,9 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
     protected FilterChainResolver createDefaultInstance() {
         FilterConfig filterConfig = getFilterConfig();
         if (filterConfig != null) {
-            return new PathMatchingFilterChainResolver(filterConfig);
+            return new PathMatchingFilterChainResolver(filterConfig).caseInsensitive(caseInsensitive);
         } else {
-            return new PathMatchingFilterChainResolver();
+            return new PathMatchingFilterChainResolver().caseInsensitive(caseInsensitive);
         }
     }
 

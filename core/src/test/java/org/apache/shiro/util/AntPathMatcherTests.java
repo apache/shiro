@@ -348,4 +348,12 @@ public class AntPathMatcherTests {
     void isPatternWithNullPath() {
         assertThat(pathMatcher.isPattern(null)).isFalse();
     }
+
+    @Test
+    void caseInsensitiveMatch() {
+        pathMatcher.setCaseInsensitive(true);
+        assertTrue(pathMatcher.match("/Test/Path", "/test/path"));
+        assertTrue(pathMatcher.match("/TEST/PATH/*", "/test/path/extra"));
+        assertFalse(pathMatcher.match("/TEST/PATH", "/different/path"));
+    }
 }

@@ -26,14 +26,17 @@ import org.apache.shiro.crypto.hash.format.DefaultHashFormatFactory;
 import org.apache.shiro.crypto.hash.format.HashFormat;
 import org.apache.shiro.crypto.hash.format.HashFormatFactory;
 import org.apache.shiro.crypto.hash.format.ParsableHashFormat;
+import org.apache.shiro.crypto.hash.format.Shiro1CryptFormat;
 import org.apache.shiro.crypto.hash.format.Shiro2CryptFormat;
 import org.apache.shiro.lang.util.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.MessageDigest;
+import java.util.HashMap;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.shiro.crypto.hash.SimpleHashProvider.Parameters.PARAMETER_ITERATIONS;
 
 /**
  * Default implementation of the {@link PasswordService} interface that relies on an internal
@@ -111,7 +114,13 @@ public class DefaultPasswordService implements HashingPasswordService {
             }
         }
 
-        return saved.matchesPassword(plaintextBytes);
+        if (hashFormat instanceof Shiro1CryptFormat) {
+            HashRequest request = createHashRequestShiro1Compatibility(plaintextBytes, saved);
+            Hash computed = hashService.computeHash(request);
+            return constantEquals(saved.toString(), computed.toString());
+        } else {
+            return saved.matchesPassword(plaintextBytes);
+        }
     }
 
     private boolean constantEquals(String savedHash, String computedHash) {
@@ -143,6 +152,28 @@ public class DefaultPasswordService implements HashingPasswordService {
     protected HashRequest createHashRequest(ByteSource plaintext) {
         return new HashRequest.Builder().setSource(plaintext)
                 .setAlgorithmName(getHashService().getDefaultAlgorithmName())
+                .build();
+    }
+
+    /**
+     * Creates a HashRequest that is compatible with Shiro 1.x password hashing behavior by
+     * using the saved password hash's parameters.
+     * Salt is no longer applicable for stronger algorithms used by default in Shiro 2.x+,
+     * but this method is retained for compatibility with Shiro 1.x hashed passwords.
+     *
+     * @param plaintext the plaintext to hash
+     * @param saved    the saved hash
+     * @return the HashRequest
+     */
+    protected HashRequest createHashRequestShiro1Compatibility(ByteSource plaintext, Hash saved) {
+        var parameters = new HashMap<>(getHashService().getParameters());
+        parameters.put(PARAMETER_ITERATIONS, saved.getIterations());
+        //keep everything from the saved hash except for the source:
+        return new HashRequest.Builder().setSource(plaintext)
+                //now use the existing saved data:
+                .setAlgorithmName(saved.getAlgorithmName())
+                .setSalt(saved.getSalt())
+                .withParameters(parameters)
                 .build();
     }
 

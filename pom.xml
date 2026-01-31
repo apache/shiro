@@ -357,6 +357,9 @@
                             <exclude>**/nb-configuration.xml</exclude>
                             <exclude>**/faces-config.NavData</exclude>
                             <exclude>**/org.mockito.plugins.MockMaker</exclude>
+                            <exclude>**/.project</exclude>
+                            <exclude>**/.classpath</exclude>
+                            <exclude>**/.settings/*</exclude>
                             <exclude>.github/linters/codespell.txt</exclude>
                             <exclude>.mvn/*</exclude>
                             <exclude>.jenkins_maven_args</exclude>
@@ -1494,6 +1497,10 @@
                         <exclude>**/target/**</exclude>
                         <exclude>**/nb-configuration.xml</exclude>
                         <exclude>**/faces-config.NavData</exclude>
+                        <exclude>**/.project</exclude>
+                        <exclude>**/.classpath</exclude>
+                        <exclude>**/.settings/*</exclude>
+                        <exclude>.github/linters/codespell.txt</exclude>
                         <exclude>**/org.mockito.plugins.MockMaker</exclude>
                         <exclude>.mvn/*</exclude>
                         <exclude>.jenkins_maven_args</exclude>

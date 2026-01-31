@@ -220,4 +220,10 @@ public interface FilterChainManager {
      * @since 1.6
      */
     void setGlobalFilters(List<String> globalFilterNames) throws ConfigurationException;
+
+    /**
+     * Sets whether or not path matching should be case insensitive.
+     * @param caseInsensitive boolean value indicating whether path matching should be case insensitive.
+     */
+    default void setCaseInsensitive(boolean caseInsensitive) { }
 }

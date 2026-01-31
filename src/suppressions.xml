@@ -19,22 +19,25 @@
 
 <!-- See https://github.com/hazelcast/hazelcast/blob/master/checkstyle/suppressions.xml for examples -->
 <suppressions>
+    <suppress checks=".*" files="target/generated-sources/.*"/>
+    <suppress checks=".*" files="target/generated-test-sources/.*"/>
     <!-- do not require package-info.java -->
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]ee[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]testing[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]cdi[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]spring[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]guice[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]aop[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]authc[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]web[\\/]jaxrs[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]lang[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]tools[\\/]hasher[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]config[\\/]ogdl[\\/]*"/>
-    <suppress checks="JavadocPackage" files="org[\\/]apache[\\/]shiro[\\/]cache[\\/]ehcache[\\/]*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.ee.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.testing.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.cdi.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.spring.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.guice.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.aop.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.authc.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.web.jaxrs.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.lang.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.tools.hasher.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.config.ogdl.*"/>
+    <suppress checks="JavadocPackage" files="org.apache.shiro.cache.ehcache.*"/>
     <suppress checks="MethodName" files=".*Test\.java"/>
     <suppress checks="MethodName" files=".*IT\.java"/>
     <suppress checks=".*" files="Quickstart.*.java"/>
     <suppress checks=".*" files="application.properties"/>
+    <suppress checks="LineLength" lines="45" files="org.apache.shiro.web.filter.InvalidRequestFilter"/>
 </suppressions>

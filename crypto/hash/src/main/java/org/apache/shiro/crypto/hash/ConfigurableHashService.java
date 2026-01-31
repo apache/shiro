@@ -33,5 +33,4 @@ public interface ConfigurableHashService extends HashService {
      *             compute secure hashes for passwords.
      */
     void setDefaultAlgorithmName(String name);
-
 }
