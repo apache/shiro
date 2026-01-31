@@ -66,6 +66,8 @@ public class DefaultFilterChainManager implements FilterChainManager {
      */
     private Map<String, NamedFilterList> filterChains;
 
+    private boolean caseInsensitive;
+
     public DefaultFilterChainManager() {
         this.filters = new LinkedHashMap<String, Filter>();
         this.filterChains = new LinkedHashMap<String, NamedFilterList>();
@@ -119,6 +121,11 @@ public class DefaultFilterChainManager implements FilterChainManager {
 
     public Filter getFilter(String name) {
         return this.filters.get(name);
+    }
+
+    @Override
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
     }
 
     public void addFilter(String name, Filter filter) {
@@ -327,6 +334,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
         }
         if (filter instanceof PathConfigProcessor) {
             ((PathConfigProcessor) filter).processPathConfig(chainName, chainSpecificFilterConfig);
+            ((PathConfigProcessor) filter).setCaseInsensitive(caseInsensitive);
         } else {
             if (StringUtils.hasText(chainSpecificFilterConfig)) {
                 //they specified a filter configuration, but the Filter doesn't implement PathConfigProcessor

@@ -25,7 +25,12 @@ import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition
 import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration
 import org.apache.shiro.web.filter.InvalidRequestFilter
+import org.apache.shiro.web.filter.PathConfigProcessor
 import org.apache.shiro.web.filter.mgt.FilterChainManager
+import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver
+import org.apache.shiro.web.mgt.DefaultWebSecurityManager
+import org.apache.shiro.web.servlet.AbstractShiroFilter
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -47,6 +52,7 @@ import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.instanceOf
 import static org.hamcrest.Matchers.notNullValue
 import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.is;
 
 /**
  * Test ShiroWebFilterConfiguration creates a ShiroFilterFactoryBean that contains Servlet filters that are available for injection.
@@ -62,6 +68,13 @@ class ShiroWebFilterConfigurationTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     private ShiroFilterFactoryBean shiroFilterFactoryBean
 
+    private static final ThreadLocal<Boolean> caseInsensitiveCalled = ThreadLocal.withInitial { false }
+
+    @AfterEach
+    void tearDown() {
+        caseInsensitiveCalled.remove()
+    }
+
     @Test
     void testShiroFilterFactoryBeanContainsSpringFilters() {
 
@@ -71,6 +84,31 @@ class ShiroWebFilterConfigurationTest extends AbstractJUnit4SpringContextTests {
         FilterChainManager filterChainManager = shiroFilterFactoryBean.createFilterChainManager()
         // lookup the chain by name
         assertThat filterChainManager.getChain("/test-me"), contains(instanceOf(InvalidRequestFilter), instanceOf(ExpectedTestFilter))
+    }
+
+    @Test
+    void caseInsensitiveChainManager() {
+        shiroFilterFactoryBean.setCaseInsensitive true
+        FilterChainManager filterChainManager = shiroFilterFactoryBean.createFilterChainManager()
+        assertThat filterChainManager.caseInsensitive, is(true)
+    }
+
+    @Test
+    void caseInsensitiveResolverAndPathMatcher() {
+        shiroFilterFactoryBean.setCaseInsensitive true
+        shiroFilterFactoryBean.setSecurityManager new DefaultWebSecurityManager()
+        AbstractShiroFilter filter = shiroFilterFactoryBean.getObject()
+        PathMatchingFilterChainResolver resolver = filter.filterChainResolver;
+        assertThat resolver.caseInsensitive, is(true)
+        assertThat resolver.pathMatcher.caseInsensitive, is(true)
+        assertThat caseInsensitiveCalled.get(), is(true)
+    }
+
+    @Test
+    void caseInsensitivePathConfigProcessor() {
+        shiroFilterFactoryBean.setCaseInsensitive true
+        shiroFilterFactoryBean.createFilterChainManager()
+        assertThat caseInsensitiveCalled.get(), is(true)
     }
 
     @Configuration
@@ -91,7 +129,7 @@ class ShiroWebFilterConfigurationTest extends AbstractJUnit4SpringContextTests {
         }
     }
 
-    static class ExpectedTestFilter implements Filter {
+    static class ExpectedTestFilter implements Filter, PathConfigProcessor {
         @Override
         void init(FilterConfig filterConfig) throws ServletException {}
 
@@ -100,5 +138,15 @@ class ShiroWebFilterConfigurationTest extends AbstractJUnit4SpringContextTests {
 
         @Override
         void destroy() {}
+
+        @Override
+        Filter processPathConfig(String path, String config) {
+            return null
+        }
+
+        @Override
+        void setCaseInsensitive(boolean caseInsensitive) {
+            caseInsensitiveCalled.set caseInsensitive
+        }
     }
 }
