@@ -22,6 +22,12 @@ github_actions:
           - any-glob-to-any-file:
               - .github/**/*
 
+groovy:
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - '**/*.groovy'
+
 java:
   - any:
       - changed-files:
