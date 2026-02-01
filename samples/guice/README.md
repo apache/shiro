@@ -6,7 +6,7 @@ A Guice example web application that show how to configure Shiro via Guice, and 
 Run the Example
 ---------------
 
-```
+```bash
 mvn jetty:run
 ```
 
