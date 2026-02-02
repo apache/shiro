@@ -71,6 +71,7 @@
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2026-01-15T21:40:21Z</project.build.outputTimestamp>
+        <root.dir>${maven.multiModuleProjectDirectory}</root.dir>
         <jacoco.skip>true</jacoco.skip>
         <!-- workaround for gmavenplus plugin until maven 4 is being used -->
         <maven.project.sourceRoots.warningsDisabled>true</maven.project.sourceRoots.warningsDisabled>
@@ -106,7 +107,7 @@
         <hsqldb.version>2.7.4</hsqldb.version>
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>17</jdk.version>
-        <jetty.version>12.1.5</jetty.version>
+        <jetty.version>12.1.6</jetty.version>
         <owasp.java.encoder.version>1.4.0</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
@@ -546,27 +547,6 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.commonjava.maven.plugins</groupId>
-                <artifactId>directory-maven-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                    <execution>
-                        <id>directories</id>
-                        <goals>
-                            <goal>directory-of</goal>
-                        </goals>
-                        <phase>validate</phase>
-                        <configuration>
-                            <property>root.dir</property>
-                            <project>
-                                <groupId>org.apache.shiro</groupId>
-                                <artifactId>shiro-root</artifactId>
-                            </project>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
