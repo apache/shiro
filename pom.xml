@@ -100,7 +100,7 @@
         <commons.text.version>1.8</commons.text.version>
         <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
              modules' OSGi metadata: -->
-        <ehcache.version>3.10.8</ehcache.version>
+        <ehcache.version>3.11.1</ehcache.version>
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
         <hazelcast.version>5.6.0</hazelcast.version>
         <hsqldb.version>2.7.4</hsqldb.version>
@@ -126,7 +126,7 @@
         <mockito.version>5.21.0</mockito.version>
         <bytebuddy.version>1.18.4</bytebuddy.version>
         <gmaven.version>4.3.0</gmaven.version>
-        <groovy.version>5.0.3</groovy.version>
+        <groovy.version>5.0.4</groovy.version>
         <junit.version>6.0.2</junit.version>
         <junit.server.jetty.version>3.4.0</junit.server.jetty.version>
         <hibernate.version>7.2.1.Final</hibernate.version>
@@ -1010,7 +1010,7 @@
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.27.6</version>
+                <version>3.27.7</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1149,12 +1149,12 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.5.26</version>
+                <version>1.5.27</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.5.26</version>
+                <version>1.5.27</version>
             </dependency>
 
             <dependency>
