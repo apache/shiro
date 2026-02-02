@@ -32,10 +32,6 @@
     <name>Apache Shiro :: Samples :: Servlet Plugin</name>
     <packaging>war</packaging>
 
-    <properties>
-        <skipITs>true</skipITs>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -54,6 +50,16 @@
                         <extended>false</extended>
                         <logTimeZone>GMT</logTimeZone>
                     </requestLog>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExclude>
+                            org.apache.shiro:shiro-servlet-plugin
+                        </classpathDependencyExclude>
+                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
         </plugins>
@@ -112,4 +118,15 @@
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-bom</artifactId>
+                <version>10.0.0</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
