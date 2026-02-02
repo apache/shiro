@@ -26,6 +26,7 @@ import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -50,11 +51,6 @@ public class ShiroEventBusBeanPostProcessor implements BeanPostProcessor {
     }
 
     @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
-    }
-
-    @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof EventBusAware aware) {
             aware.setEventBus(eventBus);
@@ -66,8 +62,7 @@ public class ShiroEventBusBeanPostProcessor implements BeanPostProcessor {
     }
 
     private boolean isEventSubscriber(Object bean) {
-        List annotatedMethods = ClassUtils.getAnnotatedMethods(bean.getClass(), Subscribe.class);
+        List<Method> annotatedMethods = ClassUtils.getAnnotatedMethods(bean.getClass(), Subscribe.class);
         return !CollectionUtils.isEmpty(annotatedMethods);
     }
-
 }

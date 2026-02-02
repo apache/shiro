@@ -32,7 +32,6 @@ import org.apache.shiro.web.servlet.AbstractShiroFilter
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.equalTo
@@ -44,7 +43,7 @@ import static org.hamcrest.MatcherAssert.assertThat
  * @since 1.4.0
  */
 @SpringBootTest(classes = [ShiroWebAutoConfigurationTestApplication])
-class ShiroWebSpringAutoConfigurationTest extends AbstractJUnit4SpringContextTests {
+class ShiroWebSpringAutoConfigurationTest {
 
     @Autowired
     private SecurityManager securityManager

@@ -42,6 +42,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizationAttributeSourceAdvisor.class);
 
+    @SuppressWarnings("rawtypes")
     private static final Class<? extends Annotation>[] AUTHZ_ANNOTATION_CLASSES =
             new Class[] {
                     RequiresPermissions.class, RequiresRoles.class,
@@ -81,7 +82,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
      * @return <tt>true</tt> if the method has a Shiro annotation, false otherwise.
      * @see org.springframework.aop.MethodMatcher#matches(java.lang.reflect.Method, Class)
      */
-    public boolean matches(Method method, Class targetClass) {
+    public boolean matches(Method method, Class<?> targetClass) {
         Method m = method;
 
         if (isAuthzAnnotationPresent(m)) {

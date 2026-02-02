@@ -38,7 +38,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 import org.springframework.test.context.web.WebAppConfiguration
 
 import jakarta.servlet.Filter
@@ -60,7 +59,7 @@ import static org.hamcrest.Matchers.is;
 @WebAppConfiguration
 @SpringJUnitConfig(classes = [RealmTestConfiguration, FilterConfiguration, ShiroConfiguration, ShiroWebFilterConfiguration])
 @ExtendWith(SpringExtension.class)
-class ShiroWebFilterConfigurationTest extends AbstractJUnit4SpringContextTests {
+class ShiroWebFilterConfigurationTest {
 
     @Autowired
     private SecurityManager securityManager

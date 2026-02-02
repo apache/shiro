@@ -49,8 +49,7 @@ import javax.sql.DataSource;
         ShiroAnnotationProcessorConfiguration.class,
         ShiroWebConfiguration.class,
         ShiroWebFilterConfiguration.class,
-        JspViewsConfig.class,
-        ShiroRequestMappingConfig.class})
+        JspViewsConfig.class})
 @ComponentScan("org.apache.shiro.samples.spring")
 public class ApplicationConfig {
 
