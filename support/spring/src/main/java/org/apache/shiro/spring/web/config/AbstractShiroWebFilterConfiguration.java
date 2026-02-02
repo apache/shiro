@@ -22,11 +22,14 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
+import org.apache.shiro.web.servlet.AbstractShiroFilter;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import jakarta.servlet.Filter;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,8 +47,8 @@ public class AbstractShiroWebFilterConfiguration {
     @Autowired(required = false)
     protected ShiroFilterConfiguration shiroFilterConfiguration;
 
-    @Autowired(required = false)
-    protected Map<String, Filter> filterMap;
+    @Autowired
+    protected ListableBeanFactory beanFactory;
 
     @Value("#{ @environment['shiro.loginUrl'] ?: '/login.jsp' }")
     protected String loginUrl;
@@ -69,6 +72,24 @@ public class AbstractShiroWebFilterConfiguration {
                 : new ShiroFilterConfiguration();
     }
 
+    /**
+     * Collects Filter beans from the application context, excluding any AbstractShiroFilter
+     * instances to avoid circular dependency with ShiroFilterFactoryBean.
+     *
+     * @return a map of filter names to Filter instances
+     */
+    protected Map<String, Filter> filterMap() {
+        Map<String, Filter> filterMap = new LinkedHashMap<>();
+        Map<String, Filter> allFilters = beanFactory.getBeansOfType(Filter.class);
+        for (Map.Entry<String, Filter> entry : allFilters.entrySet()) {
+            // Exclude AbstractShiroFilter instances to avoid circular dependency
+            if (!(entry.getValue() instanceof AbstractShiroFilter)) {
+                filterMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return filterMap;
+    }
+
     protected ShiroFilterFactoryBean shiroFilterFactoryBean() {
         ShiroFilterFactoryBean filterFactoryBean = new ShiroFilterFactoryBean();
 
@@ -82,7 +103,8 @@ public class AbstractShiroWebFilterConfiguration {
         filterFactoryBean.setGlobalFilters(globalFilters());
         filterFactoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinition.getFilterChainMap());
 
-        if (filterMap != null) {
+        Map<String, Filter> filterMap = filterMap();
+        if (!filterMap.isEmpty()) {
             filterFactoryBean.setFilters(filterMap);
         }
 
