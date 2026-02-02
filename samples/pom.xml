@@ -45,13 +45,13 @@
         <module>web</module>
         <module>servlet-plugin</module>
         <module>guice</module>
+        <module>spring</module>
     </modules>
 
     <profiles>
         <profile>
             <id>deferred-for-3x</id>
             <modules>
-                <module>spring</module>
                 <module>spring-boot</module>
                 <module>spring-boot-3-web</module>
                 <module>spring-mvc</module>
