@@ -59,7 +59,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
     /**
      * list of filters to prepend to every chain
      */
-    private List<String> globalFilterNames;
+    private final List<String> globalFilterNames;
 
     /**
      * key: chain name, value: chain
@@ -160,7 +160,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
 
         // first add each of global filters
         if (!CollectionUtils.isEmpty(globalFilterNames)) {
-            globalFilterNames.stream().forEach(filterName -> addToChain(chainName, filterName));
+            globalFilterNames.forEach(filterName -> addToChain(chainName, filterName));
         }
 
         //parse the value by tokenizing it to get the resulting filter-specific config entries
@@ -309,6 +309,10 @@ public class DefaultFilterChainManager implements FilterChainManager {
 
         NamedFilterList chain = ensureChain(chainName);
         chain.add(filter);
+    }
+
+    public List<String> getGlobalFilterNames() {
+        return List.copyOf(globalFilterNames);
     }
 
     public void setGlobalFilters(List<String> globalFilterNames) throws ConfigurationException {

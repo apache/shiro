@@ -1,5 +1,5 @@
 org.springframework.boot.diagnostics.FailureAnalyzer = \
   org.apache.shiro.spring.boot.autoconfigure.ShiroNoRealmConfiguredFailureAnalyzer
 
-org.springframework.boot.env.EnvironmentPostProcessor=\
+org.springframework.boot.EnvironmentPostProcessor=\
   org.apache.shiro.spring.config.web.autoconfigure.ShiroEnvironmentPostProcessor

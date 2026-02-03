@@ -116,7 +116,7 @@
         <slf4j.version>2.0.17</slf4j.version>
         <log4j.version>2.25.3</log4j.version>
         <spring.version>7.0.3</spring.version>
-        <spring-boot.version>4.0.1</spring-boot.version>
+        <spring-boot.version>4.0.2</spring-boot.version>
         <guice.version>7.0.0</guice.version>
         <jaxrs.api.version>4.0.0</jaxrs.api.version>
         <htmlunit.version>4.21.0</htmlunit.version>
