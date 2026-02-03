@@ -1223,7 +1223,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.5.26</version>
+                <version>1.5.27</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
