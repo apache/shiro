@@ -1803,14 +1803,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>deferred-for-3x</id>
-            <activation>
-                <property>
-                    <name>!skip.deferred.modules</name>
-                </property>
-            </activation>
-        </profile>
     </profiles>
     <!--Disable snapshot repositories because they download snapshots
         instead of using the current build in CI 'mvn verify' steps-->
