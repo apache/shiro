@@ -21,7 +21,7 @@ package org.apache.shiro.samples.spring.web;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -38,7 +38,7 @@ import java.util.Map;
  *
  * @since 0.1
  */
-@Component
+@Controller
 @RequestMapping("/s/shiro.jnlp")
 public class JnlpController extends AbstractController {
 

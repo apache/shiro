@@ -433,13 +433,6 @@
                             <port>9080</port>
                             <idleTimeout>60000</idleTimeout>
                         </httpConnector>
-                        <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
-                            <filename>./target/yyyy_mm_dd.request.log</filename>
-                            <retainDays>90</retainDays>
-                            <append>true</append>
-                            <extended>false</extended>
-                            <logTimeZone>GMT</logTimeZone>
-                        </requestLog>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -558,6 +551,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <showWarnings>true</showWarnings>
+                    <parameters>true</parameters>
                     <compilerArgs>
                         <arg>-Xlint:deprecation</arg>
                         <arg>-Xlint:unchecked</arg>
