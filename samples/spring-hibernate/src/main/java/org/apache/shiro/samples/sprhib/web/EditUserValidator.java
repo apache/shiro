@@ -32,7 +32,7 @@ public class EditUserValidator implements Validator {
 
     private static final String SIMPLE_EMAIL_REGEX = "[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}";
 
-    public boolean supports(Class aClass) {
+    public boolean supports(Class<?> aClass) {
         return EditUserCommand.class.isAssignableFrom(aClass);
     }
 

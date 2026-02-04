@@ -424,15 +424,17 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
-                    <version>11.0.26</version>
+                    <groupId>org.eclipse.jetty.ee11</groupId>
+                    <artifactId>jetty-ee11-maven-plugin</artifactId>
+                    <version>${jetty.version}</version>
                     <configuration>
-                        <contextPath>/</contextPath>
                         <httpConnector>
                             <port>9080</port>
                             <idleTimeout>60000</idleTimeout>
                         </httpConnector>
+                        <webApp>
+                            <contextPath>/</contextPath>
+                        </webApp>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1366,16 +1368,17 @@
                 <version>${quartz.version}</version>
                 <optional>true</optional>
             </dependency>
-            <dependency>
-                <groupId>com.github.mjeanroy</groupId>
-                <artifactId>junit-servers-jetty-9</artifactId>
-                <version>${junit.server.jetty.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>33.5.0-jre</version>
             </dependency>
 
             <dependency>
