@@ -48,13 +48,13 @@
         <module>spring</module>
         <module>spring-mvc</module>
         <module>spring-hibernate</module>
+        <module>spring-boot</module>
     </modules>
 
     <profiles>
         <profile>
             <id>deferred-for-3x</id>
             <modules>
-                <module>spring-boot</module>
                 <module>spring-boot-web</module>
                 <module>spring-boot-3-web</module>
             </modules>
