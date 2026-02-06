@@ -18,11 +18,8 @@
  */
 package org.apache.shiro.spring.web;
 
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.spring.web.ee10.ShiroHttpServletRequestEE10;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.lang.util.Nameable;
 import org.apache.shiro.lang.util.StringUtils;
@@ -40,7 +37,6 @@ import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.apache.shiro.web.servlet.OncePerRequestFilter;
-import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanInitializationException;
@@ -603,19 +599,5 @@ public class ShiroFilterFactoryBean implements FactoryBean<Filter> {
                 setFilterChainResolver(resolver);
             }
         }
-
-        /**
-         * Wraps the original HttpServletRequest in a {@link ShiroHttpServletRequest}, which is required for supporting
-         * Servlet Specification behavior backed by a {@link org.apache.shiro.subject.Subject Subject} instance.
-         *
-         * @param orig the original Servlet Container-provided incoming {@code HttpServletRequest} instance.
-         * @return {@link ShiroHttpServletRequest ShiroHttpServletRequest} instance wrapping the original.
-         * @since 1.0
-         */
-        @Override
-        protected ServletRequest wrapServletRequest(HttpServletRequest orig) {
-            return new ShiroHttpServletRequestEE10(orig, getServletContext(), isHttpSessions());
-        }
-
     }
 }
