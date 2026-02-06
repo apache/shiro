@@ -71,4 +71,8 @@ public class ShiroEventBusBeanPostProcessor implements BeanPostProcessor, Priori
     public int getOrder() {
         return LOWEST_PRECEDENCE - 1;
     }
+
+    public EventBus getEventBus() {
+        return eventBus;
+    }
 }

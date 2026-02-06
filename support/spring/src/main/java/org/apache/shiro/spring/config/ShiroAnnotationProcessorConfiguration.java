@@ -31,11 +31,10 @@ import org.springframework.context.annotation.DependsOn;
  */
 @Configuration
 public class ShiroAnnotationProcessorConfiguration extends AbstractShiroAnnotationProcessorConfiguration {
-
     @Bean
     @DependsOn("lifecycleBeanPostProcessor")
-    protected DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        return super.defaultAdvisorAutoProxyCreator();
+    public static DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        return new DefaultAdvisorAutoProxyCreator();
     }
 
     @Bean

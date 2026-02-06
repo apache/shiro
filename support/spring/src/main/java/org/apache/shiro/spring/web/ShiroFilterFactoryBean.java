@@ -39,10 +39,8 @@ import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.apache.shiro.web.servlet.OncePerRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 
 import jakarta.servlet.Filter;
 import java.util.ArrayList;
@@ -76,12 +74,6 @@ import java.util.Map;
  * While there is a {@link #setFilters(java.util.Map) filters} property that allows you to assign a filter beans
  * to the 'pool' of filters available when defining {@link #setFilterChainDefinitions(String) filter chains}, it is
  * optional.
- * <p/>
- * This implementation is also a {@link BeanPostProcessor} and will acquire
- * any {@link jakarta.servlet.Filter Filter} beans defined independently in your Spring application context.  Upon
- * discovery, they will be automatically added to the {@link #setFilters(java.util.Map) map} keyed by the bean ID.
- * That ID can then be used in the filter chain definitions, for example:
- *
  * <pre>
  * &lt;bean id="<b>myCustomFilter</b>" class="com.class.that.implements.jakarta.servlet.Filter"/&gt;
  * ...
@@ -120,8 +112,7 @@ import java.util.Map;
  * @since 1.0
  */
 @SuppressWarnings("checkstyle:MethodCount")
-public class ShiroFilterFactoryBean implements FactoryBean<Filter>, BeanPostProcessor {
-
+public class ShiroFilterFactoryBean implements FactoryBean<Filter> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShiroFilterFactoryBean.class);
 
     private SecurityManager securityManager;
@@ -573,7 +564,7 @@ public class ShiroFilterFactoryBean implements FactoryBean<Filter>, BeanPostProc
         }
     }
 
-    private void applyGlobalPropertiesIfNecessary(Filter filter) {
+    void applyGlobalPropertiesIfNecessary(Filter filter) {
         applyLoginUrlIfNecessary(filter);
         applySuccessUrlIfNecessary(filter);
         applyUnauthorizedUrlIfNecessary(filter);
@@ -581,32 +572,6 @@ public class ShiroFilterFactoryBean implements FactoryBean<Filter>, BeanPostProc
         if (filter instanceof OncePerRequestFilter requestFilter) {
             requestFilter.setFilterOncePerRequest(filterConfiguration.isFilterOncePerRequest());
         }
-    }
-
-    /**
-     * Inspects a bean, and if it implements the {@link Filter} interface, automatically adds that filter
-     * instance to the internal {@link #setFilters(java.util.Map) filters map} that will be referenced
-     * later during filter chain construction.
-     */
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (bean instanceof Filter filter) {
-            LOGGER.debug("Found filter chain candidate filter '{}'", beanName);
-            applyGlobalPropertiesIfNecessary(filter);
-            getFilters().put(beanName, filter);
-        } else {
-            LOGGER.trace("Ignoring non-Filter bean '{}'", beanName);
-        }
-        return bean;
-    }
-
-    /**
-     * Does nothing - only exists to satisfy the BeanPostProcessor interface and immediately returns the
-     * {@code bean} argument.
-     */
-    @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
     }
 
     /**

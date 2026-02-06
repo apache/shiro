@@ -51,5 +51,8 @@
         </property>
 
     </bean>
+    <bean id="shiroFilterFactoryBeanPostProcessor" class="org.apache.shiro.spring.web.ShiroFilterFactoryBeanPostProcessor">
+        <constructor-arg ref="&amp;shiroFilter"/>
+    </bean>
 
 </beans>

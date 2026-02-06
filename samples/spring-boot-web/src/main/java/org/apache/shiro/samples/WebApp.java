@@ -88,6 +88,7 @@ public class WebApp {
         // need to accept POSTs from the login form
         chainDefinition.addPathDefinition("/login.html", "authc");
         chainDefinition.addPathDefinition("/logout", "logout");
+        chainDefinition.addPathDefinition("/**", "anon");
         return chainDefinition;
     }
 
