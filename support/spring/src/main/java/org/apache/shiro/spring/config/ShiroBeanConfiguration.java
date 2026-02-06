@@ -23,6 +23,8 @@ import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.ShiroEventBusBeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
+import static org.springframework.beans.factory.config.BeanDefinition.ROLE_INFRASTRUCTURE;
 
 /**
  * @since 1.4.0
@@ -38,6 +40,7 @@ public class ShiroBeanConfiguration extends AbstractShiroBeanConfiguration {
 
     @Bean
     @Override
+    @Role(ROLE_INFRASTRUCTURE)
     protected EventBus eventBus() {
         return super.eventBus();
     }
