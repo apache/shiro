@@ -34,6 +34,7 @@
 
     <properties>
         <japicmp.skip>true</japicmp.skip>
+        <jacoco.skip>true</jacoco.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
         <nexus.deploy.skip>true</nexus.deploy.skip>
     </properties>
