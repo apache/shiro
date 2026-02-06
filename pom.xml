@@ -640,9 +640,7 @@
                     <execution>
                         <goals>
                             <goal>addTestSources</goal>
-                            <goal>generateTestStubs</goal>
                             <goal>compileTests</goal>
-                            <goal>removeTestStubs</goal>
                         </goals>
                     </execution>
                 </executions>
