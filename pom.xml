@@ -589,6 +589,7 @@
                         <include>org/apache/shiro/**</include>
                     </includes>
                     <excludes>
+                        <exclude>**/*$$SpringCGLIB$$*</exclude>
                         <exclude>**/*$$FastClassBy*$$*</exclude>
                         <exclude>**/*$$EnhancerBy*CGLIB$$*</exclude>
                         <exclude>**/*$MockitoMock$*</exclude>
