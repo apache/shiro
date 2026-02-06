@@ -67,7 +67,7 @@ public abstract class NameableFilter extends AbstractFilter implements Nameable 
      * servlet container at start-up:
      * <pre>
      * this.name = {@link #getFilterConfig() getFilterConfig()}.
-     *     {@link jakarta.servlet.FilterConfig#getFilterName() getName()};</pre>
+     * {@link jakarta.servlet.FilterConfig#getFilterName() getName()};</pre>
      *
      * @param name the name of the filter.
      */

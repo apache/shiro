@@ -27,9 +27,9 @@
         <version>999-SNAPSHOT</version>
     </parent>
 
-    <artifactId>shiro-its-guice</artifactId>
-    <name>Apache Shiro :: ITs :: Guice</name>
-    <packaging>war</packaging>
+	<artifactId>shiro-its-guice</artifactId>
+	<name>Apache Shiro :: ITs :: Guice</name>
+	<packaging>war</packaging>
 
     <properties>
         <groups>none()</groups>
