@@ -19,6 +19,7 @@
 package org.apache.shiro.crypto.hash;
 
 import java.security.SecureRandom;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -49,6 +50,7 @@ public class DefaultHashService implements ConfigurableHashService {
      */
     private String defaultAlgorithmName;
 
+    private Map<String, Object> parameters = Map.of();
 
     /**
      * Constructs a new {@code DefaultHashService} instance with the following defaults:
@@ -112,4 +114,13 @@ public class DefaultHashService implements ConfigurableHashService {
         return this.defaultAlgorithmName;
     }
 
+    @Override
+    public Map<String, Object> getParameters() {
+        return Map.copyOf(this.parameters);
+    }
+
+    @Override
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = Map.copyOf(parameters);
+    }
 }

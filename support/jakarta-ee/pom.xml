@@ -33,7 +33,6 @@
 
     <properties>
         <module.name>jakarta.ee</module.name>
-        <jacoco.skip>true</jacoco.skip>
     </properties>
 
     <dependencies>

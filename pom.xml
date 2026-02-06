@@ -71,6 +71,7 @@
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2026-01-15T21:40:21Z</project.build.outputTimestamp>
+        <root.dir>${maven.multiModuleProjectDirectory}</root.dir>
         <jacoco.skip>true</jacoco.skip>
         <!-- workaround for gmavenplus plugin until maven 4 is being used -->
         <maven.project.sourceRoots.warningsDisabled>true</maven.project.sourceRoots.warningsDisabled>
@@ -100,13 +101,14 @@
         <commons.text.version>1.8</commons.text.version>
         <!-- Don't change this version without also changing the shiro-ehcache and shiro-features
              modules' OSGi metadata: -->
-        <ehcache.version>3.10.8</ehcache.version>
+        <ehcache.version>3.11.1</ehcache.version>
         <!-- Don't change this version without also changing the shiro-hazelcast and shiro-features OSGi metadata: -->
         <hazelcast.version>5.6.0</hazelcast.version>
         <hsqldb.version>2.7.4</hsqldb.version>
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>17</jdk.version>
-        <jetty.version>12.1.5</jetty.version>
+        <tomcat.version>11.0.18</tomcat.version>
+        <jetty.version>12.1.6</jetty.version>
         <owasp.java.encoder.version>1.4.0</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
@@ -115,7 +117,7 @@
         <slf4j.version>2.0.17</slf4j.version>
         <log4j.version>2.25.3</log4j.version>
         <spring.version>7.0.3</spring.version>
-        <spring-boot.version>4.0.1</spring-boot.version>
+        <spring-boot.version>4.0.2</spring-boot.version>
         <guice.version>7.0.0</guice.version>
         <jaxrs.api.version>4.0.0</jaxrs.api.version>
         <htmlunit.version>4.21.0</htmlunit.version>
@@ -126,7 +128,7 @@
         <mockito.version>5.21.0</mockito.version>
         <bytebuddy.version>1.18.4</bytebuddy.version>
         <gmaven.version>4.3.0</gmaven.version>
-        <groovy.version>5.0.3</groovy.version>
+        <groovy.version>5.0.4</groovy.version>
         <junit.version>6.0.2</junit.version>
         <junit.server.jetty.version>3.4.0</junit.server.jetty.version>
         <hibernate.version>7.2.1.Final</hibernate.version>
@@ -357,6 +359,9 @@
                             <exclude>**/nb-configuration.xml</exclude>
                             <exclude>**/faces-config.NavData</exclude>
                             <exclude>**/org.mockito.plugins.MockMaker</exclude>
+                            <exclude>**/.project</exclude>
+                            <exclude>**/.classpath</exclude>
+                            <exclude>**/.settings/*</exclude>
                             <exclude>.github/linters/codespell.txt</exclude>
                             <exclude>.mvn/*</exclude>
                             <exclude>.jenkins_maven_args</exclude>
@@ -420,22 +425,17 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
-                    <version>11.0.26</version>
+                    <groupId>org.eclipse.jetty.ee11</groupId>
+                    <artifactId>jetty-ee11-maven-plugin</artifactId>
+                    <version>${jetty.version}</version>
                     <configuration>
-                        <contextPath>/</contextPath>
                         <httpConnector>
                             <port>9080</port>
                             <idleTimeout>60000</idleTimeout>
                         </httpConnector>
-                        <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
-                            <filename>./target/yyyy_mm_dd.request.log</filename>
-                            <retainDays>90</retainDays>
-                            <append>true</append>
-                            <extended>false</extended>
-                            <logTimeZone>GMT</logTimeZone>
-                        </requestLog>
+                        <webApp>
+                            <contextPath>/</contextPath>
+                        </webApp>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -547,27 +547,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.commonjava.maven.plugins</groupId>
-                <artifactId>directory-maven-plugin</artifactId>
-                <version>1.0</version>
-                <executions>
-                    <execution>
-                        <id>directories</id>
-                        <goals>
-                            <goal>directory-of</goal>
-                        </goals>
-                        <phase>validate</phase>
-                        <configuration>
-                            <property>root.dir</property>
-                            <project>
-                                <groupId>org.apache.shiro</groupId>
-                                <artifactId>shiro-root</artifactId>
-                            </project>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
             <plugin>
@@ -575,9 +554,11 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <showWarnings>true</showWarnings>
+                    <parameters>true</parameters>
                     <compilerArgs>
                         <arg>-Xlint:deprecation</arg>
                         <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:rawtypes</arg>
                     </compilerArgs>
                     <annotationProcessorPaths>
                         <annotationProcessorPath>
@@ -608,6 +589,7 @@
                         <include>org/apache/shiro/**</include>
                     </includes>
                     <excludes>
+                        <exclude>**/*$$SpringCGLIB$$*</exclude>
                         <exclude>**/*$$FastClassBy*$$*</exclude>
                         <exclude>**/*$$EnhancerBy*CGLIB$$*</exclude>
                         <exclude>**/*$MockitoMock$*</exclude>
@@ -659,9 +641,7 @@
                     <execution>
                         <goals>
                             <goal>addTestSources</goal>
-                            <goal>generateTestStubs</goal>
                             <goal>compileTests</goal>
-                            <goal>removeTestStubs</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -1006,7 +986,7 @@
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.27.6</version>
+                <version>3.27.7</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -1145,12 +1125,12 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.5.26</version>
+                <version>1.5.27</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.5.26</version>
+                <version>1.5.27</version>
             </dependency>
 
             <dependency>
@@ -1388,16 +1368,17 @@
                 <version>${quartz.version}</version>
                 <optional>true</optional>
             </dependency>
-            <dependency>
-                <groupId>com.github.mjeanroy</groupId>
-                <artifactId>junit-servers-jetty-9</artifactId>
-                <version>${junit.server.jetty.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>33.5.0-jre</version>
             </dependency>
 
             <dependency>
@@ -1493,6 +1474,10 @@
                         <exclude>**/target/**</exclude>
                         <exclude>**/nb-configuration.xml</exclude>
                         <exclude>**/faces-config.NavData</exclude>
+                        <exclude>**/.project</exclude>
+                        <exclude>**/.classpath</exclude>
+                        <exclude>**/.settings/*</exclude>
+                        <exclude>.github/linters/codespell.txt</exclude>
                         <exclude>**/org.mockito.plugins.MockMaker</exclude>
                         <exclude>.mvn/*</exclude>
                         <exclude>.jenkins_maven_args</exclude>
@@ -1819,12 +1804,20 @@
             </build>
         </profile>
         <profile>
-            <id>deferred-for-3x</id>
-            <activation>
-                <property>
-                    <name>!skip.deferred.modules</name>
-                </property>
-            </activation>
+            <id>flowlogix-nexus-releases</id>
+            <repositories>
+                <repository>
+                    <id>flowlogix-nexus-releases</id>
+                    <name>Flowlogix Nexus Releases</name>
+                    <url>https://nexus.flowlogix.com/repository/maven-releases/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
         </profile>
     </profiles>
     <!--Disable snapshot repositories because they download snapshots

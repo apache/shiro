@@ -33,8 +33,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee11</groupId>
+                <artifactId>jetty-ee11-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -89,15 +89,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jstl</artifactId>
-            <version>10.0.26</version>
-            <type>pom</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty.ee10</groupId>
-            <artifactId>jetty-ee10-annotations</artifactId>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-annotations</artifactId>
             <version>${jetty.version}</version>
         </dependency>
 
@@ -115,8 +108,8 @@
                 <jdk>[17,)</jdk>
             </activation>
             <properties>
-                <!-- needed by guice until it is compatible with jdk17+. -->
-                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</surefire.argLine>
+                <!-- needed by guice until it is compatible with jdk24+. -->
+                <surefire.argLine>--sun-misc-unsafe-memory-access=allow</surefire.argLine>
                 <failsafe.argLine>${surefire.argLine}</failsafe.argLine>
             </properties>
         </profile>

@@ -28,8 +28,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-public class ShiroMatchersTest {
+class ShiroMatchersTest {
     @Test
+    @SuppressWarnings("rawtypes")
     void testTypeLiteral() throws Exception {
         Matcher<Class> classMatcher = createMock(Matcher.class);
         expect(classMatcher.matches(MatchingClass.class)).andReturn(true);

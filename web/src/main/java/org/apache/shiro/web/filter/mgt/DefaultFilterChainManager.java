@@ -59,12 +59,14 @@ public class DefaultFilterChainManager implements FilterChainManager {
     /**
      * list of filters to prepend to every chain
      */
-    private List<String> globalFilterNames;
+    private final List<String> globalFilterNames;
 
     /**
      * key: chain name, value: chain
      */
     private Map<String, NamedFilterList> filterChains;
+
+    private boolean caseInsensitive;
 
     public DefaultFilterChainManager() {
         this.filters = new LinkedHashMap<String, Filter>();
@@ -121,6 +123,11 @@ public class DefaultFilterChainManager implements FilterChainManager {
         return this.filters.get(name);
     }
 
+    @Override
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
+    }
+
     public void addFilter(String name, Filter filter) {
         addFilter(name, filter, false);
     }
@@ -129,12 +136,11 @@ public class DefaultFilterChainManager implements FilterChainManager {
         addFilter(name, filter, init, true);
     }
 
-    public void createDefaultChain(String chainName) {
+    public void createDefaultChain(String chainName, String chainDefinition) {
         // only create the defaultChain if we don't have a chain with this name already
         // (the global filters will already be in that chain)
-        if (!getChainNames().contains(chainName) && !CollectionUtils.isEmpty(globalFilterNames)) {
-            // add each of global filters
-            globalFilterNames.stream().forEach(filterName -> addToChain(chainName, filterName));
+        if (!getChainNames().contains(chainName)) {
+            createChain(chainName, chainDefinition);
         }
     }
 
@@ -154,7 +160,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
 
         // first add each of global filters
         if (!CollectionUtils.isEmpty(globalFilterNames)) {
-            globalFilterNames.stream().forEach(filterName -> addToChain(chainName, filterName));
+            globalFilterNames.forEach(filterName -> addToChain(chainName, filterName));
         }
 
         //parse the value by tokenizing it to get the resulting filter-specific config entries
@@ -305,6 +311,10 @@ public class DefaultFilterChainManager implements FilterChainManager {
         chain.add(filter);
     }
 
+    public List<String> getGlobalFilterNames() {
+        return List.copyOf(globalFilterNames);
+    }
+
     public void setGlobalFilters(List<String> globalFilterNames) throws ConfigurationException {
         // validate each filter name
         if (!CollectionUtils.isEmpty(globalFilterNames)) {
@@ -327,6 +337,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
         }
         if (filter instanceof PathConfigProcessor processor) {
             processor.processPathConfig(chainName, chainSpecificFilterConfig);
+            processor.setCaseInsensitive(caseInsensitive);
         } else {
             if (StringUtils.hasText(chainSpecificFilterConfig)) {
                 //they specified a filter configuration, but the Filter doesn't implement PathConfigProcessor

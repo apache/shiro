@@ -30,9 +30,8 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-public class PathMatchingFilterProviderTest {
+class PathMatchingFilterProviderTest {
     @Test
-    @SuppressWarnings("unchecked")
     void testPostProcess() {
         PathMatchingFilter filter = createMock(PathMatchingFilter.class);
 
@@ -45,12 +44,11 @@ public class PathMatchingFilterProviderTest {
         pathConfigMap.put("/1", "first");
         pathConfigMap.put("/2", "second");
 
-        PathMatchingFilterProvider underTest = new PathMatchingFilterProvider(Key.get(PathMatchingFilter.class), pathConfigMap);
+        PathMatchingFilterProvider<PathMatchingFilter> underTest =
+                new PathMatchingFilterProvider<>(Key.get(PathMatchingFilter.class), pathConfigMap);
 
         underTest.postProcess(filter);
 
         verify(filter);
     }
-
-
 }

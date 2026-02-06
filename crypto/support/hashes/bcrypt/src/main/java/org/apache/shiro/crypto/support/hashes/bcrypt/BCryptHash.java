@@ -23,7 +23,6 @@ import org.apache.shiro.crypto.hash.AbstractCryptHash;
 import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
 import org.bouncycastle.crypto.generators.OpenBSDBCrypt;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,7 +213,7 @@ class BCryptHash extends AbstractCryptHash {
                 .toString();
     }
 
-    private static @NonNull String getBcryptVersion(String algorithmName) {
+    private static String getBcryptVersion(String algorithmName) {
         if (algorithmName.startsWith(BCRYPT_ALGORITHM_BASE)) {
             algorithmName = algorithmName.substring(BCRYPT_ALGORITHM_BASE.length());
         }

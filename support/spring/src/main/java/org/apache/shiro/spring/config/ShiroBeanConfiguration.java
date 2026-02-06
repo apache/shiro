@@ -19,6 +19,7 @@
 package org.apache.shiro.spring.config;
 
 import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.support.DefaultEventBus;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.ShiroEventBusBeanPostProcessor;
 import org.springframework.context.annotation.Bean;
@@ -28,23 +29,20 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.4.0
  */
 @Configuration
-public class ShiroBeanConfiguration extends AbstractShiroBeanConfiguration {
-
+@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
+public class ShiroBeanConfiguration {
     @Bean
-    @Override
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
-        return super.lifecycleBeanPostProcessor();
+    public static LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
     }
 
     @Bean
-    @Override
-    protected EventBus eventBus() {
-        return super.eventBus();
+    public static EventBus eventBus(ShiroEventBusBeanPostProcessor processor) {
+        return processor.getEventBus();
     }
 
     @Bean
-    @Override
-    public ShiroEventBusBeanPostProcessor shiroEventBusAwareBeanPostProcessor() {
-        return super.shiroEventBusAwareBeanPostProcessor();
+    public static ShiroEventBusBeanPostProcessor shiroEventBusAwareBeanPostProcessor() {
+        return new ShiroEventBusBeanPostProcessor(new DefaultEventBus());
     }
 }

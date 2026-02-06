@@ -91,6 +91,13 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
         return this;
     }
 
+    @Override
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        if (pathMatcher != null) {
+            pathMatcher.setCaseInsensitive(caseInsensitive);
+        }
+    }
+
     /**
      * Returns the context path within the application based on the specified <code>request</code>.
      * <p/>

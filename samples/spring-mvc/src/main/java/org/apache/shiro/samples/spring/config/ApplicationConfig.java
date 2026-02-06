@@ -27,7 +27,6 @@ import org.apache.shiro.spring.config.ShiroAnnotationProcessorConfiguration;
 import org.apache.shiro.spring.config.ShiroBeanConfiguration;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
-import org.apache.shiro.spring.web.config.ShiroRequestMappingConfig;
 import org.apache.shiro.spring.web.config.ShiroWebConfiguration;
 import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration;
 
@@ -49,8 +48,7 @@ import javax.sql.DataSource;
         ShiroAnnotationProcessorConfiguration.class,
         ShiroWebConfiguration.class,
         ShiroWebFilterConfiguration.class,
-        JspViewsConfig.class,
-        ShiroRequestMappingConfig.class})
+        JspViewsConfig.class})
 @ComponentScan("org.apache.shiro.samples.spring")
 public class ApplicationConfig {
 
@@ -153,9 +151,9 @@ public class ApplicationConfig {
         chainDefinition.addPathDefinition("/logo.png", "anon");
         chainDefinition.addPathDefinition("/shiro.css", "anon");
         chainDefinition.addPathDefinition("/s/login", "anon");
+        chainDefinition.addPathDefinition("/WEB-INF/resources/login.jsp", "anon");
         //allow WebStart to pull the jars for the swing app
         chainDefinition.addPathDefinition("/*.jar", "anon");
-        chainDefinition.addPathDefinition("/**", "authc");
 
 
         return chainDefinition;

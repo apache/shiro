@@ -113,11 +113,11 @@ public class JndiTemplate {
     @SuppressWarnings({"unchecked"})
     protected Context createInitialContext() throws NamingException {
         Properties env = getEnvironment();
-        Hashtable icEnv = null;
+        Hashtable<String, String> icEnv = null;
         if (env != null) {
-            icEnv = new Hashtable(env.size());
-            for (Enumeration en = env.propertyNames(); en.hasMoreElements(); ) {
-                String key = (String) en.nextElement();
+            icEnv = new Hashtable<>(env.size());
+            for (Enumeration<String> en = (Enumeration<String>) env.propertyNames(); en.hasMoreElements(); ) {
+                String key = en.nextElement();
                 icEnv.put(key, env.getProperty(key));
             }
         }
@@ -160,7 +160,7 @@ public class JndiTemplate {
      * @throws NamingException if there is no object with the given
      *                         name bound to JNDI
      */
-    public Object lookup(String name, Class requiredType) throws NamingException {
+    public Object lookup(String name, Class<?> requiredType) throws NamingException {
         Object jndiObject = lookup(name);
         if (requiredType != null && !requiredType.isInstance(jndiObject)) {
             String msg = "Jndi object acquired under name '" + name + "' is of type ["

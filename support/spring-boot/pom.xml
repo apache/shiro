@@ -36,21 +36,17 @@
         <module>spring-boot-web-starter</module>
     </modules>
 
-    <properties>
-        <junit.engine.version>6.0.2</junit.engine.version>
-    </properties>
-
     <dependencies>
         <dependency>
              <groupId>org.junit.platform</groupId>
              <artifactId>junit-platform-engine</artifactId>
-             <version>${junit.engine.version}</version>
+             <version>${junit.version}</version>
              <scope>test</scope>
          </dependency>
         <dependency>
              <groupId>org.junit.platform</groupId>
              <artifactId>junit-platform-commons</artifactId>
-             <version>${junit.engine.version}</version>
+             <version>${junit.version}</version>
              <scope>test</scope>
          </dependency>
     </dependencies>
@@ -74,6 +70,90 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.junit.vintage</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.ws.rs</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.json</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.json.bind</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.annotation</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.interceptor</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.servlet</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.enterprise</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.inject</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.data</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.el</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.websocket</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.transaction</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.persistence</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.validation</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.authentication</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.authorization</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.mail</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.resource</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.servlet.jsp.jstl</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.jms</groupId>
                         <artifactId>*</artifactId>
                     </exclusion>
                 </exclusions>

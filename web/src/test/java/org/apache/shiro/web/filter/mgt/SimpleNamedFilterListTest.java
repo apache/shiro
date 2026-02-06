@@ -116,11 +116,11 @@ public class SimpleNamedFilterListTest {
         assertThat(list).isEmpty();
 
         list.add(singleFilter);
-        Iterator i = list.iterator();
+        Iterator<Filter> i = list.iterator();
         assertThat(i.hasNext()).isTrue();
         assertThat(singleFilter).isEqualTo(i.next());
 
-        ListIterator li = list.listIterator();
+        ListIterator<Filter> li = list.listIterator();
         assertThat(li.hasNext()).isTrue();
         assertThat(singleFilter).isEqualTo(li.next());
 

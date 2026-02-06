@@ -558,7 +558,7 @@ public final class WebUtils {
      * @throws java.io.IOException if thrown by response methods.
      */
     public static void issueRedirect(ServletRequest request, ServletResponse response, String url,
-                                     Map queryParams, boolean contextRelative,
+                                     Map<String, ?> queryParams, boolean contextRelative,
                                      boolean http10Compatible) throws IOException {
         RedirectView view = new RedirectView(url, contextRelative, http10Compatible);
         view.renderMergedOutputModel(queryParams, toHttp(request), toHttp(response));
@@ -588,7 +588,7 @@ public final class WebUtils {
      * @throws java.io.IOException if thrown by response methods.
      */
     public static void issueRedirect(ServletRequest request,
-                                     ServletResponse response, String url, Map queryParams) throws IOException {
+                                     ServletResponse response, String url, Map<String, ?> queryParams) throws IOException {
         issueRedirect(request, response, url, queryParams, true, true);
     }
 
@@ -604,7 +604,7 @@ public final class WebUtils {
      * @throws java.io.IOException if thrown by response methods.
      */
     public static void issueRedirect(ServletRequest request,
-                                     ServletResponse response, String url, Map queryParams, boolean contextRelative)
+                                     ServletResponse response, String url, Map<String, ?> queryParams, boolean contextRelative)
             throws IOException {
         issueRedirect(request, response, url, queryParams, contextRelative, true);
     }

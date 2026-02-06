@@ -38,6 +38,7 @@ import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.BearerHttpAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.LogoutFilter;
+import org.apache.shiro.web.filter.authc.NoAccessFilter;
 import org.apache.shiro.web.filter.authc.UserFilter;
 import org.apache.shiro.web.filter.authz.HttpMethodPermissionFilter;
 import org.apache.shiro.web.filter.authz.IpFilter;
@@ -62,7 +63,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("checkstyle:JavadocVariable")
 /**
  * Sets up Shiro lifecycles within Guice, enables the injecting of Shiro objects, and binds a default
  * {@link org.apache.shiro.web.mgt.WebSecurityManager},
@@ -73,21 +73,38 @@ import java.util.Map;
  * Also provides for the configuring of filter chains and binds a
  * {@link org.apache.shiro.web.filter.mgt.FilterChainResolver} with that information.
  */
+@SuppressWarnings("checkstyle:JavadocVariable")
 public abstract class ShiroWebModule extends ShiroModule {
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<AnonymousFilter> ANON = Key.get(AnonymousFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<FormAuthenticationFilter> AUTHC = Key.get(FormAuthenticationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<BasicHttpAuthenticationFilter> AUTHC_BASIC = Key.get(BasicHttpAuthenticationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<BearerHttpAuthenticationFilter> AUTHC_BEARER = Key.get(BearerHttpAuthenticationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<NoSessionCreationFilter> NO_SESSION_CREATION = Key.get(NoSessionCreationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<LogoutFilter> LOGOUT = Key.get(LogoutFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<PermissionsAuthorizationFilter> PERMS = Key.get(PermissionsAuthorizationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<PortFilter> PORT = Key.get(PortFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<HttpMethodPermissionFilter> REST = Key.get(HttpMethodPermissionFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<RolesAuthorizationFilter> ROLES = Key.get(RolesAuthorizationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<SslFilter> SSL = Key.get(SslFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<IpFilter> IP = Key.get(IpFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<UserFilter> USER = Key.get(UserFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<InvalidRequestFilter> INVALID_REQUEST = Key.get(InvalidRequestFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
+    public static final Key<NoAccessFilter> NO_ACCESS = Key.get(NoAccessFilter.class);
 
     static final String NAME = "SHIRO";
 
@@ -96,10 +113,10 @@ public abstract class ShiroWebModule extends ShiroModule {
      * FilterChainResolver uses iterator order when searching for a matching chain.
      */
     private final Map<String, FilterConfig<? extends Filter>[]> filterChains =
-            new LinkedHashMap<String, FilterConfig<? extends Filter>[]>();
+            new LinkedHashMap<>();
     private final ServletContext servletContext;
 
-    public ShiroWebModule(ServletContext servletContext) {
+    protected ShiroWebModule(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
 
@@ -107,6 +124,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         binder.install(guiceFilterModule());
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public static void bindGuiceFilter(final String pattern, Binder binder) {
         binder.install(guiceFilterModule(pattern));
     }
@@ -143,7 +161,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         // add default matching route if not already set
         if (!filterChains.containsKey("/**")) {
             // no config, this will add only the global filters
-            this.addFilterChain("/**", new FilterConfig[0]);
+            this.addFilterChain("/**", new FilterConfig<?>[0]);
         }
 
         bind(FilterChainResolver.class).toProvider(new FilterChainResolverProvider(setupFilterChainConfigs()));
@@ -180,10 +198,7 @@ public abstract class ShiroWebModule extends ShiroModule {
                 String config = filterConfig.getConfigValue();
 
                 // initialize key in filterToPathToConfig, if it doesn't exist
-                if (filterToPathToConfig.get(key) == null) {
-                    // Fix for SHIRO-621: REST filter bypassing matched path
-                    filterToPathToConfig.put((key), new LinkedHashMap<String, String>());
-                }
+                filterToPathToConfig.computeIfAbsent(key, k -> new LinkedHashMap<>());
                 // now set the value
                 filterToPathToConfig.get(key).put(path, config);
 
@@ -200,7 +215,9 @@ public abstract class ShiroWebModule extends ShiroModule {
             }
 
             // map the current path to all of its Keys
-            resultConfigMap.put(path, keysForPath.toArray(new Key[keysForPath.size()]));
+            @SuppressWarnings("rawtypes")
+            var newKey = new Key[keysForPath.size()];
+            resultConfigMap.put(path, keysForPath.toArray(newKey));
         }
 
         // now we find only the PathMatchingFilter and configure bindings
@@ -276,7 +293,7 @@ public abstract class ShiroWebModule extends ShiroModule {
     @SuppressWarnings("unchecked")
     protected final void addFilterChain(String pattern, Key<? extends Filter> key) {
         // check for legacy API
-        if (key instanceof FilterConfigKey configKey) {
+        if (key instanceof FilterConfigKey<?> configKey) {
             addLegacyFilterChain(pattern, configKey);
         } else {
             addFilterChain(pattern, new FilterConfig<Filter>((Key<Filter>) key, ""));
@@ -344,6 +361,7 @@ public abstract class ShiroWebModule extends ShiroModule {
      * @return A FilterConfig used to map a String path to this configuration.
      * @since 1.4
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     protected static <T extends Filter> FilterConfig<T> filterConfig(Class<T> type, String configValue) {
         return filterConfig(Key.get(type), configValue);
     }
@@ -387,7 +405,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void addLegacyFilterChain(String pattern, FilterConfigKey filterConfigKey) {
         FilterConfig<Filter> filterConfig = new FilterConfig<>(filterConfigKey.getKey(), filterConfigKey.getConfigValue());
         addFilterChain(pattern, filterConfig);
@@ -403,7 +421,7 @@ public abstract class ShiroWebModule extends ShiroModule {
      * @param keys
      */
     @Deprecated
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected final void addFilterChain(String pattern, Key<? extends Filter>... keys) {
 
         // We need to extract the keys and FilterConfigKey and convert to the new format.
@@ -435,11 +453,13 @@ public abstract class ShiroWebModule extends ShiroModule {
         return new FilterConfigKey<T>(baseKey, configValue);
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     @Deprecated
     protected static <T extends PathMatchingFilter> Key<T> config(TypeLiteral<T> typeLiteral, String configValue) {
         return config(Key.get(typeLiteral), configValue);
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     @Deprecated
     protected static <T extends PathMatchingFilter> Key<T> config(Class<T> type, String configValue) {
         return config(Key.get(type), configValue);

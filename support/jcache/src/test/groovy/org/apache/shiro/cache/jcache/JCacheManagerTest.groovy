@@ -133,7 +133,7 @@ class JCacheManagerTest {
         assertThat cacheManager.jCacheManager, nullValue()
     }
 
-    static <T extends Throwable> T expectThrows(Class<T> exceptionClass, Closure closure) {
+    static <T extends Throwable> T expectThrows(Class<T> exceptionClass, Closure<?> closure) {
         try {
             closure.run()
         } catch (Throwable t) {

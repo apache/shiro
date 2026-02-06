@@ -47,6 +47,7 @@ public class SampleShiroServletModule extends ShiroWebModule {
     @Override
     protected void configureShiroWeb() {
         bindConstant().annotatedWith(Names.named("shiro.loginUrl")).to("/login.jsp");
+        bindConstant().annotatedWith(Names.named("shiro.blockSemicolon")).to("false");
         try {
             this.bindRealm().toConstructor(IniRealm.class.getConstructor(Ini.class));
         } catch (NoSuchMethodException e) {

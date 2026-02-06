@@ -31,7 +31,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
@@ -42,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*
  */
 @SpringJUnitConfig(classes = [RealmTestConfiguration, ShiroConfiguration])
 @ExtendWith(SpringExtension.class)
-class ShiroConfigurationTest extends AbstractJUnit4SpringContextTests {
+class ShiroConfigurationTest {
 
     @Autowired
     private SecurityManager securityManager

@@ -18,17 +18,14 @@
  */
 package org.apache.shiro.spring.config.web.autoconfigure;
 
-import org.apache.shiro.spring.web.config.ShiroRequestMappingConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 @Configuration
 @ConditionalOnClass(RequestMappingHandlerMapping.class)
-@Import(ShiroRequestMappingConfig.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @ConditionalOnProperty(name = "shiro.web.enabled", matchIfMissing = true)
 public class ShiroWebMvcAutoConfiguration {

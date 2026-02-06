@@ -34,6 +34,7 @@
 
     <properties>
         <japicmp.skip>true</japicmp.skip>
+        <jacoco.skip>true</jacoco.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
         <nexus.deploy.skip>true</nexus.deploy.skip>
     </properties>
@@ -44,22 +45,13 @@
         <module>quickstart-guice</module>
         <module>web</module>
         <module>servlet-plugin</module>
+        <module>guice</module>
+        <module>spring</module>
+        <module>spring-mvc</module>
+        <module>spring-hibernate</module>
+        <module>spring-boot</module>
+        <module>spring-boot-web</module>
     </modules>
-
-    <profiles>
-        <profile>
-            <id>deferred-for-3x</id>
-            <modules>
-                <module>spring</module>
-                <module>spring-boot</module>
-                <module>spring-boot-3-web</module>
-                <module>spring-mvc</module>
-                <module>spring-hibernate</module>
-                <module>spring-boot-web</module>
-                <module>guice</module>
-            </modules>
-        </profile>
-    </profiles>
 
     <reporting>
         <plugins>

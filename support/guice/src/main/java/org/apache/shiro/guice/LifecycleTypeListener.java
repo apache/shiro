@@ -27,7 +27,7 @@ import org.apache.shiro.lang.util.Destroyable;
 import org.apache.shiro.lang.util.Initializable;
 
 class LifecycleTypeListener implements TypeListener {
-
+    @SuppressWarnings("rawtypes")
     public static final Matcher<TypeLiteral> MATCHER
             = InitializableInjectionListener.MATCHER.or(DestroyableInjectionListener.MATCHER);
 

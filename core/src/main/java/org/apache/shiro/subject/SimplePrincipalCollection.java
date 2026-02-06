@@ -62,7 +62,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     private static final long serialVersionUID = -6305224034025797558L;
 
     //TODO - complete JavaDoc
-    private Map<String, Set> realmPrincipals;
+    private Map<String, Set<Object>> realmPrincipals;
 
     //cached toString() result, as this can be printed many times in logging
     private transient String cachedToString;
@@ -71,14 +71,14 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
     }
 
     public SimplePrincipalCollection(Object principal, String realmName) {
-        if (principal instanceof Collection collection) {
+        if (principal instanceof Collection<?> collection) {
             addAll(collection, realmName);
         } else {
             add(principal, realmName);
         }
     }
 
-    public SimplePrincipalCollection(Collection principals, String realmName) {
+    public SimplePrincipalCollection(Collection<?> principals, String realmName) {
         addAll(principals, realmName);
     }
 
@@ -86,16 +86,11 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         addAll(principals);
     }
 
-    protected Collection getPrincipalsLazy(String realmName) {
+    protected Collection<Object> getPrincipalsLazy(String realmName) {
         if (realmPrincipals == null) {
-            realmPrincipals = new LinkedHashMap<String, Set>();
+            realmPrincipals = new LinkedHashMap<>();
         }
-        Set principals = realmPrincipals.get(realmName);
-        if (principals == null) {
-            principals = new LinkedHashSet();
-            realmPrincipals.put(realmName, principals);
-        }
-        return principals;
+        return realmPrincipals.computeIfAbsent(realmName, k -> new LinkedHashSet<>());
     }
 
     /**
@@ -125,7 +120,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         getPrincipalsLazy(realmName).add(principal);
     }
 
-    public void addAll(Collection principals, String realmName) {
+    public void addAll(Collection<?> principals, String realmName) {
         if (realmName == null) {
             throw new NullPointerException("realmName argument cannot be null.");
         }
@@ -153,8 +148,8 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         if (realmPrincipals == null || realmPrincipals.isEmpty()) {
             return null;
         }
-        Collection<Set> values = realmPrincipals.values();
-        for (Set set : values) {
+        Collection<Set<Object>> values = realmPrincipals.values();
+        for (Set<Object> set : values) {
             for (Object o : set) {
                 if (type.isAssignableFrom(o.getClass())) {
                     return (T) o;
@@ -166,11 +161,11 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
 
     public <T> Collection<T> byType(Class<T> type) {
         if (realmPrincipals == null || realmPrincipals.isEmpty()) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
-        Set<T> typed = new LinkedHashSet<T>();
-        Collection<Set> values = realmPrincipals.values();
-        for (Set set : values) {
+        Set<T> typed = new LinkedHashSet<>();
+        Collection<Set<Object>> values = realmPrincipals.values();
+        for (Set<?> set : values) {
             for (Object o : set) {
                 if (type.isAssignableFrom(o.getClass())) {
                     typed.add((T) o);
@@ -178,41 +173,41 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
             }
         }
         if (typed.isEmpty()) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         return Collections.unmodifiableSet(typed);
     }
 
-    public List asList() {
-        Set all = asSet();
+    public List<Object> asList() {
+        Set<?> all = asSet();
         if (all.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
-        return Collections.unmodifiableList(new ArrayList(all));
+        return Collections.unmodifiableList(new ArrayList<>(all));
     }
 
-    public Set asSet() {
+    public Set<Object> asSet() {
         if (realmPrincipals == null || realmPrincipals.isEmpty()) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
-        Set aggregated = new LinkedHashSet();
-        Collection<Set> values = realmPrincipals.values();
-        for (Set set : values) {
+        Set<Object> aggregated = new LinkedHashSet<>();
+        Collection<Set<Object>> values = realmPrincipals.values();
+        for (Set<Object> set : values) {
             aggregated.addAll(set);
         }
         if (aggregated.isEmpty()) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
         return Collections.unmodifiableSet(aggregated);
     }
 
-    public Collection fromRealm(String realmName) {
+    public Collection<Object> fromRealm(String realmName) {
         if (realmPrincipals == null || realmPrincipals.isEmpty()) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
-        Set principals = realmPrincipals.get(realmName);
+        Set<Object> principals = realmPrincipals.get(realmName);
         if (principals == null || principals.isEmpty()) {
-            principals = Collections.EMPTY_SET;
+            principals = Collections.emptySet();
         }
         return Collections.unmodifiableSet(principals);
     }
@@ -237,7 +232,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         }
     }
 
-    public Iterator iterator() {
+    public Iterator<Object> iterator() {
         return asSet().iterator();
     }
 
@@ -287,6 +282,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
      * @param out output stream provided by Java serialization
      * @throws IOException if there is a stream error
      */
+    @Serial
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         boolean principalsExist = !CollectionUtils.isEmpty(realmPrincipals);
@@ -308,11 +304,12 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
      * @throws IOException            if there is an input/output problem
      * @throws ClassNotFoundException if the underlying Map implementation class is not available to the classloader.
      */
+    @Serial
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         boolean principalsExist = in.readBoolean();
         if (principalsExist) {
-            this.realmPrincipals = (Map<String, Set>) in.readObject();
+            this.realmPrincipals = (Map<String, Set<Object>>) in.readObject();
         }
     }
 }
