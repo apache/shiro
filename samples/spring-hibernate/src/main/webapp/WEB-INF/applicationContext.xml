@@ -55,10 +55,7 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="packagesToScan" value="org.apache.shiro.samples.sprhib.model"/>
         <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <!-- Optional; you can omit dialect and let Hibernate detect it -->
-                <property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect"/>
-            </bean>
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
         <property name="jpaPropertyMap">
             <map>
