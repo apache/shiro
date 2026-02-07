@@ -6,7 +6,7 @@ This example creates a web application (WAR packaged) to demonstrate configuring
 Run the Example
 ---------------
 
-```
+```bash
 mvn jetty:run-war
 ```
 

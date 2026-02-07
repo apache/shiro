@@ -6,7 +6,7 @@ An example web application that show how to configure Shiro via a `web.xml` and 
 Run the Example
 ---------------
 
-```
+```bash
 mvn jetty:run
 ```
 
