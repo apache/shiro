@@ -19,10 +19,9 @@
   -->
 <features name="shiro-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.4.0">
 
-    <!-- Shiro core features: -->
-
+    <!-- Shiro core features -->
     <feature name="shiro-core" version="${project.version}">
-        <feature version="[1,2)">spifly</feature>
+        <feature prerequisite="true" version="[1,2)">spifly</feature>
         <bundle dependency="true">mvn:commons-beanutils/commons-beanutils/${commons.beanutils.version}</bundle>
         <bundle dependency="true">mvn:org.apache.commons/commons-configuration2/${commons.configuration2.version}</bundle>
         <bundle dependency="true">mvn:commons-collections/commons-collections/${commons.collection.version}</bundle>
@@ -40,13 +39,13 @@
 
     <feature name="shiro-web" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
-        <feature version="[2,5)">war</feature>
+        <feature version="[4,5)">pax-web-http-war</feature>
+        <bundle dependency="true">mvn:jakarta.servlet/jakarta.servlet-api/6.1.0</bundle>
         <bundle>mvn:org.owasp.encoder/encoder/${owasp.java.encoder.version}</bundle>
         <bundle>mvn:org.apache.shiro/shiro-web/${project.version}</bundle>
     </feature>
 
-    <!-- 3rd party support (alphabetized please): -->
-
+    <!-- 3rd party support -->
     <feature name="shiro-aspectj" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
         <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aspectj/${aspectj.bundle.version}</bundle>
@@ -59,38 +58,15 @@
         <bundle>mvn:org.apache.shiro/shiro-cache/${project.version}</bundle>
     </feature>
 
-    <feature name="shiro-ehcache" version="${project.version}">
-        <feature version="${project.version}">shiro-core</feature>
-        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/${ehcache.bundle.version}</bundle>
-        <bundle>mvn:org.apache.shiro/shiro-ehcache/${project.version}</bundle>
-    </feature>
-
-    <feature name="shiro-hazelcast" version="${project.version}">
-        <feature version="${project.version}">shiro-core</feature>
-        <bundle>mvn:com.hazelcast/hazelcast-all/${hazelcast.version}</bundle>
-        <bundle>mvn:org.apache.shiro/shiro-hazelcast/${project.version}</bundle>
-    </feature>
-
-    <!--
-    TODO enable when openid4j module is done
-    <feature name="shiro-openid4j" version="${project.version}">
-        <feature version="${project.version}">shiro-core</feature>
-        <feature version="${project.version}">shiro-web</feature>
-        <feature version="[3,4)">spring</feature>
-        TODO: is there an openid4j OSGi bundle?
-        <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.openid4j/${openid4j.version}</bundle>
-        <bundle>mvn:org.apache.shiro/shiro-openid4j/${project.version}</bundle>
-    </feature>
-    -->
-
-    <feature name="shiro-quartz" version="${project.version}">
-        <feature version="${project.version}">shiro-core</feature>
-        <bundle dependency="true">mvn:commons-collections/commons-collections/${commons.collections.version}</bundle>
-        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}</bundle>
-        <bundle dependency="true">mvn:com.zaxxer/HikariCP-java7/${hikaricp-version}</bundle>
-        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/${quartz.bundle.version}</bundle>
-        <bundle>mvn:org.apache.shiro/shiro-quartz/${project.version}</bundle>
-    </feature>
+    <!-- need release of servicemix bundles quartz 2.5.x -->
+<!--    <feature name="shiro-quartz" version="${project.version}">-->
+<!--        <feature version="${project.version}">shiro-core</feature>-->
+<!--        <bundle dependency="true">mvn:commons-collections/commons-collections/${commons.collections.version}</bundle>-->
+<!--        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}</bundle>-->
+<!--        <bundle dependency="true">mvn:com.zaxxer/HikariCP-java7/${hikaricp-version}</bundle>-->
+<!--        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/${quartz.bundle.version}</bundle>-->
+<!--        <bundle>mvn:org.apache.shiro/shiro-quartz/${project.version}</bundle>-->
+<!--    </feature>-->
 
     <feature name="shiro-spring" version="${project.version}">
         <feature version="${project.version}">shiro-web</feature>
