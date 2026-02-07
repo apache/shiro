@@ -19,7 +19,7 @@
 package org.apache.shiro.samples.spring.config;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.cache.ehcache.EhCacheManager;
+import org.apache.shiro.cache.jcache.JCacheManager;
 import org.apache.shiro.samples.spring.BootstrapDataPopulator;
 import org.apache.shiro.samples.spring.DefaultSampleManager;
 import org.apache.shiro.samples.spring.realm.SaltAwareJdbcRealm;
@@ -98,20 +98,8 @@ public class ApplicationConfig {
      * @return
      */
     @Bean
-    protected EhCacheManager cacheManager() {
-
-        EhCacheManager ehCacheManager = new EhCacheManager();
-
-        // Set a net.sf.ehcache.CacheManager instance here if you already have one.
-        // If not, a new one will be created with a default config:
-        // ehCacheManager.setCacheManager(...);
-
-        // If you don't have a pre-built net.sf.ehcache.CacheManager instance to inject, but you want
-        // a specific Ehcache configuration to be used, specify that here.  If you don't, a default
-        //will be used.:
-        // ehCacheManager.setCacheManagerConfigFile("classpath:some/path/to/ehcache.xml");
-
-        return ehCacheManager;
+    protected JCacheManager cacheManager() {
+        return new JCacheManager();
     }
 
     /**

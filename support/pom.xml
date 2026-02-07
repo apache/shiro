@@ -34,8 +34,6 @@
     <modules>
         <module>aspectj</module>
         <module>jcache</module>
-        <module>ehcache</module>
-        <module>hazelcast</module>
         <module>quartz</module>
         <module>guice</module>
         <module>servlet-plugin</module>
