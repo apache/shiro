@@ -54,7 +54,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ 'ubuntu-latest', 'windows-2022', 'macOS-latest' ]
+        os: [ 'ubuntu-latest', 'windows-latest', 'macOS-latest' ]
         jdk: [ 11, 17, 21, 25 ]
         dist: [ 'temurin', 'adopt-openj9', 'zulu' ]
         exclude:
