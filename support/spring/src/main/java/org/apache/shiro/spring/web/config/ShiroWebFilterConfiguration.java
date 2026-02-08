@@ -22,6 +22,7 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.List;
 
@@ -37,8 +38,9 @@ public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfigura
     }
 
     @Bean
-    static ShiroFilterFactoryBeanPostProcessor shiroFilterFactoryBeanPostProcessor(ShiroFilterFactoryBean factory) {
-        return new ShiroFilterFactoryBeanPostProcessor(factory);
+    static ShiroFilterFactoryBeanPostProcessor
+    shiroFilterFactoryBeanPostProcessor(@Lazy ShiroFilterFactoryBean shiroFilterFactoryBean) {
+        return new ShiroFilterFactoryBeanPostProcessor(shiroFilterFactoryBean);
     }
 
     @Bean(name = "globalFilters")

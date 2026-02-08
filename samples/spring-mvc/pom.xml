@@ -59,7 +59,7 @@
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-web-api</artifactId>
-            <version>11.0.0</version>
+            <version>${jakarta.ee.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -133,15 +133,11 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
 
-        <!-- JSTL (Jakarta) -->
         <dependency>
-            <groupId>jakarta.servlet.jsp.jstl</groupId>
-            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.web</groupId>
-            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-            <version>3.0.1</version>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-glassfish-jstl</artifactId>
+            <version>${jetty.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

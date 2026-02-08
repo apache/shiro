@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.core.PriorityOrdered;
 import java.util.Map;
 
 /**
@@ -33,7 +34,7 @@ import java.util.Map;
  *
  * @since 3.0.0
  */
-public class ShiroFilterFactoryBeanPostProcessor implements BeanPostProcessor {
+public class ShiroFilterFactoryBeanPostProcessor implements BeanPostProcessor, PriorityOrdered {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShiroFilterFactoryBeanPostProcessor.class);
 
     private final ShiroFilterFactoryBean shiroFilterFactoryBean;
@@ -66,5 +67,10 @@ public class ShiroFilterFactoryBeanPostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;
+    }
+
+    @Override
+    public int getOrder() {
+        return LOWEST_PRECEDENCE;
     }
 }

@@ -19,6 +19,7 @@
 package org.apache.shiro.spring.config.web.autoconfigure;
 
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.spring.web.ShiroFilterFactoryBeanPostProcessor;
 import org.apache.shiro.spring.web.config.AbstractShiroWebFilterConfiguration;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import jakarta.servlet.DispatcherType;
+import org.springframework.context.annotation.Lazy;
 import java.util.List;
 
 /**
@@ -53,6 +55,13 @@ public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfigura
     @Override
     protected ShiroFilterFactoryBean shiroFilterFactoryBean() {
         return super.shiroFilterFactoryBean();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    static ShiroFilterFactoryBeanPostProcessor
+    shiroFilterFactoryBeanPostProcessor(@Lazy ShiroFilterFactoryBean shiroFilterFactoryBean) {
+        return new ShiroFilterFactoryBeanPostProcessor(shiroFilterFactoryBean);
     }
 
     @Bean(name = REGISTRATION_BEAN_NAME)

@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * @since 1.4.0
@@ -43,13 +44,14 @@ public class ShiroBeanAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public static EventBus eventBus(ShiroEventBusBeanPostProcessor processor) {
-        return processor.getEventBus();
+    public static EventBus eventBus() {
+        return new DefaultEventBus();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public static ShiroEventBusBeanPostProcessor shiroEventBusAwareBeanPostProcessor() {
-        return new ShiroEventBusBeanPostProcessor(new DefaultEventBus());
+    public static ShiroEventBusBeanPostProcessor
+    shiroEventBusAwareBeanPostProcessor(@Lazy EventBus eventBus) {
+        return new ShiroEventBusBeanPostProcessor(eventBus);
     }
 }

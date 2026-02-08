@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.spring.boot.autoconfigure.web
 
+import org.apache.shiro.SecurityUtils
 import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication
 import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication.EventBusAwareObject
 import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication.SubscribedListener
@@ -30,6 +31,7 @@ import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager
 import org.apache.shiro.web.mgt.WebSecurityManager
 import org.apache.shiro.web.servlet.AbstractShiroFilter
 import org.junit.jupiter.api.Test
+import org.springframework.aop.framework.Advised
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -71,8 +73,9 @@ class ShiroWebSpringAutoConfigurationTest {
         assertNotNull eventBus
         assertNotNull shiroFilter
         assertTrue(eventBus.registry.containsKey(subscribedListener))
-        assertSame(eventBusAwareObject.getEventBus(), eventBus)
-        assertSame(((DefaultSecurityManager) securityManager).getEventBus(), eventBus)
+        assertSame(((Advised)eventBusAwareObject.getEventBus()).getTargetSource().getTarget(), eventBus)
+        assertSame(((Advised) SecurityUtils.unwrapSecurityManager(securityManager, DefaultSecurityManager)
+                .getEventBus()).getTargetSource().getTarget(), eventBus)
 
         // make sure global chains are configured
         assertThat shiroFilter.filterChainResolver.filterChainManager, instanceOf(DefaultFilterChainManager)

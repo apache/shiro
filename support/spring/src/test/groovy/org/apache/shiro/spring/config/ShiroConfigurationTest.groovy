@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.spring.config
 
+import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.authz.ModularRealmAuthorizer
 import org.apache.shiro.event.EventBus
@@ -28,6 +29,7 @@ import org.apache.shiro.spring.testconfig.RealmTestConfiguration
 import org.apache.shiro.subject.Subject
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.aop.framework.Advised
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
@@ -57,7 +59,8 @@ class ShiroConfigurationTest {
         assertThat securityManager.realms, allOf(hasSize(1), hasItem(instanceOf(TextConfigurationRealm)))
         assertNull securityManager.cacheManager
 
-        assertSame(((DefaultSecurityManager)securityManager).getEventBus(), eventBus)
+        assertSame(((Advised)SecurityUtils.unwrapSecurityManager(securityManager, DefaultSecurityManager.class)
+                .getEventBus()).getTargetSource().getTarget(), eventBus)
 
         def defaultSecurityManager = (DefaultSecurityManager) securityManager
         def authorizer = (ModularRealmAuthorizer) defaultSecurityManager.getAuthorizer();

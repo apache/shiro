@@ -22,6 +22,7 @@ import org.apache.shiro.event.EventBus
 import org.apache.shiro.spring.testconfig.EventBusConsumersTestConfiguration
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.aop.framework.Advised
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
@@ -52,7 +53,7 @@ public class ShiroBeanConfigurationTest {
         assertNotNull eventSubscriber
 
         assertTrue eventBus.registry.containsKey(eventSubscriber)
-        assertSame(eventBus, eventBusAwareObject.eventBus)
+        assertSame(eventBus, ((Advised)eventBusAwareObject.eventBus).getTargetSource().getTarget())
 
     }
 

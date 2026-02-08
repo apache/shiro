@@ -70,7 +70,7 @@
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>11.0.0</version>
+            <version>${jakarta.ee.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -24,6 +24,7 @@ import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.ShiroEventBusBeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * @since 1.4.0
@@ -37,12 +38,12 @@ public class ShiroBeanConfiguration {
     }
 
     @Bean
-    public static EventBus eventBus(ShiroEventBusBeanPostProcessor processor) {
-        return processor.getEventBus();
+    public static EventBus eventBus() {
+        return new DefaultEventBus();
     }
 
     @Bean
-    public static ShiroEventBusBeanPostProcessor shiroEventBusAwareBeanPostProcessor() {
-        return new ShiroEventBusBeanPostProcessor(new DefaultEventBus());
+    public static ShiroEventBusBeanPostProcessor shiroEventBusAwareBeanPostProcessor(@Lazy EventBus eventBus) {
+        return new ShiroEventBusBeanPostProcessor(eventBus);
     }
 }
