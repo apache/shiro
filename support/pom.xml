@@ -42,7 +42,6 @@
         <module>jakarta-ee</module>
         <module>spring</module>
         <module>spring-boot</module>
-<!--        Disabled for 3.x until we can verify fix it -->
         <module>features</module>
     </modules>
 </project>

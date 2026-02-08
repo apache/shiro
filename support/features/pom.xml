@@ -51,6 +51,26 @@
             <type>kar</type>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-aspectj</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-cache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -128,7 +148,7 @@
                         <version>${karaf.version}</version>
                         <executions>
                             <execution>
-                                <id>verify</id>
+                                <id>karaf-verify</id>
                                 <phase>process-resources</phase>
                                 <goals>
                                     <goal>verify</goal>
