@@ -27,8 +27,5 @@ MD033: false
 # MD034/no-bare-urls Bare URL used
 MD034: false
 
-# MD040/fenced-code-language Fenced code blocks should have a language specified
-MD040: false
-
 # MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading
 MD041: false

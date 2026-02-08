@@ -7,7 +7,7 @@ protected methods.
 Run the Example
 ---------------
 
-```
+```bash
 mvn spring-boot:run
 ```
 
