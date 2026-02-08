@@ -91,14 +91,14 @@ public interface Realm {
      *
      * <p>This method effectively represents a login attempt for the corresponding user with the underlying EIS datasource.
      * Most implementations merely just need to lookup and return the account data only (as the method name implies)
-     * and let Shiro do the rest, but implementations may of course perform eis specific login operations if so
+     * and let Shiro do the rest, but implementations may of course perform EIS specific login operations if so
      * desired.
      *
      * @param token the application-specific representation of an account principal and credentials.
      * @return the authentication information for the account associated with the specified <tt>token</tt>,
      * or <tt>null</tt> if no account could be found.
      * @throws org.apache.shiro.authc.AuthenticationException if there is an error obtaining or constructing
-     *                                                        an AuthenticationInfo objectbased on the specified <tt>token</tt>
+     *                                                        an AuthenticationInfo object based on the specified <tt>token</tt>
      *                                                        or implementation-specific login behavior fails.
      */
     AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException;
