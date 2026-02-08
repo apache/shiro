@@ -4,7 +4,9 @@ Contributing to Apache Shiro
 Summary
 -------
 
-This document covers how to contribute to the Apache Shiro project. These instructions assume you have a GitHub.com account, so if you don't have one you will have to create one. Your proposed code changes will be published to your own fork of the Apache Shiro project and you will submit a Pull Request for your changes to be added.
+This document covers how to contribute to the Apache Shiro project.
+These instructions assume you have a GitHub.com account, so if you don't have one you will have to create one.
+Your proposed code changes will be published to your own fork of the Apache Shiro project and you will submit a Pull Request for your changes to be added.
 
 _Let's get started!!!_
 
