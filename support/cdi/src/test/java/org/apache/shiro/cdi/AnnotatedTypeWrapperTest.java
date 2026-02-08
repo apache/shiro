@@ -97,9 +97,9 @@ class AnnotatedTypeWrapperTest {
     @Test
     void removeAnnotations() {
         initializeStubs();
-        Set<Annotation> sessionScopeAnnoationsSet = Set.of(getAnnotation(SessionScopedAnnotated.class, SessionScoped.class));
-        Set<Annotation> requiresGuestAnnoationsSet = Set.of(getAnnotation(Annotated.class, RequiresGuest.class));
-        var wrapper = new AnnotatedTypeWrapper<>(annotatedType, true, sessionScopeAnnoationsSet, requiresGuestAnnoationsSet);
+        Set<Annotation> sessionScopeAnnotationsSet = Set.of(getAnnotation(SessionScopedAnnotated.class, SessionScoped.class));
+        Set<Annotation> requiresGuestAnnotationsSet = Set.of(getAnnotation(Annotated.class, RequiresGuest.class));
+        var wrapper = new AnnotatedTypeWrapper<>(annotatedType, true, sessionScopeAnnotationsSet, requiresGuestAnnotationsSet);
         assertEquals(3, wrapper.getAnnotations().size());
         assertFalse(wrapper.isAnnotationPresent(RequiresGuest.class));
         assertTrue(wrapper.isAnnotationPresent(SessionScoped.class));
@@ -126,10 +126,10 @@ class AnnotatedTypeWrapperTest {
         initializeStubs();
         when(annotatedType.getJavaClass()).thenReturn(Void.class);
         assertEquals(3, annotatedType.getAnnotations().size());
-        Annotation shiroSecureAnnoations = getAnnotation(ShiroSecureAnnotated.class, ShiroSecureAnnotation.class);
-        Annotation statelessAnnoations = getAnnotation(StatelessAnnotated.class, Stateless.class);
+        Annotation shiroSecureAnnotations = getAnnotation(ShiroSecureAnnotated.class, ShiroSecureAnnotation.class);
+        Annotation statelessAnnotations = getAnnotation(StatelessAnnotated.class, Stateless.class);
         var wrapper = new AnnotatedTypeWrapper<>(annotatedType, false,
-                Set.of(shiroSecureAnnoations, statelessAnnoations),
+                Set.of(shiroSecureAnnotations, statelessAnnotations),
                 Set.of());
         assertEquals(2, wrapper.getAnnotations().size());
         assertTrue(wrapper.isAnnotationPresent(ShiroSecureAnnotation.class));
