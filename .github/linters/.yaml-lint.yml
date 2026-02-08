@@ -20,8 +20,12 @@
 extends: default
 
 rules:
-  braces: disable
-  brackets: disable
+  braces:
+    min-spaces-inside: 1
+    max-spaces-inside: 1
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
   comments:
     ignore-shebangs: true
     min-spaces-from-content: 1
