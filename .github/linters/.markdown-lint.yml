@@ -24,8 +24,5 @@ MD014: false
 # MD033/no-inline-html Inline HTML
 MD033: false
 
-# MD034/no-bare-urls Bare URL used
-MD034: false
-
 # MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading
 MD041: false

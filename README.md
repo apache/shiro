@@ -13,7 +13,7 @@ Apache Shiro
 Documentation and Examples
 --------------------------
 
-https://shiro.apache.org
+<https://shiro.apache.org>
 
 Tutorials
 ---------
