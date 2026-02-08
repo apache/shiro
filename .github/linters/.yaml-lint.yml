@@ -22,7 +22,10 @@ extends: default
 rules:
   braces: disable
   brackets: disable
-  comments: disable
+  comments:
+    ignore-shebangs: true
+    min-spaces-from-content: 1
+    require-starting-space: true
   document-start: disable
   line-length: disable
   truthy: false
