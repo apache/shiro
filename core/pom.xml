@@ -82,7 +82,7 @@
                             org.apache.shiro.realm*;version=${project.version},
                             org.apache.shiro.session*;version=${project.version},
                             org.apache.shiro.subject*;version=${project.version},
-                            org.apache.shiro.util;version=${project.version},
+                            org.apache.shiro.util;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             org.apache.shiro.lang*;version="${shiro.osgi.importRange}",

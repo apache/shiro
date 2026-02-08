@@ -70,7 +70,7 @@
         <shiro.previousVersion>3.0.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
-        <project.build.outputTimestamp>2026-01-15T21:40:21Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-02-07T22:56:07Z</project.build.outputTimestamp>
         <root.dir>${maven.multiModuleProjectDirectory}</root.dir>
         <jacoco.skip>true</jacoco.skip>
         <!-- workaround for gmavenplus plugin until maven 4 is being used -->
@@ -85,7 +85,7 @@
         <nexus-staging-profile>nexus-staging</nexus-staging-profile>
         <jacocoAgent/>
         <!-- non-dependency-based properties: -->
-        <shiro.osgi.importRange>[3, 4)</shiro.osgi.importRange>
+        <shiro.osgi.importRange>[3.0.0,999.999.999]</shiro.osgi.importRange>
         <jcache.osgi.importRange>[1.1,2)</jcache.osgi.importRange>
 
         <!-- Compile 3rd party dependencies: -->
