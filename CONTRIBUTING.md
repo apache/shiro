@@ -1,5 +1,5 @@
 Contributing to Apache Shiro
-=======================================
+============================
 
 Summary
 -------
@@ -52,7 +52,7 @@ $ git commit -a -m "descriptive commit message for your changes"
 > Once the `feature_x` branch exists, you can later switch to it with only `git checkout feature_x`.
 
 Rebase `feature_x` to include updates from `upstream/main`
-------------------------------------------------------------
+----------------------------------------------------------
 
 It is important that you maintain an up-to-date `main` branch in your local repository.  This is done by rebasing in the code changes from `upstream/main`
 (the official Apache Shiro project repository) into your local repository.  You will want to do this before you start working on a feature as well as right

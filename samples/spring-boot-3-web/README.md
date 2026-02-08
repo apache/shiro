@@ -1,5 +1,5 @@
 Apache Shiro + Spring Boot 3 Web Example
-=================================
+========================================
 
 A Spring Boot example web application that show the usage of a user login, checking permissions, and annotation
 protected methods.
