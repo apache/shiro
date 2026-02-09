@@ -1,0 +1,7 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "^https://github.com/YOUR_ACCOUNT/shiro"
+    }
+  ]
+}

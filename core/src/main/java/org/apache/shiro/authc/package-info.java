@@ -23,7 +23,7 @@
  * 'AuthoriZation', abbreviated as <tt>authz</tt>.
  * <p/>
  * The primary item of interest in this package is the <tt>Authenticator</tt> interface, which acts as the
- * entry point (facade) to all other other authentication components. Other components, interfaces and
+ * entry point (facade) to all other authentication components. Other components, interfaces and
  * exceptions are here to support <tt>Authenticator</tt> implementations.
  */
 package org.apache.shiro.authc;

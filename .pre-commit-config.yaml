@@ -74,6 +74,9 @@ repos:
         description: Forbids any submodules in the repository
       - id: mixed-line-ending
         description: replaces or checks mixed line ending
+      - id: pretty-format-json
+        description: checks that all your JSON files are pretty
+        args: [--autofix, --no-sort-keys]
       - id: trailing-whitespace
         description: Trims trailing whitespace
         args: [--markdown-linebreak-ext=md]
@@ -107,6 +110,15 @@ repos:
     hooks:
       - id: actionlint
         description: actionlint is a static checker for GitHub Actions workflow files
+  - repo: https://github.com/tcort/markdown-link-check
+    rev: v3.14.2
+    hooks:
+      - id: markdown-link-check
+        name: run markdown-link-check
+        description: checks all of the hyperlinks in a Markdown text to determine if they are alive or dead
+        args: [--config=.github/linters/mlc_config.json, -q]
+        types: [markdown]
+        files: \.md$
   - repo: https://github.com/oxipng/oxipng
     rev: v10.1.0
     hooks:

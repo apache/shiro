@@ -15,21 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
----
-# https://yamllint.readthedocs.io/en/stable/
-extends: default
-
-rules:
-  braces:
-    min-spaces-inside: 1
-    max-spaces-inside: 1
-  brackets:
-    min-spaces-inside: 0
-    max-spaces-inside: 1
-  comments:
-    ignore-shebangs: true
-    min-spaces-from-content: 1
-    require-starting-space: true
-  document-start: disable
-  line-length: disable
-  truthy: false
+cff-version: 1.2.0
+title: Apache Shiro
+type: software
+authors:
+  - name: Apache Shiro Project
+repository-code: https://github.com/apache/shiro
+url: https://shiro.apache.org
+license: Apache-2.0

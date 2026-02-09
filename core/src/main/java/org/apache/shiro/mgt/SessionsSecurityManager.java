@@ -73,7 +73,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
      * <tt>SessionManager</tt> instance.
      * <p/>
      * If a <tt>SessionManager</tt> instance is not set, a default one will be automatically created and
-     * initialized appropriately for the the existing runtime environment.
+     * initialized appropriately for the existing runtime environment.
      *
      * @param sessionManager delegate instance to use to support this manager's <tt>SessionManager</tt> method calls.
      */

@@ -50,7 +50,7 @@ public abstract class SecurityUtils {
      * @return the currently accessible {@code Subject} accessible to the calling code.
      * @throws IllegalStateException if no {@link Subject Subject} instance or
      *                               {@link SecurityManager SecurityManager} instance is available with which to obtain
-     *                               a {@code Subject}, which which is considered an invalid application configuration
+     *                               a {@code Subject}, which is considered an invalid application configuration
      *                               - a Subject should <em>always</em> be available to the caller.
      */
     public static Subject getSubject() {
