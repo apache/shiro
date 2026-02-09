@@ -35,7 +35,7 @@
     <properties>
         <module.name>its.jaxrs.tests</module.name>
         <jaxrs.api.version>2.1.1</jaxrs.api.version>
-        <johnzon.version>1.2.21</johnzon.version>
+        <johnzon.version>1.2.22</johnzon.version>
     </properties>
 
     <dependencies>
