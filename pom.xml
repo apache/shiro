@@ -1224,7 +1224,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.5.27</version>
+                <version>1.5.28</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
