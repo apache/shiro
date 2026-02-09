@@ -74,6 +74,9 @@ repos:
         description: Forbids any submodules in the repository
       - id: mixed-line-ending
         description: replaces or checks mixed line ending
+      - id: pretty-format-json
+        description: checks that all your JSON files are pretty
+        args: [--autofix, --no-sort-keys]
       - id: trailing-whitespace
         description: Trims trailing whitespace
         args: [--markdown-linebreak-ext=md]
