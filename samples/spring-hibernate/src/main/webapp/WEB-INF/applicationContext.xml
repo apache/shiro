@@ -50,28 +50,27 @@
         <property name="username" value="sa"/>
     </bean>
 
-    <!-- Hibernate SessionFactory -->
-    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+    <!-- Replace Hibernate 5 SessionFactory with JPA EntityManagerFactory (Hibernate 6 provider) -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <!-- Scan packages for JPA annotations -->
         <property name="packagesToScan" value="org.apache.shiro.samples.sprhib.model"/>
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
-                <prop key="hibernate.jdbc.fetch_size">100</prop>
-
-                <!-- Because we're using an in-memory database for demo purposes (which is lost every time the app
-                     shuts down), we have to ensure that the HSQLDB DDL is run each time the app starts.  The
-                     DDL is auto-generated based on the *.hbm.xml mapping definitions below. -->
-                <prop key="hibernate.hbm2ddl.auto">update</prop>
-                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
-            </props>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.hbm2ddl.auto" value="update"/>
+                <entry key="hibernate.jdbc.fetch_size" value="100"/>
+                <!-- If you need 2nd-level cache on Hibernate 6, prefer JCache:
+                     hibernate.cache.region.factory_class=org.hibernate.cache.jcache.JCacheRegionFactory
+                     plus a javax.cache provider (e.g., Ehcache 3 or Caffeine) -->
+            </map>
         </property>
     </bean>
 
-    <!-- Transaction support beans -->
-    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory"/>
+    <!-- Replace HibernateTransactionManager with JpaTransactionManager -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
     <tx:annotation-driven/>

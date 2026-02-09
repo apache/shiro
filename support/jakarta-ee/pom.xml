@@ -33,14 +33,13 @@
 
     <properties>
         <module.name>jakarta.ee</module.name>
-        <jacoco.skip>true</jacoco.skip>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
-            <version>11.0.0</version>
+            <version>${jakarta.ee.version}</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>

@@ -6,6 +6,6 @@ A Spring Boot example CLI application that show the usage of a user login, check
 Run the Example
 ---------------
 
-```
+```bash
 mvn spring-boot:run
 ```

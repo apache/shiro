@@ -123,10 +123,10 @@ class AnnotatedTypeWrapperTest {
         initializeStubs();
         when(annotatedType.getJavaClass()).thenReturn(Void.class);
         assertThat(annotatedType.getAnnotations()).hasSize(3);
-        Annotation shiroSecureAnnoations = getAnnotation(ShiroSecureAnnotated.class, ShiroSecureAnnotation.class);
-        Annotation statelessAnnoations = getAnnotation(StatelessAnnotated.class, Stateless.class);
+        Annotation shiroSecureAnnotations = getAnnotation(ShiroSecureAnnotated.class, ShiroSecureAnnotation.class);
+        Annotation statelessAnnotations = getAnnotation(StatelessAnnotated.class, Stateless.class);
         var wrapper = new AnnotatedTypeWrapper<>(annotatedType, false,
-                Set.of(shiroSecureAnnoations, statelessAnnoations),
+                Set.of(shiroSecureAnnotations, statelessAnnotations),
                 Set.of());
         assertThat(wrapper.getAnnotations()).hasSize(2);
         assertThat(wrapper.isAnnotationPresent(ShiroSecureAnnotation.class)).isTrue();

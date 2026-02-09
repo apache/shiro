@@ -168,13 +168,23 @@ public interface FilterChainManager {
 
     /**
      * Creates a chain that should match any non-matched request paths,
-     * typically {@code /**} assuming an {@link AntPathMatcher} I used.
+     * typically assuming an {@link AntPathMatcher} is used.
      *
      * @param chainName The name of the chain to create, likely {@code /**}.
      * @see AntPathMatcher AntPathMatcher
      * @since 1.6
      */
-    void createDefaultChain(String chainName);
+    void createDefaultChain(String chainName, String chainDefinition);
+
+    /**
+     * @since 1.6
+     * @deprecated use {@link FilterChainManager#createDefaultChain(String, String)} instead.
+     * @see AntPathMatcher AntPathMatcher
+     */
+    @Deprecated
+    default void createDefaultChain(String chainName) {
+        createDefaultChain(chainName, DefaultFilter.noAccess.name());
+    }
 
     /**
      * Adds (appends) a filter to the filter chain identified by the given {@code chainName}.  If there is no chain
@@ -220,4 +230,10 @@ public interface FilterChainManager {
      * @since 1.6
      */
     void setGlobalFilters(List<String> globalFilterNames) throws ConfigurationException;
+
+    /**
+     * Sets whether or not path matching should be case insensitive.
+     * @param caseInsensitive boolean value indicating whether path matching should be case insensitive.
+     */
+    default void setCaseInsensitive(boolean caseInsensitive) { }
 }

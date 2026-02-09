@@ -20,9 +20,9 @@ package org.apache.shiro.testing.web;
 
 import java.nio.charset.StandardCharsets;
 
-import com.github.mjeanroy.junit.servers.jetty12.EmbeddedJetty;
 import com.github.mjeanroy.junit.servers.jetty.EmbeddedJettyConfiguration;
 import java.util.Base64;
+import com.github.mjeanroy.junit.servers.jetty12ee11.EmbeddedJetty;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;

@@ -1,10 +1,12 @@
 Contributing to Apache Shiro
-=======================================
+============================
 
 Summary
 -------
 
-This document covers how to contribute to the Apache Shiro project. These instructions assume you have a GitHub.com account, so if you don't have one you will have to create one. Your proposed code changes will be published to your own fork of the Apache Shiro project and you will submit a Pull Request for your changes to be added.
+This document covers how to contribute to the Apache Shiro project.
+These instructions assume you have a GitHub.com account, so if you don't have one you will have to create one.
+Your proposed code changes will be published to your own fork of the Apache Shiro project and you will submit a Pull Request for your changes to be added.
 
 _Let's get started!!!_
 
@@ -20,7 +22,7 @@ You will paste this URL when doing the following `git clone` command.
 
 On your computer, follow these steps to setup a local repository for working on Apache Shiro:
 
-``` bash
+```bash
 $ git clone https://github.com/YOUR_ACCOUNT/shiro.git
 $ cd shiro
 $ git remote add upstream https://github.com/apache/shiro.git
@@ -38,7 +40,7 @@ will be pushed to your forked repository on GitHub.  Once this branch is on your
 
 It is best practice to create a new branch each time you want to contribute to the project and only track the changes for that pull request in this branch.
 
-``` bash
+```bash
 $ git checkout -b feature_x
    (make your changes)
 $ git status
@@ -50,7 +52,7 @@ $ git commit -a -m "descriptive commit message for your changes"
 > Once the `feature_x` branch exists, you can later switch to it with only `git checkout feature_x`.
 
 Rebase `feature_x` to include updates from `upstream/main`
-------------------------------------------------------------
+----------------------------------------------------------
 
 It is important that you maintain an up-to-date `main` branch in your local repository.  This is done by rebasing in the code changes from `upstream/main`
 (the official Apache Shiro project repository) into your local repository.  You will want to do this before you start working on a feature as well as right
@@ -62,7 +64,7 @@ This process will do the following:
 2. Synchronize your local `main` branch with the `upstream/main` so you have all the latest changes from the project
 3. Rebase the latest project code into your `feature_x` branch so it is up-to-date with the upstream code
 
-``` bash
+```bash
 $ git checkout main
 $ git fetch upstream
 $ git rebase upstream/main
@@ -80,7 +82,7 @@ to your forked repository (default remote name is `origin`) and then initiating 
 
 > **IMPORTANT:** Make sure you have rebased your `feature_x` branch to include the latest code from `upstream/main` _before_ you do this.
 
-``` bash
+```bash
 $ git push origin main
 $ git push origin feature_x
 ```
@@ -107,7 +109,7 @@ If you want to make additional changes, restart the process with a new branch.
 
 You can delete these deprecated branches with the following:
 
-``` bash
+```bash
 $ git checkout main
 $ git branch -D feature_x
 $ git push origin :feature_x

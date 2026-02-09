@@ -38,6 +38,7 @@ import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.BearerHttpAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.LogoutFilter;
+import org.apache.shiro.web.filter.authc.NoAccessFilter;
 import org.apache.shiro.web.filter.authc.UserFilter;
 import org.apache.shiro.web.filter.authz.HttpMethodPermissionFilter;
 import org.apache.shiro.web.filter.authz.IpFilter;
@@ -62,7 +63,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("checkstyle:JavadocVariable")
 /**
  * Sets up Shiro lifecycles within Guice, enables the injecting of Shiro objects, and binds a default
  * {@link org.apache.shiro.web.mgt.WebSecurityManager},
@@ -73,21 +73,38 @@ import java.util.Map;
  * Also provides for the configuring of filter chains and binds a
  * {@link org.apache.shiro.web.filter.mgt.FilterChainResolver} with that information.
  */
+@SuppressWarnings("checkstyle:JavadocVariable")
 public abstract class ShiroWebModule extends ShiroModule {
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<AnonymousFilter> ANON = Key.get(AnonymousFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<FormAuthenticationFilter> AUTHC = Key.get(FormAuthenticationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<BasicHttpAuthenticationFilter> AUTHC_BASIC = Key.get(BasicHttpAuthenticationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<BearerHttpAuthenticationFilter> AUTHC_BEARER = Key.get(BearerHttpAuthenticationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<NoSessionCreationFilter> NO_SESSION_CREATION = Key.get(NoSessionCreationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<LogoutFilter> LOGOUT = Key.get(LogoutFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<PermissionsAuthorizationFilter> PERMS = Key.get(PermissionsAuthorizationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<PortFilter> PORT = Key.get(PortFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<HttpMethodPermissionFilter> REST = Key.get(HttpMethodPermissionFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<RolesAuthorizationFilter> ROLES = Key.get(RolesAuthorizationFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<SslFilter> SSL = Key.get(SslFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<IpFilter> IP = Key.get(IpFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<UserFilter> USER = Key.get(UserFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
     public static final Key<InvalidRequestFilter> INVALID_REQUEST = Key.get(InvalidRequestFilter.class);
+    @SuppressWarnings({"UnusedDeclaration"})
+    public static final Key<NoAccessFilter> NO_ACCESS = Key.get(NoAccessFilter.class);
 
     static final String NAME = "SHIRO";
 
@@ -107,6 +124,7 @@ public abstract class ShiroWebModule extends ShiroModule {
         binder.install(guiceFilterModule());
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     public static void bindGuiceFilter(final String pattern, Binder binder) {
         binder.install(guiceFilterModule(pattern));
     }
@@ -343,6 +361,7 @@ public abstract class ShiroWebModule extends ShiroModule {
      * @return A FilterConfig used to map a String path to this configuration.
      * @since 1.4
      */
+    @SuppressWarnings({"UnusedDeclaration"})
     protected static <T extends Filter> FilterConfig<T> filterConfig(Class<T> type, String configValue) {
         return filterConfig(Key.get(type), configValue);
     }
@@ -434,11 +453,13 @@ public abstract class ShiroWebModule extends ShiroModule {
         return new FilterConfigKey<T>(baseKey, configValue);
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     @Deprecated
     protected static <T extends PathMatchingFilter> Key<T> config(TypeLiteral<T> typeLiteral, String configValue) {
         return config(Key.get(typeLiteral), configValue);
     }
 
+    @SuppressWarnings({"UnusedDeclaration"})
     @Deprecated
     protected static <T extends PathMatchingFilter> Key<T> config(Class<T> type, String configValue) {
         return config(Key.get(type), configValue);

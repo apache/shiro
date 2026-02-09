@@ -105,17 +105,13 @@
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
                             org.aopalliance*;version="[1.0.0, 2.0.0)",
-                            org.springframework*;version="[4.0.0, 6.0.0)",
+                            org.springframework*;version="[6.0.0, 7.0.0)",
                             *
                         </Import-Package>
                         <_removeheaders>Bnd-LastModified</_removeheaders>
                         <_reproducible>true</_reproducible>
                     </instructions>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

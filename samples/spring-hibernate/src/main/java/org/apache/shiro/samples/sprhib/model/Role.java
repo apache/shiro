@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.samples.sprhib.model;
 
+import jakarta.persistence.FetchType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -88,7 +89,7 @@ public class Role {
         this.description = description;
     }
 
-    @ElementCollection(targetClass = String.class)
+    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     @JoinTable(name = "roles_permissions")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public Set<String> getPermissions() {

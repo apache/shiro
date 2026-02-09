@@ -61,6 +61,9 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
     private List<String> globalFilters = Collections.singletonList(DefaultFilter.invalidRequest.name());
 
+    private boolean allowAccessByDefault;
+    private boolean caseInsensitive = true;
+
     public IniFilterChainResolverFactory() {
         super();
     }
@@ -90,6 +93,22 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         this.globalFilters = globalFilters;
     }
 
+    public boolean isAllowAccessByDefault() {
+        return allowAccessByDefault;
+    }
+
+    public void setAllowAccessByDefault(boolean allowAccessByDefault) {
+        this.allowAccessByDefault = allowAccessByDefault;
+    }
+
+    public boolean isCaseInsensitive() {
+        return caseInsensitive;
+    }
+
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
+    }
+
     protected FilterChainResolver createInstance(Ini ini) {
         FilterChainResolver filterChainResolver = createDefaultInstance();
         if (filterChainResolver instanceof PathMatchingFilterChainResolver resolver) {
@@ -102,9 +121,9 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
     protected FilterChainResolver createDefaultInstance() {
         FilterConfig filterConfig = getFilterConfig();
         if (filterConfig != null) {
-            return new PathMatchingFilterChainResolver(filterConfig);
+            return new PathMatchingFilterChainResolver(filterConfig).caseInsensitive(caseInsensitive);
         } else {
-            return new PathMatchingFilterChainResolver();
+            return new PathMatchingFilterChainResolver().caseInsensitive(caseInsensitive);
         }
     }
 
@@ -148,7 +167,11 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
 
         // create the default chain, to match anything the path matching would have missed
         // TODO this assumes ANT path matching
-        manager.createDefaultChain("/**");
+        if (isAllowAccessByDefault()) {
+            manager.createDefaultChain("/**", DefaultFilter.anon.name());
+        } else {
+            manager.createDefaultChain("/**", DefaultFilter.noAccess.name());
+        }
     }
 
     protected void registerFilters(Map<String, Filter> filters, FilterChainManager manager) {

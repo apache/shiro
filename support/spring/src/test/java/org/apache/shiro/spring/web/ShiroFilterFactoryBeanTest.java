@@ -19,7 +19,6 @@
 package org.apache.shiro.spring.web;
 
 import org.apache.shiro.web.filter.InvalidRequestFilter;
-import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.NamedFilterList;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
@@ -66,13 +65,12 @@ public class ShiroFilterFactoryBeanTest {
         DefaultFilterChainManager fcManager = (DefaultFilterChainManager) resolver.getFilterChainManager();
         NamedFilterList chain = fcManager.getChain("/test");
         assertThat(chain).isNotNull();
-        assertThat(chain).hasSize(3);
+        assertThat(chain).hasSize(2);
         Filter[] filters = new Filter[chain.size()];
         filters = chain.toArray(filters);
         // global filter
         assertThat(filters[0] instanceof InvalidRequestFilter).isTrue();
         assertThat(filters[1] instanceof DummyFilter).isTrue();
-        assertThat(filters[2] instanceof FormAuthenticationFilter).isTrue();
     }
 
     /**
@@ -93,7 +91,8 @@ public class ShiroFilterFactoryBeanTest {
         expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext).anyTimes();
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
         expect(mockRequest.getContextPath()).andReturn("/").anyTimes();
-        expect(mockRequest.getRequestURI()).andReturn("/").anyTimes();
+        expect(mockRequest.getRequestURI()).andReturn("/test").anyTimes();
+        expect(mockRequest.getServletPath()).andReturn("/test").anyTimes();
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
 
         replay(mockFilterConfig);

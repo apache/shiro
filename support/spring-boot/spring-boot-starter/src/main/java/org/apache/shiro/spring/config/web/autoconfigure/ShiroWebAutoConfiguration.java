@@ -33,7 +33,6 @@ import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.boot.autoconfigure.ShiroAutoConfiguration;
-import org.apache.shiro.spring.web.ShiroUrlPathHelper;
 import org.apache.shiro.spring.web.config.AbstractShiroWebConfiguration;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
 import org.apache.shiro.web.servlet.Cookie;
@@ -151,12 +150,5 @@ public class ShiroWebAutoConfiguration extends AbstractShiroWebConfiguration {
     @Override
     protected ShiroFilterChainDefinition shiroFilterChainDefinition() {
         return super.shiroFilterChainDefinition();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    @Override
-    protected ShiroUrlPathHelper shiroUrlPathHelper() {
-        return super.shiroUrlPathHelper();
     }
 }

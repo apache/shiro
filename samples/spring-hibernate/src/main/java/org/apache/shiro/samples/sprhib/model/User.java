@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.samples.sprhib.model;
 
+import jakarta.persistence.FetchType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -53,7 +54,7 @@ public class User {
     private String username;
     private String email;
     private String password;
-    private Set<Role> roles = new HashSet<Role>();
+    private Set<Role> roles = new HashSet<>();
 
 
     @Id
@@ -106,7 +107,7 @@ public class User {
     }
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public Set<Role> getRoles() {

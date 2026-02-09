@@ -6,7 +6,7 @@ A Spring Boot example web application that show the usage of a user login with S
 Run the Example
 ---------------
 
-```
+```bash
 mvn jetty:run
 ```
 

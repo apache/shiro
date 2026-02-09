@@ -95,14 +95,14 @@ public class DefaultEventBus implements EventBus {
     //and the lock provides thread-safety in probably a much simpler mechanism than attempting to write a
     //EventBus-specific Comparator.  This technique is also likely to be faster than a ConcurrentSkipListMap, which
     //is about 3-5 times slower than a standard ConcurrentMap.
-    final Map<Object, Subscription> registry;
+    private final Map<Object, Subscription> registry;
     private final Lock registryReadLock;
     private final Lock registryWriteLock;
     private EventListenerResolver eventListenerResolver;
 
     public DefaultEventBus() {
         //not thread safe, so we need locks:
-        this.registry = new LinkedHashMap<Object, Subscription>();
+        this.registry = new LinkedHashMap<>();
         ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
         this.registryReadLock = rwl.readLock();
         this.registryWriteLock = rwl.writeLock();
@@ -115,6 +115,15 @@ public class DefaultEventBus implements EventBus {
 
     public void setEventListenerResolver(EventListenerResolver eventListenerResolver) {
         this.eventListenerResolver = eventListenerResolver;
+    }
+
+    public Map<Object, Subscription> getRegistry() {
+        registryReadLock.lock();
+        try {
+            return Map.copyOf(registry);
+        } finally {
+            registryReadLock.unlock();
+        }
     }
 
     public void publish(Object event) {

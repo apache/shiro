@@ -27,9 +27,9 @@
         <version>999-SNAPSHOT</version>
     </parent>
 
-    <artifactId>shiro-its-guice</artifactId>
-    <name>Apache Shiro :: ITs :: Guice</name>
-    <packaging>war</packaging>
+	<artifactId>shiro-its-guice</artifactId>
+	<name>Apache Shiro :: ITs :: Guice</name>
+	<packaging>war</packaging>
 
     <properties>
         <groups>none()</groups>
@@ -38,8 +38,8 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee11</groupId>
+                <artifactId>jetty-ee11-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -55,25 +55,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-spec</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-impl</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
-            <version>6.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -116,14 +109,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.ee10</groupId>
-            <artifactId>jetty-ee10-apache-jsp</artifactId>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-apache-jsp</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.ee10</groupId>
-            <artifactId>jetty-ee10-annotations</artifactId>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-annotations</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
@@ -141,8 +134,8 @@
                 <jdk>[17,)</jdk>
             </activation>
             <properties>
-                <!-- needed by guice until it is compatible with jdk17+. -->
-                <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</surefire.argLine>
+                <!-- needed by guice until it is compatible with jdk24+. -->
+                <surefire.argLine>--sun-misc-unsafe-memory-access=allow</surefire.argLine>
                 <failsafe.argLine>${surefire.argLine}</failsafe.argLine>
             </properties>
         </profile>

@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.spring.config
 
+import org.apache.shiro.SecurityUtils
 import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.authz.ModularRealmAuthorizer
 import org.apache.shiro.event.EventBus
@@ -31,10 +32,10 @@ import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration
 import org.apache.shiro.subject.Subject
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.aop.framework.Advised
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
@@ -45,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*
  */
 @SpringJUnitConfig(classes = [RealmTestConfiguration, ShiroConfiguration, ShiroWebConfiguration, ShiroWebFilterConfiguration])
 @ExtendWith(SpringExtension.class)
-class ShiroWebConfigurationTest extends AbstractJUnit4SpringContextTests {
+class ShiroWebConfigurationTest {
 
     @Autowired
     private SecurityManager securityManager
@@ -68,7 +69,8 @@ class ShiroWebConfigurationTest extends AbstractJUnit4SpringContextTests {
         assertNotNull shiroFilterFactoryBean
         assertThat shiroFilterFactoryBean.filters, anEmptyMap()
 
-        assertSame(((DefaultSecurityManager)securityManager).getEventBus(), eventBus)
+        assertSame(((Advised) SecurityUtils.unwrapSecurityManager(securityManager, DefaultSecurityManager).getEventBus())
+                .getTargetSource().getTarget(), eventBus)
 
         def defaultSecurityManager = (DefaultSecurityManager) securityManager
         def authorizer = (ModularRealmAuthorizer) defaultSecurityManager.getAuthorizer();

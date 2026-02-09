@@ -93,10 +93,10 @@ public class ComponentInjectionIT {
     @OperateOnDeployment(TESTABLE_MODE)
     void sessionInjection() {
         assertThat(injectedComponents.getSession()).isNotNull();
-        assertThat(injectedComponents.getNoCreateionSession()).isNotNull();
+        assertThat(injectedComponents.getNoCreationSession()).isNotNull();
         injectedComponents.getSession().setAttribute("hello", "bye");
         assertThat(injectedComponents.getSession().getAttribute("hello")).isEqualTo("bye");
-        assertThat(injectedComponents.getNoCreateionSession().getAttribute("hello")).isEqualTo("bye");
+        assertThat(injectedComponents.getNoCreationSession().getAttribute("hello")).isEqualTo("bye");
     }
 
     @Test

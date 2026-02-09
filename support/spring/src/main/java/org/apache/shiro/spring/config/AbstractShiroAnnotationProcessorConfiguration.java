@@ -21,17 +21,11 @@ package org.apache.shiro.spring.config;
 
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
-import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 
 /**
  * @since 1.4.0
  */
 public class AbstractShiroAnnotationProcessorConfiguration {
-
-    protected DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        return new DefaultAdvisorAutoProxyCreator();
-    }
-
     protected AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor advisor = new AuthorizationAttributeSourceAdvisor();
         advisor.setSecurityManager(securityManager);

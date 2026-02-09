@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings("checkstyle:LineLength")
 /**
  * Unit tests for {@link AntPathMatcher}.
  * <p>
@@ -31,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * <a href="https://github.com/spring-projects/spring-framework/blob/b92d249f450920e48e640af6bbd0bd509e7d707d/spring-core/src/test/java/org/springframework/util/AntPathMatcherTests.java"/>
  * Spring Framework's similar AntPathMatcherTests</a>
  */
-public class AntPathMatcherTests {
+class AntPathMatcherTests {
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
@@ -347,5 +346,13 @@ public class AntPathMatcherTests {
     @Test
     void isPatternWithNullPath() {
         assertThat(pathMatcher.isPattern(null)).isFalse();
+    }
+
+    @Test
+    void caseInsensitiveMatch() {
+        pathMatcher.setCaseInsensitive(true);
+        assertThat(pathMatcher.match("/Test/Path", "/test/path")).isTrue();
+        assertThat(pathMatcher.match("/TEST/PATH/*", "/test/path/extra")).isTrue();
+        assertThat(pathMatcher.match("/TEST/PATH", "/different/path")).isFalse();
     }
 }

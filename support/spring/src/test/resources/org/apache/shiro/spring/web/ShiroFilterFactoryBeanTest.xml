@@ -46,10 +46,13 @@
         <property name="securityManager" ref="securityManager"/>
         <property name="filterChainDefinitions">
             <value>
-                /test = testFilter, authc
+                /test = testFilter
             </value>
         </property>
 
+    </bean>
+    <bean id="shiroFilterFactoryBeanPostProcessor" class="org.apache.shiro.spring.web.ShiroFilterFactoryBeanPostProcessor">
+        <constructor-arg ref="&amp;shiroFilter"/>
     </bean>
 
 </beans>

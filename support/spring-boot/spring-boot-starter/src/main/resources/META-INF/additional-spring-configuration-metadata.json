@@ -5,7 +5,6 @@
     }
   ],
   "properties": [
-
     {
       "name": "shiro.enabled",
       "type": "java.lang.Boolean",

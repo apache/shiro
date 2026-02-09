@@ -25,7 +25,9 @@ import org.apache.shiro.lang.util.ClassUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.core.PriorityOrdered;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -41,17 +43,12 @@ import java.util.List;
  * @see Subscribe
  * @since 1.4
  */
-public class ShiroEventBusBeanPostProcessor implements BeanPostProcessor {
+public class ShiroEventBusBeanPostProcessor implements BeanPostProcessor, PriorityOrdered {
 
     private final EventBus eventBus;
 
     public ShiroEventBusBeanPostProcessor(EventBus eventBus) {
         this.eventBus = eventBus;
-    }
-
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
     }
 
     @Override
@@ -66,8 +63,12 @@ public class ShiroEventBusBeanPostProcessor implements BeanPostProcessor {
     }
 
     private boolean isEventSubscriber(Object bean) {
-        List annotatedMethods = ClassUtils.getAnnotatedMethods(bean.getClass(), Subscribe.class);
+        List<Method> annotatedMethods = ClassUtils.getAnnotatedMethods(bean.getClass(), Subscribe.class);
         return !CollectionUtils.isEmpty(annotatedMethods);
     }
 
+    @Override
+    public int getOrder() {
+        return LOWEST_PRECEDENCE - 1;
+    }
 }

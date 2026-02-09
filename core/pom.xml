@@ -82,7 +82,7 @@
                             org.apache.shiro.realm*;version=${project.version},
                             org.apache.shiro.session*;version=${project.version},
                             org.apache.shiro.subject*;version=${project.version},
-                            org.apache.shiro.util;version=${project.version},
+                            org.apache.shiro.util;version=${project.version}
                         </Export-Package>
                         <Import-Package>
                             org.apache.shiro.lang*;version="${shiro.osgi.importRange}",
@@ -101,10 +101,6 @@
                         <_reproducible>true</_reproducible>
                     </instructions>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

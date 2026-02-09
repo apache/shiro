@@ -37,7 +37,7 @@ public class ComponentInjectionBean {
     Session session;
     @Inject
     @NoSessionCreation
-    Session noCreateionSession;
+    Session noCreationSession;
     @Inject
     @Principal
     Supplier<PropertyPrincipal> propertyPrincipal;

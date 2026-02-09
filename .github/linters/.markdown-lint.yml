@@ -16,19 +16,14 @@
 # under the License.
 
 # MD013/line-length Line length
-MD013: false
+MD013:
+  line_length: 180
 
 # MD014/commands-show-output Dollar signs used before commands without showing output
 MD014: false
 
 # MD033/no-inline-html Inline HTML
 MD033: false
-
-# MD034/no-bare-urls Bare URL used
-MD034: false
-
-# MD040/fenced-code-language Fenced code blocks should have a language specified
-MD040: false
 
 # MD041/first-line-heading/first-line-h1 First line in a file should be a top-level heading
 MD041: false

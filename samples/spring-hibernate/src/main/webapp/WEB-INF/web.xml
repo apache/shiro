@@ -52,21 +52,11 @@
     <!-- ===================================================================
  -  Filters
  -  =================================================================== -->
-    <filter>
-        <filter-name>openSessionInViewFilter</filter-name>
-        <filter-class>org.springframework.orm.hibernate5.support.OpenSessionInViewFilter</filter-class>
-    </filter>
-
     <!-- Shiro Filter is defined in the spring application context: -->
     <filter>
         <filter-name>shiroFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
-
-    <filter-mapping>
-        <filter-name>openSessionInViewFilter</filter-name>
-        <url-pattern>/s/*</url-pattern>
-    </filter-mapping>
 
     <filter-mapping>
         <filter-name>shiroFilter</filter-name>

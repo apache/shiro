@@ -32,28 +32,20 @@
     <name>Apache Shiro :: Samples :: Servlet Plugin</name>
     <packaging>war</packaging>
 
-    <properties>
-        <skipITs>true</skipITs>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee11</groupId>
+                <artifactId>jetty-ee11-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <contextPath>/</contextPath>
-                    <httpConnector>
-                        <port>9180</port>
-                        <idleTimeout>60000</idleTimeout>
-                    </httpConnector>
-                    <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
-                        <filename>./target/yyyy_mm_dd.request.log</filename>
-                        <retainDays>90</retainDays>
-                        <append>true</append>
-                        <extended>false</extended>
-                        <logTimeZone>GMT</logTimeZone>
-                    </requestLog>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExclude>
+                            org.apache.shiro:shiro-servlet-plugin
+                        </classpathDependencyExclude>
+                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
         </plugins>
@@ -65,16 +57,6 @@
             <artifactId>shiro-servlet-plugin</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-spec</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-impl</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
@@ -97,22 +79,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.ee10</groupId>
-            <artifactId>jetty-ee10-apache-jsp</artifactId>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-apache-jsp</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.ee10</groupId>
-            <artifactId>jetty-ee10-annotations</artifactId>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-annotations</artifactId>
             <version>${jetty.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jstl</artifactId>
-            <version>10.0.26</version>
-            <type>pom</type>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -121,5 +96,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

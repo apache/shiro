@@ -101,7 +101,7 @@
                         <Export-Package>org.apache.shiro.aspectj*;version=${project.version}</Export-Package>
                         <Import-Package>
                             org.apache.shiro*;version="${shiro.osgi.importRange}",
-                            org.aspectj*;version="[1.6.0, 2.0.0)",
+                            org.aspectj*;version="[1.9.0, 2.0.0)",
                             *
                         </Import-Package>
                         <_removeheaders>Bnd-LastModified</_removeheaders>
