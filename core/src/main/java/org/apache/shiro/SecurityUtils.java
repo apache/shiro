@@ -188,8 +188,8 @@ public abstract class SecurityUtils {
     public static <SM extends SecurityManager> SM
     unwrapSecurityManager(SecurityManager securityManager, Class<SM> type,
                           Predicate<Class<? extends SecurityManager>> predicate) {
-        while (securityManager instanceof WrappedSecurityManager && !predicate.test(securityManager.getClass())) {
-            WrappedSecurityManager wrappedSecurityManager = (WrappedSecurityManager) securityManager;
+        while (securityManager instanceof WrappedSecurityManager wrappedSecurityManager
+                && !predicate.test(securityManager.getClass())) {
             securityManager = wrappedSecurityManager.unwrap();
             if (securityManager == wrappedSecurityManager) {
                 throw new IllegalStateException("SecurityManager implementation of type [" + type.getName()
