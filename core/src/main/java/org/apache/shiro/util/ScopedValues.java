@@ -24,6 +24,11 @@ import org.apache.shiro.subject.support.SubjectCallable;
 import org.apache.shiro.subject.support.SubjectRunnable;
 import java.util.concurrent.Callable;
 
+/**
+ * An abstraction over Java 25's ScopedValue to allow Shiro to use it when running on Java 25 or later,
+ * but degrade gracefully to ThreadLocals when running on older Java versions.
+ * This is used for Subject and Security manager to allow them to be propagated across thread boundaries.
+ */
 public interface ScopedValues {
     record Values(SecurityManager securityManager, Subject subject) { }
 
