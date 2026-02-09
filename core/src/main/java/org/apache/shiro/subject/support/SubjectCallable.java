@@ -68,11 +68,11 @@ public class SubjectCallable<V> implements Callable<V> {
     private final Subject subject;
 
     public SubjectCallable(Subject subject, Callable<V> delegate) {
-        this(subject, ScopedValues.SCOPED_VALUES_SUPPORTED ? null : new SubjectThreadState(subject), delegate);
+        this(subject, ScopedValues.INSTANCE.isSupported() ? null : new SubjectThreadState(subject), delegate);
     }
 
     protected SubjectCallable(Subject subject, ThreadState threadState, Callable<V> delegate) {
-        if (threadState == null && !ScopedValues.SCOPED_VALUES_SUPPORTED) {
+        if (threadState == null && !ScopedValues.INSTANCE.isSupported()) {
             throw new IllegalArgumentException("ThreadState argument cannot be null.");
         }
         this.threadState = threadState;
@@ -85,8 +85,8 @@ public class SubjectCallable<V> implements Callable<V> {
     }
 
     public V call() throws Exception {
-        if (ScopedValues.SCOPED_VALUES_SUPPORTED) {
-            return ScopedValues.call(this, callable, subject, securityManager);
+        if (ScopedValues.INSTANCE.isSupported()) {
+            return ScopedValues.INSTANCE.call(this, callable, subject, securityManager);
         }
 
         // fallback to ThreadState binding if ScopedValues are not available

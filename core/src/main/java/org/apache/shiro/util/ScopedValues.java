@@ -24,28 +24,27 @@ import org.apache.shiro.subject.support.SubjectCallable;
 import org.apache.shiro.subject.support.SubjectRunnable;
 import java.util.concurrent.Callable;
 
-public final class ScopedValues {
-    public static final boolean SCOPED_VALUES_SUPPORTED = false;
-    public record Values(SecurityManager securityManager, Subject subject) { }
+public interface ScopedValues {
+    record Values(SecurityManager securityManager, Subject subject) { }
 
-    private ScopedValues() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
-    }
+    DefaultScopedValues INSTANCE = new DefaultScopedValues();
 
-    public static boolean isBound() {
+    boolean isSupported();
+
+    default boolean isBound() {
         throw new IllegalStateException("ScopedValues are not supported in this Java version");
     }
 
-    public static Values get() {
+    default Values get() {
         throw new IllegalStateException("ScopedValues are not supported in this Java version");
     }
 
-    public static <T> T call(SubjectCallable<T> callable, Callable<T> target,
+    default  <T> T call(SubjectCallable<T> callable, Callable<T> target,
                       Subject subject, SecurityManager securityManager) throws Exception {
         throw new IllegalStateException("ScopedValues are not supported in this Java version");
     }
 
-    public static void run(SubjectRunnable runnable, Runnable target, Subject subject, SecurityManager securityManager) {
+    default void run(SubjectRunnable runnable, Runnable target, Subject subject, SecurityManager securityManager) {
         throw new IllegalStateException("ScopedValues are not supported in this Java version");
     }
 }

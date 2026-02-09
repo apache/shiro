@@ -71,7 +71,7 @@ public class SubjectRunnable implements Runnable {
      * @param delegate the runnable to run.
      */
     public SubjectRunnable(Subject subject, Runnable delegate) {
-        this(subject, ScopedValues.SCOPED_VALUES_SUPPORTED ? null : new SubjectThreadState(subject), delegate);
+        this(subject, ScopedValues.INSTANCE.isSupported() ? null : new SubjectThreadState(subject), delegate);
     }
 
     /**
@@ -84,7 +84,7 @@ public class SubjectRunnable implements Runnable {
      * @throws IllegalArgumentException if either the {@code ThreadState} or {@link Runnable} arguments are {@code null}.
      */
     protected SubjectRunnable(Subject subject, ThreadState threadState, Runnable delegate) throws IllegalArgumentException {
-        if (threadState == null && !ScopedValues.SCOPED_VALUES_SUPPORTED) {
+        if (threadState == null && !ScopedValues.INSTANCE.isSupported()) {
             throw new IllegalArgumentException("ThreadState argument cannot be null.");
         }
         this.threadState = threadState;
@@ -109,8 +109,8 @@ public class SubjectRunnable implements Runnable {
      * </pre>
      */
     public void run() {
-        if (ScopedValues.SCOPED_VALUES_SUPPORTED) {
-            ScopedValues.run(this, runnable, subject, securityManager);
+        if (ScopedValues.INSTANCE.isSupported()) {
+            ScopedValues.INSTANCE.run(this, runnable, subject, securityManager);
             return;
         }
 

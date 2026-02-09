@@ -55,8 +55,8 @@ public abstract class SecurityUtils {
      *                               - a Subject should <em>always</em> be available to the caller.
      */
     public static Subject getSubject() {
-        if (ScopedValues.SCOPED_VALUES_SUPPORTED && ScopedValues.isBound()) {
-            return ScopedValues.get().subject();
+        if (ScopedValues.INSTANCE.isSupported() && ScopedValues.INSTANCE.isBound()) {
+            return ScopedValues.INSTANCE.get().subject();
         }
 
         // fallback to ThreadContext
@@ -120,8 +120,8 @@ public abstract class SecurityUtils {
      *                                             calling code, which typically indicates an invalid application configuration.
      */
     public static SecurityManager getSecurityManager() throws UnavailableSecurityManagerException {
-        if (ScopedValues.SCOPED_VALUES_SUPPORTED && ScopedValues.isBound()) {
-            return ScopedValues.get().securityManager();
+        if (ScopedValues.INSTANCE.isSupported() && ScopedValues.INSTANCE.isBound()) {
+            return ScopedValues.INSTANCE.get().securityManager();
         }
 
         SecurityManager securityManager = ThreadContext.getSecurityManager();
