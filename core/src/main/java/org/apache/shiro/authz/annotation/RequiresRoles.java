@@ -46,7 +46,7 @@ import java.lang.annotation.Target;
  * {@link RequiresPermissions RequiresPermissions} annotation makes sense - Permission
  * types will not change during runtime for an application since permissions directly correspond to how
  * the application's functionality is programmed (that is, they reflect the application's functionality only, not
- * <em>who</em> is executing the the functionality).
+ * <em>who</em> is executing the functionality).
  *
  * @see org.apache.shiro.subject.Subject#hasRole(String)
  * @since 0.1
