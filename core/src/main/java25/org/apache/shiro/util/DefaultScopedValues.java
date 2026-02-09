@@ -25,7 +25,7 @@ import org.apache.shiro.subject.support.SubjectRunnable;
 import java.util.concurrent.Callable;
 
 /**
- * Default {@link ScopedValues} implementation that uses Java 21's {@link ScopedValue} to store the Subject and SecurityManager
+ * Default {@link ScopedValues} implementation that uses Java 25's {@link ScopedValue} to store the Subject and SecurityManager
  */
 public final class DefaultScopedValues implements ScopedValues {
     private static final ScopedValue<Values> VALUES = ScopedValue.newInstance();
