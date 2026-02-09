@@ -32,7 +32,7 @@ import java.util.concurrent.Callable;
 public interface ScopedValues {
     record Values(SecurityManager securityManager, Subject subject) { }
 
-    DefaultScopedValues INSTANCE = new DefaultScopedValues();
+    ScopedValues INSTANCE = new DefaultScopedValues();
 
     boolean isSupported();
 

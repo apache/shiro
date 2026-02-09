@@ -21,7 +21,7 @@ package org.apache.shiro.util;
 /**
  * Overridden via MR-Jar to provide a Java 25 implementation of {@link ScopedValues} when running on Java 25 or later.
  */
-public final class DefaultScopedValues implements ScopedValues {
+final class DefaultScopedValues implements ScopedValues {
     @Override
     public boolean isSupported() {
         return false;
