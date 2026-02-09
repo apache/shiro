@@ -24,32 +24,37 @@ import org.apache.shiro.subject.support.SubjectCallable;
 import org.apache.shiro.subject.support.SubjectRunnable;
 import java.util.concurrent.Callable;
 
-public final class ScopedValues {
+/**
+ * Default {@link ScopedValues} implementation that uses Java 21's {@link ScopedValue} to store the Subject and SecurityManager
+ */
+public final class DefaultScopedValues implements ScopedValues {
     private static final ScopedValue<Values> VALUES = ScopedValue.newInstance();
 
-    public static final boolean SCOPED_VALUES_SUPPORTED = true;
-    public record Values(SecurityManager securityManager, Subject subject) { }
-
-    private ScopedValues() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
-    public static boolean isBound() {
+    @Override
+    public boolean isBound() {
         return VALUES.isBound();
     }
 
-    public static Values get() {
+    @Override
+    public Values get() {
         return VALUES.get();
     }
 
-    public static <T> T call(SubjectCallable<T> callable, Callable<T> target,
+    @Override
+    public <T> T call(SubjectCallable<T> callable, Callable<T> target,
                              Subject subject, SecurityManager securityManager) throws Exception {
-        return ScopedValue.where(ScopedValues.VALUES, new Values(securityManager, subject))
+        return ScopedValue.where(VALUES, new Values(securityManager, subject))
                 .call(() -> callable.doCall(target));
     }
 
-    public static void run(SubjectRunnable runnable, Runnable target, Subject subject, SecurityManager securityManager) {
-        ScopedValue.where(ScopedValues.VALUES, new Values(securityManager, subject))
+    @Override
+    public void run(SubjectRunnable runnable, Runnable target, Subject subject, SecurityManager securityManager) {
+        ScopedValue.where(VALUES, new Values(securityManager, subject))
                 .run(() -> runnable.doRun(target));
     }
 }
