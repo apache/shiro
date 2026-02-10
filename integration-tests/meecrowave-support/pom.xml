@@ -78,7 +78,7 @@
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-bom</artifactId>
-                <version>3.6.7</version>
+                <version>3.6.9</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
