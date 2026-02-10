@@ -194,7 +194,7 @@ public interface HashRequest {
 
         /**
          * Sets the name of the hash algorithm the {@code HashService} should use when computing the {@link Hash}.
-         * Not calling this method or setting it to {@code null} indicates the the default algorithm configuration of
+         * Not calling this method or setting it to {@code null} indicates the default algorithm configuration of
          * the {@code HashService} should be used.  A non-null value
          * overrides the {@code HashService}'s configuration for a single request.
          * <p/>

@@ -65,7 +65,7 @@ public interface Session {
     Date getLastAccessTime();
 
     /**
-     * Returns the time in milliseconds that the session session may remain idle before expiring.
+     * Returns the time in milliseconds that the session may remain idle before expiring.
      * <ul>
      * <li>A negative return value means the session will never expire.</li>
      * <li>A non-negative return value (0 or greater) means the session expiration will occur if idle for that

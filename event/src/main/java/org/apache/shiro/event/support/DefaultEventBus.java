@@ -59,7 +59,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *     </pre>
  * </li>
  * </ol>
- * After registering the component, when when an event of a respective type is published, the component's
+ * After registering the component, when an event of a respective type is published, the component's
  * {@code Subscribe}-annotated method(s) will be invoked as expected.
  * <p>
  * This design (and its constituent helper components) was largely influenced by

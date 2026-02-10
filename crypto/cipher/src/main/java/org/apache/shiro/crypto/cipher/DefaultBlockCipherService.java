@@ -375,7 +375,7 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
     }
 
     /**
-     * Same purpose as the {@link #getModeName modeName} attribute, but is used instead only for for streaming
+     * Same purpose as the {@link #getModeName modeName} attribute, but is used instead only for streaming
      * operations ({@link #encrypt(java.io.InputStream, java.io.OutputStream, byte[])} and
      * {@link #decrypt(java.io.InputStream, java.io.OutputStream, byte[])}).
      * <p/>

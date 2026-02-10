@@ -40,7 +40,7 @@ public interface Hash extends ByteSource {
      * <p/>
      * The name is expected to be a {@link java.security.MessageDigest MessageDigest} algorithm name.
      *
-     * @return the the name of the algorithm used to hash the input source, for example, {@code SHA-256}, {@code MD5}, etc.
+     * @return the name of the algorithm used to hash the input source, for example, {@code SHA-256}, {@code MD5}, etc.
      * @since 1.1
      */
     String getAlgorithmName();

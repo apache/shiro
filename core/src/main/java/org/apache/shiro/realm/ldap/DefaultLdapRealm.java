@@ -124,7 +124,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * {@link #getUserDnTemplate() userDnTemplate} has been configured.  If configured, this value is the text that
      * occurs before the {@link #USERDN_SUBSTITUTION_TOKEN} in the {@link #getUserDnTemplate() userDnTemplate} value.
      *
-     * @return the the User DN prefix to use when building a runtime User DN value or {@code null} if no
+     * @return the User DN prefix to use when building a runtime User DN value or {@code null} if no
      * {@link #getUserDnTemplate() userDnTemplate} has been configured.
      */
     protected String getUserDnPrefix() {
@@ -212,7 +212,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * Returns the LDAP User Distinguished Name (DN) to use when acquiring an
      * {@link javax.naming.ldap.LdapContext LdapContext} from the {@link LdapContextFactory}.
      * <p/>
-     * If the the {@link #getUserDnTemplate() userDnTemplate} property has been set, this implementation will construct
+     * If the {@link #getUserDnTemplate() userDnTemplate} property has been set, this implementation will construct
      * the User DN by substituting the specified {@code principal} into the configured template.  If the
      * {@link #getUserDnTemplate() userDnTemplate} has not been set, the method argument will be returned directly
      * (indicating that the submitted authentication token principal <em>is</em> the User DN).
