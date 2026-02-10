@@ -31,5 +31,6 @@ rules:
     min-spaces-from-content: 1
     require-starting-space: true
   document-start: disable
-  line-length: disable
+  line-length:
+    max: 140
   truthy: false
