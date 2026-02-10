@@ -232,7 +232,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
             scheduler = createSessionValidationScheduler();
             setSessionValidationScheduler(scheduler);
         }
-        // it is possible that that a scheduler was already created and set via 'setSessionValidationScheduler()'
+        // it is possible that a scheduler was already created and set via 'setSessionValidationScheduler()'
         // but would not have been enabled/started yet
         if (!scheduler.isEnabled()) {
             if (LOGGER.isInfoEnabled()) {

@@ -172,7 +172,7 @@ public class DefaultHashFormatFactory implements HashFormatFactory {
      * Check to see if the token argument is itself a fully qualified class name.  If so, try to load the class
      * and return it.
      * </li>
-     * <li>If the above options do not result in a discovered class, search all all configured
+     * <li>If the above options do not result in a discovered class, search all configured
      * {@link #getSearchPackages() searchPackages} using heuristics defined in the
      * {@link #getHashFormatClass(String, String) getHashFormatClass(packageName, token)} method documentation
      * (relaying the {@code token} argument to that method for each configured package).

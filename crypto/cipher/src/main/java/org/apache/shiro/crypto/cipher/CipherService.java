@@ -49,7 +49,7 @@ import java.io.OutputStream;
  * Note that a symmetric cipher is perfectly fine to use if you just want to encode data in a format no one else
  * can understand and you never give away the key.  Shiro uses a symmetric cipher when creating certain
  * HTTP Cookies for example - because it is often undesirable to have user's identity stored in a plain-text cookie,
- * that identity can be converted via a symmetric cipher.  Since the the same exact Shiro application will receive
+ * that identity can be converted via a symmetric cipher.  Since the same exact Shiro application will receive
  * the cookie, it can decrypt it via the same {@code Key} and there is no potential for discovery since that Key
  * is never shared with anyone.
  * <h2>{@code CipherService}s vs JDK {@link javax.crypto.Cipher Cipher}s</h2>

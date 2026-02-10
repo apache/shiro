@@ -209,7 +209,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      *
      * @param bytes          the bytes to hash
      * @param salt           the salt to use for the initial hash
-     * @param hashIterations the number of times the the {@code bytes} will be hashed (for attack resiliency).
+     * @param hashIterations the number of times the {@code bytes} will be hashed (for attack resiliency).
      * @return the hashed bytes.
      * @throws UnknownAlgorithmException if the {@link #getAlgorithmName() algorithmName} is not available.
      */

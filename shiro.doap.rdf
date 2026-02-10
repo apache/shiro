@@ -1,10 +1,10 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl"?>
 <rdf:RDF xml:lang="en"
-         xmlns="http://usefulinc.com/ns/doap#"
-         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-         xmlns:asfext="http://projects.apache.org/ns/asfext#"
-         xmlns:foaf="http://xmlns.com/foaf/0.1/">
+    xmlns="http://usefulinc.com/ns/doap#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:asfext="http://projects.apache.org/ns/asfext#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/">
     <!--
         Licensed to the Apache Software Foundation (ASF) under one or more
         contributor license agreements.  See the NOTICE file distributed with
@@ -13,7 +13,7 @@
         (the "License"); you may not use this file except in compliance with
         the License.  You may obtain a copy of the License at
 
-             http://www.apache.org/licenses/LICENSE-2.0
+            http://www.apache.org/licenses/LICENSE-2.0
 
         Unless required by applicable law or agreed to in writing, software
         distributed under the License is distributed on an "AS IS" BASIS,
@@ -134,10 +134,10 @@
         </release>
 
         <repository>
-          <GitRepository>
-            <location rdf:resource="https://git.apache.org/shiro.git"/>
-            <browse rdf:resource="https://git.apache.org/shiro.git"/>
-          </GitRepository>
+            <GitRepository>
+                <location rdf:resource="https://git.apache.org/shiro.git"/>
+                <browse rdf:resource="https://git.apache.org/shiro.git"/>
+            </GitRepository>
         </repository>
         <maintainer>
             <foaf:Person>

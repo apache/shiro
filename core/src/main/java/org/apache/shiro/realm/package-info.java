@@ -20,6 +20,6 @@
  * Components and sub-packages used in supporting the core {@link org.apache.shiro.realm.Realm Realm} interface.
  * <p/>
  * Take particular note of the multiple sub-packages with existing Realm implementations supporting many
- * environments that you can use use directly or extend for custom behavior.
+ * environments that you can use directly or extend for custom behavior.
  */
 package org.apache.shiro.realm;

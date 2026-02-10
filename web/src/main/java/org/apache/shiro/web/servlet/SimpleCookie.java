@@ -332,7 +332,7 @@ public class SimpleCookie implements Cookie {
     }
 
     private void appendExpires(StringBuilder sb, int maxAge) {
-        // if maxAge is negative, cookie should should expire when browser closes
+        // if maxAge is negative, cookie should expire when browser closes
         // Don't write the maxAge cookie value if it's negative - at least on Firefox it'll cause the
         // cookie to be deleted immediately
         // Write the expires header used by older browsers, but may be unnecessary
