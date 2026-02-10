@@ -132,3 +132,10 @@ repos:
       - id: shellcheck
         name: run shellcheck
         description: check Shell scripts with shellcheck
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 3.6.0
+    hooks:
+      - id: editorconfig-checker
+        name: run editorconfig-checker
+        description: a tool to verify that your files are in harmony with your .editorconfig
+        alias: ec
