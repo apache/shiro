@@ -127,7 +127,7 @@
         <gmaven.version>4.3.1</gmaven.version>
         <groovy.version>5.0.4</groovy.version>
         <junit.version>6.0.2</junit.version>
-        <junit.server.jetty.version>3.4.0</junit.server.jetty.version>
+        <junit.server.jetty.version>3.5.0</junit.server.jetty.version>
         <hibernate.version>7.2.4.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <lombok.version>1.18.42</lombok.version>
@@ -1808,24 +1808,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-
-<!--        TEMPORARY: Remove when https://github.com/mjeanroy/junit-servers is released to Maven Central-->
-        <profile>
-            <id>flowlogix-nexus-releases</id>
-            <repositories>
-                <repository>
-                    <id>flowlogix-nexus-releases</id>
-                    <name>Flowlogix Nexus Releases</name>
-                    <url>https://nexus.flowlogix.com/repository/maven-releases/</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
         </profile>
     </profiles>
 </project>
