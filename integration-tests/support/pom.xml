@@ -91,7 +91,7 @@
         <dependency>
             <groupId>com.github.mjeanroy</groupId>
             <artifactId>junit-servers-jetty-12-ee11</artifactId>
-            <version>3.4.1-20260204</version>
+            <version>${junit.server.jetty.version}</version>
             <!-- Exclude older Jetty artifacts -->
             <exclusions>
                 <exclusion>

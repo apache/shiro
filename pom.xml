@@ -123,7 +123,7 @@
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.6.0</easymock.version>
         <mockito.version>5.21.0</mockito.version>
-        <bytebuddy.version>1.18.4</bytebuddy.version>
+        <bytebuddy.version>1.18.5</bytebuddy.version>
         <gmaven.version>4.3.1</gmaven.version>
         <groovy.version>5.0.4</groovy.version>
         <junit.version>6.0.2</junit.version>
@@ -1117,12 +1117,12 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.5.29</version>
+                <version>1.5.31</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.5.29</version>
+                <version>1.5.31</version>
             </dependency>
 
             <dependency>
