@@ -73,7 +73,7 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-            <version>4.1.4</version>
+            <version>4.2.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
