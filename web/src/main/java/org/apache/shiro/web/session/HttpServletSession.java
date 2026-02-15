@@ -169,4 +169,8 @@ public class HttpServletSession implements Session {
             throw new InvalidSessionException(e);
         }
     }
+
+    HttpSession getHttpSession() {
+        return httpSession;
+    }
 }
