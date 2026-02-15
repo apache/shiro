@@ -130,51 +130,33 @@
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
                 <version>${karaf.version}</version>
+                <executions>
+                    <execution>
+                        <id>karaf-verify</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features</descriptor>
+                                <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features</descriptor>
+                                <descriptor>mvn:org.apache.karaf.features/specs/${karaf.version}/xml/features</descriptor>
+                                <descriptor>mvn:org.apache.karaf.features/spring-legacy/${karaf.version}/xml/features</descriptor>
+                                <descriptor>file:${project.build.directory}/classes/features.xml</descriptor>
+                            </descriptors>
+                            <distribution>org.apache.karaf.features:framework</distribution>
+                            <javase>${jdk.version}</javase>
+                            <framework>
+                                <feature>framework</feature>
+                            </framework>
+                            <features>
+                                <feature>shiro*</feature>
+                            </features>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>karaf-jdk-25</id>
-            <activation>
-                <jdk>[25,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.karaf.tooling</groupId>
-                        <artifactId>karaf-maven-plugin</artifactId>
-                        <version>${karaf.version}</version>
-                        <executions>
-                            <execution>
-                                <id>karaf-verify</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>verify</goal>
-                                </goals>
-                                <configuration>
-                                    <descriptors>
-                                        <descriptor>mvn:org.apache.karaf.features/framework/${karaf.version}/xml/features</descriptor>
-                                        <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf.version}/xml/features</descriptor>
-                                        <descriptor>mvn:org.apache.karaf.features/specs/${karaf.version}/xml/features</descriptor>
-                                        <descriptor>mvn:org.apache.karaf.features/spring-legacy/${karaf.version}/xml/features</descriptor>
-                                        <descriptor>file:${project.build.directory}/classes/features.xml</descriptor>
-                                    </descriptors>
-                                    <distribution>org.apache.karaf.features:framework</distribution>
-                                    <javase>${jdk.version}</javase>
-                                    <framework>
-                                        <feature>framework</feature>
-                                    </framework>
-                                    <features>
-                                        <feature>shiro*</feature>
-                                    </features>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
