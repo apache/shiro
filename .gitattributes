@@ -1,0 +1,55 @@
+# Auto detect text files and normalize line endings to LF
+* text=auto eol=lf
+
+# Java source files
+*.java text eol=lf
+*.kt text eol=lf
+*.groovy text eol=lf
+
+# XML and configuration files
+*.xml text eol=lf
+*.properties text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+pom.xml text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Windows scripts
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Documentation
+*.md text eol=lf
+*.txt text eol=lf
+
+# Binary files
+*.jar binary
+*.war binary
+*.ear binary
+*.class binary
+*.so binary
+*.dll binary
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+
+# Archives
+*.zip binary
+*.tar binary
+*.gz binary
+*.7z binary
+
+# Fonts
+*.ttf binary
+*.eot binary
+*.woff binary
+*.woff2 binary
