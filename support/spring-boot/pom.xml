@@ -36,10 +36,6 @@
         <module>spring-boot-web-starter</module>
     </modules>
 
-    <properties>
-        <junit.engine.version>1.13.4</junit.engine.version>
-    </properties>
-
     <dependencies>
         <dependency>
              <groupId>org.junit.platform</groupId>
