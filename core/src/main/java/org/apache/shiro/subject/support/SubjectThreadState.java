@@ -57,15 +57,7 @@ public class SubjectThreadState implements ThreadState {
             throw new IllegalArgumentException("Subject argument cannot be null.");
         }
         this.subject = subject;
-
-        SecurityManager securityManager = null;
-        if (subject instanceof DelegatingSubject delegatingSubject) {
-            securityManager = delegatingSubject.getSecurityManager();
-        }
-        if (securityManager == null) {
-            securityManager = ThreadContext.getSecurityManager();
-        }
-        this.securityManager = securityManager;
+        this.securityManager = getSecurityManager(subject);
     }
 
     /**
@@ -120,5 +112,16 @@ public class SubjectThreadState implements ThreadState {
      */
     public void clear() {
         ThreadContext.remove();
+    }
+
+    public static SecurityManager getSecurityManager(Subject subject) {
+        SecurityManager securityManager = null;
+        if (subject instanceof DelegatingSubject delegatingSubject) {
+            securityManager = delegatingSubject.getSecurityManager();
+        }
+        if (securityManager == null) {
+            securityManager = ThreadContext.getSecurityManager();
+        }
+        return securityManager;
     }
 }

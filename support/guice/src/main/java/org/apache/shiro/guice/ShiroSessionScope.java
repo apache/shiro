@@ -24,6 +24,7 @@ import com.google.inject.Provider;
 import com.google.inject.Scope;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ScopedValues;
 import org.apache.shiro.util.ThreadContext;
 
 /**
@@ -33,7 +34,12 @@ public class ShiroSessionScope implements Scope {
     public <T> Provider<T> scope(final Key<T> key, final Provider<T> unscoped) {
         return new Provider<T>() {
             public T get() {
-                Subject subject = ThreadContext.getSubject();
+                Subject subject;
+                if (ScopedValues.INSTANCE.isSupported() && ScopedValues.INSTANCE.isBound()) {
+                    subject = ScopedValues.INSTANCE.get().subject();
+                } else {
+                    subject = ThreadContext.getSubject();
+                }
                 if (subject == null) {
                     throw new OutOfScopeException("There is no Shiro Session currently in scope.");
                 }

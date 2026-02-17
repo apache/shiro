@@ -47,7 +47,6 @@ import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
-import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
@@ -169,8 +168,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
 
         @Override
         public Subject createSubject(SubjectContext context) {
-            if (context instanceof WebSubjectContext webContext && wrapped instanceof DefaultSecurityManager) {
-                DefaultWebSecurityManager wsm = (DefaultWebSecurityManager) wrapped;
+            if (context instanceof WebSubjectContext webContext && wrapped instanceof DefaultWebSecurityManager wsm) {
                 Session session = null;
                 try {
                     session = wsm.getSession(new WebSessionKey(webContext.getSessionId(), webContext.getServletRequest(),
