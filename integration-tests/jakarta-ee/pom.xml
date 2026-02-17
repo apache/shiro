@@ -40,7 +40,7 @@
         <arquillian.core.version>1.10.0.Final</arquillian.core.version>
         <arquillian.payara5.version>2.5</arquillian.payara5.version>
         <arquillian.graphene.version>3.0.0.Final</arquillian.graphene.version>
-        <shrinkwrap.resolver.version>3.3.4</shrinkwrap.resolver.version>
+        <shrinkwrap.resolver.version>3.3.5</shrinkwrap.resolver.version>
         <drone.browser>firefox</drone.browser>
 
         <payara.version>5.2022.5.jdk21</payara.version>
@@ -112,11 +112,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
