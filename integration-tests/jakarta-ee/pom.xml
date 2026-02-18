@@ -98,7 +98,7 @@
         <dependency>
             <groupId>com.flowlogix.depchain</groupId>
             <artifactId>integration-test</artifactId>
-            <version>109</version>
+            <version>111</version>
             <scope>test</scope>
         </dependency>
 
