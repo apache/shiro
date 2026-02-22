@@ -26,6 +26,10 @@ charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 
-[*.rdf]
+[*.{groovy,rdf}]
 indent_size = 4
+indent_style = space
+
+[*.{cff,yaml,yml}]
+indent_size = 2
 indent_style = space
