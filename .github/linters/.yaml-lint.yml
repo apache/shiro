@@ -31,6 +31,9 @@ rules:
     min-spaces-from-content: 1
     require-starting-space: true
   document-start: disable
+  indentation:
+    ignore: |
+      .github/labeler.yml
   line-length:
     max: 140
   truthy: false
