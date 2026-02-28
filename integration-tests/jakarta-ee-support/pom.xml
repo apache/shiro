@@ -25,13 +25,11 @@
     <version>999-SNAPSHOT</version>
     <name>Apache Shiro :: ITs :: Jakarta EE Support</name>
     <packaging>pom</packaging>
-
     <parent>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <artifactId>shiro-integration-tests</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <build>
         <plugins>
             <plugin>

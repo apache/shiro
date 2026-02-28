@@ -17,42 +17,34 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
         <artifactId>shiro-its-jaxrs</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <artifactId>shiro-its-jaxrs-app</artifactId>
     <version>999-SNAPSHOT</version>
     <name>Apache Shiro :: ITs :: JAX-RS :: App</name>
     <packaging>war</packaging>
-
     <properties>
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <jaxrs.api.version>2.1.1</jaxrs.api.version>
     </properties>
-
-
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-jaxrs</artifactId>
         </dependency>
-
         <!-- needed by javafaker, override -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>2.5</version>
         </dependency>
-
         <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
@@ -64,7 +56,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
@@ -90,7 +81,6 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -102,5 +92,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

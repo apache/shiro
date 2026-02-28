@@ -20,13 +20,11 @@
 <!--suppress osmorcNonOsgiMavenDependency -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-lang</artifactId>
     <name>Apache Shiro :: Lang</name>
@@ -38,9 +36,7 @@
     <properties>
         <module.name>lang</module.name>
     </properties>
-
     <dependencies>
-
         <!-- Test dependencies - scope set appropriately already in the parent pom-->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -62,7 +58,6 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -85,5 +80,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

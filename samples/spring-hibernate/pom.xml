@@ -20,18 +20,15 @@
 <!--suppress osmorcNonOsgiMavenDependency -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.apache.shiro.samples</groupId>
         <artifactId>shiro-samples</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>samples-sprhib</artifactId>
     <name>Apache Shiro :: Samples :: Spring-Hibernate</name>
     <packaging>war</packaging>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -107,7 +104,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
@@ -136,12 +132,10 @@
             <type>pom</type>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.shiro.integrationtests</groupId>
             <artifactId>shiro-its-support</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

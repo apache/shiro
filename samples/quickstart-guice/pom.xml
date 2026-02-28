@@ -24,7 +24,6 @@
         <artifactId>shiro-samples</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>samples-quickstart-guice</artifactId>
     <name>Apache Shiro :: Samples :: Quick Start Guice</name>
@@ -32,7 +31,6 @@
     <properties>
         <module.name>samples.quickstart.guice</module.name>
     </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -53,8 +51,6 @@
             </plugin>
         </plugins>
     </build>
-
-
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -64,7 +60,6 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-guice</artifactId>
         </dependency>
-
         <!-- configure logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -82,5 +77,4 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-
 </project>

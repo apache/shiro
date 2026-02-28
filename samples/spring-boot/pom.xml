@@ -20,28 +20,23 @@
 <!--suppress osmorcNonOsgiMavenDependency -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>org.apache.shiro.samples</groupId>
         <artifactId>shiro-samples</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <artifactId>samples-spring-boot</artifactId>
     <name>Apache Shiro :: Samples :: Spring Boot</name>
     <properties>
         <module.name>samples.spring.boot</module.name>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring-boot-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <!-- Spring -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -56,7 +51,6 @@
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
@@ -68,7 +62,6 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -94,7 +87,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <build>
         <plugins>
             <plugin>
@@ -111,5 +103,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

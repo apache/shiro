@@ -17,25 +17,20 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <artifactId>shiro-integration-tests</artifactId>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <artifactId>shiro-its-meecrowave-support</artifactId>
     <name>Apache Shiro :: ITs :: Meecrowave-Support</name>
-
     <properties>
         <module.name>its.meecrowave.support</module.name>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.meecrowave</groupId>
@@ -43,20 +38,17 @@
             <version>${dependency.meecrowave.version}</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.meecrowave</groupId>
             <artifactId>meecrowave-junit</artifactId>
             <version>${dependency.meecrowave.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit.version}</version>
             <scope>compile</scope>
         </dependency>
-
         <!-- needed by org.apache.commons.beanutils.ConvertUtilsBean -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -64,7 +56,6 @@
             <version>2.0.17</version>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -72,7 +63,6 @@
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -99,5 +89,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 </project>

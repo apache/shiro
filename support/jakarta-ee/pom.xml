@@ -24,18 +24,15 @@
     <name>Apache Shiro :: Support :: Jakarta EE</name>
     <description>Apache Shiro - Jakarta EE Integration</description>
     <packaging>jar</packaging>
-
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <properties>
         <module.name>jakarta.ee</module.name>
         <jacoco.skip>true</jacoco.skip>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>jakarta.platform</groupId>
@@ -51,7 +48,6 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
@@ -79,7 +75,6 @@
             <artifactId>jsoup</artifactId>
             <version>1.22.1</version>
         </dependency>
-
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -96,7 +91,6 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>

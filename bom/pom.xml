@@ -26,11 +26,9 @@
         <version>999-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>shiro-bom</artifactId>
     <name>Apache Shiro :: BOM</name>
     <packaging>pom</packaging>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

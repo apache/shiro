@@ -19,13 +19,11 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-root</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-core</artifactId>
     <name>Apache Shiro :: Core</name>
@@ -33,7 +31,6 @@
     <properties>
         <module.name>core</module.name>
     </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -108,7 +105,6 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -160,7 +156,6 @@
             <artifactId>commons-configuration2</artifactId>
             <optional>true</optional>
         </dependency>
-
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -194,7 +189,6 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
-
         <!-- JDBC Realm tests: -->
         <dependency>
             <groupId>org.hsqldb</groupId>
@@ -202,5 +196,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

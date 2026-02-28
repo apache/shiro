@@ -24,7 +24,6 @@
     <name>Apache Shiro :: Support :: CDI</name>
     <description>Apache Shiro - CDI Integration</description>
     <packaging>jar</packaging>
-
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
@@ -33,7 +32,6 @@
     <properties>
         <module.name>cdi</module.name>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>jakarta.enterprise</groupId>
@@ -49,12 +47,10 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
-
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
         </dependency>
-
         <!-- Test Dependencies -->
         <dependency>
             <groupId>jakarta.validation</groupId>
@@ -77,7 +73,6 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>

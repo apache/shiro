@@ -17,24 +17,20 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
         <artifactId>shiro-its-jaxrs</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <artifactId>shiro-its-jaxrs-meecrowave</artifactId>
     <name>Apache Shiro :: ITs :: JAX-RS :: Meecrowave</name>
     <properties>
         <module.name>its.jaxrs.meecrowave</module.name>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro.integrationtests.jaxrs</groupId>
@@ -66,7 +62,6 @@
             <artifactId>shiro-its-meecrowave-support</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>

@@ -20,19 +20,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <artifactId>shiro-integration-tests</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <artifactId>shiro-its-support</artifactId>
     <name>Apache Shiro :: ITs :: Support</name>
     <properties>
         <module.name>its.support</module.name>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.taglibs</groupId>
@@ -59,13 +56,11 @@
             <artifactId>log4j-core</artifactId>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
@@ -124,7 +119,6 @@
             <version>${junit.version}</version>
             <scope>compile</scope>
         </dependency>
-
         <!-- dependency on the Base64 class
              in 2.0 this is split out, so this dep will be removed
              in the future
@@ -133,7 +127,5 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
         </dependency>
-
     </dependencies>
-
 </project>

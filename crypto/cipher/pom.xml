@@ -19,13 +19,11 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-crypto</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-crypto-cipher</artifactId>
     <name>Apache Shiro :: Cryptography :: Ciphers</name>
@@ -33,7 +31,6 @@
     <properties>
         <module.name>crypto.cipher</module.name>
     </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -60,7 +57,6 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -70,13 +66,11 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-crypto-core</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk18on</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
@@ -88,5 +82,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

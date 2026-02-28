@@ -19,18 +19,15 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-features</artifactId>
     <name>Apache Shiro :: Support :: Karaf Features</name>
     <packaging>pom</packaging>
-
     <properties>
         <aspectj.bundle.version>1.9.4_1</aspectj.bundle.version>
         <c3p0-bundle-version>0.9.5.4_1</c3p0-bundle-version>
@@ -42,7 +39,6 @@
         <!-- karaf plugin version -->
         <karaf.version>4.4.10</karaf.version>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf.features</groupId>
@@ -52,7 +48,6 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
     <build>
         <resources>
             <resource>
@@ -138,5 +133,4 @@
             <!--            </plugin>-->
         </plugins>
     </build>
-
 </project>

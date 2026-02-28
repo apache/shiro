@@ -24,12 +24,10 @@
         <artifactId>shiro-samples</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>samples-guice</artifactId>
     <name>Apache Shiro :: Samples :: Guice Web</name>
     <packaging>war</packaging>
-
     <build>
         <plugins>
             <plugin>
@@ -38,7 +36,6 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.taglibs</groupId>
@@ -86,7 +83,6 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.htmlunit</groupId>
             <artifactId>htmlunit</artifactId>
@@ -105,14 +101,12 @@
             <type>pom</type>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.shiro.integrationtests</groupId>
             <artifactId>shiro-its-support</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <profiles>
         <profile>
             <id>jdk17</id>

@@ -20,21 +20,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <artifactId>shiro-integration-tests</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <artifactId>shiro-its-guice4</artifactId>
     <name>Apache Shiro :: ITs :: Guice 4</name>
     <packaging>war</packaging>
-
     <properties>
         <groups>none()</groups>
     </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -52,7 +48,6 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.taglibs</groupId>
@@ -100,7 +95,6 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-guice</artifactId>
@@ -133,7 +127,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <profiles>
         <profile>
             <id>jdk17</id>

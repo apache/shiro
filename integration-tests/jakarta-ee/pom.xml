@@ -25,13 +25,11 @@
     <version>999-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>Apache Shiro :: ITs :: Jakarta EE</name>
-
     <parent>
         <groupId>org.apache.shiro.integrationtests</groupId>
         <artifactId>shiro-integration-tests</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- override older compiler source / target flags set by Apache parent POM -->
@@ -42,7 +40,6 @@
         <arquillian.graphene.version>3.0.0.Final</arquillian.graphene.version>
         <shrinkwrap.resolver.version>3.3.5</shrinkwrap.resolver.version>
         <drone.browser>firefox</drone.browser>
-
         <payara.version>5.2022.5.jdk21</payara.version>
         <payara.start.skip>${skipITs}</payara.start.skip>
         <asadmin.cmd>asadmin</asadmin.cmd>
@@ -51,11 +48,9 @@
         <create-domain-skip>true</create-domain-skip>
         <domain.name>domain1</domain.name>
         <payara.https.port>8181</payara.https.port>
-
         <jakartaee.it.skip>${skipITs}</jakartaee.it.skip>
         <integration.modes.skip>${jakartaee.it.skip}</integration.modes.skip>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -92,7 +87,6 @@
             <version>2.3.3</version>
             <scope>provided</scope>
         </dependency>
-
         <!-- Apache Shiro Dependencies -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -107,7 +101,6 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <scope>compile</scope>
         </dependency>
-
         <!-- test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -150,7 +143,6 @@
             <artifactId>flowlogix-jee</artifactId>
             <version>5.5.6</version>
         </dependency>
-
         <!-- Arquillian test dependencies -->
         <dependency>
             <groupId>org.jboss.arquillian.junit5</groupId>
@@ -240,7 +232,6 @@
             <version>3.30.2-GA</version>
             <scope>test</scope>
         </dependency>
-
         <!-- Selenium test dependencies -->
         <dependency>
             <groupId>org.jboss.arquillian.graphene</groupId>
@@ -250,7 +241,6 @@
             <type>pom</type>
         </dependency>
     </dependencies>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -262,7 +252,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <build>
         <plugins>
             <plugin>
@@ -515,7 +504,6 @@
             </plugins>
         </pluginManagement>
     </build>
-
     <profiles>
         <profile>
             <id>payara-server-local</id>

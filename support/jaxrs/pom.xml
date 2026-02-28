@@ -19,13 +19,11 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-jaxrs</artifactId>
     <name>Apache Shiro :: Support :: JAX-RS</name>
@@ -33,9 +31,7 @@
     <properties>
         <module.name>jaxrs</module.name>
     </properties>
-
     <dependencies>
-
         <!-- Shiro Deps -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -45,7 +41,6 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>jakarta.ws.rs</groupId>
             <artifactId>jakarta.ws.rs-api</artifactId>
@@ -53,7 +48,6 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
-
         <!-- Test Deps -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -108,7 +102,6 @@
             </exclusions>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -134,5 +127,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

@@ -19,13 +19,11 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
-
     <parent>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-support</artifactId>
         <version>999-SNAPSHOT</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
     <artifactId>shiro-aspectj</artifactId>
     <name>Apache Shiro :: Support :: AspectJ</name>
@@ -33,7 +31,6 @@
     <properties>
         <module.name>aspectj</module.name>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.shiro</groupId>
@@ -63,7 +60,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -111,5 +107,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
