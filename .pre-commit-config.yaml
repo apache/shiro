@@ -37,6 +37,15 @@ repos:
           Zip files are not allowed in the repository as they are hard to
           track and have security implications. Please remove the zip file from the repository
         files: (?i)\.zip$
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.6
+    hooks:
+      - id: chmod
+        name: set file permissions
+        description: manual hook to be run by macOS or Linux users for a full repository clean up
+        args: ['644']
+        files: \.md$
+        stages: [manual]
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
     hooks:
