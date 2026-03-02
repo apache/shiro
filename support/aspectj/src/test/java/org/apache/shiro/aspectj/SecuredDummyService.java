@@ -26,7 +26,7 @@ import org.apache.shiro.authz.annotation.RequiresUser;
 import java.sql.Timestamp;
 
 /**
- * Secured implementation of te dummy service that requires some permissions to execute.
+ * Secured implementation of the dummy service that requires some permissions to execute.
  */
 public class SecuredDummyService implements DummyService {
 
