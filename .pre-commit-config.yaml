@@ -37,13 +37,21 @@ repos:
           Zip files are not allowed in the repository as they are hard to
           track and have security implications. Please remove the zip file from the repository
         files: (?i)\.zip$
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.6
+    hooks:
+      - id: chmod
+        name: set file permissions
+        description: manual hook to be run by macOS or Linux users for a full repository clean up
+        args: ['644']
+        files: \.md$
+        stages: [manual]
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
     hooks:
       - id: codespell
         name: run codespell
         description: Check spelling with codespell
-        args: [--ignore-words=.github/linters/codespell.txt]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
@@ -115,6 +123,15 @@ repos:
       - id: gitleaks
         name: run gitleaks
         description: check for secrets with gitleaks
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.22.0
+    hooks:
+      - id: zizmor
+        name: run zizmor
+        description: zizmor is a static analysis tool for GitHub Actions
+        # args: [--config=.github/linters/zizmor.yml]
+        files: ^\.github/workflows/.*$
+        types: [yaml]
   - repo: https://github.com/rhysd/actionlint
     rev: v1.7.11
     hooks:

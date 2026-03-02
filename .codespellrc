@@ -15,20 +15,5 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# https://github.com/actions/labeler
-name: Pull Request Labeler
-on:
-  - pull_request_target # zizmor: ignore[dangerous-triggers]
-permissions:
-  contents: read
-jobs:
-  triage:
-    permissions:
-      contents: read
-      pull-requests: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/labeler@634933edcd8ababfe52f92936142cc22ac488b1b # v6.0.1
-        with:
-          repo-token: '${{ secrets.GITHUB_TOKEN }}'
-          sync-labels: true
+[codespell]
+ignore-words = .github/linters/codespell.txt
