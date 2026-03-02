@@ -47,6 +47,7 @@ jobs:
         run: ./mvnw apache-rat:check "-Drat.consoleOutput"
 
       - name: Build with Maven
+        # zizmor: ignore[template-injection]
         run: >-
           ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
           -Pskip_jakarta_ee_tests -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
@@ -94,6 +95,7 @@ jobs:
 
       - name: Build with Maven (Linux)
         if: matrix.os == 'ubuntu-latest' && matrix.jdk <= 21
+        # zizmor: ignore[template-injection]
         run: >-
           ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress
           -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
