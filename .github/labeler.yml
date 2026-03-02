@@ -18,44 +18,44 @@
 # https://github.com/actions/labeler
 github_actions:
   - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              - .github/**/*
+    - changed-files:
+      - any-glob-to-any-file:
+        - .github/**/*
 
 groovy:
   - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              - '**/*.groovy'
+    - changed-files:
+      - any-glob-to-any-file:
+        - '**/*.groovy'
 
 java:
   - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              - '**/*.java'
+    - changed-files:
+      - any-glob-to-any-file:
+        - '**/*.java'
 
 documentation:
   - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              - '**/*.md'
+    - changed-files:
+      - any-glob-to-any-file:
+        - '**/*.md'
 
 tests:
   - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              - '**/src/test/groovy/**/*'
-              - '**/src/test/java/**/*'
+    - changed-files:
+      - any-glob-to-any-file:
+        - '**/src/test/groovy/**/*'
+        - '**/src/test/java/**/*'
 
 xml:
   - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              - '**/*.xml'
+    - changed-files:
+      - any-glob-to-any-file:
+        - '**/*.xml'
 
 yaml:
   - any:
-      - changed-files:
-          - any-glob-to-any-file:
-              - '**/*.yaml'
-              - '**/*.yml'
+    - changed-files:
+      - any-glob-to-any-file:
+        - '**/*.yaml'
+        - '**/*.yml'
