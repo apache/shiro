@@ -89,7 +89,7 @@ public class FormResubmitSupportCookies {
 
     static Map<String, String> transformCookieHeader(@NonNull List<String> cookies) {
         return cookieStreamFromHeader(cookies)
-                .collect(Collectors.toMap(HttpCookie::getName, HttpCookie::getValue));
+                .collect(Collectors.toMap(HttpCookie::getName, HttpCookie::getValue, (var, v2) -> v2));
     }
 
     static Stream<HttpCookie> cookieStreamFromHeader(@NonNull List<String> cookies) {
