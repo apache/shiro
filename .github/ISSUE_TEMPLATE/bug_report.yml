@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 
+---
 name: Bug report
 title: "[Bug] Bug title "
 description: If something isn't working as expected.
