@@ -50,6 +50,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 import static java.util.function.Predicate.not;
+import static org.apache.shiro.web.mgt.CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import static javax.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
@@ -405,8 +406,7 @@ public class FormResubmitSupport {
             deleteCookie(originalResponse, servletContext, SHIRO_FORM_DATA_KEY);
             return processResubmitResponse(response, originalRequest, originalResponse,
                     response.headers(), savedRequest, servletContext,
-                    (rememberedAjaxResubmit && decodedFormData.isStatelessRequest) ? false
-                            : decodedFormData.isPartialAjaxRequest, rememberedAjaxResubmit);
+                    decodedFormData.isPartialAjaxRequest, rememberedAjaxResubmit);
         }
     }
 
@@ -486,7 +486,7 @@ public class FormResubmitSupport {
                                 .startsWith(getSessionCookieName(servletContext, getSecurityManager()))))
                         .forEach(entry -> addCookie(originalResponse, servletContext,
                                 entry.getKey(), entry.getValue(), -1));
-                if (isPartialAjaxRequest) {
+                if (response.statusCode() == FOUND && isPartialAjaxRequest) {
                     originalResponse.setHeader(CONTENT_TYPE, TEXT_XML);
                     originalResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
                     originalResponse.getWriter().append(String.format(
@@ -520,7 +520,8 @@ public class FormResubmitSupport {
         cookieManager.getCookieStore().add(savedRequest, sessionCookie);
         log.debug("Setting Cookie {}", sessionCookieName);
         for (Cookie origCookie : originalRequest.getCookies()) {
-            if (!origCookie.getName().equals(sessionCookieName)) {
+            if (!origCookie.getName().startsWith(sessionCookieName)
+                    && !origCookie.getName().equals(DEFAULT_REMEMBER_ME_COOKIE_NAME)) {
                 try {
                     log.debug("Setting Cookie {}", origCookie.getName());
                     HttpCookie cookie = new HttpCookie(origCookie.getName(), origCookie.getValue());
