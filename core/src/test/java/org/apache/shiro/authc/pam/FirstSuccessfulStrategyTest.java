@@ -51,8 +51,8 @@ public class FirstSuccessfulStrategyTest {
     void testMergeWithValidAggregateInfo() {
         AuthenticationInfo aggregate = new MergableAuthenticationInfo() {
             @Override
-            public void merge(AuthenticationInfo info) {
-
+            public AuthenticationInfo merge(AuthenticationInfo info) {
+                return info;
             }
 
             @Override
@@ -73,8 +73,8 @@ public class FirstSuccessfulStrategyTest {
     void testMergeWithInvalidAggregateInfo() {
         AuthenticationInfo aggregate = new MergableAuthenticationInfo() {
             @Override
-            public void merge(AuthenticationInfo info) {
-
+            public AuthenticationInfo merge(AuthenticationInfo info) {
+                return this;
             }
 
             @Override

@@ -444,7 +444,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      *
      * @param info the <code>AuthenticationInfo</code> to merge into this account.
      */
-    public void merge(AuthenticationInfo info) {
+    public AuthenticationInfo merge(AuthenticationInfo info) {
         authcInfo.merge(info);
 
         // Merge SimpleAccount specific info
@@ -457,6 +457,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
                 setCredentialsExpired(true);
             }
         }
+        return this;
     }
 
     /**
