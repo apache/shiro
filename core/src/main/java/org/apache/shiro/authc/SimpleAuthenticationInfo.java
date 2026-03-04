@@ -199,6 +199,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      * Takes the specified <code>info</code> argument and adds its principals and credentials into this instance.
      *
      * @param info the <code>AuthenticationInfo</code> to add into this instance.
+     * @return this instance with the new principals and credentials merged in.
      */
     @Override
     @SuppressWarnings("checkstyle:NPathComplexity")
