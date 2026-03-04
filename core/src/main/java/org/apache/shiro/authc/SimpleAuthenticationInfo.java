@@ -199,12 +199,13 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      * Takes the specified <code>info</code> argument and adds its principals and credentials into this instance.
      *
      * @param info the <code>AuthenticationInfo</code> to add into this instance.
+     * @return this instance with the new principals and credentials merged in.
      */
     @Override
     @SuppressWarnings("checkstyle:NPathComplexity")
-    public void merge(AuthenticationInfo info) {
+    public AuthenticationInfo merge(AuthenticationInfo info) {
         if (info == null || info.getPrincipals() == null || info.getPrincipals().isEmpty()) {
-            return;
+            return this;
         }
 
         if (this.principals == null) {
@@ -230,12 +231,12 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
         Object otherCredentials = info.getCredentials();
 
         if (otherCredentials == null) {
-            return;
+            return this;
         }
 
         if (thisCredentials == null) {
             this.credentials = otherCredentials;
-            return;
+            return this;
         }
 
         if (!(thisCredentials instanceof Collection)) {
@@ -252,6 +253,8 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
         } else {
             credentialCollection.add(otherCredentials);
         }
+
+        return this;
     }
 
     /**

@@ -41,7 +41,7 @@ public interface MergableAuthenticationInfo extends AuthenticationInfo {
      * not be modified in any way.
      *
      * @param info the info that should be merged into this instance.
+     * @return this instance with the new principals and credentials merged in.
      */
-    void merge(AuthenticationInfo info);
-
+    AuthenticationInfo merge(AuthenticationInfo info);
 }
