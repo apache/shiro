@@ -48,7 +48,7 @@ repos:
         files: \.md$
         stages: [manual]
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: v2.4.2
     hooks:
       - id: codespell
         name: run codespell
@@ -100,7 +100,7 @@ repos:
         description: Trims trailing whitespace
         args: [--markdown-linebreak-ext=md]
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.47.0
+    rev: v0.48.0
     hooks:
       - id: markdownlint
         name: run markdownlint
@@ -125,7 +125,7 @@ repos:
         name: run gitleaks
         description: check for secrets with gitleaks
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.22.0
+    rev: v1.23.1
     hooks:
       - id: zizmor
         name: run zizmor
@@ -162,7 +162,7 @@ repos:
         name: run shellcheck
         description: check Shell scripts with shellcheck
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 3.6.0
+    rev: 3.6.1
     hooks:
       - id: editorconfig-checker
         name: run editorconfig-checker
