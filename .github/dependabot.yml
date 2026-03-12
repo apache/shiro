@@ -114,7 +114,7 @@ updates:
       interval: 'weekly'
     open-pull-requests-limit: 10
     groups:
-      github-dependencies:
+      github-actions-dependencies:
         patterns:
           - '*'
 
@@ -126,7 +126,7 @@ updates:
       interval: 'monthly'
     open-pull-requests-limit: 10
     groups:
-      github-dependencies:
+      github-actions-dependencies:
         patterns:
           - '*'
 
@@ -136,6 +136,6 @@ updates:
       interval: 'weekly'
     open-pull-requests-limit: 10
     groups:
-      github-dependencies:
+      pre-commit-hooks:
         patterns:
           - '*'
