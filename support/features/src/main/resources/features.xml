@@ -25,7 +25,7 @@
         <feature version="[1,2)">spifly</feature>
         <bundle dependency="true">mvn:commons-beanutils/commons-beanutils/${commons.beanutils.version}</bundle>
         <bundle dependency="true">mvn:org.apache.commons/commons-configuration2/${commons.configuration2.version}</bundle>
-        <bundle dependency="true">mvn:commons-collections/commons-collections/${commons.collection.version}</bundle>
+        <bundle dependency="true">mvn:org.apache.commons/commons-collections4/${commons.collections4.version}</bundle>
         <bundle dependency="true">mvn:org.apache.commons/commons-text/${commons.text.version}</bundle>
         <bundle>mvn:org.apache.geronimo.specs/geronimo-annotation_1.3_spec/1.1</bundle>
         <bundle>mvn:org.apache.shiro/shiro-lang/${project.version}</bundle>
@@ -87,7 +87,7 @@
 
     <feature name="shiro-quartz" version="${project.version}">
         <feature version="${project.version}">shiro-core</feature>
-        <bundle dependency="true">mvn:commons-collections/commons-collections/${commons.collections.version}</bundle>
+        <bundle dependency="true">mvn:org.apache.commons/commons-collections4/${commons.collections4.version}</bundle>
         <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}</bundle>
         <bundle dependency="true">mvn:com.zaxxer/HikariCP-java7/${hikaricp-version}</bundle>
         <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/${quartz.bundle.version}</bundle>

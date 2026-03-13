@@ -37,8 +37,7 @@
         <ehcache.bundle.version>2.6.11_1</ehcache.bundle.version>
         <hikaricp-version>2.4.13</hikaricp-version>
         <quartz.bundle.version>2.3.2_1</quartz.bundle.version>
-        <!-- Not a Shiro dependency - used for quartz bundle resolution only (see features.xml): -->
-        <commons.collections.version>3.2.2</commons.collections.version>
+        <!-- commons-collections4 version inherited from parent pom -->
         <!-- karaf plugin version -->
         <karaf.version>4.4.10</karaf.version>
     </properties>

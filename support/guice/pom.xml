@@ -69,6 +69,11 @@
             <artifactId>commons-beanutils</artifactId>
         </dependency>
         <dependency>
+            <!-- Required by commons-beanutils, replacing vulnerable commons-collections 3.x -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
