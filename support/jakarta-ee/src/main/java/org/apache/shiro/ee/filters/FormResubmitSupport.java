@@ -287,7 +287,7 @@ public class FormResubmitSupport {
             String formData = getSavedFormDataFromKey(savedFormDataKey);
             if (formData != null) {
                 Optional.ofNullable(resubmitSavedForm(formData, savedRequest,
-                        request, response, request.getServletContext(), false))
+                        request, response, request.getServletContext(), false, true))
                         .ifPresent(path -> doFacesRedirect(request, response, path));
                 doRedirectAtEnd = false;
             } else {
@@ -368,7 +368,7 @@ public class FormResubmitSupport {
 
     static String resubmitSavedForm(@NonNull String savedFormData, @NonNull String savedRequest,
             HttpServletRequest originalRequest, HttpServletResponse originalResponse,
-            ServletContext servletContext, boolean rememberedAjaxResubmit)
+            ServletContext servletContext, boolean rememberedAjaxResubmit, boolean redirect)
             throws InterruptedException, IOException {
         if (log.isDebugEnabled()) {
             log.debug("saved form data: {}", savedFormData);
@@ -400,12 +400,13 @@ public class FormResubmitSupport {
             var redirectResponse = client.send(redirectRequest, HttpResponse.BodyHandlers.ofString());
             log.debug("Redirect request: {}, response: {}", redirectRequest, redirectResponse);
             return processResubmitResponse(redirectResponse, originalRequest, originalResponse,
-                    response.headers(), savedRequest, servletContext, true, rememberedAjaxResubmit);
+                    response.headers(), savedRequest, servletContext,
+                    true, rememberedAjaxResubmit, redirect);
         } else {
             deleteCookie(originalResponse, servletContext, SHIRO_FORM_DATA_KEY);
             return processResubmitResponse(response, originalRequest, originalResponse,
                     response.headers(), savedRequest, servletContext,
-                    decodedFormData.isPartialAjaxRequest, rememberedAjaxResubmit);
+                    decodedFormData.isPartialAjaxRequest, rememberedAjaxResubmit, redirect);
         }
     }
 
@@ -464,11 +465,11 @@ public class FormResubmitSupport {
         return noJSFAjaxRequests(savedFormData, isStateless);
     }
 
-    @SuppressWarnings("fallthrough")
+    @SuppressWarnings({"fallthrough", "checkstyle:ParameterNumber"})
     private static String processResubmitResponse(HttpResponse<String> response,
             HttpServletRequest originalRequest, HttpServletResponse originalResponse,
             HttpHeaders headers, String savedRequest, ServletContext servletContext,
-            boolean isPartialAjaxRequest, boolean rememberedAjaxResubmit) throws IOException {
+            boolean isPartialAjaxRequest, boolean rememberedAjaxResubmit, boolean redirect) throws IOException {
         switch (response.statusCode()) {
             case FOUND:
                 if (rememberedAjaxResubmit) {
@@ -485,7 +486,7 @@ public class FormResubmitSupport {
                                 .startsWith(getSessionCookieName(servletContext, getSecurityManager()))))
                         .forEach(entry -> addCookie(originalResponse, servletContext,
                                 entry.getKey(), entry.getValue(), -1));
-                if (response.statusCode() == FOUND && isPartialAjaxRequest) {
+                if ((response.statusCode() == FOUND || redirect) && isPartialAjaxRequest) {
                     originalResponse.setHeader(CONTENT_TYPE, TEXT_XML);
                     originalResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
                     originalResponse.getWriter().append(String.format(

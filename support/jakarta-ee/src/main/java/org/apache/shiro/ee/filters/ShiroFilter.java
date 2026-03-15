@@ -248,7 +248,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             Optional.ofNullable(resubmitSavedForm(postData,
                     Servlets.getRequestURLWithQueryString(httpRequest),
                     WebUtils.toHttp(request), WebUtils.toHttp(response),
-                    request.getServletContext(), rememberedAjaxResubmit))
+                    request.getServletContext(), rememberedAjaxResubmit, false))
                     .ifPresent(url -> sendRedirect(response, url));
         } else {
             setCharacterEncodingIfNeeded(request);
