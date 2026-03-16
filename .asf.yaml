@@ -17,7 +17,8 @@
 
 ---
 github:
-  description: "Apache Shiro is a powerful and easy-to-use Java security framework that performs authentication, authorization, cryptography, and session management"
+  description: "Apache Shiro is a powerful and easy-to-use Java security framework \
+  that performs authentication, authorization, cryptography, and session management"
   homepage: https://shiro.apache.org/
   dependabot_alerts: true
   protected_branches:
