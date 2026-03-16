@@ -198,7 +198,8 @@ public class Forms {
      */
     public static void logout(HttpServletRequest request, HttpServletResponse response,
             FallbackPredicate useFallback, String fallbackPath) {
-        if (!Boolean.TRUE.toString().equals(request.getHeader(FORM_IS_RESUBMITTED))) {
+        if (SecurityUtils.getSubject().isRemembered()
+                || !Boolean.TRUE.toString().equals(request.getHeader(FORM_IS_RESUBMITTED))) {
             SecurityUtils.getSubject().logout();
             FormResubmitSupport.redirectToView(request, response, useFallback, fallbackPath);
         }
