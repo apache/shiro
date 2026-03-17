@@ -36,7 +36,6 @@ jobs:
 
   manual:
     name: Run manual pre-commit hooks
-    needs: standard
     uses: ./.github/workflows/pre-commit-reusable.yml
     with:
       job_id: "manual"
