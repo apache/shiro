@@ -108,7 +108,7 @@
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>11</jdk.version>
         <jetty.version>9.4.58.v20250814</jetty.version>
-        <tomcat.version>9.0.113</tomcat.version>
+        <tomcat.version>11.0.20</tomcat.version>
         <tomcat10.version>10.1.50</tomcat10.version>
         <owasp.java.encoder.version>1.4.0</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
