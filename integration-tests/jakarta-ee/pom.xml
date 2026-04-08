@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>5.0</version>
+            <version>5.2</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -111,7 +111,7 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>11.1</version>
+            <version>11.2.3</version>
         </dependency>
 
         <dependency>
