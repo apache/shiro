@@ -59,7 +59,7 @@ jobs:
           pip install --require-hashes -r pre-commit-requirements.txt
       - name: set PY
         run: echo "PY=$(python -VV | sha256sum | cut -d' ' -f1)" >> "$GITHUB_ENV"
-      - uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/.cache/pre-commit
           key: pre-commit|${{ inputs.job_id }}|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
