@@ -93,7 +93,7 @@
         <dependency>
             <groupId>com.flowlogix.depchain</groupId>
             <artifactId>integration-test</artifactId>
-            <version>114</version>
+            <version>115</version>
             <scope>test</scope>
         </dependency>
 
@@ -106,7 +106,7 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>11.2.3</version>
+            <version>11.3</version>
         </dependency>
 
         <dependency>
