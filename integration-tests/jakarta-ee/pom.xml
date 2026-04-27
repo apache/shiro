@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.15</version>
+            <version>3.14.20</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
