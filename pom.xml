@@ -105,7 +105,7 @@
         <jdk.version>17</jdk.version>
         <tomcat.version>11.0.18</tomcat.version>
         <jakarta.ee.version>11.0.0</jakarta.ee.version>
-        <jetty.version>12.1.6</jetty.version>
+        <jetty.version>12.1.8</jetty.version>
         <owasp.java.encoder.version>1.4.0</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
@@ -113,8 +113,8 @@
         <quartz.docs.version>2.3.0</quartz.docs.version>
         <slf4j.version>2.0.17</slf4j.version>
         <log4j.version>2.25.4</log4j.version>
-        <spring.version>7.0.5</spring.version>
-        <spring-boot.version>4.0.2</spring-boot.version>
+        <spring.version>7.0.7</spring.version>
+        <spring-boot.version>4.0.6</spring-boot.version>
         <guice.version>7.0.0</guice.version>
         <jaxrs.api.version>4.0.0</jaxrs.api.version>
         <htmlunit.version>4.21.0</htmlunit.version>
@@ -125,10 +125,10 @@
         <mockito.version>5.23.0</mockito.version>
         <bytebuddy.version>1.18.8</bytebuddy.version>
         <gmaven.version>4.3.1</gmaven.version>
-        <groovy.version>5.0.4</groovy.version>
+        <groovy.version>5.0.5</groovy.version>
         <junit.version>6.0.3</junit.version>
         <junit.server.jetty.version>3.5.0</junit.server.jetty.version>
-        <hibernate.version>7.2.6.Final</hibernate.version>
+        <hibernate.version>7.3.2.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <lombok.version>1.18.46</lombok.version>
 
@@ -1317,7 +1317,7 @@
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
-                <version>4.0.6</version>
+                <version>4.0.7</version>
             </dependency>
 
             <!-- Guice -->
@@ -1347,7 +1347,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.5.0-jre</version>
+                <version>33.6.0-jre</version>
             </dependency>
 
             <dependency>

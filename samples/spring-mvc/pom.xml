@@ -83,7 +83,7 @@
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
-            <version>3.11.1</version>
+            <version>3.12.0</version>
             <classifier>jakarta</classifier>
             <scope>runtime</scope>
         </dependency>
