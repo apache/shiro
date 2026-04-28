@@ -33,7 +33,7 @@
     </parent>
 
     <properties>
-        <arquillian.graphene.version>3.0.0.Final</arquillian.graphene.version>
+        <arquillian.graphene.version>3.0.1.Final</arquillian.graphene.version>
         <drone.browser>firefox</drone.browser>
 
         <payara.version>7.2026.1</payara.version>
