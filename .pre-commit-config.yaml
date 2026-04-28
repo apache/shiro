@@ -149,7 +149,7 @@ repos:
         types: [markdown]
         files: \.md$
   - repo: https://github.com/oxipng/oxipng
-    rev: v10.1.0
+    rev: v10.1.1
     hooks:
       - id: oxipng
         name: run oxipng
