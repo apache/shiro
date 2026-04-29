@@ -122,9 +122,13 @@ public class ShiroBeansIT {
                 "anonymous user should get an exception");
         webDriver.get(baseURL + "lastException");
         String exceptionText = webDriver.findElement(By.tagName("body")).getText();
-        assertTrue(exceptionText
+        // Workaround for Payara 5 only: Filter out lines with 'Unsupported class file major version XX'
+        String filteredExceptionText = java.util.Arrays.stream(exceptionText.split("\\n"))
+                .filter(line -> !line.contains("SEVERE: Unsupported class file major version"))
+                .reduce("", (a, b) -> a.isEmpty() ? b : a + "\n" + b);
+        assertTrue(filteredExceptionText
                         .startsWith(jakartify("WARNING: javax.ejb.EJBException: Attempting to perform a user-only operation")),
-                String.format("capturing correct warning from the server: %s", exceptionText));
+                String.format("capturing correct warning from the server: %s", filteredExceptionText));
     }
 
     @Test
