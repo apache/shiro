@@ -35,6 +35,7 @@ import org.apache.shiro.web.env.IniWebEnvironment;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.omnifaces.util.Beans;
+import org.omnifaces.util.Faces;
 import org.omnifaces.util.Lazy;
 
 import static org.omnifaces.util.Utils.isBlank;
@@ -101,6 +102,14 @@ public class IniEnvironment extends IniWebEnvironment {
             super.setConfigLocations(configLocations[0]);
         } else {
             super.setConfigLocations(configLocations);
+        }
+    }
+
+    public static boolean hasFacesContext() {
+        try {
+            return Faces.hasContext();
+        } catch (Throwable e) {
+            return false;
         }
     }
 

@@ -24,8 +24,13 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.annotation.WebListener;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.web.env.EnvironmentLoader;
 import org.apache.shiro.web.env.WebEnvironment;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
+import org.omnifaces.util.Faces;
+import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
 
 /**
  * Automatic, adds ability to disable via system property
@@ -74,7 +79,7 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
     }
 
     @Override
-    @SuppressWarnings("checkstyle:NPathComplexity")
+    @SuppressWarnings({"checkstyle:NPathComplexity", "checkstyle:CyclomaticComplexity"})
     public void contextInitialized(ServletContextEvent sce) {
         if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_DISABLED_PARAM))) {
             sce.getServletContext().setAttribute(SHIRO_EE_DISABLED_PARAM, Boolean.TRUE);
@@ -108,7 +113,17 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
                 modifySessionTrackingConfiguration(sce);
             }
 
-            initEnvironment(sce.getServletContext());
+            WebEnvironment environment = initEnvironment(sce.getServletContext());
+            if (hasFacesContext() && Faces.isDevelopment()
+                    && SecurityUtils.unwrapSecurityManager(environment.getWebSecurityManager(), DefaultSecurityManager.class)
+                    .getRememberMeManager() instanceof CookieRememberMeManager) {
+                var rememberMeManager = (CookieRememberMeManager) SecurityUtils
+                        .unwrapSecurityManager(environment.getWebSecurityManager(), DefaultSecurityManager.class)
+                        .getRememberMeManager();
+                    if (!rememberMeManager.isSecureInDevMode()) {
+                    rememberMeManager.getCookie().setSecure(false);
+                }
+            }
         }
     }
 

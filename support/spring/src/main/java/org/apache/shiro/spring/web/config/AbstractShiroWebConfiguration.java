@@ -84,10 +84,10 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
     @Value("#{ @environment['shiro.rememberMeManager.cookie.domain'] ?: null }")
     protected String rememberMeCookieDomain;
 
-    @Value("#{ @environment['shiro.rememberMeManager.cookie.path'] ?: null }")
+    @Value("#{ @environment['shiro.rememberMeManager.cookie.path'] ?: T(org.apache.shiro.web.servlet.Cookie).ROOT_PATH } }")
     protected String rememberMeCookiePath;
 
-    @Value("#{ @environment['shiro.rememberMeManager.cookie.secure'] ?: false }")
+    @Value("#{ @environment['shiro.rememberMeManager.cookie.secure'] ?: true }")
     protected boolean rememberMeCookieSecure;
 
     @Value("#{ @environment['shiro.rememberMeManager.cookie.sameSite'] ?:"
