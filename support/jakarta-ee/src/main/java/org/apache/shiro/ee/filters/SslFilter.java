@@ -13,7 +13,7 @@
  */
 package org.apache.shiro.ee.filters;
 
-import static org.apache.shiro.ee.filters.FormResubmitSupport.hasFacesContext;
+import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;

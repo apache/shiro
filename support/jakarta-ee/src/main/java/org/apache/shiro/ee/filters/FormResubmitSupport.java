@@ -52,6 +52,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
 import static java.util.function.Predicate.not;
+import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
 import static org.apache.shiro.web.mgt.CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -350,14 +351,6 @@ public class FormResubmitSupport {
             Faces.redirect(path, paramValues);
         } else {
             Servlets.facesRedirect(request, response, path, paramValues);
-        }
-    }
-
-    static boolean hasFacesContext() {
-        try {
-            return Faces.hasContext();
-        } catch (Throwable e) {
-            return false;
         }
     }
 
