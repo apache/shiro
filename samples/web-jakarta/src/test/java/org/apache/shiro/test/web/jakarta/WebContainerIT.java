@@ -47,8 +47,7 @@ public class WebContainerIT extends JakartaAbstractContainerIT {
                     .path("/login.jsp")
                     .request(TEXT_HTML_TYPE)
                     .get()) {
-                jsessionid = new Cookie("JSESSIONID",
-                        loginPage.getMetadata().get("Set-Cookie").get(0).toString().split(";")[0].split("=")[1]);
+                jsessionid = getSessionCookie(loginPage);
                 assertTrue(loginPage.readEntity(String.class).contains("loginform"));
             }
 
@@ -59,6 +58,7 @@ public class WebContainerIT extends JakartaAbstractContainerIT {
                     .request(APPLICATION_FORM_URLENCODED)
                     .cookie(jsessionid)
                     .post(Entity.entity("username=root&password=secret&submit=Login", APPLICATION_FORM_URLENCODED))) {
+                jsessionid = getSessionCookie(loginAction);
                 assertEquals(302, loginAction.getStatus());
                 location = loginAction.getLocation();
             }
@@ -73,5 +73,13 @@ public class WebContainerIT extends JakartaAbstractContainerIT {
         } finally {
             client.close();
         }
+    }
+
+    private static Cookie getSessionCookie(Response response) {
+        return new Cookie("JSESSIONID",  response.getMetadata().get("Set-Cookie")
+                        .stream().map(String.class::cast)
+                        .filter(cookie -> cookie.startsWith("JSESSIONID="))
+                        .filter(cookie -> !cookie.contains("deleteMe"))
+                        .findAny().get().split(";")[0].split("=")[1]);
     }
 }
