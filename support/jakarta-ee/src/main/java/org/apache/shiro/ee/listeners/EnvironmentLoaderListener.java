@@ -43,6 +43,8 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
     private static final String SHIRO_EE_ENABLE_URL_SESSION_TRACKING_PARAM = "org.apache.shiro.ee.enable-url-session-tracking";
     private static final String SHIRO_EE_SESSION_TRACKING_CONFIGURATION_DISABLED_PARAM =
             "org.apache.shiro.ee.session-tracking-configuration.disabled";
+    private static final String SHIRO_EE_DISABLE_SECURE_SESSION_COOKIE_PARAM =
+            "org.apache.shiro.ee.secure-session-cookie.disabled";
     private static final String SHIRO_EE_DISABLE_CHAR_ENCODING_PARAM = "org.apache.shiro.ee.disable-character-encoding";
     private static final String SHIRO_EE_CHAR_ENCODING_PARAM = "org.apache.shiro.ee.character-encoding";
     private static final String FORM_RESUBMIT_DISABLED_PARAM = "org.apache.shiro.form-resubmit.disabled";
@@ -112,6 +114,7 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
                     .getInitParameter(SHIRO_EE_SESSION_TRACKING_CONFIGURATION_DISABLED_PARAM))) {
                 modifySessionTrackingConfiguration(sce);
             }
+            modifySecureSessionConfiguration(sce);
 
             WebEnvironment environment = initEnvironment(sce.getServletContext());
             if (hasFacesContext() && Faces.isDevelopment()
@@ -147,5 +150,12 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
             effectiveModes.remove(SessionTrackingMode.URL);
         }
         sce.getServletContext().setSessionTrackingModes(effectiveModes);
+    }
+
+    private void modifySecureSessionConfiguration(ServletContextEvent sce) {
+        if (!Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_DISABLE_SECURE_SESSION_COOKIE_PARAM))
+                && !hasFacesContext() || !Faces.isDevelopment()) {
+            sce.getServletContext().getSessionCookieConfig().setSecure(true);
+        }
     }
 }
