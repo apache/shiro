@@ -36,17 +36,13 @@ public class WebContainerIT extends JakartaAbstractContainerIT {
     @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     public void logIn() {
-        final Client client = ClientBuilder.newClient();
-
-        try {
+        try (Client client = ClientBuilder.newClient()) {
             Cookie jsessionid;
             try (Response loginPage = client.target(getBaseUri())
                     .path("/login.jsp")
                     .request(TEXT_HTML_TYPE)
                     .get()) {
-                jsessionid = new Cookie.Builder("JSESSIONID")
-                        .value(loginPage.getMetadata().get("Set-Cookie")
-                                .get(0).toString().split(";")[0].split("=")[1]).build();
+                jsessionid = getSessionCookie(loginPage);
                 assertThat(loginPage.readEntity(String.class)).contains("loginform");
             }
 
@@ -57,6 +53,7 @@ public class WebContainerIT extends JakartaAbstractContainerIT {
                     .request(APPLICATION_FORM_URLENCODED)
                     .cookie(jsessionid)
                     .post(Entity.entity("username=root&password=secret&submit=Login", APPLICATION_FORM_URLENCODED))) {
+                jsessionid = getSessionCookie(loginAction);
                 assertThat(loginAction.getStatus()).isEqualTo(302);
                 location = loginAction.getLocation();
             }
@@ -68,8 +65,15 @@ public class WebContainerIT extends JakartaAbstractContainerIT {
                     .cookie(jsessionid)
                     .get(String.class);
             assertThat(loggedPage).contains("Hi root!");
-        } finally {
-            client.close();
         }
+    }
+
+    private static Cookie getSessionCookie(Response response) {
+        return new Cookie.Builder("JSESSIONID")
+                .value(response.getMetadata().get("Set-Cookie")
+                        .stream().map(String.class::cast)
+                        .filter(cookie -> cookie.startsWith("JSESSIONID="))
+                        .filter(cookie -> !cookie.contains("deleteMe"))
+                        .findAny().get().split(";")[0].split("=")[1]).build();
     }
 }
