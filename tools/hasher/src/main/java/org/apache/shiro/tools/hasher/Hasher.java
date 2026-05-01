@@ -471,9 +471,9 @@ public final class Hasher {
         printException(e, debug);
         LOG.info("");
         try {
-            HelpFormatter.builder().get().printHelp(command, header, options, footer, true);
+            HelpFormatter.builder().get().printHelp(command, header, options, footer, false);
         } catch (Exception ex) {
-            LOG.warn("Error printing help: " + ex.getMessage(), ex);
+            LOG.warn("Error printing help: {}", ex.getMessage(), ex);
         }
     }
 
