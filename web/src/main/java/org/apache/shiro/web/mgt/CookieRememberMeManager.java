@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static org.apache.shiro.session.mgt.DefaultSessionManager.SECURE_COOKIE_DISABLED;
 
 
 /**
@@ -76,12 +77,10 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      * The default name of the underlying rememberMe cookie which is {@code rememberMe}.
      */
     public static final String DEFAULT_REMEMBER_ME_COOKIE_NAME = "rememberMe";
-    public static final String REMEMBER_ME_SECURE_COOKIE_DISABLED =  "org.apache.shiro.rememberMe.secure.disabled";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CookieRememberMeManager.class);
 
     private Cookie cookie;
-    private boolean secureInDevMode = true;
 
     /**
      * Constructs a new {@code CookieRememberMeManager} with a default {@code rememberMe} cookie template.
@@ -128,33 +127,6 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
     @SuppressWarnings({"UnusedDeclaration"})
     public void setCookie(Cookie cookie) {
         this.cookie = cookie;
-    }
-
-    /**
-     * Returns {@code true} if the rememberMe cookie should be marked as secure when the application is running in
-     * development mode.  This is a convenience method that allows users to set the rememberMe cookie as secure in
-     * production environments but not in development environments where SSL is often not used.
-     * The default value is {@code true}.
-     * @return {@code true} if the rememberMe cookie should be marked as secure when the application is running in
-     * development mode, {@code false} otherwise (the default value is {@code true}).
-     * @since 2.1.1
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    public boolean isSecureInDevMode() {
-        return secureInDevMode;
-    }
-
-    /**
-     * Sets whether the rememberMe cookie should be marked as secure when the application is running in development mode.
-     * This is a convenience method that allows users to set the rememberMe cookie as secure in production environments but not
-     * in development environments where SSL is often not used.  The default value is {@code true}.
-     * @param secureInDevMode set to {@code true} if the rememberMe cookie should be marked as secure when the
-     * application is running in development mode, {@code false} otherwise (the default value is {@code true}).
-     * @since 2.1.1
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    public void setSecureInDevMode(boolean secureInDevMode) {
-        this.secureInDevMode = secureInDevMode;
     }
 
     /**
@@ -342,7 +314,7 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
     private Cookie createDefaultCookie() {
         Cookie cookie = new SimpleCookie(DEFAULT_REMEMBER_ME_COOKIE_NAME);
         cookie.setHttpOnly(true);
-        if (!Boolean.getBoolean(REMEMBER_ME_SECURE_COOKIE_DISABLED)) {
+        if (!Boolean.getBoolean(SECURE_COOKIE_DISABLED)) {
             cookie.setSecure(true);
         }
         //One year should be long enough - most sites won't object to requiring a user to log in if they haven't visited

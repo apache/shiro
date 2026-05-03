@@ -39,6 +39,7 @@ import java.util.Date;
  * @since 0.1
  */
 public class DefaultSessionManager extends AbstractValidatingSessionManager implements CacheManagerAware {
+    public static final String SECURE_COOKIE_DISABLED =  "org.apache.shiro.cookie.secure.disabled";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSessionManager.class);
 

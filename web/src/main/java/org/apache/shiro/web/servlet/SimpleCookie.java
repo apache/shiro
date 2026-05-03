@@ -250,7 +250,7 @@ public class SimpleCookie implements Cookie {
         String path = calculatePath(request);
         int maxAge = getMaxAge();
         int version = getVersion();
-        boolean secure = isSecure();
+        boolean secure = isSecure() && request.isSecure();
         boolean httpOnly = isHttpOnly();
         SameSiteOptions sameSite = getSameSite();
 

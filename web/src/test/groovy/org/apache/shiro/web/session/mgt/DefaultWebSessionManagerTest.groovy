@@ -65,7 +65,8 @@ public class DefaultWebSessionManagerTest {
         session.setId("12345");
 
         WebSessionContext wsc = new DefaultWebSessionContext();
-        wsc.setServletRequest(createMock(HttpServletRequest.class));
+        HttpServletRequest servletRequest = createMock(HttpServletRequest.class);
+        wsc.setServletRequest(servletRequest);
         wsc.setServletResponse(createMock(HttpServletResponse.class));
 
         //test that the cookie template is being used:
@@ -77,10 +78,15 @@ public class DefaultWebSessionManagerTest {
         expect(cookie.getPath()).andReturn("/");
         expect(cookie.getVersion()).andReturn(SimpleCookie.DEFAULT_VERSION);
         expect(cookie.isSecure()).andReturn(true);
+        expect(servletRequest.isSecure()).andReturn(true);
         expect(cookie.isHttpOnly()).andReturn(true);
         expect(cookie.getSameSite()).andReturn(Cookie.SameSiteOptions.LAX);
 
+        servletRequest.removeAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE);
+        servletRequest.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_IS_NEW, Boolean.TRUE);
+
         replay(cookie);
+        replay(servletRequest);
 
         mgr.onStart(session, wsc);
 
