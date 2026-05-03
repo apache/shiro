@@ -60,10 +60,10 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
     @Value("#{ @environment['shiro.sessionManager.cookie.domain'] ?: null }")
     protected String sessionIdCookieDomain;
 
-    @Value("#{ @environment['shiro.sessionManager.cookie.path'] ?: null }")
+    @Value("#{ @environment['shiro.sessionManager.cookie.path'] ?: T(org.apache.shiro.web.servlet.Cookie).ROOT_PATH }")
     protected String sessionIdCookiePath;
 
-    @Value("#{ @environment['shiro.sessionManager.cookie.secure'] ?: false }")
+    @Value("#{ @environment['shiro.sessionManager.cookie.secure'] ?: true }")
     protected boolean sessionIdCookieSecure;
 
     @Value("#{ @environment['shiro.sessionManager.cookie.sameSite'] ?:"
