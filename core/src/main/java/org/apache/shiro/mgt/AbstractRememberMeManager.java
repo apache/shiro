@@ -81,7 +81,6 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * Cipher to use for encrypting/decrypting serialized byte arrays for added security
      */
     private CipherService cipherService = new AesCipherService();
-    ;
 
     /**
      * Cipher encryption key to use with the Cipher when encrypting data

@@ -36,6 +36,7 @@ import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getCookieAg
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getSessionCookieName;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import org.apache.shiro.crypto.CryptoException;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
@@ -49,6 +50,7 @@ import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import static java.util.function.Predicate.not;
@@ -70,6 +72,7 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.mgt.AbstractRememberMeManager;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
@@ -151,7 +154,7 @@ public class FormResubmitSupport {
             DefaultSecurityManager dsm = getSecurityManager(DefaultSecurityManager.class);
             if (dsm.getCacheManager() != null) {
                 var cache = dsm.getCacheManager().getCache(FORM_DATA_CACHE);
-                var rememberMeManager = (AbstractRememberMeManager) dsm.getRememberMeManager();
+                var rememberMeManager = getRememberMeManager();
                 if (rememberMeManager != null && rememberMeManager.getCipherService() != null) {
                     cache.put(cacheKey, rememberMeManager.getCipherService()
                             .encrypt(postData.getBytes(StandardCharsets.UTF_8),
@@ -161,7 +164,7 @@ public class FormResubmitSupport {
                     cache.put(cacheKey, postData);
                 }
                 addCookie(response, request.getServletContext(), SHIRO_FORM_DATA_KEY,
-                        cacheKey.toString(), getCookieAge(request, dsm));
+                        cacheKey.toString(), getCookieAge(request, dsm), true);
             } else {
                 log.warn("Shiro Cache manager is not configured, cannot store form data");
             }
@@ -191,7 +194,7 @@ public class FormResubmitSupport {
             if (dsm.getCacheManager() != null) {
                 var cache = dsm.getCacheManager().getCache(FORM_DATA_CACHE);
                 var cacheKey = UUID.fromString(savedFormDataKey);
-                var rememberMeManager = (AbstractRememberMeManager) dsm.getRememberMeManager();
+                var rememberMeManager = getRememberMeManager();
                 if (rememberMeManager != null && rememberMeManager.getCipherService() != null) {
                     var cachedData = Optional.ofNullable((byte[]) cache.get(cacheKey));
                     savedFormData = cachedData.map(encryptedData ->
@@ -206,17 +209,38 @@ public class FormResubmitSupport {
     }
 
     static String decrypt(byte[] encrypted, AbstractRememberMeManager rememberMeManager) {
-        return new String(rememberMeManager.getCipherService()
-                .decrypt(encrypted, rememberMeManager.getDecryptionCipherKey()).getClonedBytes(),
-                StandardCharsets.UTF_8);
+        try {
+            Objects.requireNonNull(rememberMeManager, "rememberMeManager cannot be null.");
+            return new String(rememberMeManager.getCipherService()
+                    .decrypt(encrypted, rememberMeManager.getDecryptionCipherKey()).getClonedBytes(),
+                    StandardCharsets.UTF_8);
+        } catch (CryptoException e) {
+            log.debug("Failed to decrypt", e);
+            return null;
+        }
+    }
+
+    static String decrypt(String encrypted, AbstractRememberMeManager rememberMeManager) {
+        if (encrypted == null) {
+            return null;
+        }
+        try {
+            return decrypt(Base64.decode(encrypted), rememberMeManager);
+        } catch (IllegalArgumentException e) {
+            log.debug("Failed to decode", e);
+            return null;
+        }
     }
 
     static void saveRequest(HttpServletRequest request, HttpServletResponse response, boolean useReferer) {
         String path = useReferer ? getReferer(request)
                 : Servlets.getRequestURLWithQueryString(request);
-        if (path != null) {
+        var rememberMeManager = getRememberMeManager();
+        if (path != null && rememberMeManager != null) {
             Servlets.addResponseCookie(request, response, WebUtils.SAVED_REQUEST_KEY,
-                    path, null, request.getContextPath(),
+                    rememberMeManager.getCipherService().encrypt(path.getBytes(StandardCharsets.UTF_8),
+                            rememberMeManager.getEncryptionCipherKey()).toBase64(),
+                    null, request.getContextPath(),
                     // cookie age = session timeout
                     getCookieAge(request, getSecurityManager()));
         }
@@ -255,7 +279,7 @@ public class FormResubmitSupport {
     @SneakyThrows({IOException.class, InterruptedException.class})
     static void redirectToSaved(HttpServletRequest request, HttpServletResponse response,
             FallbackPredicate useFallbackPath, String fallbackPath, boolean resubmit) {
-        String savedRequest = Servlets.getRequestCookie(request, WebUtils.SAVED_REQUEST_KEY);
+        String savedRequest = decrypt(Servlets.getRequestCookie(request, WebUtils.SAVED_REQUEST_KEY), getRememberMeManager());
         if (savedRequest != null) {
             doRedirectToSaved(request, response, savedRequest, resubmit);
         } else {
@@ -478,7 +502,7 @@ public class FormResubmitSupport {
                         .entrySet().stream().filter(not(entry -> entry.getKey()
                                 .startsWith(getSessionCookieName(servletContext, getSecurityManager()))))
                         .forEach(entry -> addCookie(originalResponse, servletContext,
-                                entry.getKey(), entry.getValue(), -1));
+                                entry.getKey(), entry.getValue(), -1, false));
                 if ((response.statusCode() == FOUND || redirect) && isPartialAjaxRequest) {
                     originalResponse.setHeader(CONTENT_TYPE, TEXT_XML);
                     originalResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
@@ -540,6 +564,14 @@ public class FormResubmitSupport {
             }
         }
         return rv;
+    }
+
+    private static AbstractRememberMeManager getRememberMeManager() {
+        if (isSecurityManagerTypeOf(getSecurityManager(), DefaultSecurityManager.class)) {
+            var dsm = getSecurityManager(DefaultSecurityManager.class);
+            return (AbstractRememberMeManager) dsm.getRememberMeManager();
+        }
+        return null;
     }
 
     private static String getJSFNewViewState(URI savedRequest, HttpClient client, String savedFormData)

@@ -42,10 +42,11 @@ public class FormResubmitSupportCookies {
     static final String DONT_ADD_ANY_MORE_COOKIES = "org.apache.shiro.no-more-cookies";
 
     static void addCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
-            @NonNull String cookieName, @NonNull String cookieValue, int maxAge) {
+            @NonNull String cookieName, @NonNull String cookieValue, int maxAge, boolean httpOnly) {
         var cookie = new Cookie(cookieName, cookieValue);
         cookie.setPath(servletContext.getContextPath());
         cookie.setMaxAge(maxAge);
+        cookie.setHttpOnly(httpOnly);
         if (EnvironmentLoaderListener.isFormResubmitSecureCookies(servletContext)) {
             cookie.setSecure(true);
         }
