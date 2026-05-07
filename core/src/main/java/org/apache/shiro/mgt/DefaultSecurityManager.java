@@ -288,16 +288,21 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             throw ae;
         }
 
-        Session existingSession = subject.getSession(false);
-        if (existingSession != null) {
-            existingSession.stop();
-        }
-
+        beforeSuccessfulLogin(subject);
         Subject loggedIn = createSubject(token, info, subject);
 
         onSuccessfulLogin(token, info, loggedIn);
 
         return loggedIn;
+    }
+
+    /**
+     * Invoked before a successful login is processed.  This implementation checks for an existing session and stops it
+     *
+     * @param subject Subject
+     */
+    protected void beforeSuccessfulLogin(Subject subject) {
+        stopSession(subject);
     }
 
     protected void onSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info, Subject subject) {
