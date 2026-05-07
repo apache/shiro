@@ -265,7 +265,6 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         }
     }
 
-
     @Override
     protected void beforeLogout(Subject subject) {
         super.beforeLogout(subject);
