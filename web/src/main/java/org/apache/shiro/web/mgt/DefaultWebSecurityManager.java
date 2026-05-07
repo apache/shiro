@@ -23,6 +23,7 @@ import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SessionStorageEvaluator;
 import org.apache.shiro.mgt.SubjectDAO;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.SessionContext;
 import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.session.mgt.SessionManager;
@@ -38,6 +39,7 @@ import org.apache.shiro.web.session.mgt.WebSessionManager;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
+import org.apache.shiro.web.subject.support.WebDelegatingSubject;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -250,6 +252,19 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
 
         }
     }
+
+    @Override
+    protected void beforeSuccessfulLogin(Subject subject) {
+        if (isHttpSessionMode()) {
+            Session session = subject.getSession(false);
+            if (session != null) {
+                WebUtils.toHttp(((WebDelegatingSubject) subject).getServletRequest()).changeSessionId();
+            }
+        } else {
+            super.beforeSuccessfulLogin(subject);
+        }
+    }
+
 
     @Override
     protected void beforeLogout(Subject subject) {
