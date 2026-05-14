@@ -359,6 +359,8 @@
                             <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                             <exclude>velocity.log</exclude>
                             <exclude>CONTRIBUTING.md</exclude>
+                            <exclude>AGENTS.md</exclude>
+                            <exclude>SECURITY.md</exclude>
                             <exclude>**/README.md</exclude>
                             <exclude>**/*.json</exclude>
                             <exclude>**/spring.factories</exclude>
@@ -1595,6 +1597,8 @@
                         <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
                         <exclude>velocity.log</exclude>
                         <exclude>CONTRIBUTING.md</exclude>
+                        <exclude>AGENTS.md</exclude>
+                        <exclude>SECURITY.md</exclude>
                         <exclude>**/README.md</exclude>
                         <exclude>**/*.json</exclude>
                         <exclude>**/spring.factories</exclude>
