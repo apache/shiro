@@ -17,7 +17,7 @@
 
 ---
 # https://github.com/j178/prek
-name: pre-commit
+name: Manual hooks
 
 on: [pull_request]
 
@@ -35,4 +35,6 @@ jobs:
           persist-credentials: false
       - uses: j178/prek-action@6ad80277337ad479fe43bd70701c3f7f8aa74db3 # v2.0.3
         with:
-          extra-args: --all-files
+          install-only: true
+      - name: Run manual pre-commit hooks
+        run: prek run --color=always --all-files --hook-stage manual
