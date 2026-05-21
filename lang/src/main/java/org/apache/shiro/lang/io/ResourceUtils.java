@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Paths;
 
 /**
  * Static helper methods for loading {@code Stream}-backed resources.
@@ -120,7 +121,6 @@ public final class ResourceUtils {
      * @throws IOException if there is a problem acquiring the resource at the specified path.
      */
     public static InputStream getInputStreamForPath(String resourcePath) throws IOException {
-
         URL url = getURLForPath(resourcePath);
         if (url == null) {
             throw new IOException("Resource [" + resourcePath + "] could not be found.");
@@ -148,8 +148,10 @@ public final class ResourceUtils {
             url = ClassUtils.getResource(stripPrefix(resourcePath));
         } else if (resourcePath.startsWith(URL_PREFIX)) {
             url = URI.create(stripPrefix(resourcePath)).toURL();
+        } else if (resourcePath.startsWith(FILE_PREFIX)) {
+            url = Paths.get(stripPrefix(resourcePath)).toUri().toURL();
         } else {
-            url = URI.create(resourcePath).toURL();
+            url = Paths.get(resourcePath).toUri().toURL();
         }
 
         if (url == null) {
