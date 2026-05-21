@@ -156,6 +156,8 @@ public class DelegatingSubjectTest {
         //login as user1
         Subject subject = new Subject.Builder(sm).buildSubject();
         subject.login(new UsernamePasswordToken("user1", "user1"));
+        // duplicate login, test for https://github.com/apache/shiro/issues/2704
+        subject.login(new UsernamePasswordToken("user1", "user1"));
 
         assertFalse(subject.isRunAs());
         assertEquals("user1", subject.getPrincipal());

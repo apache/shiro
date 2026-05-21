@@ -35,6 +35,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
+import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -603,6 +604,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         Session s = subject.getSession(false);
         if (s != null) {
             s.stop();
+            if (subject instanceof DelegatingSubject delegatingSubject) {
+                delegatingSubject.sessionStopped();
+            }
         }
     }
 
