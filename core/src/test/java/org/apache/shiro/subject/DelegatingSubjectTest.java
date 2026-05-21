@@ -226,6 +226,36 @@ public class DelegatingSubjectTest {
     }
 
     @Test
+    void sessionAttributesSurviveLoginSessionRotation() {
+        Ini ini = new Ini();
+        Ini.Section users = ini.addSection("users");
+        users.put("user1", "user1,role1");
+        users.put("user2", "user2,role2");
+        users.put("user3", "user3,role3");
+        SecurityManager sm = new BasicIniEnvironment(ini).getSecurityManager();
+        Subject subject = new Subject.Builder(sm).buildSubject();
+
+        subject.login(new UsernamePasswordToken("user1", "user1"));
+        subject.logout();
+
+        Session preLoginSession = subject.getSession(true);
+        preLoginSession.setAttribute("tenantId", "ACME");
+        Serializable preLoginSessionId = preLoginSession.getId();
+
+        subject.login(new UsernamePasswordToken("user1", "user1"));
+        assertThat(subject.isAuthenticated()).isTrue();
+
+        Session postLoginSession = subject.getSession(false);
+        assertThat(postLoginSession).isNotNull();
+
+        assertThat(preLoginSessionId).as("session ID should change on login (session fixation protection)")
+                .isNotEqualTo(postLoginSession.getId());
+        assertThat(postLoginSession.getAttribute("tenantId"))
+                .as("session attributes set before login must survive session rotation")
+                .isEqualTo("ACME");
+    }
+
+    @Test
     void testToString() {
         // given
         String username = "jsmith";
