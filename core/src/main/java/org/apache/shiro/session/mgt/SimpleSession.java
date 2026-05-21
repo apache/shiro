@@ -303,11 +303,10 @@ public class SimpleSession implements ValidatingSession, Serializable {
     }
 
     private Map<Object, Object> getAttributesLazy() {
-        Map<Object, Object> attributes = getAttributes();
         if (attributes == null) {
-            this.attributes = new ConcurrentHashMap<>();
+            attributes = new ConcurrentHashMap<>();
         }
-        return this.attributes;
+        return attributes;
     }
 
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
