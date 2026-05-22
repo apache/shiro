@@ -168,3 +168,10 @@ repos:
         name: run editorconfig-checker
         description: a tool to verify that your files are in harmony with your .editorconfig
         alias: ec
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.37.2
+    hooks:
+      - id: check-citation-file-format
+        name: run check-citation-file-format
+        description: validate citation file format
+        files: ^CITATION\.cff$
