@@ -259,13 +259,31 @@ public class FormResubmitSupport {
 
     static String getReferer(HttpServletRequest request) {
         String referer = request.getHeader("referer");
-        if (referer != null) {
-            // do not switch to https if custom port is specified
-            if (!referer.matches("^http:\\/\\/[A-z|.|[0-9]]+:[0-9]+(\\/.*|$)")) {
-                referer = referer.replaceFirst("^http:", "https:");
-            }
+        if (referer == null || referer.isBlank()) {
+            return null;
         }
-        return referer;
+
+        try {
+            URI uri = URI.create(referer);
+
+            String contextPath = WebUtils.getContextPath(request);
+            String path = WebUtils.normalize(uri.getPath());
+
+            if (path == null) {
+                return null;
+            }
+
+            if (!contextPath.isEmpty()
+                    && !path.equals(contextPath)
+                    && !path.startsWith(contextPath + "/")) {
+                return null;
+            }
+
+            String query = uri.getRawQuery();
+            return query == null ? path : path + "?" + query;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     /**

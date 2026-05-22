@@ -28,9 +28,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,38 +46,155 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * Resubmit forms support
  */
 @ExtendWith(MockitoExtension.class)
-public class FormSupportTest {
+class FormSupportTest {
     @Mock
     private HttpServletRequest request;
 
     @Test
     void nullReferer() {
         when(request.getHeader("referer")).thenReturn(null);
-        assertNull(getReferer(request));
+        assertThat(getReferer(request)).isNull();
+    }
+
+    @Test
+    void blankReferer() {
+        when(request.getHeader("referer")).thenReturn("   ");
+        assertThat(getReferer(request)).isNull();
     }
 
     @Test
     void plainStringReferer() {
         when(request.getHeader("referer")).thenReturn("hello");
-        assertEquals("hello", getReferer(request));
+        when(request.getContextPath()).thenReturn("/myapp");
+        assertThat(getReferer(request)).isNull();
     }
 
     @Test
-    void switchToHttps() {
-        when(request.getHeader("referer")).thenReturn("http://example.com");
-        assertEquals("https://example.com", getReferer(request));
+    void malformedReferer() {
+        when(request.getHeader("referer")).thenReturn("http://exa mple.com");
+        assertThat(getReferer(request)).isNull();
     }
 
     @Test
-    void dontSwitchToHttpsWhenCustomPort() {
-        when(request.getHeader("referer")).thenReturn("http://example.com:8080/");
-        assertEquals("http://example.com:8080/", getReferer(request));
+    void refererWithinContextPath() {
+        when(request.getHeader("referer")).thenReturn("https://example.com/myapp/login.xhtml");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isEqualTo("/myapp/login.xhtml");
     }
 
     @Test
-    void dontSwitchToHttpsWhenCustomPortNoTrailingSlash() {
-        when(request.getHeader("referer")).thenReturn("http://example.com:8080");
-        assertEquals("http://example.com:8080", getReferer(request));
+    void refererWithinContextPathWithQuery() {
+        when(request.getHeader("referer")).thenReturn("https://example.com/myapp/login.xhtml?a=1&b=2");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isEqualTo("/myapp/login.xhtml?a=1&b=2");
+    }
+
+    @Test
+    void refererEqualToContextPathBecomesRoot() {
+        when(request.getHeader("referer")).thenReturn("https://example.com/myapp");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isEqualTo("/myapp");
+    }
+
+    @Test
+    void refererOutsideContextPathIsRejected() {
+        when(request.getHeader("referer")).thenReturn("https://example.com/otherapp/login.xhtml");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isNull();
+    }
+
+    @Test
+    void rootContextKeepsPath() {
+        when(request.getHeader("referer")).thenReturn("https://example.com/login.xhtml");
+        when(request.getContextPath()).thenReturn("");
+
+        assertThat(getReferer(request)).isEqualTo("/login.xhtml");
+    }
+
+    @Test
+    void rootContextKeepsPathWithQuery() {
+        when(request.getHeader("referer")).thenReturn("https://example.com/login.xhtml?x=1");
+        when(request.getContextPath()).thenReturn("");
+
+        assertThat(getReferer(request)).isEqualTo("/login.xhtml?x=1");
+    }
+
+    @Test
+    void normalizedPathWithinContextIsAccepted() {
+        when(request.getHeader("referer")).thenReturn("https://example.com/myapp//foo/./bar.xhtml");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isEqualTo("/myapp/foo/bar.xhtml");
+    }
+
+    @Test
+    void normalizedPathEscapingContextIsRejected() {
+        when(request.getHeader("referer")).thenReturn("https://example.com/myapp/../otherapp/page.xhtml");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isNull();
+    }
+
+    @Test
+    void opaqueUriRefererIsRejected() {
+        when(request.getHeader("referer")).thenReturn("mailto:test@example.com");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isNull();
+    }
+
+    @Test
+    void javascriptUriRefererIsRejected() {
+        when(request.getHeader("referer")).thenReturn("javascript:alert(1)");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isNull();
+    }
+
+    @Test
+    void contextPathPrefixMatchRequiresPathBoundary() {
+        when(request.getHeader("referer")).thenReturn("https://example.com/myapplication/page.xhtml");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isNull();
+    }
+
+    @Test
+    void refererWithFragmentDropsFragmentAndKeepsQueryOnly() {
+        when(request.getHeader("referer")).thenReturn("https://example.com/myapp/page.xhtml?a=1#frag");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isEqualTo("/myapp/page.xhtml?a=1");
+    }
+
+    @Test
+    void externalHostWithMatchingContextCurrentlyPasses() {
+        when(request.getHeader("referer")).thenReturn("https://attacker.example/myapp/login.xhtml");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isEqualTo("/myapp/login.xhtml");
+    }
+
+    @Test
+    void encodedPathTraversalRefererIsRejected() {
+        when(request.getHeader("referer"))
+                .thenReturn("https://example.com/myapp/%2e%2e/otherapp/page.xhtml");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isNull();
+    }
+
+    @Test
+    void encodedPathTraversalWithEncodedSlashesRefererIsRejected() {
+        when(request.getHeader("referer"))
+                .thenReturn("https://example.com/myapp/%2e%2e%2fotherapp%2fpage.xhtml");
+        when(request.getContextPath()).thenReturn("/myapp");
+
+        assertThat(getReferer(request)).isNull();
     }
 
     @Test
