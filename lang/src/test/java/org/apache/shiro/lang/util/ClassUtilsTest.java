@@ -87,7 +87,7 @@ class ClassUtilsTest {
     }
 
     @Test
-    void inputStream() throws IOException {
+    void inputStreamFileLoading() throws IOException {
         try (InputStream is = getInputStreamForPath("classpath:org/apache/shiro/lang/util/ClassUtilsTest.class")) {
             assertThat(is.readAllBytes()).isNotEmpty();
         }

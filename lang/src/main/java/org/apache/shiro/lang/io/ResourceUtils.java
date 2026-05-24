@@ -135,7 +135,7 @@ public final class ResourceUtils {
      * ({@link #CLASSPATH_PREFIX CLASSPATH_PREFIX},
      * {@link #URL_PREFIX URL_PREFIX}, or {@link #FILE_PREFIX FILE_PREFIX}).  If the path is not prefixed by one
      * of these schemes, the path is assumed to be a file-based path that can be loaded with a
-     * call to {@link URI#create(String)}.
+     * call to {@link Paths#get(String, String...)}.
      *
      * @param resourcePath the String path representing the resource to obtain.
      * @return the URL for the specified resource.
