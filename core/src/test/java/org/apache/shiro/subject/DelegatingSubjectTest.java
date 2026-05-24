@@ -36,6 +36,7 @@ import java.io.Serializable;
 import java.util.concurrent.Callable;
 
 import static org.apache.shiro.env.BasicIniEnvironment.INI_REALM_NAME;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

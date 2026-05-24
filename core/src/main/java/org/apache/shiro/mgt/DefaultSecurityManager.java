@@ -616,8 +616,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         Session s = subject.getSession(false);
         if (s != null) {
             s.stop();
-            if (subject instanceof DelegatingSubject delegatingSubject) {
-                delegatingSubject.sessionStopped();
+            if (subject instanceof DelegatingSubject) {
+                ((DelegatingSubject) subject).sessionStopped();
             }
         }
     }
