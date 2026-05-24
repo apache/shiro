@@ -35,12 +35,15 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
+import org.apache.shiro.subject.support.DelegatingSubject;
 import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Shiro framework's default concrete implementation of the {@link SecurityManager} interface,
@@ -302,7 +305,17 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @param subject Subject
      */
     protected void beforeSuccessfulLogin(Subject subject) {
-        stopSession(subject);
+        Session session = subject.getSession(false);
+        if (session != null) {
+            Map<Object, Object> attributes = new HashMap<>();
+            session.getAttributeKeys().forEach(key -> attributes.put(key, session.getAttribute(key)));
+            stopSession(subject);
+            var newSession = subject.getSession();
+            var keys = newSession.getAttributeKeys();
+            attributes.entrySet().stream()
+                    .filter(entry -> !keys.contains(entry.getKey()))
+                    .forEach(entry -> newSession.setAttribute(entry.getKey(), entry.getValue()));
+        }
     }
 
     protected void onSuccessfulLogin(AuthenticationToken token, AuthenticationInfo info, Subject subject) {
@@ -603,6 +616,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         Session s = subject.getSession(false);
         if (s != null) {
             s.stop();
+            if (subject instanceof DelegatingSubject) {
+                ((DelegatingSubject) subject).sessionStopped();
+            }
         }
     }
 
