@@ -458,21 +458,31 @@ public class SimpleSession implements ValidatingSession, Serializable {
         if (startTimestamp != null) {
             out.writeObject(startTimestamp);
         }
-        if (stopTimestamp.get() != null) {
-            out.writeObject(stopTimestamp.get());
+
+        var stopTimestamp = getStopTimestamp();
+        if (stopTimestamp != null) {
+            out.writeObject(stopTimestamp);
         }
-        if (lastAccessTime.get() != null) {
-            out.writeObject(lastAccessTime.get());
+
+        var lastAccessTime = getLastAccessTime();
+        if (lastAccessTime != null) {
+            out.writeObject(lastAccessTime);
         }
-        if (timeout.get() != 0L) {
-            out.writeLong(timeout.get());
+
+        var timeout = getTimeout();
+        if (timeout != 0L) {
+            out.writeLong(timeout);
         }
-        if (expired.get()) {
-            out.writeBoolean(expired.get());
+
+        var expired = isExpired();
+        if (expired) {
+            out.writeBoolean(expired);
         }
         if (host != null) {
             out.writeUTF(host);
         }
+
+        var attributes = getAttributes();
         if (!CollectionUtils.isEmpty(attributes)) {
             out.writeObject(attributes);
         }
