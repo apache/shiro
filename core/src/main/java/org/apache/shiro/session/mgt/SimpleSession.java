@@ -99,7 +99,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     private transient AtomicLong timeout;
     private transient AtomicBoolean expired = new AtomicBoolean();
     private transient String host;
-    private transient Map<Object, Object> attributes;
+    private transient volatile Map<Object, Object> attributes;
 
     public SimpleSession() {
         //TODO - remove concrete reference to DefaultSessionManager
@@ -198,7 +198,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     }
 
     public void setAttributes(Map<Object, Object> attributes) {
-        this.attributes = new ConcurrentHashMap<>(attributes);
+        this.attributes = attributes == null ? null : new ConcurrentHashMap<>(attributes);
     }
 
     public void touch() {
@@ -303,10 +303,17 @@ public class SimpleSession implements ValidatingSession, Serializable {
     }
 
     private Map<Object, Object> getAttributesLazy() {
-        if (attributes == null) {
-            attributes = new ConcurrentHashMap<>();
+        Map<Object, Object> local = attributes;
+        if (local == null) {
+            synchronized (this) {
+                local = attributes;
+                if (local == null) {
+                    local = new ConcurrentHashMap<>();
+                    attributes = local;
+                }
+            }
         }
-        return attributes;
+        return local;
     }
 
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
@@ -492,15 +499,23 @@ public class SimpleSession implements ValidatingSession, Serializable {
         }
         if (isFieldPresent(bitMask, STOP_TIMESTAMP_BIT_MASK)) {
             this.stopTimestamp = new AtomicReference<>((Date) in.readObject());
+        } else {
+            this.stopTimestamp = new AtomicReference<>();
         }
         if (isFieldPresent(bitMask, LAST_ACCESS_TIME_BIT_MASK)) {
             this.lastAccessTime = new AtomicReference<>((Date) in.readObject());
+        } else {
+            this.lastAccessTime = new AtomicReference<>();
         }
         if (isFieldPresent(bitMask, TIMEOUT_BIT_MASK)) {
             this.timeout = new AtomicLong(in.readLong());
+        } else {
+            this.timeout = new AtomicLong();
         }
         if (isFieldPresent(bitMask, EXPIRED_BIT_MASK)) {
             this.expired = new AtomicBoolean(in.readBoolean());
+        } else {
+            this.expired = new AtomicBoolean();
         }
         if (isFieldPresent(bitMask, HOST_BIT_MASK)) {
             this.host = in.readUTF();
