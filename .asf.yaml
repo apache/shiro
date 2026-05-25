@@ -54,7 +54,7 @@ github:
         required_approving_review_count: 0
       required_status_checks:
         - name: "build"
-          app_slug: -1
+          app_slug: "github-actions"
 notifications:
   pullrequests: commits@shiro.apache.org
   commits: commits@shiro.apache.org
