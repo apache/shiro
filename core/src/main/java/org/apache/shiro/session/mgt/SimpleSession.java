@@ -126,10 +126,6 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return startTimestamp;
     }
 
-    public void setStartTimestamp(Date startTimestamp) {
-        this.startTimestamp = startTimestamp;
-    }
-
     /**
      * Returns the time the session was stopped, or <tt>null</tt> if the session is still active.
      * <p/>
@@ -149,10 +145,6 @@ public class SimpleSession implements ValidatingSession, Serializable {
      */
     public Date getStopTimestamp() {
         return stopTimestamp.get();
-    }
-
-    public void setStopTimestamp(Date stopTimestamp) {
-        this.stopTimestamp.set(stopTimestamp);
     }
 
     public Date getLastAccessTime() {
@@ -189,16 +181,13 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return host;
     }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
-
     public Map<Object, Object> getAttributes() {
         return attributes;
     }
 
     public void setAttributes(Map<Object, Object> attributes) {
-        this.attributes = attributes == null ? null : new ConcurrentHashMap<>(attributes);
+        this.attributes = attributes == null ? null : attributes instanceof ConcurrentHashMap ? attributes
+                                                      : new ConcurrentHashMap<>(attributes);
     }
 
     public void touch() {
@@ -440,6 +429,10 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return sb.toString();
     }
 
+    void setStartTimestamp(Date startTimestamp) {
+        this.startTimestamp = startTimestamp;
+    }
+
     /**
      * Serializes this object to the specified output stream for JDK Serialization.
      *
@@ -450,7 +443,14 @@ public class SimpleSession implements ValidatingSession, Serializable {
     @SuppressWarnings("checkstyle:NPathComplexity")
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
-        short alteredFieldsBitMask = getAlteredFieldsBitMask();
+
+        var stopTimestamp = getStopTimestamp();
+        var lastAccessTime = getLastAccessTime();
+        var timeout = getTimeout();
+        var expired = isExpired();
+        var attributes = getAttributes();
+
+        short alteredFieldsBitMask = getAlteredFieldsBitMask(stopTimestamp, lastAccessTime, timeout, expired, attributes);
         out.writeShort(alteredFieldsBitMask);
         if (id != null) {
             out.writeObject(id);
@@ -459,22 +459,18 @@ public class SimpleSession implements ValidatingSession, Serializable {
             out.writeObject(startTimestamp);
         }
 
-        var stopTimestamp = getStopTimestamp();
         if (stopTimestamp != null) {
             out.writeObject(stopTimestamp);
         }
 
-        var lastAccessTime = getLastAccessTime();
         if (lastAccessTime != null) {
             out.writeObject(lastAccessTime);
         }
 
-        var timeout = getTimeout();
         if (timeout != 0L) {
             out.writeLong(timeout);
         }
 
-        var expired = isExpired();
         if (expired) {
             out.writeBoolean(expired);
         }
@@ -482,7 +478,6 @@ public class SimpleSession implements ValidatingSession, Serializable {
             out.writeUTF(host);
         }
 
-        var attributes = getAttributes();
         if (!CollectionUtils.isEmpty(attributes)) {
             out.writeObject(attributes);
         }
@@ -531,7 +526,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
             this.host = in.readUTF();
         }
         if (isFieldPresent(bitMask, ATTRIBUTES_BIT_MASK)) {
-            this.attributes = (Map<Object, Object>) in.readObject();
+            this.attributes = (ConcurrentHashMap<Object, Object>) in.readObject();
         }
     }
 
@@ -544,14 +539,15 @@ public class SimpleSession implements ValidatingSession, Serializable {
      * @since 1.0
      */
     @SuppressWarnings("checkstyle:NPathComplexity")
-    private short getAlteredFieldsBitMask() {
+    private short getAlteredFieldsBitMask(Date stopTimestamp, Date lastAccessTime, long timeout, boolean expired,
+                                          Map<Object, Object> attributes) {
         int bitMask = 0;
         bitMask = id != null ? bitMask | ID_BIT_MASK : bitMask;
         bitMask = startTimestamp != null ? bitMask | START_TIMESTAMP_BIT_MASK : bitMask;
-        bitMask = stopTimestamp.get() != null ? bitMask | STOP_TIMESTAMP_BIT_MASK : bitMask;
-        bitMask = lastAccessTime.get() != null ? bitMask | LAST_ACCESS_TIME_BIT_MASK : bitMask;
-        bitMask = timeout.get() != 0L ? bitMask | TIMEOUT_BIT_MASK : bitMask;
-        bitMask = expired.get() ? bitMask | EXPIRED_BIT_MASK : bitMask;
+        bitMask = stopTimestamp != null ? bitMask | STOP_TIMESTAMP_BIT_MASK : bitMask;
+        bitMask = lastAccessTime != null ? bitMask | LAST_ACCESS_TIME_BIT_MASK : bitMask;
+        bitMask = timeout != 0L ? bitMask | TIMEOUT_BIT_MASK : bitMask;
+        bitMask = expired ? bitMask | EXPIRED_BIT_MASK : bitMask;
         bitMask = host != null ? bitMask | HOST_BIT_MASK : bitMask;
         bitMask = !CollectionUtils.isEmpty(attributes) ? bitMask | ATTRIBUTES_BIT_MASK : bitMask;
         return (short) bitMask;
@@ -572,5 +568,4 @@ public class SimpleSession implements ValidatingSession, Serializable {
     private static boolean isFieldPresent(short bitMask, int fieldBitMask) {
         return (bitMask & fieldBitMask) != 0;
     }
-
 }
