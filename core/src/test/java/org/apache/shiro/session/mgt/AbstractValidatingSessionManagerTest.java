@@ -85,6 +85,11 @@ public class AbstractValidatingSessionManagerTest {
                 sessions.add(invalidSession);
                 return sessions;
             }
+
+            @Override
+            public boolean isVersioned() {
+                return false;
+            }
         };
 
         sessionManager.setSessionListeners(Arrays.asList(sessionListener));

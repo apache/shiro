@@ -557,6 +557,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         if (host != null) {
             sessionContext.setHost(host);
         }
+        if (isVersioned()) {
+            sessionContext.setVersioned(true);
+        }
         return sessionContext;
     }
 
@@ -597,6 +600,11 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean isVersioned() {
+        return getSessionManager().isVersioned();
     }
 
     protected void stopSession(Subject subject) {

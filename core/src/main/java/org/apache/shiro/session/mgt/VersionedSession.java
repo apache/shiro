@@ -21,23 +21,12 @@ package org.apache.shiro.session.mgt;
 import org.apache.shiro.session.Session;
 
 /**
- * {@code SessionFactory} implementation that generates {@link SimpleSession} instances.
+ * Implements versioned session support
  *
- * @since 1.0
+ * @since 3.0
  */
-public class SimpleSessionFactory implements SessionFactory {
-
-    /**
-     * Creates a new {@link SimpleSession SimpleSession} instance retaining the context's
-     * {@link SessionContext#getHost() host} if one can be found.
-     *
-     * @param initData the initialization data to be used during {@link Session} creation.
-     * @return a new {@link SimpleSession SimpleSession} instance
-     */
-    public Session createSession(SessionContext initData) {
-        if (initData != null) {
-            return new SimpleSession(initData.getHost(), initData.isVersioned());
-        }
-        return new SimpleSession();
-    }
+public interface VersionedSession extends Session {
+    boolean isVersioned();
+    long getVersion();
+    long incrementVersion();
 }

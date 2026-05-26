@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -48,7 +49,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 0.1
  */
 @SuppressWarnings("checkstyle:MethodCount")
-public class SimpleSession implements ValidatingSession, Serializable {
+public class SimpleSession implements ValidatingSession, VersionedSession, Serializable {
 
     protected static final long MILLIS_PER_SECOND = 1000;
     protected static final long MILLIS_PER_MINUTE = 60 * MILLIS_PER_SECOND;
@@ -63,7 +64,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     // changes do not require a change to this number.  If you need to generate
     // a new number in this case, use the JDK's 'serialver' program to generate it.
     @Serial
-    private static final long serialVersionUID = -7125642695178165650L;
+    private static final long serialVersionUID = -7125642695178165651L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSession.class);
     private static final int ID_BIT_MASK = 1 << bitIndexCounter++;
@@ -74,6 +75,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     private static final int EXPIRED_BIT_MASK = 1 << bitIndexCounter++;
     private static final int HOST_BIT_MASK = 1 << bitIndexCounter++;
     private static final int ATTRIBUTES_BIT_MASK = 1 << bitIndexCounter++;
+    private static final int VERSION_BIT_MASK = 1 << bitIndexCounter++;
 
     // ==============================================================
     // NOTICE:
@@ -99,6 +101,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     private transient AtomicLong timeout;
     private transient AtomicBoolean expired = new AtomicBoolean();
     private transient String host;
+    private transient AtomicLong version;
     private transient volatile Map<Object, Object> attributes;
 
     public SimpleSession() {
@@ -114,6 +117,18 @@ public class SimpleSession implements ValidatingSession, Serializable {
         this.host = host;
     }
 
+    public SimpleSession(boolean versioned) {
+        this(null, versioned);
+    }
+
+    public SimpleSession(String host, boolean versioned) {
+        this(host);
+        if (versioned) {
+            version = new AtomicLong();
+        }
+    }
+
+    @Override
     public Serializable getId() {
         return this.id;
     }
@@ -122,6 +137,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         this.id = id;
     }
 
+    @Override
     public Date getStartTimestamp() {
         return startTimestamp;
     }
@@ -147,12 +163,29 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return stopTimestamp.get();
     }
 
+    @Override
     public Date getLastAccessTime() {
         return lastAccessTime.get();
     }
 
     public void setLastAccessTime(Date lastAccessTime) {
         this.lastAccessTime.set(lastAccessTime);
+    }
+
+    @Override
+    public long getVersion() {
+        Objects.requireNonNull(version, "versioned session is required");
+        return version.get();
+    }
+
+    @Override
+    public boolean isVersioned() {
+        return version != null;
+    }
+
+    public long incrementVersion() {
+        Objects.requireNonNull(version, "versioned session is required");
+        return version.incrementAndGet();
     }
 
     /**
@@ -169,6 +202,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         this.expired.set(expired);
     }
 
+    @Override
     public long getTimeout() {
         return timeout.get();
     }
@@ -177,6 +211,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         this.timeout.set(timeout);
     }
 
+    @Override
     public String getHost() {
         return host;
     }
@@ -190,10 +225,12 @@ public class SimpleSession implements ValidatingSession, Serializable {
                                                       : new ConcurrentHashMap<>(attributes);
     }
 
+    @Override
     public void touch() {
         this.lastAccessTime.set(new Date());
     }
 
+    @Override
     public void stop() {
         stopTimestamp.compareAndSet(null, new Date());
     }
@@ -210,6 +247,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     /**
      * @since 0.9
      */
+    @Override
     public boolean isValid() {
         return !isStopped() && !isExpired();
     }
@@ -258,6 +296,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return false;
     }
 
+    @Override
     public void validate() throws InvalidSessionException {
         //check for stopped:
         if (isStopped()) {
@@ -305,6 +344,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return local;
     }
 
+    @Override
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
         Map<Object, Object> attributes = getAttributes();
         if (attributes == null) {
@@ -313,6 +353,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return attributes.keySet();
     }
 
+    @Override
     public Object getAttribute(Object key) {
         Map<Object, Object> attributes = getAttributes();
         if (attributes == null) {
@@ -321,6 +362,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return attributes.get(key);
     }
 
+    @Override
     public void setAttribute(Object key, Object value) {
         if (value == null) {
             removeAttribute(key);
@@ -329,6 +371,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         }
     }
 
+    @Override
     public Object removeAttribute(Object key) {
         Map<Object, Object> attributes = getAttributes();
         if (attributes == null) {
@@ -449,8 +492,10 @@ public class SimpleSession implements ValidatingSession, Serializable {
         var timeout = getTimeout();
         var expired = isExpired();
         var attributes = getAttributes();
+        var version = isVersioned() ? getVersion() : null;
 
-        short alteredFieldsBitMask = getAlteredFieldsBitMask(stopTimestamp, lastAccessTime, timeout, expired, attributes);
+        short alteredFieldsBitMask = getAlteredFieldsBitMask(stopTimestamp, lastAccessTime, timeout, expired,
+                attributes, version);
         out.writeShort(alteredFieldsBitMask);
         if (id != null) {
             out.writeObject(id);
@@ -480,6 +525,10 @@ public class SimpleSession implements ValidatingSession, Serializable {
 
         if (!CollectionUtils.isEmpty(attributes)) {
             out.writeObject(attributes);
+        }
+
+        if (version != null) {
+            out.writeLong(version);
         }
     }
 
@@ -528,6 +577,9 @@ public class SimpleSession implements ValidatingSession, Serializable {
         if (isFieldPresent(bitMask, ATTRIBUTES_BIT_MASK)) {
             this.attributes = (ConcurrentHashMap<Object, Object>) in.readObject();
         }
+        if (isFieldPresent(bitMask, VERSION_BIT_MASK)) {
+            this.version = new AtomicLong(in.readLong());
+        }
     }
 
     /**
@@ -540,7 +592,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
      */
     @SuppressWarnings("checkstyle:NPathComplexity")
     private short getAlteredFieldsBitMask(Date stopTimestamp, Date lastAccessTime, long timeout, boolean expired,
-                                          Map<Object, Object> attributes) {
+                                          Map<Object, Object> attributes, Long version) {
         int bitMask = 0;
         bitMask = id != null ? bitMask | ID_BIT_MASK : bitMask;
         bitMask = startTimestamp != null ? bitMask | START_TIMESTAMP_BIT_MASK : bitMask;
@@ -550,6 +602,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         bitMask = expired ? bitMask | EXPIRED_BIT_MASK : bitMask;
         bitMask = host != null ? bitMask | HOST_BIT_MASK : bitMask;
         bitMask = !CollectionUtils.isEmpty(attributes) ? bitMask | ATTRIBUTES_BIT_MASK : bitMask;
+        bitMask = version != null ? bitMask | VERSION_BIT_MASK : bitMask;
         return (short) bitMask;
     }
 

@@ -96,6 +96,9 @@ public class WebDelegatingSubject extends DelegatingSubject implements WebSubjec
         if (StringUtils.hasText(host)) {
             wsc.setHost(host);
         }
+        if (securityManager.isVersioned()) {
+            wsc.setVersioned(true);
+        }
         wsc.setServletRequest(this.servletRequest);
         wsc.setServletResponse(this.servletResponse);
         return wsc;

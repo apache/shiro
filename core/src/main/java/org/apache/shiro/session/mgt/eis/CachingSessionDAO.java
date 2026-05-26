@@ -24,10 +24,14 @@ import org.apache.shiro.cache.CacheManagerAware;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.session.mgt.ValidatingSession;
+import org.apache.shiro.session.mgt.VersionedSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * An CachingSessionDAO is a SessionDAO that provides a transparent caching layer between the components that
@@ -46,12 +50,12 @@ import java.util.Collections;
  * @since 0.2
  */
 public abstract class CachingSessionDAO extends AbstractSessionDAO implements CacheManagerAware {
-
     /**
      * The default active sessions cache name, equal to {@code shiro-activeSessionCache}.
      */
     public static final String ACTIVE_SESSION_CACHE_NAME = "shiro-activeSessionCache";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CachingSessionDAO.class);
     /**
      * The CacheManager to use to acquire the Session cache.
      */
@@ -60,7 +64,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
     /**
      * The Cache instance responsible for caching Sessions.
      */
-    private Cache<Serializable, Session> activeSessions;
+    private AtomicReference<Cache<Serializable, Session>> activeSessions = new AtomicReference<>();
 
     /**
      * The name of the session cache, defaults to {@link #ACTIVE_SESSION_CACHE_NAME}.
@@ -123,7 +127,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * should be retrieved from the
      */
     public Cache<Serializable, Session> getActiveSessionsCache() {
-        return this.activeSessions;
+        return this.activeSessions.get();
     }
 
     /**
@@ -135,7 +139,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      *              acquired from the {@link #setCacheManager configured} {@code CacheManager}.
      */
     public void setActiveSessionsCache(Cache<Serializable, Session> cache) {
-        this.activeSessions = cache;
+        this.activeSessions.set(cache);
     }
 
     /**
@@ -148,10 +152,8 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * @return the active sessions cache instance.
      */
     private Cache<Serializable, Session> getActiveSessionsCacheLazy() {
-        if (this.activeSessions == null) {
-            this.activeSessions = createActiveSessionsCache();
-        }
-        return activeSessions;
+        activeSessions.compareAndSet(null, createActiveSessionsCache());
+        return activeSessions.get();
     }
 
     /**
@@ -244,7 +246,21 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * @param cache     the cache to store the session
      */
     protected void cache(Session session, Serializable sessionId, Cache<Serializable, Session> cache) {
-        cache.put(sessionId, session);
+        if (session instanceof VersionedSession versionedSession && versionedSession.isVersioned()) {
+            var previous = (VersionedSession) cache.get(versionedSession.getId());
+            if (previous == null || previous.getVersion() <= versionedSession.getVersion()) {
+                cache.put(sessionId, session);
+            } else {
+                LOGGER.debug("""
+                                Not caching session with id [{}] because the version of the session in the cache
+                                is greater than the version of the session being cached.
+                                This is likely due to a concurrent update to the same session from another thread or JVM.
+                                Cache version: [{}], Session version: [{}]""",
+                        sessionId, previous.getVersion(), versionedSession.getVersion());
+            }
+        } else {
+            cache.put(sessionId, session);
+        }
     }
 
     /**

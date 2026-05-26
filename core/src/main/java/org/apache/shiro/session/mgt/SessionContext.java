@@ -88,4 +88,6 @@ public interface SessionContext extends Map<String, Object> {
 
     void setSessionId(Serializable sessionId);
 
+    boolean isVersioned();
+    void setVersioned(boolean versioned);
 }

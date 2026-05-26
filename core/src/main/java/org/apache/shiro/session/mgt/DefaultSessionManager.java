@@ -22,6 +22,7 @@ import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.cache.CacheManagerAware;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.UnknownSessionException;
+import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.slf4j.Logger;
@@ -245,4 +246,8 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         return active != null ? active : Collections.<Session>emptySet();
     }
 
+    @Override
+    public boolean isVersioned() {
+        return sessionDAO instanceof CachingSessionDAO;
+    }
 }

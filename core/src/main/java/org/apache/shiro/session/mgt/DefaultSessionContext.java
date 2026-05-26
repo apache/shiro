@@ -32,12 +32,12 @@ import java.util.Map;
  * @since 1.0
  */
 public class DefaultSessionContext extends MapContext implements SessionContext {
-
     @Serial
     private static final long serialVersionUID = -1424160751361252966L;
 
     private static final String HOST = DefaultSessionContext.class.getName() + ".HOST";
     private static final String SESSION_ID = DefaultSessionContext.class.getName() + ".SESSION_ID";
+    private static final String VERSIONED_SESSION = DefaultSessionContext.class.getName() + ".VERSIONED_SESSION";
 
     public DefaultSessionContext() {
         super();
@@ -47,21 +47,36 @@ public class DefaultSessionContext extends MapContext implements SessionContext 
         super(map);
     }
 
+    @Override
     public String getHost() {
         return getTypedValue(HOST, String.class);
     }
 
+    @Override
     public void setHost(String host) {
         if (StringUtils.hasText(host)) {
             put(HOST, host);
         }
     }
 
+    @Override
     public Serializable getSessionId() {
         return getTypedValue(SESSION_ID, Serializable.class);
     }
 
+    @Override
     public void setSessionId(Serializable sessionId) {
         nullSafePut(SESSION_ID, sessionId);
+    }
+
+    @Override
+    public boolean isVersioned() {
+        var versioned = getTypedValue(VERSIONED_SESSION, Boolean.class);
+        return versioned != null && versioned;
+    }
+
+    @Override
+    public void setVersioned(boolean versioned) {
+        put(VERSIONED_SESSION, versioned);
     }
 }

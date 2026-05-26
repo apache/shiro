@@ -20,6 +20,8 @@ package org.apache.shiro.web.servlet;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.DefaultSessionKey;
+import org.apache.shiro.session.mgt.NativeSessionManager;
 import org.apache.shiro.subject.ExecutionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.config.ShiroFilterConfiguration;
@@ -336,6 +338,17 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
         }
     }
 
+    protected void incrementSessionVersion() {
+        if (!isHttpSessions()) {
+            var session = SecurityUtils.getSubject().getSession(false);
+            if (session != null) {
+                NativeSessionManager sm = (NativeSessionManager) SecurityUtils
+                        .getSecurityManager(DefaultWebSecurityManager.class).getSessionManager();
+                sm.incrementVersion(new DefaultSessionKey(session.getId()));
+            }
+        }
+    }
+
     /**
      * {@code doFilterInternal} implementation that sets-up, executes, and cleans-up a Shiro-filtered request.  It
      * performs the following ordered operations:
@@ -375,6 +388,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
             subject.execute((Callable<Void>) () -> {
                 updateSessionLastAccessTime(request, response);
                 executeChain(request, response, chain);
+                incrementSessionVersion();
                 return null;
             });
         } catch (ExecutionException ex) {

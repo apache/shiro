@@ -58,4 +58,6 @@ public interface SessionManager {
      * @since 1.0
      */
     Session getSession(SessionKey key) throws SessionException;
+
+    boolean isVersioned();
 }

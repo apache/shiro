@@ -310,4 +310,13 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
 
     protected void onChange(Session s) {
     }
+
+    @Override
+    public long incrementVersion(SessionKey key) {
+        Session session = lookupRequiredSession(key);
+        if (session instanceof VersionedSession versionedSession && versionedSession.isVersioned()) {
+            return versionedSession.incrementVersion();
+        }
+        return 0;
+    }
 }

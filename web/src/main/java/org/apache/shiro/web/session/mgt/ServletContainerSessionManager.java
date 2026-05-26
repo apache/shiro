@@ -130,4 +130,8 @@ public class ServletContainerSessionManager implements WebSessionManager {
         return true;
     }
 
+    @Override
+    public boolean isVersioned() {
+        return false;
+    }
 }

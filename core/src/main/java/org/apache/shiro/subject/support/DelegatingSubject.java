@@ -349,6 +349,9 @@ public class DelegatingSubject implements Subject {
         if (StringUtils.hasText(host)) {
             sessionContext.setHost(host);
         }
+        if (securityManager.isVersioned()) {
+            sessionContext.setVersioned(true);
+        }
         return sessionContext;
     }
 

@@ -178,4 +178,5 @@ public interface NativeSessionManager extends SessionManager {
      */
     Object removeAttribute(SessionKey sessionKey, Object attributeKey) throws InvalidSessionException;
 
+    long incrementVersion(SessionKey sessionKey) throws InvalidSessionException;
 }
