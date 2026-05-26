@@ -247,7 +247,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      */
     protected void cache(Session session, Serializable sessionId, Cache<Serializable, Session> cache) {
         if (session instanceof VersionedSession versionedSession && versionedSession.isVersioned()) {
-            var previous = (VersionedSession) cache.get(versionedSession.getId());
+            var previous = (VersionedSession) cache.get(sessionId);
             if (previous == null || previous.getVersion() <= versionedSession.getVersion()) {
                 cache.put(sessionId, session);
             } else {

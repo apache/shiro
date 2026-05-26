@@ -59,5 +59,19 @@ public interface SessionManager {
      */
     Session getSession(SessionKey key) throws SessionException;
 
+    /**
+     * Returns {@code true} if sessions managed by this instance are versioned.
+     * <p/>
+     * In this context, &quot;versioned&quot; means that the underlying session implementation maintains a version
+     * value for a session and updates that value as session state changes, typically to support persistence
+     * and/or concurrency control in a backing store.  This flag does not control whether sessions can be
+     * created, how they are looked up, cache ordering semantics, or general session lifecycle behavior.
+     * <p/>
+     * Implementations that do not maintain session version metadata should return {@code false}.  Implementations
+     * that track and expose such version state should return {@code true}.
+     *
+     * @return {@code true} if managed sessions maintain version state, {@code false} otherwise.
+     * @since 3.0
+     */
     boolean isVersioned();
 }

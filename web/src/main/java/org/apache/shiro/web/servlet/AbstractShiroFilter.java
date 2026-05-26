@@ -341,10 +341,9 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
     protected void incrementSessionVersion() {
         if (!isHttpSessions()) {
             var session = SecurityUtils.getSubject().getSession(false);
-            if (session != null) {
-                NativeSessionManager sm = (NativeSessionManager) SecurityUtils
-                        .getSecurityManager(DefaultWebSecurityManager.class).getSessionManager();
-                sm.incrementVersion(new DefaultSessionKey(session.getId()));
+            if (session != null && SecurityUtils.getSecurityManager(DefaultWebSecurityManager.class)
+                    .getSessionManager() instanceof NativeSessionManager sessionManager) {
+                sessionManager.incrementVersion(new DefaultSessionKey(session.getId()));
             }
         }
     }
@@ -387,8 +386,11 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
 
             subject.execute((Callable<Void>) () -> {
                 updateSessionLastAccessTime(request, response);
-                executeChain(request, response, chain);
-                incrementSessionVersion();
+                try {
+                    executeChain(request, response, chain);
+                } finally {
+                    incrementSessionVersion();
+                }
                 return null;
             });
         } catch (ExecutionException ex) {

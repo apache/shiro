@@ -64,7 +64,7 @@ public class SimpleSession implements ValidatingSession, VersionedSession, Seria
     // changes do not require a change to this number.  If you need to generate
     // a new number in this case, use the JDK's 'serialver' program to generate it.
     @Serial
-    private static final long serialVersionUID = -7125642695178165651L;
+    private static final long serialVersionUID = -7125642695178165650L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSession.class);
     private static final int ID_BIT_MASK = 1 << bitIndexCounter++;
@@ -183,6 +183,7 @@ public class SimpleSession implements ValidatingSession, VersionedSession, Seria
         return version != null;
     }
 
+    @Override
     public long incrementVersion() {
         Objects.requireNonNull(version, "versioned session is required");
         return version.incrementAndGet();
@@ -575,7 +576,12 @@ public class SimpleSession implements ValidatingSession, VersionedSession, Seria
             this.host = in.readUTF();
         }
         if (isFieldPresent(bitMask, ATTRIBUTES_BIT_MASK)) {
-            this.attributes = (ConcurrentHashMap<Object, Object>) in.readObject();
+            var attributes = (Map<Object, Object>) in.readObject();
+            if (attributes instanceof ConcurrentHashMap<Object, Object>) {
+                this.attributes = attributes;
+            } else {
+                this.attributes = new ConcurrentHashMap<>(attributes);
+            }
         }
         if (isFieldPresent(bitMask, VERSION_BIT_MASK)) {
             this.version = new AtomicLong(in.readLong());

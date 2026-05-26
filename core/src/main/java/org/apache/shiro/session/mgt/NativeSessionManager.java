@@ -178,5 +178,21 @@ public interface NativeSessionManager extends SessionManager {
      */
     Object removeAttribute(SessionKey sessionKey, Object attributeKey) throws InvalidSessionException;
 
+    /**
+     * Increments the version of the associated session for implementations that track session versions to
+     * enforce consistency across concurrent updates.
+     * <p>
+     * This method should be invoked once for each session mutation that must advance the session version,
+     * not once per request unless every request performs such a mutation.
+     * <p>
+     * Calling this method updates the version as managed by the implementation, but it does not by itself
+     * guarantee any persistence behavior beyond the implementation's normal session persistence semantics.
+     *
+     * @param sessionKey the session key to use to look up the target session.
+     * @return the session version after the increment has been applied. If session versioning is disabled,
+     *         implementations should perform no version change and return the current effective version,
+     *         typically {@code 0}.
+     * @throws InvalidSessionException if the specified session has stopped or expired prior to calling this method.
+     */
     long incrementVersion(SessionKey sessionKey) throws InvalidSessionException;
 }
