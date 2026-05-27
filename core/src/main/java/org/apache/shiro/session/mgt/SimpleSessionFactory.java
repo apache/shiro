@@ -35,12 +35,6 @@ public class SimpleSessionFactory implements SessionFactory {
      * @return a new {@link SimpleSession SimpleSession} instance
      */
     public Session createSession(SessionContext initData) {
-        if (initData != null) {
-            String host = initData.getHost();
-            if (host != null) {
-                return new SimpleSession(host);
-            }
-        }
-        return new SimpleSession();
+        return initData != null ? new SimpleSession(initData.getHost()) : new SimpleSession();
     }
 }

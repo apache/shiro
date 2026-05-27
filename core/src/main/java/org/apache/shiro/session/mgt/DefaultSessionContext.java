@@ -47,20 +47,24 @@ public class DefaultSessionContext extends MapContext implements SessionContext 
         super(map);
     }
 
+    @Override
     public String getHost() {
         return getTypedValue(HOST, String.class);
     }
 
+    @Override
     public void setHost(String host) {
         if (StringUtils.hasText(host)) {
             put(HOST, host);
         }
     }
 
+    @Override
     public Serializable getSessionId() {
         return getTypedValue(SESSION_ID, Serializable.class);
     }
 
+    @Override
     public void setSessionId(Serializable sessionId) {
         nullSafePut(SESSION_ID, sessionId);
     }

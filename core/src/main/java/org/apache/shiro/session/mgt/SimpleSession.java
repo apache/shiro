@@ -114,6 +114,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         this.host = host;
     }
 
+    @Override
     public Serializable getId() {
         return this.id;
     }
@@ -122,6 +123,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         this.id = id;
     }
 
+    @Override
     public Date getStartTimestamp() {
         return startTimestamp;
     }
@@ -147,6 +149,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return stopTimestamp.get();
     }
 
+    @Override
     public Date getLastAccessTime() {
         return lastAccessTime.get();
     }
@@ -169,14 +172,17 @@ public class SimpleSession implements ValidatingSession, Serializable {
         this.expired.set(expired);
     }
 
+    @Override
     public long getTimeout() {
         return timeout.get();
     }
 
+    @Override
     public void setTimeout(long timeout) {
         this.timeout.set(timeout);
     }
 
+    @Override
     public String getHost() {
         return host;
     }
@@ -190,10 +196,12 @@ public class SimpleSession implements ValidatingSession, Serializable {
                                                       : new ConcurrentHashMap<>(attributes);
     }
 
+    @Override
     public void touch() {
         this.lastAccessTime.set(new Date());
     }
 
+    @Override
     public void stop() {
         stopTimestamp.compareAndSet(null, new Date());
     }
@@ -210,6 +218,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
     /**
      * @since 0.9
      */
+    @Override
     public boolean isValid() {
         return !isStopped() && !isExpired();
     }
@@ -258,6 +267,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return false;
     }
 
+    @Override
     public void validate() throws InvalidSessionException {
         //check for stopped:
         if (isStopped()) {
@@ -305,6 +315,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return local;
     }
 
+    @Override
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
         Map<Object, Object> attributes = getAttributes();
         if (attributes == null) {
@@ -313,6 +324,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return attributes.keySet();
     }
 
+    @Override
     public Object getAttribute(Object key) {
         Map<Object, Object> attributes = getAttributes();
         if (attributes == null) {
@@ -321,6 +333,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         return attributes.get(key);
     }
 
+    @Override
     public void setAttribute(Object key, Object value) {
         if (value == null) {
             removeAttribute(key);
@@ -329,6 +342,7 @@ public class SimpleSession implements ValidatingSession, Serializable {
         }
     }
 
+    @Override
     public Object removeAttribute(Object key) {
         Map<Object, Object> attributes = getAttributes();
         if (attributes == null) {
@@ -526,7 +540,12 @@ public class SimpleSession implements ValidatingSession, Serializable {
             this.host = in.readUTF();
         }
         if (isFieldPresent(bitMask, ATTRIBUTES_BIT_MASK)) {
-            this.attributes = (ConcurrentHashMap<Object, Object>) in.readObject();
+            var attributes = (Map<Object, Object>) in.readObject();
+            if (attributes instanceof ConcurrentHashMap<Object, Object>) {
+                this.attributes = attributes;
+            } else {
+                this.attributes = new ConcurrentHashMap<>(attributes);
+            }
         }
     }
 
