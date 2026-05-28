@@ -39,6 +39,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
+import javax.naming.ldap.Rdn;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -234,11 +235,12 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
     }
 
     protected String getUsernameWithSuffix(String username) {
+        String sanitizedUsername = Rdn.escapeValue(username);
         if (principalSuffix != null
-                && !username.toLowerCase(Locale.ROOT).endsWith(principalSuffix.toLowerCase(Locale.ROOT))) {
-            return username + principalSuffix;
+                && !sanitizedUsername.toLowerCase(Locale.ROOT).endsWith(principalSuffix.toLowerCase(Locale.ROOT))) {
+            return sanitizedUsername + principalSuffix;
         }
-        return username;
+        return sanitizedUsername;
     }
 
 }
