@@ -22,7 +22,6 @@ github:
   homepage: https://shiro.apache.org/
   dependabot_alerts: true
   protected_branches:
-    main: { }
   features:
     wiki: false
     issues: true
@@ -32,7 +31,31 @@ github:
     squash: true
     merge: true
     rebase: false
-
+  rulesets:
+    - name: "Branch Protection"
+      type: branch
+      branches:
+        includes:
+          - "main"
+          - "2.x"
+          - "1.13.x"
+          - "release/*"
+        excludes: []
+      bypass_teams:
+        - "release-managers"
+      restrict_deletion: true
+      restrict_force_push: true
+      required_signatures: false
+      required_linear_history: true
+      required_conversation_resolution: false
+      required_pull_request_reviews:
+        dismiss_stale_reviews: true
+        require_last_push_approval: false
+        require_code_owner_reviews: false
+        required_approving_review_count: 0
+      required_status_checks:
+        - name: "build"
+          app_slug: "github-actions"
 notifications:
   pullrequests: commits@shiro.apache.org
   commits: commits@shiro.apache.org
