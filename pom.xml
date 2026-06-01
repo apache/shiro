@@ -460,7 +460,7 @@
                 <plugin>
                     <groupId>com.github.siom79.japicmp</groupId>
                     <artifactId>japicmp-maven-plugin</artifactId>
-                    <version>0.25.7</version>
+                    <version>0.26.0</version>
                     <configuration>
                         <oldVersion>
                             <dependency>
