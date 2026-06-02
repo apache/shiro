@@ -21,7 +21,7 @@ github:
   that performs authentication, authorization, cryptography, and session management"
   homepage: https://shiro.apache.org/
   dependabot_alerts: true
-  protected_branches:
+  protected_branches: ~
   features:
     wiki: false
     issues: true
