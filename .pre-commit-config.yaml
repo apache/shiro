@@ -39,7 +39,7 @@ repos:
           track and have security implications. Please remove the zip file from the repository
         files: (?i)\.zip$
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.5.6
+    rev: ad1b27d73581aa16cca06fc4a0761fc563ffe8e8 # frozen: v1.5.6
     hooks:
       - id: chmod
         name: set file permissions
@@ -48,13 +48,13 @@ repos:
         files: \.md$
         stages: [manual]
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.2
+    rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a # frozen: v2.4.2
     hooks:
       - id: codespell
         name: run codespell
         description: Check spelling with codespell
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: check-case-conflict
         description: Check for files with names that would conflict on a case-insensitive filesystem like MacOS HFS+ or Windows FAT
@@ -100,7 +100,7 @@ repos:
         description: Trims trailing whitespace
         args: [--markdown-linebreak-ext=md]
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.48.0
+    rev: e72a3ca1632f0b11a07d171449fe447a7ff6795e # frozen: v0.48.0
     hooks:
       - id: markdownlint
         name: run markdownlint
@@ -110,7 +110,7 @@ repos:
         types: [markdown]
         files: \.md$
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.38.0
+    rev: cba56bcde1fdd01c1deb3f945e69764c291a6530 # frozen: v1.38.0
     hooks:
       - id: yamllint
         name: run yamllint
@@ -119,13 +119,13 @@ repos:
         types: [yaml]
         files: \.ya?ml$
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.30.1
+    rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e # frozen: v8.30.1
     hooks:
       - id: gitleaks
         name: run gitleaks
         description: check for secrets with gitleaks
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.25.2
+    rev: 9257c6050c0261b8c57e712f632dc4a8010109a9 # frozen: v1.25.2
     hooks:
       - id: zizmor
         name: run zizmor
@@ -134,13 +134,13 @@ repos:
         files: ^\.github/workflows/.*$
         types: [yaml]
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.12
+    rev: 914e7df21a07ef503a81201c76d2b11c789d3fca # frozen: v1.7.12
     hooks:
       - id: actionlint
         name: run actionlint
         description: actionlint is a static checker for GitHub Actions workflow files
   - repo: https://github.com/tcort/markdown-link-check
-    rev: v3.14.2
+    rev: 3a8992dcbb083a248671812c7027b6995ef88523 # frozen: v3.14.2
     hooks:
       - id: markdown-link-check
         name: run markdown-link-check
@@ -149,36 +149,33 @@ repos:
         types: [markdown]
         files: \.md$
   - repo: https://github.com/oxipng/oxipng
-    rev: v10.1.1
+    rev: 628e241e23f368097883807fa6e985ccf7c00357 # frozen: v10.1.1
     hooks:
       - id: oxipng
         name: run oxipng
         description: check PNG files with oxipng
         args: ['--fix', '-o', '4', '--strip', 'safe', '--alpha']
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.2
-    hooks:
-      - id: check-dependabot
-        name: validate dependabot.yml
-        description: ensures the dependabot config file is valid
-        files: ^\.github/dependabot\.yml$
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.11.0.1
-    hooks:
-      - id: shellcheck
-        name: run shellcheck
-        description: check Shell scripts with shellcheck
-  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 3.6.1
-    hooks:
-      - id: editorconfig-checker
-        name: run editorconfig-checker
-        description: a tool to verify that your files are in harmony with your .editorconfig
-        alias: ec
-  - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.2
+    rev: f805888065fdb6162e1f800e50bb9460cbd223d6 # frozen: 0.37.2
     hooks:
       - id: check-citation-file-format
         name: run check-citation-file-format
         description: validate citation file format
         files: ^CITATION\.cff$
+      - id: check-dependabot
+        name: validate dependabot.yml
+        description: ensures the dependabot config file is valid
+        files: ^\.github/dependabot\.yml$
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: 745eface02aef23e168a8afb6b5737818efbea95 # frozen: v0.11.0.1
+    hooks:
+      - id: shellcheck
+        name: run shellcheck
+        description: check Shell scripts with shellcheck
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: bebfac867564fbd992e5b45379b4b0568d5cb85b # frozen: 3.6.1
+    hooks:
+      - id: editorconfig-checker
+        name: run editorconfig-checker
+        description: a tool to verify that your files are in harmony with your .editorconfig
+        alias: ec
