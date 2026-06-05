@@ -42,8 +42,7 @@ github:
           - "release/*"
         excludes: []
       bypass_teams:
-        # shiro-private
-        - "6163760"
+        - "shiro private"
       restrict_deletion: true
       restrict_force_push: true
       required_signatures: false
