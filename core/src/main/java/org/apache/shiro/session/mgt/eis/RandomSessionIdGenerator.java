@@ -30,7 +30,11 @@ import java.util.Random;
  * implementation is a {@link java.security.SecureRandom SecureRandom} with the {@code SHA1PRNG} algorithm.
  *
  * @since 1.0
+ * @deprecated since 2.0. Use {@link JavaUuidSessionIdGenerator} instead. This class uses only 64 bits of entropy
+ *             which is below modern industry minimums (128 bits per OWASP ASVS and NIST SP 800-63B) and poses
+ *             a security risk if used in production.
  */
+@Deprecated
 public class RandomSessionIdGenerator implements SessionIdGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RandomSessionIdGenerator.class);
