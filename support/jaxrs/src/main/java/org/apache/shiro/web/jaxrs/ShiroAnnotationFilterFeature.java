@@ -62,7 +62,7 @@ public class ShiroAnnotationFilterFeature implements DynamicFeature {
     public void configure(ResourceInfo resourceInfo, FeatureContext context) {
         List<Annotation> authzSpecs = new ArrayList<>();
         var annotations = SHIRO_ANNOTATIONS;
-        if (Boolean.TRUE.equals(context.getConfiguration().getProperty(SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM))) {
+        if (!Boolean.TRUE.equals(context.getConfiguration().getProperty(SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM))) {
             annotations = Stream.concat(SHIRO_ANNOTATIONS.stream(), JSR_250_ANNOTATIONS.stream())
                     .collect(Collectors.toList());
         }
