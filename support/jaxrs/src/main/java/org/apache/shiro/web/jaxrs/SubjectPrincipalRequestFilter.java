@@ -34,7 +34,20 @@ import java.io.IOException;
 @PreMatching
 public class SubjectPrincipalRequestFilter implements ContainerRequestFilter {
     @SuppressWarnings("checkstyle:JavadocVariable")
-    public static final String SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.jaxrs.disable-principal";
+        /**
+     * Configuration parameter to disable the injection of the Shiro Subject/Principal in JAX-RS.
+     *
+     * <p><strong>⚠️ WARNING: Side-Effect on JSR-250 Annotations</strong><br>
+     * Setting this parameter to {@code true} will also <em>silently disable</em>
+     * the processing of JSR-250 security annotations (such as {@code @RolesAllowed},
+     * {@code @PermitAll}, and {@code @DenyAll}). Because JSR-250 annotations require
+     * a valid Principal to evaluate roles against, disabling the principal inherently
+     * removes the framework's ability to enforce these declarative authorization checks.
+     *
+     * <p>If your application relies on JSR-250 annotations for access control,
+     * <strong>do not</strong> enable this parameter.
+     */
+    public static final String SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.jaxrs.disable-principal";";
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
