@@ -47,7 +47,7 @@ public class SubjectPrincipalRequestFilter implements ContainerRequestFilter {
      * <p>If your application relies on JSR-250 annotations for access control,
      * <strong>do not</strong> enable this parameter.
      */
-    public static final String SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.jaxrs.disable-principal";";
+    public static final String SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.jaxrs.disable-principal";
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
