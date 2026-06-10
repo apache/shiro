@@ -34,7 +34,7 @@ import java.io.IOException;
 @PreMatching
 public class SubjectPrincipalRequestFilter implements ContainerRequestFilter {
     @SuppressWarnings("checkstyle:JavadocVariable")
-        /**
+    /**
      * Configuration parameter to disable the injection of the Shiro Subject/Principal in JAX-RS.
      *
      * <p><strong>⚠️ WARNING: Side-Effect on JSR-250 Annotations</strong><br>

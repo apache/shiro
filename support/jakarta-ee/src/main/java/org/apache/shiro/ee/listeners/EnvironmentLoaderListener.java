@@ -46,7 +46,7 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
     private static final String SHIRO_EE_CHAR_ENCODING_PARAM = "org.apache.shiro.ee.character-encoding";
     private static final String FORM_RESUBMIT_DISABLED_PARAM = "org.apache.shiro.form-resubmit.disabled";
     private static final String FORM_RESUBMIT_SECURE_COOKIES = "org.apache.shiro.form-resubmit.secure-cookies";
-        /**
+    /**
      * Configuration parameter to disable the injection of the Shiro Subject/Principal.
      *
      * <p><strong>⚠️ WARNING: Side-Effect on JSR-250 Annotations</strong><br>
