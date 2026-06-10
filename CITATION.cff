@@ -20,7 +20,16 @@ message: If you use this software, please cite it as below.
 title: Apache Shiro
 type: software
 authors:
-  - name: Apache Shiro Project
+  - name: Apache Shiro Contributors
 repository-code: https://github.com/apache/shiro
 url: https://shiro.apache.org
 license: Apache-2.0
+abstract: Apache Shiro is a powerful and easy-to-use Java security framework that performs authentication, authorization, cryptography, and session management
+keywords:
+  - security
+  - authentication
+  - authorization
+  - cryptography
+  - session-management
+  - Java
+  - Apache
