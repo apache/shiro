@@ -132,6 +132,34 @@
                 <revision>1.4.0-RC2</revision>
             </Version>
         </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 1.13.0</name>
+                <created>2023-10-31</created>
+                <revision>1.13.0</revision>
+            </Version>
+        </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 2.1.0</name>
+                <created>2026-02-04</created>
+                <revision>2.1.0</revision>
+            </Version>
+        </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 3.0.0-alpha-1</name>
+                <created>2026-02-22</created>
+                <revision>3.0.0-alpha-1</revision>
+            </Version>
+        </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 2.2.0</name>
+                <created>2026-05-26</created>
+                <revision>2.2.0</revision>
+            </Version>
+        </release>
 
         <repository>
             <GitRepository>
@@ -140,6 +168,18 @@
             </GitRepository>
         </repository>
         <maintainer>
+            <foaf:Person>
+                <foaf:name>Lenny Primak</foaf:name>
+                <foaf:mbox rdf:resource="mailto:lenny@flowlogix.com"/>
+            </foaf:Person>
+            <foaf:Person>
+                <foaf:name>François Papon</foaf:name>
+                <foaf:mbox rdf:resource="mailto:fpapon@apache.org"/>
+            </foaf:Person>
+            <foaf:Person>
+                <foaf:name>Benjamin Marwell</foaf:name>
+                <foaf:mbox rdf:resource="mailto:bmarwell@apache.org"/>
+            </foaf:Person>
             <foaf:Person>
                 <foaf:name>Les Hazlewood</foaf:name>
                 <foaf:mbox rdf:resource="mailto:lhazlewood@apache.org"/>
