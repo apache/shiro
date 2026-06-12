@@ -695,6 +695,7 @@
                         <exclude>**/*$$EnhancerBy*CGLIB$$*</exclude>
                         <exclude>**/*$MockitoMock$*</exclude>
                         <exclude>**/*$HibernateProxy$*</exclude>
+                        <exclude>**/*$Proxy$*WeldClientProxy</exclude>
                         <exclude>org/apache/shiro/samples/guice/SampleShiroGuiceBootstrap</exclude>
                         <exclude>org/apache/shiro/samples/guice/SampleShiroServletModule</exclude>
                         <exclude>org/apache/shiro/**/*Test</exclude>
