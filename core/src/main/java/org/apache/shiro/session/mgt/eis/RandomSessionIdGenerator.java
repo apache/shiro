@@ -30,7 +30,10 @@ import java.util.Random;
  * implementation is a {@link java.security.SecureRandom SecureRandom} with the {@code SHA1PRNG} algorithm.
  *
  * @since 1.0
+ * @deprecated since 2.2.1. Use {@link JavaUuidSessionIdGenerator} instead, as this class is no longer considered
+ * secure by modern standards.
  */
+@Deprecated(forRemoval = true, since = "2.2.1")
 public class RandomSessionIdGenerator implements SessionIdGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RandomSessionIdGenerator.class);
