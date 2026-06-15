@@ -13,7 +13,7 @@
  */
 package org.apache.shiro.testing.cdi;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.apache.shiro.cdi.annotations.CipherKeySupplier;
 

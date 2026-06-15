@@ -35,49 +35,21 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty.version}</version>
+                <groupId>org.eclipse.jetty.ee11</groupId>
+                <artifactId>jetty-ee11-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <contextPath>/</contextPath>
-                    <httpConnector>
-                        <port>9080</port>
-                        <idleTimeout>60000</idleTimeout>
-                    </httpConnector>
-                    <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
-                        <filename>./target/yyyy_mm_dd.request.log</filename>
-                        <retainDays>90</retainDays>
-                        <append>true</append>
-                        <extended>false</extended>
-                        <logTimeZone>GMT</logTimeZone>
-                    </requestLog>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExclude>
+                            org.apache.shiro:shiro-servlet-plugin
+                        </classpathDependencyExclude>
+                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <!-- Currently the test fails with JDK11, so exclude it -->
-    <profiles>
-        <profile>
-            <id>jdk9-plus</id>
-            <activation>
-                <jdk>[9,)</jdk>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/ContainerIntegrationIT.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <dependencies>
         <dependency>
@@ -86,18 +58,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-spec</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.taglibs</groupId>
-            <artifactId>taglibs-standard-impl</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -117,16 +79,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jsp</artifactId>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-apache-jsp</artifactId>
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>apache-jstl</artifactId>
+            <groupId>org.eclipse.jetty.ee11</groupId>
+            <artifactId>jetty-ee11-annotations</artifactId>
             <version>${jetty.version}</version>
-            <type>pom</type>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -135,5 +96,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

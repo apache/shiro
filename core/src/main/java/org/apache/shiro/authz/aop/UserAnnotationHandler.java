@@ -47,7 +47,7 @@ public class UserAnnotationHandler extends AuthorizingAnnotationHandler {
     }
 
     /**
-     * Ensures that the calling <code>Subject</code> is a <em>user</em>, that is, they are <em>either</code>
+     * Ensures that the calling <code>Subject</code> is a <em>user</em>, that is, they are <em><code>either</code>
      * {@link org.apache.shiro.subject.Subject#isAuthenticated() authenticated} <b><em>or</em></b> remembered via remember
      * me services before allowing access, and if not, throws an
      * <code>AuthorizingException</code> indicating access is not allowed.

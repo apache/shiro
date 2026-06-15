@@ -43,6 +43,4 @@
         <module>meecrowave</module>
         <module>openliberty</module>
     </modules>
-
-
 </project>

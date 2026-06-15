@@ -30,14 +30,13 @@ import java.util.Map;
 
 import static org.apache.shiro.web.filter.authz.SslFilter.HSTS.DEFAULT_MAX_AGE;
 import static org.apache.shiro.web.filter.authz.SslFilter.HSTS.HTTP_HEADER;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.newCapture;
 import static org.easymock.EasyMock.replay;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SslFilterTest {
 
@@ -84,14 +83,14 @@ public class SslFilterTest {
     @Test
     void testDisabledByDefault() {
         sslFilter.postHandle(request, response);
-        assertNull(response.getHeader(HTTP_HEADER));
+        assertThat(response.getHeader(HTTP_HEADER)).isNull();
     }
 
     @Test
     void testDefaultValues() {
         sslFilter.getHsts().setEnabled(true);
         sslFilter.postHandle(request, response);
-        assertEquals("max-age=" + DEFAULT_MAX_AGE, response.getHeader(HTTP_HEADER));
+        assertThat(response.getHeader(HTTP_HEADER)).isEqualTo("max-age=" + DEFAULT_MAX_AGE);
     }
 
     @SuppressWarnings("checkstyle:MagicNumber")
@@ -104,7 +103,7 @@ public class SslFilterTest {
 
         String expected = "max-age=" + 7776000 + "; includeSubDomains";
 
-        assertEquals(expected, response.getHeader(HTTP_HEADER));
+        assertThat(response.getHeader(HTTP_HEADER)).isEqualTo(expected);
     }
 
 }

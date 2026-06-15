@@ -26,17 +26,16 @@ import org.slf4j.LoggerFactory;
  * @since 1.3
  */
 public class SimplePrincipalCollectionTest {
-
     private static final Logger LOG = LoggerFactory.getLogger(SimplePrincipalCollectionTest.class);
 
     @Test
     void multiplePrincipalsTest() {
-        SimplePrincipalCollection principalCollection = new SimplePrincipalCollection();
-        principalCollection.add("frank", "realm1");
-        principalCollection.add("johnny", "realm1");
-        principalCollection.add("Alberto", "realm2");
+        var principalCollection = new ImmutablePrincipalCollection.Builder();
+        principalCollection.addPrincipal("frank", "realm1");
+        principalCollection.addPrincipal("johnny", "realm1");
+        principalCollection.addPrincipal("Alberto", "realm2");
 
-        PrincipalCollection underTest = principalCollection;
+        PrincipalCollection underTest = principalCollection.build();
 
 //        underTest.
         LOG.trace("{}", principalCollection);

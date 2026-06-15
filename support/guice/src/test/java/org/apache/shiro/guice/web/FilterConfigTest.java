@@ -25,17 +25,17 @@ import org.apache.shiro.guice.ShiroModuleTest;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FilterConfigTest {
     private FilterChainResolver setupResolver() {
@@ -69,7 +69,7 @@ public class FilterConfigTest {
         HttpServletRequest request = createMockRequest("/index.html");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNotNull(resolved);
+        assertThat(resolved).isNotNull();
         verify(request);
     }
 
@@ -81,7 +81,7 @@ public class FilterConfigTest {
         HttpServletRequest request = createMockRequest("/index2.html");
 
         FilterChain resolved = resolver.getChain(request, response, chain);
-        assertNotNull(resolved);
+        assertThat(resolved).isNotNull();
         verify(request);
     }
 

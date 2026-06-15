@@ -22,8 +22,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
 /**

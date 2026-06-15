@@ -23,7 +23,7 @@ import java.lang.annotation.Annotation;
 /**
  * MethodInterceptor that inspects a specific annotation on the method invocation before continuing
  * its execution.
- * </p>
+ * <p>
  * The annotation is acquired from the {@link MethodInvocation MethodInvocation} via a
  * {@link AnnotationResolver AnnotationResolver} instance that may be configured.  Unless
  * overridden, the default {@code AnnotationResolver} is a

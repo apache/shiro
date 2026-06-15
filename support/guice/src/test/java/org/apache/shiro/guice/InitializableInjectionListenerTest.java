@@ -26,7 +26,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
 
-public class InitializableInjectionListenerTest {
+class InitializableInjectionListenerTest {
     @Test
     void testAfterInjection() throws Exception {
         Initializable initializable = createMock(Initializable.class);
@@ -35,7 +35,7 @@ public class InitializableInjectionListenerTest {
 
         replay(initializable);
 
-        InitializableInjectionListener underTest = new InitializableInjectionListener();
+        InitializableInjectionListener<?> underTest = new InitializableInjectionListener<>();
         underTest.afterInjection(initializable);
 
         verify(initializable);

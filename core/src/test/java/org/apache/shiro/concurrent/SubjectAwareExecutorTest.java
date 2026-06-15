@@ -25,7 +25,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.util.concurrent.Executor;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -49,6 +49,6 @@ public class SubjectAwareExecutorTest extends SecurityManagerTestSupport {
         ArgumentCaptor<SubjectRunnable> subjectRunnableArgumentCaptor = ArgumentCaptor.forClass(SubjectRunnable.class);
         verify(targetMockExecutor).execute(subjectRunnableArgumentCaptor.capture());
         SubjectRunnable subjectRunnable = subjectRunnableArgumentCaptor.getValue();
-        assertNotNull(subjectRunnable);
+        assertThat(subjectRunnable).isNotNull();
     }
 }

@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.HashSet;
 import java.util.Objects;
 
 
@@ -40,7 +39,6 @@ import java.util.Objects;
  * <p>
  * The first principal of the first non-empty realm is considered the primary principal of this collection.
  */
-@SuppressWarnings("unchecked")
 public final class ImmutablePrincipalCollection implements PrincipalCollection {
 
     /**
@@ -141,6 +139,7 @@ public final class ImmutablePrincipalCollection implements PrincipalCollection {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T oneByType(Class<T> type) {
         for (Set<?> set : realmPrincipals.values()) {
             for (Object principal : set) {
@@ -153,6 +152,7 @@ public final class ImmutablePrincipalCollection implements PrincipalCollection {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> Set<T> byType(Class<T> type) {
         Set<T> typed = new LinkedHashSet<>();
         for (Set<?> set : realmPrincipals.values()) {
@@ -171,8 +171,8 @@ public final class ImmutablePrincipalCollection implements PrincipalCollection {
     }
 
     @Override
-    public Set<?> asSet() {
-        Set<Object> result = new HashSet<>();
+    public Set<Object> asSet() {
+        Set<Object> result = new LinkedHashSet<>();
         for (Set<?> set : realmPrincipals.values()) {
             result.addAll(set);
         }
@@ -201,7 +201,7 @@ public final class ImmutablePrincipalCollection implements PrincipalCollection {
     }
 
     @Override
-    public Iterator<?> iterator() {
+    public Iterator<Object> iterator() {
         return asSet().iterator();
     }
 
@@ -262,7 +262,7 @@ public final class ImmutablePrincipalCollection implements PrincipalCollection {
             if (realmName == null) {
                 throw new NullPointerException("realmName argument cannot be null.");
             }
-            return realmPrincipals.computeIfAbsent(realmName, (_key) -> new LinkedHashSet<>());
+            return realmPrincipals.computeIfAbsent(realmName, key -> new LinkedHashSet<>());
         }
 
         /**
@@ -314,8 +314,10 @@ public final class ImmutablePrincipalCollection implements PrincipalCollection {
             if (principals == null) {
                 throw new NullPointerException("principals argument cannot be null.");
             }
-            for (String realmName : principals.getRealmNames()) {
-                addPrincipals(principals.fromRealm(realmName), realmName);
+            if (!principals.isEmpty()) {
+                for (String realmName : principals.getRealmNames()) {
+                    addPrincipals(principals.fromRealm(realmName), realmName);
+                }
             }
             return this;
         }

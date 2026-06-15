@@ -18,9 +18,9 @@ import static org.apache.shiro.ee.cdi.ShiroScopeContext.isWebContainerSessions;
 import org.apache.shiro.ee.filters.Forms;
 
 import java.util.Map;
-import javax.ejb.EJBException;
-import javax.enterprise.inject.Model;
-import javax.inject.Inject;
+import jakarta.ejb.EJBException;
+import jakarta.enterprise.inject.Model;
+import jakarta.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;

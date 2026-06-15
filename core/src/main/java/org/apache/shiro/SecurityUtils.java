@@ -21,6 +21,7 @@ package org.apache.shiro;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.WrappedSecurityManager;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ScopedValues;
 import org.apache.shiro.util.ThreadContext;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -54,6 +55,11 @@ public abstract class SecurityUtils {
      *                               - a Subject should <em>always</em> be available to the caller.
      */
     public static Subject getSubject() {
+        if (ScopedValues.INSTANCE.isSupported() && ScopedValues.INSTANCE.isBound()) {
+            return ScopedValues.INSTANCE.get().subject();
+        }
+
+        // fallback to ThreadContext
         Subject subject = ThreadContext.getSubject();
         if (subject == null) {
             subject = (new Subject.Builder()).buildSubject();
@@ -114,6 +120,10 @@ public abstract class SecurityUtils {
      *                                             calling code, which typically indicates an invalid application configuration.
      */
     public static SecurityManager getSecurityManager() throws UnavailableSecurityManagerException {
+        if (ScopedValues.INSTANCE.isSupported() && ScopedValues.INSTANCE.isBound()) {
+            return ScopedValues.INSTANCE.get().securityManager();
+        }
+
         SecurityManager securityManager = ThreadContext.getSecurityManager();
         if (securityManager == null) {
             securityManager = SecurityUtils.securityManager;
@@ -178,8 +188,8 @@ public abstract class SecurityUtils {
     public static <SM extends SecurityManager> SM
     unwrapSecurityManager(SecurityManager securityManager, Class<SM> type,
                           Predicate<Class<? extends SecurityManager>> predicate) {
-        while (securityManager instanceof WrappedSecurityManager && !predicate.test(securityManager.getClass())) {
-            WrappedSecurityManager wrappedSecurityManager = (WrappedSecurityManager) securityManager;
+        while (securityManager instanceof WrappedSecurityManager wrappedSecurityManager
+                && !predicate.test(securityManager.getClass())) {
             securityManager = wrappedSecurityManager.unwrap();
             if (securityManager == wrappedSecurityManager) {
                 throw new IllegalStateException("SecurityManager implementation of type [" + type.getName()

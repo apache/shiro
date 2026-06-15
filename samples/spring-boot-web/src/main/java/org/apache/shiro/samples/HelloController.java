@@ -26,14 +26,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Collection;
 import java.util.Map;
 
 @Controller
 public class HelloController {
-
-    @SuppressWarnings("Duplicates")
     @RequestMapping("/")
     public String home(HttpServletRequest request, Model model) {
 
@@ -44,6 +43,7 @@ public class HelloController {
         PrincipalCollection principalCollection = subject.getPrincipals();
 
         if (principalCollection != null && !principalCollection.isEmpty()) {
+            @SuppressWarnings("rawtypes")
             Collection<Map> principalMaps = subject.getPrincipals().byType(Map.class);
             if (CollectionUtils.isEmpty(principalMaps)) {
                 name = subject.getPrincipal().toString();

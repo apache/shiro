@@ -34,26 +34,28 @@ import javax.sql.DataSource;
  */
 public class BootstrapDataPopulator implements InitializingBean {
 
-    private static final String CREATE_TABLES = "create table users (\n"
-            + "    username varchar(255) primary key,\n"
-            + "    password varchar(255) not null\n"
-            + ");\n"
-            + "\n"
-            + "create table roles (\n"
-            + "    role_name varchar(255) primary key\n"
-            + ");\n"
-            + "\n"
-            + "create table user_roles (\n"
-            + "    username varchar(255) not null,\n"
-            + "    role_name varchar(255) not null,\n"
-            + "    constraint user_roles_uq unique ( username, role_name )\n"
-            + ");\n"
-            + "\n"
-            + "create table roles_permissions (\n"
-            + "    role_name varchar(255) not null,\n"
-            + "    permission varchar(255) not null,\n"
-            + "    primary key (role_name, permission)\n"
-            + ");";
+    private static final String CREATE_TABLES = """
+            create table users (
+                username varchar(255) primary key,
+                password varchar(255) not null
+            );
+
+            create table roles (
+                role_name varchar(255) primary key
+            );
+
+            create table user_roles (
+                username varchar(255) not null,
+                role_name varchar(255) not null,
+                constraint user_roles_uq unique ( username, role_name )
+            );
+
+            create table roles_permissions (
+                role_name varchar(255) not null,
+                permission varchar(255) not null,
+                primary key (role_name, permission)
+            );\
+            """;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BootstrapDataPopulator.class);
 

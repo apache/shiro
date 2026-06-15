@@ -30,9 +30,10 @@ import org.apache.shiro.lang.util.Destroyable;
  * @param <I>
  */
 class DestroyableInjectionListener<I extends Destroyable> implements InjectionListener<I> {
+    @SuppressWarnings("rawtypes")
     public static final Matcher<TypeLiteral> MATCHER = ShiroMatchers.typeLiteral(Matchers.subclassesOf(Destroyable.class));
 
-    private DestroyableRegistry registry;
+    private final DestroyableRegistry registry;
 
     DestroyableInjectionListener(DestroyableRegistry registry) {
         this.registry = registry;

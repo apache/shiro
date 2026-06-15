@@ -39,12 +39,10 @@ import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.apache.shiro.web.servlet.OncePerRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -76,14 +74,8 @@ import java.util.Map;
  * While there is a {@link #setFilters(java.util.Map) filters} property that allows you to assign a filter beans
  * to the 'pool' of filters available when defining {@link #setFilterChainDefinitions(String) filter chains}, it is
  * optional.
- * <p/>
- * This implementation is also a {@link BeanPostProcessor} and will acquire
- * any {@link javax.servlet.Filter Filter} beans defined independently in your Spring application context.  Upon
- * discovery, they will be automatically added to the {@link #setFilters(java.util.Map) map} keyed by the bean ID.
- * That ID can then be used in the filter chain definitions, for example:
- *
  * <pre>
- * &lt;bean id="<b>myCustomFilter</b>" class="com.class.that.implements.javax.servlet.Filter"/&gt;
+ * &lt;bean id="<b>myCustomFilter</b>" class="com.class.that.implements.jakarta.servlet.Filter"/&gt;
  * ...
  * &lt;bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean"&gt;
  *    ...
@@ -119,8 +111,8 @@ import java.util.Map;
  * @see org.springframework.web.filter.DelegatingFilterProxy DelegatingFilterProxy
  * @since 1.0
  */
-public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
-
+@SuppressWarnings("checkstyle:MethodCount")
+public class ShiroFilterFactoryBean implements FactoryBean<Filter> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ShiroFilterFactoryBean.class);
 
     private SecurityManager securityManager;
@@ -135,6 +127,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     private String loginUrl;
     private String successUrl;
     private String unauthorizedUrl;
+    private boolean allowAccessByDefault;
     private boolean caseInsensitive;
 
     private AbstractShiroFilter instance;
@@ -142,11 +135,11 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     private ShiroFilterConfiguration filterConfiguration;
 
     public ShiroFilterFactoryBean() {
-        this.filters = new LinkedHashMap<String, Filter>();
+        this.filters = new LinkedHashMap<>();
         this.globalFilters = new ArrayList<>();
         this.globalFilters.add(DefaultFilter.invalidRequest.name());
         //order matters!
-        this.filterChainDefinitionMap = new LinkedHashMap<String, String>();
+        this.filterChainDefinitionMap = new LinkedHashMap<>();
         this.filterConfiguration = new ShiroFilterConfiguration();
     }
 
@@ -209,7 +202,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * configure the 'loginUrl' property manually on each filter instance, and instead that can be configured once
      * via this attribute.
      * <p/>
-     * <b>*</b>If a filter already has already been explicitly configured with a value, it will
+     * <b>*</b>If a filter has already been explicitly configured with a value, it will
      * <em>not</em> receive this value. Individual filter configuration overrides this global convenience property.
      *
      * @param loginUrl the application's login URL to apply to as a convenience to all discovered
@@ -241,7 +234,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * configure the 'successUrl' property manually on each filter instance, and instead that can be configured once
      * via this attribute.
      * <p/>
-     * <b>*</b>If a filter already has already been explicitly configured with a value, it will
+     * <b>*</b>If a filter has already been explicitly configured with a value, it will
      * <em>not</em> receive this value. Individual filter configuration overrides this global convenience property.
      *
      * @param successUrl the application's after-login success URL to apply to as a convenience to all discovered
@@ -273,7 +266,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * configure the 'unauthorizedUrl' property manually on each filter instance, and instead that can be configured once
      * via this attribute.
      * <p/>
-     * <b>*</b>If a filter already has already been explicitly configured with a value, it will
+     * <b>*</b>If a filter has already been explicitly configured with a value, it will
      * <em>not</em> receive this value. Individual filter configuration overrides this global convenience property.
      *
      * @param unauthorizedUrl the application's 'unauthorized' URL to apply to as a convenience to all discovered
@@ -285,15 +278,15 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     }
 
     /**
-     * @return true if filter chain matching should be case insensitive.
+     * @return true if filter chain matching should be case-insensitive.
      */
     public boolean isCaseInsensitive() {
         return caseInsensitive;
     }
 
     /**
-     * Sets whether filter chain matching should be case insensitive.
-     * @param caseInsensitive true if filter chain matching should be case insensitive.
+     * Sets whether filter chain matching should be case-insensitive.
+     * @param caseInsensitive true if filter chain matching should be case-insensitive.
      */
     public void setCaseInsensitive(boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
@@ -310,6 +303,22 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
     }
 
     /**
+     * @return {@code true} if the default filter chain will allow access if no other filter chain matches.
+     */
+    public boolean isAllowAccessByDefault() {
+        return allowAccessByDefault;
+    }
+
+    /**
+     * Sets whether the default filter chain will allow access if no other filter chain matches.
+     *
+     * @param allowAccessByDefault {@code true} if the default filter chain will allow access
+     */
+    public void setAllowAccessByDefault(boolean allowAccessByDefault) {
+        this.allowAccessByDefault = allowAccessByDefault;
+    }
+
+    /**
      * Sets the filterName-to-Filter map of filters available for reference when creating
      * {@link #setFilterChainDefinitionMap(java.util.Map) filter chain definitions}.
      * <p/>
@@ -319,7 +328,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * <p/>
      * For example, just defining this bean in a web Spring XML application context:
      * <pre>
-     * &lt;bean id=&quot;myFilter&quot; class=&quot;com.class.that.implements.javax.servlet.Filter&quot;&gt;
+     * &lt;bean id=&quot;myFilter&quot; class=&quot;com.class.that.implements.jakarta.servlet.Filter&quot;&gt;
      * ...
      * &lt;/bean&gt;</pre>
      * Will automatically place that bean into this Filters map under the key '<b>myFilter</b>'.
@@ -397,7 +406,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      * @return the application's Shiro Filter instance used to filter incoming web requests.
      * @throws Exception if there is a problem creating the {@code Filter} instance.
      */
-    public Object getObject() throws Exception {
+    @Override
+    public Filter getObject() throws Exception {
         if (instance == null) {
             instance = createInstance();
         }
@@ -409,7 +419,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      *
      * @return <code>{@link org.apache.shiro.web.servlet.AbstractShiroFilter}.class</code>
      */
-    public Class getObjectType() {
+    public Class<?> getObjectType() {
         return SpringShiroFilter.class;
     }
 
@@ -418,6 +428,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      *
      * @return {@code true} always.  There is almost always only ever 1 Shiro {@code Filter} per web application.
      */
+    @Override
     public boolean isSingleton() {
         return true;
     }
@@ -439,8 +450,8 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
                 String name = entry.getKey();
                 Filter filter = entry.getValue();
                 applyGlobalPropertiesIfNecessary(filter);
-                if (filter instanceof Nameable) {
-                    ((Nameable) filter).setName(name);
+                if (filter instanceof Nameable nameable) {
+                    nameable.setName(name);
                 }
                 //'init' argument is false, since Spring-configured filters should be initialized
                 //in Spring (i.e. 'init-method=blah') or implement InitializingBean:
@@ -463,7 +474,11 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
         // create the default chain, to match anything the path matching would have missed
         // TODO this assumes ANT path matching, which might be OK here
-        manager.createDefaultChain("/**");
+        if (isAllowAccessByDefault()) {
+            manager.createDefaultChain("/**", DefaultFilter.anon.name());
+        } else {
+            manager.createDefaultChain("/**", DefaultFilter.noAccess.name());
+        }
 
         return manager;
     }
@@ -518,8 +533,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
     private void applyLoginUrlIfNecessary(Filter filter) {
         String loginUrl = getLoginUrl();
-        if (StringUtils.hasText(loginUrl) && (filter instanceof AccessControlFilter)) {
-            AccessControlFilter acFilter = (AccessControlFilter) filter;
+        if (StringUtils.hasText(loginUrl) && (filter instanceof AccessControlFilter acFilter)) {
             //only apply the login url if they haven't explicitly configured one already:
             String existingLoginUrl = acFilter.getLoginUrl();
             if (AccessControlFilter.DEFAULT_LOGIN_URL.equals(existingLoginUrl)) {
@@ -530,8 +544,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
     private void applySuccessUrlIfNecessary(Filter filter) {
         String successUrl = getSuccessUrl();
-        if (StringUtils.hasText(successUrl) && (filter instanceof AuthenticationFilter)) {
-            AuthenticationFilter authcFilter = (AuthenticationFilter) filter;
+        if (StringUtils.hasText(successUrl) && (filter instanceof AuthenticationFilter authcFilter)) {
             //only apply the successUrl if they haven't explicitly configured one already:
             String existingSuccessUrl = authcFilter.getSuccessUrl();
             if (AuthenticationFilter.DEFAULT_SUCCESS_URL.equals(existingSuccessUrl)) {
@@ -542,8 +555,7 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
 
     private void applyUnauthorizedUrlIfNecessary(Filter filter) {
         String unauthorizedUrl = getUnauthorizedUrl();
-        if (StringUtils.hasText(unauthorizedUrl) && (filter instanceof AuthorizationFilter)) {
-            AuthorizationFilter authzFilter = (AuthorizationFilter) filter;
+        if (StringUtils.hasText(unauthorizedUrl) && (filter instanceof AuthorizationFilter authzFilter)) {
             //only apply the unauthorizedUrl if they haven't explicitly configured one already:
             String existingUnauthorizedUrl = authzFilter.getUnauthorizedUrl();
             if (existingUnauthorizedUrl == null) {
@@ -552,39 +564,14 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
         }
     }
 
-    private void applyGlobalPropertiesIfNecessary(Filter filter) {
+    void applyGlobalPropertiesIfNecessary(Filter filter) {
         applyLoginUrlIfNecessary(filter);
         applySuccessUrlIfNecessary(filter);
         applyUnauthorizedUrlIfNecessary(filter);
 
-        if (filter instanceof OncePerRequestFilter) {
-            ((OncePerRequestFilter) filter).setFilterOncePerRequest(filterConfiguration.isFilterOncePerRequest());
+        if (filter instanceof OncePerRequestFilter requestFilter) {
+            requestFilter.setFilterOncePerRequest(filterConfiguration.isFilterOncePerRequest());
         }
-    }
-
-    /**
-     * Inspects a bean, and if it implements the {@link Filter} interface, automatically adds that filter
-     * instance to the internal {@link #setFilters(java.util.Map) filters map} that will be referenced
-     * later during filter chain construction.
-     */
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (bean instanceof Filter) {
-            LOGGER.debug("Found filter chain candidate filter '{}'", beanName);
-            Filter filter = (Filter) bean;
-            applyGlobalPropertiesIfNecessary(filter);
-            getFilters().put(beanName, filter);
-        } else {
-            LOGGER.trace("Ignoring non-Filter bean '{}'", beanName);
-        }
-        return bean;
-    }
-
-    /**
-     * Does nothing - only exists to satisfy the BeanPostProcessor interface and immediately returns the
-     * {@code bean} argument.
-     */
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
     }
 
     /**
@@ -598,15 +585,15 @@ public class ShiroFilterFactoryBean implements FactoryBean, BeanPostProcessor {
      */
     private static final class SpringShiroFilter extends AbstractShiroFilter {
 
-        protected SpringShiroFilter(WebSecurityManager webSecurityManager,
-                                    FilterChainResolver resolver,
-                                    ShiroFilterConfiguration filterConfiguration) {
+        private SpringShiroFilter(WebSecurityManager webSecurityManager,
+                                  FilterChainResolver resolver,
+                                  ShiroFilterConfiguration filterConfiguration) {
             super();
             if (webSecurityManager == null) {
                 throw new IllegalArgumentException("WebSecurityManager property cannot be null.");
             }
-            setSecurityManager(webSecurityManager);
-            setShiroFilterConfiguration(filterConfiguration);
+            super.setSecurityManager(webSecurityManager);
+            super.setShiroFilterConfiguration(filterConfiguration);
 
             if (resolver != null) {
                 setFilterChainResolver(resolver);

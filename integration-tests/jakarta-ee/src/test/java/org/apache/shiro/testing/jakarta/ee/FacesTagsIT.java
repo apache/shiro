@@ -17,6 +17,7 @@ import java.net.URL;
 
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_DEV_MODE;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.createDeploymentDev;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -27,8 +28,6 @@ import static org.jboss.arquillian.graphene.Graphene.guardHttp;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -108,40 +107,40 @@ public class FacesTagsIT {
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void guestTag() {
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("Guest Content", guest.getText());
+        assertThat(guest.getText()).isEqualTo("Guest Content");
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("", guest.getText());
+        assertThat(guest.getText()).isEqualTo("");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void userTag() {
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("", user.getText());
+        assertThat(user.getText()).isEqualTo("");
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("User Content", user.getText());
+        assertThat(user.getText()).isEqualTo("User Content");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void authenticated() {
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("", authenticated.getText());
+        assertThat(authenticated.getText()).isEqualTo("");
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("Authenticated Content", authenticated.getText());
+        assertThat(authenticated.getText()).isEqualTo("Authenticated Content");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void notAuthenticated() {
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("Not Authenticated Content", notAuthenticated.getText());
+        assertThat(notAuthenticated.getText()).isEqualTo("Not Authenticated Content");
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("", notAuthenticated.getText());
+        assertThat(notAuthenticated.getText()).isEqualTo("");
     }
 
     @Test
@@ -149,7 +148,7 @@ public class FacesTagsIT {
     void principal() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("webuser", principal.getText());
+        assertThat(principal.getText()).isEqualTo("webuser");
     }
 
     @Test
@@ -158,7 +157,7 @@ public class FacesTagsIT {
     void principalByType() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("5", principalByType.getText());
+        assertThat(principalByType.getText()).isEqualTo("5");
     }
 
     @Test
@@ -166,7 +165,7 @@ public class FacesTagsIT {
     void principalByProperty() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("webuser", principalByProperty.getText());
+        assertThat(principalByProperty.getText()).isEqualTo("webuser");
     }
 
     @Test
@@ -174,7 +173,7 @@ public class FacesTagsIT {
     void hasRegularRole() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("Regular Role", regularRole.getText());
+        assertThat(regularRole.getText()).isEqualTo("Regular Role");
     }
 
     @Test
@@ -182,7 +181,7 @@ public class FacesTagsIT {
     void lacksAdminRole() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("Lacks Admin Role", lacksAdminRole.getText());
+        assertThat(lacksAdminRole.getText()).isEqualTo("Lacks Admin Role");
     }
 
     @Test
@@ -190,7 +189,7 @@ public class FacesTagsIT {
     void hasAnyRole() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("Has Some Role", hasAnyRole.getText());
+        assertThat(hasAnyRole.getText()).isEqualTo("Has Some Role");
     }
 
     @Test
@@ -198,7 +197,7 @@ public class FacesTagsIT {
     void hasAnyPermission() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("Has Some Permission", hasAnyPermission.getText());
+        assertThat(hasAnyPermission.getText()).isEqualTo("Has Some Permission");
     }
 
     @Test
@@ -206,7 +205,7 @@ public class FacesTagsIT {
     void hasPermission() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("Has Permission", hasPermission.getText());
+        assertThat(hasPermission.getText()).isEqualTo("Has Permission");
     }
 
     @Test
@@ -214,7 +213,7 @@ public class FacesTagsIT {
     void lacksPermissio() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("Lacks Permission", lacksPermission.getText());
+        assertThat(lacksPermission.getText()).isEqualTo("Lacks Permission");
     }
 
     @Test
@@ -222,7 +221,7 @@ public class FacesTagsIT {
     void remembered() {
         login();
         webDriver.get(baseURL + "shiro/unprotected/tags");
-        assertEquals("", remembered.getText());
+        assertThat(remembered.getText()).isEqualTo("");
     }
 
     private void login() {

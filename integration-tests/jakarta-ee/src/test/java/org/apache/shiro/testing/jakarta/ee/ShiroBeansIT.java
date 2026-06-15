@@ -14,11 +14,9 @@
 package org.apache.shiro.testing.jakarta.ee;
 
 import java.net.URL;
-import java.util.Arrays;
 
-import static org.apache.shiro.ee.util.JakartaTransformer.isJakarta;
-import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_DEV_MODE;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -31,9 +29,6 @@ import static org.jboss.arquillian.graphene.Graphene.waitGui;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -105,31 +100,21 @@ public class ShiroBeansIT {
     void checkDontCallWhenNotAuth() {
         webDriver.get(baseURL + "shiro/unprotected/manybeans");
         guardAjax(facesViewScoped).click();
-        assertTrue(messages.getText().startsWith("view scope unauth: Attempting to perform a user-only operation"),
-                "anonymous user should get an exception");
+        assertThat(messages.getText()).startsWith("view scope unauth: Attempting to perform a user-only operation");
         guardAjax(omniViewScoped).click();
-        assertTrue(messages.getText().startsWith("omni view scope unauth: Attempting to perform a user-only operation"),
-                "anonymous user should get an exception");
+        assertThat(messages.getText()).startsWith("omni view scope unauth: Attempting to perform a user-only operation");
         guardAjax(sessionScoped).click();
-        assertTrue(messages.getText().startsWith("session scoped unauth: Attempting to perform a user-only operation"),
-                "anonymous user should get an exception");
+        assertThat(messages.getText()).startsWith("session scoped unauth: Attempting to perform a user-only operation");
         guardAjax(stateless).click();
-        assertTrue(messages.getText().startsWith("stateless bean unauth: Attempting to perform a user-only operation"),
-                "anonymous user should get an exception");
+        assertThat(messages.getText()).startsWith("stateless bean unauth: Attempting to perform a user-only operation");
         guardAjax(unprotectedMethod).click();
-        assertEquals("unprotected method: hello from unprotected", messages.getText());
+        assertThat(messages.getText()).isEqualTo("unprotected method: hello from unprotected");
         guardAjax(protectedMethod).click();
-        assertTrue(messages.getText().startsWith("protected unauth: Attempting to perform a user-only operation"),
-                "anonymous user should get an exception");
+        assertThat(messages.getText()).startsWith("protected unauth: Attempting to perform a user-only operation");
         webDriver.get(baseURL + "lastException");
         String exceptionText = webDriver.findElement(By.tagName("body")).getText();
-        // Workaround for Payara 5 only: Filter out lines with 'Unsupported class file major version XX'
-        String filteredExceptionText = Arrays.stream(exceptionText.split("\\n"))
-                .filter(line -> !line.contains("Unsupported class file major version"))
-                .reduce("", (a, b) -> a.isEmpty() ? b : a + "\n" + b);
-        assertTrue(filteredExceptionText
-                        .startsWith(jakartify("WARNING: javax.ejb.EJBException: Attempting to perform a user-only operation")),
-                String.format("capturing correct warning from the server: %s", filteredExceptionText));
+        assertThat(exceptionText).startsWith(
+                "WARNING: jakarta.ejb.EJBException: Attempting to perform a user-only operation");
     }
 
     @Test
@@ -140,27 +125,26 @@ public class ShiroBeansIT {
 
         webDriver.get(baseURL + "shiro/unprotected/manybeans");
         guardAjax(facesViewScoped).click();
-        assertTrue(messages.getText().startsWith("Hello from FacesViewScoped"));
+        assertThat(messages.getText()).startsWith("Hello from FacesViewScoped");
         guardAjax(omniViewScoped).click();
-        assertTrue(messages.getText().startsWith("Hello from OmniViewScoped"));
+        assertThat(messages.getText()).startsWith("Hello from OmniViewScoped");
         guardAjax(sessionScoped).click();
-        assertTrue(messages.getText().startsWith("Hello from SessionScoped"));
+        assertThat(messages.getText()).startsWith("Hello from SessionScoped");
         guardAjax(stateless).click();
-        assertTrue(messages.getText().startsWith("Hello from ProtectedStatelessBean"));
+        assertThat(messages.getText()).startsWith("Hello from ProtectedStatelessBean");
         guardAjax(protectedMethod).click();
-        assertEquals("protected method: hello from protected", messages.getText());
+        assertThat(messages.getText()).isEqualTo("protected method: hello from protected");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void beanDestroyCalled() {
-        exerciseViewAndSessionScoped(facesViewScoped, "api/statistics/pc_fv", "api/statistics/pd_fv", !isJakarta());
+        exerciseViewAndSessionScoped(facesViewScoped, "api/statistics/pc_fv", "api/statistics/pd_fv");
         webDriver.get(baseURL + "api/statistics/clear");
-        exerciseViewAndSessionScoped(omniViewScoped, "api/statistics/pc_ofv", "api/statistics/pd_ofv", false);
+        exerciseViewAndSessionScoped(omniViewScoped, "api/statistics/pc_ofv", "api/statistics/pd_ofv");
     }
 
-    private void exerciseViewAndSessionScoped(WebElement elem, String createStatistic, String destroyStatistic,
-                                              boolean isBrokenDestructor) {
+    private void exerciseViewAndSessionScoped(WebElement elem, String createStatistic, String destroyStatistic) {
         webDriver.get(baseURL + "shiro/auth/loginform");
         login();
 
@@ -175,13 +159,13 @@ public class ShiroBeansIT {
         waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
         webDriver.switchTo().alert().accept();
         webDriver.get(baseURL + createStatistic);
-        assertEquals("2", webDriver.findElement(By.tagName("body")).getText());
+        assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("2");
         webDriver.get(baseURL + destroyStatistic);
-        assertEquals(isBrokenDestructor && webSessions ? "1" : "2", webDriver.findElement(By.tagName("body")).getText());
+        assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("2");
         webDriver.get(baseURL + "api/statistics/pc_ss");
-        assertEquals("1", webDriver.findElement(By.tagName("body")).getText());
+        assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("1");
         webDriver.get(baseURL + "api/statistics/pd_ss");
-        assertEquals("1", webDriver.findElement(By.tagName("body")).getText());
+        assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("1");
     }
 
     private void login() {

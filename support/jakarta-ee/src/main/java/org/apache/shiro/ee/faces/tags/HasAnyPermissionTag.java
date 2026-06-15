@@ -15,7 +15,7 @@ package org.apache.shiro.ee.faces.tags;
 
 import org.apache.shiro.subject.Subject;
 
-import javax.faces.view.facelets.TagConfig;
+import jakarta.faces.view.facelets.TagConfig;
 
 /**
  * Tag that renders the tag body only if the current user has <em>at least one</em> of the comma-delimited

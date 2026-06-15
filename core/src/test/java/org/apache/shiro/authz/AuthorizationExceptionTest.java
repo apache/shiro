@@ -26,7 +26,7 @@ import org.apache.shiro.ExceptionTest;
  */
 public class AuthorizationExceptionTest extends ExceptionTest {
 
-    protected Class getExceptionClass() {
+    protected Class<?> getExceptionClass() {
         return AuthorizationException.class;
     }
 }

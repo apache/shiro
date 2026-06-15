@@ -34,11 +34,11 @@ import org.apache.shiro.authz.aop.RoleAnnotationHandler;
 import org.apache.shiro.authz.aop.RolesAllowedAnnotationHandler;
 import org.apache.shiro.authz.aop.UserAnnotationHandler;
 
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Collection;

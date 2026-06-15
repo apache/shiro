@@ -21,8 +21,8 @@ package org.apache.shiro.testing.jaxrs.app.config;
 
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 
-import javax.enterprise.context.Dependent;
-import javax.servlet.annotation.WebListener;
+import jakarta.enterprise.context.Dependent;
+import jakarta.servlet.annotation.WebListener;
 
 @Dependent
 @WebListener

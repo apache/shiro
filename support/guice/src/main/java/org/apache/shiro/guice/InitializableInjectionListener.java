@@ -30,6 +30,7 @@ import org.apache.shiro.lang.util.Initializable;
  * @param <I>
  */
 class InitializableInjectionListener<I extends Initializable> implements InjectionListener<I> {
+    @SuppressWarnings("rawtypes")
     public static final Matcher<TypeLiteral> MATCHER = ShiroMatchers.typeLiteral(Matchers.subclassesOf(Initializable.class));
 
     public void afterInjection(Initializable injectee) {

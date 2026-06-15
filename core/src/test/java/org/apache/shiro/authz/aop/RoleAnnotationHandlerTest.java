@@ -27,10 +27,10 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test cases for the {@link RoleAnnotationHandler} class.
@@ -62,7 +62,8 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
         };
 
         runWithSubject(subject -> {
-            assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresRolesAnnotation));
+            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() ->
+                handler.assertAuthorized(requiresRolesAnnotation));
         });
     }
 
@@ -90,7 +91,8 @@ public class RoleAnnotationHandlerTest extends SecurityManagerTestSupport {
         };
 
         runWithSubject(subject -> {
-            assertThrows(UnauthenticatedException.class, () -> handler.assertAuthorized(requiresRolesAnnotation));
+            assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() ->
+                handler.assertAuthorized(requiresRolesAnnotation));
         });
     }
 

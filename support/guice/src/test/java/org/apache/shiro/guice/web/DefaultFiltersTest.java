@@ -22,12 +22,12 @@ import com.google.inject.Key;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.EnumSet;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.fail;
 
 public class DefaultFiltersTest {
 

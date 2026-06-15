@@ -29,29 +29,24 @@ import java.net.URI;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static jakarta.ws.rs.core.MediaType.TEXT_HTML_TYPE;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class WebContainerIT extends JakartaAbstractContainerIT {
 
     @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     public void logIn() {
-        final Client client = ClientBuilder.newClient();
-
-        try {
+        try (Client client = ClientBuilder.newClient()) {
             Cookie jsessionid;
             try (Response loginPage = client.target(getBaseUri())
                     .path("/login.jsp")
                     .request(TEXT_HTML_TYPE)
                     .get()) {
                 jsessionid = getSessionCookie(loginPage);
-                assertTrue(loginPage.readEntity(String.class).contains("loginform"));
+                assertThat(loginPage.readEntity(String.class)).contains("loginform");
             }
 
-            assertNotNull(jsessionid);
+            assertThat(jsessionid).isNotNull();
             URI location;
             try (Response loginAction = client.target(getBaseUri())
                     .path("/login.jsp")
@@ -59,27 +54,26 @@ public class WebContainerIT extends JakartaAbstractContainerIT {
                     .cookie(jsessionid)
                     .post(Entity.entity("username=root&password=secret&submit=Login", APPLICATION_FORM_URLENCODED))) {
                 jsessionid = getSessionCookie(loginAction);
-                assertEquals(302, loginAction.getStatus());
+                assertThat(loginAction.getStatus()).isEqualTo(302);
                 location = loginAction.getLocation();
             }
 
-            assertNotNull(location);
+            assertThat(location).isNotNull();
             final String loggedPage = client.target(getBaseUri())
                     .path(location.getPath())
                     .request(APPLICATION_FORM_URLENCODED)
                     .cookie(jsessionid)
                     .get(String.class);
-            assertTrue(loggedPage.contains("Hi root!"));
-        } finally {
-            client.close();
+            assertThat(loggedPage).contains("Hi root!");
         }
     }
 
     private static Cookie getSessionCookie(Response response) {
-        return new Cookie("JSESSIONID",  response.getMetadata().get("Set-Cookie")
+        return new Cookie.Builder("JSESSIONID")
+                .value(response.getMetadata().get("Set-Cookie")
                         .stream().map(String.class::cast)
                         .filter(cookie -> cookie.startsWith("JSESSIONID="))
                         .filter(cookie -> !cookie.contains("deleteMe"))
-                        .findAny().get().split(";")[0].split("=")[1]);
+                        .findAny().get().split(";")[0].split("=")[1]).build();
     }
 }

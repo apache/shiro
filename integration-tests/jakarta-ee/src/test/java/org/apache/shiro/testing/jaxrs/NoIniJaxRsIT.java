@@ -16,17 +16,18 @@ package org.apache.shiro.testing.jaxrs;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import javax.json.bind.JsonbException;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.json.bind.JsonbException;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.UriBuilder;
 
 import lombok.Builder;
 import lombok.SneakyThrows;
 import org.apache.shiro.testing.cdi.ComponentInjectionIT;
 
 import static org.apache.shiro.testing.cdi.ComponentInjectionIT.TESTABLE_MODE;
+import static org.assertj.core.api.Assertions.fail;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -35,7 +36,6 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

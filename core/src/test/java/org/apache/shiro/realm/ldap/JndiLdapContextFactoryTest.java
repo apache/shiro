@@ -30,11 +30,9 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.easymock.EasyMock.createNiceMock;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /**
@@ -51,7 +49,7 @@ public class JndiLdapContextFactoryTest {
         factory = new JndiLdapContextFactory() {
             //Fake a JNDI environment for the tests:
             @Override
-            protected LdapContext createLdapContext(Hashtable env) throws NamingException {
+            protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
                 return createNiceMock(LdapContext.class);
             }
         };
@@ -64,7 +62,7 @@ public class JndiLdapContextFactoryTest {
      */
     @Test
     void testGetLdapContext() throws NamingException {
-        assertThrows(NamingException.class, () -> {
+        assertThatExceptionOfType(NamingException.class).isThrownBy(() -> {
             factory = new JndiLdapContextFactory();
             //garbage URL to test that the context is being created, but fails:
             String brokenHost = UUID.randomUUID().toString();
@@ -77,39 +75,39 @@ public class JndiLdapContextFactoryTest {
     void testAuthenticationMechanism() {
         String mech = "MD5-DIGEST";
         factory.setAuthenticationMechanism(mech);
-        assertEquals(mech, factory.getAuthenticationMechanism());
+        assertThat(factory.getAuthenticationMechanism()).isEqualTo(mech);
     }
 
     @Test
     void testReferral() {
         String referral = "throw";
         factory.setReferral(referral);
-        assertEquals(referral, factory.getReferral());
+        assertThat(factory.getReferral()).isEqualTo(referral);
     }
 
     @Test
     void testGetContextFactoryClassName() {
-        assertEquals(JndiLdapContextFactory.DEFAULT_CONTEXT_FACTORY_CLASS_NAME, factory.getContextFactoryClassName());
+        assertThat(factory.getContextFactoryClassName()).isEqualTo(JndiLdapContextFactory.DEFAULT_CONTEXT_FACTORY_CLASS_NAME);
     }
 
     @Test
     void testSetEnvironmentPropertyNull() {
         factory.setAuthenticationMechanism("MD5-DIGEST");
         factory.setAuthenticationMechanism(null);
-        assertNull(factory.getAuthenticationMechanism());
+        assertThat(factory.getAuthenticationMechanism()).isNull();
     }
 
     @Test
     void testCustomEnvironment() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, Object> map = new HashMap<>();
         map.put("foo", "bar");
         factory.setEnvironment(map);
-        assertEquals("bar", factory.getEnvironment().get("foo"));
+        assertThat(factory.getEnvironment()).containsEntry("foo", "bar");
     }
 
     @Test
     void testGetLdapContextWithoutUrl() throws NamingException {
-        assertThrows(IllegalStateException.class, () -> {
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> {
             factory.getLdapContext("foo", "bar");
         });
     }
@@ -118,12 +116,12 @@ public class JndiLdapContextFactoryTest {
     void testGetLdapContextDefault() throws NamingException {
         factory = new JndiLdapContextFactory() {
             @Override
-            protected LdapContext createLdapContext(Hashtable env) throws NamingException {
-                assertEquals("ldap://localhost:389", env.get(Context.PROVIDER_URL));
-                assertEquals("foo", env.get(Context.SECURITY_PRINCIPAL));
-                assertEquals("bar", env.get(Context.SECURITY_CREDENTIALS));
-                assertEquals("simple", env.get(Context.SECURITY_AUTHENTICATION));
-                assertNull(env.get(SUN_CONNECTION_POOLING_PROPERTY));
+            protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
+                assertThat(env).containsEntry(Context.PROVIDER_URL, "ldap://localhost:389");
+                assertThat(env).containsEntry(Context.SECURITY_PRINCIPAL, "foo");
+                assertThat(env).containsEntry(Context.SECURITY_CREDENTIALS, "bar");
+                assertThat(env).containsEntry(Context.SECURITY_AUTHENTICATION, "simple");
+                assertThat(env.get(SUN_CONNECTION_POOLING_PROPERTY)).isNull();
                 return createNiceMock(LdapContext.class);
             }
         };
@@ -137,12 +135,12 @@ public class JndiLdapContextFactoryTest {
     void testGetLdapContextStringArguments() throws NamingException {
         factory = new JndiLdapContextFactory() {
             @Override
-            protected LdapContext createLdapContext(Hashtable env) throws NamingException {
-                assertEquals("ldap://localhost:389", env.get(Context.PROVIDER_URL));
-                assertEquals("foo", env.get(Context.SECURITY_PRINCIPAL));
-                assertEquals("bar", env.get(Context.SECURITY_CREDENTIALS));
-                assertEquals("simple", env.get(Context.SECURITY_AUTHENTICATION));
-                assertNull(env.get(SUN_CONNECTION_POOLING_PROPERTY));
+            protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
+                assertThat(env).containsEntry(Context.PROVIDER_URL, "ldap://localhost:389");
+                assertThat(env).containsEntry(Context.SECURITY_PRINCIPAL, "foo");
+                assertThat(env).containsEntry(Context.SECURITY_CREDENTIALS, "bar");
+                assertThat(env).containsEntry(Context.SECURITY_AUTHENTICATION, "simple");
+                assertThat(env.get(SUN_CONNECTION_POOLING_PROPERTY)).isNull();
                 return createNiceMock(LdapContext.class);
             }
         };
@@ -155,12 +153,12 @@ public class JndiLdapContextFactoryTest {
     void testGetSystemLdapContext() throws NamingException {
         factory = new JndiLdapContextFactory() {
             @Override
-            protected LdapContext createLdapContext(Hashtable env) throws NamingException {
-                assertEquals("ldap://localhost:389", env.get(Context.PROVIDER_URL));
-                assertEquals("foo", env.get(Context.SECURITY_PRINCIPAL));
-                assertEquals("bar", env.get(Context.SECURITY_CREDENTIALS));
-                assertEquals("simple", env.get(Context.SECURITY_AUTHENTICATION));
-                assertNotNull(env.get(SUN_CONNECTION_POOLING_PROPERTY));
+            protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
+                assertThat(env).containsEntry(Context.PROVIDER_URL, "ldap://localhost:389");
+                assertThat(env).containsEntry(Context.SECURITY_PRINCIPAL, "foo");
+                assertThat(env).containsEntry(Context.SECURITY_CREDENTIALS, "bar");
+                assertThat(env).containsEntry(Context.SECURITY_AUTHENTICATION, "simple");
+                assertThat(env.get(SUN_CONNECTION_POOLING_PROPERTY)).isNotNull();
                 return createNiceMock(LdapContext.class);
             }
         };
@@ -175,12 +173,12 @@ public class JndiLdapContextFactoryTest {
     void testGetSystemLdapContextPoolingDisabled() throws NamingException {
         factory = new JndiLdapContextFactory() {
             @Override
-            protected LdapContext createLdapContext(Hashtable env) throws NamingException {
-                assertEquals("ldap://localhost:389", env.get(Context.PROVIDER_URL));
-                assertEquals("foo", env.get(Context.SECURITY_PRINCIPAL));
-                assertEquals("bar", env.get(Context.SECURITY_CREDENTIALS));
-                assertEquals("simple", env.get(Context.SECURITY_AUTHENTICATION));
-                assertNull(env.get(SUN_CONNECTION_POOLING_PROPERTY));
+            protected LdapContext createLdapContext(Hashtable<String, Object> env) throws NamingException {
+                assertThat(env).containsEntry(Context.PROVIDER_URL, "ldap://localhost:389");
+                assertThat(env).containsEntry(Context.SECURITY_PRINCIPAL, "foo");
+                assertThat(env).containsEntry(Context.SECURITY_CREDENTIALS, "bar");
+                assertThat(env).containsEntry(Context.SECURITY_AUTHENTICATION, "simple");
+                assertThat(env.get(SUN_CONNECTION_POOLING_PROPERTY)).isNull();
                 return createNiceMock(LdapContext.class);
             }
         };
@@ -194,7 +192,7 @@ public class JndiLdapContextFactoryTest {
 
     @Test
     void testEmptyStringCredentials() throws NamingException {
-        assertThrows(AuthenticationException.class, () -> {
+        assertThatExceptionOfType(AuthenticationException.class).isThrownBy(() -> {
             factory.setUrl("ldap://localhost:389");
             factory.getLdapContext("jcoder", "");
         });
@@ -202,7 +200,7 @@ public class JndiLdapContextFactoryTest {
 
     @Test
     void testEmptyCharArrayCredentials() throws NamingException {
-        assertThrows(AuthenticationException.class, () -> {
+        assertThatExceptionOfType(AuthenticationException.class).isThrownBy(() -> {
             factory.setUrl("ldap://localhost:389");
             factory.getLdapContext("jcoder", new char[0]);
         });
@@ -210,7 +208,7 @@ public class JndiLdapContextFactoryTest {
 
     @Test
     void testEmptyByteArrayCredentials() throws NamingException {
-        assertThrows(AuthenticationException.class, () -> {
+        assertThatExceptionOfType(AuthenticationException.class).isThrownBy(() -> {
             factory.setUrl("ldap://localhost:389");
             factory.getLdapContext("jcoder", new byte[0]);
         });
@@ -218,7 +216,7 @@ public class JndiLdapContextFactoryTest {
 
     @Test
     void testEmptyNullCredentials() throws NamingException {
-        assertThrows(AuthenticationException.class, () -> {
+        assertThatExceptionOfType(AuthenticationException.class).isThrownBy(() -> {
             factory.setUrl("ldap://localhost:389");
             factory.getLdapContext("jcoder", null);
         });

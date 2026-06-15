@@ -24,9 +24,10 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Web MVC controller that handles security-related web requests, such as login and logout.
@@ -36,12 +37,12 @@ public class SecurityController {
 
     private LoginValidator loginValidator = new LoginValidator();
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @GetMapping("/login")
     public String showLoginForm(Model model, @ModelAttribute LoginCommand command) {
         return "login";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping("/login")
     public String login(Model model, @ModelAttribute LoginCommand command, BindingResult errors) {
         loginValidator.validate(command, errors);
 

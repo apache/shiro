@@ -25,19 +25,18 @@ import org.apache.shiro.testing.jaxrs.app.model.Stormtrooper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class AbstractShiroJaxRsIT {
 
@@ -58,7 +57,7 @@ public abstract class AbstractShiroJaxRsIT {
         final Response usersResponse = usersTarget.request(MediaType.APPLICATION_JSON_TYPE)
                 .buildGet()
                 .invoke();
-        assertEquals(Status.UNAUTHORIZED.getStatusCode(), usersResponse.getStatus());
+        assertThat(usersResponse.getStatus()).isEqualTo(Status.UNAUTHORIZED.getStatusCode());
     }
 
     @SuppressWarnings({"checkstyle:MagicNumber"})
@@ -70,11 +69,10 @@ public abstract class AbstractShiroJaxRsIT {
                 .header("Authorization", "Basic " + basicToken)
                 .buildGet()
                 .invoke();
-        assertEquals(Status.OK.getStatusCode(), usersResponse.getStatus());
+        assertThat(usersResponse.getStatus()).isEqualTo(Status.OK.getStatusCode());
         final Stormtrooper[] stormtroopers = usersResponse.readEntity(Stormtrooper[].class);
-        assertEquals(50, stormtroopers.length);
+        assertThat(stormtroopers.length).isEqualTo(50);
         Arrays.stream(stormtroopers).forEach(stormtrooper
-                -> assertTrue(stormtrooper.getStormtrooperId().getValue().startsWith("u")));
+                -> assertThat(stormtrooper.getStormtrooperId().getValue().startsWith("u")).isTrue());
     }
-
 }

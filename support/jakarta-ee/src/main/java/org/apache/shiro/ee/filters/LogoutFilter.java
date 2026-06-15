@@ -19,9 +19,9 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.getReferer;
 
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.experimental.Delegate;
 import org.apache.shiro.authc.AuthenticationException;

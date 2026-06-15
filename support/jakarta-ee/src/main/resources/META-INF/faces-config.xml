@@ -19,10 +19,10 @@
     under the License.
 
 -->
-<faces-config version="2.3"
-              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+<faces-config version="4.0"
+              xmlns="https://jakarta.ee/xml/ns/jakartaee"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_3.xsd">
+              xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd">
     <component>
         <component-type>org.apache.shiro.ee.faces.tags.PrincipalTag</component-type>
         <component-class>org.apache.shiro.ee.faces.tags.PrincipalTag</component-class>

@@ -14,18 +14,18 @@
 package org.apache.shiro.testing.jaxrs;
 
 import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Destroyed;
-import javax.enterprise.context.Initialized;
-import javax.enterprise.event.Observes;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Destroyed;
+import jakarta.enterprise.context.Initialized;
+import jakarta.enterprise.event.Observes;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 
 import lombok.Getter;
 import org.apache.shiro.authc.SimpleAccount;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.SimpleAccountRealm;
-import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.testing.jakarta.ee.PropertyPrincipal;
 
 @ApplicationPath("/")
@@ -37,7 +37,7 @@ public class TestApplication extends Application {
         var realm = new SimpleAccountRealm("testRealm") {
             @Override
             public void addAccount(String username, String password) {
-                SimpleAccount account = new SimpleAccount(new SimplePrincipalCollection(
+                SimpleAccount account = new SimpleAccount(ImmutablePrincipalCollection.ofSingleRealm(
                         List.of(username, new PropertyPrincipal(username)), getName()), password);
                 add(account);
             }

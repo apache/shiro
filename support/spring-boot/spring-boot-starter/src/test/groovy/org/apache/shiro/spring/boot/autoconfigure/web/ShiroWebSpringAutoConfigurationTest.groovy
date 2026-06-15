@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.spring.boot.autoconfigure.web
 
+import org.apache.shiro.SecurityUtils
 import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication
 import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication.EventBusAwareObject
 import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication.SubscribedListener
@@ -30,9 +31,9 @@ import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager
 import org.apache.shiro.web.mgt.WebSecurityManager
 import org.apache.shiro.web.servlet.AbstractShiroFilter
 import org.junit.jupiter.api.Test
+import org.springframework.aop.framework.Advised
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests
 
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.equalTo
@@ -44,7 +45,7 @@ import static org.hamcrest.MatcherAssert.assertThat
  * @since 1.4.0
  */
 @SpringBootTest(classes = [ShiroWebAutoConfigurationTestApplication])
-class ShiroWebSpringAutoConfigurationTest extends AbstractJUnit4SpringContextTests {
+class ShiroWebSpringAutoConfigurationTest {
 
     @Autowired
     private SecurityManager securityManager
@@ -72,8 +73,9 @@ class ShiroWebSpringAutoConfigurationTest extends AbstractJUnit4SpringContextTes
         assertNotNull eventBus
         assertNotNull shiroFilter
         assertTrue(eventBus.registry.containsKey(subscribedListener))
-        assertSame(eventBusAwareObject.getEventBus(), eventBus)
-        assertSame(((DefaultSecurityManager) securityManager).getEventBus(), eventBus)
+        assertSame(((Advised)eventBusAwareObject.getEventBus()).getTargetSource().getTarget(), eventBus)
+        assertSame(((Advised) SecurityUtils.unwrapSecurityManager(securityManager, DefaultSecurityManager)
+                .getEventBus()).getTargetSource().getTarget(), eventBus)
 
         // make sure global chains are configured
         assertThat shiroFilter.filterChainResolver.filterChainManager, instanceOf(DefaultFilterChainManager)
@@ -82,7 +84,9 @@ class ShiroWebSpringAutoConfigurationTest extends AbstractJUnit4SpringContextTes
         // default config set
         assertThat filterChainManager.globalFilterNames, equalTo([DefaultFilter.invalidRequest.name()])
         // default route configured
-        assertThat filterChainManager.getChain("/**"), contains(instanceOf(DefaultFilter.invalidRequest.filterClass))
+        assertThat filterChainManager.getChain("/**"), contains(
+                instanceOf(DefaultFilter.invalidRequest.filterClass),
+                instanceOf(DefaultFilter.noAccess.filterClass))
         // configured routes also contain global filters
         assertThat filterChainManager.getChain("/login.html"), contains(
                 instanceOf(DefaultFilter.invalidRequest.filterClass),

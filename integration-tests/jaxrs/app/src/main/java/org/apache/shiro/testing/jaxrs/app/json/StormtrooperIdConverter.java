@@ -21,9 +21,9 @@ package org.apache.shiro.testing.jaxrs.app.json;
 
 import org.apache.shiro.testing.jaxrs.app.model.StormtrooperId;
 
-import javax.enterprise.context.Dependent;
-import javax.json.bind.adapter.JsonbAdapter;
-import javax.ws.rs.ext.Provider;
+import jakarta.enterprise.context.Dependent;
+import jakarta.json.bind.adapter.JsonbAdapter;
+import jakarta.ws.rs.ext.Provider;
 
 @Dependent
 @Provider

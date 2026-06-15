@@ -26,7 +26,7 @@ import org.springframework.validation.Validator;
  * Validator for login.
  */
 public class LoginValidator implements Validator {
-    public boolean supports(Class aClass) {
+    public boolean supports(Class<?> aClass) {
         return LoginCommand.class.isAssignableFrom(aClass);
     }
 

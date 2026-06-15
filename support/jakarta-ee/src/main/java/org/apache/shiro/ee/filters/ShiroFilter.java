@@ -29,17 +29,17 @@ import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +47,6 @@ import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
-import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
@@ -169,9 +168,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
 
         @Override
         public Subject createSubject(SubjectContext context) {
-            if (context instanceof WebSubjectContext && wrapped instanceof DefaultSecurityManager) {
-                WebSubjectContext webContext = (WebSubjectContext) context;
-                DefaultWebSecurityManager wsm = (DefaultWebSecurityManager) wrapped;
+            if (context instanceof WebSubjectContext webContext && wrapped instanceof DefaultWebSecurityManager wsm) {
                 Session session = null;
                 try {
                     session = wsm.getSession(new WebSessionKey(webContext.getSessionId(), webContext.getServletRequest(),

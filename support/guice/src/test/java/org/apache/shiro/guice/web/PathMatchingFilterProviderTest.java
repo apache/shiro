@@ -25,32 +25,24 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-public class PathMatchingFilterProviderTest {
+class PathMatchingFilterProviderTest {
     @Test
-    @SuppressWarnings("unchecked")
     void testPostProcess() {
-        PathMatchingFilter filter = createMock(PathMatchingFilter.class);
+        PathMatchingFilter filter = mock(PathMatchingFilter.class);
 
-        expect(filter.processPathConfig("/1", "first")).andReturn(filter);
-        expect(filter.processPathConfig("/2", "second")).andReturn(filter);
-
-        replay(filter);
-
-        Map<String, String> pathConfigMap = new HashMap<String, String>();
+        Map<String, String> pathConfigMap = new HashMap<>();
         pathConfigMap.put("/1", "first");
         pathConfigMap.put("/2", "second");
 
-        PathMatchingFilterProvider underTest = new PathMatchingFilterProvider(Key.get(PathMatchingFilter.class), pathConfigMap);
+        PathMatchingFilterProvider<PathMatchingFilter> underTest =
+                new PathMatchingFilterProvider<>(Key.get(PathMatchingFilter.class), pathConfigMap);
 
         underTest.postProcess(filter);
 
-        verify(filter);
+        verify(filter).processPathConfig("/1", "first");
+        verify(filter).processPathConfig("/2", "second");
     }
-
-
 }

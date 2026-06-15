@@ -587,8 +587,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
                 LOGGER.debug("Logging out subject with primary principal {}", principals.getPrimaryPrincipal());
             }
             Authenticator authc = getAuthenticator();
-            if (authc instanceof LogoutAware) {
-                ((LogoutAware) authc).onLogout(principals);
+            if (authc instanceof LogoutAware aware) {
+                aware.onLogout(principals);
             }
         }
 
@@ -616,8 +616,8 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         Session s = subject.getSession(false);
         if (s != null) {
             s.stop();
-            if (subject instanceof DelegatingSubject) {
-                ((DelegatingSubject) subject).sessionStopped();
+            if (subject instanceof DelegatingSubject delegatingSubject) {
+                delegatingSubject.sessionStopped();
             }
         }
     }

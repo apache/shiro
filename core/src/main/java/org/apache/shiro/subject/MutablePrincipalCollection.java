@@ -29,6 +29,7 @@ import java.util.Collection;
  * an unspecified and unpredictable number of other objects. This interface only exists for compatibility with existing
  * code.
  */
+@Deprecated
 public interface MutablePrincipalCollection extends PrincipalCollection {
 
     /**
@@ -45,7 +46,7 @@ public interface MutablePrincipalCollection extends PrincipalCollection {
      * @param principals the principals to be added.
      * @param realmName  the realm these principals came from.
      */
-    void addAll(Collection principals, String realmName);
+    void addAll(Collection<?> principals, String realmName);
 
     /**
      * Adds all of the principals from the given principal collection to this collection.

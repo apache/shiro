@@ -39,13 +39,11 @@ import org.springframework.context.annotation.DependsOn;
 @Configuration
 @ConditionalOnProperty(name = "shiro.annotations.enabled", matchIfMissing = true)
 public class ShiroAnnotationProcessorAutoConfiguration extends AbstractShiroAnnotationProcessorConfiguration {
-
     @Bean
     @DependsOn("lifecycleBeanPostProcessor")
     @ConditionalOnMissingBean(name = AopConfigUtils.AUTO_PROXY_CREATOR_BEAN_NAME)
-    @Override
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        return super.defaultAdvisorAutoProxyCreator();
+    public static DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        return new DefaultAdvisorAutoProxyCreator();
     }
 
     @Bean
