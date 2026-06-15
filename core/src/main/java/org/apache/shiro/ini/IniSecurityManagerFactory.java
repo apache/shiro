@@ -132,9 +132,8 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
 
     protected boolean isAutoApplyRealms(SecurityManager securityManager) {
         boolean autoApply = true;
-        if (securityManager instanceof RealmSecurityManager) {
-            //only apply realms if they haven't been explicitly set by the user:
-            RealmSecurityManager realmSecurityManager = (RealmSecurityManager) securityManager;
+        if (securityManager instanceof RealmSecurityManager realmSecurityManager) {
+            // only apply realms if they haven't been explicitly set by the user:
             Collection<Realm> realms = realmSecurityManager.getRealms();
             if (!CollectionUtils.isEmpty(realms)) {
                 LOGGER.info("Realms have been explicitly set on the SecurityManager instance - auto-setting of "
@@ -215,15 +214,14 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
             String name = entry.getKey();
             Object value = entry.getValue();
 
-            if (value instanceof RealmFactory) {
-                addToRealms(realms, (RealmFactory) value);
-            } else if (value instanceof Realm) {
-                Realm realm = (Realm) value;
+            if (value instanceof RealmFactory factory) {
+                addToRealms(realms, factory);
+            } else if (value instanceof Realm realm) {
                 //set the name if null:
                 String existingName = realm.getName();
                 if (existingName == null || existingName.startsWith(realm.getClass().getName())) {
-                    if (realm instanceof Nameable) {
-                        ((Nameable) realm).setName(name);
+                    if (realm instanceof Nameable nameable) {
+                        nameable.setName(name);
                         LOGGER.debug("Applied name '{}' to Nameable realm instance {}", name, realm);
                     } else {
                         LOGGER.info("Realm does not implement the {} interface.  Configured name will not be applied.",

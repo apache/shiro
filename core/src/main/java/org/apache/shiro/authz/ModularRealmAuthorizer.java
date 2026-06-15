@@ -137,8 +137,8 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         Collection<Realm> realms = getRealms();
         if (resolver != null && realms != null && !realms.isEmpty()) {
             for (Realm realm : realms) {
-                if (realm instanceof PermissionResolverAware) {
-                    ((PermissionResolverAware) realm).setPermissionResolver(resolver);
+                if (realm instanceof PermissionResolverAware aware) {
+                    aware.setPermissionResolver(resolver);
                 }
             }
         }
@@ -193,8 +193,8 @@ public class ModularRealmAuthorizer implements Authorizer, PermissionResolverAwa
         Collection<Realm> realms = getRealms();
         if (resolver != null && realms != null && !realms.isEmpty()) {
             for (Realm realm : realms) {
-                if (realm instanceof RolePermissionResolverAware) {
-                    ((RolePermissionResolverAware) realm).setRolePermissionResolver(resolver);
+                if (realm instanceof RolePermissionResolverAware aware) {
+                    aware.setRolePermissionResolver(resolver);
                 }
             }
         }

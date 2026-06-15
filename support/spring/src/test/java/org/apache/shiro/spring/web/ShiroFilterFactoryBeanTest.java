@@ -19,7 +19,6 @@
 package org.apache.shiro.spring.web;
 
 import org.apache.shiro.web.filter.InvalidRequestFilter;
-import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
 import org.apache.shiro.web.filter.mgt.NamedFilterList;
 import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
@@ -27,24 +26,22 @@ import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -67,14 +64,13 @@ public class ShiroFilterFactoryBeanTest {
         PathMatchingFilterChainResolver resolver = (PathMatchingFilterChainResolver) shiroFilter.getFilterChainResolver();
         DefaultFilterChainManager fcManager = (DefaultFilterChainManager) resolver.getFilterChainManager();
         NamedFilterList chain = fcManager.getChain("/test");
-        assertNotNull(chain);
-        assertEquals(3, chain.size());
+        assertThat(chain).isNotNull();
+        assertThat(chain).hasSize(2);
         Filter[] filters = new Filter[chain.size()];
         filters = chain.toArray(filters);
         // global filter
-        assertTrue(filters[0] instanceof InvalidRequestFilter);
-        assertTrue(filters[1] instanceof DummyFilter);
-        assertTrue(filters[2] instanceof FormAuthenticationFilter);
+        assertThat(filters[0] instanceof InvalidRequestFilter).isTrue();
+        assertThat(filters[1] instanceof DummyFilter).isTrue();
     }
 
     /**
@@ -95,7 +91,8 @@ public class ShiroFilterFactoryBeanTest {
         expect(mockFilterConfig.getServletContext()).andReturn(mockServletContext).anyTimes();
         HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
         expect(mockRequest.getContextPath()).andReturn("/").anyTimes();
-        expect(mockRequest.getRequestURI()).andReturn("/").anyTimes();
+        expect(mockRequest.getRequestURI()).andReturn("/test").anyTimes();
+        expect(mockRequest.getServletPath()).andReturn("/test").anyTimes();
         HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
 
         replay(mockFilterConfig);
@@ -108,9 +105,9 @@ public class ShiroFilterFactoryBeanTest {
             public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse)
                     throws IOException, ServletException {
                 HttpServletRequest request = (HttpServletRequest) servletRequest;
-                assertNotNull(request.getSession());
+                assertThat(request.getSession()).isNotNull();
                 //this line asserts the fix for the user-reported issue:
-                assertNotNull(request.getSession().getServletContext());
+                assertThat(request.getSession().getServletContext()).isNotNull();
             }
         };
 

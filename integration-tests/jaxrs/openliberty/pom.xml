@@ -65,10 +65,10 @@
                     <serverName>shiro-its-jaxrs-openliberty</serverName>
                     <features>
                         <acceptLicense>true</acceptLicense>
-                        <feature>jaxrs-2.1</feature>
-                        <feature>servlet-4.0</feature>
-                        <feature>cdi-2.0</feature>
-                        <feature>jsonb-1.0</feature>
+                        <feature>restfulWS-3.1</feature>
+                        <feature>cdi-4.0</feature>
+                        <feature>servlet-6.0</feature>
+                        <feature>jsonb-3.0</feature>
                     </features>
                     <deployPackages>dependencies</deployPackages>
                     <looseApplication>false</looseApplication>

@@ -338,8 +338,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      */
     protected Object getLdapPrincipal(AuthenticationToken token) {
         Object principal = token.getPrincipal();
-        if (principal instanceof String) {
-            String sPrincipal = (String) principal;
+        if (principal instanceof String sPrincipal) {
             return getUserDn(sPrincipal);
         }
         return principal;
@@ -417,7 +416,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
     /**
      * Method that should be implemented by subclasses to build an
      * {@link AuthorizationInfo} object by querying the LDAP context for the
-     * specified principal.</p>
+     * specified principal.<p/>
      *
      * @param principals         the principals of the Subject whose AuthenticationInfo should be queried from the LDAP server.
      * @param ldapContextFactory factory used to retrieve LDAP connections.

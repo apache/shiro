@@ -14,20 +14,21 @@
 package org.apache.shiro.testing.jaxrs;
 
 import java.util.function.Supplier;
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.lang.ShiroException;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 
 @Path("whoami")
@@ -76,13 +77,20 @@ public class WhoamiResource {
 
     private <T> T check(Supplier<T> happy, Supplier<T> sad, String user, String password) {
         try {
-            ThreadContext.bind(testApplication.getSecurityManager());
-            SecurityUtils.getSubject().login(new UsernamePasswordToken(user, password));
-            return happy.get();
+            return new Subject.Builder()
+                    .securityManager(testApplication.getSecurityManager())
+                    .buildSubject()
+                    .execute(() -> {
+                        SecurityUtils.getSubject().login(new UsernamePasswordToken(user, password));
+                        try {
+                            return happy.get();
+                        } finally {
+                            SecurityUtils.getSubject().logout();
+                        }
+                    });
         } catch (ShiroException e) {
             return sad.get();
         } finally {
-            SecurityUtils.getSubject().logout();
             ThreadContext.unbindSecurityManager();
             ThreadContext.unbindSubject();
             ThreadContext.remove();

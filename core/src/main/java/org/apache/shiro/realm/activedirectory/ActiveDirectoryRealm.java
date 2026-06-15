@@ -163,7 +163,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
     protected Set<String> getRoleNamesForUser(String username, LdapContext ldapContext) throws NamingException {
         Set<String> roleNames;
-        roleNames = new LinkedHashSet<String>();
+        roleNames = new LinkedHashSet<>();
 
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
@@ -172,10 +172,10 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
 
         Object[] searchArguments = new Object[] {userPrincipalName};
 
-        NamingEnumeration answer = ldapContext.search(searchBase, searchFilter, searchArguments, searchControls);
+        NamingEnumeration<SearchResult> answer = ldapContext.search(searchBase, searchFilter, searchArguments, searchControls);
 
         while (answer.hasMoreElements()) {
-            SearchResult sr = (SearchResult) answer.next();
+            SearchResult sr = answer.next();
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Retrieving group names for user [" + sr.getName() + "]");
@@ -184,9 +184,9 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             Attributes attrs = sr.getAttributes();
 
             if (attrs != null) {
-                NamingEnumeration ae = attrs.getAll();
+                NamingEnumeration<? extends Attribute> ae = attrs.getAll();
                 while (ae.hasMore()) {
-                    Attribute attr = (Attribute) ae.next();
+                    Attribute attr = ae.next();
 
                     if (attr.getID().equals("memberOf")) {
 
@@ -213,7 +213,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      * @return a collection of roles that are implied by the given role names.
      */
     protected Collection<String> getRoleNamesForGroups(Collection<String> groupNames) {
-        Set<String> roleNames = new HashSet<String>(groupNames.size());
+        Set<String> roleNames = new HashSet<>(groupNames.size());
 
         if (groupRolesMap != null) {
             for (String groupName : groupNames) {

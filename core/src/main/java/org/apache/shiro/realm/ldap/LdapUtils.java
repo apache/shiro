@@ -69,8 +69,8 @@ public final class LdapUtils {
      * @throws javax.naming.NamingException if there is an LDAP error while reading the values.
      */
     public static Collection<String> getAllAttributeValues(Attribute attr) throws NamingException {
-        Set<String> values = new HashSet<String>();
-        NamingEnumeration ne = null;
+        Set<String> values = new HashSet<>();
+        NamingEnumeration<?> ne = null;
         try {
             ne = attr.getAll();
             while (ne.hasMore()) {
@@ -89,7 +89,7 @@ public final class LdapUtils {
      * [1] <a href="https://issues.apache.org/jira/browse/SHIRO-127?focusedCommentId=12891380
      * &page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#action_12891380">SHIRO-127</a>
      */
-    public static void closeEnumeration(NamingEnumeration ne) {
+    public static void closeEnumeration(NamingEnumeration<?> ne) {
         try {
             if (ne != null) {
                 ne.close();

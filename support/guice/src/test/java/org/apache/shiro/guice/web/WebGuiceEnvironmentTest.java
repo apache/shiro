@@ -23,27 +23,23 @@ import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.WebSecurityManager;
-import org.easymock.Capture;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
-import static org.easymock.EasyMock.and;
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.capture;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class WebGuiceEnvironmentTest {
 
     @Test
     void ensureInjectable() {
         try {
-            InjectionPoint ip = InjectionPoint.forConstructorOf(WebGuiceEnvironment.class);
+            InjectionPoint.forConstructorOf(WebGuiceEnvironment.class);
         } catch (Exception e) {
             fail("Could not create constructor injection point.");
         }
@@ -51,27 +47,23 @@ public class WebGuiceEnvironmentTest {
 
     @Test
     void testConstructor() {
-        WebSecurityManager securityManager = createMock(WebSecurityManager.class);
-        FilterChainResolver filterChainResolver = createMock(FilterChainResolver.class);
-        ServletContext servletContext = createMock(ServletContext.class);
-        ShiroFilterConfiguration filterConfiguration = createMock(ShiroFilterConfiguration.class);
+        WebSecurityManager securityManager = mock(WebSecurityManager.class);
+        FilterChainResolver filterChainResolver = mock(FilterChainResolver.class);
+        ServletContext servletContext = mock(ServletContext.class);
+        ShiroFilterConfiguration filterConfiguration = mock(ShiroFilterConfiguration.class);
 
-        Capture<WebGuiceEnvironment> capture = Capture.newInstance();
-        servletContext.setAttribute(eq(EnvironmentLoaderListener.ENVIRONMENT_ATTRIBUTE_KEY),
-                and(anyObject(WebGuiceEnvironment.class), capture(capture)));
-
-        replay(servletContext, securityManager, filterChainResolver);
+        ArgumentCaptor<WebGuiceEnvironment> capture = ArgumentCaptor.forClass(WebGuiceEnvironment.class);
 
         WebGuiceEnvironment underTest =
                 new WebGuiceEnvironment(filterChainResolver, servletContext, securityManager, filterConfiguration);
 
-        assertSame(securityManager, underTest.getSecurityManager());
-        assertSame(filterChainResolver, underTest.getFilterChainResolver());
-        assertSame(securityManager, underTest.getWebSecurityManager());
-        assertSame(servletContext, underTest.getServletContext());
+        assertThat(underTest.getSecurityManager()).isSameAs(securityManager);
+        assertThat(underTest.getFilterChainResolver()).isSameAs(filterChainResolver);
+        assertThat(underTest.getWebSecurityManager()).isSameAs(securityManager);
+        assertThat(underTest.getServletContext()).isSameAs(servletContext);
 
-        assertSame(underTest, capture.getValue());
+        verify(servletContext).setAttribute(eq(EnvironmentLoaderListener.ENVIRONMENT_ATTRIBUTE_KEY), capture.capture());
 
-        verify(servletContext);
+        assertThat(capture.getValue()).isSameAs(underTest);
     }
 }

@@ -29,6 +29,8 @@ import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
@@ -36,9 +38,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the {@link DefaultLdapRealm} class.
@@ -62,28 +61,28 @@ public class DefaultLdapRealmTest {
 
     @Test
     void testDefaultInstance() {
-        assertTrue(realm.getCredentialsMatcher() instanceof AllowAllCredentialsMatcher);
-        assertEquals(AuthenticationToken.class, realm.getAuthenticationTokenClass());
-        assertTrue(realm.getContextFactory() instanceof JndiLdapContextFactory);
+        assertThat(realm.getCredentialsMatcher() instanceof AllowAllCredentialsMatcher).isTrue();
+        assertThat(realm.getAuthenticationTokenClass()).isEqualTo(AuthenticationToken.class);
+        assertThat(realm.getContextFactory() instanceof JndiLdapContextFactory).isTrue();
     }
 
     @Test
     void testSetUserDnTemplateNull() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
             realm.setUserDnTemplate(null);
         });
     }
 
     @Test
     void testSetUserDnTemplateEmpty() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
             realm.setUserDnTemplate("  ");
         });
     }
 
     @Test
     void testSetUserDnTemplateWithoutToken() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
             realm.setUserDnTemplate("uid=,ou=users,dc=mycompany,dc=com");
         });
     }
@@ -92,7 +91,7 @@ public class DefaultLdapRealmTest {
     void testUserDnTemplate() {
         String template = "uid={0},ou=users,dc=mycompany,dc=com";
         realm.setUserDnTemplate(template);
-        assertEquals(template, realm.getUserDnTemplate());
+        assertThat(realm.getUserDnTemplate()).isEqualTo(template);
     }
 
     @Test
@@ -113,7 +112,7 @@ public class DefaultLdapRealmTest {
 
     @Test
     void testGetAuthenticationInfoNamingAuthenticationException() throws NamingException {
-        assertThrows(AuthenticationException.class, () -> {
+        assertThatExceptionOfType(AuthenticationException.class).isThrownBy(() -> {
             realm.setUserDnTemplate("uid={0},ou=users,dc=mycompany,dc=com");
             LdapContextFactory factory = createMock(LdapContextFactory.class);
             realm.setContextFactory(factory);
@@ -128,7 +127,7 @@ public class DefaultLdapRealmTest {
 
     @Test
     void testGetAuthenticationInfoNamingException() throws NamingException {
-        assertThrows(AuthenticationException.class, () -> {
+        assertThatExceptionOfType(AuthenticationException.class).isThrownBy(() -> {
             realm.setUserDnTemplate("uid={0},ou=users,dc=mycompany,dc=com");
             LdapContextFactory factory = createMock(LdapContextFactory.class);
             realm.setContextFactory(factory);
@@ -174,7 +173,7 @@ public class DefaultLdapRealmTest {
 
     @Test
     void testGetUserDnNullArgument() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> {
             realm.getUserDn(null);
         });
     }
@@ -194,6 +193,6 @@ public class DefaultLdapRealmTest {
         };
         String principal = "foo";
         String userDn = realm.getUserDn(principal);
-        assertEquals(principal, userDn);
+        assertThat(userDn).isEqualTo(principal);
     }
 }

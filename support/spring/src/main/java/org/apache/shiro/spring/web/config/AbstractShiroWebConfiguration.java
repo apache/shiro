@@ -24,7 +24,6 @@ import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.mgt.SubjectFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.config.AbstractShiroConfiguration;
-import org.apache.shiro.spring.web.ShiroUrlPathHelper;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.DefaultWebSessionStorageEvaluator;
@@ -185,9 +184,5 @@ public class AbstractShiroWebConfiguration extends AbstractShiroConfiguration {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
         chainDefinition.addPathDefinition("/**", "authc");
         return chainDefinition;
-    }
-
-    protected ShiroUrlPathHelper shiroUrlPathHelper() {
-        return new ShiroUrlPathHelper();
     }
 }

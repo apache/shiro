@@ -51,7 +51,7 @@ import static java.util.Objects.requireNonNull;
  * and multiple hash iterations.  Please read this excellent
  * <a href="http://www.owasp.org/index.php/Hashing_Java">Hashing Java article</a> to learn about
  * salting and multiple iterations and why you might want to use them. (Note of sections 5
- * &quot;Why add salt?&quot; and 6 "Hardening against the attacker's attack").</p>
+ * &quot;Why add salt?&quot; and 6 "Hardening against the attacker's attack").<p>
  * <h4>Real World Case Study</h4>
  * In April 2010, some public Atlassian Jira and Confluence
  * installations (Apache Software Foundation, Codehaus, etc.) were the target of account attacks and user accounts
@@ -241,7 +241,7 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
 
     /**
      * Sets whether to salt a submitted {@code AuthenticationToken}'s credentials when hashing.
-     * <p/>
+     * <p>
      * If enabled, the salt used will be obtained via the
      * {@link #getSalt(org.apache.shiro.authc.AuthenticationToken) getCredentialsSalt} method.
      * </p>
@@ -402,8 +402,8 @@ public class HashedCredentialsMatcher extends SimpleCredentialsMatcher {
      */
     protected Object hashProvidedCredentials(AuthenticationToken token, AuthenticationInfo info) {
         final Object salt;
-        if (info instanceof SaltedAuthenticationInfo) {
-            salt = ((SaltedAuthenticationInfo) info).getCredentialsSalt();
+        if (info instanceof SaltedAuthenticationInfo authenticationInfo) {
+            salt = authenticationInfo.getCredentialsSalt();
         } else if (isHashSalted()) {
             //retain 1.0 backwards compatibility:
             salt = getSalt(token);

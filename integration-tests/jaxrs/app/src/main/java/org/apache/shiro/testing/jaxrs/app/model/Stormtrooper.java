@@ -19,8 +19,8 @@
 
 package org.apache.shiro.testing.jaxrs.app.model;
 
-import javax.json.bind.annotation.JsonbCreator;
-import javax.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
 import java.time.Instant;
 
 import static java.util.Objects.requireNonNull;

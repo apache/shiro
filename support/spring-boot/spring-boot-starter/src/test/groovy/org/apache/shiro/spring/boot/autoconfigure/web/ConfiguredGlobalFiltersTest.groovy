@@ -80,7 +80,8 @@ class ConfiguredGlobalFiltersTest {
         NamedFilterList allChain = filterChainManager.getChain("/**")
         assertThat allChain, contains(
                 instanceOf(DefaultFilter.invalidRequest.filterClass),
-                instanceOf(DefaultFilter.port.filterClass))
+                instanceOf(DefaultFilter.port.filterClass),
+                instanceOf(DefaultFilter.noAccess.filterClass))
 
         InvalidRequestFilter invalidRequest = allChain.get(0)
         assertThat "Expected invalidRequest.blockBackslash to be false", !invalidRequest.isBlockBackslash()

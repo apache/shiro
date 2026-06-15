@@ -44,6 +44,10 @@ public class SaltAwareJdbcRealm extends JdbcRealm {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SaltAwareJdbcRealm.class);
 
+    public SaltAwareJdbcRealm() {
+        setPermissionsLookupEnabled(true);
+    }
+
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;

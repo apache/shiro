@@ -22,8 +22,8 @@ import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.lang.util.SimpleByteSource;
 import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -39,6 +39,7 @@ import java.util.Set;
  */
 public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, SaltedAuthenticationInfo {
 
+    @Serial
     private static final long serialVersionUID = 5390456512469696779L;
     /**
      * The principals identifying the account associated with this AuthenticationInfo instance.
@@ -74,7 +75,9 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      * @param realmName   the realm from where the principal and credentials were acquired.
      */
     public SimpleAuthenticationInfo(Object principal, Object credentials, String realmName) {
-        this.principals = new SimplePrincipalCollection(principal, realmName);
+        this.principals = principal instanceof Collection
+                ? ImmutablePrincipalCollection.ofSingleRealm((Collection<?>) principal, realmName)
+                : ImmutablePrincipalCollection.ofSinglePrincipal(principal, realmName);
         this.credentials = credentials;
     }
 
@@ -93,7 +96,9 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      * @since 1.1
      */
     public SimpleAuthenticationInfo(Object principal, Object hashedCredentials, ByteSource credentialsSalt, String realmName) {
-        this.principals = new SimplePrincipalCollection(principal, realmName);
+        this.principals = principal instanceof Collection
+                ? ImmutablePrincipalCollection.ofSingleRealm((Collection<?>) principal, realmName)
+                : ImmutablePrincipalCollection.ofSinglePrincipal(principal, realmName);
         this.credentials = hashedCredentials;
         this.credentialsSalt = credentialsSalt;
     }
@@ -106,7 +111,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      * @param credentials the accounts corresponding principals that verify the principals.
      */
     public SimpleAuthenticationInfo(PrincipalCollection principals, Object credentials) {
-        this.principals = new SimplePrincipalCollection(principals);
+        this.principals = ImmutablePrincipalCollection.copyOf(principals);
         this.credentials = credentials;
     }
 
@@ -121,7 +126,7 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      * @since 1.1
      */
     public SimpleAuthenticationInfo(PrincipalCollection principals, Object hashedCredentials, ByteSource credentialsSalt) {
-        this.principals = new SimplePrincipalCollection(principals);
+        this.principals = ImmutablePrincipalCollection.copyOf(principals);
         this.credentials = hashedCredentials;
         this.credentialsSalt = credentialsSalt;
     }
@@ -194,12 +199,13 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
      * Takes the specified <code>info</code> argument and adds its principals and credentials into this instance.
      *
      * @param info the <code>AuthenticationInfo</code> to add into this instance.
+     * @return this instance with the new principals and credentials merged in.
      */
     @Override
-    @SuppressWarnings({"unchecked", "checkstyle:NPathComplexity"})
-    public void merge(AuthenticationInfo info) {
+    @SuppressWarnings("checkstyle:NPathComplexity")
+    public AuthenticationInfo merge(AuthenticationInfo info) {
         if (info == null || info.getPrincipals() == null || info.getPrincipals().isEmpty()) {
-            return;
+            return this;
         }
 
         if (this.principals == null) {
@@ -217,35 +223,38 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
         //is null, then it can't hurt to pull in a non-null value if one exists.
         //
         //since 1.1:
-        if (this.credentialsSalt == null && info instanceof SaltedAuthenticationInfo) {
-            this.credentialsSalt = ((SaltedAuthenticationInfo) info).getCredentialsSalt();
+        if (this.credentialsSalt == null && info instanceof SaltedAuthenticationInfo authenticationInfo) {
+            this.credentialsSalt = authenticationInfo.getCredentialsSalt();
         }
 
         Object thisCredentials = getCredentials();
         Object otherCredentials = info.getCredentials();
 
         if (otherCredentials == null) {
-            return;
+            return this;
         }
 
         if (thisCredentials == null) {
             this.credentials = otherCredentials;
-            return;
+            return this;
         }
 
         if (!(thisCredentials instanceof Collection)) {
-            Set newSet = new HashSet();
+            Set<Object> newSet = new HashSet<>();
             newSet.add(thisCredentials);
             setCredentials(newSet);
         }
 
         // At this point, the credentials should be a collection
-        Collection credentialCollection = (Collection) getCredentials();
-        if (otherCredentials instanceof Collection) {
-            credentialCollection.addAll((Collection) otherCredentials);
+        @SuppressWarnings("unchecked")
+        Collection<Object> credentialCollection = (Collection<Object>) getCredentials();
+        if (otherCredentials instanceof Collection<?> collection) {
+            credentialCollection.addAll(collection);
         } else {
             credentialCollection.add(otherCredentials);
         }
+
+        return this;
     }
 
     /**
@@ -294,5 +303,4 @@ public class SimpleAuthenticationInfo implements MergableAuthenticationInfo, Sal
     public String toString() {
         return principals.toString();
     }
-
 }

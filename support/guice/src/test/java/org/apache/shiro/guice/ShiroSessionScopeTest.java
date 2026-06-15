@@ -26,12 +26,12 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ShiroSessionScopeTest {
     @Test
@@ -59,9 +59,9 @@ public class ShiroSessionScopeTest {
             ShiroSessionScope underTest = new ShiroSessionScope();
 
             // first time the session doesn't contain it, we expect the provider to be invoked
-            assertSame(returned, underTest.scope(key, mockProvider).get());
+            assertThat(underTest.scope(key, mockProvider).get()).isSameAs(returned);
             // second time the session does contain it, we expect the provider to not be invoked
-            assertSame(returned, underTest.scope(key, mockProvider).get());
+            assertThat(underTest.scope(key, mockProvider).get()).isSameAs(returned);
 
             verify(subject, mockProvider, session);
         } finally {
@@ -72,7 +72,7 @@ public class ShiroSessionScopeTest {
 
     @Test
     void testOutOfScope() throws Exception {
-        assertThrows(OutOfScopeException.class, () -> {
+        assertThatExceptionOfType(OutOfScopeException.class).isThrownBy(() -> {
             ShiroSessionScope underTest = new ShiroSessionScope();
 
             Provider<SomeClass> mockProvider = createMock(Provider.class);

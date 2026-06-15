@@ -30,10 +30,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 /**
  * @since May 8, 2008 12:26:23 AM
@@ -66,12 +64,12 @@ public class VMSingletonDefaultSecurityManagerTest {
             AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
             subject.login(token);
             subject.getSession().setAttribute("key", "value");
-            assertEquals("value", subject.getSession().getAttribute("key"));
+            assertThat(subject.getSession().getAttribute("key")).isEqualTo("value");
 
             subject = SecurityUtils.getSubject();
 
-            assertTrue(subject.isAuthenticated());
-            assertEquals("value", subject.getSession().getAttribute("key"));
+            assertThat(subject.isAuthenticated()).isTrue();
+            assertThat(subject.getSession().getAttribute("key")).isEqualTo("value");
         } finally {
             sm.destroy();
             //SHIRO-270:

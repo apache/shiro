@@ -133,7 +133,7 @@ public class JndiLocator {
      * @throws NamingException if the JNDI lookup failed
      * @see #setResourceRef
      */
-    protected Object lookup(String jndiName, Class requiredType) throws NamingException {
+    protected Object lookup(String jndiName, Class<?> requiredType) throws NamingException {
         if (jndiName == null) {
             throw new IllegalArgumentException("jndiName argument must not be null");
         }

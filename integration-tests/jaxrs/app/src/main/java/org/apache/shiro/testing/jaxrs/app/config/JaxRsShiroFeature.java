@@ -21,9 +21,9 @@ package org.apache.shiro.testing.jaxrs.app.config;
 
 import org.apache.shiro.web.jaxrs.ShiroFeature;
 
-import javax.enterprise.context.Dependent;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.ext.Provider;
+import jakarta.enterprise.context.Dependent;
+import jakarta.ws.rs.core.FeatureContext;
+import jakarta.ws.rs.ext.Provider;
 
 @Dependent
 @Provider

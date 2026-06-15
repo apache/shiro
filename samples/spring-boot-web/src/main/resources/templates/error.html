@@ -18,14 +18,14 @@
   -->
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <!--/*/ <th:block th:include="fragments/head :: head"/> /*/-->
+    <!--/*/ <th:block th:insert="~{fragments/head :: head}"/> /*/-->
 </head>
 <body>
 <div class="container-fluid">
     <div class="row">
         <div class="box col-md-6 col-md-offset-3">
             <div class="custom-header">
-                <img src="https://shiro.apache.org/assets/images/apache-shiro-logo.png"/>
+                <img src="https://shiro.apache.org/images/apache-shiro-logo.png"/>
             </div>
             <div class="logo">
                 <h1 th:text="${errors.status}"></h1>

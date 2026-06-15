@@ -25,11 +25,11 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.Sha512Hash;
 import org.apache.shiro.lang.util.ByteSource;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests for the {@link org.apache.shiro.authc.credential.HashedCredentialsMatcher} class.
@@ -54,7 +54,7 @@ public class HashedCredentialsMatcherTest {
         AuthenticationToken token = new UsernamePasswordToken("username", "password");
 
         //verify the hashed token matches what is in the account:
-        assertTrue(matcher.doCredentialsMatch(token, account));
+        assertThat(matcher.doCredentialsMatch(token, account)).isTrue();
     }
 
     /**
@@ -74,7 +74,7 @@ public class HashedCredentialsMatcherTest {
 
             @Override
             public PrincipalCollection getPrincipals() {
-                return new SimplePrincipalCollection(username, "realmName");
+                return ImmutablePrincipalCollection.ofSinglePrincipal(username, "realmName");
             }
 
             @Override
@@ -87,7 +87,7 @@ public class HashedCredentialsMatcherTest {
         AuthenticationToken token = new UsernamePasswordToken("username", "password");
 
         //verify the hashed token matches what is in the account:
-        assertTrue(matcher.doCredentialsMatch(token, account));
+        assertThat(matcher.doCredentialsMatch(token, account)).isTrue();
     }
 
     /**
@@ -111,7 +111,7 @@ public class HashedCredentialsMatcherTest {
 
             @Override
             public PrincipalCollection getPrincipals() {
-                return new SimplePrincipalCollection(username, "realmName");
+                return ImmutablePrincipalCollection.ofSinglePrincipal(username, "realmName");
             }
 
             @Override
@@ -124,6 +124,6 @@ public class HashedCredentialsMatcherTest {
         AuthenticationToken token = new UsernamePasswordToken("username", "password");
 
         //verify the hashed token matches what is in the account:
-        assertTrue(matcher.doCredentialsMatch(token, account));
+        assertThat(matcher.doCredentialsMatch(token, account)).isTrue();
     }
 }

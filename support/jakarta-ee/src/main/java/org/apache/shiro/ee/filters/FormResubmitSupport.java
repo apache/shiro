@@ -13,6 +13,8 @@
  */
 package org.apache.shiro.ee.filters;
 
+import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
+import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
 import static org.apache.shiro.SecurityUtils.getSecurityManager;
 import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
 import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
@@ -56,13 +58,11 @@ import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
 import static org.apache.shiro.web.mgt.CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import static javax.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
-import static javax.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -72,7 +72,6 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
-import static org.apache.shiro.ee.util.JakartaTransformer.jakartify;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.mgt.AbstractRememberMeManager;
 import org.apache.shiro.mgt.DefaultSecurityManager;
@@ -96,17 +95,17 @@ public class FormResubmitSupport {
     static final String SESSION_EXPIRED_PARAMETER = "org.apache.shiro.sessionExpired";
     static final String FORM_IS_RESUBMITTED = "org.apache.shiro.form-is-resubmitted";
     // encoded view state
-    private static final String FACES_VIEW_STATE = jakartify("javax.faces.ViewState");
+    private static final String FACES_VIEW_STATE = "jakarta.faces.ViewState";
     private static final String FACES_VIEW_STATE_EQUALS = FACES_VIEW_STATE + "=";
     private static final Pattern VIEW_STATE_PATTERN
             = Pattern.compile(String.format("(.*)(%s[-]?[\\d]+:[-]?[\\d]+)(.*)", FACES_VIEW_STATE_EQUALS));
-    private static final String FACES_SOURCE = jakartify("javax.faces.source");
+    private static final String FACES_SOURCE = "jakarta.faces.source";
     private static final String FACES_SOURCE_EQUALS = FACES_SOURCE + "=";
     static final Pattern FACES_SOURCE_PATTERN
             = Pattern.compile(String.format("[\\&]?%s([\\w\\s:%%\\d]*)(.*)", FACES_SOURCE_EQUALS));
     private static final Pattern PARTIAL_REQUEST_PATTERN
-            = Pattern.compile(String.format("[\\&]?(%s.\\w+|%s.\\w+|%s)=[\\w\\s:%%\\d]*",
-            jakartify("javax.faces.partial"), jakartify("javax.faces.behavior"), FACES_SOURCE));
+            = Pattern.compile("[\\&]?(%s.\\w+|%s.\\w+|%s)=[\\w\\s:%%\\d]*".formatted(
+            "jakarta.faces.partial", "jakarta.faces.behavior", FACES_SOURCE));
     private static final Pattern INITIAL_AMPERSAND = Pattern.compile("^\\&");
     private static final String FORM_DATA_CACHE = "org.apache.shiro.form-data-cache";
     private static final String FORM_RESUBMIT_HOST = "org.apache.shiro.form-resubmit-host";
@@ -576,11 +575,10 @@ public class FormResubmitSupport {
     public static DefaultWebSessionManager getNativeSessionManager(SecurityManager securityManager) {
         DefaultWebSessionManager rv = null;
         SecurityManager unwrapped = unwrapSecurityManager(securityManager, SecurityManager.class, type -> false);
-        if (unwrapped instanceof SessionsSecurityManager) {
-            var ssm = (SessionsSecurityManager) unwrapped;
+        if (unwrapped instanceof SessionsSecurityManager ssm) {
             var sm = ssm.getSessionManager();
-            if (sm instanceof DefaultWebSessionManager) {
-                rv = (DefaultWebSessionManager) sm;
+            if (sm instanceof DefaultWebSessionManager manager) {
+                rv = manager;
             }
         }
         return rv;
@@ -605,13 +603,13 @@ public class FormResubmitSupport {
     }
 
     static String extractJSFNewViewState(@NonNull String responseBody, @NonNull String savedFormData) {
-        Elements elts = Jsoup.parse(responseBody).select(String.format("input[name=%s]", FACES_VIEW_STATE));
+        Elements elts = Jsoup.parse(responseBody).select("input[name=%s]".formatted(FACES_VIEW_STATE));
         if (!elts.isEmpty()) {
             String viewState = elts.first().attr("value");
 
             var matcher = VIEW_STATE_PATTERN.matcher(savedFormData);
             if (matcher.matches()) {
-                savedFormData = matcher.replaceFirst(String.format("$1%s%s$3",
+                savedFormData = matcher.replaceFirst("$1%s%s$3".formatted(
                         FACES_VIEW_STATE_EQUALS, viewState));
                 log.debug("Encoded w/Replaced ViewState: {}", savedFormData);
             }
@@ -626,7 +624,7 @@ public class FormResubmitSupport {
         if (hasPartialAjax) {
             var facesSourceMatcher = FACES_SOURCE_PATTERN.matcher(savedFormData);
             if (facesSourceMatcher.find()) {
-                appendFacesSourceString = String.format("&%s=", facesSourceMatcher.group(1));
+                appendFacesSourceString = "&%s=".formatted(facesSourceMatcher.group(1));
             }
         }
 

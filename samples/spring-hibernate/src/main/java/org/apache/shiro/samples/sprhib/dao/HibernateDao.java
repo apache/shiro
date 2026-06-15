@@ -18,25 +18,18 @@
  */
 package org.apache.shiro.samples.sprhib.dao;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 /**
  * Convenience superclass for DAOs that contains annotations for injecting the session factory
  * and accessing the session.
  */
 public abstract class HibernateDao {
+    @PersistenceContext
+    EntityManager entityManager;
 
-    private SessionFactory sessionFactory;
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public EntityManager getSession() {
+        return entityManager;
     }
-
-    public Session getSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
 }

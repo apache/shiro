@@ -26,9 +26,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.Assert;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -52,7 +53,7 @@ public class ManageUsersController {
         model.addAttribute("users", userService.getAllUsers());
     }
 
-    @RequestMapping(value = "/editUser", method = RequestMethod.GET)
+    @GetMapping("/editUser")
     @RequiresPermissions("user:edit")
     public String showEditUserForm(Model model, @RequestParam Long userId, @ModelAttribute EditUserCommand command) {
 
@@ -63,7 +64,7 @@ public class ManageUsersController {
         return "editUser";
     }
 
-    @RequestMapping(value = "/editUser", method = RequestMethod.POST)
+    @PostMapping("/editUser")
     @RequiresPermissions("user:edit")
     public String editUser(Model model, @RequestParam Long userId,
                            @ModelAttribute EditUserCommand command, BindingResult errors) {

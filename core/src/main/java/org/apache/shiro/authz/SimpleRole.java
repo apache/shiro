@@ -102,8 +102,7 @@ public class SimpleRole implements Serializable {
         if (o == this) {
             return true;
         }
-        if (o instanceof SimpleRole) {
-            SimpleRole sr = (SimpleRole) o;
+        if (o instanceof SimpleRole sr) {
             //only check name, since role names should be unique across an entire application:
             return (getName() != null ? getName().equals(sr.getName()) : sr.getName() == null);
         }

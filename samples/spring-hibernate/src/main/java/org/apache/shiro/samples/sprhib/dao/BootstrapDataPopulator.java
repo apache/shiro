@@ -19,7 +19,6 @@
 package org.apache.shiro.samples.sprhib.dao;
 
 import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -34,18 +33,10 @@ import javax.sql.DataSource;
 public class BootstrapDataPopulator implements InitializingBean {
 
     private DataSource dataSource;
-    @SuppressWarnings({"FieldCanBeLocal"})
-    private SessionFactory sessionFactory;
 
     @Autowired
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
-    }
-
-    // Session factory is only injected to ensure it is initialized before this runs
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
     }
 
     public void afterPropertiesSet() throws Exception {
@@ -59,7 +50,5 @@ public class BootstrapDataPopulator implements InitializingBean {
         jdbcTemplate.execute("insert into users(id,username,email,password) values (1, 'admin', 'sample@shiro.apache.org', '"
                 + new Sha256Hash("admin").toHex() + "')");
         jdbcTemplate.execute("insert into users_roles values (1, 2)");
-
-
     }
 }

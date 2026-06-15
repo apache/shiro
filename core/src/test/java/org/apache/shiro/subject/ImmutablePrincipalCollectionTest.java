@@ -22,11 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ImmutablePrincipalCollectionTest {
 
@@ -38,16 +34,16 @@ public class ImmutablePrincipalCollectionTest {
     private static final String THIRD_PRINCIPAL = "thirdPrincipal";
 
     private void testEmptyHelper(PrincipalCollection c) {
-        assertNull(c.getPrimaryPrincipal());
-        assertNull(c.oneByType(Object.class));
-        assertNull(c.oneByType(String.class));
-        assertNull(c.oneByType(Integer.class));
-        assertTrue(c.byType(Object.class).isEmpty());
-        assertTrue(c.asSet().isEmpty());
-        assertTrue(c.asList().isEmpty());
-        assertTrue(c.fromRealm(MY_REALM).isEmpty());
-        assertTrue(c.getRealmNames().isEmpty());
-        assertTrue(c.isEmpty());
+        assertThat(c.getPrimaryPrincipal()).isNull();
+        assertThat(c.oneByType(Object.class)).isNull();
+        assertThat(c.oneByType(String.class)).isNull();
+        assertThat(c.oneByType(Integer.class)).isNull();
+        assertThat(c.byType(Object.class).isEmpty()).isTrue();
+        assertThat(c.asSet().isEmpty()).isTrue();
+        assertThat(c.asList().isEmpty()).isTrue();
+        assertThat(c.fromRealm(MY_REALM).isEmpty()).isTrue();
+        assertThat(c.getRealmNames().isEmpty()).isTrue();
+        assertThat(c.isEmpty()).isTrue();
     }
 
     @Test
@@ -66,24 +62,24 @@ public class ImmutablePrincipalCollectionTest {
     }
 
     private void testSinglePrincipalHelper(PrincipalCollection c) {
-        assertEquals(MY_PRINCIPAL, c.getPrimaryPrincipal());
+        assertThat(c.getPrimaryPrincipal()).isEqualTo(MY_PRINCIPAL);
 
-        assertEquals(MY_PRINCIPAL, c.oneByType(Object.class));
-        assertEquals(MY_PRINCIPAL, c.oneByType(String.class));
-        assertNull(c.oneByType(Integer.class));
+        assertThat(c.oneByType(Object.class)).isEqualTo(MY_PRINCIPAL);
+        assertThat(c.oneByType(String.class)).isEqualTo(MY_PRINCIPAL);
+        assertThat(c.oneByType(Integer.class)).isNull();
 
-        assertEquals(Set.of(MY_PRINCIPAL), c.byType(Object.class));
-        assertEquals(Set.of(MY_PRINCIPAL), c.byType(String.class));
-        assertEquals(Set.of(), c.byType(Integer.class));
+        assertThat(c.byType(Object.class)).isEqualTo(Set.of(MY_PRINCIPAL));
+        assertThat(c.byType(String.class)).isEqualTo(Set.of(MY_PRINCIPAL));
+        assertThat(c.byType(Integer.class)).isEqualTo(Set.of());
 
-        assertEquals(Set.of(MY_PRINCIPAL), c.asSet());
-        assertEquals(List.of(MY_PRINCIPAL), c.asList());
+        assertThat(c.asSet()).isEqualTo(Set.of(MY_PRINCIPAL));
+        assertThat(c.asList()).isEqualTo(List.of(MY_PRINCIPAL));
 
-        assertEquals(Set.of(MY_PRINCIPAL), c.fromRealm(MY_REALM));
-        assertTrue(c.fromRealm(OTHER_REALM).isEmpty());
+        assertThat(c.fromRealm(MY_REALM)).isEqualTo(Set.of(MY_PRINCIPAL));
+        assertThat(c.fromRealm(OTHER_REALM)).isEmpty();
 
-        assertEquals(Set.of(MY_REALM), c.getRealmNames());
-        assertFalse(c.isEmpty());
+        assertThat(c.getRealmNames()).isEqualTo(Set.of(MY_REALM));
+        assertThat(c).isNotEmpty();
     }
 
     @Test
@@ -113,24 +109,24 @@ public class ImmutablePrincipalCollectionTest {
     }
 
     private void testSingleRealmMultiplePrincipalsHelper(PrincipalCollection c) {
-        assertEquals(MY_PRINCIPAL, c.getPrimaryPrincipal());
+        assertThat(c.getPrimaryPrincipal()).isEqualTo(MY_PRINCIPAL);
 
-        assertEquals(MY_PRINCIPAL, c.oneByType(Object.class));
-        assertEquals(MY_PRINCIPAL, c.oneByType(String.class));
-        assertNull(c.oneByType(Integer.class));
+        assertThat(c.oneByType(Object.class)).isEqualTo(MY_PRINCIPAL);
+        assertThat(c.oneByType(String.class)).isEqualTo(MY_PRINCIPAL);
+        assertThat(c.oneByType(Integer.class)).isNull();
 
-        assertEquals(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL), c.byType(Object.class));
-        assertEquals(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL), c.byType(String.class));
-        assertEquals(Set.of(), c.byType(Integer.class));
+        assertThat(c.byType(Object.class)).isEqualTo(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL));
+        assertThat(c.byType(String.class)).isEqualTo(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL));
+        assertThat(c.byType(Integer.class)).isEqualTo(Set.of());
 
-        assertEquals(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL), c.asSet());
-        assertEquals(List.of(MY_PRINCIPAL, OTHER_PRINCIPAL), c.asList());
+        assertThat(c.asSet()).isEqualTo(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL));
+        assertThat(c.asList()).isEqualTo(List.of(MY_PRINCIPAL, OTHER_PRINCIPAL));
 
-        assertEquals(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL), c.fromRealm(MY_REALM));
-        assertTrue(c.fromRealm(OTHER_REALM).isEmpty());
+        assertThat(c.fromRealm(MY_REALM)).isEqualTo(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL));
+        assertThat(c.fromRealm(OTHER_REALM)).isEmpty();
 
-        assertEquals(Set.of(MY_REALM), c.getRealmNames());
-        assertFalse(c.isEmpty());
+        assertThat(c.getRealmNames()).isEqualTo(Set.of(MY_REALM));
+        assertThat(c).isNotEmpty();
     }
 
     @Test
@@ -157,24 +153,24 @@ public class ImmutablePrincipalCollectionTest {
     }
 
     private void testMultipleRealmsSinglePrincipalEachHelper(PrincipalCollection c) {
-        assertEquals(MY_PRINCIPAL, c.getPrimaryPrincipal());
+        assertThat(c.getPrimaryPrincipal()).isEqualTo(MY_PRINCIPAL);
 
-        assertEquals(MY_PRINCIPAL, c.oneByType(Object.class));
-        assertEquals(MY_PRINCIPAL, c.oneByType(String.class));
-        assertNull(c.oneByType(Integer.class));
+        assertThat(c.oneByType(Object.class)).isEqualTo(MY_PRINCIPAL);
+        assertThat(c.oneByType(String.class)).isEqualTo(MY_PRINCIPAL);
+        assertThat(c.oneByType(Integer.class)).isNull();
 
-        assertEquals(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL), c.byType(Object.class));
-        assertEquals(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL), c.byType(String.class));
-        assertEquals(Set.of(), c.byType(Integer.class));
+        assertThat(c.byType(Object.class)).isEqualTo(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL));
+        assertThat(c.byType(String.class)).isEqualTo(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL));
+        assertThat(c.byType(Integer.class)).isEqualTo(Set.of());
 
-        assertEquals(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL), c.asSet());
-        assertEquals(List.of(MY_PRINCIPAL, OTHER_PRINCIPAL), c.asList());
+        assertThat(c.asSet()).isEqualTo(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL));
+        assertThat(c.asList()).isEqualTo(List.of(MY_PRINCIPAL, OTHER_PRINCIPAL));
 
-        assertEquals(Set.of(MY_PRINCIPAL), c.fromRealm(MY_REALM));
-        assertEquals(Set.of(OTHER_PRINCIPAL), c.fromRealm(OTHER_REALM));
+        assertThat(c.fromRealm(MY_REALM)).isEqualTo(Set.of(MY_PRINCIPAL));
+        assertThat(c.fromRealm(OTHER_REALM)).isEqualTo(Set.of(OTHER_PRINCIPAL));
 
-        assertEquals(Set.of(MY_REALM, OTHER_REALM), c.getRealmNames());
-        assertFalse(c.isEmpty());
+        assertThat(c.getRealmNames()).isEqualTo(Set.of(MY_REALM, OTHER_REALM));
+        assertThat(c).isNotEmpty();
     }
 
     @Test
@@ -203,26 +199,25 @@ public class ImmutablePrincipalCollectionTest {
                 .addPrincipal(THIRD_PRINCIPAL, MY_REALM)
                 .build();
 
-        assertEquals(MY_PRINCIPAL, c.getPrimaryPrincipal());
+        assertThat(c.getPrimaryPrincipal()).isEqualTo(MY_PRINCIPAL);
 
-        assertEquals(MY_PRINCIPAL, c.oneByType(Object.class));
-        assertEquals(MY_PRINCIPAL, c.oneByType(String.class));
-        assertNull(c.oneByType(Integer.class));
+        assertThat(c.oneByType(Object.class)).isEqualTo(MY_PRINCIPAL);
+        assertThat(c.oneByType(String.class)).isEqualTo(MY_PRINCIPAL);
+        assertThat(c.oneByType(Integer.class)).isNull();
 
-        assertEquals(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL, THIRD_PRINCIPAL), c.byType(Object.class));
-        assertEquals(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL, THIRD_PRINCIPAL), c.byType(String.class));
-        assertEquals(Set.of(), c.byType(Integer.class));
+        assertThat(c.byType(Object.class)).isEqualTo(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL, THIRD_PRINCIPAL));
+        assertThat(c.byType(String.class)).isEqualTo(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL, THIRD_PRINCIPAL));
+        assertThat(c.byType(Integer.class)).isEqualTo(Set.of());
 
-        assertEquals(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL, THIRD_PRINCIPAL), c.asSet());
+        assertThat(c.asSet()).isEqualTo(Set.of(MY_PRINCIPAL, OTHER_PRINCIPAL, THIRD_PRINCIPAL));
 
         // principals are returned sorted by realm, then within each realm by insertion order
-        assertEquals(List.of(MY_PRINCIPAL, THIRD_PRINCIPAL, OTHER_PRINCIPAL), c.asList());
+        assertThat(c.asList()).isEqualTo(List.of(MY_PRINCIPAL, THIRD_PRINCIPAL, OTHER_PRINCIPAL));
 
-        assertEquals(Set.of(MY_PRINCIPAL, THIRD_PRINCIPAL), c.fromRealm(MY_REALM));
-        assertEquals(Set.of(OTHER_PRINCIPAL), c.fromRealm(OTHER_REALM));
+        assertThat(c.fromRealm(MY_REALM)).isEqualTo(Set.of(MY_PRINCIPAL, THIRD_PRINCIPAL));
+        assertThat(c.fromRealm(OTHER_REALM)).isEqualTo(Set.of(OTHER_PRINCIPAL));
 
-        assertEquals(Set.of(MY_REALM, OTHER_REALM), c.getRealmNames());
-        assertFalse(c.isEmpty());
+        assertThat(c.getRealmNames()).isEqualTo(Set.of(MY_REALM, OTHER_REALM));
+        assertThat(c).isNotEmpty();
     }
-
 }

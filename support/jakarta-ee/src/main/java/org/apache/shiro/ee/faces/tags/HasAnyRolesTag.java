@@ -15,7 +15,7 @@ package org.apache.shiro.ee.faces.tags;
 
 import org.apache.shiro.subject.Subject;
 
-import javax.faces.view.facelets.TagConfig;
+import jakarta.faces.view.facelets.TagConfig;
 
 
 /**

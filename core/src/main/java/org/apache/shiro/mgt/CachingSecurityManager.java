@@ -124,8 +124,8 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * @since 1.3
      */
     protected void applyEventBusToCacheManager() {
-        if (this.eventBus != null && this.cacheManager != null && this.cacheManager instanceof EventBusAware) {
-            ((EventBusAware) this.cacheManager).setEventBus(this.eventBus);
+        if (this.eventBus != null && this.cacheManager != null && this.cacheManager instanceof EventBusAware aware) {
+            aware.setEventBus(this.eventBus);
         }
     }
 

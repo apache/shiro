@@ -17,10 +17,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import javax.inject.Scope;
+import jakarta.inject.Scope;
 
 /**
- * {@code @javax.faces.view.ViewScoped} interface that works with Shiro sessions
+ * {@code @jakarta.faces.view.ViewScoped} interface that works with Shiro sessions
  * Primarily for plugging into Shiro destruction pipeline
  * <p>
  * This is an internal class and should not be used by applications

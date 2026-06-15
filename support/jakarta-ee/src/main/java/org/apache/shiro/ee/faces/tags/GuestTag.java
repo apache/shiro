@@ -13,7 +13,7 @@
  */
 package org.apache.shiro.ee.faces.tags;
 
-import javax.faces.view.facelets.TagConfig;
+import jakarta.faces.view.facelets.TagConfig;
 
 /**
  * Tag that renders the tag body if the current user <em>is not</em> known to the system, either because they

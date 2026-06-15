@@ -80,13 +80,13 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
      * @throws BeansException if any exception is thrown during initialization.
      */
     public Object postProcessBeforeInitialization(Object object, String name) throws BeansException {
-        if (object instanceof Initializable) {
+        if (object instanceof Initializable initializable) {
             try {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Initializing bean [" + name + "]...");
                 }
 
-                ((Initializable) object).init();
+                initializable.init();
             } catch (Exception e) {
                 throw new FatalBeanException("Error initializing bean [" + name + "]", e);
             }
@@ -112,13 +112,13 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
      * @throws BeansException if any exception is thrown during initialization.
      */
     public void postProcessBeforeDestruction(Object object, String name) throws BeansException {
-        if (object instanceof Destroyable) {
+        if (object instanceof Destroyable destroyable) {
             try {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Destroying bean [" + name + "]...");
                 }
 
-                ((Destroyable) object).destroy();
+                destroyable.destroy();
             } catch (Exception e) {
                 throw new FatalBeanException("Error destroying bean [" + name + "]", e);
             }

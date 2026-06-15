@@ -19,19 +19,17 @@
 package org.apache.shiro.samples.spring.config;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.cache.ehcache.EhCacheManager;
-import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.cache.jcache.JCacheManager;
 import org.apache.shiro.samples.spring.BootstrapDataPopulator;
 import org.apache.shiro.samples.spring.DefaultSampleManager;
 import org.apache.shiro.samples.spring.realm.SaltAwareJdbcRealm;
 import org.apache.shiro.spring.config.ShiroAnnotationProcessorConfiguration;
 import org.apache.shiro.spring.config.ShiroBeanConfiguration;
-import org.apache.shiro.spring.remoting.SecureRemoteInvocationExecutor;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
-import org.apache.shiro.spring.web.config.ShiroRequestMappingConfig;
 import org.apache.shiro.spring.web.config.ShiroWebConfiguration;
 import org.apache.shiro.spring.web.config.ShiroWebFilterConfiguration;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -50,9 +48,7 @@ import javax.sql.DataSource;
         ShiroAnnotationProcessorConfiguration.class,
         ShiroWebConfiguration.class,
         ShiroWebFilterConfiguration.class,
-        JspViewsConfig.class,
-        RemotingServletConfig.class,
-        ShiroRequestMappingConfig.class})
+        JspViewsConfig.class})
 @ComponentScan("org.apache.shiro.samples.spring")
 public class ApplicationConfig {
 
@@ -102,38 +98,9 @@ public class ApplicationConfig {
      * @return
      */
     @Bean
-    protected EhCacheManager cacheManager() {
-
-        EhCacheManager ehCacheManager = new EhCacheManager();
-
-        // Set a net.sf.ehcache.CacheManager instance here if you already have one.
-        // If not, a new one will be created with a default config:
-        // ehCacheManager.setCacheManager(...);
-
-        // If you don't have a pre-built net.sf.ehcache.CacheManager instance to inject, but you want
-        // a specific Ehcache configuration to be used, specify that here.  If you don't, a default
-        //will be used.:
-        // ehCacheManager.setCacheManagerConfigFile("classpath:some/path/to/ehcache.xml");
-
-        return ehCacheManager;
+    protected JCacheManager cacheManager() {
+        return new JCacheManager();
     }
-
-    /**
-     * Secure Spring remoting:  Ensure any Spring Remoting method invocations can be associated
-     * with a Subject for security checks.
-     *
-     * @param securityManager
-     * @return
-     */
-    @Bean
-    protected SecureRemoteInvocationExecutor secureRemoteInvocationExecutor(SecurityManager securityManager) {
-
-        SecureRemoteInvocationExecutor executor = new SecureRemoteInvocationExecutor();
-        executor.setSecurityManager(securityManager);
-
-        return executor;
-    }
-
 
     /**
      * Simulated business-tier "Manager", not Shiro related, just an example
@@ -172,11 +139,9 @@ public class ApplicationConfig {
         chainDefinition.addPathDefinition("/logo.png", "anon");
         chainDefinition.addPathDefinition("/shiro.css", "anon");
         chainDefinition.addPathDefinition("/s/login", "anon");
+        chainDefinition.addPathDefinition("/WEB-INF/resources/login.jsp", "anon");
         //allow WebStart to pull the jars for the swing app
         chainDefinition.addPathDefinition("/*.jar", "anon");
-        // protected using SecureRemoteInvocationExecutor
-        chainDefinition.addPathDefinition("/remoting/**", "anon");
-        chainDefinition.addPathDefinition("/**", "authc");
 
 
         return chainDefinition;

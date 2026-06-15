@@ -27,8 +27,8 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull
 /**
  * @since 1.4.0
  */
-@ContextConfiguration(classes = [EventBusTestConfiguration, RealmTestConfiguration, CacheManagerConfiguration, ShiroWebConfiguration])
+@SpringJUnitConfig(classes = [EventBusTestConfiguration, RealmTestConfiguration, CacheManagerConfiguration, ShiroWebConfiguration])
 @ExtendWith(SpringExtension.class)
 class ShiroWebConfigurationWithCacheTest {
 

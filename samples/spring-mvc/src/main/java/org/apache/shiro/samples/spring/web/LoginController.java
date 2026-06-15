@@ -23,10 +23,11 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -34,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  *
  * @since 0.1
  */
-@Component
+@Controller
 @RequestMapping("/s/login")
 public class LoginController {
 
@@ -42,14 +43,14 @@ public class LoginController {
 
     private static String loginview = "login";
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     protected String view() {
         return loginview;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    protected String onSubmit(@RequestParam("username") String username,
-                              @RequestParam("password") String password,
+    @PostMapping
+    protected String onSubmit(@RequestParam String username,
+                              @RequestParam String password,
                               Model model) throws Exception {
 
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);

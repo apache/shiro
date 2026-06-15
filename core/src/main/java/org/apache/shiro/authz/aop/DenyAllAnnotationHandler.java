@@ -21,7 +21,7 @@ package org.apache.shiro.authz.aop;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 
-import javax.annotation.security.DenyAll;
+import jakarta.annotation.security.DenyAll;
 import java.lang.annotation.Annotation;
 
 /**

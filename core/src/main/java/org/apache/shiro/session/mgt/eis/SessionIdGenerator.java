@@ -35,7 +35,6 @@ import java.io.Serializable;
  * store, you can implement this interface and typically inject it into an {@link AbstractSessionDAO} instance.
  *
  * @see org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator JavaUuidSessionIdGenerator
- * @see org.apache.shiro.session.mgt.eis.RandomSessionIdGenerator RandomSessionIdGenerator
  * @since 1.0
  */
 public interface SessionIdGenerator {

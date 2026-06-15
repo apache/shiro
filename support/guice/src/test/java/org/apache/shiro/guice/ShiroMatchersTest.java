@@ -22,15 +22,15 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matcher;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ShiroMatchersTest {
+class ShiroMatchersTest {
     @Test
+    @SuppressWarnings("rawtypes")
     void testTypeLiteral() throws Exception {
         Matcher<Class> classMatcher = createMock(Matcher.class);
         expect(classMatcher.matches(MatchingClass.class)).andReturn(true);
@@ -40,8 +40,8 @@ public class ShiroMatchersTest {
 
         Matcher<TypeLiteral> underTest = ShiroMatchers.typeLiteral(classMatcher);
 
-        assertTrue(underTest.matches(TypeLiteral.get(MatchingClass.class)));
-        assertFalse(underTest.matches(TypeLiteral.get(NotMatchingClass.class)));
+        assertThat(underTest.matches(TypeLiteral.get(MatchingClass.class))).isTrue();
+        assertThat(underTest.matches(TypeLiteral.get(NotMatchingClass.class))).isFalse();
 
         verify(classMatcher);
     }

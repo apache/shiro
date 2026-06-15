@@ -62,7 +62,7 @@ public final class CollectionUtils {
      * {@code false} otherwise.
      * @since 1.0
      */
-    public static boolean isEmpty(Collection c) {
+    public static boolean isEmpty(Collection<?> c) {
         return c == null || c.isEmpty();
     }
 
@@ -75,7 +75,7 @@ public final class CollectionUtils {
      * {@code false} otherwise.
      * @since 1.0
      */
-    public static boolean isEmpty(Map m) {
+    public static boolean isEmpty(Map<?, ?> m) {
         return m == null || m.isEmpty();
     }
 
@@ -86,7 +86,7 @@ public final class CollectionUtils {
      * @return the size of the specified collection or {@code 0} if the collection is {@code null}.
      * @since 1.2
      */
-    public static int size(Collection c) {
+    public static int size(Collection<?> c) {
         return c != null ? c.size() : 0;
     }
 
@@ -97,7 +97,7 @@ public final class CollectionUtils {
      * @return the size of the specified map or {@code 0} if the map is {@code null}.
      * @since 1.2
      */
-    public static int size(Map m) {
+    public static int size(Map<?, ?> m) {
         return m != null ? m.size() : 0;
     }
 
@@ -127,16 +127,6 @@ public final class CollectionUtils {
         return Arrays.asList(elements);
     }
 
-    /*public static <E> Deque<E> asDeque(E... elements) {
-        if (elements == null || elements.length == 0) {
-            return new ArrayDeque<E>();
-        }
-        // Avoid integer overflow when a large array is passed in
-        int capacity = computeListCapacity(elements.length);
-        ArrayDeque<E> deque = new ArrayDeque<E>(capacity);
-        Collections.addAll(deque, elements);
-        return deque;
-    }*/
     @SuppressWarnings("checkstyle:MagicNumber")
     static int computeListCapacity(int arraySize) {
         return (int) Math.min(5L + arraySize + (arraySize / 10), Integer.MAX_VALUE);
