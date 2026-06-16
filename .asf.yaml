@@ -29,8 +29,8 @@ github:
     discussions: true
   enabled_merge_buttons:
     squash: true
-    merge: true
-    rebase: false
+    merge: false
+    rebase: true
   rulesets:
     - name: "Branch Protection"
       type: branch
