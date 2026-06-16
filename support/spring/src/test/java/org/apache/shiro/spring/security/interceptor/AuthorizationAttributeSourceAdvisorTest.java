@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AuthorizationAttributeSourceAdvisorTest {
+class AuthorizationAttributeSourceAdvisorTest {
 
     static class Secured {
         @RequiresAuthentication

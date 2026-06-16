@@ -34,7 +34,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
  * @since 1.1
  */
 @SpringJUnitConfig
-public class DapcAuthorizationAnnotationTest extends AbstractAuthorizationAnnotationTest {
+class DapcAuthorizationAnnotationTest extends AbstractAuthorizationAnnotationTest {
 
     @Test
     void testGuestInterfaceFailure() {

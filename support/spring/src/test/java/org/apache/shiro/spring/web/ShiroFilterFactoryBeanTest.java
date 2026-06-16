@@ -35,6 +35,8 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,12 +51,11 @@ import static org.easymock.EasyMock.verify;
  *
  * @since 1.0
  */
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = {"/org/apache/shiro/spring/web/ShiroFilterFactoryBeanTest.xml"})
-public class ShiroFilterFactoryBeanTest {
-
+@SpringJUnitWebConfig
+@ContextConfiguration(locations = {"/org/apache/shiro/spring/web/ShiroFilterFactoryBeanTest.xml"})
+class ShiroFilterFactoryBeanTest {
     @Test
-    void testFilterDefinition() {
+    void filterDefinition() {
 
         ClassPathXmlApplicationContext context =
                 new ClassPathXmlApplicationContext("org/apache/shiro/spring/web/ShiroFilterFactoryBeanTest.xml");
@@ -79,7 +80,7 @@ public class ShiroFilterFactoryBeanTest {
      * @throws Exception if there is any unexpected error
      */
     @Test
-    void testFilterDefinitionWithInit() throws Exception {
+    void filterDefinitionWithInit() throws Exception {
 
         ClassPathXmlApplicationContext context =
                 new ClassPathXmlApplicationContext("org/apache/shiro/spring/web/ShiroFilterFactoryBeanTest.xml");

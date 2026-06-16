@@ -29,17 +29,16 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringJUnitConfig(classes = {EventBusTestConfiguration.class, RealmTestConfiguration.class, ShiroWebConfiguration.class})
 @TestPropertySource
-public class ShiroWebConfigurationTestSameSiteStrict {
-
+@SpringJUnitConfig(classes = {EventBusTestConfiguration.class, RealmTestConfiguration.class, ShiroWebConfiguration.class})
+class ShiroWebConfigurationSameSiteStrictTest {
     @Autowired
     ShiroWebConfiguration shiroWebConfiguration;
 
     @Test
     void testStrictSameSite() {
         // given
-        // org/apache/shiro/spring/web/config/ShiroWebConfigurationTestSameSiteStrict.properties
+        // org/apache/shiro/spring/web/config/ShiroWebConfigurationSameSiteStrictTest.properties
 
         // then
         assertThat(shiroWebConfiguration.sessionIdCookieSameSite).isEqualTo(Cookie.SameSiteOptions.STRICT);
