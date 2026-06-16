@@ -29,8 +29,8 @@ github:
     discussions: true
   enabled_merge_buttons:
     squash: true
-    merge: true
-    rebase: false
+    merge: false
+    rebase: true
   rulesets:
     - name: "Branch Protection"
       type: branch
@@ -46,7 +46,7 @@ github:
       restrict_deletion: true
       restrict_force_push: true
       required_signatures: false
-      required_linear_history: false
+      required_linear_history: true
       required_conversation_resolution: false
       required_pull_request_reviews:
         dismiss_stale_reviews: true
