@@ -36,7 +36,6 @@ github:
       type: branch
       branches:
         includes:
-          - "main"
           - "2.x"
           - "1.13.x"
           - "release/*"
