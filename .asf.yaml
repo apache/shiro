@@ -41,10 +41,12 @@ github:
           - "1.13.x"
           - "release/*"
         excludes: []
+      bypass_teams:
+        - "release-managers"
       restrict_deletion: true
       restrict_force_push: true
       required_signatures: false
-      required_linear_history: true
+      required_linear_history: false
       required_conversation_resolution: false
       required_pull_request_reviews:
         dismiss_stale_reviews: true
