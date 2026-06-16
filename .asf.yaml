@@ -36,8 +36,8 @@ github:
       type: branch
       branches:
         includes:
-          - "main"
-          - "2.x"
+          - "main-XXX"
+          - "2.x-XXX"
           - "1.13.x"
           - "release/*"
         excludes: []
