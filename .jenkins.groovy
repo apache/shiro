@@ -17,7 +17,7 @@
  * under the License.
  */
 
-def deployableBranch = env.BRANCH_NAME ==~ /(1.13.x|2.x|3.x|4.x|main)/
+def deployableBranch = env.BRANCH_NAME ==~ /(main|4.x)/
 def latestSupportedJDK = 'jdk_25_latest'
 def builtinVersion = '999-SNAPSHOT'
 def nextVersion
@@ -107,10 +107,9 @@ pipeline {
                                 def parts = latestRelease.tokenize('.')
                                 def nextPatch = parts[2].toInteger() + 1
                                 nextVersion = "${parts[0]}.${parts[1]}.${nextPatch}-SNAPSHOT"
-                                if (env.BRANCH_NAME == '2.x') {
-                                    nextVersion = '2.0.0-SNAPSHOT'
-                                }
-                                if (env.BRANCH_NAME == '3.x') {
+                                if (env.BRANCH_NAME == '4.x') {
+                                    nextVersion = '4.0.0-SNAPSHOT'
+                                } else if (parts[0].toInteger() < 3) {
                                     nextVersion = '3.0.0-SNAPSHOT'
                                 }
 

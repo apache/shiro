@@ -40,7 +40,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
  * @since 1.1
  */
 @SpringJUnitConfig
-public abstract class AbstractAuthorizationAnnotationTest {
+abstract class AbstractAuthorizationAnnotationTest {
 
     @Autowired
     protected TestService testService;

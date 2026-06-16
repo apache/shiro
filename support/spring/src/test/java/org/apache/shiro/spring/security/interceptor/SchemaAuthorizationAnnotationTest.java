@@ -30,5 +30,5 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
  * @since 1.1
  */
 @SpringJUnitConfig
-public class SchemaAuthorizationAnnotationTest extends AbstractAuthorizationAnnotationTest {
+class SchemaAuthorizationAnnotationTest extends AbstractAuthorizationAnnotationTest {
 }

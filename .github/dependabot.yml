@@ -69,6 +69,9 @@ updates:
       - dependency-name: "org.aspectj:*"
         update-types: [ "version-update:semver-patch" ]
 
+      - dependency-name: "com.puppycrawl.tools:checkstyle"
+        update-types: [ "version-update:semver-major" ]
+
       - dependency-name: "org.springframework*:*"
         update-types: [ "version-update:semver-major" ]
       - dependency-name: "com.flowlogix:flowlogix-jee"
