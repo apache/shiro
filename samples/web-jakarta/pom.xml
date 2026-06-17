@@ -33,7 +33,6 @@
 
     <properties>
         <meecrowave.version>1.2.15</meecrowave.version>
-        <tomcat.version>${tomcat10.version}</tomcat.version>
         <jacoco.skip>true</jacoco.skip>
     </properties>
 
@@ -61,27 +60,27 @@
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-core</artifactId>
-                <version>${tomcat.version}</version>
+                <version>${tomcat10.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-el</artifactId>
-                <version>${tomcat.version}</version>
+                <version>${tomcat10.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jaspic-api</artifactId>
-                <version>${tomcat.version}</version>
+                <version>${tomcat10.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat.embed</groupId>
                 <artifactId>tomcat-embed-websocket</artifactId>
-                <version>${tomcat.version}</version>
+                <version>${tomcat10.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-catalina</artifactId>
-                <version>${tomcat.version}</version>
+                <version>${tomcat10.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -141,7 +140,7 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jasper</artifactId>
-            <version>${tomcat.version}</version>
+            <version>${tomcat10.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -153,7 +152,7 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-jasper-el</artifactId>
-            <version>${tomcat.version}</version>
+            <version>${tomcat10.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
