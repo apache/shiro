@@ -86,6 +86,30 @@ updates:
       - dependency-name: "com.hazelcast:*"
         update-types: [ "version-update:semver-minor" ]
 
+      - dependency-name: "org.apache.groovy:*"
+        update-types: [ "version-update:semver-major" ]
+
+      - dependency-name: "org.junit.jupiter:*"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "org.junit.platform:*"
+
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "org.htmlunit:htmlunit:*"
+
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "org.apache.felix:maven-bundle-plugin"
+
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "org.apache.tomcat.embed:*"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "org.apache.tomcat:*"
+        update-types: [ "version-update:semver-major" ]
+      - dependency-name: "org.apache.meecrowave:*"
+        update-types: [ "version-update:semver-major" ]
+
+      - dependency-name: "fish.payara.arquillian:arquillian-payara-server-remote"
+        update-types: [ "version-update:semver-major" ]
+
   # Dependencies for GitHub Actions
   - package-ecosystem: 'github-actions'
     directory: '/'
