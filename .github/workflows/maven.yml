@@ -24,9 +24,9 @@ permissions:
 on:
   workflow_dispatch: { }
   push:
-    branches: [ main, '1.13.x', '1.12.x', '1.11.x', '1.10.x' ]
+    branches: [ main, '2.x', '1.13.x' ]
   pull_request:
-    branches: [ main, '1.13.x', '1.12.x', '1.11.x', '1.10.x' ]
+    branches: [ main, '2.x', '1.13.x' ]
 
 jobs:
   build:
