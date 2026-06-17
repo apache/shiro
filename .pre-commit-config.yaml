@@ -100,7 +100,7 @@ repos:
         description: Trims trailing whitespace
         args: [--markdown-linebreak-ext=md]
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: e72a3ca1632f0b11a07d171449fe447a7ff6795e # frozen: v0.48.0
+    rev: a4d5d37e66ebcd6b3705204a1d6dbb56dea66338 # frozen: v0.49.0
     hooks:
       - id: markdownlint
         name: run markdownlint
