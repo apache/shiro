@@ -92,14 +92,13 @@ updates:
       - dependency-name: "org.junit.jupiter:*"
         update-types: [ "version-update:semver-major" ]
       - dependency-name: "org.junit.platform:*"
-
         update-types: [ "version-update:semver-major" ]
-      - dependency-name: "org.htmlunit:htmlunit:*"
 
+      - dependency-name: "org.htmlunit:*"
         update-types: [ "version-update:semver-major" ]
       - dependency-name: "org.apache.felix:maven-bundle-plugin"
-
         update-types: [ "version-update:semver-major" ]
+
       - dependency-name: "org.apache.tomcat.embed:*"
         update-types: [ "version-update:semver-major" ]
       - dependency-name: "org.apache.tomcat:*"
