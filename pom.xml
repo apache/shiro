@@ -108,7 +108,7 @@
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>11</jdk.version>
         <jetty.version>9.4.58.v20250814</jetty.version>
-        <tomcat.version>9.0.113</tomcat.version>
+        <tomcat.version>11.0.22</tomcat.version>
         <tomcat10.version>10.1.50</tomcat10.version>
         <owasp.java.encoder.version>1.4.0</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
@@ -121,7 +121,7 @@
         <spring-boot.version>2.7.18</spring-boot.version>
         <guice.version>4.2.3</guice.version>
         <jaxrs.api.version>2.1.6</jaxrs.api.version>
-        <htmlunit.version>4.21.0</htmlunit.version>
+        <htmlunit.version>5.1.0</htmlunit.version>
         <bouncycastle.version>1.84</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
@@ -129,9 +129,9 @@
         <mockito.version>5.23.0</mockito.version>
         <bytebuddy.version>1.18.10</bytebuddy.version>
         <gmaven.version>5.0.0</gmaven.version>
-        <groovy.version>4.0.27</groovy.version>
-        <junit.version>5.13.4</junit.version>
-        <junit.engine.version>1.13.4</junit.engine.version>
+        <groovy.version>5.0.6</groovy.version>
+        <junit.version>6.1.0</junit.version>
+        <junit.engine.version>6.1.0</junit.engine.version>
         <junit.server.jetty.version>3.5.0</junit.server.jetty.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
@@ -336,7 +336,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>5.1.9</version>
+                    <version>6.0.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
