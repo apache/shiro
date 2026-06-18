@@ -117,6 +117,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     protected void afterEventBusSet() {
         super.afterEventBusSet();
         applyEventBusToSessionManager();
+        applyEventBusToAuthenticator();
     }
 
     /**
@@ -144,6 +145,22 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
     protected void applyEventBusToSessionManager() {
         EventBus eventBus = getEventBus();
         if (eventBus != null && this.sessionManager instanceof EventBusAware aware) {
+            aware.setEventBus(eventBus);
+        }
+    }
+
+    /**
+     * Ensures the internal delegate <code>Authenticator</code> is injected with the newly set
+     * {@link #setEventBus EventBus} so it may use it for its internal event needs.
+     * <p/>
+     * Note: This implementation only injects the EventBus into the Authenticator if it
+     * instance implements the {@link EventBusAware EventBusAware} interface.
+     *
+     * @since 3.0.0
+     */
+    protected void applyEventBusToAuthenticator() {
+        EventBus eventBus = getEventBus();
+        if (eventBus != null && this.getAuthenticator() instanceof EventBusAware aware) {
             aware.setEventBus(eventBus);
         }
     }

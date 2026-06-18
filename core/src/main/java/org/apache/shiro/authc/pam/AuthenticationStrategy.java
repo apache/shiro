@@ -21,6 +21,7 @@ package org.apache.shiro.authc.pam;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.realm.Realm;
 
 import java.util.Collection;
@@ -39,7 +40,7 @@ import java.util.Collection;
  * @see FirstSuccessfulStrategy
  * @since 0.2
  */
-public interface AuthenticationStrategy {
+public interface AuthenticationStrategy extends EventBusAware {
 
     /**
      * Method invoked by the ModularAuthenticator signifying that the authentication process is about to begin for the
