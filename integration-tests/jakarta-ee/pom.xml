@@ -36,14 +36,14 @@
         <arquillian.graphene.version>3.0.1.Final</arquillian.graphene.version>
         <drone.browser>firefox</drone.browser>
 
-        <payara.version>7.2026.1</payara.version>
+        <payara.version>7.2026.5</payara.version>
         <payara.start.skip>${skipITs}</payara.start.skip>
         <asadmin.cmd>asadmin</asadmin.cmd>
         <unix-sed-skip>${payara.start.skip}</unix-sed-skip>
         <mac-backup-file/>
         <create-domain-skip>true</create-domain-skip>
         <domain.name>domain1</domain.name>
-        <payara.https.port>8181</payara.https.port>
+        <server.https.port>8181</server.https.port>
 
         <jakartaee.it.skip>${skipITs}</jakartaee.it.skip>
         <integration.modes.skip>${jakartaee.it.skip}</integration.modes.skip>
@@ -140,6 +140,16 @@
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>fish.payara.extras</groupId>
+                <artifactId>payara-micro</artifactId>
+                <version>${payara.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -167,7 +177,7 @@
                         <integration.test.mode>${integration.test.mode}</integration.test.mode>
                         <gh_user>${gh_user}</gh_user>
                         <gh_token>${gh_token}</gh_token>
-                        <httpsPort>${payara.https.port}</httpsPort>
+                        <httpsPort>${server.https.port}</httpsPort>
                         <webdriver.browser>${drone.browser}</webdriver.browser>
                         <webdriver.chrome.binary>${drone.chrome.binary}</webdriver.chrome.binary>
                         <webdriver.firefox.binary>${drone.firefox.binary}</webdriver.firefox.binary>
