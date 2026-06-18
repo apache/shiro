@@ -23,7 +23,10 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.MergableAuthenticationInfo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.event.EventBus;
 import org.apache.shiro.realm.Realm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
@@ -35,6 +38,9 @@ import java.util.Collection;
  * @since 0.9
  */
 public abstract class AbstractAuthenticationStrategy implements AuthenticationStrategy {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAuthenticationStrategy.class);
+    private EventBus eventBus;
+    private boolean warnIfAuthenticatorFailed = true;
 
     /**
      * Simply returns <code>new {@link org.apache.shiro.authc.SimpleAuthenticationInfo SimpleAuthenticationInfo}();</code>,
@@ -64,6 +70,14 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
         AuthenticationInfo info;
         if (singleRealmInfo == null) {
             info = aggregateInfo;
+            if (t != null && !(t instanceof AuthenticationException)) {
+                if (warnIfAuthenticatorFailed) {
+                    LOGGER.warn("Error during multi-realm authentication for [" + realm + "]", t);
+                }
+                if (eventBus != null) {
+                    eventBus.publish(new AuthenticationExceptionEvent(realm, t));
+                }
+            }
         } else {
             if (aggregateInfo == null) {
                 info = singleRealmInfo;
@@ -102,5 +116,18 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
     public AuthenticationInfo afterAllAttempts(AuthenticationToken token, AuthenticationInfo aggregate)
             throws AuthenticationException {
         return aggregate;
+    }
+
+    @Override
+    public void setEventBus(EventBus bus) {
+        this.eventBus = bus;
+    }
+
+    public boolean isWarnIfAuthenticatorFailed() {
+        return warnIfAuthenticatorFailed;
+    }
+
+    public void setWarnIfAuthenticatorFailed(boolean warnIfAuthenticatorFailed) {
+        this.warnIfAuthenticatorFailed = warnIfAuthenticatorFailed;
     }
 }

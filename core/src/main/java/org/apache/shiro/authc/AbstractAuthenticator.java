@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.authc;
 
+import org.apache.shiro.event.EventBus;
+import org.apache.shiro.event.EventBusAware;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +42,7 @@ import java.util.Collection;
  *
  * @since 0.1
  */
-public abstract class AbstractAuthenticator implements Authenticator, LogoutAware {
+public abstract class AbstractAuthenticator implements Authenticator, LogoutAware, EventBusAware {
 
     /*-------------------------------------------
     |             C O N S T A N T S             |
@@ -258,5 +260,6 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
     protected abstract AuthenticationInfo doAuthenticate(AuthenticationToken token)
             throws AuthenticationException;
 
-
+    @Override
+    public void setEventBus(EventBus eventBus) { }
 }

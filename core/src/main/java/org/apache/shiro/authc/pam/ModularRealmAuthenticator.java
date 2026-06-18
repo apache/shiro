@@ -24,6 +24,7 @@ import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.LogoutAware;
 import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.event.EventBus;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
@@ -299,5 +300,13 @@ public class ModularRealmAuthenticator extends AbstractAuthenticator {
                 }
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setEventBus(EventBus eventBus) {
+        authenticationStrategy.setEventBus(eventBus);
     }
 }
