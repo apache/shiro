@@ -42,7 +42,7 @@ if (executor_number != null) {
 
     project.properties.'payara.portbase' = portbase as String
     project.properties.'payara.adminport' = adminPort as String
-    project.properties.'payara.argLine' = "-DadminPort=$adminPort -Dpayara.https.port=$httpsPort" as String
+    project.properties.'payara.argLine' = "-DadminPort=$adminPort -Dserver.https.port=$httpsPort" as String
     project.properties.'payara.restart.skip' = project.properties.'payara.start.skip'
     println "Payara: portbase = ${project.properties.'payara.portbase'}, " +
             "argLine = ${project.properties.'payara.argLine'}"
