@@ -18,22 +18,26 @@
  */
 package org.apache.shiro.web.mgt;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.crypto.CryptoException;
+import org.apache.shiro.lang.codec.Base64;
+import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.session.mgt.SimpleSession;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.subject.support.DefaultWebSubjectContext;
+import org.apache.shiro.web.subject.support.WebDelegatingSubject;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.UUID;
 
@@ -321,5 +325,32 @@ class CookieRememberMeManagerTest {
             String base64 = mgr.ensurePadding(encoded);
             assertDoesNotThrow(() -> Base64.decode(base64), "Error decoding " + stringToTest);
         }
+    }
+
+    @Test
+    void ensuresDeleteIfMaxAge() {
+        HttpServletRequest mockRequest = createNiceMock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = createNiceMock(HttpServletResponse.class);
+
+        WebSubjectContext context = new DefaultWebSubjectContext();
+        context.setServletRequest(mockRequest);
+        context.setServletResponse(mockResponse);
+        expect(mockRequest.isSecure()).andReturn(true).anyTimes();
+
+        CookieRememberMeManager mgr = new CookieRememberMeManager();
+
+        Cookie cookie = createNiceMock(Cookie.class);
+        expect(cookie.getName()).andReturn("rememberMe").anyTimes();
+        // TODO: set value
+        // TODO: check age / set age in servlet
+        expect(mockRequest.getCookies()).andReturn(new Cookie[]{cookie}).anyTimes();
+        replay(mockRequest);
+        replay(cookie);
+
+        // when
+        byte[] rememberedSerializedIdentity = mgr.getRememberedSerializedIdentity(context);
+
+        // then
+        assertThat(rememberedSerializedIdentity).isNull();
     }
 }
