@@ -154,6 +154,20 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
     }
 
     /**
+     * Removes the trailing slash from the given path if it exists and is not the root path ("/").
+
+     * @param path input
+     * @return stripped path
+     */
+    public static String removeTrailingSlash(String path) {
+        if (path != null && !DEFAULT_PATH_SEPARATOR.equals(path)
+                && path.endsWith(DEFAULT_PATH_SEPARATOR)) {
+            return path.substring(0, path.length() - 1);
+        }
+        return path;
+    }
+
+    /**
      * Returns {@code true} if an incoming request path (the {@code path} argument)
      * matches a configured filter chain path (the {@code pattern} argument), {@code false} otherwise.
      * <p/>
@@ -185,13 +199,5 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      */
     protected String getPathWithinApplication(ServletRequest request) {
         return WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
-    }
-
-    private static String removeTrailingSlash(String path) {
-        if (path != null && !DEFAULT_PATH_SEPARATOR.equals(path)
-                && path.endsWith(DEFAULT_PATH_SEPARATOR)) {
-            return path.substring(0, path.length() - 1);
-        }
-        return path;
     }
 }
