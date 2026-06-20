@@ -33,6 +33,7 @@ import com.google.inject.Key;
 import org.apache.shiro.util.PatternMatcher;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.util.WebUtils;
+import static org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver.removeTrailingSlash;
 
 class SimpleFilterChainResolver implements FilterChainResolver {
     private final Map<String, Key<? extends Filter>[]> chains;
@@ -46,26 +47,34 @@ class SimpleFilterChainResolver implements FilterChainResolver {
     }
 
     public FilterChain getChain(ServletRequest request, ServletResponse response, final FilterChain originalChain) {
-        String path = WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
-        for (final String pathPattern : chains.keySet()) {
-            if (patternMatcher.matches(pathPattern, path)) {
-                final Iterator<Key<? extends Filter>> chain = Arrays.asList(chains.get(pathPattern)).iterator();
-                return new SimpleFilterChain(originalChain, new Iterator<Filter>() {
-                    public boolean hasNext() {
-                        return chain.hasNext();
-                    }
+        String requestURI = WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
+        final String requestURINoTrailingSlash = removeTrailingSlash(requestURI);
 
-                    public Filter next() {
-                        return injector.getInstance(chain.next());
-                    }
-
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                });
+        for (String pathPattern : chains.keySet()) {
+            if (patternMatcher.matches(pathPattern, requestURI)) {
+                return proxy(originalChain, pathPattern);
+            } else {
+                pathPattern = removeTrailingSlash(pathPattern);
+                if (patternMatcher.matches(pathPattern, requestURINoTrailingSlash)) {
+                    return proxy(originalChain, pathPattern);
+                }
             }
         }
         return null;
     }
 
+    private FilterChain proxy(FilterChain originalChain, String pathPattern) {
+        final Iterator<Key<? extends Filter>> chain = Arrays.asList(chains.get(pathPattern)).iterator();
+        return new SimpleFilterChain(originalChain, new Iterator<>() {
+            public boolean hasNext() {
+                return chain.hasNext();
+            }
+            public Filter next() {
+                return injector.getInstance(chain.next());
+            }
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+        });
+    }
 }

@@ -87,7 +87,7 @@ public class SimpleFilterChainResolverTest {
 
         expect(request.getCharacterEncoding()).andStubReturn(null);
 
-        expect(patternMatcher.matches(chainOne, "/mychain")).andReturn(false);
+        expect(patternMatcher.matches(chainOne, "/mychain")).andReturn(false).times(2);
         expect(patternMatcher.matches(chainTwo, "/mychain")).andReturn(true);
 
         Filter filter2a = ctrl.createMock(Filter.class);
@@ -118,9 +118,9 @@ public class SimpleFilterChainResolverTest {
 
         expect(request.getCharacterEncoding()).andStubReturn(null);
 
-        expect(patternMatcher.matches(chainOne, "/nochain")).andReturn(false);
-        expect(patternMatcher.matches(chainTwo, "/nochain")).andReturn(false);
-        expect(patternMatcher.matches(chainThree, "/nochain")).andReturn(false);
+        expect(patternMatcher.matches(chainOne, "/nochain")).andReturn(false).times(2);
+        expect(patternMatcher.matches(chainTwo, "/nochain")).andReturn(false).times(2);
+        expect(patternMatcher.matches(chainThree, "/nochain")).andReturn(false).times(2);
 
         ctrl.replay();
 
