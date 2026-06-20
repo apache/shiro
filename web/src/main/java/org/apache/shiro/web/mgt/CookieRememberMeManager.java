@@ -18,10 +18,12 @@
  */
 package org.apache.shiro.web.mgt;
 
+import java.time.Instant;
 import java.util.function.Supplier;
 
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.mgt.AbstractRememberMeManager;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.web.servlet.Cookie;
@@ -37,7 +39,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import static org.apache.shiro.session.mgt.DefaultSessionManager.SECURE_COOKIE_DISABLED;
-
 
 /**
  * Remembers a Subject's identity by saving the Subject's {@link Subject#getPrincipals() principals} to a {@link Cookie}
@@ -72,7 +73,6 @@ import static org.apache.shiro.session.mgt.DefaultSessionManager.SECURE_COOKIE_D
  * @since 1.0
  */
 public class CookieRememberMeManager extends AbstractRememberMeManager {
-
     /**
      * The default name of the underlying rememberMe cookie which is {@code rememberMe}.
      */
@@ -139,6 +139,7 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      * @param subject    the Subject for which the identity is being serialized.
      * @param serialized the serialized bytes to be persisted.
      */
+    @Override
     protected void rememberSerializedIdentity(Subject subject, byte[] serialized) {
 
         if (!WebUtils.isHttp(subject)) {
@@ -191,6 +192,7 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      *                       lookup.
      * @return a previously serialized identity byte array or {@code null} if the byte array could not be acquired.
      */
+    @Override
     protected byte[] getRememberedSerializedIdentity(SubjectContext subjectContext) {
 
         if (!WebUtils.isHttp(subjectContext)) {
@@ -246,6 +248,28 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
         }
     }
 
+    @Override
+    protected PrincipalCollection checkExpiration(RememberedIdentity identity) {
+        int maxAge = getCookie().getMaxAge();
+
+        // Negative maxAge means no explicit persistence lifetime is configured
+        // (e.g. session cookie semantics), so nothing to enforce here.
+        if (maxAge < 0) {
+            return identity.principals();
+        }
+
+        Instant expiresAt = identity.creationTime().plusSeconds(maxAge);
+        if (now().isAfter(expiresAt)) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Remembered identity expired at [{}] based on cookie maxAge [{}] seconds.",
+                        expiresAt, maxAge);
+            }
+            return null;
+        }
+
+        return identity.principals();
+    }
+
     /**
      * Sometimes a user agent will send the rememberMe cookie value without padding,
      * most likely because {@code =} is a separator in the cookie header.
@@ -276,6 +300,7 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      *
      * @param subject the subject instance for which identity data should be forgotten from the underlying persistence
      */
+    @Override
     protected void forgetIdentity(Subject subject) {
         if (WebUtils.isHttp(subject)) {
             HttpServletRequest request = WebUtils.getHttpRequest(subject);
@@ -293,6 +318,7 @@ public class CookieRememberMeManager extends AbstractRememberMeManager {
      *
      * @param subjectContext the contextual data, usually provided by a {@link Subject.Builder} implementation
      */
+    @Override
     public void forgetIdentity(SubjectContext subjectContext) {
         if (WebUtils.isHttp(subjectContext)) {
             HttpServletRequest request = WebUtils.getHttpRequest(subjectContext);

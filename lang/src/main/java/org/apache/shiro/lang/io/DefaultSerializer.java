@@ -23,6 +23,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -33,7 +34,6 @@ import java.io.ObjectOutputStream;
  * @since 0.9
  */
 public class DefaultSerializer<T> implements Serializer<T> {
-
     /**
      * This implementation serializes the Object by using an {@link ObjectOutputStream} backed by a
      * {@link ByteArrayOutputStream}.  The {@code ByteArrayOutputStream}'s backing byte array is returned.
@@ -80,7 +80,7 @@ public class DefaultSerializer<T> implements Serializer<T> {
         ByteArrayInputStream bais = new ByteArrayInputStream(serialized);
         BufferedInputStream bis = new BufferedInputStream(bais);
         try {
-            ObjectInputStream ois = new ClassResolvingObjectInputStream(bis);
+            ObjectInputStream ois = createObjectInputStream(bis);
             @SuppressWarnings({"unchecked"})
             T deserialized = (T) ois.readObject();
             ois.close();
@@ -89,5 +89,9 @@ public class DefaultSerializer<T> implements Serializer<T> {
             String msg = "Unable to deserialize argument byte array.";
             throw new SerializationException(msg, e);
         }
+    }
+
+    protected ObjectInputStream createObjectInputStream(InputStream inputStream) throws IOException {
+        return new ClassResolvingObjectInputStream(inputStream);
     }
 }

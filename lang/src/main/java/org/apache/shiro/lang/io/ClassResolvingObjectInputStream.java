@@ -19,6 +19,7 @@
 package org.apache.shiro.lang.io;
 
 import org.apache.shiro.lang.util.ClassUtils;
+import org.apache.shiro.lang.util.ClassUtils.ClassLoaderAccessor;
 import org.apache.shiro.lang.util.UnknownClassException;
 
 import java.io.IOException;
@@ -33,9 +34,16 @@ import java.io.ObjectStreamClass;
  * @since 1.2
  */
 public class ClassResolvingObjectInputStream extends ObjectInputStream {
+    private final ClassLoaderAccessor additionalClassLoader;
 
     public ClassResolvingObjectInputStream(InputStream inputStream) throws IOException {
+        this(inputStream, null);
+    }
+
+    public ClassResolvingObjectInputStream(InputStream inputStream,
+                                           ClassLoaderAccessor additionalClassLoader) throws IOException {
         super(inputStream);
+        this.additionalClassLoader = additionalClassLoader;
     }
 
     /**
@@ -48,9 +56,9 @@ public class ClassResolvingObjectInputStream extends ObjectInputStream {
      * @throws ClassNotFoundException if the class could not be found in any known ClassLoader
      */
     @Override
-    protected Class<?> resolveClass(ObjectStreamClass osc) throws IOException, ClassNotFoundException {
+    protected Class<?> resolveClass(ObjectStreamClass osc) throws ClassNotFoundException {
         try {
-            return ClassUtils.forName(osc.getName());
+            return ClassUtils.forName(osc.getName(), additionalClassLoader);
         } catch (UnknownClassException e) {
             throw new ClassNotFoundException("Unable to load ObjectStreamClass [" + osc + "]: ", e);
         }

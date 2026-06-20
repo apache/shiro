@@ -35,7 +35,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.time.Instant;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
@@ -54,6 +56,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @since 1.0
  */
 class CookieRememberMeManagerTest {
+    //The following base64 string was determined from the log output of the above 'onSuccessfulLogin' test.
+    //This will have to change any time the PrincipalCollection implementation changes:
+    @SuppressWarnings("checkstyle:ConstantName")
+    private static
+    final String userPCAesBase64 = "nKSpN8HWb1LN9LpM/Q78UDuKDHpqTBOVH651SqQfhAfdGbm3XyWBwjUesqQVX+c5xe8ewLiqXtcBE"
+            + "DfAnmnMWNPPVKNtHrAGN081gSd/UGuCDIIjy7JnlKQNFe7hkVSAQAaNEyOYKKs5mZtaOQiuzieTAIp2DaFJdwZ5eKodZIBN8Tc"
+            + "rDG9S5DWW6kEHOSW37Vxk+FRL3My1/bDh4VTa84lYChAEUdBLBxnTPYXQrVt9HAQavqRhE1KJiXcku+LEE0DzqtE3qkaO1C6vH"
+            + "It2gmzri8ULdFnWQr0C0dXSe0KkcMDfpuEwluMQOAjSsLjv0W066xZkV6FYWV6KpFQjSUDRyJODL8t/q3aP5bNA73FCq7eXLc2"
+            + "p98bn1ord/Q8yIYts4MtXMiJpjVW8zM6CBbc1L2ipQnwqH5NcRDSk3HcGq61/COzy5oAJHN1yIoowMfRhV+in1z/N2PANjzw6H"
+            + "hZslDvZo4bMwSu+qwpiXQ1z3vGtdqX8W+ch0GaivJSXjP3gC6CpMn+WeYJL+rp5y9lRj4LOoAIVHKnYEn7zjp26W/l7dks5eyo"
+            + "l6GwlUsHy3KtKigdepfE5WCUmXk6aBBQOSS7cMMmHjDJnOf+dgtkvSbxCZySAXCQi4ONgSrX8wBFuGCTEdKUDUogAAJ5HpZ0Fs"
+            + "BdaUE3NYaeo5ptXbzFfCFUosqu0";
+    private static final String CIPHER_KEY = "kPH+bIxk5D2deZiIxcaaaA==";
 
     @Test
     void onSuccessfulLogin() {
@@ -65,6 +80,7 @@ class CookieRememberMeManagerTest {
         expect(mockSubject.getServletResponse()).andReturn(mockResponse).anyTimes();
 
         CookieRememberMeManager mgr = new CookieRememberMeManager();
+        mgr.setCipherKey(Base64.decode(CIPHER_KEY));
         org.apache.shiro.web.servlet.Cookie cookie = createMock(org.apache.shiro.web.servlet.Cookie.class);
         mgr.setCookie(cookie);
 
@@ -133,15 +149,55 @@ class CookieRememberMeManagerTest {
 
         expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
 
-        //The following base64 string was determined from the log output of the above 'onSuccessfulLogin' test.
-        //This will have to change any time the PrincipalCollection implementation changes:
-        final String userPCAesBase64 = "0o6DCfePYTjK4q579qzUFEfkeGRvbBOdKHp2y8/nGAltt1Vz8uW0Z8igeO"
-                 + "Tq/yBmcw25f3Q0ui/Leg3x0iQZWhw9Bbu0mFHmHsGxEd6mPwtUpSegIjyX5c/kZpqnb7QLdajPWiczX8P"
-                 + "Oc2Eku5+8ye1u38Y8uKlklHxcYCPh0pRiDSBxfjPsLaDfOpGbmPjZd4SVg68i/++TvUjqBNJyb+pDix3f"
-                 + "PeuPvReWGcE50iovezVZrEfDOAQ0cZYW35ShypMWOmE9yZnb+p8++StDyAUegryyuIa4pjuRzfMh9D+sN"
-                 + "F9tm/EnDC1VCer2S/a0AGlWAQiM7jrWt1sNinZcKIrvShaWI21tONJt8WhozNS2H72lk4p92rfLNHeglT"
-                 + "xObxIYxLfTI9KiToSe1nYmpQmbBO8x1wWDkWBG//EqRvhgbIfQVqJp12T0fJC1nFuZuVhw/ZanaAZGDk8"
-                 + "7aLMiw3T6FBZtWaspgvfH+0TJrTD8Ra386ekNXNN8JW8=";
+        Cookie[] cookies = new Cookie[] {
+                new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
+        };
+
+        expect(mockRequest.getCookies()).andReturn(cookies);
+        replay(mockRequest);
+
+        CookieRememberMeManager mgr = new CookieRememberMeManager() {
+            @Override
+            protected Instant now() {
+                // Return a fixed time to ensure the test is repeatable and not affected by time-based expiration
+                return Instant.parse("2021-01-01T00:00:00Z");
+            }
+        };
+        mgr.setCipherKey(Base64.decode(CIPHER_KEY));
+        PrincipalCollection collection = mgr.getRememberedPrincipals(context);
+
+        verify(mockRequest);
+
+        assertThat(collection).isNotNull();
+        //noinspection ConstantConditions
+        assertThat(collection.iterator().next()).isEqualTo("user");
+    }
+
+    @Test
+    void ensureRememberMeExpires() {
+        HttpServletRequest mockRequest = createMock(HttpServletRequest.class);
+        HttpServletResponse mockResponse = createMock(HttpServletResponse.class);
+        WebSubjectContext context = new DefaultWebSubjectContext();
+        context.setServletRequest(mockRequest);
+        context.setServletResponse(mockResponse);
+
+        AtomicReference<Instant> instant = new AtomicReference<>();
+        CookieRememberMeManager mgr = new CookieRememberMeManager() {
+            @Override
+            protected Instant now() {
+                return instant.get();
+            }
+
+            @Override
+            protected PrincipalCollection checkExpiration(RememberedIdentity remembered) {
+                instant.set(remembered.creationTime().plusSeconds(getCookie().getMaxAge() + 1));
+                return super.checkExpiration(remembered);
+            }
+        };
+        mgr.setCipherKey(Base64.decode(CIPHER_KEY));
+        mgr.getCookie().setMaxAge(5);
+
+        expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
 
         Cookie[] cookies = new Cookie[] {
                 new Cookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME, userPCAesBase64)
@@ -150,15 +206,11 @@ class CookieRememberMeManagerTest {
         expect(mockRequest.getCookies()).andReturn(cookies);
         replay(mockRequest);
 
-        CookieRememberMeManager mgr = new CookieRememberMeManager();
-        mgr.setCipherKey(Base64.decode("kPH+bIxk5D2deZiIxcaaaA=="));
         PrincipalCollection collection = mgr.getRememberedPrincipals(context);
 
         verify(mockRequest);
 
-        assertThat(collection).isNotNull();
-        //noinspection ConstantConditions
-        assertThat(collection.iterator().next()).isEqualTo("user");
+        assertThat(collection).isNull();
     }
 
     @Test

@@ -194,8 +194,25 @@ public final class ClassUtils {
      * @return the located class
      * @throws UnknownClassException if the class cannot be found.
      */
-    @SuppressWarnings("unchecked")
     public static <T> Class<T> forName(String fqcn) throws UnknownClassException {
+        return forName(fqcn, null);
+    }
+
+    /**
+     * Attempts to load the specified class name from the current thread's
+     * {@link Thread#getContextClassLoader() context class loader}, then the
+     * current ClassLoader (<code>ClassUtils.class.getClassLoader()</code>), then the system/application
+     * ClassLoader (<code>ClassLoader.getSystemClassLoader()</code>, in that order.  If any of them cannot locate
+     * the specified class, an <code>UnknownClassException</code> is thrown (our RuntimeException equivalent of
+     * the JRE's <code>ClassNotFoundException</code>.
+     *
+     * @param fqcn the fully qualified class name to load
+     * @param additionalClassLoader accessor to override additional class loader
+     * @return the located class
+     * @throws UnknownClassException if the class cannot be found.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> forName(String fqcn, ClassLoaderAccessor additionalClassLoader) throws UnknownClassException {
         Class<?> clazz = THREAD_CL_ACCESSOR.loadClass(fqcn);
 
         if (clazz == null) {
@@ -211,7 +228,8 @@ public final class ClassUtils {
                 LOGGER.trace("Unable to load class named [" + fqcn
                         + "] from the org.apache.shiro.lang ClassLoader.  Trying the additionally set ClassLoader...");
             }
-            clazz = ADDITIONAL_CL_ACCESSOR.loadClass(fqcn);
+            clazz = additionalClassLoader != null ? additionalClassLoader.loadClass(fqcn)
+                    : ADDITIONAL_CL_ACCESSOR.loadClass(fqcn);
         }
 
         if (clazz == null) {
@@ -337,7 +355,7 @@ public final class ClassUtils {
     /**
      * @since 1.0
      */
-    private interface ClassLoaderAccessor {
+    public interface ClassLoaderAccessor {
         Class<?> loadClass(String fqcn);
 
         InputStream getResourceStream(String name);
@@ -348,8 +366,7 @@ public final class ClassUtils {
     /**
      * @since 1.0
      */
-    private abstract static class ExceptionIgnoringAccessor implements ClassLoaderAccessor {
-
+    public abstract static class ExceptionIgnoringAccessor implements ClassLoaderAccessor {
         public Class<?> loadClass(String fqcn) {
             Class<?> clazz = null;
             ClassLoader cl = getClassLoader();
