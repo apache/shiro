@@ -305,7 +305,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @param subject Subject
      */
     protected void beforeSuccessfulLogin(Subject subject) {
-        Session session = subject.getSession(false);
+        Session session = subject != null ? subject.getSession(false) : null;
         if (session != null) {
             Map<Object, Object> attributes = new HashMap<>();
             session.getAttributeKeys().forEach(key -> attributes.put(key, session.getAttribute(key)));
