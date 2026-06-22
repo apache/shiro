@@ -29,7 +29,7 @@ pipeline {
     options {
         // When we have test-fails e.g. we don't need to run the remaining steps
         skipStagesAfterUnstable()
-        buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '5'))
+        buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '5', daysToKeepStr: '30'))
     }
 
     stages {
