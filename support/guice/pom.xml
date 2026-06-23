@@ -33,7 +33,6 @@
 
     <properties>
         <module.name>guice</module.name>
-        <japicmp.skip>true</japicmp.skip>
         <groups>none()</groups>
     </properties>
 

@@ -73,6 +73,8 @@
         <project.build.outputTimestamp>2026-02-07T22:56:07Z</project.build.outputTimestamp>
         <root.dir>${maven.multiModuleProjectDirectory}</root.dir>
         <jacoco.skip>true</jacoco.skip>
+        <japicmp-skip>false</japicmp-skip>
+        <japicmp.skip>${japicmp-skip}</japicmp.skip>
         <!-- workaround for gmavenplus plugin until maven 4 is being used -->
         <maven.project.sourceRoots.warningsDisabled>true</maven.project.sourceRoots.warningsDisabled>
         <!--suppress CheckTagEmptyBody -->
@@ -466,7 +468,6 @@
                             <excludes>
                                 <exclude>org.apache.shiro.subject.SimplePrincipalMap</exclude>
                             </excludes>
-<!--                            <postAnalysisScript>${root.dir}/src/japicmp/postAnalysisScript.groovy</postAnalysisScript>-->
                         </parameter>
                     </configuration>
                 </plugin>
