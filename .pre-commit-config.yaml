@@ -16,21 +16,46 @@
 # under the License.
 
 ---
+# prek Hook Priority System Explanation:
+#
+# prek (a fast Rust-based pre-commit alternative) executes hooks based on priority levels:
+# 1. Ordering: Hooks are executed in ascending order of their priority value (lowest first).
+# 2. Concurrency: Hooks with the SAME priority value are executed concurrently (in parallel),
+#    limited only by the global concurrency limit (typically the number of CPU cores).
+# 3. Explicit vs. Implicit: Any hook without an explicit `priority` field is automatically
+#    assigned an implicit priority equal to its 0-based index in the flattened hook list.
+#    To avoid unexpected execution order when mixing, we explicitly define priorities
+#    for all hooks.
+#
+# In this configuration:
+# - Priority 1: Meta hooks (e.g., identity, check-hooks-apply). These run first to verify
+#   the hook environment and setup before any files are processed.
+# - Priorities 10-17: File-modifying and formatting hooks (e.g., end-of-file-fixer,
+#   trailing-whitespace, pretty-format-json). These are executed sequentially in a specific
+#   order to avoid write conflicts/race conditions, ensuring files are fully prepared and
+#   formatted before any validation.
+# - Priority 100: All read-only validation and linting hooks (e.g., codespell, yamllint,
+#   check-json, shellcheck, actionlint). Since these do not modify any files, they are run
+#   in parallel to maximize performance and minimize pre-commit execution time.
+
 default_stages: [pre-commit, pre-push]
 default_language_version:
   # force all unspecified Python hooks to run python3
   python: python3
-minimum_pre_commit_version: "3.2.0"
+minimum_prek_version: '0.3.4'
 repos:
   - repo: meta
     hooks:
       - id: identity
+        priority: 1
         description: A simple hook which prints all arguments passed to it, useful for debugging
       - id: check-hooks-apply
+        priority: 1
         description: Useful when testing new hooks to see if they apply to the repository
   - repo: local
     hooks:
       - id: check-zip-file-is-not-committed
+        priority: 100
         name: Check no Zip files are committed
         description: Zip files are not allowed in the repository
         language: fail
@@ -42,6 +67,7 @@ repos:
     rev: ad1b27d73581aa16cca06fc4a0761fc563ffe8e8 # frozen: v1.5.6
     hooks:
       - id: chmod
+        priority: 17
         name: set file permissions
         description: manual hook to be run by macOS or Linux users for a full repository clean up
         args: ['644']
@@ -51,58 +77,79 @@ repos:
     rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a # frozen: v2.4.2
     hooks:
       - id: codespell
+        priority: 100
         name: run codespell
         description: Check spelling with codespell
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: check-case-conflict
+        priority: 100
         description: Check for files with names that would conflict on a case-insensitive filesystem like MacOS HFS+ or Windows FAT
       - id: check-executables-have-shebangs
+        priority: 100
         description: Checks that non-binary executables have a proper shebang
       - id: check-illegal-windows-names
+        priority: 100
         description: Check for files that cannot be created on Windows
       - id: check-json
+        priority: 100
         description: Attempts to load all json files to verify syntax
       - id: check-merge-conflict
+        priority: 100
         description: Check for files that contain merge conflict strings
       - id: check-shebang-scripts-are-executable
+        priority: 100
         description: Checks that scripts with shebangs are executable
       - id: check-vcs-permalinks
+        priority: 100
         description: Ensures that links to vcs websites are permalinks
       - id: check-xml
+        priority: 100
         description: Attempts to load all xml files to verify syntax
       - id: check-yaml
+        priority: 100
         description: Attempts to load all yaml files to verify syntax
       - id: destroyed-symlinks
+        priority: 100
         description: Detects symlinks which are changed to regular files with a content of a path which that symlink was pointing to
       - id: detect-aws-credentials
+        priority: 100
         description: Checks for the existence of AWS secrets that you have set up with the AWS CLI
         args: [--allow-missing-credentials]
       - id: detect-private-key
+        priority: 100
         description: Checks for the existence of private keys
       - id: end-of-file-fixer
+        priority: 10
         description: Makes sure files end in a newline and only a newline
       - id: file-contents-sorter
+        priority: 15
         description: sort the lines in specified files (defaults to alphabetical)
         args: [--unique]
         files: ^\.github/linters/codespell\.txt$
       - id: fix-byte-order-marker
+        priority: 13
         description: removes UTF-8 byte order marker
       - id: forbid-submodules
+        priority: 100
         description: Forbids any submodules in the repository
       - id: mixed-line-ending
+        priority: 12
         description: replaces or checks mixed line ending
       - id: pretty-format-json
+        priority: 14
         description: checks that all your JSON files are pretty
         args: [--autofix, --no-sort-keys]
       - id: trailing-whitespace
+        priority: 11
         description: Trims trailing whitespace
         args: [--markdown-linebreak-ext=md]
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: a4d5d37e66ebcd6b3705204a1d6dbb56dea66338 # frozen: v0.49.0
     hooks:
       - id: markdownlint
+        priority: 100
         name: run markdownlint
         description: check Markdown files with markdownlint
         args: [--config=.github/linters/.markdown-lint.yml]
@@ -113,6 +160,7 @@ repos:
     rev: cba56bcde1fdd01c1deb3f945e69764c291a6530 # frozen: v1.38.0
     hooks:
       - id: yamllint
+        priority: 100
         name: run yamllint
         description: check YAML files with yamllint
         args: [--strict, -c=.github/linters/.yaml-lint.yml]
@@ -122,12 +170,14 @@ repos:
     rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e # frozen: v8.30.1
     hooks:
       - id: gitleaks
+        priority: 100
         name: run gitleaks
         description: check for secrets with gitleaks
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: 9257c6050c0261b8c57e712f632dc4a8010109a9 # frozen: v1.25.2
     hooks:
       - id: zizmor
+        priority: 100
         name: run zizmor
         description: zizmor is a static analysis tool for GitHub Actions
         # args: [--config=.github/linters/zizmor.yml]
@@ -137,12 +187,14 @@ repos:
     rev: 914e7df21a07ef503a81201c76d2b11c789d3fca # frozen: v1.7.12
     hooks:
       - id: actionlint
+        priority: 100
         name: run actionlint
         description: actionlint is a static checker for GitHub Actions workflow files
   - repo: https://github.com/tcort/markdown-link-check
     rev: 3a8992dcbb083a248671812c7027b6995ef88523 # frozen: v3.14.2
     hooks:
       - id: markdown-link-check
+        priority: 100
         name: run markdown-link-check
         description: checks all of the hyperlinks in a Markdown text to determine if they are alive or dead
         args: [--config=.github/linters/mlc_config.json, -q]
@@ -152,6 +204,7 @@ repos:
     rev: 628e241e23f368097883807fa6e985ccf7c00357 # frozen: v10.1.1
     hooks:
       - id: oxipng
+        priority: 16
         name: run oxipng
         description: check PNG files with oxipng
         args: ['--fix', '-o', '4', '--strip', 'safe', '--alpha']
@@ -159,10 +212,12 @@ repos:
     rev: 5030dca3047414c338091455ac41803200ec1f0f # frozen: 0.37.3
     hooks:
       - id: check-citation-file-format
+        priority: 100
         name: run check-citation-file-format
         description: validate citation file format
         files: ^CITATION\.cff$
       - id: check-dependabot
+        priority: 100
         name: validate dependabot.yml
         description: ensures the dependabot config file is valid
         files: ^\.github/dependabot\.yml$
@@ -170,12 +225,14 @@ repos:
     rev: 745eface02aef23e168a8afb6b5737818efbea95 # frozen: v0.11.0.1
     hooks:
       - id: shellcheck
+        priority: 100
         name: run shellcheck
         description: check Shell scripts with shellcheck
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
     rev: bebfac867564fbd992e5b45379b4b0568d5cb85b # frozen: 3.6.1
     hooks:
       - id: editorconfig-checker
+        priority: 100
         name: run editorconfig-checker
         description: a tool to verify that your files are in harmony with your .editorconfig
         alias: ec
