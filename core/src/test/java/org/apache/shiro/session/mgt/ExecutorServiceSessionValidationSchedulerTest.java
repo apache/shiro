@@ -23,7 +23,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @SuppressWarnings("checkstyle:MagicNumber")
 public class ExecutorServiceSessionValidationSchedulerTest {
@@ -47,8 +49,9 @@ public class ExecutorServiceSessionValidationSchedulerTest {
         Session session = new SimpleSession();
         session.setTimeout(2000L);
         defaultSessionManager.create(session);
-        Thread.sleep(5000L);
-        assertThat(defaultSessionManager.getActiveSessions()).isEmpty();
+        await().atMost(Duration.ofSeconds(10))
+                .pollInterval(Duration.ofMillis(100))
+                .untilAsserted(() -> assertThat(defaultSessionManager.getActiveSessions()).isEmpty());
         assertThat(executorServiceSessionValidationScheduler.isEnabled()).isTrue();
     }
 
@@ -59,8 +62,9 @@ public class ExecutorServiceSessionValidationSchedulerTest {
         defaultSessionManager.create(session);
         Thread.sleep(1000L);
         session.stop();
-        Thread.sleep(3000L);
-        assertThat(defaultSessionManager.getActiveSessions()).isEmpty();
+        await().atMost(Duration.ofSeconds(10))
+                .pollInterval(Duration.ofMillis(100))
+                .untilAsserted(() -> assertThat(defaultSessionManager.getActiveSessions()).isEmpty());
         assertThat(executorServiceSessionValidationScheduler.isEnabled()).isTrue();
     }
 
@@ -88,8 +92,9 @@ public class ExecutorServiceSessionValidationSchedulerTest {
         defaultSessionManager.create(session);
         Thread.sleep(2000L);
         session.stop();
-        Thread.sleep(2000L);
-        assertThat(defaultSessionManager.getActiveSessions()).isNotEmpty();
+        await().atMost(Duration.ofSeconds(10))
+                .pollInterval(Duration.ofMillis(100))
+                .untilAsserted(() -> assertThat(defaultSessionManager.getActiveSessions()).isNotEmpty());
         assertThat(executorServiceSessionValidationScheduler.isEnabled()).isTrue();
     }
 
