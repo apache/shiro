@@ -202,6 +202,16 @@ Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME} [${env.BRANC
                         // (in this case we probably don't have to do any post-build analysis)
                         cleanBeforeCheckout()
                         script {
+                            // remove MatrixCheckout directories older than 30 days to save disk space
+                            sh '''
+                                set -eu
+                                base_dir="../../../.."
+                                if [ -d "$base_dir" ]; then
+                                    find "$base_dir" -name MatrixCheckout -mindepth 3 -maxdepth 3 -type d -mtime +30 -exec rm -rf {} +
+                                fi
+                            '''
+
+                            // If this build was successful, and the previous build was not successful, send a "back to normal" email.
                             if (deployableBranch
                                     && (currentBuild.previousBuild != null) && (currentBuild.previousBuild.result != 'SUCCESS')) {
                                 emailext(
