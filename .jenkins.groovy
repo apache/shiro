@@ -132,7 +132,7 @@ pipeline {
                         steps {
                             echo 'Building'
                             sh './mvnw verify --show-version --errors --batch-mode --no-transfer-progress \
-                            -Dmaven.test.failure.ignore=true -Pskip_jakarta_ee_tests -Djdk.version=17 -Djapicmp.skip=true'
+                            -Dmaven.test.failure.ignore=true -Pskip_jakarta_ee_tests -Djdk.version=17'
                         }
                         post {
                             always {
