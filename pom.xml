@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>38</version>
+        <version>39</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -105,7 +105,7 @@
         <hsqldb.version>2.7.4</hsqldb.version>
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>17</jdk.version>
-        <tomcat.version>11.0.22</tomcat.version>
+        <tomcat.version>11.0.23</tomcat.version>
         <jakarta.ee.version>11.0.0</jakarta.ee.version>
         <jetty.version>12.1.10</jetty.version>
         <owasp.java.encoder.version>1.4.0</owasp.java.encoder.version>
@@ -128,9 +128,9 @@
         <bytebuddy.version>1.18.10</bytebuddy.version>
         <gmaven.version>5.0.0</gmaven.version>
         <groovy.version>5.0.6</groovy.version>
-        <junit.version>6.1.0</junit.version>
+        <junit.version>6.1.1</junit.version>
         <junit.server.jetty.version>3.5.0</junit.server.jetty.version>
-        <hibernate.version>7.4.1.Final</hibernate.version>
+        <hibernate.version>7.4.3.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <lombok.version>1.18.46</lombok.version>
 
@@ -527,7 +527,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>13.6.0</version>
+                            <version>13.7.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -1123,12 +1123,12 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.5.34</version>
+                <version>1.5.37</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.5.34</version>
+                <version>1.5.37</version>
             </dependency>
 
             <dependency>
