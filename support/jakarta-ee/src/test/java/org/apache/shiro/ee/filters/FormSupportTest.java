@@ -14,6 +14,7 @@
 package org.apache.shiro.ee.filters;
 
 import org.apache.shiro.ee.filters.FormResubmitSupport.PartialAjaxResult;
+import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 
 import static org.apache.shiro.ee.filters.FormResubmitSupport.FACES_SOURCE_PATTERN;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.extractJSFNewViewState;
@@ -23,6 +24,7 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.noJSFAjaxRequests;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
 
 import java.net.URLDecoder;
+import java.time.Duration;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -38,12 +40,16 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.apache.shiro.mgt.DefaultSecurityManager;
 
 /**
  * Resubmit forms support
  */
 @ExtendWith(MockitoExtension.class)
 class FormSupportTest {
+    private static final long BLACKLISTED_AT = 1_000L;
+    private static final Duration BLACKLIST_TTL = Duration.ofSeconds(60);
+
     @Mock
     private HttpServletRequest request;
 
@@ -326,6 +332,37 @@ class FormSupportTest {
         assertThat(transformCookieHeader(List.of("name="))).isEqualTo(Map.of("name", ""));
         assertThat(transformCookieHeader(List.of("JSESSIONID=\"abc\"; $Version=\"1\"; $Path=\"/mypath\"")))
             .isEqualTo(Map.of("JSESSIONID", "abc"));
+    }
+
+    @Test
+    @SuppressWarnings("checkstyle:MagicNumber")
+    void whitelistAndBlacklistUseShiroCacheManager() {
+        var securityManager = new DefaultSecurityManager();
+        securityManager.setCacheManager(new MemoryConstrainedCacheManager());
+
+        var whitelist = FormResubmitSupport.getWhitelistCache(securityManager);
+        var blacklist = FormResubmitSupport.getBlacklistCache(securityManager);
+
+        whitelist.put("good.example", Boolean.TRUE);
+        blacklist.put("bad.example", BLACKLISTED_AT);
+
+        assertThat(FormResubmitSupport.getWhitelistCache(securityManager).get("good.example")).isTrue();
+        assertThat(FormResubmitSupport.isBlacklisted(blacklist, "bad.example",
+                BLACKLIST_TTL, 1_500L)).isTrue();
+    }
+
+    @Test
+    @SuppressWarnings("checkstyle:MagicNumber")
+    void expiredBlacklistEntryIsRemovedFromShiroCache() {
+        var securityManager = new DefaultSecurityManager();
+        securityManager.setCacheManager(new MemoryConstrainedCacheManager());
+
+        var blacklist = FormResubmitSupport.getBlacklistCache(securityManager);
+        blacklist.put("expired.example", BLACKLISTED_AT);
+
+        assertThat(FormResubmitSupport.isBlacklisted(blacklist, "expired.example",
+                BLACKLIST_TTL, 61_001L)).isFalse();
+        assertThat(blacklist.get("expired.example")).isNull();
     }
 
     private static String decode(String plain) {
