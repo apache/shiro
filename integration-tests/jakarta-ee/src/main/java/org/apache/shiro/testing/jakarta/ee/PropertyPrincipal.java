@@ -18,11 +18,13 @@ import java.io.Serializable;
 import jakarta.enterprise.inject.Vetoed;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 @Vetoed
+@EqualsAndHashCode
+@AllArgsConstructor
 public class PropertyPrincipal implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;

@@ -74,7 +74,7 @@ import java.util.function.Supplier;
  * @since 0.9
  */
 public abstract class AbstractRememberMeManager implements RememberMeManager {
-    protected record RememberedIdentity(PrincipalCollection principals, Instant creationTime) implements Serializable {
+    public record RememberedIdentity(PrincipalCollection principals, Instant creationTime) implements Serializable {
         @Serial
         private static final long serialVersionUID = 1L;
     }
