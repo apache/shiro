@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.session.mgt;
 
+import lombok.NonNull;
 import org.apache.shiro.session.ExpiredSessionException;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.StoppedSessionException;
@@ -102,15 +103,28 @@ public class SimpleSession implements ValidatingSession, Serializable {
     private transient volatile Map<Object, Object> attributes;
 
     public SimpleSession() {
+        this(new Date());
+    }
+
+    public SimpleSession(Date startTimestamp) {
         //TODO - remove concrete reference to DefaultSessionManager
         this.timeout = new AtomicLong(DefaultSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
-        this.startTimestamp = new Date();
+        this.startTimestamp = startTimestamp;
         this.stopTimestamp = new AtomicReference<>();
         this.lastAccessTime = new AtomicReference<>(this.startTimestamp);
     }
 
     public SimpleSession(String host) {
         this();
+        this.host = host;
+    }
+
+    /**
+     * @param host null allowed
+     * @param startTimestamp null not allowed
+     */
+    public SimpleSession(String host, @NonNull Date startTimestamp) {
+        this(startTimestamp);
         this.host = host;
     }
 
