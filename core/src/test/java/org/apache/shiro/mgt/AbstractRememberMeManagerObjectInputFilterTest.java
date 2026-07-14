@@ -116,7 +116,9 @@ class AbstractRememberMeManagerObjectInputFilterTest {
         rmm.injectRawSerializedIdentity(rmm.encryptForTest(disallowed));
 
         assertThatThrownBy(() -> rmm.getRememberedPrincipals(new DefaultSubjectContext()))
-                .isInstanceOf(RuntimeException.class);
+                .isInstanceOf(RuntimeException.class)
+                .hasCauseInstanceOf(InvalidClassException.class);
+        assertThat(rmm.forgetCount).isEqualTo(1);
     }
 
     @Test
