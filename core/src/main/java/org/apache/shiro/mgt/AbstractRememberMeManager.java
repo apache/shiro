@@ -111,7 +111,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * one in a single line; see {@link #getSerializer()}. The depth limit is set generously (well above the
      * depth of realistic principal object graphs) so that well-formed principal data is not rejected.
      *
-     * @since 3.1
+     * @since 3.0.1
      */
     private static final String DEFAULT_OBJECT_INPUT_FILTER_PATTERN =
             "maxdepth=30;maxarray=100000;maxrefs=10000;maxbytes=10000000";
@@ -119,7 +119,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     /**
      * Default {@link ObjectInputFilter} instance built from {@link #DEFAULT_OBJECT_INPUT_FILTER_PATTERN}.
      *
-     * @since 3.1
+     * @since 3.0.1
      */
     private static final ObjectInputFilter DEFAULT_OBJECT_INPUT_FILTER =
             ObjectInputFilter.Config.createFilter(DEFAULT_OBJECT_INPUT_FILTER_PATTERN);
@@ -157,12 +157,9 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * operating on untrusted, client-supplied input, the default serializer is also pre-configured with the
      * {@link #DEFAULT_OBJECT_INPUT_FILTER_PATTERN conservative resource-limit ObjectInputFilter} described above.
      */
-    @SuppressWarnings("unchecked")
     public AbstractRememberMeManager() {
         setCipherKey(((AesCipherService) cipherService).generateNewKey().getEncoded());
-        if (serializer instanceof DefaultSerializer) {
-            ((DefaultSerializer<RememberedIdentity>) serializer).setObjectInputFilter(DEFAULT_OBJECT_INPUT_FILTER);
-        }
+        serializer.setObjectInputFilter(DEFAULT_OBJECT_INPUT_FILTER);
     }
 
     /**
@@ -188,7 +185,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * replace it with a stricter, class-based allow-list, built with
      * {@link ObjectInputFilter.Config#createFilter(String)}:
      * <pre>
-     * ((DefaultSerializer&lt;?&gt;) rememberMeManager.getSerializer())
+     * rememberMeManager.getSerializer()
      *         .setObjectInputFilter(ObjectInputFilter.Config.createFilter("com.example.MyPrincipal;!*"));
      * </pre>
      *

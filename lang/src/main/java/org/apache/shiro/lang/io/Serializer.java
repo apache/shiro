@@ -18,6 +18,8 @@
  */
 package org.apache.shiro.lang.io;
 
+import java.io.ObjectInputFilter;
+
 /**
  * A <code>Serializer</code> converts objects to raw binary data and vice versa, enabling persistent storage
  * of objects to files, HTTP cookies, or other mechanism.
@@ -50,4 +52,32 @@ public interface Serializer<T> {
      * @throws SerializationException if an error occurs converting the raw byte[] array back into an Object.
      */
     T deserialize(byte[] serialized) throws SerializationException;
+
+    /**
+     * Returns the optional <a href="https://openjdk.org/jeps/290">JEP-290</a> {@link ObjectInputFilter} this
+     * serializer applies while deserializing, or {@code null} if none is configured (the default).
+     * <p/>
+     * Serializers that do not perform Java object deserialization may ignore this; the default implementation
+     * returns {@code null}.
+     *
+     * @return the configured {@code ObjectInputFilter}, or {@code null} if none is configured.
+     * @since 3.0.1
+     */
+    default ObjectInputFilter getObjectInputFilter() {
+        return null;
+    }
+
+    /**
+     * Sets an optional <a href="https://openjdk.org/jeps/290">JEP-290</a> {@link ObjectInputFilter} to apply while
+     * deserializing, providing defense-in-depth against malicious serialized payloads (for example a class or
+     * resource-limit allow-list) in addition to any validation the caller performs on the deserialized result.
+     * <p/>
+     * Serializers that do not perform Java object deserialization may ignore this; the default implementation is a
+     * no-op. {@link DefaultSerializer} applies the filter to the {@link java.io.ObjectInputStream} it uses.
+     *
+     * @param objectInputFilter the filter to apply, or {@code null} to disable filtering (the default).
+     * @since 3.0.1
+     */
+    default void setObjectInputFilter(ObjectInputFilter objectInputFilter) {
+    }
 }

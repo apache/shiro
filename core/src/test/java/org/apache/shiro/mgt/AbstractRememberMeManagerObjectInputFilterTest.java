@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.mgt;
 
-import org.apache.shiro.lang.io.DefaultSerializer;
 import org.apache.shiro.lang.io.Serializer;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
@@ -94,15 +93,14 @@ class AbstractRememberMeManagerObjectInputFilterTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void testCustomStricterAllowListFilterCanBeConfigured() {
-        // Documented override path (see AbstractRememberMeManager#getSerializer javadoc): cast the default
-        // DefaultSerializer and replace its filter with a strict class allow-list. Only SimplePrincipalCollection,
+        // Documented override path (see AbstractRememberMeManager#getSerializer javadoc): replace the default
+        // serializer's filter with a strict class allow-list. Only SimplePrincipalCollection,
         // AbstractRememberMeManager.RememberedIdentity, and JDK collection/primitive/java.time plumbing are let
         // through. Note: java.time types (e.g. Instant) don't serialize themselves directly - they writeReplace()
         // to an internal java.time serialization proxy class, which is what actually appears in the stream.
         InMemoryRememberMeManager rmm = new InMemoryRememberMeManager();
-        ((DefaultSerializer<AbstractRememberMeManager.RememberedIdentity>) rmm.getSerializer())
+        rmm.getSerializer()
                 .setObjectInputFilter(ObjectInputFilter.Config.createFilter(
                         "org.apache.shiro.subject.SimplePrincipalCollection;"
                                 + "org.apache.shiro.mgt.AbstractRememberMeManager$RememberedIdentity;"

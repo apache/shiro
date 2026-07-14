@@ -43,7 +43,7 @@ public class DefaultSerializer<T> implements Serializer<T> {
      * {@code null} by default, meaning no filter is applied and behavior is unchanged from prior releases -
      * existing callers of this class are not affected unless they opt in via {@link #setObjectInputFilter}.
      *
-     * @since 3.1
+     * @since 3.0.1
      */
     private ObjectInputFilter objectInputFilter;
 
@@ -116,8 +116,9 @@ public class DefaultSerializer<T> implements Serializer<T> {
      * {@link ObjectInputStream} used by {@link #deserialize(byte[])}, or {@code null} if none is configured.
      *
      * @return the configured {@code ObjectInputFilter}, or {@code null} if none is configured.
-     * @since 3.1
+     * @since 3.0.1
      */
+    @Override
     public ObjectInputFilter getObjectInputFilter() {
         return objectInputFilter;
     }
@@ -139,8 +140,9 @@ public class DefaultSerializer<T> implements Serializer<T> {
      * AbstractRememberMeManager}'s RememberMe cookie deserialization, are encouraged to configure one.
      *
      * @param objectInputFilter the filter to apply, or {@code null} to disable filtering (the default).
-     * @since 3.1
+     * @since 3.0.1
      */
+    @Override
     public void setObjectInputFilter(ObjectInputFilter objectInputFilter) {
         this.objectInputFilter = objectInputFilter;
     }
