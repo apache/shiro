@@ -290,4 +290,29 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         assertThat(resolved).isNotNull();
         verify(request).getServletPath();
     }
+
+    /**
+     * Verifies that path traversal above root (where normalize returns null)
+     * no longer bypasses Shiro. The path is normalized to "/" and can match
+     * the /** catch-all chain if one exists.
+     */
+    @Test
+    void testPathTraversalAboveRootFallsBackToCatchAll() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        // Create the /** catch-all chain (as ShiroFactoryBean would)
+        resolver.getFilterChainManager().createChain("/**", "anon");
+
+        // Path that normalizes to null (above root)
+        when(request.getServletPath()).thenReturn("/");
+        when(request.getPathInfo()).thenReturn("../");
+
+        // Previously, getPathWithinApplication would return null,
+        // no pattern would match, and the resolver would return null.
+        // Now, getPathWithinApplication returns "/" and the /** chain matches.
+        FilterChain resolved = resolver.getChain(request, response, chain);
+        assertThat(resolved).isNotNull();
+    }
 }

@@ -177,6 +177,9 @@ class WebUtilsTest {
         doTestGetPathWithinApplication("/foobar", "//extra", "/foobar/extra");
         doTestGetPathWithinApplication("/foobar", "//extra///", "/foobar/extra/");
         doTestGetPathWithinApplication("/foo bar", "/path info", "/foo bar/path info");
+        // path traversal above root would previously return null, now returns "/" for safety
+        doTestGetPathWithinApplication("", "/../", "/");
+        doTestGetPathWithinApplication("/", "../", "/");
     }
 
     @Test

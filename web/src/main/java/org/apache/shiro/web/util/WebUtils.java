@@ -118,7 +118,11 @@ public final class WebUtils {
      * @return the path within the web application
      */
     public static String getPathWithinApplication(HttpServletRequest request) {
-        return normalize(removeSemicolon(getServletPath(request) + getPathInfo(request)));
+        String path = normalize(removeSemicolon(getServletPath(request) + getPathInfo(request)));
+        if (path == null) {
+            path = "/";
+        }
+        return path;
     }
 
     /**
