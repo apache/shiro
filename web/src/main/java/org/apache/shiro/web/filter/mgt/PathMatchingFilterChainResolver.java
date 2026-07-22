@@ -150,9 +150,8 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
             }
         }
 
-        // If no chain matched, fall back to the catch-all chain if one exists.
-        // This ensures global filters (e.g. InvalidRequestFilter) always run,
-        // even if the requestURI is null or doesn't match any pattern.
+        // If no chain matched and the requestURI is null/empty, fall back to the catch-all chain if one exists.
+        // This ensures global filters (e.g. InvalidRequestFilter) always run when the request path cannot be resolved.
         if (requestURI == null || "".equals(requestURI)) {
             NamedFilterList catchAllChain = filterChainManager.getChain("/**");
             if (catchAllChain != null) {
