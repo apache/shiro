@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.Serial;
 import java.io.Serializable;
@@ -92,6 +93,38 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     };
 
     /**
+     * Default <a href="https://openjdk.org/jeps/290">JEP-290</a> filter pattern applied to the
+     * {@link #getSerializer() serializer}'s {@code ObjectInputStream} when deserializing the RememberMe cookie
+     * payload, an untrusted, client-supplied value (see {@link #getRememberedPrincipals(SubjectContext)}).
+     * <p/>
+     * This default is deliberately a <em>resource-limit-only</em> filter: it bounds the object graph depth,
+     * array size, back-reference count, and total stream size that {@code readObject()} will process, but it
+     * does not restrict <em>which</em> classes may be deserialized. It is intended as defense-in-depth against
+     * oversized or deeply nested (denial-of-service shaped) payloads reaching this deserialization sink. It is
+     * <em>not</em> protection against remote-code-execution gadget chains: typical serialization gadget chains
+     * (for example the Apache Commons Collections family) are shallow and small, so they stay well within these
+     * limits and are <em>not</em> rejected by them. Stopping such chains requires a class-based allow-list,
+     * which cannot be a safe default here because principal types are entirely application-defined (custom
+     * {@code Serializable} principal classes are common) and a default allow-list would break existing
+     * deployments. Applications that need that stronger, class-based defense (for example to reduce the blast
+     * radius of a leaked or static cipher key, the classic Shiro-550 / CVE-2016-4437 scenario) can configure
+     * one in a single line; see {@link #getSerializer()}. The depth limit is set generously (well above the
+     * depth of realistic principal object graphs) so that well-formed principal data is not rejected.
+     *
+     * @since 3.0.1
+     */
+    private static final String DEFAULT_OBJECT_INPUT_FILTER_PATTERN =
+            "maxdepth=30;maxarray=100000;maxrefs=10000;maxbytes=10000000";
+
+    /**
+     * Default {@link ObjectInputFilter} instance built from {@link #DEFAULT_OBJECT_INPUT_FILTER_PATTERN}.
+     *
+     * @since 3.0.1
+     */
+    private static final ObjectInputFilter DEFAULT_OBJECT_INPUT_FILTER =
+            ObjectInputFilter.Config.createFilter(DEFAULT_OBJECT_INPUT_FILTER_PATTERN);
+
+    /**
      * Serializer to use for converting PrincipalCollection instances to/from byte arrays
      */
     private Serializer<RememberedIdentity> serializer = new DefaultSerializer<>() {
@@ -119,9 +152,14 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
     /**
      * Default constructor that initializes a {@link DefaultSerializer} as the {@link #getSerializer() serializer} and
      * an {@link AesCipherService} as the {@link #getCipherService() cipherService}.
+     * <p/>
+     * As defense-in-depth against the {@link #getRememberedPrincipals(SubjectContext)} deserialization path
+     * operating on untrusted, client-supplied input, the default serializer is also pre-configured with the
+     * {@link #DEFAULT_OBJECT_INPUT_FILTER_PATTERN conservative resource-limit ObjectInputFilter} described above.
      */
     public AbstractRememberMeManager() {
         setCipherKey(((AesCipherService) cipherService).generateNewKey().getEncoded());
+        serializer.setObjectInputFilter(DEFAULT_OBJECT_INPUT_FILTER);
     }
 
     /**
@@ -140,7 +178,16 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * persistent remember me storage.
      * <p/>
      * Unless overridden by the {@link #setSerializer} method, the default instance is a
-     * {@link org.apache.shiro.lang.io.DefaultSerializer}.
+     * {@link org.apache.shiro.lang.io.DefaultSerializer} pre-configured with the conservative resource-limit
+     * <a href="https://openjdk.org/jeps/290">JEP-290</a> {@link ObjectInputFilter} described at
+     * {@link #DEFAULT_OBJECT_INPUT_FILTER_PATTERN}. Applications that know the exact set of principal classes
+     * they store (for example, a single {@code SimplePrincipalCollection} of {@code String}s) are encouraged to
+     * replace it with a stricter, class-based allow-list, built with
+     * {@link ObjectInputFilter.Config#createFilter(String)}:
+     * <pre>
+     * rememberMeManager.getSerializer()
+     *         .setObjectInputFilter(ObjectInputFilter.Config.createFilter("com.example.MyPrincipal;!*"));
+     * </pre>
      *
      * @return the {@code Serializer} used to serialize and deserialize {@link PrincipalCollection} instances for
      * persistent remember me storage.

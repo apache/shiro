@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -34,6 +35,18 @@ import java.io.ObjectOutputStream;
  * @since 0.9
  */
 public class DefaultSerializer<T> implements Serializer<T> {
+
+    /**
+     * Optional <a href="https://openjdk.org/jeps/290">JEP-290</a> filter applied to the
+     * {@link ObjectInputStream} used by {@link #deserialize(byte[])}.
+     * <p/>
+     * {@code null} by default, meaning no filter is applied and behavior is unchanged from prior releases -
+     * existing callers of this class are not affected unless they opt in via {@link #setObjectInputFilter}.
+     *
+     * @since 3.0.1
+     */
+    private ObjectInputFilter objectInputFilter;
+
     /**
      * This implementation serializes the Object by using an {@link ObjectOutputStream} backed by a
      * {@link ByteArrayOutputStream}.  The {@code ByteArrayOutputStream}'s backing byte array is returned.
@@ -81,6 +94,9 @@ public class DefaultSerializer<T> implements Serializer<T> {
         BufferedInputStream bis = new BufferedInputStream(bais);
         try {
             ObjectInputStream ois = createObjectInputStream(bis);
+            if (objectInputFilter != null) {
+                ois.setObjectInputFilter(objectInputFilter);
+            }
             @SuppressWarnings({"unchecked"})
             T deserialized = (T) ois.readObject();
             ois.close();
@@ -93,5 +109,41 @@ public class DefaultSerializer<T> implements Serializer<T> {
 
     protected ObjectInputStream createObjectInputStream(InputStream inputStream) throws IOException {
         return new ClassResolvingObjectInputStream(inputStream);
+    }
+
+    /**
+     * Returns the <a href="https://openjdk.org/jeps/290">JEP-290</a> {@link ObjectInputFilter} applied to the
+     * {@link ObjectInputStream} used by {@link #deserialize(byte[])}, or {@code null} if none is configured.
+     *
+     * @return the configured {@code ObjectInputFilter}, or {@code null} if none is configured.
+     * @since 3.0.1
+     */
+    @Override
+    public ObjectInputFilter getObjectInputFilter() {
+        return objectInputFilter;
+    }
+
+    /**
+     * Sets a <a href="https://openjdk.org/jeps/290">JEP-290</a> {@link ObjectInputFilter} to apply to the
+     * {@link ObjectInputStream} used by {@link #deserialize(byte[])}, providing defense-in-depth against
+     * malicious serialized payloads (for example, a class or resource-limit allow-list) in addition to any
+     * validation the caller performs on the deserialized result.
+     * <p/>
+     * The filter is consulted by the JVM for every class resolved while reading the stream, before that
+     * class is instantiated - a rejecting filter causes {@code deserialize} to fail (wrapped in a
+     * {@link SerializationException}) instead of constructing the disallowed object. See
+     * {@link ObjectInputFilter.Config#createFilter(String)} for a convenient way to build a pattern-based
+     * filter combining class allow/deny lists with depth, reference, and byte-count limits.
+     * <p/>
+     * The default is {@code null} (no filter), matching this class's behavior prior to this option being
+     * introduced. Callers handling untrusted input, such as {@link org.apache.shiro.mgt.AbstractRememberMeManager
+     * AbstractRememberMeManager}'s RememberMe cookie deserialization, are encouraged to configure one.
+     *
+     * @param objectInputFilter the filter to apply, or {@code null} to disable filtering (the default).
+     * @since 3.0.1
+     */
+    @Override
+    public void setObjectInputFilter(ObjectInputFilter objectInputFilter) {
+        this.objectInputFilter = objectInputFilter;
     }
 }
