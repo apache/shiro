@@ -74,7 +74,7 @@ repos:
         files: \.md$
         stages: [manual]
   - repo: https://github.com/codespell-project/codespell
-    rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a # frozen: v2.4.2
+    rev: 57b21406f092110c18776e39b0bda50d37c945c8 # frozen: v2.4.3
     hooks:
       - id: codespell
         priority: 100
@@ -146,7 +146,7 @@ repos:
         description: Trims trailing whitespace
         args: [--markdown-linebreak-ext=md]
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: a4d5d37e66ebcd6b3705204a1d6dbb56dea66338 # frozen: v0.49.0
+    rev: 5b5dddc4fb0f83c3ea1fc5616fa63e115dce83e0 # frozen: v0.49.1
     hooks:
       - id: markdownlint
         priority: 100
@@ -174,7 +174,7 @@ repos:
         name: run gitleaks
         description: check for secrets with gitleaks
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: e3eebf65325ccc992422292cb7a4baee967cf815 # frozen: v1.26.1
+    rev: 067260dc5fe6ea86b7551bfd6f8b3ba4e6c93129 # frozen: v1.28.0
     hooks:
       - id: zizmor
         priority: 100
@@ -191,7 +191,7 @@ repos:
         name: run actionlint
         description: actionlint is a static checker for GitHub Actions workflow files
   - repo: https://github.com/tcort/markdown-link-check
-    rev: 3a8992dcbb083a248671812c7027b6995ef88523 # frozen: v3.14.2
+    rev: 275c27c5035a5b4a656fe0e21a4c1403c118c767 # frozen: v3.15.0
     hooks:
       - id: markdown-link-check
         priority: 100
