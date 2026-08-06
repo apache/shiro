@@ -127,7 +127,7 @@
         <mockito.version>5.23.0</mockito.version>
         <bytebuddy.version>1.18.11</bytebuddy.version>
         <gmaven.version>5.1.0</gmaven.version>
-        <groovy.version>5.0.7</groovy.version>
+        <groovy.version>5.0.8</groovy.version>
         <junit.version>6.1.2</junit.version>
         <junit.server.jetty.version>3.5.0</junit.server.jetty.version>
         <hibernate.version>7.4.5.Final</hibernate.version>
@@ -321,7 +321,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>6.0.2</version>
+                    <version>6.1.0</version>
                     <dependencies>
                         <!-- Required to upgrade bnd in the maven-bundle-plugin to be able to handle Multi-Release jars -->
                         <dependency>
