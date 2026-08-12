@@ -65,8 +65,11 @@ import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 
 /**
@@ -147,6 +150,42 @@ public class ActiveDirectoryRealmTest {
         } catch (UnavailableSecurityManagerException e) {
         }
         SecurityUtils.setSecurityManager(null);
+    }
+
+    @Test
+    void testUsernameForAuthenticationWithDn() {
+        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm();
+
+        String dn = "CN=my_name,OU=Development,OU=Special Accounts,DC=mycompany,DC=com";
+
+        assertThat(activeDirectoryRealm.getUsernameForAuthentication(dn))
+                .isEqualTo(dn);
+    }
+
+    @Test
+    void testUsernameForAuthenticationWithUsername() {
+        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm();
+
+        assertThat(activeDirectoryRealm.getUsernameForAuthentication("test,user"))
+                .isEqualTo("test\\,user");
+    }
+
+    @Test
+    void testAuthenticationUsesDnWithoutEscaping() throws Exception {
+        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm();
+        LdapContextFactory factory = createMock(LdapContextFactory.class);
+        LdapContext ldapContext = createNiceMock(LdapContext.class);
+
+        String dn = "CN=my_name,OU=Development,OU=Special Accounts,DC=mycompany,DC=com";
+
+        expect(factory.getLdapContext(eq(dn), anyObject())).andReturn(ldapContext);
+        replay(factory);
+
+        UsernamePasswordToken token = new UsernamePasswordToken(dn, PASSWORD);
+
+        activeDirectoryRealm.queryForAuthenticationInfo(token, factory);
+
+        verify(factory);
     }
 
     public void assertExistingUserSuffix(String username, String expectedPrincipalName) throws Exception {
@@ -232,7 +271,6 @@ public class ActiveDirectoryRealmTest {
                 throws NamingException {
             return new SimpleAccount(token.getPrincipal(), token.getCredentials(), getName());
         }
-
     }
 
 }

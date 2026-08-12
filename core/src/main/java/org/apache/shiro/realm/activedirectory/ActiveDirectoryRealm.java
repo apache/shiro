@@ -39,6 +39,7 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
+import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 import java.util.Collection;
 import java.util.HashSet;
@@ -109,7 +110,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         // Binds using the username and password provided by the user.
         LdapContext ctx = null;
         try {
-            ctx = ldapContextFactory.getLdapContext(getUsernameWithSuffix(upToken.getUsername()),
+            ctx = ldapContextFactory.getLdapContext(getUsernameForAuthentication(upToken.getUsername()),
                     String.valueOf(upToken.getPassword()));
         } finally {
             LdapUtils.closeContext(ctx);
@@ -237,10 +238,24 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
     protected String getUsernameWithSuffix(String username) {
         String sanitizedUsername = Rdn.escapeValue(username);
         if (principalSuffix != null
-                && !sanitizedUsername.toLowerCase(Locale.ROOT).endsWith(principalSuffix.toLowerCase(Locale.ROOT))) {
+                && !sanitizedUsername.toLowerCase(Locale.ROOT)
+                .endsWith(principalSuffix.toLowerCase(Locale.ROOT))) {
             return sanitizedUsername + principalSuffix;
         }
         return sanitizedUsername;
+    }
+
+    protected String getUsernameForAuthentication(String username) {
+        try {
+            LdapName ldapName = new LdapName(username);
+            if (ldapName.size() > 1) {
+                return username;
+            }
+        } catch (javax.naming.InvalidNameException e) {
+            // Not a valid LDAP DN, so treat it as a regular username.
+        }
+
+        return getUsernameWithSuffix(username);
     }
 
 }
