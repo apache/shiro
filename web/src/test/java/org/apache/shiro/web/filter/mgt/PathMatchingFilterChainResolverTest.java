@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for {@link org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver}.
@@ -293,26 +294,46 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
 
     /**
      * Verifies that path traversal above root (where normalize returns null)
-     * no longer bypasses Shiro. The path is normalized to "/" and can match
-     * the /** catch-all chain if one exists.
+     * throws IllegalStateException from getPathWithinApplication.
      */
     @Test
-    void testPathTraversalAboveRootFallsBackToCatchAll() {
+    void testPathTraversalAboveRootThrowsException() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
 
-        // Create the /** catch-all chain (as ShiroFactoryBean would)
-        resolver.getFilterChainManager().createChain("/**", "anon");
+        // Create at least one chain so the resolver doesn't short-circuit.
+        resolver.getFilterChainManager().createChain("/public", "anon");
 
         // Path that normalizes to null (above root)
         when(request.getServletPath()).thenReturn("/");
         when(request.getPathInfo()).thenReturn("../");
 
-        // Previously, getPathWithinApplication would return null,
-        // no pattern would match, and the resolver would return null.
-        // Now, getPathWithinApplication returns "/" and the /** chain matches.
-        FilterChain resolved = resolver.getChain(request, response, chain);
+        // getPathWithinApplication throws IllegalStateException when normalize() returns null.
+        assertThrows(IllegalStateException.class,
+                () -> resolver.getChain(request, response, chain));
+    }
+
+    /**
+     * Defense in depth: a subclass override that returns a null request URI
+     * (instead of throwing) must not bypass Shiro either - the resolver falls
+     * back to the {@code /**} catch-all chain so global filters still run.
+     */
+    @Test
+    void testNullRequestUriFromSubclassFallsBackToCatchAll() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        PathMatchingFilterChainResolver nullPathResolver = new PathMatchingFilterChainResolver() {
+            @Override
+            protected String getPathWithinApplication(ServletRequest servletRequest) {
+                return null;
+            }
+        };
+        nullPathResolver.getFilterChainManager().createChain("/**", "anon");
+
+        FilterChain resolved = nullPathResolver.getChain(request, response, chain);
         assertThat(resolved).isNotNull();
     }
 }
