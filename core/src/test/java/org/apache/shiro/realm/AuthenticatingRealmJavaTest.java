@@ -25,6 +25,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.DefaultPasswordService;
 import org.apache.shiro.authc.credential.PasswordMatcher;
@@ -35,6 +36,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 public class AuthenticatingRealmJavaTest {
+
+    @Test
+    @DisplayName("should not simulate failed login when AllowAllCredentialsMatcher is configured")
+    void allowAllCredentialsMatcherShouldNotSimulateFailedLoginForUnknownPrincipal() {
+        AuthenticationToken token = new UsernamePasswordToken("alice", "secret".toCharArray());
+        NullAuthenticatingRealm realm = new NullAuthenticatingRealm();
+        realm.setCredentialsMatcher(new AllowAllCredentialsMatcher());
+
+        AuthenticationInfo info = realm.getAuthenticationInfo(token);
+
+        assertThat(info).isNull();
+        assertThat(realm.authInfo).isNull();
+    }
 
     @Test
     @DisplayName("should create Argon2 hash when user does not exist")

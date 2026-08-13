@@ -24,6 +24,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -123,6 +124,12 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @since 1.2
      */
     private static final String DEFAULT_AUTHENTICATION_CACHE_SUFFIX = ".authenticationCache";
+
+    /**
+     * Cached when a {@link CredentialsMatcher} does not supply simulated credentials so lookups are not repeated.
+     */
+    private static final AuthenticationInfo NO_SIMULATED_CREDENTIALS =
+            new SimpleAuthenticationInfo("__noSimulatedCredentials__", new Object(), "noSimulatedCredentials");
 
     /**
      * Simulated authentication info, should only be set once to avoid wasting useless CPU cycles.
@@ -617,12 +624,18 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
         var info = simulatedAuthenticationInfo.get();
         if (info == null) {
             getCredentialsMatcher().createSimulatedCredentials()
-                    .ifPresentOrElse(simulatedAuthenticationInfo::set, () -> LOGGER.warn(
-                            "CredentialsMatcher [{}] did not supply simulated credentials. Please update the implementation.",
-                            getCredentialsMatcher()));
-            return simulatedAuthenticationInfo.get();
+                    .ifPresentOrElse(simulatedAuthenticationInfo::set, () -> {
+                        if (!(getCredentialsMatcher() instanceof AllowAllCredentialsMatcher)) {
+                            LOGGER.warn(
+                                    "CredentialsMatcher [{}] did not supply simulated credentials. "
+                                            + "Please update the implementation.",
+                                    getCredentialsMatcher());
+                        }
+                        simulatedAuthenticationInfo.set(NO_SIMULATED_CREDENTIALS);
+                    });
+            info = simulatedAuthenticationInfo.get();
         }
-        return info;
+        return info == NO_SIMULATED_CREDENTIALS ? null : info;
     }
 
     /**
