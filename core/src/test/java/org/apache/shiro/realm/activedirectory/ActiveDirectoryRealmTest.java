@@ -154,7 +154,9 @@ public class ActiveDirectoryRealmTest {
 
     @Test
     void testUsernameForAuthenticationWithDn() {
-        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm();
+        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm() {{
+            this.principalSuffix = "@example.com";
+        }};
 
         String dn = "CN=my_name,OU=Development,OU=Special Accounts,DC=mycompany,DC=com";
 
@@ -172,7 +174,9 @@ public class ActiveDirectoryRealmTest {
 
     @Test
     void testAuthenticationUsesDnWithoutEscaping() throws Exception {
-        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm();
+        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm() {{
+            this.principalSuffix = "@example.com";
+        }};
         LdapContextFactory factory = createMock(LdapContextFactory.class);
         LdapContext ldapContext = createNiceMock(LdapContext.class);
 
@@ -186,6 +190,37 @@ public class ActiveDirectoryRealmTest {
         activeDirectoryRealm.queryForAuthenticationInfo(token, factory);
 
         verify(factory);
+    }
+
+    @Test
+    void testAuthorizationUsesDnWithoutEscaping() throws Exception {
+        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm() {{
+            this.principalSuffix = "@example.com";
+        }};
+
+        LdapContext ldapContext = createNiceMock(LdapContext.class);
+        NamingEnumeration<SearchResult> results = createNiceMock(NamingEnumeration.class);
+
+        String dn = "CN=my_name,OU=Development,OU=Special Accounts,DC=mycompany,DC=com";
+
+        Capture<Object[]> captureArgs = Capture.newInstance(CaptureType.ALL);
+
+        expect(ldapContext.search(
+                anyString(),
+                anyString(),
+                capture(captureArgs),
+                anyObject(SearchControls.class)))
+                .andReturn(results);
+
+        replay(ldapContext);
+
+        activeDirectoryRealm.getRoleNamesForUser(dn, ldapContext);
+
+        Object[] searchArguments = captureArgs.getValue();
+
+        assertThat(searchArguments[0]).isEqualTo(dn);
+
+        verify(ldapContext);
     }
 
     public void assertExistingUserSuffix(String username, String expectedPrincipalName) throws Exception {

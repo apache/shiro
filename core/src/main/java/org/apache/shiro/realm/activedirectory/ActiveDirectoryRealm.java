@@ -169,7 +169,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-        String userPrincipalName = getUsernameWithSuffix(username);
+        String userPrincipalName = getUsernameForAuthentication(username);
 
         Object[] searchArguments = new Object[] {userPrincipalName};
 
@@ -238,8 +238,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
     protected String getUsernameWithSuffix(String username) {
         String sanitizedUsername = Rdn.escapeValue(username);
         if (principalSuffix != null
-                && !sanitizedUsername.toLowerCase(Locale.ROOT)
-                .endsWith(principalSuffix.toLowerCase(Locale.ROOT))) {
+                && !sanitizedUsername.toLowerCase(Locale.ROOT).endsWith(principalSuffix.toLowerCase(Locale.ROOT))) {
             return sanitizedUsername + principalSuffix;
         }
         return sanitizedUsername;
