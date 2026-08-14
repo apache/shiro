@@ -31,20 +31,24 @@ import org.apache.shiro.authc.SimpleAuthenticationInfo;
  * @since 0.2
  */
 public class AllowAllCredentialsMatcher implements CredentialsMatcher {
+    private static final SimpleAuthenticationInfo SIMULATED_CREDENTIALS =
+            new SimpleAuthenticationInfo("user", "password", "realm");
 
     /**
      * Returns <code>true</code> <em>always</em> no matter what the method arguments are.
+     * Exception is made for the simulated credentials returned by {@link #createSimulatedCredentials()} which will
+     * always return <code>false</code> to avoid accidental matches when multiple realms are configured
      *
      * @param token the token submitted for authentication.
      * @param info  the account being verified for access
-     * @return <code>true</code> <em>always</em>.
+     * @return <code>true</code> <em>always</em>. (except for simulated credentials)
      */
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
-        return true;
+        return info != SIMULATED_CREDENTIALS;
     }
 
     @Override
     public Optional<AuthenticationInfo> createSimulatedCredentials() {
-        return Optional.of(new SimpleAuthenticationInfo("user", "password", "realm"));
+        return Optional.of(SIMULATED_CREDENTIALS);
     }
 }
