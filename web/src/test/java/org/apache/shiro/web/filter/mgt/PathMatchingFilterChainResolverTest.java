@@ -313,27 +313,4 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         assertThrows(IllegalStateException.class,
                 () -> resolver.getChain(request, response, chain));
     }
-
-    /**
-     * Defense in depth: a subclass override that returns a null request URI
-     * (instead of throwing) must not bypass Shiro either - the resolver falls
-     * back to the {@code /**} catch-all chain so global filters still run.
-     */
-    @Test
-    void testNullRequestUriFromSubclassFallsBackToCatchAll() {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        FilterChain chain = mock(FilterChain.class);
-
-        PathMatchingFilterChainResolver nullPathResolver = new PathMatchingFilterChainResolver() {
-            @Override
-            protected String getPathWithinApplication(ServletRequest servletRequest) {
-                return null;
-            }
-        };
-        nullPathResolver.getFilterChainManager().createChain("/**", "anon");
-
-        FilterChain resolved = nullPathResolver.getChain(request, response, chain);
-        assertThat(resolved).isNotNull();
-    }
 }

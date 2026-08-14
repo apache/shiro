@@ -265,10 +265,11 @@ class WebUtilsTest {
 
     void doTestGetPathWithinApplicationExpectException(String servletPath, String pathInfo) {
         def request = createMock(HttpServletRequest)
-        expect(request.getAttribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE)).andReturn(servletPath)
-        expect(request.getAttribute(WebUtils.INCLUDE_PATH_INFO_ATTRIBUTE)).andReturn(pathInfo)
+        // first read: to build and normalize the path; second read: to build the exception message
+        expect(request.getAttribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE)).andReturn(servletPath).times(2)
+        expect(request.getAttribute(WebUtils.INCLUDE_PATH_INFO_ATTRIBUTE)).andReturn(pathInfo).times(2)
         if (pathInfo == null) {
-            expect(request.getPathInfo()).andReturn(null)
+            expect(request.getPathInfo()).andReturn(null).times(2)
         }
         replay request
         assertThrows(IllegalStateException.class,
