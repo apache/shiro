@@ -69,7 +69,7 @@ public class AntPathMatcher implements PatternMatcher {
     public static final String DEFAULT_PATH_SEPARATOR = "/";
 
     private String pathSeparator = DEFAULT_PATH_SEPARATOR;
-    private boolean caseInsensitive;
+    private boolean caseInsensitive = true;
 
 
     /**

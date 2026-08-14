@@ -65,7 +65,9 @@ public class RegExPatternMatcherTest {
     }
 
     private void assertPatternNotMatch(String pattern, String path) {
-        assertPatternNotMatch(pattern, path, new RegExPatternMatcher());
+        var matcher = new RegExPatternMatcher();
+        matcher.setCaseInsensitive(false);
+        assertPatternNotMatch(pattern, path, matcher);
     }
 
     private void assertPatternNotMatch(String pattern, String path, PatternMatcher pm) {

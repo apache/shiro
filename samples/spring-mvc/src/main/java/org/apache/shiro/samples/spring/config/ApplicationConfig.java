@@ -142,7 +142,7 @@ public class ApplicationConfig {
         chainDefinition.addPathDefinition("/WEB-INF/resources/login.jsp", "anon");
         //allow WebStart to pull the jars for the swing app
         chainDefinition.addPathDefinition("/*.jar", "anon");
-
+        chainDefinition.addPathDefinition("/**", "anon");
 
         return chainDefinition;
     }

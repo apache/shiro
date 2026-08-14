@@ -66,7 +66,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
      */
     private Map<String, NamedFilterList> filterChains;
 
-    private boolean caseInsensitive;
+    private boolean caseInsensitive = true;
 
     public DefaultFilterChainManager() {
         this.filters = new LinkedHashMap<String, Filter>();
