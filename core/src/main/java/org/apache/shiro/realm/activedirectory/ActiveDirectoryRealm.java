@@ -24,6 +24,7 @@ import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.realm.ldap.AbstractLdapRealm;
 import org.apache.shiro.realm.ldap.LdapContextFactory;
@@ -110,7 +111,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         // Binds using the username and password provided by the user.
         LdapContext ctx = null;
         try {
-            ctx = ldapContextFactory.getLdapContext(getUsernameForAuthentication(upToken.getUsername()),
+            ctx = ldapContextFactory.getLdapContext(getUsernameWithSuffixOrFullDN(upToken.getUsername()),
                     String.valueOf(upToken.getPassword()));
         } finally {
             LdapUtils.closeContext(ctx);
@@ -169,7 +170,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-        String userPrincipalName = getUsernameForAuthentication(username);
+        String userPrincipalName = getUsernameWithSuffixOrFullDN(username);
 
         Object[] searchArguments = new Object[] {userPrincipalName};
 
@@ -235,6 +236,43 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         return roleNames;
     }
 
+    /**
+     * Returns the username to use for authentication.
+     * If {@link #principalSuffix} is configured, the sanitized username with appended suffix will be returned.
+     * If {@link #principalSuffix} is not configured, the method will check if the username is a valid LDAP DN.
+     * If it is a valid LDAP DN, the username will be returned as-is,
+     * otherwise the sanitized username with appended suffix will be returned.
+     *
+     * @param username input to check and sanitize
+     * @return the sanitized username with optional suffix to use for authentication
+     */
+    protected String getUsernameWithSuffixOrFullDN(String username) {
+        if (!StringUtils.hasText(principalSuffix)) {
+            try {
+                LdapName ldapName = new LdapName(username);
+                // Full LDAP DN needs to have more than one RDN, so we can return the username as-is
+                if (ldapName.size() > 1) {
+                    return username;
+                }
+            } catch (javax.naming.InvalidNameException e) {
+                // Not a valid LDAP DN, so treat it as a regular username.
+            }
+        }
+
+        return getUsernameWithSuffix(username);
+    }
+
+    /**
+     * Returns the sanitized username with appended suffix if {@link #principalSuffix} is configured
+     * and the username does not already end with it.
+     * If {@link #principalSuffix} is not configured, the sanitized username will be returned
+     * <p>
+     * NOTE: {@link #getUsernameWithSuffixOrFullDN(String)} should be used instead of this method
+     * to handle full LDAP DNs correctly.
+     *
+     * @param username input to sanitize and append suffix
+     * @return the sanitized username with optional suffix
+     */
     protected String getUsernameWithSuffix(String username) {
         String sanitizedUsername = Rdn.escapeValue(username);
         if (principalSuffix != null
@@ -243,18 +281,4 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
         }
         return sanitizedUsername;
     }
-
-    protected String getUsernameForAuthentication(String username) {
-        try {
-            LdapName ldapName = new LdapName(username);
-            if (ldapName.size() > 1) {
-                return username;
-            }
-        } catch (javax.naming.InvalidNameException e) {
-            // Not a valid LDAP DN, so treat it as a regular username.
-        }
-
-        return getUsernameWithSuffix(username);
-    }
-
 }

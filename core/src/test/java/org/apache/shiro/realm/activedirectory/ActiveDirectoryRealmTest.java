@@ -55,6 +55,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
+import javax.naming.ldap.Rdn;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -153,30 +154,37 @@ public class ActiveDirectoryRealmTest {
     }
 
     @Test
-    void testUsernameForAuthenticationWithDn() {
-        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm() {{
-            this.principalSuffix = "@example.com";
-        }};
+    void usernameForAuthenticationWithDnAndSuffix() {
+        var activeDirectoryRealm = new ActiveDirectoryRealm();
+        activeDirectoryRealm.setPrincipalSuffix("@example.com");
 
         String dn = "CN=my_name,OU=Development,OU=Special Accounts,DC=mycompany,DC=com";
 
-        assertThat(activeDirectoryRealm.getUsernameForAuthentication(dn))
+        assertThat(activeDirectoryRealm.getUsernameWithSuffixOrFullDN(dn))
+                .isEqualTo(Rdn.escapeValue(dn) + "@example.com");
+    }
+
+    @Test
+    void usernameForAuthenticationWithDn() {
+        var activeDirectoryRealm = new ActiveDirectoryRealm();
+
+        String dn = "CN=my_name,OU=Development,OU=Special Accounts,DC=mycompany,DC=com";
+
+        assertThat(activeDirectoryRealm.getUsernameWithSuffixOrFullDN(dn))
                 .isEqualTo(dn);
     }
 
     @Test
     void testUsernameForAuthenticationWithUsername() {
-        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm();
+        var activeDirectoryRealm = new ActiveDirectoryRealm();
 
-        assertThat(activeDirectoryRealm.getUsernameForAuthentication("test,user"))
+        assertThat(activeDirectoryRealm.getUsernameWithSuffixOrFullDN("test,user"))
                 .isEqualTo("test\\,user");
     }
 
     @Test
-    void testAuthenticationUsesDnWithoutEscaping() throws Exception {
-        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm() {{
-            this.principalSuffix = "@example.com";
-        }};
+    void authenticationUsesDnWithoutEscaping() throws Exception {
+        var activeDirectoryRealm = new ActiveDirectoryRealm();
         LdapContextFactory factory = createMock(LdapContextFactory.class);
         LdapContext ldapContext = createNiceMock(LdapContext.class);
 
@@ -193,10 +201,8 @@ public class ActiveDirectoryRealmTest {
     }
 
     @Test
-    void testAuthorizationUsesDnWithoutEscaping() throws Exception {
-        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm() {{
-            this.principalSuffix = "@example.com";
-        }};
+    void authorizationUsesDnWithoutEscaping() throws Exception {
+        var activeDirectoryRealm = new ActiveDirectoryRealm();
 
         LdapContext ldapContext = createNiceMock(LdapContext.class);
         NamingEnumeration<SearchResult> results = createNiceMock(NamingEnumeration.class);
@@ -232,9 +238,8 @@ public class ActiveDirectoryRealmTest {
                 .andReturn(results);
         replay(ldapContext);
 
-        ActiveDirectoryRealm activeDirectoryRealm = new ActiveDirectoryRealm() {{
-            this.principalSuffix = "@ExAmple.COM";
-        }};
+        var activeDirectoryRealm = new ActiveDirectoryRealm();
+        activeDirectoryRealm.setPrincipalSuffix("@ExAmple.COM");
 
         SecurityManager securityManager = new DefaultSecurityManager(activeDirectoryRealm);
         Subject subject = new Subject.Builder(securityManager).buildSubject();
@@ -277,10 +282,6 @@ public class ActiveDirectoryRealmTest {
             setCredentialsMatcher(credentialsMatcher);
         }
 
-        public void setPrincipalSuffix(String principalSuffix) {
-            this.principalSuffix = principalSuffix;
-        }
-
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             SimpleAccount account = (SimpleAccount) super.doGetAuthenticationInfo(token);
 
@@ -296,14 +297,14 @@ public class ActiveDirectoryRealmTest {
         }
 
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-            Set<String> roles = new HashSet<String>();
+            Set<String> roles = new HashSet<>();
             roles.add(ROLE);
             return new SimpleAuthorizationInfo(roles);
         }
 
         // override ldap query because i don't care about testing that piece in this case
-        protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory)
-                throws NamingException {
+        protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token,
+                                                                LdapContextFactory ldapContextFactory) {
             return new SimpleAccount(token.getPrincipal(), token.getCredentials(), getName());
         }
     }

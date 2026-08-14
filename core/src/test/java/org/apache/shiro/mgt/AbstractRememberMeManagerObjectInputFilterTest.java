@@ -19,18 +19,21 @@
 package org.apache.shiro.mgt;
 
 import org.apache.shiro.lang.io.Serializer;
+import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputFilter;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +54,7 @@ class AbstractRememberMeManagerObjectInputFilterTest {
     @Test
     void testLegitimatePrincipalsRoundTripUnderDefaultFilter() {
         InMemoryRememberMeManager rmm = new InMemoryRememberMeManager();
-        PrincipalCollection principals = new SimplePrincipalCollection("joecool", "myRealm");
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("joecool", "myRealm");
 
         rmm.rememberIdentity(null, principals);
         PrincipalCollection remembered = rmm.getRememberedPrincipals(new DefaultSubjectContext());
@@ -95,18 +98,18 @@ class AbstractRememberMeManagerObjectInputFilterTest {
     @Test
     void testCustomStricterAllowListFilterCanBeConfigured() {
         // Documented override path (see AbstractRememberMeManager#getSerializer javadoc): replace the default
-        // serializer's filter with a strict class allow-list. Only SimplePrincipalCollection,
+        // serializer's filter with a strict class allow-list. Only ImmutablePrincipalCollection,
         // AbstractRememberMeManager.RememberedIdentity, and JDK collection/primitive/java.time plumbing are let
         // through. Note: java.time types (e.g. Instant) don't serialize themselves directly - they writeReplace()
         // to an internal java.time serialization proxy class, which is what actually appears in the stream.
         InMemoryRememberMeManager rmm = new InMemoryRememberMeManager();
         rmm.getSerializer()
                 .setObjectInputFilter(ObjectInputFilter.Config.createFilter(
-                        "org.apache.shiro.subject.SimplePrincipalCollection;"
+                        "org.apache.shiro.subject.ImmutablePrincipalCollection;"
                                 + "org.apache.shiro.mgt.AbstractRememberMeManager$RememberedIdentity;"
                                 + "java.time.*;java.util.*;java.lang.*;!*"));
 
-        PrincipalCollection principals = new SimplePrincipalCollection("joecool", "myRealm");
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("joecool", "myRealm");
         rmm.rememberIdentity(null, principals);
         PrincipalCollection remembered = rmm.getRememberedPrincipals(new DefaultSubjectContext());
         assertThat(remembered.getPrimaryPrincipal()).isEqualTo("joecool");
@@ -126,17 +129,16 @@ class AbstractRememberMeManagerObjectInputFilterTest {
         // A caller-supplied Serializer implementation (not a DefaultSerializer) must keep working exactly as
         // before this feature existed - AbstractRememberMeManager only touches the filter on its own default
         // DefaultSerializer instance, never on a replaced Serializer.
-        InMemoryRememberMeManager rmm = new InMemoryRememberMeManager();
-        rmm.setSerializer(new Serializer<AbstractRememberMeManager.RememberedIdentity>() {
+        var rmm = new InMemoryRememberMeManager();
+        rmm.setSerializer(new Serializer<>() {
             @Override
             public byte[] serialize(AbstractRememberMeManager.RememberedIdentity o) {
                 return plainJdkSerialize(o);
             }
 
             @Override
-            @SuppressWarnings("unchecked")
             public AbstractRememberMeManager.RememberedIdentity deserialize(byte[] serialized) {
-                try (var ois = new java.io.ObjectInputStream(new java.io.ByteArrayInputStream(serialized))) {
+                try (var ois = new ObjectInputStream(new ByteArrayInputStream(serialized))) {
                     return (AbstractRememberMeManager.RememberedIdentity) ois.readObject();
                 } catch (IOException | ClassNotFoundException e) {
                     throw new RuntimeException(e);
@@ -144,7 +146,7 @@ class AbstractRememberMeManagerObjectInputFilterTest {
             }
         });
 
-        PrincipalCollection principals = new SimplePrincipalCollection("joecool", "myRealm");
+        PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("joecool", "myRealm");
         rmm.rememberIdentity(null, principals);
         PrincipalCollection remembered = rmm.getRememberedPrincipals(new DefaultSubjectContext());
 
@@ -164,6 +166,7 @@ class AbstractRememberMeManagerObjectInputFilterTest {
     }
 
     public static class NotAllowlisted implements Serializable {
+        @Serial
         private static final long serialVersionUID = 1L;
     }
 
