@@ -15,6 +15,7 @@ package org.apache.shiro.ee.filters;
 
 import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
 import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
+import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import static org.apache.shiro.SecurityUtils.getSecurityManager;
 import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
 import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
@@ -58,6 +59,8 @@ import static java.util.function.Predicate.not;
 import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
 import static org.apache.shiro.web.filter.authc.NoAccessFilter.FORM_RESUBMIT_CHECK_SERVLET_PATH;
 import static org.apache.shiro.web.mgt.CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import jakarta.servlet.ServletContext;
@@ -99,6 +102,7 @@ public class FormResubmitSupport {
     static final String FORM_IS_RESUBMITTED = "org.apache.shiro.form-is-resubmitted";
     static final String FORM_RESUBMIT_WHITELIST = "org.apache.shiro.form-resubmit-whitelist";
     static final String FORM_RESUBMIT_BLACKLIST = "org.apache.shiro.form-resubmit-blacklist";
+    static final String FORM_DATA_CACHE = "org.apache.shiro.form-data-cache";
     // encoded view state
     private static final String FACES_VIEW_STATE = "jakarta.faces.ViewState";
     private static final String FACES_VIEW_STATE_EQUALS = FACES_VIEW_STATE + "=";
@@ -112,7 +116,6 @@ public class FormResubmitSupport {
             = Pattern.compile("[\\&]?(%s.\\w+|%s.\\w+|%s)=[\\w\\s:%%\\d]*".formatted(
             "jakarta.faces.partial", "jakarta.faces.behavior", FACES_SOURCE));
     private static final Pattern INITIAL_AMPERSAND = Pattern.compile("^\\&");
-    private static final String FORM_DATA_CACHE = "org.apache.shiro.form-data-cache";
     private static final String FORM_RESUBMIT_HOST = "org.apache.shiro.form-resubmit-host";
     private static final String FORM_RESUBMIT_PORT = "org.apache.shiro.form-resubmit-port";
     private static final Optional<String> RESUBMIT_HOST = Optional.ofNullable(System.getProperty(FORM_RESUBMIT_HOST));
@@ -203,7 +206,7 @@ public class FormResubmitSupport {
         return request.getReader().lines().collect(Collectors.joining());
     }
 
-    static String getSavedFormDataFromKey(@NonNull String savedFormDataKey) {
+    static String getSavedFormDataFromKey(@NonNull String savedFormDataKey, Consumer<Cache<Object, ?>> cacheConsumer) {
         String savedFormData = null;
         if (isSecurityManagerTypeOf(getSecurityManager(), DefaultSecurityManager.class)) {
             DefaultSecurityManager dsm = getSecurityManager(DefaultSecurityManager.class);
@@ -218,7 +221,7 @@ public class FormResubmitSupport {
                 } else {
                     savedFormData = (String) cache.get(cacheKey);
                 }
-                cache.remove(cacheKey);
+                cacheConsumer.accept(cache);
             }
         }
         return savedFormData;
@@ -343,14 +346,21 @@ public class FormResubmitSupport {
         String savedFormDataKey = Servlets.getRequestCookie(request, SHIRO_FORM_DATA_KEY);
         boolean doRedirectAtEnd = true;
         if (savedFormDataKey != null && resubmit) {
-            String formData = getSavedFormDataFromKey(savedFormDataKey);
-            if (formData != null) {
-                Optional.ofNullable(resubmitSavedForm(formData, savedRequest,
-                        request, response, request.getServletContext(), false, true))
-                        .ifPresent(path -> doFacesRedirect(request, response, path));
-                doRedirectAtEnd = false;
-            } else {
-                deleteCookie(response, request.getServletContext(), SHIRO_FORM_DATA_KEY);
+            AtomicReference<Cache<Object, ?>> cache = new AtomicReference<>();
+            String formData = getSavedFormDataFromKey(savedFormDataKey, cache::set);
+            try {
+                if (formData != null) {
+                    Optional.ofNullable(resubmitSavedForm(formData, savedFormDataKey, savedRequest,
+                                    request, response, request.getServletContext(), false, true))
+                            .ifPresent(path -> doFacesRedirect(request, response, path));
+                    doRedirectAtEnd = false;
+                } else {
+                    deleteCookie(response, request.getServletContext(), SHIRO_FORM_DATA_KEY);
+                }
+            } finally {
+                if (cache.get() != null) {
+                    cache.get().remove(savedFormDataKey);
+                }
             }
         }
         if (doRedirectAtEnd) {
@@ -417,7 +427,7 @@ public class FormResubmitSupport {
         return loginUrl != null && request.getRequestURI().equals(request.getContextPath() + loginUrl);
     }
 
-    static String resubmitSavedForm(@NonNull String savedFormData, @NonNull String savedRequest,
+    static String resubmitSavedForm(@NonNull String savedFormData, String savedFormDataKey, @NonNull String savedRequest,
             HttpServletRequest originalRequest, HttpServletResponse originalResponse,
             ServletContext servletContext, boolean rememberedAjaxResubmit, boolean redirect)
             throws InterruptedException, IOException {
@@ -433,10 +443,13 @@ public class FormResubmitSupport {
             return resubmitResponseCleanup(originalRequest);
         }
         URI overriddenRequestURI = overrideSavedRequestURI(URI.create(savedRequest));
-        HttpClient client = buildHttpClient(overriddenRequestURI, servletContext, originalRequest);
-        if (!checkWhitelist(servletContext, overriddenRequestURI, client)) {
+        var cookieManager = new CookieManager();
+        HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2))
+                .cookieHandler(cookieManager).build();
+        if (!checkWhitelist(servletContext, overriddenRequestURI, client, savedFormDataKey)) {
             return savedRequest;
         }
+        initializeCookies(overriddenRequestURI, servletContext, cookieManager, originalRequest);
         HttpResponse<String> response;
         PartialAjaxResult decodedFormData;
         try {
@@ -564,9 +577,8 @@ public class FormResubmitSupport {
         return null;
     }
 
-    private static HttpClient buildHttpClient(URI savedRequest, ServletContext servletContext,
-            HttpServletRequest originalRequest) {
-        CookieManager cookieManager = new CookieManager();
+    private static void initializeCookies(URI savedRequest, ServletContext servletContext,
+                                          CookieManager cookieManager, HttpServletRequest originalRequest) {
         var session = SecurityUtils.getSubject().getSession();
         var sessionCookieName = getSessionCookieName(servletContext, getSecurityManager());
         var sessionCookie = new HttpCookie(sessionCookieName, session.getId().toString());
@@ -589,10 +601,10 @@ public class FormResubmitSupport {
                 }
             }
         }
-        return HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2)).cookieHandler(cookieManager).build();
     }
 
-    private static boolean checkWhitelist(ServletContext servletContext, URI savedRequestURI, HttpClient client) {
+    private static boolean checkWhitelist(ServletContext servletContext, URI savedRequestURI, HttpClient client,
+                                          String savedFormDataKey) {
         if (!isSecurityManagerTypeOf(getSecurityManager(), DefaultSecurityManager.class)) {
             log.warn("Shiro SecurityManager is not configured for form resubmit whitelist caching");
             return false;
@@ -612,7 +624,7 @@ public class FormResubmitSupport {
         } else if (isBlacklisted(blacklist, authority)) {
             log.debug("Form resubmit blacklist cache hit for {}", savedRequestURI);
             return false;
-        } else if (checkWhitelistClient(savedRequestURI, servletContext.getContextPath(), client)) {
+        } else if (checkWhitelistClient(savedRequestURI, servletContext.getContextPath(), client, savedFormDataKey)) {
             putWhitelistEntry(whitelist, authority);
             blacklist.remove(authority);
             return true;
@@ -675,7 +687,8 @@ public class FormResubmitSupport {
         return active;
     }
 
-    private static boolean checkWhitelistClient(URI savedRequestURI, String contextPath, HttpClient client) {
+    private static boolean checkWhitelistClient(URI savedRequestURI, String contextPath, HttpClient client,
+                                                String savedFormDataKey) {
         try {
             var rememberMeManager = getRememberMeManager();
             if (rememberMeManager == null || rememberMeManager.getCipherService() == null
@@ -687,11 +700,13 @@ public class FormResubmitSupport {
             var request = HttpRequest.newBuilder()
                     .uri(URI.create("%s://%s%s%s".formatted(savedRequestURI.getScheme(), savedRequestURI.getAuthority(),
                             contextPath, FORM_RESUBMIT_CHECK_SERVLET_PATH)))
-                    .timeout(Duration.ofSeconds(3)).GET().build();
+                    .timeout(Duration.ofSeconds(3)).header(CONTENT_TYPE, TEXT_PLAIN)
+                    .POST(HttpRequest.BodyPublishers.ofString(rememberMeManager.getCipherService()
+                            .encrypt(savedFormDataKey.getBytes(StandardCharsets.UTF_8),
+                                    rememberMeManager.getEncryptionCipherKey()).toBase64())).build();
             var response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == OK && Objects.equals(decrypt(response.body(), rememberMeManager),
-                    SecurityUtils.getSubject().getSession().getId().toString())) {
+            if (response.statusCode() == OK && Objects.equals(decrypt(response.body(), rememberMeManager), savedFormDataKey)) {
                 log.debug("Form resubmit whitelist check succeeded for {}", savedRequestURI);
                 return true;
             } else {

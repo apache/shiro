@@ -52,7 +52,7 @@ public class NoAccessFilter extends AuthenticatingFilter {
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = WebUtils.toHttp(request);
-            return httpRequest.getMethod().equals("GET")
+            return httpRequest.getMethod().equals("POST")
                     && httpRequest.getServletPath().equals(FORM_RESUBMIT_CHECK_SERVLET_PATH);
         }
         return false;
