@@ -174,7 +174,7 @@ repos:
         name: run gitleaks
         description: check for secrets with gitleaks
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: 067260dc5fe6ea86b7551bfd6f8b3ba4e6c93129 # frozen: v1.28.0
+    rev: 451b56af716f9f0d0c2b816503a3fd0cf8b036fa # frozen: v1.29.0
     hooks:
       - id: zizmor
         priority: 100
@@ -229,7 +229,7 @@ repos:
         name: run shellcheck
         description: check Shell scripts with shellcheck
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: bebfac867564fbd992e5b45379b4b0568d5cb85b # frozen: 3.6.1
+    rev: 3aa28ce11a84d747c5695ad10b81945f2400b54f # frozen: 3.8.0
     hooks:
       - id: editorconfig-checker
         priority: 100
