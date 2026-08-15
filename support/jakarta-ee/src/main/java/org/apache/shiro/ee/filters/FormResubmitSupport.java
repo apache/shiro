@@ -111,11 +111,11 @@ public class FormResubmitSupport {
     private static final String FACES_SOURCE = "jakarta.faces.source";
     private static final String FACES_SOURCE_EQUALS = FACES_SOURCE + "=";
     static final Pattern FACES_SOURCE_PATTERN
-            = Pattern.compile(String.format("[\\&]?%s([\\w\\s:%%\\d]*)(.*)", FACES_SOURCE_EQUALS));
+            = Pattern.compile(String.format("&?%s([\\w\\s:%%d]*)(.*)", FACES_SOURCE_EQUALS));
     private static final Pattern PARTIAL_REQUEST_PATTERN
-            = Pattern.compile("[\\&]?(%s.\\w+|%s.\\w+|%s)=[\\w\\s:%%\\d]*".formatted(
+            = Pattern.compile("&?(%s.\\w+|%s.\\w+|%s)=[\\w\\s:%%d]*".formatted(
             "jakarta.faces.partial", "jakarta.faces.behavior", FACES_SOURCE));
-    private static final Pattern INITIAL_AMPERSAND = Pattern.compile("^\\&");
+    private static final Pattern INITIAL_AMPERSAND = Pattern.compile("^&");
     private static final String FORM_RESUBMIT_HOST = "org.apache.shiro.form-resubmit-host";
     private static final String FORM_RESUBMIT_PORT = "org.apache.shiro.form-resubmit-port";
     private static final Optional<String> RESUBMIT_HOST = Optional.ofNullable(System.getProperty(FORM_RESUBMIT_HOST));

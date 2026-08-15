@@ -233,7 +233,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
     }
 
     @Override
-    @SneakyThrows
+    @SneakyThrows(InterruptedException.class)
     protected void executeChain(ServletRequest request, ServletResponse response,
             FilterChain origChain) throws IOException, ServletException {
         if (isShiroEEDisabled(getServletContext())) {

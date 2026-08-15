@@ -39,7 +39,7 @@ import static org.apache.shiro.web.filter.authc.NoAccessFilter.FORM_RESUBMIT_CHE
 @WebServlet(name = "ShiroFormResubmitValidator", urlPatterns = FORM_RESUBMIT_CHECK_SERVLET_PATH)
 public class FormResubmitValidator extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         var rememberMeManager = getRememberMeManager();
         if (rememberMeManager == null || rememberMeManager.getCipherService() == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
