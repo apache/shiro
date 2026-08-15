@@ -79,6 +79,8 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
 
     private static final String HOST = DefaultSubjectContext.class.getName() + ".HOST";
 
+    private static final String REMEMBERED_PRINCIPALS = DefaultSubjectContext.class.getName() + ".REMEMBERED_PRINCIPALS";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSubjectContext.class);
 
     public DefaultSubjectContext() {
@@ -278,5 +280,14 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
         }
 
         return host;
+    }
+
+    public void setRememberedPrincipals(boolean remembered) {
+        put(REMEMBERED_PRINCIPALS, remembered);
+    }
+
+    public boolean isRememberedPrincipals() {
+        Boolean remembered = getTypedValue(REMEMBERED_PRINCIPALS, Boolean.class);
+        return remembered != null && remembered;
     }
 }

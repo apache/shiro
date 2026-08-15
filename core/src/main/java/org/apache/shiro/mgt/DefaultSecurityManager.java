@@ -379,6 +379,9 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
         //session, so we don't constantly rehydrate the rememberMe PrincipalCollection on every operation).
         //Added in 1.2:
         if (context.isSessionCreationEnabled()) {
+            if (context.isRememberedPrincipals()) {
+                beforeSuccessfulLogin(subject);
+            }
             save(subject);
         }
 
@@ -439,7 +442,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @return The SubjectContext to use to pass to a {@link SubjectFactory} for subject creation.
      * @since 1.0
      */
-    @SuppressWarnings({"unchecked"})
     protected SubjectContext ensureSecurityManager(SubjectContext context) {
         if (context.resolveSecurityManager() != null) {
             LOGGER.trace("Context already contains a SecurityManager instance.  Returning.");
@@ -463,7 +465,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @return The context to use to pass to a {@link SubjectFactory} for subject creation.
      * @since 1.0
      */
-    @SuppressWarnings({"unchecked"})
     protected SubjectContext resolveSession(SubjectContext context) {
         if (context.resolveSession() != null) {
             LOGGER.debug("Context already contains a session.  Returning.");
@@ -518,7 +519,6 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
      * @return The Subject context to use to pass to a {@link SubjectFactory} for subject creation.
      * @since 1.0
      */
-    @SuppressWarnings({"unchecked"})
     protected SubjectContext resolvePrincipals(SubjectContext context) {
 
         PrincipalCollection principals = context.resolvePrincipals();
@@ -531,6 +531,7 @@ public class DefaultSecurityManager extends SessionsSecurityManager {
             if (!isEmpty(principals)) {
                 LOGGER.debug("Found remembered PrincipalCollection.  Adding to the context to be used "
                         + "for subject construction by the SubjectFactory.");
+                context.setRememberedPrincipals(true);
 
                 context.setPrincipals(principals);
 
