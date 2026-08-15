@@ -42,6 +42,16 @@ public class AnnotationResolverTest {
         }
     }
 
+    @SuppressWarnings("unused")
+    @RequiresRoles("admin")
+    private static class ParentFixture {
+        public void operateParent() {
+        }
+    }
+
+    private static final class ChildFixture extends ParentFixture {
+    }
+
     DefaultAnnotationResolver annotationResolver = new DefaultAnnotationResolver();
 
     @Test
@@ -62,6 +72,17 @@ public class AnnotationResolverTest {
         expect(methodInvocation.getMethod()).andReturn(method);
         replay(methodInvocation);
         assertThat(annotationResolver.getAnnotation(methodInvocation, RequiresUser.class)).isNotNull();
+    }
+
+    @Test
+    void testAnnotationFoundFromSuperclass() throws SecurityException, NoSuchMethodException {
+        ChildFixture childFixture = new ChildFixture();
+        MethodInvocation methodInvocation = createMock(MethodInvocation.class);
+        Method method = ParentFixture.class.getDeclaredMethod("operateParent");
+        expect(methodInvocation.getMethod()).andReturn(method);
+        expect(methodInvocation.getThis()).andReturn(childFixture);
+        replay(methodInvocation);
+        assertThat(annotationResolver.getAnnotation(methodInvocation, RequiresRoles.class)).isNotNull();
     }
 
     @Test
