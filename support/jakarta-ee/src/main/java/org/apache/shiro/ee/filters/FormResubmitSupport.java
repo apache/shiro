@@ -15,7 +15,6 @@ package org.apache.shiro.ee.filters;
 
 import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
 import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
-import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import static org.apache.shiro.SecurityUtils.getSecurityManager;
 import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
 import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
@@ -700,7 +699,7 @@ public class FormResubmitSupport {
             var request = HttpRequest.newBuilder()
                     .uri(URI.create("%s://%s%s%s".formatted(savedRequestURI.getScheme(), savedRequestURI.getAuthority(),
                             contextPath, FORM_RESUBMIT_CHECK_SERVLET_PATH)))
-                    .timeout(Duration.ofSeconds(3)).header(CONTENT_TYPE, TEXT_PLAIN)
+                    .timeout(Duration.ofSeconds(3)).header(CONTENT_TYPE, "text/plain")
                     .POST(HttpRequest.BodyPublishers.ofString(rememberMeManager.getCipherService()
                             .encrypt(savedFormDataKey.getBytes(StandardCharsets.UTF_8),
                                     rememberMeManager.getEncryptionCipherKey()).toBase64())).build();
