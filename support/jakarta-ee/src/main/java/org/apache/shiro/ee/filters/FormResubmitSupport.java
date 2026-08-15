@@ -206,20 +206,19 @@ public class FormResubmitSupport {
         return request.getReader().lines().collect(Collectors.joining());
     }
 
-    static String getSavedFormDataFromKey(@NonNull String savedFormDataKey, Consumer<Cache<Object, ?>> cacheConsumer) {
+    static String getSavedFormDataFromKey(@NonNull UUID savedFormDataKey, Consumer<Cache<Object, ?>> cacheConsumer) {
         String savedFormData = null;
         if (isSecurityManagerTypeOf(getSecurityManager(), DefaultSecurityManager.class)) {
             DefaultSecurityManager dsm = getSecurityManager(DefaultSecurityManager.class);
             if (dsm.getCacheManager() != null) {
                 var cache = dsm.getCacheManager().getCache(FORM_DATA_CACHE);
-                var cacheKey = UUID.fromString(savedFormDataKey);
                 var rememberMeManager = getRememberMeManager();
                 if (rememberMeManager != null && rememberMeManager.getCipherService() != null) {
-                    var cachedData = Optional.ofNullable((byte[]) cache.get(cacheKey));
+                    var cachedData = Optional.ofNullable((byte[]) cache.get(savedFormDataKey));
                     savedFormData = cachedData.map(encryptedData ->
                             decrypt(encryptedData, rememberMeManager)).orElse(savedFormData);
                 } else {
-                    savedFormData = (String) cache.get(cacheKey);
+                    savedFormData = (String) cache.get(savedFormDataKey);
                 }
                 cacheConsumer.accept(cache);
             }
@@ -343,14 +342,15 @@ public class FormResubmitSupport {
     private static void doRedirectToSaved(HttpServletRequest request, HttpServletResponse response,
             @NonNull String savedRequest, boolean resubmit) throws IOException, InterruptedException {
         deleteCookie(response, request.getServletContext(), WebUtils.SAVED_REQUEST_KEY);
-        String savedFormDataKey = Servlets.getRequestCookie(request, SHIRO_FORM_DATA_KEY);
+        String savedFormDataKeyString = Servlets.getRequestCookie(request, SHIRO_FORM_DATA_KEY);
         boolean doRedirectAtEnd = true;
-        if (savedFormDataKey != null && resubmit) {
+        if (savedFormDataKeyString != null && resubmit) {
             AtomicReference<Cache<Object, ?>> cache = new AtomicReference<>();
+            UUID savedFormDataKey = UUID.fromString(savedFormDataKeyString);
             String formData = getSavedFormDataFromKey(savedFormDataKey, cache::set);
             try {
                 if (formData != null) {
-                    Optional.ofNullable(resubmitSavedForm(formData, savedFormDataKey, savedRequest,
+                    Optional.ofNullable(resubmitSavedForm(formData, savedFormDataKeyString, savedRequest,
                                     request, response, request.getServletContext(), false, true))
                             .ifPresent(path -> doFacesRedirect(request, response, path));
                     doRedirectAtEnd = false;
