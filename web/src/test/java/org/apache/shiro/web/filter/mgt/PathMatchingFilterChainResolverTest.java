@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests for {@link org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver}.
@@ -289,5 +290,27 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         FilterChain resolved = resolver.getChain(request, response, chain);
         assertThat(resolved).isNotNull();
         verify(request).getServletPath();
+    }
+
+    /**
+     * Verifies that path traversal above root (where normalize returns null)
+     * throws IllegalStateException from getPathWithinApplication.
+     */
+    @Test
+    void testPathTraversalAboveRootThrowsException() {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        // Create at least one chain so the resolver doesn't short-circuit.
+        resolver.getFilterChainManager().createChain("/public", "anon");
+
+        // Path that normalizes to null (above root)
+        when(request.getServletPath()).thenReturn("/");
+        when(request.getPathInfo()).thenReturn("../");
+
+        // getPathWithinApplication throws IllegalStateException when normalize() returns null.
+        assertThrows(IllegalStateException.class,
+                () -> resolver.getChain(request, response, chain));
     }
 }

@@ -116,9 +116,19 @@ public final class WebUtils {
      *
      * @param request current HTTP request
      * @return the path within the web application
+     * @throws IllegalStateException if the path cannot be normalized (e.g. it
+     * traverses above the root, {@code "/.."}) or is empty. Callers must fail closed
+     * instead of operating on a {@code null} path, which would otherwise bypass the
+     * filter chain.
      */
     public static String getPathWithinApplication(HttpServletRequest request) {
-        return normalize(removeSemicolon(getServletPath(request) + getPathInfo(request)));
+        String path = normalize(removeSemicolon(getServletPath(request) + getPathInfo(request)));
+        if (path == null || path.isEmpty()) {
+            String servletPath = getServletPath(request);
+            String pathInfo = getPathInfo(request);
+            throw new IllegalStateException("Unable to normalize path: " + servletPath + pathInfo);
+        }
+        return path;
     }
 
     /**

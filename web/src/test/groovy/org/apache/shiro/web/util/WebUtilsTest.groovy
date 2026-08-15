@@ -177,6 +177,9 @@ class WebUtilsTest {
         doTestGetPathWithinApplication("/foobar", "//extra", "/foobar/extra");
         doTestGetPathWithinApplication("/foobar", "//extra///", "/foobar/extra/");
         doTestGetPathWithinApplication("/foo bar", "/path info", "/foo bar/path info");
+        // path traversal above root returns null from normalize(); must fail closed
+        doTestGetPathWithinApplicationExpectException("", "/../");
+        doTestGetPathWithinApplicationExpectException("/", "../");
     }
 
     @Test
@@ -257,6 +260,20 @@ class WebUtilsTest {
         }
         replay request
         assertEquals expectedValue, WebUtils.getPathWithinApplication(request)
+        verify request
+    }
+
+    void doTestGetPathWithinApplicationExpectException(String servletPath, String pathInfo) {
+        def request = createMock(HttpServletRequest)
+        // first read: to build and normalize the path; second read: to build the exception message
+        expect(request.getAttribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE)).andReturn(servletPath).times(2)
+        expect(request.getAttribute(WebUtils.INCLUDE_PATH_INFO_ATTRIBUTE)).andReturn(pathInfo).times(2)
+        if (pathInfo == null) {
+            expect(request.getPathInfo()).andReturn(null).times(2)
+        }
+        replay request
+        assertThrows(IllegalStateException.class,
+                () -> WebUtils.getPathWithinApplication(request))
         verify request
     }
 
