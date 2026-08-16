@@ -27,6 +27,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import static org.apache.shiro.web.filter.authz.PortFilter.DEFAULT_HTTP_PORT;
+import static org.apache.shiro.web.filter.authz.PortFilter.HTTP_SCHEME;
+import static org.apache.shiro.web.filter.authz.SslFilter.DEFAULT_HTTPS_PORT;
+import static org.apache.shiro.web.filter.authz.SslFilter.HTTPS_SCHEME;
 
 /**
  * HttpServletResponse implementation to support URL Encoding of Shiro Session IDs.
@@ -183,18 +187,18 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         }
         int serverPort = hreq.getServerPort();
         if (serverPort == -1) {
-            if ("https".equals(hreq.getScheme())) {
-                serverPort = 443;
+            if (HTTPS_SCHEME.equals(hreq.getScheme())) {
+                serverPort = DEFAULT_HTTPS_PORT;
             } else {
-                serverPort = 80;
+                serverPort = DEFAULT_HTTP_PORT;
             }
         }
         int urlPort = url.getPort();
         if (urlPort == -1) {
-            if ("https".equals(url.getProtocol())) {
-                urlPort = 443;
+            if (HTTPS_SCHEME.equals(url.getProtocol())) {
+                urlPort = DEFAULT_HTTPS_PORT;
             } else {
-                urlPort = 80;
+                urlPort = DEFAULT_HTTP_PORT;
             }
         }
         if (serverPort != urlPort) {
@@ -208,9 +212,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
                 return (false);
             }
             String tok = ";" + DEFAULT_SESSION_ID_PARAMETER_NAME + "=" + session.getId();
-            if (file.indexOf(tok, contextPath.length()) >= 0) {
-                return (false);
-            }
+            return file.indexOf(tok, contextPath.length()) < 0;
         }
 
         // This URL belongs to our web application, so it is encodeable
@@ -248,8 +250,8 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
 
             try {
                 buf.append(scheme).append("://").append(name);
-                if ((scheme.equals("http") && port != 80)
-                        || (scheme.equals("https") && port != 443)) {
+                if ((scheme.equals(HTTP_SCHEME) && port != DEFAULT_HTTP_PORT)
+                        || (scheme.equals(HTTPS_SCHEME) && port != DEFAULT_HTTPS_PORT)) {
                     buf.append(':').append(port);
                 }
                 if (!leadingSlash) {
@@ -262,9 +264,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
                 }
                 buf.append(location);
             } catch (IOException e) {
-                IllegalArgumentException iae = new IllegalArgumentException(location);
-                iae.initCause(e);
-                throw iae;
+                throw new IllegalArgumentException(location, e);
             }
 
             return buf.toString();
@@ -333,7 +333,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         }
         StringBuilder sb = new StringBuilder(path);
         // session id param can't be first.
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             sb.append(";");
             sb.append(DEFAULT_SESSION_ID_PARAMETER_NAME);
             sb.append("=");
