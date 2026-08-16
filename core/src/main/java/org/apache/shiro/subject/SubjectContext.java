@@ -235,4 +235,19 @@ public interface SubjectContext extends Map<String, Object> {
     void setHost(String host);
 
     String resolveHost();
+
+    /**
+     * Sets whether the constructed {@code Subject} instance should was constructed from remembered principals
+     */
+    default void setRememberedPrincipals(boolean rememberedPrincipals) {
+        throw new IllegalStateException("Remembered principals are not supported by this SubjectContext implementation.");
+    }
+
+    /**
+     * Returns whether the constructed {@code Subject} instance was constructed from remembered principals
+     * @return true if the constructed {@code Subject} instance was constructed from remembered principals, false otherwise
+     */
+    default boolean isRememberedPrincipals() {
+        throw new IllegalStateException("Remembered principals are not supported by this SubjectContext implementation.");
+    }
 }

@@ -114,11 +114,10 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
             LOGGER.debug("Session ID cookie is disabled - session id will not be acquired from a request cookie.");
             return null;
         }
-        if (!(request instanceof HttpServletRequest)) {
+        if (!(request instanceof HttpServletRequest httpRequest)) {
             LOGGER.debug("Current request is not an HttpServletRequest - cannot get session ID cookie.  Returning null.");
             return null;
         }
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
         return getSessionIdCookie().readValue(httpRequest, WebUtils.toHttp(response));
     }
 
@@ -128,7 +127,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         if (id != null) {
             request.setAttribute(ShiroHttpServletRequest.REFERENCED_SESSION_ID_SOURCE,
                     ShiroHttpServletRequest.COOKIE_SESSION_ID_SOURCE);
-        } else {
+        } else if (isSessionIdUrlRewritingEnabled()) {
             //not in a cookie, or cookie is disabled - try the request URI as a fallback (i.e. due to URL rewriting):
 
             //try the URI path segment parameters first:
@@ -170,10 +169,9 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
     //since 1.2.2
     private String getUriPathSegmentParamValue(ServletRequest servletRequest, String paramName) {
 
-        if (!(servletRequest instanceof HttpServletRequest)) {
+        if (!(servletRequest instanceof HttpServletRequest request)) {
             return null;
         }
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
         String uri = request.getRequestURI();
         if (uri == null) {
             return null;
