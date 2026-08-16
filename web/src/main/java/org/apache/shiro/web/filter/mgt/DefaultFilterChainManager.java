@@ -66,18 +66,18 @@ public class DefaultFilterChainManager implements FilterChainManager {
      */
     private Map<String, NamedFilterList> filterChains;
 
-    private boolean caseInsensitive;
+    private boolean caseInsensitive = true;
 
     public DefaultFilterChainManager() {
-        this.filters = new LinkedHashMap<String, Filter>();
-        this.filterChains = new LinkedHashMap<String, NamedFilterList>();
+        this.filters = new LinkedHashMap<>();
+        this.filterChains = new LinkedHashMap<>();
         this.globalFilterNames = new ArrayList<>();
         addDefaultFilters(false);
     }
 
     public DefaultFilterChainManager(FilterConfig filterConfig) {
-        this.filters = new LinkedHashMap<String, Filter>();
-        this.filterChains = new LinkedHashMap<String, NamedFilterList>();
+        this.filters = new LinkedHashMap<>();
+        this.filterChains = new LinkedHashMap<>();
         this.globalFilterNames = new ArrayList<>();
         setFilterConfig(filterConfig);
         addDefaultFilters(true);

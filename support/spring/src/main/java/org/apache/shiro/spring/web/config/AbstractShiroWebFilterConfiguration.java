@@ -59,7 +59,7 @@ public class AbstractShiroWebFilterConfiguration {
     @Value("#{ @environment['shiro.unauthorizedUrl'] ?: null }")
     protected String unauthorizedUrl;
 
-    @Value("#{ @environment['shiro.caseInsensitive'] ?: false }")
+    @Value("#{ @environment['shiro.caseInsensitive'] ?: true }")
     protected boolean caseInsensitive;
 
     protected List<String> globalFilters() {
