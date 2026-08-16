@@ -27,10 +27,15 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @since Jun 10, 2008 4:35:27 PM
  */
 public class AllowAllCredentialsMatcherTest {
-
     @Test
-    void testBasic() {
+    void basic() {
         assertThat(new AllowAllCredentialsMatcher().doCredentialsMatch(null, null)).isTrue();
     }
 
+    @Test
+    void multiRealm() {
+        var matcher = new AllowAllCredentialsMatcher();
+        assertThat(matcher.doCredentialsMatch(null, matcher.createSimulatedCredentials().get()))
+                .withFailMessage("Simulated credentials should not match").isFalse();
+    }
 }
