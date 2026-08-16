@@ -212,9 +212,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
                 return (false);
             }
             String tok = ";" + DEFAULT_SESSION_ID_PARAMETER_NAME + "=" + session.getId();
-            if (file.indexOf(tok, contextPath.length()) >= 0) {
-                return (false);
-            }
+            return file.indexOf(tok, contextPath.length()) < 0;
         }
 
         // This URL belongs to our web application, so it is encodeable
@@ -266,9 +264,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
                 }
                 buf.append(location);
             } catch (IOException e) {
-                IllegalArgumentException iae = new IllegalArgumentException(location);
-                iae.initCause(e);
-                throw iae;
+                throw new IllegalArgumentException(location, e);
             }
 
             return buf.toString();
@@ -337,7 +333,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         }
         StringBuilder sb = new StringBuilder(path);
         // session id param can't be first.
-        if (sb.length() > 0) {
+        if (!sb.isEmpty()) {
             sb.append(";");
             sb.append(DEFAULT_SESSION_ID_PARAMETER_NAME);
             sb.append("=");
