@@ -39,11 +39,11 @@ import java.time.Duration;
 import java.util.Collections;
 import org.apache.shiro.crypto.CryptoException;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
+import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.initializeCookies;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.io.IOException;
 import java.net.CookieManager;
-import java.net.HttpCookie;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
@@ -51,6 +51,7 @@ import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -61,14 +62,12 @@ import static org.apache.shiro.web.filter.authz.PortFilter.DEFAULT_HTTP_PORT;
 import static org.apache.shiro.web.filter.authz.PortFilter.HTTP_SCHEME;
 import static org.apache.shiro.web.filter.authz.SslFilter.DEFAULT_HTTPS_PORT;
 import static org.apache.shiro.web.filter.authz.SslFilter.HTTPS_SCHEME;
-import static org.apache.shiro.web.mgt.CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -79,7 +78,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.lang.codec.Base64;
 import org.apache.shiro.mgt.AbstractRememberMeManager;
@@ -138,6 +136,11 @@ public class FormResubmitSupport {
     private static final long DEFAULT_RESUBMIT_BLACK_LIST_TTL_SECONDS = 60L;
     private static final String SEC_FETCH_SITE = "Sec-Fetch-Site";
     private static final String ORIGIN = "Origin";
+    private static final String CACHE_CONTROL = "Cache-Control";
+    private static final String NO_STORE = "no-store";
+    private static final String PRAGMA = "Pragma";
+    private static final String EXPIRES = "Expires";
+    private static final String NO_CACHE = "no-cache";
 
     static class HttpMethod {
         static final String GET = "GET";
@@ -445,6 +448,7 @@ public class FormResubmitSupport {
         }
         if (Boolean.TRUE.toString().equals(originalRequest.getHeader(FORM_IS_RESUBMITTED))) {
             log.debug("Form resubmit: internal auth failure");
+            setNoStoreHeaders(originalResponse);
             originalResponse.setStatus(AUTHFAIL);
             return resubmitResponseCleanup(originalRequest);
         }
@@ -554,6 +558,7 @@ public class FormResubmitSupport {
                     originalResponse.setHeader(LOCATION, response.headers().firstValue(LOCATION).orElseThrow());
                 }
             case OK:
+                propagateCacheHeaders(response, originalResponse);
                 // do not duplicate the session cookie(s)
                 transformCookieHeader(headers.allValues(SET_COOKIE))
                         .entrySet().stream().filter(not(entry -> entry.getKey()
@@ -583,30 +588,29 @@ public class FormResubmitSupport {
         return null;
     }
 
-    private static void initializeCookies(URI savedRequest, ServletContext servletContext,
-                                          CookieManager cookieManager, HttpServletRequest originalRequest) {
-        var session = SecurityUtils.getSubject().getSession();
-        var sessionCookieName = getSessionCookieName(servletContext, getSecurityManager());
-        var sessionCookie = new HttpCookie(sessionCookieName, session.getId().toString());
-        sessionCookie.setPath(servletContext.getContextPath());
-        sessionCookie.setVersion(0);
-        cookieManager.getCookieStore().add(savedRequest, sessionCookie);
-        log.debug("Setting Cookie {}", sessionCookieName);
-        for (Cookie origCookie : originalRequest.getCookies()) {
-            if (!origCookie.getName().startsWith(sessionCookieName)
-                    && !origCookie.getName().equals(DEFAULT_REMEMBER_ME_COOKIE_NAME)) {
-                try {
-                    log.debug("Setting Cookie {}", origCookie.getName());
-                    HttpCookie cookie = new HttpCookie(origCookie.getName(), origCookie.getValue());
-                    cookie.setPath(servletContext.getContextPath());
-                    cookie.setVersion(0);
-                    cookieManager.getCookieStore().add(savedRequest, cookie);
-                } catch (IllegalArgumentException e) {
-                    log.warn("Form Resubmit: Ignoring invalid cookie [{} - {}]",
-                            origCookie.getName(), origCookie.getValue(), e);
-                }
-            }
+    private static void propagateCacheHeaders(HttpResponse<String> response, HttpServletResponse originalResponse) {
+        HttpHeaders upstreamHeaders = response.headers();
+
+        List<String> cacheControlValues = upstreamHeaders.allValues(CACHE_CONTROL);
+        originalResponse.setHeader(CACHE_CONTROL, cacheControlValues.isEmpty()
+                ? NO_STORE : String.join(", ", cacheControlValues));
+
+        List<String> pragmaValues = upstreamHeaders.allValues(PRAGMA);
+        originalResponse.setHeader(PRAGMA, pragmaValues.isEmpty()
+                ? NO_CACHE : String.join(", ", pragmaValues));
+
+        List<String> expiresValues = upstreamHeaders.allValues(EXPIRES);
+        if (expiresValues.isEmpty()) {
+            originalResponse.setDateHeader(EXPIRES, 0);
+        } else {
+            originalResponse.setHeader(EXPIRES, expiresValues.get(expiresValues.size() - 1));
         }
+    }
+
+    private static void setNoStoreHeaders(HttpServletResponse response) {
+        response.setHeader(CACHE_CONTROL, NO_STORE);
+        response.setHeader(PRAGMA, NO_CACHE);
+        response.setDateHeader(EXPIRES, 0);
     }
 
     private static boolean checkWhitelist(ServletContext servletContext, URI savedRequestURI, HttpClient client,
