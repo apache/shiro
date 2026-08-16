@@ -24,23 +24,28 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 
 /**
- * Aspect that adds a before advice for each invocation of an annotated method.
+ * Aspect that adds a before advice for each invocation of an annotated method or class.
  */
-@Aspect()
+@Aspect
 public class ShiroAnnotationAuthorizingAspect {
 
-    private static final String pointCupExpression =
+    private static final String pointCutExpression =
             "execution(@org.apache.shiro.authz.annotation.RequiresAuthentication * *(..)) || " +
+                    "execution(* (@org.apache.shiro.authz.annotation.RequiresAuthentication *).*(..)) || " +
                     "execution(@org.apache.shiro.authz.annotation.RequiresGuest * *(..)) || " +
+                    "execution(* (@org.apache.shiro.authz.annotation.RequiresGuest *).*(..)) || " +
                     "execution(@org.apache.shiro.authz.annotation.RequiresPermissions * *(..)) || " +
+                    "execution(* (@org.apache.shiro.authz.annotation.RequiresPermissions *).*(..)) || " +
                     "execution(@org.apache.shiro.authz.annotation.RequiresRoles * *(..)) || " +
-                    "execution(@org.apache.shiro.authz.annotation.RequiresUser * *(..))";
+                    "execution(* (@org.apache.shiro.authz.annotation.RequiresRoles *).*(..)) || " +
+                    "execution(@org.apache.shiro.authz.annotation.RequiresUser * *(..)) || " +
+                    "execution(* (@org.apache.shiro.authz.annotation.RequiresUser *).*(..))";
 
-    @Pointcut(pointCupExpression)
+    @Pointcut(pointCutExpression)
     public void anyShiroAnnotatedMethod() {
     }
 
-    @Pointcut(pointCupExpression)
+    @Pointcut(pointCutExpression)
     void anyShiroAnnotatedMethodCall(JoinPoint thisJoinPoint) {
     }
 

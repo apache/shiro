@@ -21,11 +21,11 @@ package org.apache.shiro.aspectj;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 
 /**
- * Extends the secure dummy service and makes it some access more restrictive.
+ * Extends the secure dummy service and applies an additional class-level restriction.
  */
+@RequiresPermissions("dummy:admin")
 public class RestrictedDummyService extends SecuredDummyService {
 
-    @RequiresPermissions("dummy:admin")
     public void retrieve() {
         log("retrieve *RESTRICTED*");
         super.retrieve();
