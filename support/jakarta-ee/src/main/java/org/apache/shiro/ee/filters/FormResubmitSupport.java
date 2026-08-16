@@ -92,6 +92,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Servlets;
+import org.owasp.encoder.Encode;
 
 /**
  * supporting methods for {@link Forms}
@@ -564,7 +565,7 @@ public class FormResubmitSupport {
                     originalResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
                     originalResponse.getWriter().append(String.format(
                             "<partial-response><redirect url=\"%s\"></redirect></partial-response>",
-                            savedRequest));
+                            Encode.forXmlAttribute(savedRequest)));
                 } else {
                     originalResponse.getWriter().append(response.body());
                 }
