@@ -54,6 +54,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import static java.util.function.Predicate.not;
 import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
@@ -141,6 +142,10 @@ public class FormResubmitSupport {
     private static final String PRAGMA = "Pragma";
     private static final String EXPIRES = "Expires";
     private static final String NO_CACHE = "no-cache";
+    private static final Set<String> SECURITY_HEADERS =
+            Set.of("Content-Security-Policy", "Content-Security-Policy-Report-Only",
+                    "X-Content-Type-Options", "Referrer-Policy", "X-Frame-Options",
+                    "Cross-Origin-Opener-Policy", "Strict-Transport-Security");
 
     static class HttpMethod {
         static final String GET = "GET";
@@ -572,6 +577,7 @@ public class FormResubmitSupport {
                             "<partial-response><redirect url=\"%s\"></redirect></partial-response>",
                             Encode.forXmlAttribute(savedRequest)));
                 } else {
+                    response.headers().firstValue(CONTENT_TYPE).ifPresent(originalResponse::setContentType);
                     originalResponse.getWriter().append(response.body());
                 }
                 return resubmitResponseCleanup(originalRequest);
@@ -605,6 +611,12 @@ public class FormResubmitSupport {
         } else {
             originalResponse.setHeader(EXPIRES, expiresValues.get(expiresValues.size() - 1));
         }
+
+        upstreamHeaders.map().forEach((name, values) -> {
+            if (SECURITY_HEADERS.stream().anyMatch(name::equalsIgnoreCase)) {
+                values.forEach(v -> originalResponse.addHeader(name, v));
+            }
+        });
     }
 
     private static void setNoStoreHeaders(HttpServletResponse response) {
