@@ -27,6 +27,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import static org.apache.shiro.web.filter.authz.PortFilter.DEFAULT_HTTP_PORT;
+import static org.apache.shiro.web.filter.authz.PortFilter.HTTP_SCHEME;
+import static org.apache.shiro.web.filter.authz.SslFilter.DEFAULT_HTTPS_PORT;
+import static org.apache.shiro.web.filter.authz.SslFilter.HTTPS_SCHEME;
 
 /**
  * HttpServletResponse implementation to support URL Encoding of Shiro Session IDs.
@@ -183,18 +187,18 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
         }
         int serverPort = hreq.getServerPort();
         if (serverPort == -1) {
-            if ("https".equals(hreq.getScheme())) {
-                serverPort = 443;
+            if (HTTPS_SCHEME.equals(hreq.getScheme())) {
+                serverPort = DEFAULT_HTTPS_PORT;
             } else {
-                serverPort = 80;
+                serverPort = DEFAULT_HTTP_PORT;
             }
         }
         int urlPort = url.getPort();
         if (urlPort == -1) {
-            if ("https".equals(url.getProtocol())) {
-                urlPort = 443;
+            if (HTTPS_SCHEME.equals(url.getProtocol())) {
+                urlPort = DEFAULT_HTTPS_PORT;
             } else {
-                urlPort = 80;
+                urlPort = DEFAULT_HTTP_PORT;
             }
         }
         if (serverPort != urlPort) {
@@ -248,8 +252,8 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
 
             try {
                 buf.append(scheme).append("://").append(name);
-                if ((scheme.equals("http") && port != 80)
-                        || (scheme.equals("https") && port != 443)) {
+                if ((scheme.equals(HTTP_SCHEME) && port != DEFAULT_HTTP_PORT)
+                        || (scheme.equals(HTTPS_SCHEME) && port != DEFAULT_HTTPS_PORT)) {
                     buf.append(':').append(port);
                 }
                 if (!leadingSlash) {

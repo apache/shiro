@@ -57,6 +57,10 @@ import java.util.UUID;
 import static java.util.function.Predicate.not;
 import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
 import static org.apache.shiro.web.filter.authc.NoAccessFilter.FORM_RESUBMIT_CHECK_SERVLET_PATH;
+import static org.apache.shiro.web.filter.authz.PortFilter.DEFAULT_HTTP_PORT;
+import static org.apache.shiro.web.filter.authz.PortFilter.HTTP_SCHEME;
+import static org.apache.shiro.web.filter.authz.SslFilter.DEFAULT_HTTPS_PORT;
+import static org.apache.shiro.web.filter.authz.SslFilter.HTTPS_SCHEME;
 import static org.apache.shiro.web.mgt.CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -106,7 +110,7 @@ public class FormResubmitSupport {
     private static final String FACES_VIEW_STATE = "jakarta.faces.ViewState";
     private static final String FACES_VIEW_STATE_EQUALS = FACES_VIEW_STATE + "=";
     private static final Pattern VIEW_STATE_PATTERN
-            = Pattern.compile(String.format("(.*)(%s[-]?[\\d]+:[-]?[\\d]+)(.*)", FACES_VIEW_STATE_EQUALS));
+            = Pattern.compile(String.format("(.*)(%s-?\\d+:-?\\d+)(.*)", FACES_VIEW_STATE_EQUALS));
     private static final String FACES_SOURCE = "jakarta.faces.source";
     private static final String FACES_SOURCE_EQUALS = FACES_SOURCE + "=";
     static final Pattern FACES_SOURCE_PATTERN
@@ -131,6 +135,8 @@ public class FormResubmitSupport {
     private static final Optional<Long> RESUBMIT_BLACK_LIST_TTL_SECONDS =
             Optional.ofNullable(System.getProperty(FORM_RESUBMIT_BLACK_LIST_TTL_SECONDS)).map(Long::valueOf);
     private static final long DEFAULT_RESUBMIT_BLACK_LIST_TTL_SECONDS = 60L;
+    private static final String SEC_FETCH_SITE = "Sec-Fetch-Site";
+    private static final String ORIGIN = "Origin";
 
     static class HttpMethod {
         static final String GET = "GET";
@@ -166,7 +172,7 @@ public class FormResubmitSupport {
 
     static void savePostDataForResubmit(HttpServletRequest request, HttpServletResponse response, @NonNull String loginUrl) {
         if (isPostRequest(request) && isSecurityManagerTypeOf(getSecurityManager(),
-                DefaultSecurityManager.class)) {
+                DefaultSecurityManager.class) && shouldSavePostData(request)) {
             String postData = getPostData(request);
             var cacheKey = UUID.randomUUID();
             DefaultSecurityManager dsm = getSecurityManager(DefaultSecurityManager.class);
@@ -789,5 +795,50 @@ public class FormResubmitSupport {
     static boolean isJSFClientStateSavingMethod(ServletContext servletContext) {
         return STATE_SAVING_METHOD_CLIENT.equals(
                 servletContext.getInitParameter(STATE_SAVING_METHOD_PARAM_NAME));
+    }
+
+    static boolean shouldSavePostData(HttpServletRequest request) {
+        String secFetchSite = request.getHeader(SEC_FETCH_SITE);
+        if (secFetchSite != null && !secFetchSite.isBlank()) {
+            return "same-origin".equalsIgnoreCase(secFetchSite.trim());
+        }
+
+        return originMatchesRequest(request, request.getHeader(ORIGIN));
+    }
+
+    static boolean originMatchesRequest(HttpServletRequest request, String originHeader) {
+        if (originHeader == null || originHeader.isBlank() || "null".equalsIgnoreCase(originHeader)) {
+            return false;
+        }
+
+        try {
+            URI origin = URI.create(originHeader);
+            String originScheme = origin.getScheme();
+            String originHost = origin.getHost();
+            int originPort = normalizePort(originScheme, origin.getPort());
+
+            String requestScheme = request.getScheme();
+            String requestHost = request.getServerName();
+            int requestPort = normalizePort(requestScheme, request.getServerPort());
+
+            return Objects.equals(originScheme, requestScheme)
+                    && Objects.equals(originHost, requestHost)
+                    && originPort == requestPort;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private static int normalizePort(String scheme, int port) {
+        if (port >= 0) {
+            return port;
+        }
+        if (HTTPS_SCHEME.equalsIgnoreCase(scheme)) {
+            return DEFAULT_HTTPS_PORT;
+        }
+        if (HTTP_SCHEME.equalsIgnoreCase(scheme)) {
+            return DEFAULT_HTTP_PORT;
+        }
+        return -1;
     }
 }
