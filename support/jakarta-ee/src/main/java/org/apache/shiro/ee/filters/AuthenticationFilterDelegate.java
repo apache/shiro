@@ -33,12 +33,15 @@ import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_PREDICA
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_WAITTIME_ATTR_NAME;
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.NO_PREDICATE;
+import static org.apache.shiro.ee.filters.FormAuthenticationFilter.getPathWithinApplication;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.isPostRequest;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.savePostDataForResubmit;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.saveRequestReferer;
 import static org.apache.shiro.ee.filters.LogoutFilter.LOGOUT_PREDICATE_ATTR_NAME;
 import static org.apache.shiro.ee.filters.LogoutFilter.YES_PREDICATE;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
+import static org.apache.shiro.web.filter.authc.NoAccessFilter.FORM_RESUBMIT_CHECK_SERVLET_PATH;
 import static org.apache.shiro.web.jaxrs.SubjectPrincipalRequestFilter.SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM;
 
 /**
@@ -101,7 +104,10 @@ class AuthenticationFilterDelegate {
     public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         Subject subject = methods.getSubject(request, response);
         boolean isAuthenticated = subject.isAuthenticated() && subject.getPrincipal() != null;
-        return isAuthenticated || (useRemembered && subject.isRemembered());
+        return isAuthenticated || (useRemembered && subject.isRemembered())
+                || (isPostRequest(request)
+                && FORM_RESUBMIT_CHECK_SERVLET_PATH.equals(getPathWithinApplication(request,
+                () -> WebUtils.getPathWithinApplication(WebUtils.toHttp(request)))));
     }
 
     /**

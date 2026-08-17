@@ -37,10 +37,12 @@ import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getSessionC
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.Collections;
+import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.crypto.CryptoException;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.initializeCookies;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitBlacklistEnabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.io.IOException;
 import java.net.CookieManager;
@@ -57,6 +59,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import static java.util.function.Predicate.not;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitWhitelistEnabled;
 import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
 import static org.apache.shiro.web.filter.authc.NoAccessFilter.FORM_RESUBMIT_CHECK_SERVLET_PATH;
 import static org.apache.shiro.web.filter.authz.PortFilter.DEFAULT_HTTP_PORT;
@@ -646,13 +649,18 @@ public class FormResubmitSupport {
         } else if (isBlacklisted(blacklist, authority)) {
             log.debug("Form resubmit blacklist cache hit for {}", savedRequestURI);
             return false;
-        } else if (checkWhitelistClient(savedRequestURI, servletContext.getContextPath(), client, savedFormDataKey)) {
-            putWhitelistEntry(whitelist, authority);
+        } else if (checkWhitelistClient(savedRequestURI, servletContext.getContextPath(), client,
+                savedFormDataKey, dsm.getCacheManager())) {
+            if (isFormResubmitWhitelistEnabled(servletContext)) {
+                putWhitelistEntry(whitelist, authority);
+            }
             blacklist.remove(authority);
             return true;
         }
 
-        putBlacklistEntry(blacklist, authority);
+        if (isFormResubmitBlacklistEnabled(servletContext)) {
+            putBlacklistEntry(blacklist, authority);
+        }
         return false;
     }
 
@@ -710,13 +718,23 @@ public class FormResubmitSupport {
     }
 
     private static boolean checkWhitelistClient(URI savedRequestURI, String contextPath, HttpClient client,
-                                                String savedFormDataKey) {
+                                                String savedFormDataKey, @NonNull CacheManager cacheManager) {
+        Cache<UUID, String> cache = null;
+        UUID savedFormDataUUID = null;
+
         try {
             var rememberMeManager = getRememberMeManager();
             if (rememberMeManager == null || rememberMeManager.getCipherService() == null
                     || rememberMeManager.getSerializer() == null) {
                 log.warn("Form resubmit cipher service not available, unable to decrypt - resubmit will not be available.");
                 return false;
+            }
+
+            if (savedFormDataKey == null) {
+                savedFormDataUUID = UUID.randomUUID();
+                savedFormDataKey = savedFormDataUUID.toString();
+                cache = cacheManager.getCache(FORM_DATA_CACHE);
+                cache.put(savedFormDataUUID, "__DUMMY_FOR_CLIENT_WHITELIST_CHECK__");
             }
 
             var request = HttpRequest.newBuilder()
@@ -738,6 +756,10 @@ public class FormResubmitSupport {
         } catch (IOException | InterruptedException e) {
             log.debug("Form resubmit whitelist check failed for {} with exception: {}",
                     savedRequestURI, e);
+        } finally {
+            if (cache != null) {
+                cache.remove(savedFormDataUUID);
+            }
         }
         return false;
     }
