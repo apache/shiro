@@ -42,6 +42,7 @@ import org.apache.shiro.crypto.CryptoException;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.initializeCookies;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitBlacklistEnabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.io.IOException;
 import java.net.CookieManager;
@@ -58,6 +59,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import static java.util.function.Predicate.not;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitWhitelistEnabled;
 import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
 import static org.apache.shiro.web.filter.authc.NoAccessFilter.FORM_RESUBMIT_CHECK_SERVLET_PATH;
 import static org.apache.shiro.web.filter.authz.PortFilter.DEFAULT_HTTP_PORT;
@@ -649,12 +651,16 @@ public class FormResubmitSupport {
             return false;
         } else if (checkWhitelistClient(savedRequestURI, servletContext.getContextPath(), client,
                 savedFormDataKey, dsm.getCacheManager())) {
-            putWhitelistEntry(whitelist, authority);
+            if (isFormResubmitWhitelistEnabled(servletContext)) {
+                putWhitelistEntry(whitelist, authority);
+            }
             blacklist.remove(authority);
             return true;
         }
 
-        putBlacklistEntry(blacklist, authority);
+        if (isFormResubmitBlacklistEnabled(servletContext)) {
+            putBlacklistEntry(blacklist, authority);
+        }
         return false;
     }
 
