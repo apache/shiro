@@ -201,7 +201,7 @@ repos:
         types: [markdown]
         files: \.md$
   - repo: https://github.com/oxipng/oxipng
-    rev: 628e241e23f368097883807fa6e985ccf7c00357 # frozen: v10.1.1
+    rev: 340cd9878d8d8289f09fa101b48a8f5f0b7783f4 # frozen: v10.2.0
     hooks:
       - id: oxipng
         priority: 16
@@ -209,7 +209,7 @@ repos:
         description: check PNG files with oxipng
         args: ['--fix', '-o', '4', '--strip', 'safe', '--alpha']
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 6b63472e72e1a91ed8a2f6d483790dfb644fa1d3 # frozen: 0.37.4
+    rev: 12e63946db2c5cfcc9030fac21c3883ba88c6ed8 # frozen: 0.38.0
     hooks:
       - id: check-citation-file-format
         priority: 100
@@ -229,7 +229,7 @@ repos:
         name: run shellcheck
         description: check Shell scripts with shellcheck
   - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
-    rev: 3aa28ce11a84d747c5695ad10b81945f2400b54f # frozen: 3.8.0
+    rev: e8b4e28241a9ae8296ba6e4a491b5da4eda73283 # frozen: 3.11.1
     hooks:
       - id: editorconfig-checker
         priority: 100
