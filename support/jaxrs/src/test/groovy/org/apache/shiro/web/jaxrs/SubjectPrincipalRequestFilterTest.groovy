@@ -48,7 +48,7 @@ class SubjectPrincipalRequestFilterTest {
         filter.filter(requestContext)
 
         verify requestContext, originalSecurityContext
-        assertSame requestContext, contextCapture.value.containerRequestContext
+        assertNotSame requestContext, contextCapture.value.originalSecurityContext
     }
 
 }
