@@ -23,11 +23,13 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFStatefulForm;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.noJSFAjaxRequests;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
 
+import java.net.HttpCookie;
 import java.net.URLDecoder;
 import java.time.Duration;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import jakarta.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -327,11 +329,21 @@ class FormSupportTest {
 
     @Test
     void parseCookies() {
-        var map = Map.of("name1", "value1", "name2", "value2", "name3", "value3");
+        var map = Map.of("name1", "value1", "name2", "value2", "name3", "value3")
+                .entrySet().stream()
+                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey,
+                        entry -> {
+                            var cookie = new HttpCookie(entry.getKey(), entry.getValue());
+                            if (entry.getKey().equals("name2")) {
+                                cookie.setPath("/my/path");
+                            }
+                            return cookie;
+                        }));
+
         assertThat(transformCookieHeader(List.of("name1=value1", "name2=value2; path=/my/path", "name3=value3"))).isEqualTo(map);
-        assertThat(transformCookieHeader(List.of("name="))).isEqualTo(Map.of("name", ""));
+        assertThat(transformCookieHeader(List.of("name="))).isEqualTo(Map.of("name", new HttpCookie("name", "")));
         assertThat(transformCookieHeader(List.of("JSESSIONID=\"abc\"; $Version=\"1\"; $Path=\"/mypath\"")))
-            .isEqualTo(Map.of("JSESSIONID", "abc"));
+            .isEqualTo(Map.of("JSESSIONID", new HttpCookie("JSESSIONID", "abc")));
     }
 
     @Test

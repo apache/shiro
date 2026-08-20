@@ -22,6 +22,7 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import jakarta.servlet.ServletContext;
@@ -53,6 +54,18 @@ public class FormResubmitSupportCookies {
         cookie.setPath(servletContext.getContextPath());
         cookie.setMaxAge(maxAge);
         cookie.setHttpOnly(httpOnly);
+        if (EnvironmentLoaderListener.isFormResubmitSecureCookies(servletContext)) {
+            cookie.setSecure(true);
+        }
+        response.addCookie(cookie);
+    }
+
+    static void addCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
+                          @NonNull String cookieName, @NonNull HttpCookie inputCookie) {
+        var cookie = new Cookie(cookieName, inputCookie.getValue());
+        cookie.setPath(inputCookie.getPath() != null ? inputCookie.getPath() : servletContext.getContextPath());
+        cookie.setMaxAge(Math.toIntExact(inputCookie.getMaxAge()));
+        cookie.setHttpOnly(inputCookie.isHttpOnly());
         if (EnvironmentLoaderListener.isFormResubmitSecureCookies(servletContext)) {
             cookie.setSecure(true);
         }
@@ -94,9 +107,9 @@ public class FormResubmitSupportCookies {
         }
     }
 
-    static Map<String, String> transformCookieHeader(@NonNull List<String> cookies) {
+    static Map<String, HttpCookie> transformCookieHeader(@NonNull List<String> cookies) {
         return cookieStreamFromHeader(cookies)
-                .collect(Collectors.toMap(HttpCookie::getName, HttpCookie::getValue, (var, v2) -> v2));
+                .collect(Collectors.toMap(HttpCookie::getName, Function.identity(), (var, v2) -> v2));
     }
 
     static Stream<HttpCookie> cookieStreamFromHeader(@NonNull List<String> cookies) {
