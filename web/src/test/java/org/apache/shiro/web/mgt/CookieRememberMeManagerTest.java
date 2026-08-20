@@ -241,6 +241,7 @@ class CookieRememberMeManagerTest {
             };
 
             expect(mockRequest.getCookies()).andReturn(cookies);
+            expect(mockRequest.isSecure()).andReturn(false);
             replay(mockRequest);
 
             CookieRememberMeManager mgr = new CookieRememberMeManager();
@@ -350,6 +351,7 @@ class CookieRememberMeManagerTest {
         expect(mockRequest.getAttribute(ShiroHttpServletRequest.IDENTITY_REMOVED_KEY)).andReturn(null);
         expect(mockRequest.getContextPath()).andReturn(null);
         expect(mockRequest.getCookies()).andReturn(cookies);
+        expect(mockRequest.isSecure()).andReturn(false);
         replay(mockRequest);
 
         // when
