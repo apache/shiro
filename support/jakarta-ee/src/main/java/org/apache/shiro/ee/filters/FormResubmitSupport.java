@@ -109,6 +109,7 @@ public class FormResubmitSupport {
     static final String FORM_RESUBMIT_WHITELIST = "org.apache.shiro.form-resubmit-whitelist";
     static final String FORM_RESUBMIT_BLACKLIST = "org.apache.shiro.form-resubmit-blacklist";
     static final String FORM_DATA_CACHE = "org.apache.shiro.form-data-cache";
+    static final String FORM_DATA_KEY_PREFIX = "formDataKey=";
     // encoded view state
     private static final String FACES_VIEW_STATE = "jakarta.faces.ViewState";
     private static final String FACES_VIEW_STATE_EQUALS = FACES_VIEW_STATE + "=";
@@ -742,7 +743,7 @@ public class FormResubmitSupport {
                             contextPath, FORM_RESUBMIT_CHECK_SERVLET_PATH)))
                     .timeout(Duration.ofSeconds(3)).header(CONTENT_TYPE, "text/plain")
                     .POST(HttpRequest.BodyPublishers.ofString(rememberMeManager.getCipherService()
-                            .encrypt(savedFormDataKey.getBytes(StandardCharsets.UTF_8),
+                            .encrypt((FORM_DATA_KEY_PREFIX + savedFormDataKey).getBytes(StandardCharsets.UTF_8),
                                     rememberMeManager.getEncryptionCipherKey()).toBase64())).build();
             var response = client.send(request, HttpResponse.BodyHandlers.ofString());
 

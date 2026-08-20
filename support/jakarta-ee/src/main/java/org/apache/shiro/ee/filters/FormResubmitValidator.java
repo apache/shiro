@@ -31,6 +31,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import static org.apache.shiro.SecurityUtils.getSecurityManager;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.FORM_DATA_CACHE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.FORM_DATA_KEY_PREFIX;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.decrypt;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getRememberMeManager;
 import static org.apache.shiro.web.filter.authc.NoAccessFilter.FORM_RESUBMIT_CHECK_SERVLET_PATH;
@@ -45,7 +46,8 @@ public class FormResubmitValidator extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else {
             try {
-                String formDataKey = decrypt(request.getReader().lines().collect(Collectors.joining()), rememberMeManager);
+                String formDataKey = decrypt(request.getReader().lines().collect(Collectors.joining()), rememberMeManager)
+                        .substring(FORM_DATA_KEY_PREFIX.length());
                 var cache = getSecurityManager(DefaultSecurityManager.class)
                         .getCacheManager().getCache(FORM_DATA_CACHE);
                 Optional.ofNullable(cache.get(UUID.fromString(formDataKey))).orElseThrow(IllegalCallerException::new);
