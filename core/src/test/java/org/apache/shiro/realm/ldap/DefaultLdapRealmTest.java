@@ -21,7 +21,7 @@ package org.apache.shiro.realm.ldap;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
+import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +61,7 @@ public class DefaultLdapRealmTest {
 
     @Test
     void testDefaultInstance() {
-        assertThat(realm.getCredentialsMatcher() instanceof AllowAllCredentialsMatcher).isTrue();
+        assertThat(realm.getCredentialsMatcher() instanceof SimpleCredentialsMatcher).isTrue();
         assertThat(realm.getAuthenticationTokenClass()).isEqualTo(AuthenticationToken.class);
         assertThat(realm.getContextFactory() instanceof JndiLdapContextFactory).isTrue();
     }
