@@ -22,9 +22,11 @@ import jakarta.ws.rs.QueryParam;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
+import jakarta.ws.rs.core.SecurityContext;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.lang.ShiroException;
@@ -39,6 +41,10 @@ public class WhoamiResource {
     RolesAllowedBean rolesAllowedBean;
     @Inject
     TestApplication testApplication;
+    @Context
+    SecurityContext securityContext;
+
+    public record SecurityDetails(String principal, boolean isSecure, String authScheme) { }
 
     @GET
     @Path("whoami")
@@ -73,6 +79,17 @@ public class WhoamiResource {
     @Produces(APPLICATION_JSON)
     public Response permit(@QueryParam("user") String user, @QueryParam("password") String password) {
         return check(rolesAllowedBean::permit, rolesAllowedBean::permit, user, password);
+    }
+
+    @GET
+    @Path("securityContext")
+    @Produces(APPLICATION_JSON)
+    public Response securityContext(@QueryParam("user") String user, @QueryParam("password") String password) {
+        return check(() -> Response.ok(new SecurityDetails(
+                securityContext.getUserPrincipal().getName(),
+                securityContext.isSecure(),
+                securityContext.getAuthenticationScheme()
+        )).build(), () -> Response.status(Status.UNAUTHORIZED).build(), user, password);
     }
 
     private <T> T check(Supplier<T> happy, Supplier<T> sad, String user, String password) {

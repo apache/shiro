@@ -27,8 +27,10 @@ import lombok.SneakyThrows;
 import org.apache.shiro.testing.cdi.ComponentInjectionIT;
 
 import static org.apache.shiro.testing.cdi.ComponentInjectionIT.TESTABLE_MODE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
+import org.apache.shiro.testing.jaxrs.WhoamiResource.SecurityDetails;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit5.ArquillianExtension;
@@ -128,6 +130,17 @@ public class NoIniJaxRsIT {
         assertEquals(Status.UNAUTHORIZED.getStatusCode(), createWebTarget("whoami/rolesAllowed",
                 Credentials.builder().username("powerful").password("awesome").send(true).build())
                 .request().get().getStatus());
+    }
+
+    @Test
+    @OperateOnDeployment(TESTABLE_MODE)
+    void securityContext() {
+        var securityDetails = createWebTarget("whoami/securityContext", Credentials.builder()
+                .username("powerful").password("awesome").send(true).build())
+                .request().get().readEntity(SecurityDetails.class);
+        assertThat(securityDetails.principal()).isEqualTo("powerful");
+        assertThat(securityDetails.isSecure()).isFalse();
+        assertThat(securityDetails.authScheme()).isNull();
     }
 
     @Deployment(name = TESTABLE_MODE)

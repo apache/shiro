@@ -33,12 +33,9 @@ import java.security.Principal;
  * @since 1.4
  */
 public class ShiroSecurityContext implements SecurityContext {
-
-    private final ContainerRequestContext containerRequestContext;
     private final SecurityContext originalSecurityContext;
 
     public ShiroSecurityContext(ContainerRequestContext containerRequestContext) {
-        this.containerRequestContext = containerRequestContext;
         this.originalSecurityContext = containerRequestContext.getSecurityContext();
     }
 
@@ -69,12 +66,12 @@ public class ShiroSecurityContext implements SecurityContext {
 
     @Override
     public boolean isSecure() {
-        return containerRequestContext.getSecurityContext().isSecure();
+        return originalSecurityContext.isSecure();
     }
 
     @Override
     public String getAuthenticationScheme() {
-        return containerRequestContext.getSecurityContext().getAuthenticationScheme();
+        return originalSecurityContext.getAuthenticationScheme();
     }
 
     private Subject getSubject() {
@@ -85,9 +82,8 @@ public class ShiroSecurityContext implements SecurityContext {
     /**
      * Java Principal wrapper around any Shiro Principal object.s
      */
-    private class ObjectPrincipal implements Principal {
-
-        private Object object;
+    private static class ObjectPrincipal implements Principal {
+        private final Object object;
 
         ObjectPrincipal(Object object) {
             this.object = object;
