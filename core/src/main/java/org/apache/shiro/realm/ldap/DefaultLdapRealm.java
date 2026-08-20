@@ -22,7 +22,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.credential.AllowAllCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.ldap.UnsupportedAuthenticationMechanismException;
@@ -109,8 +108,6 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * {@link JndiLdapContextFactory}.
      */
     public DefaultLdapRealm() {
-        //Credentials Matching is not necessary - the LDAP directory will do it automatically:
-        setCredentialsMatcher(new AllowAllCredentialsMatcher());
         //Any Object principal and Object credentials may be passed to the LDAP provider, so accept any token:
         setAuthenticationTokenClass(AuthenticationToken.class);
         this.contextFactory = new JndiLdapContextFactory();
