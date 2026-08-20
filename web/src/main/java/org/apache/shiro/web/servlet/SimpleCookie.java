@@ -423,7 +423,6 @@ public class SimpleCookie implements Cookie {
     @Override
     public void removeFrom(HttpServletRequest request, HttpServletResponse response) {
         String name = getName();
-        String value = DELETED_COOKIE_VALUE;
         //don't need to add extra size to the response - comments are irrelevant for deletions
         String comment = null;
         String domain = getDomain();
@@ -431,12 +430,12 @@ public class SimpleCookie implements Cookie {
         //always zero for deletion
         int maxAge = 0;
         int version = getVersion();
-        boolean secure = isSecure();
+        boolean secure = isSecure() && request.isSecure();
         //no need to add the extra text, plus the value 'deleteMe' is not sensitive at all
         boolean httpOnly = false;
         SameSiteOptions sameSite = getSameSite();
 
-        addCookieHeader(response, name, value, null, domain, path, maxAge, version, secure, httpOnly, sameSite);
+        addCookieHeader(response, name, DELETED_COOKIE_VALUE, null, domain, path, maxAge, version, secure, httpOnly, sameSite);
 
         LOGGER.trace("Removed '{}' cookie by setting maxAge=0", name);
     }
