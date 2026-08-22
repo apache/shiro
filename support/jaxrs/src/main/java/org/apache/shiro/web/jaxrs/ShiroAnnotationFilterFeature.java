@@ -69,14 +69,13 @@ public class ShiroAnnotationFilterFeature implements DynamicFeature {
 
         for (Class<? extends Annotation> annotationClass : annotations) {
             // XXX What is the performance of getAnnotation vs getAnnotations?
-            Annotation classAuthzSpec = resourceInfo.getResourceClass().getAnnotation(annotationClass);
             Annotation methodAuthzSpec = resourceInfo.getResourceMethod().getAnnotation(annotationClass);
+            Annotation classAuthzSpec = resourceInfo.getResourceClass().getAnnotation(annotationClass);
 
-            if (classAuthzSpec != null) {
-                authzSpecs.add(classAuthzSpec);
-            }
             if (methodAuthzSpec != null) {
                 authzSpecs.add(methodAuthzSpec);
+            } else if (classAuthzSpec != null) {
+                authzSpecs.add(classAuthzSpec);
             }
         }
 

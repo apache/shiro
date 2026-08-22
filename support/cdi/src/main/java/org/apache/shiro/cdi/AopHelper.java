@@ -83,22 +83,17 @@ class AopHelper {
      */
     static List<SecurityInterceptor> createSecurityInterceptors(Method method, Class<?> clazz) {
         List<SecurityInterceptor> result = new ArrayList<>();
+        boolean checkClassAnnotations = isInterceptOnClassAnnotation(method.getModifiers());
 
-        if (isInterceptOnClassAnnotation(method.getModifiers())) {
-            for (Class<? extends Annotation> ac
-                    : getAuthorizationAnnotationClasses()) {
-                Annotation annotationOnClass = clazz.getAnnotation(ac);
-                if (annotationOnClass != null) {
-                    result.add(new SecurityInterceptor(annotationOnClass));
+        for (Class<? extends Annotation> ac : getAuthorizationAnnotationClasses()) {
+            Annotation methodAnnotation = method.getAnnotation(ac);
+            if (methodAnnotation != null) {
+                result.add(new SecurityInterceptor(methodAnnotation));
+            } else if (checkClassAnnotations) {
+                Annotation classAnnotation = clazz.getAnnotation(ac);
+                if (classAnnotation != null) {
+                    result.add(new SecurityInterceptor(classAnnotation));
                 }
-            }
-        }
-
-        for (Class<? extends Annotation> ac
-                : getAuthorizationAnnotationClasses()) {
-            Annotation annotation = method.getAnnotation(ac);
-            if (annotation != null) {
-                result.add(new SecurityInterceptor(annotation));
             }
         }
 
