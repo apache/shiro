@@ -203,4 +203,11 @@ public class DummyServiceTest {
         restrictedService.retrieve();
     }
 
+    @Test
+    void testStaticMethodOnClassLevelRequiresRoles_asUser() throws Exception {
+        assertThatExceptionOfType(UnauthorizedException.class).isThrownBy(() -> {
+            loginAsUser();
+            StaticDummyService.staticAdminOnly();
+        });
+    }
 }
