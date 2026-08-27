@@ -174,6 +174,13 @@
                 <revision>3.0.0</revision>
             </Version>
         </release>
+        <release>
+            <Version>
+                <name>Apache Shiro 3.0.1</name>
+                <created>2026-08-24</created>
+                <revision>3.0.1</revision>
+            </Version>
+        </release>
 
         <repository>
             <GitRepository>
