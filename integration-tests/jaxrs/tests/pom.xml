@@ -54,7 +54,7 @@
         <dependency>
             <groupId>jakarta.json.bind</groupId>
             <artifactId>jakarta.json.bind-api</artifactId>
-            <version>3.0.2</version>
+            <version>3.0.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
