@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.23</version>
+            <version>3.14.24</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -237,7 +237,7 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.32.0-GA</version>
+            <version>3.33.0-GA</version>
             <scope>test</scope>
         </dependency>
 
