@@ -53,17 +53,17 @@ jobs:
         java:
           #  8
           - version: 8
-            dist: adopt-openj9
+            dist: 'semeru'
           # 11
           - version: 11
             dist: temurin
           - version: 11
-            dist: adopt-openj9
+            dist: 'semeru'
           # 17
           - version: 17
             dist: temurin
           - version: 17
-            dist: adopt-openj9
+            dist: 'semeru'
           - version: 17
             dist: zulu
       fail-fast: false
