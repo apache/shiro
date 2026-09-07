@@ -68,7 +68,7 @@ public class DefaultAnnotationResolver implements AnnotationResolver {
         return annotation;
     }
 
-    private Annotation getAnnotationFromClassHierarchy(Class<?> targetClass, Class<? extends Annotation> clazz) {
+    public static Annotation getAnnotationFromClassHierarchy(Class<?> targetClass, Class<? extends Annotation> clazz) {
         Class<?> current = targetClass;
         while (current != null) {
             Annotation annotation = current.getDeclaredAnnotation(clazz);

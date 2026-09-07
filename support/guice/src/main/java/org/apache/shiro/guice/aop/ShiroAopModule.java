@@ -30,6 +30,7 @@ import org.apache.shiro.authz.aop.RoleAnnotationMethodInterceptor;
 import org.apache.shiro.authz.aop.UserAnnotationMethodInterceptor;
 
 import java.lang.annotation.Annotation;
+import static org.apache.shiro.aop.DefaultAnnotationResolver.getAnnotationFromClassHierarchy;
 
 /**
  * Install this module to enable Shiro AOP functionality in Guice.  You may extend it to add your own Shiro
@@ -47,7 +48,8 @@ public class ShiroAopModule extends AbstractModule {
         bindInterceptor(Matchers.any(), method -> {
             Class<? extends Annotation> annotation = methodInterceptor.getHandler().getAnnotationClass();
             return method.getAnnotation(annotation) != null
-                    || method.getDeclaringClass().getAnnotation(annotation) != null;
+                    || method.getDeclaringClass().getAnnotation(annotation) != null
+                    || getAnnotationFromClassHierarchy(method.getDeclaringClass(), annotation) != null;
         }, new AopAllianceMethodInterceptorAdapter(methodInterceptor));
     }
 
