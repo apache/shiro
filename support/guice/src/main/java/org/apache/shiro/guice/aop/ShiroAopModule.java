@@ -48,7 +48,6 @@ public class ShiroAopModule extends AbstractModule {
         bindInterceptor(Matchers.any(), method -> {
             Class<? extends Annotation> annotation = methodInterceptor.getHandler().getAnnotationClass();
             return method.getAnnotation(annotation) != null
-                    || method.getDeclaringClass().getAnnotation(annotation) != null
                     || getAnnotationFromClassHierarchy(method.getDeclaringClass(), annotation) != null;
         }, new AopAllianceMethodInterceptorAdapter(methodInterceptor));
     }
