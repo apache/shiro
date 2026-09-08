@@ -222,21 +222,13 @@ public final class WebUtils {
         }
 
         // Resolve occurrences of "//" in the normalized path
-        while (true) {
-            int index = normalized.indexOf("//");
-            if (index < 0) {
-                break;
-            }
-            normalized = normalized.substring(0, index) + normalized.substring(index + 1);
+        while (normalized.contains("//")) {
+            normalized = normalized.replace("//", "/");
         }
 
         // Resolve occurrences of "/./" in the normalized path
-        while (true) {
-            int index = normalized.indexOf("/./");
-            if (index < 0) {
-                break;
-            }
-            normalized = normalized.substring(0, index) + normalized.substring(index + 2);
+        while (normalized.contains("/./")) {
+            normalized = normalized.replace("/./", "/");
         }
 
         // Resolve occurrences of "/../" in the normalized path

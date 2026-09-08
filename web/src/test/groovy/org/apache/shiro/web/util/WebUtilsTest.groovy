@@ -209,6 +209,8 @@ class WebUtilsTest {
         doNormalizeTest "foobar", "/foobar"
         doNormalizeTest "//foobar", "/foobar"
         doNormalizeTest "//foobar///", "/foobar/"
+        doNormalizeTest "////////", "/"
+        doNormalizeTest "/./././x", "/x"
         doNormalizeTest "/context-path/foobar", "/context-path/foobar"
         doNormalizeTest "/context-path/foobar/", "/context-path/foobar/"
         doNormalizeTest "//context-path/foobar", "/context-path/foobar"
