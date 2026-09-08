@@ -32,7 +32,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <meecrowave.version>2.0.0</meecrowave.version>
+        <meecrowave.version>2.1.1</meecrowave.version>
     </properties>
 
     <dependencyManagement>

@@ -174,7 +174,7 @@ repos:
         name: run gitleaks
         description: check for secrets with gitleaks
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: 451b56af716f9f0d0c2b816503a3fd0cf8b036fa # frozen: v1.29.0
+    rev: cef8b8350da46d8114c7e6b7272aebdccdf193ce # frozen: v1.30.0
     hooks:
       - id: zizmor
         priority: 100
@@ -201,7 +201,7 @@ repos:
         types: [markdown]
         files: \.md$
   - repo: https://github.com/oxipng/oxipng
-    rev: 340cd9878d8d8289f09fa101b48a8f5f0b7783f4 # frozen: v10.2.0
+    rev: 36f3ef8aac65ecf1761739ea2f2e530281f1312b # frozen: v10.2.1
     hooks:
       - id: oxipng
         priority: 16
