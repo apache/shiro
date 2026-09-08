@@ -39,25 +39,30 @@ import static org.apache.shiro.web.filter.authc.NoAccessFilter.FORM_RESUBMIT_CHE
 @Slf4j
 @WebServlet(name = "ShiroFormResubmitValidator", urlPatterns = FORM_RESUBMIT_CHECK_SERVLET_PATH)
 public class FormResubmitValidator extends HttpServlet {
+    private static final long MAX_CONTENT_LENGTH = 1024 * 2;
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         var rememberMeManager = getRememberMeManager();
-        if (rememberMeManager == null || rememberMeManager.getCipherService() == null) {
+        if (rememberMeManager == null || rememberMeManager.getCipherService() == null
+        || request.getContentLengthLong() > MAX_CONTENT_LENGTH) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else {
             try {
-                String formDataKey = decrypt(request.getReader().lines().collect(Collectors.joining()), rememberMeManager)
+                String formDataKey = Optional.ofNullable(decrypt(request.getReader().lines().collect(Collectors.joining()),
+                                rememberMeManager)).filter(s -> s.startsWith(FORM_DATA_KEY_PREFIX))
+                        .orElseThrow(IllegalArgumentException::new)
                         .substring(FORM_DATA_KEY_PREFIX.length());
-                var cache = getSecurityManager(DefaultSecurityManager.class)
-                        .getCacheManager().getCache(FORM_DATA_CACHE);
+                var cache = Optional.ofNullable(getSecurityManager(DefaultSecurityManager.class)
+                        .getCacheManager()).orElseThrow(IllegalStateException::new).getCache(FORM_DATA_CACHE);
                 Optional.ofNullable(cache.get(UUID.fromString(formDataKey))).orElseThrow(IllegalCallerException::new);
                 String encryptedFormDataKey = rememberMeManager.getCipherService()
                         .encrypt(formDataKey.getBytes(StandardCharsets.UTF_8),
                         rememberMeManager.getEncryptionCipherKey()).toBase64();
                 response.getWriter().write(encryptedFormDataKey);
                 response.setStatus(HttpServletResponse.SC_OK);
-            } catch (IOException | IllegalCallerException e) {
-                log.warn("Form resubmit verification: invalid input or failed to write encrypted session id to response", e);
+            } catch (IOException | RuntimeException e) {
+                log.debug("Form resubmit verification: invalid input or failed to write encrypted form key to response", e);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
         }

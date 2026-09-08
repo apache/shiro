@@ -270,7 +270,7 @@ public class FormResubmitSupport {
 
     static void saveRequest(HttpServletRequest request, HttpServletResponse response, boolean useReferer) {
         String path = useReferer ? getReferer(request)
-                : Servlets.getRequestURLWithQueryString(request);
+                : Servlets.getRequestURIWithQueryString(request);
         var rememberMeManager = getRememberMeManager();
         if (path != null && rememberMeManager != null) {
             Servlets.addResponseCookie(request, response, WebUtils.SAVED_REQUEST_KEY,
@@ -293,29 +293,34 @@ public class FormResubmitSupport {
     }
 
     static String getReferer(HttpServletRequest request) {
-        String referer = request.getHeader("referer");
-        if (referer == null || referer.isBlank()) {
+        return normalizeSavedRequest(request.getHeader("referer"), request);
+    }
+
+    static String normalizeSavedRequest(String savedRequest, HttpServletRequest request) {
+        if (savedRequest == null || savedRequest.isBlank()) {
             return null;
         }
-
         try {
-            URI uri = URI.create(referer);
-
-            String contextPath = WebUtils.getContextPath(request);
-            String path = WebUtils.normalize(uri.getPath());
-
-            if (path == null) {
+            URI uri = URI.create(savedRequest);
+            String rawPath = uri.getRawPath();
+            if (rawPath == null || !rawPath.startsWith("/")) {
+                // opaque URI (mailto:, javascript:), or relative / empty path
                 return null;
             }
-
+            String path = uri.getPath();
+            if (!path.equals(WebUtils.normalize(path))) {
+                // reject anything non-canonical: "//", "/./", "/../", and traversal
+                // above root (normalize returns null there, so equals() is false)
+                return null;
+            }
+            String contextPath = WebUtils.getContextPath(request);
             if (!contextPath.isEmpty()
                     && !path.equals(contextPath)
                     && !path.startsWith(contextPath + "/")) {
                 return null;
             }
-
             String query = uri.getRawQuery();
-            return query == null ? path : path + "?" + query;
+            return query == null ? rawPath : rawPath + "?" + query;
         } catch (IllegalArgumentException e) {
             return null;
         }
@@ -333,7 +338,8 @@ public class FormResubmitSupport {
     @SneakyThrows({IOException.class, InterruptedException.class})
     static void redirectToSaved(HttpServletRequest request, HttpServletResponse response,
             FallbackPredicate useFallbackPath, String fallbackPath, boolean resubmit) {
-        String savedRequest = decrypt(Servlets.getRequestCookie(request, WebUtils.SAVED_REQUEST_KEY), getRememberMeManager());
+        String savedRequest = normalizeSavedRequest(decrypt(Servlets.getRequestCookie(request, WebUtils.SAVED_REQUEST_KEY),
+                getRememberMeManager()), request);
         if (savedRequest != null) {
             doRedirectToSaved(request, response, savedRequest, resubmit);
         } else {
@@ -445,7 +451,7 @@ public class FormResubmitSupport {
         return loginUrl != null && request.getRequestURI().equals(request.getContextPath() + loginUrl);
     }
 
-    static String resubmitSavedForm(@NonNull String savedFormData, String savedFormDataKey, @NonNull String savedRequest,
+    static String resubmitSavedForm(@NonNull String savedFormData, String savedFormDataKey, @NonNull String rawSavedRequest,
             HttpServletRequest originalRequest, HttpServletResponse originalResponse,
             ServletContext servletContext, boolean rememberedAjaxResubmit, boolean redirect)
             throws InterruptedException, IOException {
@@ -461,7 +467,13 @@ public class FormResubmitSupport {
             originalResponse.setStatus(AUTHFAIL);
             return resubmitResponseCleanup(originalRequest);
         }
-        URI overriddenRequestURI = overrideSavedRequestURI(URI.create(savedRequest));
+        String savedRequest = normalizeSavedRequest(rawSavedRequest, originalRequest);
+        if (savedRequest == null) {
+            log.debug("Form resubmit: rejecting saved request");
+            return originalRequest.getContextPath();
+        }
+        URI overriddenRequestURI = overrideSavedRequestURI(
+                URI.create(Servlets.getRequestBaseURL(originalRequest)).resolve(savedRequest));
         var cookieManager = new CookieManager();
         HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2))
                 .cookieHandler(cookieManager).build();

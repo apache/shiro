@@ -70,7 +70,6 @@ class FormSupportTest {
     @Test
     void plainStringReferer() {
         when(request.getHeader("referer")).thenReturn("hello");
-        when(request.getContextPath()).thenReturn("/myapp");
         assertThat(getReferer(request)).isNull();
     }
 
@@ -131,32 +130,24 @@ class FormSupportTest {
     @Test
     void normalizedPathWithinContextIsAccepted() {
         when(request.getHeader("referer")).thenReturn("https://example.com/myapp//foo/./bar.xhtml");
-        when(request.getContextPath()).thenReturn("/myapp");
-
-        assertThat(getReferer(request)).isEqualTo("/myapp/foo/bar.xhtml");
+        assertThat(getReferer(request)).isNull();
     }
 
     @Test
     void normalizedPathEscapingContextIsRejected() {
         when(request.getHeader("referer")).thenReturn("https://example.com/myapp/../otherapp/page.xhtml");
-        when(request.getContextPath()).thenReturn("/myapp");
-
         assertThat(getReferer(request)).isNull();
     }
 
     @Test
     void opaqueUriRefererIsRejected() {
         when(request.getHeader("referer")).thenReturn("mailto:test@example.com");
-        when(request.getContextPath()).thenReturn("/myapp");
-
         assertThat(getReferer(request)).isNull();
     }
 
     @Test
     void javascriptUriRefererIsRejected() {
         when(request.getHeader("referer")).thenReturn("javascript:alert(1)");
-        when(request.getContextPath()).thenReturn("/myapp");
-
         assertThat(getReferer(request)).isNull();
     }
 
@@ -186,19 +177,25 @@ class FormSupportTest {
 
     @Test
     void encodedPathTraversalRefererIsRejected() {
-        when(request.getHeader("referer"))
-                .thenReturn("https://example.com/myapp/%2e%2e/otherapp/page.xhtml");
-        when(request.getContextPath()).thenReturn("/myapp");
-
+        when(request.getHeader("referer")).thenReturn("https://example.com/myapp/%2e%2e/otherapp/page.xhtml");
         assertThat(getReferer(request)).isNull();
     }
 
     @Test
     void encodedPathTraversalWithEncodedSlashesRefererIsRejected() {
-        when(request.getHeader("referer"))
-                .thenReturn("https://example.com/myapp/%2e%2e%2fotherapp%2fpage.xhtml");
-        when(request.getContextPath()).thenReturn("/myapp");
+        when(request.getHeader("referer")).thenReturn("https://example.com/myapp/%2e%2e%2fotherapp%2fpage.xhtml");
+        assertThat(getReferer(request)).isNull();
+    }
 
+    @Test
+    void doubleSlashPathWithRootContextIsRejected() {
+        when(request.getHeader("referer")).thenReturn("https://example.com//evil.com/x");
+        assertThat(getReferer(request)).isNull();
+    }
+
+    @Test
+    void doubleSlashPathWithinContextIsRejected() {
+        when(request.getHeader("referer")).thenReturn("https://attacker.example//myapp/x");
         assertThat(getReferer(request)).isNull();
     }
 
