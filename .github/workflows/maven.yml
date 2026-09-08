@@ -60,24 +60,21 @@ jobs:
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest', 'macOS-latest' ]
         jdk: [ 21, 25 ]
-        dist: [ 'temurin', 'adopt-openj9', 'zulu' ]
+        dist: [ 'temurin', 'semeru', 'zulu' ]
         exclude:
           # was already built
           - os: 'ubuntu-latest'
             jdk: 25
             dist: 'temurin'
-          # exclude temurin on MacOS. zulu (also hotspot) and OpenJ9 are sufficient.
+          # exclude temurin on MacOS. zulu (also hotspot) and Semeru are sufficient.
           - os: 'macOS-latest'
             dist: 'temurin'
           # no Temurin 21
           - dist: 'temurin'
             jdk: 21
-          # no OpenJ9 21
-          - dist: adopt-openj9
+          # no Semeru 21
+          - dist: 'semeru'
             jdk: 21
-          # no OpenJ9 25
-          - dist: adopt-openj9
-            jdk: 25
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
