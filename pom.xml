@@ -1655,13 +1655,6 @@
         </profile>
         <profile>
             <id>apache-release</id>
-            <distributionManagement>
-                <site>
-                    <id>shiro.website</id>
-                    <name>Apache Shiro Site</name>
-                    <url>scm:svn:https://svn.apache.org/repos/asf/shiro/site/publish/static/${project.version}</url>
-                </site>
-            </distributionManagement>
             <build>
                 <plugins>
                     <!-- calculate checksums of source release for Apache dist area -->
