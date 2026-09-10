@@ -13,6 +13,7 @@
  */
 package org.apache.shiro.ee.filters;
 
+import jakarta.servlet.ServletContext;
 import org.apache.shiro.ee.filters.FormResubmitSupport.PartialAjaxResult;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 
@@ -48,12 +49,15 @@ import org.apache.shiro.mgt.DefaultSecurityManager;
  * Resubmit forms support
  */
 @ExtendWith(MockitoExtension.class)
+@SuppressWarnings("checkstyle:MethodCount")
 class FormSupportTest {
     private static final long BLACKLISTED_AT = 1_000L;
     private static final Duration BLACKLIST_TTL = Duration.ofSeconds(60);
 
     @Mock
     private HttpServletRequest request;
+    @Mock
+    private ServletContext servletContext;
 
     @Test
     void nullReferer() {
@@ -70,7 +74,6 @@ class FormSupportTest {
     @Test
     void plainStringReferer() {
         when(request.getHeader("referer")).thenReturn("hello");
-        when(request.getContextPath()).thenReturn("/myapp");
         assertThat(getReferer(request)).isNull();
     }
 
@@ -129,34 +132,26 @@ class FormSupportTest {
     }
 
     @Test
-    void normalizedPathWithinContextIsAccepted() {
+    void nonCanonicalPathIsRejected() {
         when(request.getHeader("referer")).thenReturn("https://example.com/myapp//foo/./bar.xhtml");
-        when(request.getContextPath()).thenReturn("/myapp");
-
-        assertThat(getReferer(request)).isEqualTo("/myapp/foo/bar.xhtml");
+        assertThat(getReferer(request)).isNull();
     }
 
     @Test
     void normalizedPathEscapingContextIsRejected() {
         when(request.getHeader("referer")).thenReturn("https://example.com/myapp/../otherapp/page.xhtml");
-        when(request.getContextPath()).thenReturn("/myapp");
-
         assertThat(getReferer(request)).isNull();
     }
 
     @Test
     void opaqueUriRefererIsRejected() {
         when(request.getHeader("referer")).thenReturn("mailto:test@example.com");
-        when(request.getContextPath()).thenReturn("/myapp");
-
         assertThat(getReferer(request)).isNull();
     }
 
     @Test
     void javascriptUriRefererIsRejected() {
         when(request.getHeader("referer")).thenReturn("javascript:alert(1)");
-        when(request.getContextPath()).thenReturn("/myapp");
-
         assertThat(getReferer(request)).isNull();
     }
 
@@ -177,7 +172,7 @@ class FormSupportTest {
     }
 
     @Test
-    void externalHostWithMatchingContextCurrentlyPasses() {
+    void externalHostIsStrippedToPath() {
         when(request.getHeader("referer")).thenReturn("https://attacker.example/myapp/login.xhtml");
         when(request.getContextPath()).thenReturn("/myapp");
 
@@ -186,19 +181,25 @@ class FormSupportTest {
 
     @Test
     void encodedPathTraversalRefererIsRejected() {
-        when(request.getHeader("referer"))
-                .thenReturn("https://example.com/myapp/%2e%2e/otherapp/page.xhtml");
-        when(request.getContextPath()).thenReturn("/myapp");
-
+        when(request.getHeader("referer")).thenReturn("https://example.com/myapp/%2e%2e/otherapp/page.xhtml");
         assertThat(getReferer(request)).isNull();
     }
 
     @Test
     void encodedPathTraversalWithEncodedSlashesRefererIsRejected() {
-        when(request.getHeader("referer"))
-                .thenReturn("https://example.com/myapp/%2e%2e%2fotherapp%2fpage.xhtml");
-        when(request.getContextPath()).thenReturn("/myapp");
+        when(request.getHeader("referer")).thenReturn("https://example.com/myapp/%2e%2e%2fotherapp%2fpage.xhtml");
+        assertThat(getReferer(request)).isNull();
+    }
 
+    @Test
+    void doubleSlashPathWithRootContextIsRejected() {
+        when(request.getHeader("referer")).thenReturn("https://example.com//evil.com/x");
+        assertThat(getReferer(request)).isNull();
+    }
+
+    @Test
+    void doubleSlashPathWithinContextIsRejected() {
+        when(request.getHeader("referer")).thenReturn("https://attacker.example//myapp/x");
         assertThat(getReferer(request)).isNull();
     }
 
@@ -348,18 +349,15 @@ class FormSupportTest {
 
     @Test
     @SuppressWarnings("checkstyle:MagicNumber")
-    void whitelistAndBlacklistUseShiroCacheManager() {
+    void blacklistUseShiroCacheManager() {
         var securityManager = new DefaultSecurityManager();
         securityManager.setCacheManager(new MemoryConstrainedCacheManager());
 
-        var whitelist = FormResubmitSupport.getWhitelistCache(securityManager);
         var blacklist = FormResubmitSupport.getBlacklistCache(securityManager);
 
-        whitelist.put("good.example", Boolean.TRUE);
         blacklist.put("bad.example", BLACKLISTED_AT);
 
-        assertThat(FormResubmitSupport.getWhitelistCache(securityManager).get("good.example")).isTrue();
-        assertThat(FormResubmitSupport.isBlacklisted(blacklist, "bad.example",
+        assertThat(FormResubmitSupport.isBlacklisted(blacklist, null, "bad.example",
                 BLACKLIST_TTL, 1_500L)).isTrue();
     }
 
@@ -372,9 +370,26 @@ class FormSupportTest {
         var blacklist = FormResubmitSupport.getBlacklistCache(securityManager);
         blacklist.put("expired.example", BLACKLISTED_AT);
 
-        assertThat(FormResubmitSupport.isBlacklisted(blacklist, "expired.example",
+        assertThat(FormResubmitSupport.isBlacklisted(blacklist, null, "expired.example",
                 BLACKLIST_TTL, 61_001L)).isFalse();
         assertThat(blacklist.get("expired.example")).isNull();
+    }
+
+    @Test
+    @SuppressWarnings("checkstyle:MagicNumber")
+    void blacklistHonoursEnabledFlag() {
+        var securityManager = new DefaultSecurityManager();
+        securityManager.setCacheManager(new MemoryConstrainedCacheManager());
+        var blacklist = FormResubmitSupport.getBlacklistCache(securityManager);
+        blacklist.put("bad.example", BLACKLISTED_AT);
+
+        // attribute absent → enabled
+        assertThat(FormResubmitSupport.isBlacklisted(blacklist, servletContext, "bad.example",
+                BLACKLIST_TTL, 1_500L)).isTrue();
+
+        when(servletContext.getAttribute("org.apache.shiro.form-resubmit.blacklist.disabled")).thenReturn(Boolean.TRUE);
+        assertThat(FormResubmitSupport.isBlacklisted(blacklist, servletContext, "bad.example",
+                BLACKLIST_TTL, 1_500L)).isFalse();
     }
 
     private static String decode(String plain) {

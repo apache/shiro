@@ -245,8 +245,8 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             log.debug("Resubmitting Post Data: {}", postData);
             var httpRequest = WebUtils.toHttp(request);
             boolean rememberedAjaxResubmit = "partial/ajax".equals(httpRequest.getHeader("Faces-Request"));
-            Optional.ofNullable(resubmitSavedForm(postData, null,
-                    Servlets.getRequestURLWithQueryString(httpRequest),
+            Optional.ofNullable(resubmitSavedForm(postData,
+                    Servlets.getRequestURIWithQueryString(httpRequest),
                     WebUtils.toHttp(request), WebUtils.toHttp(response),
                     request.getServletContext(), rememberedAjaxResubmit, false))
                     .ifPresent(url -> sendRedirect(response, url));

@@ -18,7 +18,6 @@
  */
 package org.apache.shiro.web.filter.authc;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.util.WebUtils;
 import org.slf4j.Logger;
@@ -32,8 +31,6 @@ import jakarta.servlet.ServletResponse;
  * that do not match existing filter patterns.
  */
 public class NoAccessFilter extends AuthenticatingFilter {
-    public static final String FORM_RESUBMIT_CHECK_SERVLET_PATH = "/org.apache.shiro.form-resubmit-check";
-
     private final Logger log = LoggerFactory.getLogger(NoAccessFilter.class);
 
     @Override
@@ -46,15 +43,5 @@ public class NoAccessFilter extends AuthenticatingFilter {
     @Override
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
         return null;
-    }
-
-    @Override
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        if (request instanceof HttpServletRequest) {
-            HttpServletRequest httpRequest = WebUtils.toHttp(request);
-            return httpRequest.getMethod().equals("POST")
-                    && httpRequest.getServletPath().equals(FORM_RESUBMIT_CHECK_SERVLET_PATH);
-        }
-        return false;
     }
 }
