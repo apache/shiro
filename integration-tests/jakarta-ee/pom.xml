@@ -93,7 +93,7 @@
         <dependency>
             <groupId>com.flowlogix.depchain</groupId>
             <artifactId>integration-test</artifactId>
-            <version>130</version>
+            <version>131</version>
             <scope>test</scope>
         </dependency>
 
@@ -106,7 +106,7 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>11.5</version>
+            <version>11.6</version>
         </dependency>
 
         <dependency>
@@ -273,7 +273,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.3</version>
+                <version>3.6.4</version>
                 <configuration>
                     <executable>${project.build.directory}/dependency/payara7/bin/${asadmin.cmd}</executable>
                     <skip>${payara.start.skip}</skip>
