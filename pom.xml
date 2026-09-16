@@ -105,7 +105,7 @@
         <hsqldb.version>2.7.4</hsqldb.version>
         <jcache.api.version>1.1.1</jcache.api.version>
         <jdk.version>17</jdk.version>
-        <tomcat.version>11.0.25</tomcat.version>
+        <tomcat.version>11.0.26</tomcat.version>
         <jakarta.ee.version>11.0.0</jakarta.ee.version>
         <jetty.version>12.1.13</jetty.version>
         <owasp.java.encoder.version>1.4.0</owasp.java.encoder.version>
@@ -120,7 +120,7 @@
         <guice.version>7.0.0</guice.version>
         <jaxrs.api.version>4.0.0</jaxrs.api.version>
         <htmlunit.version>5.5.0</htmlunit.version>
-        <bouncycastle.version>1.85.2</bouncycastle.version>
+        <bouncycastle.version>1.86</bouncycastle.version>
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.7.0</easymock.version>
@@ -380,7 +380,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.21.0</version>
+                    <version>2.22.0</version>
                 </plugin>
                 <!-- Allow writing tests in Groovy: -->
                 <plugin>
@@ -403,7 +403,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.6.1</version>
+                    <version>3.6.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -655,7 +655,7 @@
                 -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <phase>validate</phase>
@@ -1473,7 +1473,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>taglist-maven-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>3.2.3</version>
                 <configuration>
                     <tagListOptions>
                         <tagClasses>
@@ -1506,7 +1506,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
-                <version>2.2.0</version>
+                <version>2.2.1</version>
                 <reportSets>
                     <reportSet>
                         <reports>
