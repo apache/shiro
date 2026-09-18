@@ -754,7 +754,7 @@
                     <preparationGoals>validate</preparationGoals>
                     <preparationProfiles>skip-checkstyle</preparationProfiles>
                     <goals>deploy</goals>
-                    <releaseProfiles>docs,apache-release,${nexus-staging-profile}</releaseProfiles>
+                    <releaseProfiles>docs,apache-release,generate-sbom,${nexus-staging-profile}</releaseProfiles>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                 </configuration>
             </plugin>
@@ -1688,6 +1688,13 @@
                             <csvSummary>false</csvSummary>
                         </configuration>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>generate-sbom</id>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.cyclonedx</groupId>
                         <artifactId>cyclonedx-maven-plugin</artifactId>
