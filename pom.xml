@@ -531,6 +531,16 @@
                         </dependency>
                     </dependencies>
                 </plugin>
+                <plugin>
+                    <groupId>org.cyclonedx</groupId>
+                    <artifactId>cyclonedx-maven-plugin</artifactId>
+                    <version>2.9.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.spdx</groupId>
+                    <artifactId>spdx-maven-plugin</artifactId>
+                    <version>1.0.4</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -744,7 +754,7 @@
                     <preparationGoals>validate</preparationGoals>
                     <preparationProfiles>skip-checkstyle</preparationProfiles>
                     <goals>deploy</goals>
-                    <releaseProfiles>docs,apache-release,${nexus-staging-profile}</releaseProfiles>
+                    <releaseProfiles>docs,apache-release,generate-sbom,${nexus-staging-profile}</releaseProfiles>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                 </configuration>
             </plugin>
@@ -1677,6 +1687,48 @@
                             </algorithms>
                             <csvSummary>false</csvSummary>
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>generate-sbom</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.cyclonedx</groupId>
+                        <artifactId>cyclonedx-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>makeAggregateBom</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.spdx</groupId>
+                        <artifactId>spdx-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>build-spdx-v2</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>createSPDX</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>build-spdx-v3</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>createSPDX</goal>
+                                </goals>
+                                <configuration>
+                                    <outputFormat>JSON-LD</outputFormat>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
