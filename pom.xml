@@ -341,41 +341,33 @@
                     <artifactId>apache-rat-plugin</artifactId>
                     <configuration>
                         <!-- note that this configuration needs to be maintained both in pluginManagement and reporting sections -->
-                        <excludes>
-                            <exclude>**/.externalToolBuilders/*</exclude>
-                            <exclude>**/infinitest.filters</exclude>
+                        <inputExcludes>
+                            <inputExclude>**/.externalToolBuilders/*</inputExclude>
+                            <inputExclude>**/infinitest.filters</inputExclude>
                             <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
-                            <exclude>velocity.log</exclude>
-                            <exclude>CONTRIBUTING.md</exclude>
-                            <exclude>AGENTS.md</exclude>
-                            <exclude>SECURITY.md</exclude>
-                            <exclude>**/README.md</exclude>
-                            <exclude>**/*.json</exclude>
-                            <exclude>**/spring.factories</exclude>
-                            <exclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</exclude>
-                            <exclude>**/spring.provides</exclude>
-                            <exclude>**/*.iml</exclude>
-                            <exclude>**/*.idea/**</exclude>
-                            <exclude>**/target/**</exclude>
-                            <exclude>**/nb-configuration.xml</exclude>
-                            <exclude>**/faces-config.NavData</exclude>
-                            <exclude>**/org.mockito.plugins.MockMaker</exclude>
-                            <exclude>**/.project</exclude>
-                            <exclude>**/.classpath</exclude>
-                            <exclude>**/.settings/*</exclude>
-                            <exclude>.github/linters/codespell.txt</exclude>
-                            <exclude>.mvn/*</exclude>
-                            <exclude>.jenkins_maven_args</exclude>
-                        </excludes>
+                            <inputExclude>velocity.log</inputExclude>
+                            <inputExclude>CONTRIBUTING.md</inputExclude>
+                            <inputExclude>AGENTS.md</inputExclude>
+                            <inputExclude>SECURITY.md</inputExclude>
+                            <inputExclude>**/README.md</inputExclude>
+                            <inputExclude>**/*.json</inputExclude>
+                            <inputExclude>**/spring.factories</inputExclude>
+                            <inputExclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</inputExclude>
+                            <inputExclude>**/spring.provides</inputExclude>
+                            <inputExclude>**/*.iml</inputExclude>
+                            <inputExclude>**/*.idea/**</inputExclude>
+                            <inputExclude>**/target/**</inputExclude>
+                            <inputExclude>**/nb-configuration.xml</inputExclude>
+                            <inputExclude>**/faces-config.NavData</inputExclude>
+                            <inputExclude>**/org.mockito.plugins.MockMaker</inputExclude>
+                            <inputExclude>**/.project</inputExclude>
+                            <inputExclude>**/.classpath</inputExclude>
+                            <inputExclude>**/.settings/*</inputExclude>
+                            <inputExclude>.github/linters/codespell.txt</inputExclude>
+                            <inputExclude>.mvn/*</inputExclude>
+                            <inputExclude>.jenkins_maven_args</inputExclude>
+                        </inputExcludes>
                     </configuration>
-<!--                This can be removed when RAT plugin is updated to use commons-lang3 3.20.0 or above -->
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.commons</groupId>
-                            <artifactId>commons-lang3</artifactId>
-                            <version>${commons.lang3.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -1437,37 +1429,36 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <version>0.18</version>
                 <!-- only run at the root -->
                 <inherited>false</inherited>
                 <configuration>
                     <!-- note that this configuration needs to be maintained both in pluginManagement and reporting sections -->
-                    <excludes>
-                        <exclude>**/.externalToolBuilders/*</exclude>
-                        <exclude>**/infinitest.filters</exclude>
+                    <inputExcludes>
+                        <inputExclude>**/.externalToolBuilders/*</inputExclude>
+                        <inputExclude>**/infinitest.filters</inputExclude>
                         <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
-                        <exclude>velocity.log</exclude>
-                        <exclude>CONTRIBUTING.md</exclude>
-                        <exclude>AGENTS.md</exclude>
-                        <exclude>SECURITY.md</exclude>
-                        <exclude>**/README.md</exclude>
-                        <exclude>**/*.json</exclude>
-                        <exclude>**/spring.factories</exclude>
-                        <exclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</exclude>
-                        <exclude>**/spring.provides</exclude>
-                        <exclude>**/*.iml</exclude>
-                        <exclude>**/*.idea/**</exclude>
-                        <exclude>**/target/**</exclude>
-                        <exclude>**/nb-configuration.xml</exclude>
-                        <exclude>**/faces-config.NavData</exclude>
-                        <exclude>**/.project</exclude>
-                        <exclude>**/.classpath</exclude>
-                        <exclude>**/.settings/*</exclude>
-                        <exclude>.github/linters/codespell.txt</exclude>
-                        <exclude>**/org.mockito.plugins.MockMaker</exclude>
-                        <exclude>.mvn/*</exclude>
-                        <exclude>.jenkins_maven_args</exclude>
-                    </excludes>
+                        <inputExclude>velocity.log</inputExclude>
+                        <inputExclude>CONTRIBUTING.md</inputExclude>
+                        <inputExclude>AGENTS.md</inputExclude>
+                        <inputExclude>SECURITY.md</inputExclude>
+                        <inputExclude>**/README.md</inputExclude>
+                        <inputExclude>**/*.json</inputExclude>
+                        <inputExclude>**/spring.factories</inputExclude>
+                        <inputExclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</inputExclude>
+                        <inputExclude>**/spring.provides</inputExclude>
+                        <inputExclude>**/*.iml</inputExclude>
+                        <inputExclude>**/*.idea/**</inputExclude>
+                        <inputExclude>**/target/**</inputExclude>
+                        <inputExclude>**/nb-configuration.xml</inputExclude>
+                        <inputExclude>**/faces-config.NavData</inputExclude>
+                        <inputExclude>**/.project</inputExclude>
+                        <inputExclude>**/.classpath</inputExclude>
+                        <inputExclude>**/.settings/*</inputExclude>
+                        <inputExclude>.github/linters/codespell.txt</inputExclude>
+                        <inputExclude>**/org.mockito.plugins.MockMaker</inputExclude>
+                        <inputExclude>.mvn/*</inputExclude>
+                        <inputExclude>.jenkins_maven_args</inputExclude>
+                    </inputExcludes>
                 </configuration>
             </plugin>
             <plugin>
