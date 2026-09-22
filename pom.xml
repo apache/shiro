@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>39</version>
+        <version>40</version>
     </parent>
 
     <groupId>org.apache.shiro</groupId>
@@ -125,12 +125,12 @@
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.7.0</easymock.version>
         <mockito.version>5.23.0</mockito.version>
-        <bytebuddy.version>1.18.13</bytebuddy.version>
+        <bytebuddy.version>1.18.14</bytebuddy.version>
         <gmaven.version>5.1.0</gmaven.version>
-        <groovy.version>5.1.2</groovy.version>
+        <groovy.version>6.0.0</groovy.version>
         <junit.version>6.1.3</junit.version>
         <junit.server.jetty.version>3.5.0</junit.server.jetty.version>
-        <hibernate.version>7.4.7.Final</hibernate.version>
+        <hibernate.version>7.4.9.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <lombok.version>1.18.48</lombok.version>
 
@@ -321,7 +321,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>6.1.2</version>
+                    <version>6.2.0</version>
                     <dependencies>
                         <!-- Required to upgrade bnd in the maven-bundle-plugin to be able to handle Multi-Release jars -->
                         <dependency>
