@@ -548,6 +548,29 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-forbidden-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <fail>true</fail>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>*:powermock-api-easymock</exclude>
+                                        <exclude>*:powermock-module-junit4</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
             <plugin>
@@ -755,45 +778,6 @@
                 <configuration>
                     <deployAtEnd>true</deployAtEnd>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-maven</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>[3.5.0,4)</version>
-                                </requireMavenVersion>
-                                <requireJavaVersion>
-                                    <version>[11,)</version>
-                                </requireJavaVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>enforce-forbidden-dependencies</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <fail>true</fail>
-                            <rules>
-                                <bannedDependencies>
-                                    <excludes>
-                                        <exclude>*:powermock-api-easymock</exclude>
-                                        <exclude>*:powermock-module-junit4</exclude>
-                                    </excludes>
-                                </bannedDependencies>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>com.github.siom79.japicmp</groupId>
