@@ -146,7 +146,7 @@
                                 <descriptor>file:${project.build.directory}/classes/features.xml</descriptor>
                             </descriptors>
                             <distribution>org.apache.karaf.features:framework</distribution>
-                            <javase>${jdk.version}</javase>
+                            <javase>${javaVersion}</javase>
                             <framework>
                                 <feature>framework</feature>
                             </framework>
