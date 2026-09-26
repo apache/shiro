@@ -105,6 +105,7 @@
         <hsqldb.version>2.7.4</hsqldb.version>
         <jcache.api.version>1.1.1</jcache.api.version>
         <javaVersion>17</javaVersion>
+        <minimalJavaBuildVersion>21</minimalJavaBuildVersion>
         <tomcat.version>11.0.26</tomcat.version>
         <jakarta.ee.version>11.0.0</jakarta.ee.version>
         <jetty.version>12.1.13</jetty.version>
