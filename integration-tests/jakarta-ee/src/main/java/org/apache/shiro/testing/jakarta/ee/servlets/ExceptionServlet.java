@@ -44,8 +44,13 @@ public class ExceptionServlet extends HttpServlet {
 
         LogRecord record = LogCapture.get().poll();
         while (record != null) {
-            if (record.getThrown() != null) {
-                out.printf("%s: %s", record.getLevel(), record.getThrown());
+            Throwable thrown = record.getThrown();
+            // Ignore the Payara logging bug on JDK 27, but keep reporting other exceptions.
+            boolean payaraLoggingBug = thrown instanceof NullPointerException
+                    && ("Cannot invoke \"java.util.ResourceBundle.getString(String)\" because the return value of "
+                    + "\"java.util.logging.Logger.getResourceBundle()\" is null").equals(thrown.getMessage());
+            if (thrown != null && !payaraLoggingBug) {
+                out.printf("%s: %s", record.getLevel(), thrown);
                 out.print(System.lineSeparator());
             }
             record = LogCapture.get().poll();

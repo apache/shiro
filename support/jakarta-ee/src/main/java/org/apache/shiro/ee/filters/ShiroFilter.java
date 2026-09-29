@@ -19,7 +19,6 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.getPostData;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFClientStateSavingMethod;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isPostRequest;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.resubmitSavedForm;
-import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.DONT_ADD_ANY_MORE_COOKIES;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.getCharacterEncoding;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isCharEncodingEnabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isShiroEEDisabled;
@@ -36,7 +35,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
@@ -52,12 +50,14 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
+import org.apache.shiro.SecurityUtils;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isShiroEERedirectDisabled;
 import static org.apache.shiro.web.filter.authz.SslFilter.HTTPS_SCHEME;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.mgt.WebSessionKey;
+import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.util.WebUtils;
 import org.omnifaces.util.Servlets;
@@ -146,13 +146,6 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
         }
 
         @Override
-        public void addCookie(Cookie cookie) {
-            if (request.getAttribute(DONT_ADD_ANY_MORE_COOKIES) != Boolean.TRUE) {
-                super.addCookie(cookie);
-            }
-        }
-
-        @Override
         public void sendRedirect(String location) throws IOException {
             if (!Utils.startsWithOneOf(location, "http://", "https://")
                     && !isShiroEERedirectDisabled(request.getServletContext())) {
@@ -233,7 +226,16 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
     }
 
     @Override
-    @SneakyThrows(InterruptedException.class)
+    protected WebSubject createSubject(ServletRequest request, ServletResponse response) {
+        if (FormResubmitRequest.isResubmit(request) && SecurityUtils.getSubject() instanceof WebSubject subject) {
+            // The new session cookie need not have reached the browser yet (notably with native sessions).
+            // Reuse identity, not the security chain: executeChain still resolves the forwarded target.
+            return subject;
+        }
+        return super.createSubject(request, response);
+    }
+
+    @Override
     protected void executeChain(ServletRequest request, ServletResponse response,
             FilterChain origChain) throws IOException, ServletException {
         if (isShiroEEDisabled(getServletContext())) {

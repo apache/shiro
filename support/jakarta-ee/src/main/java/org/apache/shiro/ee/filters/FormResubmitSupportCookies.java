@@ -13,31 +13,17 @@
  */
 package org.apache.shiro.ee.filters;
 
-import static org.apache.shiro.SecurityUtils.getSecurityManager;
-import static org.apache.shiro.ee.cdi.ShiroScopeContext.isWebContainerSessions;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getNativeSessionManager;
-import java.net.CookieManager;
-import java.net.HttpCookie;
-import java.net.URI;
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.ee.listeners.EnvironmentLoaderListener;
-import static org.apache.shiro.web.mgt.CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME;
-import static org.apache.shiro.web.servlet.ShiroHttpSession.DEFAULT_SESSION_ID_NAME;
 
 /**
  * Cookie Support methods
@@ -46,26 +32,12 @@ import static org.apache.shiro.web.servlet.ShiroHttpSession.DEFAULT_SESSION_ID_N
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("HideUtilityClassConstructor")
 public class FormResubmitSupportCookies {
-    static final String DONT_ADD_ANY_MORE_COOKIES = "org.apache.shiro.no-more-cookies";
-
     static void addCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
             @NonNull String cookieName, @NonNull String cookieValue, int maxAge, boolean httpOnly) {
         var cookie = new Cookie(cookieName, cookieValue);
         cookie.setPath(servletContext.getContextPath());
         cookie.setMaxAge(maxAge);
         cookie.setHttpOnly(httpOnly);
-        if (EnvironmentLoaderListener.isFormResubmitSecureCookies(servletContext)) {
-            cookie.setSecure(true);
-        }
-        response.addCookie(cookie);
-    }
-
-    static void addCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
-                          @NonNull String cookieName, @NonNull HttpCookie inputCookie) {
-        var cookie = new Cookie(cookieName, inputCookie.getValue());
-        cookie.setPath(inputCookie.getPath() != null ? inputCookie.getPath() : servletContext.getContextPath());
-        cookie.setMaxAge(Math.toIntExact(inputCookie.getMaxAge()));
-        cookie.setHttpOnly(inputCookie.isHttpOnly());
         if (EnvironmentLoaderListener.isFormResubmitSecureCookies(servletContext)) {
             cookie.setSecure(true);
         }
@@ -98,47 +70,4 @@ public class FormResubmitSupportCookies {
         }
     }
 
-    static String getSessionCookieName(ServletContext context, org.apache.shiro.mgt.SecurityManager securityManager) {
-        if (!isWebContainerSessions(securityManager) && getNativeSessionManager(securityManager) != null) {
-            return getNativeSessionManager(securityManager).getSessionIdCookie().getName();
-        } else {
-            return context.getSessionCookieConfig().getName() != null
-                    ? context.getSessionCookieConfig().getName() : DEFAULT_SESSION_ID_NAME;
-        }
-    }
-
-    static Map<String, HttpCookie> transformCookieHeader(@NonNull List<String> cookies) {
-        return cookieStreamFromHeader(cookies)
-                .collect(Collectors.toMap(HttpCookie::getName, Function.identity(), (var, v2) -> v2));
-    }
-
-    static Stream<HttpCookie> cookieStreamFromHeader(@NonNull List<String> cookies) {
-        return cookies.stream().map(HttpCookie::parse).map(list -> list.get(0));
-    }
-
-    static void initializeCookies(URI savedRequest, ServletContext servletContext,
-                                  CookieManager cookieManager, HttpServletRequest originalRequest) {
-        var session = SecurityUtils.getSubject().getSession();
-        var sessionCookieName = getSessionCookieName(servletContext, getSecurityManager());
-        var sessionCookie = new HttpCookie(sessionCookieName, session.getId().toString());
-        sessionCookie.setPath(servletContext.getContextPath());
-        sessionCookie.setVersion(0);
-        cookieManager.getCookieStore().add(savedRequest, sessionCookie);
-        log.debug("Setting Cookie {}", sessionCookieName);
-        for (Cookie origCookie : originalRequest.getCookies()) {
-            if (!origCookie.getName().startsWith(sessionCookieName)
-                    && !origCookie.getName().equals(DEFAULT_REMEMBER_ME_COOKIE_NAME)) {
-                try {
-                    log.debug("Setting Cookie {}", origCookie.getName());
-                    HttpCookie cookie = new HttpCookie(origCookie.getName(), origCookie.getValue());
-                    cookie.setPath(servletContext.getContextPath());
-                    cookie.setVersion(0);
-                    cookieManager.getCookieStore().add(savedRequest, cookie);
-                } catch (IllegalArgumentException e) {
-                    log.warn("Form Resubmit: Ignoring invalid cookie [{} - {}]",
-                            origCookie.getName(), origCookie.getValue(), e);
-                }
-            }
-        }
-    }
 }
