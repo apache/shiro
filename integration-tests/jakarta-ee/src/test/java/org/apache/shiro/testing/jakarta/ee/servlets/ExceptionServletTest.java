@@ -88,4 +88,3 @@ class ExceptionServletTest {
         return output.toString();
     }
 }
-
