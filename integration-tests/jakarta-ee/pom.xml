@@ -106,7 +106,7 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>11.6</version>
+            <version>11.7</version>
         </dependency>
 
         <dependency>
