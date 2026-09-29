@@ -114,7 +114,7 @@
              modules' OSGi metadata: -->
         <quartz.version>2.5.2</quartz.version>
         <quartz.docs.version>2.3.0</quartz.docs.version>
-        <slf4j.version>2.0.19</slf4j.version>
+        <slf4j.version>2.0.20</slf4j.version>
         <log4j.version>2.26.1</log4j.version>
         <spring.version>7.0.9</spring.version>
         <spring-boot.version>4.1.1</spring-boot.version>
@@ -125,13 +125,13 @@
 
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.7.0</easymock.version>
-        <mockito.version>5.23.0</mockito.version>
+        <mockito.version>5.24.0</mockito.version>
         <bytebuddy.version>1.18.14</bytebuddy.version>
         <gmaven.version>5.1.0</gmaven.version>
         <groovy.version>6.0.0</groovy.version>
         <junit.version>6.1.3</junit.version>
         <junit.server.jetty.version>3.5.0</junit.server.jetty.version>
-        <hibernate.version>7.4.9.Final</hibernate.version>
+        <hibernate.version>7.4.10.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <lombok.version>1.18.48</lombok.version>
 
@@ -1108,12 +1108,12 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.6.3</version>
+                <version>1.6.4</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.6.3</version>
+                <version>1.6.4</version>
             </dependency>
 
             <dependency>
