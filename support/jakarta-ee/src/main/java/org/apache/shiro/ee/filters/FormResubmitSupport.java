@@ -35,9 +35,9 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.StringJoiner;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.StringJoiner;
 import java.util.UUID;
 import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
 import static org.apache.shiro.web.filter.authz.PortFilter.DEFAULT_HTTP_PORT;
@@ -159,11 +159,8 @@ public class FormResubmitSupport {
     }
 
     static boolean isPostRequest(ServletRequest request) {
-        if (request instanceof HttpServletRequest) {
-            return HttpMethod.POST.equalsIgnoreCase(WebUtils.toHttp(request).getMethod());
-        } else {
-            return false;
-        }
+        return request instanceof HttpServletRequest
+                && HttpMethod.POST.equalsIgnoreCase(WebUtils.toHttp(request).getMethod());
     }
 
     @SneakyThrows(IOException.class)
