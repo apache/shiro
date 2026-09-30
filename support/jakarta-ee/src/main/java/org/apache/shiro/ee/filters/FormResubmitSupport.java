@@ -112,7 +112,6 @@ public class FormResubmitSupport {
     }
 
     static class MediaType {
-        static final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
         static final String TEXT_XML = "text/xml";
     }
 
@@ -418,13 +417,12 @@ public class FormResubmitSupport {
                 originalResponse, servletContext);
         boolean doubleSubmit = rememberedAjaxResubmit && !formData.isStatelessRequest;
         if (formData.isPartialAjaxRequest || doubleSubmit) {
-            var response = new FormResubmitResponse(originalResponse);
+            var response = new FormResubmitResponse(originalResponse, true);
             forward(dispatchPath, originalRequest, response, HttpMethod.POST, formData.result);
-            response.copyCookiesTo(originalResponse);
             if (doubleSubmit && (response.getStatus() == OK || response.getStatus() == FOUND)) {
                 // This second POST only obtains redirect handling for the expired Ajax view.
                 // Its flash cookie must not replace the successful POST's messages.
-                response = new FormResubmitResponse(originalResponse);
+                response = new FormResubmitResponse(originalResponse, false);
                 forward(dispatchPath, originalRequest, response, HttpMethod.POST, savedFormData);
             }
             processResubmitResponse(response, originalResponse, savedRequest, rememberedAjaxResubmit, redirect);
@@ -493,11 +491,9 @@ public class FormResubmitSupport {
 
     private static void processResubmitResponse(FormResubmitResponse response, HttpServletResponse originalResponse,
             String savedRequest, boolean rememberedAjaxResubmit, boolean redirect) throws IOException {
-        response.copyHeadersTo(originalResponse);
         int status = response.getStatus();
         originalResponse.setStatus(rememberedAjaxResubmit && status == FOUND ? OK : status);
         if (status == FOUND || status == OK && redirect) {
-            originalResponse.setHeader("Content-Length", null);
             if (rememberedAjaxResubmit) {
                 originalResponse.setHeader(LOCATION, null);
             }
@@ -507,7 +503,6 @@ public class FormResubmitSupport {
                     "<partial-response><redirect url=\"%s\"></redirect></partial-response>",
                     Encode.forXmlAttribute(savedRequest)));
         } else {
-            originalResponse.setCharacterEncoding(response.getCharacterEncoding());
             originalResponse.getOutputStream().write(response.getBody());
         }
     }
@@ -540,9 +535,8 @@ public class FormResubmitSupport {
 
     private static String getJSFNewViewState(String path, HttpServletRequest request,
             HttpServletResponse response, String savedFormData) throws IOException, ServletException {
-        var htmlResponse = new FormResubmitResponse(response);
+        var htmlResponse = new FormResubmitResponse(response, true);
         forward(path, request, htmlResponse, HttpMethod.GET, "");
-        htmlResponse.copyCookiesTo(response);
         if (htmlResponse.getStatus() == OK) {
             String html = htmlResponse.getBodyAsString();
             // Decode only the view-state field: decoding the entire body corrupts escaped &, + and = in user input.
