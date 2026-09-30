@@ -142,11 +142,6 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
     }
 
     @Override
-    public String getPathInfo() {
-        return null;
-    }
-
-    @Override
     public String getQueryString() {
         return query;
     }
@@ -164,11 +159,6 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
     @Override
     public long getContentLengthLong() {
         return body.length;
-    }
-
-    @Override
-    public String getCharacterEncoding() {
-        return StandardCharsets.UTF_8.name();
     }
 
     @Override
