@@ -128,7 +128,6 @@ public class ShiroAuthFormsIT {
         webDriver.manage().deleteAllCookies();
     }
 
-
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void protectedPageWithLogin() {
