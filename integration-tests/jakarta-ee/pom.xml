@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
-            <version>3.14.24</version>
+            <version>3.14.25</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -386,7 +386,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.3</version>
+                <version>3.6.4</version>
                 <configuration>
                     <executable>${project.build.directory}/dependency/payara5/bin/${asadmin.cmd}</executable>
                     <skip>${payara.start.skip}</skip>
