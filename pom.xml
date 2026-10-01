@@ -66,12 +66,11 @@
     </distributionManagement>
 
     <properties>
-        <!-- *** Remove the line below when 3.0.0 is released -->
-        <shiro.previousVersion>3.0.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2026-02-07T22:56:07Z</project.build.outputTimestamp>
         <root.dir>${maven.multiModuleProjectDirectory}</root.dir>
+        <rat.skip>false</rat.skip>
         <jacoco.skip>true</jacoco.skip>
         <japicmp-skip>false</japicmp-skip>
         <japicmp.skip>${japicmp-skip}</japicmp.skip>
@@ -331,15 +330,17 @@
                     </dependencies>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>4.0.0-M16</version>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
                     <configuration>
-                        <!-- note that this configuration needs to be maintained both in pluginManagement and reporting sections -->
+                        <!-- also applied to the RAT report in <reporting> -->
+                        <!--
+                            RAT is not thread-safe in parallel (-T / mvnd) builds (shared .gitignore parser and
+                            license matchers), so it is skipped in modules and runs once at the root,
+                            scanning the whole tree. This also covers command-line "apache-rat:check" runs.
+                        -->
+                        <skip>true</skip>
+                        <excludeSubProjects>false</excludeSubProjects>
                         <inputExcludes>
                             <inputExclude>**/.externalToolBuilders/*</inputExclude>
                             <inputExclude>**/infinitest.filters</inputExclude>
@@ -440,15 +441,18 @@
                     <artifactId>japicmp-maven-plugin</artifactId>
                     <version>0.26.2</version>
                     <configuration>
+                        <!-- If specific old version is needed, uncomment the following and set the version to compare against
                         <oldVersion>
                             <dependency>
                                 <groupId>${project.groupId}</groupId>
                                 <artifactId>${project.artifactId}</artifactId>
-                                <version>${shiro.previousVersion}</version>
+                                <version>3.0.0</version>
                                 <type>jar</type>
                             </dependency>
                         </oldVersion>
+                        -->
                         <parameter>
+                            <oldVersionPattern>\d+\.0\.0</oldVersionPattern>
                             <onlyModified>true</onlyModified>
                             <breakBuildOnSourceIncompatibleModifications>true</breakBuildOnSourceIncompatibleModifications>
                             <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
@@ -538,6 +542,11 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
+                <!-- only run at the root, see pluginManagement -->
+                <inherited>false</inherited>
+                <configuration>
+                    <skip>${rat.skip}</skip>
+                </configuration>
                 <executions>
                     <execution>
                         <id>rat-check</id>
@@ -1412,36 +1421,10 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <!-- only run at the root -->
                 <inherited>false</inherited>
+                <!-- configuration is inherited from build/pluginManagement -->
                 <configuration>
-                    <!-- note that this configuration needs to be maintained both in pluginManagement and reporting sections -->
-                    <inputExcludes>
-                        <inputExclude>**/.externalToolBuilders/*</inputExclude>
-                        <inputExclude>**/infinitest.filters</inputExclude>
-                        <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
-                        <inputExclude>velocity.log</inputExclude>
-                        <inputExclude>CONTRIBUTING.md</inputExclude>
-                        <inputExclude>AGENTS.md</inputExclude>
-                        <inputExclude>SECURITY.md</inputExclude>
-                        <inputExclude>**/README.md</inputExclude>
-                        <inputExclude>**/*.json</inputExclude>
-                        <inputExclude>**/spring.factories</inputExclude>
-                        <inputExclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</inputExclude>
-                        <inputExclude>**/spring.provides</inputExclude>
-                        <inputExclude>**/*.iml</inputExclude>
-                        <inputExclude>**/*.idea/**</inputExclude>
-                        <inputExclude>**/target/**</inputExclude>
-                        <inputExclude>**/nb-configuration.xml</inputExclude>
-                        <inputExclude>**/faces-config.NavData</inputExclude>
-                        <inputExclude>**/.project</inputExclude>
-                        <inputExclude>**/.classpath</inputExclude>
-                        <inputExclude>**/.settings/*</inputExclude>
-                        <inputExclude>.github/linters/codespell.txt</inputExclude>
-                        <inputExclude>**/org.mockito.plugins.MockMaker</inputExclude>
-                        <inputExclude>.mvn/*</inputExclude>
-                        <inputExclude>.jenkins_maven_args</inputExclude>
-                    </inputExcludes>
+                    <skip>${rat.skip}</skip>
                 </configuration>
             </plugin>
             <plugin>
