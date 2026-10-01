@@ -19,50 +19,50 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
- * Replays saved form data as a forwarded request, isolated from the login request's
- * parameters and Faces request-scoped attributes. Path elements are overridden because containers
- * may nest their forward wrapper beneath an earlier one (e.g. OmniFaces FacesViews), masking them.
+ * Replays saved form data in place of the login request's parameters, with a private request scope
+ * (attributes), so that Faces and CDI request state doesn't leak between replays and the login request.
+ * Wraps the container's own request, so that the forward supplies the target's paths
+ * beneath application wrappers (e.g. OmniFaces FacesViews) that would otherwise mask them.
  */
 final class FormResubmitRequest extends HttpServletRequestWrapper {
     private static final List<String> DISPATCH_SCOPED_PREFIXES = List.of("jakarta.faces.", "com.sun.faces.",
             "org.apache.myfaces.", "org.omnifaces.", "jakarta.servlet.forward.", "jakarta.servlet.include.",
             FormResubmitSupport.FORM_IS_RESUBMITTED);
     private final String method;
-    private final String path;
-    private final String query;
-    private final Map<String, String[]> parameters;
+    private final Map<String, String[]> parameters = new LinkedHashMap<>();
     private final Map<String, Object> attributes = new HashMap<>();
 
-    FormResubmitRequest(HttpServletRequest request, String pathWithQuery, String method, String formData) {
-        super(request);
+    FormResubmitRequest(HttpServletRequest request, String method, String formData) {
+        super((HttpServletRequest) unwrap(request));
         this.method = method;
-        String[] pathAndQuery = pathWithQuery.split("\\?", 2);
-        path = pathAndQuery[0];
-        query = pathAndQuery.length == 2 ? pathAndQuery[1] : null;
-        parameters = Arrays.stream(formData.split("&"))
-                .filter(field -> !field.isEmpty())
-                .map(field -> field.split("=", 2))
-                .collect(Collectors.groupingBy(pair -> decode(pair[0]), LinkedHashMap::new,
-                        Collectors.collectingAndThen(Collectors.mapping(pair -> pair.length == 2 ? decode(pair[1]) : "",
-                                Collectors.toList()), values -> values.toArray(String[]::new))));
+        Map<String, List<String>> parsed = new LinkedHashMap<>();
+        for (String field : formData.split("&")) {
+            if (!field.isEmpty()) {
+                String[] pair = field.split("=", 2);
+                parsed.computeIfAbsent(decode(pair[0]), name -> new ArrayList<>()).add(pair.length == 2 ? decode(pair[1]) : "");
+            }
+        }
+        parsed.forEach((name, values) -> parameters.put(name, values.toArray(String[]::new)));
         Collections.list(request.getAttributeNames()).stream()
                 .filter(name -> DISPATCH_SCOPED_PREFIXES.stream().noneMatch(name::startsWith))
                 .forEach(name -> attributes.put(name, request.getAttribute(name)));
     }
 
     static boolean isResubmit(ServletRequest request) {
-        return request instanceof FormResubmitRequest
-                || request instanceof ServletRequestWrapper wrapper && wrapper.isWrapperFor(FormResubmitRequest.class);
+        return request instanceof ServletRequestWrapper wrapper && wrapper.isWrapperFor(FormResubmitRequest.class);
+    }
+
+    private static ServletRequest unwrap(ServletRequest request) {
+        return request instanceof ServletRequestWrapper wrapper ? unwrap(wrapper.getRequest()) : request;
     }
 
     private static String decode(String value) {
@@ -72,21 +72,6 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
     @Override
     public String getMethod() {
         return method;
-    }
-
-    @Override
-    public String getServletPath() {
-        return path;
-    }
-
-    @Override
-    public String getRequestURI() {
-        return getContextPath() + path;
-    }
-
-    @Override
-    public String getQueryString() {
-        return query;
     }
 
     @Override

@@ -454,7 +454,7 @@ public class FormResubmitSupport {
         if (dispatcher == null) {
             throw new ServletException("No request dispatcher for saved form path: " + path);
         }
-        var request = new FormResubmitRequest(originalRequest, path, method, body);
+        var request = new FormResubmitRequest(originalRequest, method, body);
         // FacesServlet creates/releases its own context. Restore a calling JSF login action afterwards.
         FacesContext context = hasFacesContext() ? Faces.getContext() : null;
         try {
@@ -503,7 +503,7 @@ public class FormResubmitSupport {
                     "<partial-response><redirect url=\"%s\"></redirect></partial-response>",
                     Encode.forXmlAttribute(savedRequest)));
         } else {
-            originalResponse.getOutputStream().write(response.getBody());
+            originalResponse.getOutputStream().write(response.getBuffer());
         }
     }
 
@@ -538,7 +538,7 @@ public class FormResubmitSupport {
         var htmlResponse = new FormResubmitResponse(response, true);
         forward(path, request, htmlResponse, HttpMethod.GET, "");
         if (htmlResponse.getStatus() == OK) {
-            String html = htmlResponse.getBodyAsString();
+            String html = htmlResponse.getBufferAsString();
             // Decode only the view-state field: decoding the entire body corrupts escaped &, + and = in user input.
             savedFormData = java.util.Arrays.stream(savedFormData.split("&", -1)).map(field -> {
                 String[] pair = field.split("=", 2);
