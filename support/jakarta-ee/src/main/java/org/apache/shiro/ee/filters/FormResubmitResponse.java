@@ -15,6 +15,8 @@ package org.apache.shiro.ee.filters;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
+import lombok.Setter;
 import org.omnifaces.servlet.BufferedHttpServletResponse;
 
 /**
@@ -23,21 +25,11 @@ import org.omnifaces.servlet.BufferedHttpServletResponse;
  */
 final class FormResubmitResponse extends BufferedHttpServletResponse {
     private final boolean keepCookies;
-    private int status = SC_OK;
+    private @Getter @Setter int status = SC_OK;
 
     FormResubmitResponse(HttpServletResponse response, boolean keepCookies) {
         super(response);
         this.keepCookies = keepCookies;
-    }
-
-    @Override
-    public int getStatus() {
-        return status;
-    }
-
-    @Override
-    public void setStatus(int status) {
-        this.status = status;
     }
 
     @Override
@@ -47,7 +39,7 @@ final class FormResubmitResponse extends BufferedHttpServletResponse {
 
     @Override
     public void sendError(int status, String message) {
-        setStatus(status);
+        sendError(status);
     }
 
     @Override

@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.experimental.Delegate;
+import org.omnifaces.filter.MutableRequestFilter.MutableRequest;
 
 /**
  * Replays saved form data in place of the login request's parameters, with a private request scope
@@ -37,9 +40,16 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
     private static final List<String> DISPATCH_SCOPED_PREFIXES = List.of("jakarta.faces.", "com.sun.faces.",
             "org.apache.myfaces.", "org.omnifaces.", "jakarta.servlet.forward.", "jakarta.servlet.include.",
             FormResubmitSupport.FORM_IS_RESUBMITTED);
-    private final String method;
-    private final Map<String, String[]> parameters = new LinkedHashMap<>();
+    private final @Getter String method;
+    private final @Delegate(types = Parameters.class) MutableRequest parameters;
     private final Map<String, Object> attributes = new HashMap<>();
+
+    private interface Parameters {
+        String getParameter(String name);
+        String[] getParameterValues(String name);
+        Enumeration<String> getParameterNames();
+        Map<String, String[]> getParameterMap();
+    }
 
     FormResubmitRequest(HttpServletRequest request, String method, String formData) {
         super((HttpServletRequest) unwrap(request));
@@ -48,10 +58,16 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
         for (String field : formData.split("&")) {
             if (!field.isEmpty()) {
                 String[] pair = field.split("=", 2);
-                parsed.computeIfAbsent(decode(pair[0]), name -> new ArrayList<>()).add(pair.length == 2 ? decode(pair[1]) : "");
+                parsed.computeIfAbsent(decode(pair[0]), name -> new ArrayList<>())
+                        .add(pair.length == 2 ? decode(pair[1]) : "");
             }
         }
-        parsed.forEach((name, values) -> parameters.put(name, values.toArray(String[]::new)));
+        parameters = new MutableRequest(request) {
+            @Override
+            public Map<String, List<String>> getMutableParameterMap() {
+                return parsed;
+            }
+        };
         Collections.list(request.getAttributeNames()).stream()
                 .filter(name -> DISPATCH_SCOPED_PREFIXES.stream().noneMatch(name::startsWith))
                 .forEach(name -> attributes.put(name, request.getAttribute(name)));
@@ -70,35 +86,9 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
     }
 
     @Override
-    public String getMethod() {
-        return method;
-    }
-
-    @Override
     public String getHeader(String name) {
         // Replays execute full-page actions. The caller translates their response for the original Ajax client.
         return "Faces-Request".equalsIgnoreCase(name) ? null : super.getHeader(name);
-    }
-
-    @Override
-    public Map<String, String[]> getParameterMap() {
-        return Collections.unmodifiableMap(parameters);
-    }
-
-    @Override
-    public String getParameter(String name) {
-        String[] values = parameters.get(name);
-        return values == null ? null : values[0];
-    }
-
-    @Override
-    public String[] getParameterValues(String name) {
-        return parameters.get(name);
-    }
-
-    @Override
-    public Enumeration<String> getParameterNames() {
-        return Collections.enumeration(parameters.keySet());
     }
 
     @Override
@@ -114,7 +104,7 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
     @Override
     public void setAttribute(String name, Object value) {
         if (value == null) {
-            attributes.remove(name);
+            removeAttribute(name);
         } else {
             attributes.put(name, value);
         }
