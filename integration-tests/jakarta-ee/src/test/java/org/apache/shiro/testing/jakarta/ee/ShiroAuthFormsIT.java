@@ -222,13 +222,17 @@ public class ShiroAuthFormsIT {
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void nonAjaxSessionExpired() {
+        nonAjaxSessionExpired("Jack", "Frost");
+    }
+
+    private void nonAjaxSessionExpired(String first, String last) {
         webDriver.get(baseURL + "shiro/form");
         login();
         invalidateSession.click();
         waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
         webDriver.switchTo().alert().accept();
-        firstName.sendKeys("Jack");
-        lastName.sendKeys("Frost");
+        firstName.sendKeys(first);
+        lastName.sendKeys(last);
         guardHttp(submitFirst).click();
         assertThat(sessionExpiredMessage.getText()).isEqualTo("Your Session Has Expired");
     }
@@ -239,6 +243,14 @@ public class ShiroAuthFormsIT {
         nonAjaxSessionExpired();
         login();
         assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
+    }
+
+    @Test
+    @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
+    void nonAjaxResubmitPreservesEscapedInput() {
+        nonAjaxSessionExpired("Jörg & Sons + =", "Frost 雪");
+        login();
+        assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jörg & Sons + =, lastName: Frost 雪");
     }
 
     @Test

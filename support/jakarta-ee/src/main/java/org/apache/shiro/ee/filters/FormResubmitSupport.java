@@ -20,44 +20,25 @@ import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
 import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.CONTENT_TYPE;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.COOKIE;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.LOCATION;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.SET_COOKIE;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.AUTHFAIL;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.FOUND;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.OK;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.MediaType.TEXT_XML;
-import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.DONT_ADD_ANY_MORE_COOKIES;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.addCookie;
-import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.cookieStreamFromHeader;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.deleteCookie;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getCookieAge;
-import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getSessionCookieName;
-import java.net.URISyntaxException;
-import java.time.Duration;
-import java.util.Collections;
 import org.apache.shiro.crypto.CryptoException;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
-import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.initializeCookies;
-import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
-import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitBlacklistEnabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.io.IOException;
-import java.net.CookieManager;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
+import java.util.StringJoiner;
 import java.util.UUID;
-import static java.util.function.Predicate.not;
 import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
 import static org.apache.shiro.web.filter.authz.PortFilter.DEFAULT_HTTP_PORT;
 import static org.apache.shiro.web.filter.authz.PortFilter.HTTP_SCHEME;
@@ -67,7 +48,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import jakarta.faces.context.FacesContext;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -103,7 +86,6 @@ public class FormResubmitSupport {
     static final String SHIRO_FORM_DATA_KEY = "org.apache.shiro.form-data-key";
     static final String SESSION_EXPIRED_PARAMETER = "org.apache.shiro.sessionExpired";
     static final String FORM_IS_RESUBMITTED = "org.apache.shiro.form-is-resubmitted";
-    static final String FORM_RESUBMIT_BLACKLIST = "org.apache.shiro.form-resubmit-blacklist";
     static final String FORM_DATA_CACHE = "org.apache.shiro.form-data-cache";
     // encoded view state
     private static final String FACES_VIEW_STATE = "jakarta.faces.ViewState";
@@ -111,26 +93,6 @@ public class FormResubmitSupport {
     private static final Pattern VIEW_STATE_PATTERN
             = Pattern.compile(String.format("(.*)(%s-?\\d+:-?\\d+)(.*)", FACES_VIEW_STATE_EQUALS));
     private static final String FACES_SOURCE = "jakarta.faces.source";
-    private static final String FACES_SOURCE_EQUALS = FACES_SOURCE + "=";
-    static final Pattern FACES_SOURCE_PATTERN
-            = Pattern.compile(String.format("&?%s([\\w\\s:%%d]*)(.*)", FACES_SOURCE_EQUALS));
-    private static final Pattern PARTIAL_REQUEST_PATTERN
-            = Pattern.compile("&?(%s.\\w+|%s.\\w+|%s)=[\\w\\s:%%d]*".formatted(
-            "jakarta.faces.partial", "jakarta.faces.behavior", FACES_SOURCE));
-    private static final Pattern INITIAL_AMPERSAND = Pattern.compile("^&");
-    private static final String FORM_RESUBMIT_HOST = "org.apache.shiro.form-resubmit-host";
-    private static final String FORM_RESUBMIT_PORT = "org.apache.shiro.form-resubmit-port";
-    private static final Optional<String> RESUBMIT_HOST = Optional.ofNullable(System.getProperty(FORM_RESUBMIT_HOST));
-    private static final Optional<Integer> RESUBMIT_PORT = Optional.ofNullable(System.getProperty(FORM_RESUBMIT_PORT))
-            .map(Integer::valueOf);
-    private static final String FORM_RESUBMIT_BLACK_LIST_MAX_SIZE = "org.apache.shiro.form-resubmit-blacklist-max-size";
-    private static final Optional<Integer> RESUBMIT_BLACK_LIST_MAX_SIZE =
-            Optional.ofNullable(System.getProperty(FORM_RESUBMIT_BLACK_LIST_MAX_SIZE)).map(Integer::valueOf);
-    private static final String FORM_RESUBMIT_BLACK_LIST_TTL_SECONDS =
-            "org.apache.shiro.form-resubmit-blacklist-ttl-seconds";
-    private static final Optional<Long> RESUBMIT_BLACK_LIST_TTL_SECONDS =
-            Optional.ofNullable(System.getProperty(FORM_RESUBMIT_BLACK_LIST_TTL_SECONDS)).map(Long::valueOf);
-    private static final long DEFAULT_RESUBMIT_BLACK_LIST_TTL_SECONDS = 60L;
     private static final String SEC_FETCH_SITE = "Sec-Fetch-Site";
     private static final String ORIGIN = "Origin";
     private static final String CACHE_CONTROL = "Cache-Control";
@@ -138,10 +100,6 @@ public class FormResubmitSupport {
     private static final String PRAGMA = "Pragma";
     private static final String EXPIRES = "Expires";
     private static final String NO_CACHE = "no-cache";
-    private static final Set<String> SECURITY_HEADERS =
-            Set.of("Content-Security-Policy", "Content-Security-Policy-Report-Only",
-                    "X-Content-Type-Options", "Referrer-Policy", "X-Frame-Options",
-                    "Cross-Origin-Opener-Policy", "Strict-Transport-Security");
 
     static class HttpMethod {
         static final String GET = "GET";
@@ -151,19 +109,15 @@ public class FormResubmitSupport {
     static class HttpHeaderConstants {
         static final String CONTENT_TYPE = "Content-Type";
         static final String LOCATION = "Location";
-        static final String COOKIE = "Cookie";
-        static final String SET_COOKIE = "Set-Cookie";
     }
 
     static class MediaType {
-        static final String APPLICATION_FORM_URLENCODED = "application/x-www-form-urlencoded";
         static final String TEXT_XML = "text/xml";
     }
 
     static class HttpResponseCodes {
         static final int OK = 200;
         static final int FOUND = 302;
-        static final int AUTHFAIL = 401;
     }
 
     @RequiredArgsConstructor
@@ -204,11 +158,8 @@ public class FormResubmitSupport {
     }
 
     static boolean isPostRequest(ServletRequest request) {
-        if (request instanceof HttpServletRequest) {
-            return HttpMethod.POST.equalsIgnoreCase(WebUtils.toHttp(request).getMethod());
-        } else {
-            return false;
-        }
+        return request instanceof HttpServletRequest
+                && HttpMethod.POST.equalsIgnoreCase(WebUtils.toHttp(request).getMethod());
     }
 
     @SneakyThrows(IOException.class)
@@ -327,7 +278,7 @@ public class FormResubmitSupport {
      * @param fallbackPath
      * @param resubmit if true, attempt to resubmit the form that was unsubmitted prior to logout
      */
-    @SneakyThrows({IOException.class, InterruptedException.class})
+    @SneakyThrows({IOException.class, ServletException.class})
     static void redirectToSaved(HttpServletRequest request, HttpServletResponse response,
             FallbackPredicate useFallbackPath, String fallbackPath, boolean resubmit) {
         String savedRequest = normalizeSavedRequest(decrypt(Servlets.getRequestCookie(request, WebUtils.SAVED_REQUEST_KEY),
@@ -356,7 +307,7 @@ public class FormResubmitSupport {
 
 
     private static void doRedirectToSaved(HttpServletRequest request, HttpServletResponse response,
-            @NonNull String savedRequest, boolean resubmit) throws IOException, InterruptedException {
+            @NonNull String savedRequest, boolean resubmit) throws IOException, ServletException {
         deleteCookie(response, request.getServletContext(), WebUtils.SAVED_REQUEST_KEY);
         String savedFormDataKeyString = Servlets.getRequestCookie(request, SHIRO_FORM_DATA_KEY);
         boolean doRedirectAtEnd = true;
@@ -446,252 +397,120 @@ public class FormResubmitSupport {
     static String resubmitSavedForm(@NonNull String savedFormData, @NonNull String rawSavedRequest,
             HttpServletRequest originalRequest, HttpServletResponse originalResponse,
             ServletContext servletContext, boolean rememberedAjaxResubmit, boolean redirect)
-            throws InterruptedException, IOException {
-        if (log.isDebugEnabled()) {
-            log.debug("saved form data: {}", savedFormData);
-            log.debug("Set Cookie Headers: {}", originalResponse.getHeaders(SET_COOKIE));
-            log.debug("Original Request Headers: {}", Collections.list(originalRequest.getHeaderNames()));
-            log.debug("Original Request Cookie Header: {}", Collections.list(originalRequest.getHeaders(COOKIE)));
-        }
-        if (Boolean.TRUE.toString().equals(originalRequest.getHeader(FORM_IS_RESUBMITTED))) {
-            log.debug("Form resubmit: internal auth failure");
-            setNoStoreHeaders(originalResponse);
-            originalResponse.setStatus(AUTHFAIL);
-            return resubmitResponseCleanup(originalRequest);
+            throws ServletException, IOException {
+        if (FormResubmitRequest.isResubmit(originalRequest)) {
+            throw new ServletException("Recursive form resubmission");
         }
         String savedRequest = normalizeSavedRequest(rawSavedRequest, originalRequest);
         if (savedRequest == null) {
             log.debug("Form resubmit: rejecting saved request");
             return originalRequest.getContextPath();
         }
-        URI overriddenRequestURI = overrideSavedRequestURI(
-                URI.create(Servlets.getRequestBaseURL(originalRequest)).resolve(savedRequest));
-        var cookieManager = new CookieManager();
-        HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2))
-                .cookieHandler(cookieManager).build();
-        if (isBlacklisted(overriddenRequestURI.getAuthority(), servletContext)) {
-            return savedRequest;
+        String dispatchPath = getDispatchPath(savedRequest, originalRequest);
+        if (dispatchPath == null) {
+            return originalRequest.getContextPath();
         }
-        initializeCookies(overriddenRequestURI, servletContext, cookieManager, originalRequest);
-        HttpResponse<String> response;
-        PartialAjaxResult decodedFormData;
-        try {
-            decodedFormData = parseFormData(savedFormData, overriddenRequestURI, client, servletContext);
-            HttpRequest postRequest = constructPostRequest(overriddenRequestURI, decodedFormData.result);
-            response = sendResubmitRequest(client, postRequest);
-        } catch (IOException e) {
-            putBlacklistEntry(overriddenRequestURI.getAuthority(), servletContext);
-            log.warn("Unable to resubmit form to {}{}"
-                    + "perhaps set org.apache.shiro.form-resubmit-host or "
-                    + "org.apache.shiro.form-resubmit-port system property?",
-                    overriddenRequestURI, System.lineSeparator(), e);
-            return savedRequest;
-        }
-        if (rememberedAjaxResubmit && !decodedFormData.isStatelessRequest) {
-            HttpRequest redirectRequest = constructPostRequest(overriddenRequestURI, savedFormData);
-            var redirectResponse = client.send(redirectRequest, HttpResponse.BodyHandlers.ofString());
-            log.debug("Redirect request: {}, response: {}", redirectRequest, redirectResponse);
-            return processResubmitResponse(redirectResponse, originalRequest, originalResponse,
-                    response.headers(), savedRequest, servletContext,
-                    true, true, redirect);
-        } else {
-            deleteCookie(originalResponse, servletContext, SHIRO_FORM_DATA_KEY);
-            return processResubmitResponse(response, originalRequest, originalResponse,
-                    response.headers(), savedRequest, servletContext,
-                    decodedFormData.isPartialAjaxRequest, rememberedAjaxResubmit, redirect);
-        }
-    }
-
-    @SneakyThrows(URISyntaxException.class)
-    private static URI overrideSavedRequestURI(URI savedRequestURI) {
-        if (RESUBMIT_HOST.isPresent() || RESUBMIT_PORT.isPresent()) {
-            var uri = new URI(savedRequestURI.getScheme(), savedRequestURI.getRawUserInfo(),
-                    RESUBMIT_HOST.orElse(savedRequestURI.getHost()), RESUBMIT_PORT.orElse(savedRequestURI.getPort()),
-                    savedRequestURI.getRawPath(), savedRequestURI.getRawQuery(), savedRequestURI.getRawFragment());
-            log.debug("Form Resubmit - Overriding URI {} with {}", savedRequestURI, uri);
-            return uri;
-        } else {
-            return savedRequestURI;
-        }
-    }
-
-    private static HttpRequest constructPostRequest(URI request, String body) {
-        return HttpRequest.newBuilder().uri(request)
-                .timeout(Duration.ofSeconds(5))
-                .POST(HttpRequest.BodyPublishers.ofString(body))
-                .headers(CONTENT_TYPE, APPLICATION_FORM_URLENCODED,
-                        FORM_IS_RESUBMITTED, Boolean.TRUE.toString())
-                .build();
-    }
-
-    private static HttpResponse<String>
-    sendResubmitRequest(HttpClient client, HttpRequest request) throws IOException, InterruptedException {
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if (log.isDebugEnabled()) {
-            log.debug("Resubmit request: {}, response: {}", request, response);
-            log.debug("Response Headers: {}", response.headers().map());
-        }
-        if (response.statusCode() == AUTHFAIL) {
-            log.debug("processing authfail");
-            var cookieManager = (CookieManager) client.cookieHandler().get();
-            cookieStreamFromHeader(response.headers().allValues(SET_COOKIE))
-                    .forEach(cookie -> cookieManager.getCookieStore().add(request.uri(), cookie));
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (log.isDebugEnabled()) {
-                log.debug("Resubmit request(authfail): {}, response: {}", request, response);
-                log.debug("Response Headers(authfail): {}", response.headers().map());
+        // These must be written before the final forward can commit the response.
+        deleteCookie(originalResponse, servletContext, SHIRO_FORM_DATA_KEY);
+        setNoStoreHeaders(originalResponse);
+        PartialAjaxResult formData = parseFormData(savedFormData, dispatchPath, originalRequest,
+                originalResponse, servletContext);
+        boolean doubleSubmit = rememberedAjaxResubmit && !formData.isStatelessRequest;
+        if (formData.isPartialAjaxRequest || doubleSubmit) {
+            var response = new FormResubmitResponse(originalResponse, true);
+            forward(dispatchPath, originalRequest, response, HttpMethod.POST, formData.result);
+            if (doubleSubmit && (response.getStatus() == OK || response.getStatus() == FOUND)) {
+                // This second POST only obtains redirect handling for the expired Ajax view.
+                // Its flash cookie must not replace the successful POST's messages.
+                response = new FormResubmitResponse(originalResponse, false);
+                forward(dispatchPath, originalRequest, response, HttpMethod.POST, savedFormData);
             }
+            processResubmitResponse(response, originalResponse, savedRequest, rememberedAjaxResubmit, redirect);
+        } else {
+            forward(dispatchPath, originalRequest, originalResponse, HttpMethod.POST, formData.result);
         }
-        return response;
-    }
-
-    private static PartialAjaxResult parseFormData(String savedFormData, URI savedRequest,
-            HttpClient client, ServletContext servletContext) throws IOException, InterruptedException {
-        boolean isStateless = true;
-        if (!isJSFClientStateSavingMethod(servletContext)) {
-            String decodedFormData = URLDecoder.decode(savedFormData, StandardCharsets.UTF_8);
-            if (isJSFStatefulForm(decodedFormData)) {
-                isStateless = false;
-                savedFormData = getJSFNewViewState(savedRequest, client, decodedFormData);
-            }
-        }
-        return noJSFAjaxRequests(savedFormData, isStateless);
-    }
-
-    @SuppressWarnings({"fallthrough", "checkstyle:ParameterNumber"})
-    private static String processResubmitResponse(HttpResponse<String> response,
-            HttpServletRequest originalRequest, HttpServletResponse originalResponse,
-            HttpHeaders headers, String savedRequest, ServletContext servletContext,
-            boolean isPartialAjaxRequest, boolean rememberedAjaxResubmit, boolean redirect) throws IOException {
-        switch (response.statusCode()) {
-            case FOUND:
-                if (rememberedAjaxResubmit) {
-                    originalResponse.setStatus(OK);
-                } else {
-                    // can't use Faces.redirect() here
-                    originalResponse.setStatus(response.statusCode());
-                    originalResponse.setHeader(LOCATION, response.headers().firstValue(LOCATION).orElseThrow());
-                }
-            case OK:
-                propagateCacheHeaders(response, originalResponse);
-                // do not duplicate the session cookie(s)
-                transformCookieHeader(headers.allValues(SET_COOKIE))
-                        .entrySet().stream().filter(not(entry -> entry.getKey()
-                                .startsWith(getSessionCookieName(servletContext, getSecurityManager()))))
-                        .forEach(entry -> addCookie(originalResponse, servletContext,
-                                entry.getKey(), entry.getValue()));
-                if ((response.statusCode() == FOUND || redirect) && isPartialAjaxRequest) {
-                    originalResponse.setHeader(CONTENT_TYPE, TEXT_XML);
-                    originalResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
-                    originalResponse.getWriter().append(String.format(
-                            "<partial-response><redirect url=\"%s\"></redirect></partial-response>",
-                            Encode.forXmlAttribute(savedRequest)));
-                } else {
-                    response.headers().firstValue(CONTENT_TYPE).ifPresent(originalResponse::setContentType);
-                    originalResponse.getWriter().append(response.body());
-                }
-                return resubmitResponseCleanup(originalRequest);
-            default:
-                return savedRequest;
-        }
-    }
-
-    private static String resubmitResponseCleanup(HttpServletRequest originalRequest) {
-        originalRequest.setAttribute(DONT_ADD_ANY_MORE_COOKIES, Boolean.TRUE);
         if (hasFacesContext()) {
             Faces.responseComplete();
         }
         return null;
     }
 
-    private static void propagateCacheHeaders(HttpResponse<String> response, HttpServletResponse originalResponse) {
-        HttpHeaders upstreamHeaders = response.headers();
-
-        List<String> cacheControlValues = upstreamHeaders.allValues(CACHE_CONTROL);
-        originalResponse.setHeader(CACHE_CONTROL, cacheControlValues.isEmpty()
-                ? NO_STORE : String.join(", ", cacheControlValues));
-
-        List<String> pragmaValues = upstreamHeaders.allValues(PRAGMA);
-        originalResponse.setHeader(PRAGMA, pragmaValues.isEmpty()
-                ? NO_CACHE : String.join(", ", pragmaValues));
-
-        List<String> expiresValues = upstreamHeaders.allValues(EXPIRES);
-        if (expiresValues.isEmpty()) {
-            originalResponse.setDateHeader(EXPIRES, 0);
-        } else {
-            originalResponse.setHeader(EXPIRES, expiresValues.get(expiresValues.size() - 1));
+    private static String getDispatchPath(String savedRequest, HttpServletRequest request) {
+        String path = savedRequest.substring(request.getContextPath().length());
+        if (path.isEmpty() || path.startsWith("?")) {
+            path = "/" + path;
         }
+        // A dispatcher can reach these directories, unlike the browser request being replayed.
+        String decodedPath = URI.create(path).getPath();
+        if (Pattern.compile("^/(WEB-INF|META-INF)([/;].*)?$", Pattern.CASE_INSENSITIVE).matcher(decodedPath).matches()) {
+            return null;
+        }
+        return path;
+    }
 
-        upstreamHeaders.map().forEach((name, values) -> {
-            if (SECURITY_HEADERS.stream().anyMatch(name::equalsIgnoreCase)) {
-                values.forEach(v -> originalResponse.addHeader(name, v));
+    private static void forward(String path, HttpServletRequest originalRequest, HttpServletResponse response,
+            String method, String body) throws ServletException, IOException {
+        var dispatcher = originalRequest.getServletContext().getRequestDispatcher(path);
+        if (dispatcher == null) {
+            throw new ServletException("No request dispatcher for saved form path: " + path);
+        }
+        var request = new FormResubmitRequest(originalRequest, method, body);
+        // FacesServlet creates/releases its own context. Restore a calling JSF login action afterwards.
+        FacesContext context = hasFacesContext() ? Faces.getContext() : null;
+        try {
+            if (context != null) {
+                FacesContextAccess.restore(null);
             }
-        });
+            dispatcher.forward(request, response);
+        } finally {
+            if (context != null) {
+                FacesContextAccess.restore(context);
+            }
+        }
+    }
+
+    private abstract static class FacesContextAccess extends FacesContext {
+        static void restore(FacesContext context) {
+            setCurrentInstance(context);
+        }
+    }
+
+    private static PartialAjaxResult parseFormData(String savedFormData, String path,
+            HttpServletRequest request, HttpServletResponse response, ServletContext servletContext)
+            throws IOException, ServletException {
+        boolean isStateless = true;
+        if (!isJSFClientStateSavingMethod(servletContext)) {
+            String decodedFormData = URLDecoder.decode(savedFormData, StandardCharsets.UTF_8);
+            if (isJSFStatefulForm(decodedFormData)) {
+                isStateless = false;
+                savedFormData = getJSFNewViewState(path, request, response, savedFormData);
+            }
+        }
+        return noJSFAjaxRequests(savedFormData, isStateless);
+    }
+
+    private static void processResubmitResponse(FormResubmitResponse response, HttpServletResponse originalResponse,
+            String savedRequest, boolean rememberedAjaxResubmit, boolean redirect) throws IOException {
+        int status = response.getStatus();
+        originalResponse.setStatus(rememberedAjaxResubmit && status == FOUND ? OK : status);
+        if (status == FOUND || status == OK && redirect) {
+            if (rememberedAjaxResubmit) {
+                originalResponse.setHeader(LOCATION, null);
+            }
+            originalResponse.setHeader(CONTENT_TYPE, TEXT_XML);
+            originalResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            originalResponse.getWriter().append(String.format(
+                    "<partial-response><redirect url=\"%s\"></redirect></partial-response>",
+                    Encode.forXmlAttribute(savedRequest)));
+        } else {
+            originalResponse.getOutputStream().write(response.getBuffer());
+        }
     }
 
     private static void setNoStoreHeaders(HttpServletResponse response) {
         response.setHeader(CACHE_CONTROL, NO_STORE);
         response.setHeader(PRAGMA, NO_CACHE);
         response.setDateHeader(EXPIRES, 0);
-    }
-
-    static Cache<String, Long> getBlacklistCache(DefaultSecurityManager securityManager) {
-        if (securityManager == null || securityManager.getCacheManager() == null) {
-            return null;
-        }
-        return securityManager.getCacheManager().getCache(FORM_RESUBMIT_BLACKLIST);
-    }
-
-    private static void putBlacklistEntry(String authority, ServletContext servletContext) {
-        var blacklist = getBlacklistCache(getDefaultSecurityManager());
-        if (blacklist != null && (servletContext == null || isFormResubmitBlacklistEnabled(servletContext))) {
-            if (blacklist.get(authority) == null) {
-                @SuppressWarnings("checkstyle:MagicNumber")
-                int maxSize = RESUBMIT_BLACK_LIST_MAX_SIZE.orElse(1000);
-                if (blacklist.size() >= maxSize) {
-                    log.warn("Form resubmit blacklist exceeded max size of {}. Clearing blacklist.", maxSize);
-                    blacklist.clear();
-                }
-            }
-            blacklist.put(authority, System.currentTimeMillis());
-        }
-    }
-
-    private static DefaultSecurityManager getDefaultSecurityManager() {
-        if (!isSecurityManagerTypeOf(getSecurityManager(), DefaultSecurityManager.class)) {
-            log.debug("Shiro SecurityManager is not configured for form resubmit blacklist caching");
-            return null;
-        }
-        DefaultSecurityManager dsm = getSecurityManager(DefaultSecurityManager.class);
-        if (dsm.getCacheManager() == null) {
-            log.debug("Shiro Cache manager is not configured, cannot cache form resubmit blacklist state");
-            return null;
-        }
-        return dsm;
-    }
-
-    static boolean isBlacklisted(String authority, ServletContext servletContext) {
-        long currentTimeMillis = System.currentTimeMillis();
-        return isBlacklisted(getBlacklistCache(getDefaultSecurityManager()), servletContext, authority,
-                Duration.ofSeconds(RESUBMIT_BLACK_LIST_TTL_SECONDS.orElse(DEFAULT_RESUBMIT_BLACK_LIST_TTL_SECONDS)),
-                currentTimeMillis);
-    }
-
-    static boolean isBlacklisted(Cache<String, Long> blacklist, ServletContext servletContext, String authority,
-            Duration ttl, long currentTimeMillis) {
-        if (blacklist == null || (servletContext != null && !isFormResubmitBlacklistEnabled(servletContext))) {
-            return false;
-        }
-        Long blacklistedAt = blacklist.get(authority);
-        if (blacklistedAt == null) {
-            return false;
-        }
-        boolean active = blacklistedAt >= currentTimeMillis
-                || currentTimeMillis - blacklistedAt < ttl.toMillis();
-        if (!active) {
-            blacklist.remove(authority);
-        }
-        return active;
     }
 
     public static DefaultWebSessionManager getNativeSessionManager(SecurityManager securityManager) {
@@ -714,12 +533,23 @@ public class FormResubmitSupport {
         return null;
     }
 
-    private static String getJSFNewViewState(URI savedRequest, HttpClient client, String savedFormData)
-            throws IOException, InterruptedException {
-        var getRequest = HttpRequest.newBuilder().uri(savedRequest).GET().build();
-        HttpResponse<String> htmlResponse = sendResubmitRequest(client, getRequest);
-        if (htmlResponse.statusCode() == OK) {
-            savedFormData = extractJSFNewViewState(htmlResponse.body(), savedFormData);
+    private static String getJSFNewViewState(String path, HttpServletRequest request,
+            HttpServletResponse response, String savedFormData) throws IOException, ServletException {
+        var htmlResponse = new FormResubmitResponse(response, true);
+        forward(path, request, htmlResponse, HttpMethod.GET, "");
+        if (htmlResponse.getStatus() == OK) {
+            String html = htmlResponse.getBufferAsString();
+            // Decode only the view-state field: decoding the entire body corrupts escaped &, + and = in user input.
+            savedFormData = java.util.Arrays.stream(savedFormData.split("&", -1)).map(field -> {
+                String[] pair = field.split("=", 2);
+                if (pair.length == 2 && FACES_VIEW_STATE.equals(URLDecoder.decode(pair[0], StandardCharsets.UTF_8))) {
+                    String updated = extractJSFNewViewState(html,
+                            FACES_VIEW_STATE_EQUALS + URLDecoder.decode(pair[1], StandardCharsets.UTF_8));
+                    return pair[0] + "=" + URLEncoder.encode(updated.substring(FACES_VIEW_STATE_EQUALS.length()),
+                            StandardCharsets.UTF_8);
+                }
+                return field;
+            }).collect(Collectors.joining("&"));
         }
         return savedFormData;
     }
@@ -740,18 +570,24 @@ public class FormResubmitSupport {
     }
 
     static PartialAjaxResult noJSFAjaxRequests(String savedFormData, boolean isStateless) {
-        var partialMatcher = PARTIAL_REQUEST_PATTERN.matcher(savedFormData);
-        boolean hasPartialAjax = partialMatcher.find();
+        boolean hasPartialAjax = false;
         String appendFacesSourceString = "";
-        if (hasPartialAjax) {
-            var facesSourceMatcher = FACES_SOURCE_PATTERN.matcher(savedFormData);
-            if (facesSourceMatcher.find()) {
-                appendFacesSourceString = "&%s=".formatted(facesSourceMatcher.group(1));
+        var fullForm = new StringJoiner("&");
+        for (String field : savedFormData.split("&")) {
+            String[] pair = field.split("=", 2);
+            String name = URLDecoder.decode(pair[0], StandardCharsets.UTF_8);
+            boolean isSource = FACES_SOURCE.equals(name);
+            if (isSource || name.startsWith("jakarta.faces.partial.") || name.startsWith("jakarta.faces.behavior.")) {
+                hasPartialAjax = true;
+                if (isSource && pair.length == 2 && !pair[1].isEmpty()) {
+                    // The source value becomes the submitted command's parameter name, still URL-encoded.
+                    appendFacesSourceString = "&" + pair[1] + "=";
+                }
+            } else if (!field.isEmpty()) {
+                fullForm.add(field);
             }
         }
-
-        return new PartialAjaxResult((isStateless ? savedFormData : INITIAL_AMPERSAND.matcher(partialMatcher
-                .replaceAll("")).replaceFirst(""))
+        return new PartialAjaxResult((isStateless ? savedFormData : fullForm.toString())
                 + appendFacesSourceString, hasPartialAjax, isStateless);
     }
 

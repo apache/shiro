@@ -15,7 +15,6 @@ package org.apache.shiro.ee.filters;
 
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_PREDICATE_ATTR_NAME;
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_WAITTIME_ATTR_NAME;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.FORM_IS_RESUBMITTED;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.SESSION_EXPIRED_PARAMETER;
 import static org.apache.shiro.ee.filters.LogoutFilter.LOGOUT_PREDICATE_ATTR_NAME;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
@@ -199,7 +198,7 @@ public class Forms {
     public static void logout(HttpServletRequest request, HttpServletResponse response,
             FallbackPredicate useFallback, String fallbackPath) {
         if (SecurityUtils.getSubject().isRemembered()
-                || !Boolean.TRUE.toString().equals(request.getHeader(FORM_IS_RESUBMITTED))) {
+                || !FormResubmitRequest.isResubmit(request)) {
             SecurityUtils.getSubject().logout();
             FormResubmitSupport.redirectToView(request, response, useFallback, fallbackPath);
         }

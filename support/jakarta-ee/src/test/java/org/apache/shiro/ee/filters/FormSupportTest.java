@@ -13,24 +13,14 @@
  */
 package org.apache.shiro.ee.filters;
 
-import jakarta.servlet.ServletContext;
 import org.apache.shiro.ee.filters.FormResubmitSupport.PartialAjaxResult;
-import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 
-import static org.apache.shiro.ee.filters.FormResubmitSupport.FACES_SOURCE_PATTERN;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.extractJSFNewViewState;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getReferer;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFStatefulForm;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.noJSFAjaxRequests;
-import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
-
-import java.net.HttpCookie;
 import java.net.URLDecoder;
-import java.time.Duration;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import jakarta.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +33,6 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.apache.shiro.mgt.DefaultSecurityManager;
 
 /**
  * Resubmit forms support
@@ -51,13 +40,8 @@ import org.apache.shiro.mgt.DefaultSecurityManager;
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("checkstyle:MethodCount")
 class FormSupportTest {
-    private static final long BLACKLISTED_AT = 1_000L;
-    private static final Duration BLACKLIST_TTL = Duration.ofSeconds(60);
-
     @Mock
     private HttpServletRequest request;
-    @Mock
-    private ServletContext servletContext;
 
     @Test
     void nullReferer() {
@@ -271,17 +255,16 @@ class FormSupportTest {
     }
 
     @Test
-    void parseFacesSources() {
-        var matcher = FACES_SOURCE_PATTERN.matcher("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
-                + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917"
-                + "&jakarta.faces.source=j_idt12:j_idt18"
+    void encodedAjaxFieldsAreRemovedCompletely() {
+        var result = noJSFAjaxRequests("text=a%26b%2Bc%3Dd&jakarta.faces.ViewState=123%3A456"
+                + "&jakarta.faces.source=j_idt12%3Aj_idt18"
                 + "&jakarta.faces.partial.event=click"
-                + "&jakarta.faces.partial.execute=j_idt12:j_idt18 j_idt12"
-                + "&jakarta.faces.partial.render=j_idt12"
+                + "&jakarta.faces.partial.execute=j_idt12%3Aj_idt18+j_idt12"
+                + "&jakarta.faces.partial.render=j_idt12%20%40all"
                 + "&jakarta.faces.behavior.event=action"
-                + "&jakarta.faces.partial.ajax=false");
-        assertThat(matcher.find()).isTrue();
-        assertThat(matcher.group(1)).isEqualTo("j_idt12:j_idt18");
+                + "&jakarta.faces.partial.ajax=true", false);
+        assertThat(result).isEqualTo(new PartialAjaxResult(
+                "text=a%26b%2Bc%3Dd&jakarta.faces.ViewState=123%3A456&j_idt12%3Aj_idt18=", true, false));
     }
 
     @Test
@@ -328,69 +311,6 @@ class FormSupportTest {
                 &jakarta.faces.partial.ajax=true&secondForm:submitSecond=""".replace("\n", ""));
     }
 
-    @Test
-    void parseCookies() {
-        var map = Map.of("name1", "value1", "name2", "value2", "name3", "value3")
-                .entrySet().stream()
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey,
-                        entry -> {
-                            var cookie = new HttpCookie(entry.getKey(), entry.getValue());
-                            if (entry.getKey().equals("name2")) {
-                                cookie.setPath("/my/path");
-                            }
-                            return cookie;
-                        }));
-
-        assertThat(transformCookieHeader(List.of("name1=value1", "name2=value2; path=/my/path", "name3=value3"))).isEqualTo(map);
-        assertThat(transformCookieHeader(List.of("name="))).isEqualTo(Map.of("name", new HttpCookie("name", "")));
-        assertThat(transformCookieHeader(List.of("JSESSIONID=\"abc\"; $Version=\"1\"; $Path=\"/mypath\"")))
-            .isEqualTo(Map.of("JSESSIONID", new HttpCookie("JSESSIONID", "abc")));
-    }
-
-    @Test
-    @SuppressWarnings("checkstyle:MagicNumber")
-    void blacklistUseShiroCacheManager() {
-        var securityManager = new DefaultSecurityManager();
-        securityManager.setCacheManager(new MemoryConstrainedCacheManager());
-
-        var blacklist = FormResubmitSupport.getBlacklistCache(securityManager);
-
-        blacklist.put("bad.example", BLACKLISTED_AT);
-
-        assertThat(FormResubmitSupport.isBlacklisted(blacklist, null, "bad.example",
-                BLACKLIST_TTL, 1_500L)).isTrue();
-    }
-
-    @Test
-    @SuppressWarnings("checkstyle:MagicNumber")
-    void expiredBlacklistEntryIsRemovedFromShiroCache() {
-        var securityManager = new DefaultSecurityManager();
-        securityManager.setCacheManager(new MemoryConstrainedCacheManager());
-
-        var blacklist = FormResubmitSupport.getBlacklistCache(securityManager);
-        blacklist.put("expired.example", BLACKLISTED_AT);
-
-        assertThat(FormResubmitSupport.isBlacklisted(blacklist, null, "expired.example",
-                BLACKLIST_TTL, 61_001L)).isFalse();
-        assertThat(blacklist.get("expired.example")).isNull();
-    }
-
-    @Test
-    @SuppressWarnings("checkstyle:MagicNumber")
-    void blacklistHonoursEnabledFlag() {
-        var securityManager = new DefaultSecurityManager();
-        securityManager.setCacheManager(new MemoryConstrainedCacheManager());
-        var blacklist = FormResubmitSupport.getBlacklistCache(securityManager);
-        blacklist.put("bad.example", BLACKLISTED_AT);
-
-        // attribute absent → enabled
-        assertThat(FormResubmitSupport.isBlacklisted(blacklist, servletContext, "bad.example",
-                BLACKLIST_TTL, 1_500L)).isTrue();
-
-        when(servletContext.getAttribute("org.apache.shiro.form-resubmit.blacklist.disabled")).thenReturn(Boolean.TRUE);
-        assertThat(FormResubmitSupport.isBlacklisted(blacklist, servletContext, "bad.example",
-                BLACKLIST_TTL, 1_500L)).isFalse();
-    }
 
     private static String decode(String plain) {
         return URLDecoder.decode(plain, StandardCharsets.UTF_8);

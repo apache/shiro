@@ -46,7 +46,6 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
     private static final String SHIRO_EE_CHAR_ENCODING_PARAM = "org.apache.shiro.ee.character-encoding";
     private static final String FORM_RESUBMIT_DISABLED_PARAM = "org.apache.shiro.form-resubmit.disabled";
     private static final String FORM_RESUBMIT_SECURE_COOKIES = "org.apache.shiro.form-resubmit.secure-cookies";
-    private static final String FORM_RESUBMIT_BLACK_LIST_DISABLED = "org.apache.shiro.form-resubmit.blacklist.disabled";
     private static final String SHIRO_WEB_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.disable-principal";
 
     public static boolean isShiroEEDisabled(ServletContext ctx) {
@@ -63,10 +62,6 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
 
     public static boolean isFormResubmitSecureCookies(ServletContext ctx) {
         return Boolean.TRUE.equals(ctx.getAttribute(FORM_RESUBMIT_SECURE_COOKIES));
-    }
-
-    public static boolean isFormResubmitBlacklistEnabled(ServletContext ctx) {
-        return !Boolean.TRUE.equals(ctx.getAttribute(FORM_RESUBMIT_BLACK_LIST_DISABLED));
     }
 
     public static boolean isServletNoPrincipal(ServletContext ctx) {
@@ -100,9 +95,6 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
             sce.getServletContext().setAttribute(FORM_RESUBMIT_SECURE_COOKIES, Boolean.TRUE);
         } else {
             sce.getServletContext().setAttribute(FORM_RESUBMIT_SECURE_COOKIES, Boolean.FALSE);
-        }
-        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(FORM_RESUBMIT_BLACK_LIST_DISABLED))) {
-            sce.getServletContext().setAttribute(FORM_RESUBMIT_BLACK_LIST_DISABLED, Boolean.TRUE);
         }
         if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_WEB_DISABLE_PRINCIPAL_PARAM))) {
             sce.getServletContext().setAttribute(SHIRO_WEB_DISABLE_PRINCIPAL_PARAM, Boolean.TRUE);
