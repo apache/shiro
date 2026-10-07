@@ -26,7 +26,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -39,7 +38,6 @@ import org.omnifaces.util.Faces;
  * functionality includes saving a previous form state and resubmitting
  * if the form times out
  */
-@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("HideUtilityClassConstructor")
 public class Forms {
@@ -48,6 +46,7 @@ public class Forms {
      */
     @Named("authc")
     @ApplicationScoped
+    @SuppressWarnings("unused")
     public static class AuthenticationMethods {
         /**
          * let Shiro filter handle the login,
@@ -65,8 +64,8 @@ public class Forms {
         /**
          * manual login, zero wait time
          *
-         * @param username
-         * @param password
+         * @param username the username
+         * @param password the password
          */
         public void login(String username, String password) {
             login(username, password, false);
@@ -75,9 +74,9 @@ public class Forms {
         /**
          * manual login with timeout
          *
-         * @param username
-         * @param password
-         * @param rememberMe
+         * @param username the username
+         * @param password the password
+         * @param rememberMe whether to remember the user
          */
         public void login(String username, String password, boolean rememberMe) {
             Forms.login(username, password, rememberMe);
@@ -124,8 +123,8 @@ public class Forms {
      * redirect to saved request, possibly resubmitting an existing form
      * the saved request is via a cookie
      *
-     * @param useFallbackPath
-     * @param fallbackPath
+     * @param useFallbackPath whether to use fallback path
+     * @param fallbackPath the fallback path to use if no saved request is found
      */
     public static void redirectToSaved(FallbackPredicate useFallbackPath, String fallbackPath) {
         FormResubmitSupport.redirectToSaved(Faces.getRequest(), Faces.getResponse(), useFallbackPath, fallbackPath,
@@ -140,15 +139,20 @@ public class Forms {
         FormResubmitSupport.redirectToView(Faces.getRequest(), Faces.getResponse());
     }
 
+    /**
+     * Jakarta Faces variant
+     * @param useFallbackPath whether to use fallback path
+     * @param fallbackPath the fallback path to use if no saved request is found
+     */
     public static void redirectToView(FallbackPredicate useFallbackPath, String fallbackPath) {
         FormResubmitSupport.redirectToView(Faces.getRequest(), Faces.getResponse(), useFallbackPath, fallbackPath);
     }
 
     /**
      * manually login, used via {@link PassThruAuthenticationFilter}
-     * @param username
-     * @param password
-     * @param rememberMe
+     * @param username the username
+     * @param password the password
+     * @param rememberMe whether to remember the user
      */
     @SneakyThrows(InterruptedException.class)
     public static void login(String username, String password, boolean rememberMe) {
@@ -174,14 +178,17 @@ public class Forms {
         redirectToView();
     }
 
+    /**
+     * Jakarta Faces variant
+     */
     public static void logout() {
         Forms.logout(Faces.getRequestAttribute(LOGOUT_PREDICATE_ATTR_NAME), "");
     }
 
     /**
-     * Faces variant
-     * @param useFallback
-     * @param fallbackPath
+     * Jakarta Faces variant
+     * @param useFallback whether to use fallback path
+     * @param fallbackPath the fallback path to use if no saved request is found
      */
     public static void logout(FallbackPredicate useFallback, String fallbackPath) {
         logout(Faces.getRequest(), Faces.getResponse(), useFallback, fallbackPath);
@@ -190,15 +197,14 @@ public class Forms {
     /**
      * makes sure that there is no double-logout
      *
-     * @param request
-     * @param response
-     * @param useFallback
-     * @param fallbackPath
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @param useFallback whether to use fallback path
+     * @param fallbackPath the fallback path to use if no saved request is found
      */
     public static void logout(HttpServletRequest request, HttpServletResponse response,
             FallbackPredicate useFallback, String fallbackPath) {
-        if (SecurityUtils.getSubject().isRemembered()
-                || !FormResubmitRequest.isResubmit(request)) {
+        if (SecurityUtils.getSubject().isRemembered() || !FormResubmitRequest.isResubmit(request)) {
             SecurityUtils.getSubject().logout();
             FormResubmitSupport.redirectToView(request, response, useFallback, fallbackPath);
         }
