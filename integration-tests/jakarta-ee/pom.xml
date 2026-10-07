@@ -150,7 +150,7 @@
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-bom</artifactId>
-                <version>4.49.0</version>
+                <version>4.50.0</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
