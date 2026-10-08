@@ -403,11 +403,11 @@ public class FormResubmitSupport {
             return false;
         }
         String dispatchPath = getDispatchPath(savedRequest, originalRequest);
-        if (dispatchPath == null) {
+        var servletContext = originalRequest.getServletContext();
+        if (dispatchPath == null || servletContext.getRequestDispatcher(dispatchPath) == null) {
             log.debug("Form resubmit: rejecting dispatch path for {}", savedRequest);
             return false;
         }
-        var servletContext = originalRequest.getServletContext();
         // These must be written before the replayed response is committed by processResubmitResponse()
         deleteCookie(originalResponse, servletContext, SHIRO_FORM_DATA_KEY);
         Servlets.setNoCacheHeaders(originalRequest, originalResponse);
@@ -490,12 +490,11 @@ public class FormResubmitSupport {
         return Utils.formatURLWithQueryString(path, uri.getRawQuery());
     }
 
+    /**
+     * @param path dispatch path already verified by {@link #replaySavedForm} to resolve to a dispatcher
+     */
     private static void forward(String path, HttpServletRequest originalRequest, HttpServletResponse response,
             String method, Map<String, List<String>> formFields) throws ServletException, IOException {
-        var dispatcher = originalRequest.getServletContext().getRequestDispatcher(path);
-        if (dispatcher == null) {
-            throw new ServletException("No request dispatcher for saved form path: " + path);
-        }
         var request = new FormResubmitRequest(originalRequest, method, formFields);
         // FacesServlet creates/releases its own context. Restore a calling Faces login action's afterward.
         FacesContext context = hasFacesContext() ? Faces.getContext() : null;
@@ -503,7 +502,7 @@ public class FormResubmitSupport {
             if (context != null) {
                 Faces.setContext(null);
             }
-            dispatcher.forward(request, response);
+            originalRequest.getServletContext().getRequestDispatcher(path).forward(request, response);
         } finally {
             if (context != null) {
                 Faces.setContext(context);
