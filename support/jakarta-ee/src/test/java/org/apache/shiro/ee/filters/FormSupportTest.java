@@ -194,8 +194,8 @@ class FormSupportTest {
         when(request.getContextPath()).thenReturn("/myapp");
         assertThat(getDispatchPath("/myapp", request)).isEqualTo("/");
         assertThat(getDispatchPath("/myapp?a=1", request)).isEqualTo("/?a=1");
-        assertThat(getDispatchPath("/myapp/caf%C3%A9/view.xhtml?a=1&b=%2F", request))
-                .isEqualTo("/caf%C3%A9/view.xhtml?a=1&b=%2F");
+        assertThat(getDispatchPath("/myapp/calf%C3%A9/view.xhtml?a=1&b=%2F", request))
+                .isEqualTo("/calf%C3%A9/view.xhtml?a=1&b=%2F");
         assertThat(getDispatchPath("/myapp/WEB-INFO/view.xhtml", request)).isEqualTo("/WEB-INFO/view.xhtml");
     }
 
