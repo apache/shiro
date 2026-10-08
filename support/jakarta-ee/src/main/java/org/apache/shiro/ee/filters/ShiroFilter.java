@@ -40,7 +40,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
@@ -65,13 +64,13 @@ import org.omnifaces.util.Utils;
 
 /**
  * Stops JEE server from interpreting Shiro principal as direct EJB principal,
- * this has sideffects of trying to log in to remote EJBs with the credentials from Shiro,
+ * this has side effects of trying to log in to remote EJBs with the credentials from Shiro,
  * which isn't what this meant to do, as it's meant to just transfer Shiro credentials
  * to remote EJB call site.
- *
+ * <p/>
  * Thus, force null EJB principal for the web session,
  * as the real principal comes from the EjbSecurityFilter's doAs() call
- *
+ * <p/>
  * Also handles X-Forwarded-Proto support
  */
 @Slf4j
@@ -155,10 +154,8 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
         }
     }
 
-    @RequiredArgsConstructor
-    static class WrappedSecurityManager implements WebSecurityManager, org.apache.shiro.mgt.WrappedSecurityManager {
-        final @Delegate WebSecurityManager wrapped;
-
+    record WrappedSecurityManager(@Delegate WebSecurityManager wrapped)
+            implements WebSecurityManager, org.apache.shiro.mgt.WrappedSecurityManager {
         @Override
         public Subject createSubject(SubjectContext context) {
             if (context instanceof WebSubjectContext webContext && wrapped instanceof DefaultWebSecurityManager wsm) {
