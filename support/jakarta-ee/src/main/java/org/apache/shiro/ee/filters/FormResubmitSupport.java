@@ -496,15 +496,16 @@ public class FormResubmitSupport {
     private static void forward(String path, HttpServletRequest originalRequest, HttpServletResponse response,
             String method, Map<String, List<String>> formFields) throws ServletException, IOException {
         var request = new FormResubmitRequest(originalRequest, method, formFields);
-        // FacesServlet creates/releases its own context. Restore a calling Faces login action's afterward.
-        FacesContext context = hasFacesContext() ? Faces.getContext() : null;
-        try {
-            if (context != null) {
-                Faces.setContext(null);
-            }
-            originalRequest.getServletContext().getRequestDispatcher(path).forward(request, response);
-        } finally {
-            if (context != null) {
+        var dispatcher = originalRequest.getServletContext().getRequestDispatcher(path);
+        if (!hasFacesContext()) {
+            dispatcher.forward(request, response);
+        } else {
+            // FacesServlet creates/releases its own context. Restore a calling Faces login action's afterward.
+            FacesContext context = Faces.getContext();
+            Faces.setContext(null);
+            try {
+                dispatcher.forward(request, response);
+            } finally {
                 Faces.setContext(context);
             }
         }
