@@ -17,12 +17,14 @@ import org.apache.shiro.ee.filters.FormResubmitSupport.PartialAjaxResult;
 
 import static org.apache.shiro.ee.filters.FormResubmitSupport.extractJSFNewViewState;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getDispatchPath;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.getFormCharset;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getReferer;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFStatefulForm;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.noJSFAjaxRequests;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.parseFormData;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -203,7 +205,7 @@ class FormSupportTest {
     void dispatchPathDropsPathParameters() {
         when(request.getContextPath()).thenReturn("/myapp");
         assertThat(getDispatchPath("/myapp/view.xhtml;jsessionid=123?a=1", request)).isEqualTo("/view.xhtml?a=1");
-        assertThat(getDispatchPath("/myapp/a;x/view.xhtml", request)).isEqualTo("/a");
+        assertThat(getDispatchPath("/myapp/a;x/view.xhtml;y", request)).isEqualTo("/a/view.xhtml");
     }
 
     @Test
@@ -222,8 +224,8 @@ class FormSupportTest {
     void dispatchPathRejectsTraversal() {
         when(request.getContextPath()).thenReturn("/myapp");
         assertThat(getDispatchPath("/myapp/a/..;/WEB-INF/web.xml", request)).isNull();
-        assertThat(getDispatchPath("/myapp/a/..", request)).isNull();
-        assertThat(getDispatchPath("/myapp/a/.", request)).isNull();
+        assertThat(getDispatchPath("/myapp/a/..", request)).isEqualTo("/a/..");
+        assertThat(getDispatchPath("/myapp/..", request)).isNull();
         assertThat(getDispatchPath("/myapp/view.xhtml/", request)).isEqualTo("/view.xhtml/");
         assertThat(getDispatchPath("/myapp/a/../WEB-INF/web.xml", request)).isNull();
         assertThat(getDispatchPath("/myapp/a/%2e%2e/WEB-INF/web.xml", request)).isNull();
@@ -262,6 +264,30 @@ class FormSupportTest {
                         Map.entry("empty", List.of("")),
                         Map.entry("flag", List.of("")),
                         Map.entry("multi", List.of("1", "2", "=")));
+    }
+
+    @Test
+    void parseFormDataHonoursCharset() {
+        assertThat(FormResubmitSupport.parseFormData("name=J%F6rg", StandardCharsets.ISO_8859_1))
+                .containsExactly(Map.entry("name", List.of("J\u00f6rg")));
+        assertThat(FormResubmitSupport.parseFormData("name=J%C3%B6rg", StandardCharsets.UTF_8))
+                .containsExactly(Map.entry("name", List.of("J\u00f6rg")));
+    }
+
+    @Test
+    void formCharsetFallsBackFromRequestToContextToUtf8(@Mock ServletContext servletContext) {
+        when(request.getCharacterEncoding()).thenReturn("ISO-8859-1");
+        assertThat(getFormCharset(request, servletContext)).isEqualTo(StandardCharsets.ISO_8859_1);
+
+        when(request.getCharacterEncoding()).thenReturn(null);
+        when(servletContext.getRequestCharacterEncoding()).thenReturn("US-ASCII");
+        assertThat(getFormCharset(request, servletContext)).isEqualTo(StandardCharsets.US_ASCII);
+
+        when(servletContext.getRequestCharacterEncoding()).thenReturn("no-such-charset");
+        assertThat(getFormCharset(request, servletContext)).isEqualTo(StandardCharsets.UTF_8);
+
+        when(servletContext.getRequestCharacterEncoding()).thenReturn(null);
+        assertThat(getFormCharset(request, servletContext)).isEqualTo(StandardCharsets.UTF_8);
     }
 
     @Test
@@ -355,4 +381,7 @@ class FormSupportTest {
                 &jakarta.faces.partial.ajax=true&secondForm:submitSecond=""".replace("\n", "")));
     }
 
+    private static Map<String, List<String>> parseFormData(String formData) {
+        return FormResubmitSupport.parseFormData(formData, StandardCharsets.UTF_8);
+    }
 }

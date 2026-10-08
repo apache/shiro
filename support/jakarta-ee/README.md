@@ -22,8 +22,15 @@ and form parameters replace those of the login request.
 For server-side Faces state saving, a buffered GET obtains a new view state
 before the POST. Remembered Ajax submissions retain the two-POST flow, buffering
 intermediate responses. A calling Faces context is restored after each dispatch.
-The successful POST's cookies are preserved unchanged; the expired-view probe
-must not replace its flash cookie and lose submitted-form messages.
+
+Each replay's status, headers, cookies and body are captured rather than written
+to the browser response, which is also shielded from `reset()`, `resetBuffer()`
+and `flushBuffer()`. Only a successful replay is applied: the successful POST's
+headers and cookies, then the Ajax redirect replay's headers without its cookies,
+so that its flash cookie can't replace the submitted-form messages. View-state
+GETs and failed attempts leave the login request's response, such as its
+session cookies, untouched. Saved form data is decoded with the request's
+character encoding, falling back to the servlet context's and then UTF-8.
 
 ## Application filter configuration
 

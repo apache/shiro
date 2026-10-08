@@ -64,7 +64,9 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
     }
 
     static boolean isResubmit(ServletRequest request) {
-        return request instanceof ServletRequestWrapper wrapper && wrapper.isWrapperFor(FormResubmitRequest.class);
+        // isWrapperFor() inspects only the wrapped chain, not the wrapper itself
+        return request instanceof FormResubmitRequest
+                || request instanceof ServletRequestWrapper wrapper && wrapper.isWrapperFor(FormResubmitRequest.class);
     }
 
     private static HttpServletRequest unwrap(HttpServletRequest request) {

@@ -21,8 +21,9 @@ import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.CONTENT_TYPE;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.LOCATION;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.FOUND;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpResponseCodes.OK;
+import static jakarta.servlet.http.HttpServletResponse.SC_FOUND;
+import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.MediaType.TEXT_XML;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.addCookie;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.deleteCookie;
@@ -32,6 +33,8 @@ import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -116,11 +119,6 @@ public class FormResubmitSupport {
         static final String TEXT_XML = "text/xml";
     }
 
-    static class HttpResponseCodes {
-        static final int OK = 200;
-        static final int FOUND = 302;
-    }
-
     /**
      * Form fields prepared for replay
      *
@@ -128,7 +126,6 @@ public class FormResubmitSupport {
      * @param isPartialAjaxRequest whether the saved form was submitted via Faces Ajax
      * @param isStatelessRequest whether the saved form carries no server-side view state
      */
-    @SuppressWarnings("VisibilityModifier")
     record PartialAjaxResult(Map<String, List<String>> result, boolean isPartialAjaxRequest,
                              boolean isStatelessRequest) { }
 
@@ -424,24 +421,21 @@ public class FormResubmitSupport {
         deleteCookie(originalResponse, servletContext, SHIRO_FORM_DATA_KEY);
         setNoStoreHeaders(originalResponse);
         try {
-            var savedFormFields = parseFormData(savedFormData);
+            var savedFormFields = parseFormData(savedFormData, getFormCharset(originalRequest, servletContext));
             PartialAjaxResult formData = prepareFormData(savedFormFields, dispatchPath, originalRequest,
                     originalResponse, servletContext);
-            var response = new FormResubmitResponse(originalResponse, true);
+            var response = new FormResubmitResponse(originalResponse);
             forward(dispatchPath, originalRequest, response, HttpMethod.POST, formData.result);
-            boolean doubleSubmit = rememberedAjaxResubmit && !formData.isStatelessRequest;
-            if (doubleSubmit && isSuccessful(response.getStatus())) {
-                // This second POST only obtains redirect handling for the expired Ajax view.
-                // Its flash cookie must not replace the successful POST's messages.
-                response = new FormResubmitResponse(originalResponse, false);
-                forward(dispatchPath, originalRequest, response, HttpMethod.POST, savedFormFields);
-            }
-            if (!isSuccessful(response.getStatus())) {
-                log.debug("Form resubmit to {} failed with status {}", dispatchPath, response.getStatus());
+            boolean needsAjaxRedirectReplay = rememberedAjaxResubmit && !formData.isStatelessRequest;
+            var redirectResponse = replayAjaxRequestForRedirect(needsAjaxRedirectReplay, response, dispatchPath,
+                    originalRequest, originalResponse, savedFormFields);
+            var result = Objects.requireNonNullElse(redirectResponse, response);
+            if (isFailed(result.getStatus())) {
+                log.debug("Form resubmit to {} failed with status {}", dispatchPath, result.getStatus());
                 return savedRequest;
             }
-            processResubmitResponse(response, originalResponse, savedRequest, formData.isPartialAjaxRequest,
-                    rememberedAjaxResubmit, redirect);
+            processResubmitResponse(response, redirectResponse, originalResponse, savedRequest,
+                    formData.isPartialAjaxRequest, rememberedAjaxResubmit, redirect);
         } catch (ServletException | IOException | RuntimeException e) {
             log.warn("Unable to resubmit form to {}", dispatchPath, e);
             return savedRequest;
@@ -452,16 +446,42 @@ public class FormResubmitSupport {
         return null;
     }
 
-    private static boolean isSuccessful(int status) {
-        return status == OK || status == FOUND;
+    /**
+     * The browser's Faces Ajax client awaits a partial response, which the full-page replay above can't provide.
+     * The original Ajax request is therefore replayed unmodified, with its now-stale view state,
+     * so the application's Ajax view-expired handling supplies the redirect that the client follows
+     * to see the replay's outcome. Only this response's status and redirect are used;
+     * its flash cookie must not replace the successful POST's messages.
+     *
+     * @return the captured Ajax response, failed if the application doesn't handle the expired view,
+     * or null for a stateless or non-Ajax replay
+     */
+    private static FormResubmitResponse replayAjaxRequestForRedirect(boolean needsAjaxRedirectReplay,
+            FormResubmitResponse response, String dispatchPath, HttpServletRequest originalRequest,
+            HttpServletResponse originalResponse, Map<String, List<String>> savedFormFields) {
+        if (!needsAjaxRedirectReplay || isFailed(response.getStatus())) {
+            return null;
+        }
+        var redirectResponse = new FormResubmitResponse(originalResponse);
+        try {
+            forward(dispatchPath, originalRequest, redirectResponse, HttpMethod.POST, savedFormFields);
+        } catch (ServletException | IOException | RuntimeException e) {
+            // expected without an application view-expired handler
+            log.debug("Ajax redirect replay to {} failed", dispatchPath, e);
+            redirectResponse.setStatus(SC_INTERNAL_SERVER_ERROR);
+        }
+        return redirectResponse;
+    }
+
+    private static boolean isFailed(int status) {
+        return status != SC_OK && status != SC_FOUND;
     }
 
     /**
      * Derives the dispatcher path from a saved request that is already verified to be within the context path.
      * The container's dispatcher strips path parameters, decodes and normalizes the path before resolving it,
      * which could otherwise reach the WEB-INF and META-INF directories that are inaccessible to browsers.
-     * Hence path parameters are dropped the same way OmniFaces does for request URIs,
-     * and the dispatcher only receives the path that has been verified here as canonical.
+     * Hence, the same is mirrored here, and the resulting path is checked.
      *
      * @return path and query to dispatch to, or null if rejected
      */
@@ -470,12 +490,12 @@ public class FormResubmitSupport {
         int queryIndex = pathAndQuery.indexOf('?');
         String query = queryIndex < 0 ? "" : pathAndQuery.substring(queryIndex);
         String path = ResourcePaths.addLeadingSlashIfNecessary(
-                (queryIndex < 0 ? pathAndQuery : pathAndQuery.substring(0, queryIndex)).split(";", 2)[0]);
-        String decodedPath = Utils.decodeURL(path);
+                (queryIndex < 0 ? pathAndQuery : pathAndQuery.substring(0, queryIndex)).replaceAll(";[^/]*", ""));
         // trailing slash makes a trailing "." or ".." segment resolvable, and matches directories exactly
-        String canonicalPath = ResourcePaths.addTrailingSlashIfNecessary(decodedPath);
-        if (decodedPath.indexOf('\\') >= 0 || !canonicalPath.equals(WebUtils.normalize(canonicalPath))
-                || Utils.startsWithOneOf(canonicalPath.toUpperCase(Locale.ROOT), "/WEB-INF/", "/META-INF/")) {
+        String resolvedPath = WebUtils.normalize(ResourcePaths.addTrailingSlashIfNecessary(
+                Utils.decodeURL(path).replace('\\', '/')));
+        if (resolvedPath == null
+                || Utils.startsWithOneOf(resolvedPath.toUpperCase(Locale.ROOT), "/WEB-INF/", "/META-INF/")) {
             return null;
         }
         return path + query;
@@ -507,16 +527,32 @@ public class FormResubmitSupport {
      * Unlike {@link Servlets#toParameterMap(String)}, empty values are preserved,
      * since Faces treats an empty field differently from an absent one.
      */
-    static Map<String, List<String>> parseFormData(@NonNull String formData) {
+    static Map<String, List<String>> parseFormData(@NonNull String formData, @NonNull Charset charset) {
         var formFields = new LinkedHashMap<String, List<String>>();
         for (String field : formData.split("&")) {
             if (!field.isEmpty()) {
                 String[] pair = field.split("=", 2);
-                formFields.computeIfAbsent(Utils.decodeURL(pair[0]), name -> new ArrayList<>())
-                        .add(pair.length == 2 ? Utils.decodeURL(pair[1]) : "");
+                formFields.computeIfAbsent(URLDecoder.decode(pair[0], charset), name -> new ArrayList<>())
+                        .add(pair.length == 2 ? URLDecoder.decode(pair[1], charset) : "");
             }
         }
         return formFields;
+    }
+
+    /**
+     * @return the encoding the container would have used for the saved form's parameters
+     */
+    static Charset getFormCharset(HttpServletRequest request, ServletContext servletContext) {
+        return Optional.ofNullable(request.getCharacterEncoding())
+                .or(() -> Optional.ofNullable(servletContext.getRequestCharacterEncoding()))
+                .map(encoding -> {
+                    try {
+                        return Charset.forName(encoding);
+                    } catch (IllegalArgumentException e) {
+                        log.debug("Ignoring unsupported request encoding {}", encoding, e);
+                        return null;
+                    }
+                }).orElse(StandardCharsets.UTF_8);
     }
 
     private static PartialAjaxResult prepareFormData(Map<String, List<String>> savedFormFields, String path,
@@ -530,22 +566,36 @@ public class FormResubmitSupport {
         return noJSFAjaxRequests(formFields, isStateless);
     }
 
-    private static void processResubmitResponse(FormResubmitResponse response, HttpServletResponse originalResponse,
-            String savedRequest, boolean isPartialAjaxRequest, boolean rememberedAjaxResubmit, boolean redirect)
-            throws IOException {
-        int status = response.getStatus();
-        originalResponse.setStatus(rememberedAjaxResubmit && status == FOUND ? OK : status);
-        if (isPartialAjaxRequest && (status == FOUND || redirect)) {
-            if (rememberedAjaxResubmit) {
-                originalResponse.setHeader(LOCATION, null);
-            }
+    /**
+     * Only a successful replay reaches the browser: the successful POST's headers and cookies,
+     * then the Ajax redirect replay's headers without its cookies, so that its flash cookie
+     * doesn't replace the submitted-form messages.
+     */
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    private static void processResubmitResponse(FormResubmitResponse response, FormResubmitResponse redirectResponse,
+            HttpServletResponse originalResponse, String savedRequest, boolean isPartialAjaxRequest,
+            boolean rememberedAjaxResubmit, boolean redirect) throws IOException {
+        var result = Objects.requireNonNullElse(redirectResponse, response);
+        int status = result.getStatus();
+        boolean redirectAsOk = rememberedAjaxResubmit && status == SC_FOUND;
+        if (redirectAsOk) {
+            // a 200 must not carry the replay's redirect target
+            response.removeHeader(LOCATION);
+            result.removeHeader(LOCATION);
+        }
+        response.applyTo(originalResponse, true);
+        if (redirectResponse != null) {
+            redirectResponse.applyTo(originalResponse, false);
+        }
+        originalResponse.setStatus(redirectAsOk ? SC_OK : status);
+        if (isPartialAjaxRequest && (status == SC_FOUND || redirect)) {
             originalResponse.setHeader(CONTENT_TYPE, TEXT_XML);
             originalResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
             originalResponse.getWriter().append(String.format(
                     "<partial-response><redirect url=\"%s\"></redirect></partial-response>",
                     Encode.forXmlAttribute(savedRequest)));
         } else {
-            originalResponse.getOutputStream().write(response.getBuffer());
+            originalResponse.getOutputStream().write(result.getBuffer());
         }
     }
 
@@ -577,9 +627,10 @@ public class FormResubmitSupport {
 
     private static void refreshJSFViewState(String path, HttpServletRequest request,
             HttpServletResponse response, Map<String, List<String>> formFields) throws IOException, ServletException {
-        var htmlResponse = new FormResubmitResponse(response, true);
+        // view-state GET headers and cookies stay captured and are never applied to the browser response
+        var htmlResponse = new FormResubmitResponse(response);
         forward(path, request, htmlResponse, HttpMethod.GET, Map.of());
-        if (htmlResponse.getStatus() == OK) {
+        if (htmlResponse.getStatus() == SC_OK) {
             Optional.ofNullable(extractJSFNewViewState(htmlResponse.getBufferAsString())).ifPresent(viewState -> {
                 log.debug("Replaced ViewState: {}", viewState);
                 formFields.put(FACES_VIEW_STATE, List.of(viewState));
