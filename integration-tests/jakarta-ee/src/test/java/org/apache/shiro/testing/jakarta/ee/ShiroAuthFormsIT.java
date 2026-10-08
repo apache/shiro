@@ -111,6 +111,9 @@ public class ShiroAuthFormsIT {
     @FindBy(id = "secondForm:messages")
     private WebElement secondFormMessages;
 
+    @FindBy(id = "firstForm:messages")
+    private WebElement firstFormMessages;
+
     @FindBy(id = "invalidate")
     private WebElement invalidateSession;
 
@@ -341,6 +344,47 @@ public class ShiroAuthFormsIT {
         city.sendKeys("Los Angeles");
         guardAjax(submitSecond).click();
         assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: LAX Airport, City: Los Angeles");
+    }
+
+    @Test
+    @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
+    void nonAjaxAnonymousResubmit() {
+        webDriver.get(baseURL + "shiro/unprotected/form");
+        assertThat(webDriver.getTitle()).isEqualTo("Anonymous Form Page");
+        invalidateSession.click();
+        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
+        webDriver.switchTo().alert().accept();
+        firstName.sendKeys("Jack");
+        lastName.sendKeys("Frost");
+        guardHttp(submitFirst).click();
+        assertThat(webDriver.getTitle()).as("no login page").isEqualTo("Anonymous Form Page");
+        assertThat(firstFormMessages.getText()).isEqualTo("Anonymous Form Submitted - firstName: Jack, lastName: Frost");
+    }
+
+    @Test
+    @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
+    void ajaxAnonymousResubmit() {
+        webDriver.get(baseURL + "shiro/unprotected/form");
+        address.sendKeys("1 Houston Street");
+        city.sendKeys("New York");
+        invalidateSession.click();
+        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
+        webDriver.switchTo().alert().accept();
+        if (isClientStateSavingIntegrationTest()) {
+            guardAjax(submitSecond).click();
+        } else {
+            waitForHttp(submitSecond).click();
+        }
+        assertThat(webDriver.getTitle()).as("no login page").isEqualTo("Anonymous Form Page");
+        assertThat(secondFormMessages.getText())
+                .isEqualTo("2nd Anonymous Form Submitted - Address: 1 Houston Street, City: New York");
+        address.clear();
+        city.clear();
+        address.sendKeys("Workshop");
+        city.sendKeys("North Pole");
+        guardAjax(submitSecond).click();
+        assertThat(secondFormMessages.getText())
+                .isEqualTo("2nd Anonymous Form Submitted - Address: Workshop, City: North Pole");
     }
 
     @Test
