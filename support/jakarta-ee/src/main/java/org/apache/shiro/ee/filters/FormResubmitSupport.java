@@ -107,7 +107,6 @@ public class FormResubmitSupport {
 
     static class HttpHeaderConstants {
         static final String LOCATION = "Location";
-        static final String SET_COOKIE = "Set-Cookie";
     }
 
     /**
