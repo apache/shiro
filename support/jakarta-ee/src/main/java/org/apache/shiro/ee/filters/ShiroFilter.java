@@ -21,6 +21,7 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.isPostRequest;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.normalizeSavedRequest;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.redirectToView;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.resubmitSavedForm;
+import org.apache.shiro.ee.filters.FormResubmitSupport.ReplayFlow;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.getCharacterEncoding;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isCharEncodingEnabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isShiroEEDisabled;
@@ -249,8 +250,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             if (savedRequest == null) {
                 redirectToView(httpRequest, httpResponse);
             } else {
-                resubmitSavedForm(postData, savedRequest, httpRequest, httpResponse,
-                        Servlets.isFacesAjaxRequest(httpRequest), false);
+                resubmitSavedForm(postData, savedRequest, httpRequest, httpResponse, ReplayFlow.IN_PLACE);
             }
         } else {
             setCharacterEncodingIfNeeded(request);

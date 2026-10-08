@@ -15,7 +15,11 @@ package org.apache.shiro.ee.filters;
 
 import org.apache.shiro.ee.filters.FormResubmitSupport.PartialAjaxResult;
 
+import static org.apache.shiro.ee.filters.FormResubmitSupport.AjaxReplay.FULL_PAGE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.AjaxReplay.PASS_THROUGH;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.AjaxReplay.RENDER_ALL;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.extractJSFNewViewState;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.isPartialResponseError;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getDispatchPath;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getFormCharset;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getReferer;
@@ -308,7 +312,7 @@ class FormSupportTest {
         assertThat(noJSFAjaxRequests(parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456"
                         + "&jakarta.faces.partial.ajax=true&hello=bye"), false)).isEqualTo(new PartialAjaxResult(
                         parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye"),
-                        true, false));
+                        true, FULL_PAGE));
         assertThat(noJSFAjaxRequests(parseFormData("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
                         + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917"
                         + "&jakarta.faces.source=j_idt12:j_idt18"
@@ -320,7 +324,56 @@ class FormSupportTest {
                 .isEqualTo(new PartialAjaxResult(parseFormData("j_idt12=j_idt12&j_idt12:j_idt14=asdf"
                         + "&j_idt12:j_idt16=asdf"
                         + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917&j_idt12:j_idt18="),
-                        true, false));
+                        true, FULL_PAGE));
+    }
+
+    @Test
+    void ajaxFieldsAreKeptForPassThrough() {
+        String ajaxForm = "aaa=bbb&jakarta.faces.ViewState=-123:-456&jakarta.faces.source=j_idt12:j_idt18"
+                + "&jakarta.faces.partial.render=j_idt12&jakarta.faces.partial.ajax=true";
+        assertThat(noJSFAjaxRequests(parseFormData(ajaxForm), false, PASS_THROUGH)).isEqualTo(new PartialAjaxResult(
+                parseFormData(ajaxForm + "&j_idt12:j_idt18="), true, PASS_THROUGH));
+        // a non-Ajax form submitted while the Ajax client is on the page isn't an Ajax replay
+        assertThat(noJSFAjaxRequests(parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456"), false, RENDER_ALL))
+                .isEqualTo(new PartialAjaxResult(parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456"),
+                        false, FULL_PAGE));
+    }
+
+    @Test
+    void partialResponseErrorIsDetected() {
+        assertThat(isPartialResponseError("""
+                <?xml version='1.0' encoding='UTF-8'?>
+                <partial-response id="j_id1">
+                    <error>
+                        <error-name>class jakarta.faces.application.ViewExpiredException</error-name>
+                        <error-message><![CDATA[viewId:/index.xhtml - View /index.xhtml could not be restored.]]></error-message>
+                    </error>
+                </partial-response>""")).isTrue();
+        assertThat(isPartialResponseError("""
+                <?xml version='1.0' encoding='UTF-8'?>
+                <partial-response id="j_id1">
+                    <changes>
+                        <update id="form"><![CDATA[<error>not an error</error>]]></update>
+                        <update id="j_id1:jakarta.faces.ViewState:0"><![CDATA[-123:-456]]></update>
+                    </changes>
+                </partial-response>""")).isFalse();
+        assertThat(isPartialResponseError("<html><body>full page</body></html>")).isFalse();
+    }
+
+    @Test
+    void ajaxReplayOfRebuiltViewRendersAll() {
+        String ajaxForm = "aaa=bbb&jakarta.faces.ViewState=-123:-456&jakarta.faces.source=j_idt12:j_idt18"
+                + "&jakarta.faces.partial.render=j_idt12&jakarta.faces.partial.ajax=true";
+        assertThat(noJSFAjaxRequests(parseFormData(ajaxForm), false, RENDER_ALL).result())
+                .containsEntry("jakarta.faces.partial.render", List.of("@all"))
+                .containsEntry("jakarta.faces.partial.ajax", List.of("true"));
+        // the render targets stay in place when a stateless view isn't rebuilt
+        assertThat(noJSFAjaxRequests(parseFormData(ajaxForm), true, RENDER_ALL))
+                .isEqualTo(new PartialAjaxResult(parseFormData(ajaxForm + "&j_idt12:j_idt18="), true, PASS_THROUGH));
+        // or without any render targets
+        assertThat(noJSFAjaxRequests(parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456"
+                + "&jakarta.faces.source=j_idt12:j_idt18&jakarta.faces.partial.ajax=true"), false, RENDER_ALL)
+                .result()).containsEntry("jakarta.faces.partial.render", List.of("@all"));
     }
 
     @Test
@@ -334,7 +387,7 @@ class FormSupportTest {
                 + "&jakarta.faces.partial.ajax=true"), false);
         assertThat(result).isEqualTo(new PartialAjaxResult(
                 parseFormData("text=a%26b%2Bc%3Dd&jakarta.faces.ViewState=123%3A456&j_idt12%3Aj_idt18="),
-                true, false));
+                true, FULL_PAGE));
         assertThat(result.result()).containsEntry("text", List.of("a&b+c=d"));
     }
 

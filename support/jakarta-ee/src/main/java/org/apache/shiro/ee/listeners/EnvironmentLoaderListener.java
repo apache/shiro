@@ -46,6 +46,8 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
     private static final String SHIRO_EE_CHAR_ENCODING_PARAM = "org.apache.shiro.ee.character-encoding";
     private static final String FORM_RESUBMIT_DISABLED_PARAM = "org.apache.shiro.form-resubmit.disabled";
     private static final String FORM_RESUBMIT_SECURE_COOKIES = "org.apache.shiro.form-resubmit.secure-cookies";
+    private static final String FORM_RESUBMIT_AJAX_RENDER_ALL_DISABLED_PARAM =
+            "org.apache.shiro.form-resubmit.ajax-render-all.disabled";
     private static final String SHIRO_WEB_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.disable-principal";
 
     public static boolean isShiroEEDisabled(ServletContext ctx) {
@@ -64,6 +66,15 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
         return Boolean.TRUE.equals(ctx.getAttribute(FORM_RESUBMIT_SECURE_COOKIES));
     }
 
+    /**
+     * @param ctx servlet context
+     * @return whether an in-place Faces Ajax replay keeps the form's own render targets
+     * instead of re-rendering the whole view, which resynchronizes the page with the rebuilt server-side view
+     */
+    public static boolean isFormResubmitAjaxRenderAllDisabled(ServletContext ctx) {
+        return Boolean.TRUE.equals(ctx.getAttribute(FORM_RESUBMIT_AJAX_RENDER_ALL_DISABLED_PARAM));
+    }
+
     public static boolean isServletNoPrincipal(ServletContext ctx) {
         return Boolean.TRUE.equals(ctx.getAttribute(SHIRO_WEB_DISABLE_PRINCIPAL_PARAM));
     }
@@ -80,15 +91,9 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
     @Override
     @SuppressWarnings({"checkstyle:NPathComplexity", "checkstyle:CyclomaticComplexity"})
     public void contextInitialized(ServletContextEvent sce) {
-        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_DISABLED_PARAM))) {
-            sce.getServletContext().setAttribute(SHIRO_EE_DISABLED_PARAM, Boolean.TRUE);
-        }
-        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_REDIRECT_DISABLED_PARAM))) {
-            sce.getServletContext().setAttribute(SHIRO_EE_REDIRECT_DISABLED_PARAM, Boolean.TRUE);
-        }
-        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(FORM_RESUBMIT_DISABLED_PARAM))) {
-            sce.getServletContext().setAttribute(FORM_RESUBMIT_DISABLED_PARAM, Boolean.TRUE);
-        }
+        copyBooleanInitParameter(sce.getServletContext(), SHIRO_EE_DISABLED_PARAM);
+        copyBooleanInitParameter(sce.getServletContext(), SHIRO_EE_REDIRECT_DISABLED_PARAM);
+        copyBooleanInitParameter(sce.getServletContext(), FORM_RESUBMIT_DISABLED_PARAM);
         String secureCookiesStr = sce.getServletContext().getInitParameter(FORM_RESUBMIT_SECURE_COOKIES);
         if (Optional.ofNullable(System.getProperty(FORM_RESUBMIT_SECURE_COOKIES)).map(Boolean::valueOf)
                         .or(() -> Optional.ofNullable(secureCookiesStr).map(Boolean::valueOf)).orElse(true)) {
@@ -96,12 +101,9 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
         } else {
             sce.getServletContext().setAttribute(FORM_RESUBMIT_SECURE_COOKIES, Boolean.FALSE);
         }
-        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_WEB_DISABLE_PRINCIPAL_PARAM))) {
-            sce.getServletContext().setAttribute(SHIRO_WEB_DISABLE_PRINCIPAL_PARAM, Boolean.TRUE);
-        }
-        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_DISABLE_CHAR_ENCODING_PARAM))) {
-            sce.getServletContext().setAttribute(SHIRO_EE_DISABLE_CHAR_ENCODING_PARAM, Boolean.TRUE);
-        }
+        copyBooleanInitParameter(sce.getServletContext(), FORM_RESUBMIT_AJAX_RENDER_ALL_DISABLED_PARAM);
+        copyBooleanInitParameter(sce.getServletContext(), SHIRO_WEB_DISABLE_PRINCIPAL_PARAM);
+        copyBooleanInitParameter(sce.getServletContext(), SHIRO_EE_DISABLE_CHAR_ENCODING_PARAM);
         if (sce.getServletContext().getInitParameter(SHIRO_EE_CHAR_ENCODING_PARAM) != null) {
             sce.getServletContext().setAttribute(SHIRO_EE_CHAR_ENCODING_PARAM,
                     Charset.forName(sce.getServletContext().getInitParameter(SHIRO_EE_CHAR_ENCODING_PARAM)));
@@ -114,6 +116,15 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
 
             modifySecureSessionConfiguration(sce);
             initEnvironment(sce.getServletContext());
+        }
+    }
+
+    /**
+     * Exposes an init parameter's {@code true} as an attribute, for the {@code is...()} methods above
+     */
+    private static void copyBooleanInitParameter(ServletContext ctx, String name) {
+        if (Boolean.parseBoolean(ctx.getInitParameter(name))) {
+            ctx.setAttribute(name, Boolean.TRUE);
         }
     }
 

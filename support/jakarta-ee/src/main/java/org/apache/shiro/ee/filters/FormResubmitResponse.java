@@ -37,8 +37,7 @@ import org.omnifaces.servlet.BufferedHttpServletResponse;
  * cannot disturb what the login request has already written, such as session cookies.
  */
 final class FormResubmitResponse extends BufferedHttpServletResponse {
-    private static final String SET_COOKIE = "Set-Cookie";
-    private final List<Deferred> deferred = new ArrayList<>();
+    private final List<Consumer<HttpServletResponse>> deferred = new ArrayList<>();
     private final @Delegate(types = Captured.class) HttpServletResponse recorder;
     private @Getter @Setter int status = SC_OK;
 
@@ -66,8 +65,6 @@ final class FormResubmitResponse extends BufferedHttpServletResponse {
         void setContentLengthLong(long len);
     }
 
-    private record Deferred(String header, Consumer<HttpServletResponse> operation) { }
-
     FormResubmitResponse(HttpServletResponse response) {
         super(new UncommittedResponse(response));
         recorder = (HttpServletResponse) Proxy.newProxyInstance(getClass().getClassLoader(),
@@ -79,15 +76,9 @@ final class FormResubmitResponse extends BufferedHttpServletResponse {
      * Status and body are left to the caller, which may translate them for the original client.
      *
      * @param target the browser response
-     * @param withCookies whether cookies (incl. Set-Cookie headers) are applied as well
      */
-    void applyTo(HttpServletResponse target, boolean withCookies) {
-        deferred.stream().filter(op -> withCookies || !SET_COOKIE.equalsIgnoreCase(op.header()))
-                .forEach(op -> op.operation().accept(target));
-    }
-
-    void removeHeader(String name) {
-        deferred.removeIf(op -> name.equalsIgnoreCase(op.header()));
+    void applyTo(HttpServletResponse target) {
+        deferred.forEach(op -> op.accept(target));
     }
 
     private Object defer(Object proxy, Method method, Object[] args) {
@@ -95,10 +86,9 @@ final class FormResubmitResponse extends BufferedHttpServletResponse {
             case "sendRedirect" -> redirect(args);
             case "sendError" -> setStatus((int) args[0]);
             case "setContentLength", "setContentLengthLong" -> { }
-            case "addCookie" -> deferred.add(new Deferred(SET_COOKIE, target -> invoke(method, target, args)));
             case "equals", "hashCode", "toString" ->
                     throw new IllegalStateException("Cannot compare FormResubmitResponse instances");
-            default -> deferred.add(new Deferred((String) args[0], target -> invoke(method, target, args)));
+            default -> deferred.add(target -> invoke(method, target, args));
         }
         return null;
     }
