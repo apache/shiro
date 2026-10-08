@@ -13,6 +13,8 @@
  */
 package org.apache.shiro.ee.filters;
 
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.LOCATION;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.SET_COOKIE;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
@@ -36,8 +38,6 @@ import org.omnifaces.servlet.BufferedHttpServletResponse;
  * cannot disturb what the login request has already written, such as session cookies.
  */
 final class FormResubmitResponse extends BufferedHttpServletResponse {
-    private static final String SET_COOKIE = "Set-Cookie";
-    private static final String LOCATION = "Location";
     private final List<Deferred> deferred = new ArrayList<>();
     private final @Delegate(types = Captured.class) HttpServletResponse recorder;
     private @Getter @Setter int status = SC_OK;
