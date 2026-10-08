@@ -303,9 +303,7 @@ public class FormResubmitSupport {
             String formData = getSavedFormDataFromKey(savedFormDataKey, cache::set);
             try {
                 if (formData != null) {
-                    Optional.ofNullable(resubmitSavedForm(formData, savedRequest, request, response,
-                                    request.getServletContext(), false, true))
-                            .ifPresent(path -> doFacesRedirect(request, response, path));
+                    resubmitSavedForm(formData, savedRequest, request, response, false, true);
                     doRedirectAtEnd = false;
                 } else {
                     deleteCookie(response, request.getServletContext(), SHIRO_FORM_DATA_KEY);
@@ -381,29 +379,39 @@ public class FormResubmitSupport {
     }
 
     /**
-     * Replays a saved form in-process, via a request dispatcher forward.
-     * Any replay fault is treated as optional and quietly falls back to a plain redirect.
-     *
-     * @return path to redirect to, or null if the response has been fully written
+     * Replays a saved form in-process, via a request dispatcher forward, and writes the outcome to the response.
+     * Any replay fault is treated as optional and quietly falls back to a plain redirect:
+     * to the saved request, or to the current view when the saved request is unusable.
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
-    static String resubmitSavedForm(@NonNull String savedFormData, @NonNull String rawSavedRequest,
+    static void resubmitSavedForm(@NonNull String savedFormData, @NonNull String rawSavedRequest,
             HttpServletRequest originalRequest, HttpServletResponse originalResponse,
-            ServletContext servletContext, boolean rememberedAjaxResubmit, boolean redirect) {
-        if (FormResubmitRequest.isResubmit(originalRequest)) {
-            log.debug("Recursive form resubmission, skipping replay");
-            return originalRequest.getContextPath();
-        }
+            boolean rememberedAjaxResubmit, boolean redirect) {
         String savedRequest = normalizeSavedRequest(rawSavedRequest, originalRequest);
         if (savedRequest == null) {
             log.debug("Form resubmit: rejecting saved request");
-            return originalRequest.getContextPath();
+            redirectToView(originalRequest, originalResponse);
+        } else if (!replaySavedForm(savedFormData, savedRequest, originalRequest, originalResponse,
+                rememberedAjaxResubmit, redirect)) {
+            doFacesRedirect(originalRequest, originalResponse, savedRequest);
+        }
+    }
+
+    /**
+     * @return whether the response has been fully written
+     */
+    private static boolean replaySavedForm(String savedFormData, String savedRequest,
+            HttpServletRequest originalRequest, HttpServletResponse originalResponse,
+            boolean rememberedAjaxResubmit, boolean redirect) {
+        if (FormResubmitRequest.isResubmit(originalRequest)) {
+            log.debug("Recursive form resubmission, skipping replay");
+            return false;
         }
         String dispatchPath = getDispatchPath(savedRequest, originalRequest);
         if (dispatchPath == null) {
             log.debug("Form resubmit: rejecting dispatch path for {}", savedRequest);
-            return originalRequest.getContextPath();
+            return false;
         }
+        var servletContext = originalRequest.getServletContext();
         // These must be written before the replayed response is committed by processResubmitResponse()
         deleteCookie(originalResponse, servletContext, SHIRO_FORM_DATA_KEY);
         Servlets.setNoCacheHeaders(originalRequest, originalResponse);
@@ -419,18 +427,18 @@ public class FormResubmitSupport {
             var result = Objects.requireNonNullElse(redirectResponse, response);
             if (isFailed(result.getStatus())) {
                 log.debug("Form resubmit to {} failed with status {}", dispatchPath, result.getStatus());
-                return savedRequest;
+                return false;
             }
             processResubmitResponse(response, redirectResponse, originalRequest, originalResponse, savedRequest,
                     formData.isPartialAjaxRequest, rememberedAjaxResubmit, redirect);
         } catch (ServletException | IOException | RuntimeException e) {
             log.warn("Unable to resubmit form to {}", dispatchPath, e);
-            return savedRequest;
+            return false;
         }
         if (hasFacesContext()) {
             Faces.responseComplete();
         }
-        return null;
+        return true;
     }
 
     /**

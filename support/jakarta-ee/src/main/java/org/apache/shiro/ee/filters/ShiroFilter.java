@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.Principal;
-import java.util.Optional;
 import java.util.regex.Pattern;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterChain;
@@ -40,7 +39,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
@@ -243,21 +241,12 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             String postData = getPostData(request);
             log.debug("Resubmitting Post Data: {}", postData);
             var httpRequest = WebUtils.toHttp(request);
-            boolean rememberedAjaxResubmit = Servlets.isFacesAjaxRequest(httpRequest);
-            Optional.ofNullable(resubmitSavedForm(postData,
-                    Servlets.getRequestURIWithQueryString(httpRequest),
-                    WebUtils.toHttp(request), WebUtils.toHttp(response),
-                    request.getServletContext(), rememberedAjaxResubmit, false))
-                    .ifPresent(url -> sendRedirect(response, url));
+            resubmitSavedForm(postData, Servlets.getRequestURIWithQueryString(httpRequest), httpRequest,
+                    WebUtils.toHttp(response), Servlets.isFacesAjaxRequest(httpRequest), false);
         } else {
             setCharacterEncodingIfNeeded(request);
             super.executeChain(request, response, origChain);
         }
-    }
-
-    @SneakyThrows(IOException.class)
-    private static void sendRedirect(ServletResponse response, String url) {
-        WebUtils.toHttp(response).sendRedirect(url);
     }
 
     @SuppressWarnings("LineLength")
