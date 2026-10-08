@@ -260,7 +260,8 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
      */
     private static void resubmitForm(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         String postData = getPostData(httpRequest);
-        log.debug("Resubmitting Post Data: {}", postData);
+        // never log the body itself: anonymous replays may carry credentials or other secrets
+        log.debug("Resubmitting POST to {} ({} bytes of form data)", httpRequest.getRequestURI(), postData.length());
         // the raw request URI need not be canonical, nor start with the context path
         String savedRequest = normalizeSavedRequest(Servlets.getRequestURIWithQueryString(httpRequest), httpRequest);
         if (savedRequest == null) {
