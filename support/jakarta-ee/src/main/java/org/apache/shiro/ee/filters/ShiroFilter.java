@@ -242,9 +242,10 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             setCharacterEncodingIfNeeded(request);
             request.removeAttribute(FORM_IS_RESUBMITTED);
             String postData = getPostData(request);
-            log.debug("Resubmitting Post Data: {}", postData);
             var httpRequest = WebUtils.toHttp(request);
             var httpResponse = WebUtils.toHttp(response);
+            // never log the body itself: replayed forms may carry credentials or other secrets
+            log.debug("Resubmitting POST to {} ({} bytes of form data)", httpRequest.getRequestURI(), postData.length());
             // the raw request URI need not be canonical, nor start with the context path
             String savedRequest = normalizeSavedRequest(Servlets.getRequestURIWithQueryString(httpRequest), httpRequest);
             if (savedRequest == null) {
