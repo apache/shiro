@@ -48,6 +48,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -61,6 +62,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class ShiroAuthFormsIT {
     static final String DEPLOYMENT_DEV_MODE = "DevMode";
     static final String DEPLOYMENT_PROD_MODE = "ProdMode";
+    private static final String NATIVE_SESSION_COOKIE_NAME = "native_session_cookie";
 
     @Drone
     private WebDriver webDriver;
@@ -188,7 +190,7 @@ public class ShiroAuthFormsIT {
         }
         login();
         webDriver.manage().deleteCookieNamed(isShiroNativeSessionsIntegrationTest()
-                ? "native_session_cookie" : DEFAULT_SESSION_ID_NAME);
+                ? NATIVE_SESSION_COOKIE_NAME : DEFAULT_SESSION_ID_NAME);
         webDriver.navigate().refresh();
         assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
         guardHttp(logout).click();
@@ -351,9 +353,7 @@ public class ShiroAuthFormsIT {
     void nonAjaxAnonymousResubmit() {
         webDriver.get(baseURL + "shiro/unprotected/form");
         assertThat(webDriver.getTitle()).isEqualTo("Anonymous Form Page");
-        invalidateSession.click();
-        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
-        webDriver.switchTo().alert().accept();
+        expireAnonymousSession();
         firstName.sendKeys("Jack");
         lastName.sendKeys("Frost");
         guardHttp(submitFirst).click();
@@ -367,9 +367,7 @@ public class ShiroAuthFormsIT {
         webDriver.get(baseURL + "shiro/unprotected/form");
         address.sendKeys("1 Houston Street");
         city.sendKeys("New York");
-        invalidateSession.click();
-        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
-        webDriver.switchTo().alert().accept();
+        expireAnonymousSession();
         if (isClientStateSavingIntegrationTest()) {
             guardAjax(submitSecond).click();
         } else {
@@ -401,6 +399,23 @@ public class ShiroAuthFormsIT {
         username.sendKeys("webuser");
         password.sendKeys("webpwd");
         guardHttp(login).click();
+    }
+
+    /**
+     * Simulates a timed-out anonymous session. Explicit invalidation of a native session also removes
+     * its cookie from the browser, unlike a timeout, after which the browser still sends the stale id,
+     * so the stale cookie is restored here.
+     */
+    private void expireAnonymousSession() {
+        var sessionCookie = webDriver.manage().getCookieNamed(NATIVE_SESSION_COOKIE_NAME);
+        invalidateSession.click();
+        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
+        webDriver.switchTo().alert().accept();
+        if (isShiroNativeSessionsIntegrationTest() && sessionCookie != null) {
+            // Firefox rejects re-adding the cookie with its original attributes (e.g. secure) over plain HTTP
+            webDriver.manage().addCookie(new Cookie(sessionCookie.getName(), sessionCookie.getValue(),
+                    sessionCookie.getPath()));
+        }
     }
 
     @Deployment(testable = false, name = DEPLOYMENT_DEV_MODE)
