@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.experimental.Delegate;
+import org.apache.shiro.web.util.WebUtils;
 import org.omnifaces.filter.MutableRequestFilter.MutableRequest;
 import org.omnifaces.util.Utils;
 
@@ -83,7 +84,7 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
     }
 
     private static HttpServletRequest unwrap(HttpServletRequest request) {
-        return request instanceof ServletRequestWrapper wrapper ? unwrap((HttpServletRequest) wrapper.getRequest()) : request;
+        return request instanceof ServletRequestWrapper wrapper ? unwrap(WebUtils.toHttp(wrapper.getRequest())) : request;
     }
 
     @Override

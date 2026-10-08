@@ -55,12 +55,9 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.lang.codec.Base64;
@@ -120,14 +117,8 @@ public class FormResubmitSupport {
         static final int FOUND = 302;
     }
 
-    @RequiredArgsConstructor
-    @EqualsAndHashCode @ToString
     @SuppressWarnings("VisibilityModifier")
-    static class PartialAjaxResult {
-        public final String result;
-        public final boolean isPartialAjaxRequest;
-        public final boolean isStatelessRequest;
-    }
+    record PartialAjaxResult(String result, boolean isPartialAjaxRequest, boolean isStatelessRequest) { }
 
     static void savePostDataForResubmit(HttpServletRequest request, HttpServletResponse response, @NonNull String loginUrl) {
         if (isPostRequest(request) && isSecurityManagerTypeOf(getSecurityManager(),
@@ -272,10 +263,10 @@ public class FormResubmitSupport {
     /**
      * Redirects the user to saved request after login, if available
      * Resubmits the form that caused the logout upon successful login.Form resubmission supports JSF and Ajax forms
-     * @param request
-     * @param response
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
      * @param useFallbackPath predicate whether to use fall back path
-     * @param fallbackPath
+     * @param fallbackPath the fallback path to use if no saved request is found
      * @param resubmit if true, attempt to resubmit the form that was unsubmitted prior to logout
      */
     @SneakyThrows({IOException.class, ServletException.class})
@@ -294,10 +285,10 @@ public class FormResubmitSupport {
      * redirect to saved request, possibly resubmitting an existing form
      * the saved request is via a cookie
      *
-     * @param request
-     * @param response
-     * @param useFallbackPath
-     * @param fallbackPath
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @param useFallbackPath predicate whether to use fall back path
+     * @param fallbackPath the fallback path to use if no saved request is found
      */
     static void redirectToSaved(HttpServletRequest request, HttpServletResponse response,
             FallbackPredicate useFallbackPath, String fallbackPath) {
@@ -336,8 +327,8 @@ public class FormResubmitSupport {
     }
 
     /**
-     * @param request
-     * @param response
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
      */
     static void redirectToView(HttpServletRequest request, HttpServletResponse response) {
         redirectToView(request, response, (path, req) -> false, null);
@@ -347,10 +338,10 @@ public class FormResubmitSupport {
      * redirects to current view after a form submit,
      * or the fallback path if predicate succeeds
      *
-     * @param request
-     * @param response
-     * @param useFallbackPath
-     * @param fallbackPath
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @param useFallbackPath predicate whether to use fall back path
+     * @param fallbackPath the fallback path to use if no saved request is found
      */
     @SneakyThrows
     static void redirectToView(HttpServletRequest request, HttpServletResponse response,
@@ -375,10 +366,10 @@ public class FormResubmitSupport {
     /**
      * flash cookie is preserved here
      *
-     * @param request
-     * @param response
-     * @param path
-     * @param paramValues
+     * @param request the HTTP servlet request
+     * @param response the HTTP servlet response
+     * @param path the path to redirect to
+     * @param paramValues the parameters to include in the redirect
      */
     private static void doFacesRedirect(HttpServletRequest request, HttpServletResponse response,
             String path, Object... paramValues) {
@@ -399,7 +390,8 @@ public class FormResubmitSupport {
             ServletContext servletContext, boolean rememberedAjaxResubmit, boolean redirect)
             throws ServletException, IOException {
         if (FormResubmitRequest.isResubmit(originalRequest)) {
-            throw new ServletException("Recursive form resubmission");
+            log.debug("Recursive form resubmission, skipping replay");
+            return originalRequest.getContextPath();
         }
         String savedRequest = normalizeSavedRequest(rawSavedRequest, originalRequest);
         if (savedRequest == null) {
@@ -455,7 +447,7 @@ public class FormResubmitSupport {
             throw new ServletException("No request dispatcher for saved form path: " + path);
         }
         var request = new FormResubmitRequest(originalRequest, method, body);
-        // FacesServlet creates/releases its own context. Restore a calling JSF login action afterwards.
+        // FacesServlet creates/releases its own context. Restore a calling JSF login action afterward.
         FacesContext context = hasFacesContext() ? Faces.getContext() : null;
         try {
             if (context != null) {
@@ -557,7 +549,7 @@ public class FormResubmitSupport {
     static String extractJSFNewViewState(@NonNull String responseBody, @NonNull String savedFormData) {
         Elements elts = Jsoup.parse(responseBody).select("input[name=%s]".formatted(FACES_VIEW_STATE));
         if (!elts.isEmpty()) {
-            String viewState = elts.first().attr("value");
+            String viewState = Objects.requireNonNull(elts.first()).attr("value");
 
             var matcher = VIEW_STATE_PATTERN.matcher(savedFormData);
             if (matcher.matches()) {

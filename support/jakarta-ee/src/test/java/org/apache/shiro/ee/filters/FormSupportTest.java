@@ -289,7 +289,7 @@ class FormSupportTest {
                 &jakarta.faces.partial.execute=secondForm:submitSecond secondForm
                 &jakarta.faces.partial.render=secondForm&jakarta.faces.behavior.event=action
                 &jakarta.faces.partial.ajax=true""".replace("\n", "");
-        assertThat(noJSFAjaxRequests(savedRequest, true).result).isEqualTo("""
+        assertThat(noJSFAjaxRequests(savedRequest, true).result()).isEqualTo("""
                 secondForm=secondForm&secondForm:address=asfd&secondForm:city=asdf
                 &jakarta.faces.ViewState=5BDAqkysYaMvzcnTG3bVSXRoK43OvdMyb8w6RicBatqzOdHBwl/cFvOXYfYCwvJoBU6/qv
                 735kadAP67luQ/wMqF4jAQyBKDdxy5F4CxNz4FhAYC2iCd613QnwLWP8BX3so7BylQxIN2Y64n6LUogwkgZLEAHgTBDQGwG
