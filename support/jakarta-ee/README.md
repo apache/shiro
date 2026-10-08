@@ -32,6 +32,22 @@ GETs and failed attempts leave the login request's response, such as its
 session cookies, untouched. Saved form data is decoded with the request's
 character encoding, falling back to the servlet context's and then UTF-8.
 
+## Replay without a login flow
+
+When a POST arrives with a session id that no longer resolves to a session,
+and the subject is either remembered or anonymous, the form is replayed in
+place as soon as Shiro's security chain permits the request, with no
+"session expired" login page in between. For a page that requires login,
+the authentication filter still runs first and saves the form for replay
+after login instead. Only same-origin, `application/x-www-form-urlencoded`
+submissions are replayed, and never with client-side Faces state saving,
+where no view state is lost with the session.
+
+Set the `org.apache.shiro.form-resubmit.anonymous.disabled` context parameter
+to `true` to limit this to remembered subjects, or
+`org.apache.shiro.form-resubmit.disabled` to turn off form resubmission
+entirely.
+
 ## Application filter configuration
 
 Shiro's Jakarta EE filter is mapped to `DispatcherType.FORWARD`, so the forwarded

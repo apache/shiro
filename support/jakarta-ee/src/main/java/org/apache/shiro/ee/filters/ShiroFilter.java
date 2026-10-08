@@ -16,7 +16,8 @@ package org.apache.shiro.ee.filters;
 import static org.apache.shiro.ee.cdi.ShiroScopeContext.addScopeSessionListeners;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.FORM_IS_RESUBMITTED;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getPostData;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFClientStateSavingMethod;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.isDirectResubmitCandidate;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.isLoginUrl;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isPostRequest;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.normalizeSavedRequest;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.redirectToView;
@@ -167,9 +168,8 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
                     log.debug("Create Session Failed", e);
                 }
                 var newSubject = wrapped.createSubject(context);
-                if (newSubject.isRemembered() && session == null
-                        && !isJSFClientStateSavingMethod(webContext.getServletRequest().getServletContext())) {
-                    log.debug("Remembered Subject with new session {}", newSubject.getPrincipal());
+                if (session == null && isDirectResubmitCandidate(newSubject, webContext.getServletRequest())) {
+                    log.debug("Subject {} without a session, form will be replayed", newSubject.getPrincipal());
                     webContext.getServletRequest().setAttribute(FORM_IS_RESUBMITTED, Boolean.TRUE);
                 }
                 return newSubject;
@@ -237,24 +237,36 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             FilterChain origChain) throws IOException, ServletException {
         if (isShiroEEDisabled(getServletContext())) {
             origChain.doFilter(request, response);
-        } else if (Boolean.TRUE.equals(request.getAttribute(FORM_IS_RESUBMITTED)) && isPostRequest(request)) {
-            setCharacterEncodingIfNeeded(request);
-            request.removeAttribute(FORM_IS_RESUBMITTED);
-            String postData = getPostData(request);
-            log.debug("Resubmitting Post Data: {}", postData);
-            var httpRequest = WebUtils.toHttp(request);
-            var httpResponse = WebUtils.toHttp(response);
-            // the raw request URI need not be canonical, nor start with the context path
-            String savedRequest = normalizeSavedRequest(Servlets.getRequestURIWithQueryString(httpRequest), httpRequest);
-            if (savedRequest == null) {
-                redirectToView(httpRequest, httpResponse);
-            } else {
-                resubmitSavedForm(postData, savedRequest, httpRequest, httpResponse,
-                        Servlets.isFacesAjaxRequest(httpRequest), false);
-            }
         } else {
             setCharacterEncodingIfNeeded(request);
-            super.executeChain(request, response, origChain);
+            // Replay only once the security chain has permitted the request, so that a denied request
+            // still saves its form for the login flow, with its body intact
+            super.executeChain(request, response, (chainRequest, chainResponse) -> {
+                if (Boolean.TRUE.equals(chainRequest.getAttribute(FORM_IS_RESUBMITTED))) {
+                    chainRequest.removeAttribute(FORM_IS_RESUBMITTED);
+                    if (isPostRequest(chainRequest) && !isLoginUrl(WebUtils.toHttp(chainRequest))) {
+                        resubmitForm(WebUtils.toHttp(chainRequest), WebUtils.toHttp(chainResponse));
+                        return;
+                    }
+                }
+                origChain.doFilter(chainRequest, chainResponse);
+            });
+        }
+    }
+
+    /**
+     * Replays the current POST, whose session has been lost, in place of the request's own processing
+     */
+    private static void resubmitForm(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+        String postData = getPostData(httpRequest);
+        log.debug("Resubmitting Post Data: {}", postData);
+        // the raw request URI need not be canonical, nor start with the context path
+        String savedRequest = normalizeSavedRequest(Servlets.getRequestURIWithQueryString(httpRequest), httpRequest);
+        if (savedRequest == null) {
+            redirectToView(httpRequest, httpResponse);
+        } else {
+            resubmitSavedForm(postData, savedRequest, httpRequest, httpResponse,
+                    Servlets.isFacesAjaxRequest(httpRequest), false);
         }
     }
 

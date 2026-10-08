@@ -45,6 +45,7 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
     private static final String SHIRO_EE_DISABLE_CHAR_ENCODING_PARAM = "org.apache.shiro.ee.disable-character-encoding";
     private static final String SHIRO_EE_CHAR_ENCODING_PARAM = "org.apache.shiro.ee.character-encoding";
     private static final String FORM_RESUBMIT_DISABLED_PARAM = "org.apache.shiro.form-resubmit.disabled";
+    private static final String FORM_RESUBMIT_ANONYMOUS_DISABLED_PARAM = "org.apache.shiro.form-resubmit.anonymous.disabled";
     private static final String FORM_RESUBMIT_SECURE_COOKIES = "org.apache.shiro.form-resubmit.secure-cookies";
     private static final String SHIRO_WEB_DISABLE_PRINCIPAL_PARAM = "org.apache.shiro.web.disable-principal";
 
@@ -58,6 +59,15 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
 
     public static boolean isFormResubmitDisabled(ServletContext ctx) {
         return Boolean.TRUE.equals(ctx.getAttribute(FORM_RESUBMIT_DISABLED_PARAM));
+    }
+
+    /**
+     * @param ctx servlet context
+     * @return whether replaying an expired-session form for a subject that is neither authenticated
+     * nor remembered, i.e. without a login flow, is disabled
+     */
+    public static boolean isAnonymousFormResubmitDisabled(ServletContext ctx) {
+        return Boolean.TRUE.equals(ctx.getAttribute(FORM_RESUBMIT_ANONYMOUS_DISABLED_PARAM));
     }
 
     public static boolean isFormResubmitSecureCookies(ServletContext ctx) {
@@ -88,6 +98,9 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
         }
         if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(FORM_RESUBMIT_DISABLED_PARAM))) {
             sce.getServletContext().setAttribute(FORM_RESUBMIT_DISABLED_PARAM, Boolean.TRUE);
+        }
+        if (Boolean.parseBoolean(sce.getServletContext().getInitParameter(FORM_RESUBMIT_ANONYMOUS_DISABLED_PARAM))) {
+            sce.getServletContext().setAttribute(FORM_RESUBMIT_ANONYMOUS_DISABLED_PARAM, Boolean.TRUE);
         }
         String secureCookiesStr = sce.getServletContext().getInitParameter(FORM_RESUBMIT_SECURE_COOKIES);
         if (Optional.ofNullable(System.getProperty(FORM_RESUBMIT_SECURE_COOKIES)).map(Boolean::valueOf)
