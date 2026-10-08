@@ -19,12 +19,10 @@ import static org.apache.shiro.SecurityUtils.getSecurityManager;
 import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
 import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.CONTENT_TYPE;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.LOCATION;
 import static jakarta.servlet.http.HttpServletResponse.SC_FOUND;
 import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.MediaType.TEXT_XML;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.addCookie;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.deleteCookie;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getCookieAge;
@@ -78,7 +76,6 @@ import org.omnifaces.util.Faces;
 import org.omnifaces.util.ResourcePaths;
 import org.omnifaces.util.Servlets;
 import org.omnifaces.util.Utils;
-import org.owasp.encoder.Encode;
 
 /**
  * supporting methods for {@link Forms}
@@ -99,11 +96,6 @@ public class FormResubmitSupport {
     private static final String FACES_BEHAVIOR_PREFIX = "jakarta.faces.behavior.";
     private static final String SEC_FETCH_SITE = "Sec-Fetch-Site";
     private static final String ORIGIN = "Origin";
-    private static final String CACHE_CONTROL = "Cache-Control";
-    private static final String NO_STORE = "no-store";
-    private static final String PRAGMA = "Pragma";
-    private static final String EXPIRES = "Expires";
-    private static final String NO_CACHE = "no-cache";
 
     static class HttpMethod {
         static final String GET = "GET";
@@ -111,12 +103,7 @@ public class FormResubmitSupport {
     }
 
     static class HttpHeaderConstants {
-        static final String CONTENT_TYPE = "Content-Type";
         static final String LOCATION = "Location";
-    }
-
-    static class MediaType {
-        static final String TEXT_XML = "text/xml";
     }
 
     /**
@@ -419,7 +406,7 @@ public class FormResubmitSupport {
         }
         // These must be written before the replayed response is committed by processResubmitResponse()
         deleteCookie(originalResponse, servletContext, SHIRO_FORM_DATA_KEY);
-        setNoStoreHeaders(originalResponse);
+        Servlets.setNoCacheHeaders(originalRequest, originalResponse);
         try {
             var savedFormFields = parseFormData(savedFormData, getFormCharset(originalRequest, servletContext));
             PartialAjaxResult formData = prepareFormData(savedFormFields, dispatchPath, originalRequest,
@@ -434,7 +421,7 @@ public class FormResubmitSupport {
                 log.debug("Form resubmit to {} failed with status {}", dispatchPath, result.getStatus());
                 return savedRequest;
             }
-            processResubmitResponse(response, redirectResponse, originalResponse, savedRequest,
+            processResubmitResponse(response, redirectResponse, originalRequest, originalResponse, savedRequest,
                     formData.isPartialAjaxRequest, rememberedAjaxResubmit, redirect);
         } catch (ServletException | IOException | RuntimeException e) {
             log.warn("Unable to resubmit form to {}", dispatchPath, e);
@@ -573,8 +560,8 @@ public class FormResubmitSupport {
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     private static void processResubmitResponse(FormResubmitResponse response, FormResubmitResponse redirectResponse,
-            HttpServletResponse originalResponse, String savedRequest, boolean isPartialAjaxRequest,
-            boolean rememberedAjaxResubmit, boolean redirect) throws IOException {
+            HttpServletRequest originalRequest, HttpServletResponse originalResponse, String savedRequest,
+            boolean isPartialAjaxRequest, boolean rememberedAjaxResubmit, boolean redirect) throws IOException {
         var result = Objects.requireNonNullElse(redirectResponse, response);
         int status = result.getStatus();
         boolean redirectAsOk = rememberedAjaxResubmit && status == SC_FOUND;
@@ -589,20 +576,10 @@ public class FormResubmitSupport {
         }
         originalResponse.setStatus(redirectAsOk ? SC_OK : status);
         if (isPartialAjaxRequest && (status == SC_FOUND || redirect)) {
-            originalResponse.setHeader(CONTENT_TYPE, TEXT_XML);
-            originalResponse.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            originalResponse.getWriter().append(String.format(
-                    "<partial-response><redirect url=\"%s\"></redirect></partial-response>",
-                    Encode.forXmlAttribute(savedRequest)));
+            doFacesRedirect(originalRequest, originalResponse, savedRequest);
         } else {
             originalResponse.getOutputStream().write(result.getBuffer());
         }
-    }
-
-    private static void setNoStoreHeaders(HttpServletResponse response) {
-        response.setHeader(CACHE_CONTROL, NO_STORE);
-        response.setHeader(PRAGMA, NO_CACHE);
-        response.setDateHeader(EXPIRES, 0);
     }
 
     public static DefaultWebSessionManager getNativeSessionManager(SecurityManager securityManager) {
