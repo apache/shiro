@@ -18,6 +18,8 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.FORM_IS_RESUBMITTE
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getPostData;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFClientStateSavingMethod;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isPostRequest;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.normalizeSavedRequest;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.redirectToView;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.resubmitSavedForm;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.getCharacterEncoding;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isCharEncodingEnabled;
@@ -241,8 +243,15 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             String postData = getPostData(request);
             log.debug("Resubmitting Post Data: {}", postData);
             var httpRequest = WebUtils.toHttp(request);
-            resubmitSavedForm(postData, Servlets.getRequestURIWithQueryString(httpRequest), httpRequest,
-                    WebUtils.toHttp(response), Servlets.isFacesAjaxRequest(httpRequest), false);
+            var httpResponse = WebUtils.toHttp(response);
+            // the raw request URI need not be canonical, nor start with the context path
+            String savedRequest = normalizeSavedRequest(Servlets.getRequestURIWithQueryString(httpRequest), httpRequest);
+            if (savedRequest == null) {
+                redirectToView(httpRequest, httpResponse);
+            } else {
+                resubmitSavedForm(postData, savedRequest, httpRequest, httpResponse,
+                        Servlets.isFacesAjaxRequest(httpRequest), false);
+            }
         } else {
             setCharacterEncodingIfNeeded(request);
             super.executeChain(request, response, origChain);

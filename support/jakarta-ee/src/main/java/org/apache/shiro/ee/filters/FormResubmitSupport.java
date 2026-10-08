@@ -380,17 +380,14 @@ public class FormResubmitSupport {
 
     /**
      * Replays a saved form in-process, via a request dispatcher forward, and writes the outcome to the response.
-     * Any replay fault is treated as optional and quietly falls back to a plain redirect:
-     * to the saved request, or to the current view when the saved request is unusable.
+     * Any replay fault is treated as optional and quietly falls back to a plain redirect to the saved request.
+     *
+     * @param savedRequest already validated by {@link #normalizeSavedRequest}
      */
-    static void resubmitSavedForm(@NonNull String savedFormData, @NonNull String rawSavedRequest,
+    static void resubmitSavedForm(@NonNull String savedFormData, @NonNull String savedRequest,
             HttpServletRequest originalRequest, HttpServletResponse originalResponse,
             boolean rememberedAjaxResubmit, boolean redirect) {
-        String savedRequest = normalizeSavedRequest(rawSavedRequest, originalRequest);
-        if (savedRequest == null) {
-            log.debug("Form resubmit: rejecting saved request");
-            redirectToView(originalRequest, originalResponse);
-        } else if (!replaySavedForm(savedFormData, savedRequest, originalRequest, originalResponse,
+        if (!replaySavedForm(savedFormData, savedRequest, originalRequest, originalResponse,
                 rememberedAjaxResubmit, redirect)) {
             doFacesRedirect(originalRequest, originalResponse, savedRequest);
         }
