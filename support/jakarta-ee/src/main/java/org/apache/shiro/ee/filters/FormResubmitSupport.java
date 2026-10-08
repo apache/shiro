@@ -249,8 +249,7 @@ public class FormResubmitSupport {
                     && !path.startsWith(contextPath + "/")) {
                 return null;
             }
-            String query = uri.getRawQuery();
-            return query == null ? rawPath : rawPath + "?" + query;
+            return Utils.formatURLWithQueryString(rawPath, uri.getRawQuery());
         } catch (IllegalArgumentException e) {
             return null;
         }
@@ -478,11 +477,9 @@ public class FormResubmitSupport {
      * @return path and query to dispatch to, or null if rejected
      */
     static String getDispatchPath(@NonNull String savedRequest, HttpServletRequest request) {
-        String pathAndQuery = savedRequest.substring(request.getContextPath().length());
-        int queryIndex = pathAndQuery.indexOf('?');
-        String query = queryIndex < 0 ? "" : pathAndQuery.substring(queryIndex);
+        URI uri = URI.create(savedRequest);
         String path = ResourcePaths.addLeadingSlashIfNecessary(
-                (queryIndex < 0 ? pathAndQuery : pathAndQuery.substring(0, queryIndex)).replaceAll(";[^/]*", ""));
+                uri.getRawPath().substring(request.getContextPath().length()).replaceAll(";[^/]*", ""));
         // trailing slash makes a trailing "." or ".." segment resolvable, and matches directories exactly
         String resolvedPath = WebUtils.normalize(ResourcePaths.addTrailingSlashIfNecessary(
                 Utils.decodeURL(path).replace('\\', '/')));
@@ -490,7 +487,7 @@ public class FormResubmitSupport {
                 || Utils.startsWithOneOf(resolvedPath.toUpperCase(Locale.ROOT), "/WEB-INF/", "/META-INF/")) {
             return null;
         }
-        return path + query;
+        return Utils.formatURLWithQueryString(path, uri.getRawQuery());
     }
 
     private static void forward(String path, HttpServletRequest originalRequest, HttpServletResponse response,

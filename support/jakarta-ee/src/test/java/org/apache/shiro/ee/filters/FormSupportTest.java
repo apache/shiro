@@ -216,6 +216,7 @@ class FormSupportTest {
         assertThat(getDispatchPath("/myapp/web-inf/web.xml", request)).isNull();
         assertThat(getDispatchPath("/myapp/META-INF/x", request)).isNull();
         assertThat(getDispatchPath("/myapp/WEB-INF;x/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/;x/WEB-INF/web.xml", request)).isNull();
         assertThat(getDispatchPath("/myapp/%57EB-INF/web.xml", request)).isNull();
         assertThat(getDispatchPath("/myapp/WEB-INF%2Fweb.xml", request)).isNull();
     }
@@ -232,7 +233,7 @@ class FormSupportTest {
         assertThat(getDispatchPath("/myapp/a/%2e%2e%2fWEB-INF/web.xml", request)).isNull();
         assertThat(getDispatchPath("/myapp//WEB-INF/web.xml", request)).isNull();
         assertThat(getDispatchPath("/myapp/./WEB-INF/web.xml", request)).isNull();
-        assertThat(getDispatchPath("/myapp/a\\..\\WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/a%5C..%5CWEB-INF/web.xml", request)).isNull();
         assertThat(getDispatchPath("/myapp/../../etc/passwd", request)).isNull();
     }
 
