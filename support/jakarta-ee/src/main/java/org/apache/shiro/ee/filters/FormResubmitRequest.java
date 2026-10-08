@@ -17,8 +17,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletRequestWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -29,6 +27,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.experimental.Delegate;
 import org.omnifaces.filter.MutableRequestFilter.MutableRequest;
+import org.omnifaces.util.Utils;
 
 /**
  * Replays saved form data in place of the login request's parameters, with a private request scope
@@ -44,6 +43,7 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
     private final @Delegate(types = Parameters.class) MutableRequest parameters;
     private final Map<String, Object> attributes = new HashMap<>();
 
+    @SuppressWarnings("unused")
     private interface Parameters {
         String getParameter(String name);
         String[] getParameterValues(String name);
@@ -52,20 +52,13 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
     }
 
     FormResubmitRequest(HttpServletRequest request, String method, String formData) {
-        super((HttpServletRequest) unwrap(request));
+        super(unwrap(request));
         this.method = method;
-        Map<String, List<String>> parsed = new LinkedHashMap<>();
-        for (String field : formData.split("&")) {
-            if (!field.isEmpty()) {
-                String[] pair = field.split("=", 2);
-                parsed.computeIfAbsent(decode(pair[0]), name -> new ArrayList<>())
-                        .add(pair.length == 2 ? decode(pair[1]) : "");
-            }
-        }
+        var formFields = toFormFields(formData);
         parameters = new MutableRequest(request) {
             @Override
             public Map<String, List<String>> getMutableParameterMap() {
-                return parsed;
+                return formFields;
             }
         };
         Collections.list(request.getAttributeNames()).stream()
@@ -77,12 +70,20 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
         return request instanceof ServletRequestWrapper wrapper && wrapper.isWrapperFor(FormResubmitRequest.class);
     }
 
-    private static ServletRequest unwrap(ServletRequest request) {
-        return request instanceof ServletRequestWrapper wrapper ? unwrap(wrapper.getRequest()) : request;
+    private static Map<String, List<String>> toFormFields(String formData) {
+        var parsed = new LinkedHashMap<String, List<String>>();
+        for (String field : formData.split("&")) {
+            if (!field.isEmpty()) {
+                String[] pair = field.split("=", 2);
+                parsed.computeIfAbsent(Utils.decodeURL(pair[0]), name -> new ArrayList<>())
+                        .add(pair.length == 2 ? Utils.decodeURL(pair[1]) : "");
+            }
+        }
+        return parsed;
     }
 
-    private static String decode(String value) {
-        return URLDecoder.decode(value, StandardCharsets.UTF_8);
+    private static HttpServletRequest unwrap(HttpServletRequest request) {
+        return request instanceof ServletRequestWrapper wrapper ? unwrap((HttpServletRequest) wrapper.getRequest()) : request;
     }
 
     @Override
