@@ -20,17 +20,29 @@ uses the current Shiro subject, session, and browser response. Its request body
 and form parameters replace those of the login request.
 
 For server-side Faces state saving, a buffered GET obtains a new view state
-before the POST. Remembered Ajax submissions retain the two-POST flow, buffering
-intermediate responses. A calling Faces context is restored after each dispatch.
+before the POST. A calling Faces context is restored after each dispatch.
 
 Each replay's status, headers, cookies and body are captured rather than written
 to the browser response, which is also shielded from `reset()`, `resetBuffer()`
-and `flushBuffer()`. Only a successful replay is applied: the successful POST's
-headers and cookies, then the Ajax redirect replay's headers without its cookies,
-so that its flash cookie can't replace the submitted-form messages. View-state
-GETs and failed attempts leave the login request's response, such as its
-session cookies, untouched. Saved form data is decoded with the request's
-character encoding, falling back to the servlet context's and then UTF-8.
+and `flushBuffer()`. Only a successful replay is applied, with its headers and
+cookies. View-state GETs and failed attempts leave the login request's response,
+such as its session cookies, untouched. Saved form data is decoded with the
+request's character encoding, falling back to the servlet context's and then UTF-8.
+
+A Faces Ajax submission replayed in place (see below) stays an Ajax request:
+the saved partial request is replayed with the refreshed view state, and its
+partial response is passed through to the waiting Ajax client, without a full
+page refresh. Since the server-side view is rebuilt from scratch, the replay
+renders the whole view (`@all`) by default, which resynchronizes the page and
+the view state of all its forms with the server. Set the
+`org.apache.shiro.form-resubmit.ajax-render-all.disabled` context parameter to
+`true` to keep the form's own render targets instead; components outside them
+then keep their pre-expiry client state, and with Mojarra, other forms on the
+page keep their expired view state. A partial response that reports an
+unhandled Faces error is treated as a failed replay and falls back to a redirect
+to the saved request, as a failed full-page replay does. After a login flow, the browser is on the
+login page instead, so the submission is replayed as a full-page action and the
+browser is redirected to the saved request.
 
 ## Replay without a login flow
 

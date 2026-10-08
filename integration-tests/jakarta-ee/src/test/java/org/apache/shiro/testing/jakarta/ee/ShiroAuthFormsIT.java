@@ -18,7 +18,6 @@ import com.flowlogix.util.ShrinkWrapManipulator.Action;
 
 import static com.flowlogix.util.ShrinkWrapManipulator.getContextParamValue;
 import static org.apache.shiro.testing.jakarta.ee.Deployments.standardActions;
-import static org.apache.shiro.testing.jakarta.ee.Deployments.isClientStateSavingIntegrationTest;
 import static org.apache.shiro.testing.jakarta.ee.Deployments.isShiroNativeSessionsIntegrationTest;
 
 import java.net.URL;
@@ -321,26 +320,18 @@ public class ShiroAuthFormsIT {
         invalidateSession.click();
         waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
         webDriver.switchTo().alert().accept();
-        if (isClientStateSavingIntegrationTest()) {
-            guardAjax(submitSecond).click();
-            address.clear();
-            city.clear();
-        } else {
-            waitForHttp(submitSecond).click();
-        }
+        guardAjax(submitSecond).click();
+        address.clear();
+        city.clear();
         assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: 1 Houston Street, City: New York");
         address.sendKeys("Workshop");
         city.sendKeys("North Pole");
         invalidateSession.click();
         waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
         webDriver.switchTo().alert().accept();
-        if (isClientStateSavingIntegrationTest()) {
-            guardAjax(submitSecond).click();
-            address.clear();
-            city.clear();
-        } else {
-            waitForHttp(submitSecond).click();
-        }
+        guardAjax(submitSecond).click();
+        address.clear();
+        city.clear();
         assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: Workshop, City: North Pole");
         address.sendKeys("LAX Airport");
         city.sendKeys("Los Angeles");
@@ -368,11 +359,7 @@ public class ShiroAuthFormsIT {
         address.sendKeys("1 Houston Street");
         city.sendKeys("New York");
         expireAnonymousSession();
-        if (isClientStateSavingIntegrationTest()) {
-            guardAjax(submitSecond).click();
-        } else {
-            waitForHttp(submitSecond).click();
-        }
+        guardAjax(submitSecond).click();
         assertThat(webDriver.getTitle()).as("no login page").isEqualTo("Anonymous Form Page");
         assertThat(secondFormMessages.getText())
                 .isEqualTo("2nd Anonymous Form Submitted - Address: 1 Houston Street, City: New York");

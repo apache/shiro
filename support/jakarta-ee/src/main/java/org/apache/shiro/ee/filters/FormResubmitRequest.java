@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.experimental.Delegate;
+import org.apache.shiro.ee.filters.FormResubmitSupport.AjaxReplay;
 import org.apache.shiro.web.util.WebUtils;
 import org.omnifaces.filter.MutableRequestFilter.MutableRequest;
 
@@ -37,7 +38,9 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
     private static final List<String> DISPATCH_SCOPED_PREFIXES = List.of("jakarta.faces.", "com.sun.faces.",
             "org.apache.myfaces.", "org.omnifaces.", "jakarta.servlet.forward.", "jakarta.servlet.include.",
             FormResubmitSupport.FORM_IS_RESUBMITTED);
+    private static final String FACES_REQUEST_HEADER = "Faces-Request";
     private final @Getter String method;
+    private final AjaxReplay ajaxReplay;
     private final @Delegate(types = Parameters.class) MutableRequest parameters;
     private final Map<String, Object> attributes = new HashMap<>();
 
@@ -49,9 +52,11 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
         Map<String, String[]> getParameterMap();
     }
 
-    FormResubmitRequest(HttpServletRequest request, String method, Map<String, List<String>> formFields) {
+    FormResubmitRequest(HttpServletRequest request, String method, Map<String, List<String>> formFields,
+            AjaxReplay ajaxReplay) {
         super(unwrap(request));
         this.method = method;
+        this.ajaxReplay = ajaxReplay;
         parameters = new MutableRequest(request) {
             @Override
             public Map<String, List<String>> getMutableParameterMap() {
@@ -75,8 +80,9 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
 
     @Override
     public String getHeader(String name) {
-        // Replays execute full-page actions. The caller translates their response for the original Ajax client.
-        return "Faces-Request".equalsIgnoreCase(name) ? null : super.getHeader(name);
+        // A full-page replay's response is translated for the original Ajax client by the caller
+        return !ajaxReplay.isPassThrough() && FACES_REQUEST_HEADER.equalsIgnoreCase(name)
+                ? null : super.getHeader(name);
     }
 
     @Override

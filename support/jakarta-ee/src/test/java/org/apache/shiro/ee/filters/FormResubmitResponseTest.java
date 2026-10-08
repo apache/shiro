@@ -27,7 +27,6 @@ import org.mockito.Mock;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
@@ -78,7 +77,7 @@ class FormResubmitResponseTest {
         response.setIntHeader("N", 3);
         response.setDateHeader("D", 4L);
         response.addCookie(cookie);
-        response.applyTo(browser, true);
+        response.applyTo(browser);
         var order = inOrder(browser);
         order.verify(browser).setHeader("X", "1");
         order.verify(browser).addHeader("X", "2");
@@ -88,31 +87,17 @@ class FormResubmitResponseTest {
     }
 
     @Test
-    void appliesWithoutCookiesOnDemand() {
-        response.addCookie(new Cookie("c", "d"));
-        response.addHeader("Set-Cookie", "a=b");
-        response.setHeader("set-cookie", "e=f");
-        response.setHeader("Cache-Control", "no-store");
-        response.applyTo(browser, false);
-        verify(browser).setHeader("Cache-Control", "no-store");
-        verify(browser, never()).addCookie(any());
-        verify(browser, never()).addHeader(anyString(), anyString());
-        verify(browser, never()).setHeader(eq("set-cookie"), anyString());
-    }
-
-    @Test
     void redirectOverloadsAreCaptured() throws IOException {
         response.sendRedirect("/a");
         assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_FOUND);
-        response.removeHeader("location");
         response.sendRedirect("/b", HttpServletResponse.SC_SEE_OTHER);
         assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_SEE_OTHER);
         response.sendRedirect("/c", false);
         assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_FOUND);
         response.sendRedirect("/d", HttpServletResponse.SC_MOVED_PERMANENTLY, false);
         assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_MOVED_PERMANENTLY);
-        response.applyTo(browser, true);
-        verify(browser, never()).setHeader("Location", "/a");
+        response.applyTo(browser);
+        verify(browser).setHeader("Location", "/a");
         verify(browser).setHeader("Location", "/b");
         verify(browser).setHeader("Location", "/c");
         verify(browser).setHeader("Location", "/d");
@@ -141,7 +126,7 @@ class FormResubmitResponseTest {
         response.reset();
         assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_OK);
         assertThat(response.getBufferAsString()).isEmpty();
-        response.applyTo(browser, true);
+        response.applyTo(browser);
         verify(browser, never()).setHeader(anyString(), anyString());
         verify(browser, never()).addCookie(any());
         verify(browser, never()).reset();
