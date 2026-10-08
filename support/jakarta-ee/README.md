@@ -37,6 +37,10 @@ request-scoped components should not assume that a replay starts a new external
 request. Saved targets must be within the current context; servlet-private
 `WEB-INF` and `META-INF` resources cannot be replay targets.
 
+Resubmission is best-effort. Replays are buffered, so if the forward fails or
+the target doesn't answer with `200` or `302`, the fault is logged and the user
+is simply redirected to the saved request without the form being resubmitted.
+
 The old `org.apache.shiro.form-resubmit-host`,
 `org.apache.shiro.form-resubmit-port`, and form-resubmit blacklist settings are
 no longer used. Saved-form cookies still use the existing secure-cookie setting;

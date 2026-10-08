@@ -16,11 +16,13 @@ package org.apache.shiro.ee.filters;
 import org.apache.shiro.ee.filters.FormResubmitSupport.PartialAjaxResult;
 
 import static org.apache.shiro.ee.filters.FormResubmitSupport.extractJSFNewViewState;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.getDispatchPath;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getReferer;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFStatefulForm;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.noJSFAjaxRequests;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.parseFormData;
+import java.util.List;
+import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -188,83 +190,125 @@ class FormSupportTest {
     }
 
     @Test
+    void dispatchPathStripsContextAndKeepsQuery() {
+        when(request.getContextPath()).thenReturn("/myapp");
+        assertThat(getDispatchPath("/myapp", request)).isEqualTo("/");
+        assertThat(getDispatchPath("/myapp?a=1", request)).isEqualTo("/?a=1");
+        assertThat(getDispatchPath("/myapp/caf%C3%A9/view.xhtml?a=1&b=%2F", request))
+                .isEqualTo("/caf%C3%A9/view.xhtml?a=1&b=%2F");
+        assertThat(getDispatchPath("/myapp/WEB-INFO/view.xhtml", request)).isEqualTo("/WEB-INFO/view.xhtml");
+    }
+
+    @Test
+    void dispatchPathDropsPathParameters() {
+        when(request.getContextPath()).thenReturn("/myapp");
+        assertThat(getDispatchPath("/myapp/view.xhtml;jsessionid=123?a=1", request)).isEqualTo("/view.xhtml?a=1");
+        assertThat(getDispatchPath("/myapp/a;x/view.xhtml", request)).isEqualTo("/a");
+    }
+
+    @Test
+    void dispatchPathRejectsProtectedDirectories() {
+        when(request.getContextPath()).thenReturn("/myapp");
+        assertThat(getDispatchPath("/myapp/WEB-INF", request)).isNull();
+        assertThat(getDispatchPath("/myapp/WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/web-inf/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/META-INF/x", request)).isNull();
+        assertThat(getDispatchPath("/myapp/WEB-INF;x/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/%57EB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/WEB-INF%2Fweb.xml", request)).isNull();
+    }
+
+    @Test
+    void dispatchPathRejectsTraversal() {
+        when(request.getContextPath()).thenReturn("/myapp");
+        assertThat(getDispatchPath("/myapp/a/..;/WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/a/..", request)).isNull();
+        assertThat(getDispatchPath("/myapp/a/.", request)).isNull();
+        assertThat(getDispatchPath("/myapp/view.xhtml/", request)).isEqualTo("/view.xhtml/");
+        assertThat(getDispatchPath("/myapp/a/../WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/a/%2e%2e/WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/a/%2e%2e%2fWEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp//WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/./WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/a\\..\\WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/../../etc/passwd", request)).isNull();
+    }
+
+    @Test
     void viewStatePattern() {
         String statefulFormData
-                = "j_idt5%3Dj_idt5%26j_idt5%3Aj_idt7%3Daaa%26j_idt5%3Aj_idt9%3Dbbb%26j_idt5%3A"
-                + "j_idt11%3DSubmit+...%26jakarta.faces.ViewState"
-                + "%3D-8335355445345003673%3A-6008443334776649058";
-        assertThat(isJSFStatefulForm(decode(statefulFormData))).isTrue();
+                = "j_idt5=j_idt5&j_idt5%3Aj_idt7=aaa&j_idt5%3Aj_idt9=bbb&j_idt5%3A"
+                + "j_idt11=Submit+...&jakarta.faces.ViewState"
+                + "=-8335355445345003673%3A-6008443334776649058";
+        assertThat(isJSFStatefulForm(parseFormData(statefulFormData))).isTrue();
         String statelessFormData
-                = "j_idt5%3Dj_idt5%26j_idt5%3Aj_idt7%3Daaa%26j_idt5%3Aj_idt9%3Dbbb%26j_idt5%3A"
-                + "j_idt11%3DSubmit+...%26jakarta.faces.ViewState%3Dstateless";
-        assertThat(isJSFStatefulForm(statelessFormData)).isFalse();
+                = "j_idt5=j_idt5&j_idt5%3Aj_idt7=aaa&j_idt5%3Aj_idt9=bbb&j_idt5%3A"
+                + "j_idt11=Submit+...&jakarta.faces.ViewState=stateless";
+        assertThat(isJSFStatefulForm(parseFormData(statelessFormData))).isFalse();
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> isJSFStatefulForm(null));
         String nonJSFFormData
-                = "j_idt5%3Dj_idt5%26j_idt5%3Aj_idt7%3Daaa%26j_idt5%3Aj_idt9%3Dbbb%26j_idt5%3A"
-                + "j_idt11%3DSubmit+...";
-        assertThat(isJSFStatefulForm("xxx")).isFalse();
-        assertThat(isJSFStatefulForm(nonJSFFormData)).isFalse();
+                = "j_idt5=j_idt5&j_idt5%3Aj_idt7=aaa&j_idt5%3Aj_idt9=bbb&j_idt5%3A"
+                + "j_idt11=Submit+...";
+        assertThat(isJSFStatefulForm(parseFormData("xxx"))).isFalse();
+        assertThat(isJSFStatefulForm(parseFormData(nonJSFFormData))).isFalse();
+    }
+
+    @Test
+    void parseFormDataKeepsEmptyFieldsAndDecodesOnce() {
+        assertThat(parseFormData("")).isEmpty();
+        assertThat(parseFormData("text=a%26b%2Bc%3Dd&empty=&flag&multi=1&multi=2&multi=%3D"))
+                .containsExactly(
+                        Map.entry("text", List.of("a&b+c=d")),
+                        Map.entry("empty", List.of("")),
+                        Map.entry("flag", List.of("")),
+                        Map.entry("multi", List.of("1", "2", "=")));
     }
 
     @Test
     void extractViewState() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> extractJSFNewViewState(null, null));
-        assertThat(extractJSFNewViewState("", "hello")).isEqualTo("hello");
-        assertThat(extractJSFNewViewState("xxx", "jakarta.faces.ViewState=stateless&hello=bye"))
-                .isEqualTo("jakarta.faces.ViewState=stateless&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>",
-                        "jakarta.faces.ViewState=stateless&hello=bye"))
-                .isEqualTo("jakarta.faces.ViewState=stateless&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>",
-                        "aaa=bbb&jakarta.faces.ViewState=xxx:yyy&hello=bye"))
-                .isEqualTo("aaa=bbb&jakarta.faces.ViewState=xxx:yyy&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>",
-                        "jakarta.faces.ViewState=987:654&hello=bye"))
-                .isEqualTo("jakarta.faces.ViewState=123:456&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
-                        "jakarta.faces.ViewState=987:654&hello=bye"))
-                .isEqualTo("jakarta.faces.ViewState=-123:-456&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
-                        "jakarta.faces.ViewState=-987:-654&hello=bye"))
-                .isEqualTo("jakarta.faces.ViewState=-123:-456&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
-                        "aaa=bbb&jakarta.faces.ViewState=-987:-654&hello=bye"))
-                .isEqualTo("aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
-                        "aaa=bbb&jakarta.faces.ViewState=-987:-654"))
-                .isEqualTo("aaa=bbb&jakarta.faces.ViewState=-123:-456");
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> extractJSFNewViewState(null));
+        assertThat(extractJSFNewViewState("")).isNull();
+        assertThat(extractJSFNewViewState("xxx")).isNull();
+        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>"))
+                .isEqualTo("123:456");
+        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>"
+                + "<input name=\"jakarta.faces.ViewState\" value=\"-789:-012\"/>"))
+                .isEqualTo("-123:-456");
     }
 
     @Test
     void noAjaxRequests() {
-        assertThat(noJSFAjaxRequests("aaa=bbb&jakarta.faces.ViewState=-123:-456"
-                        + "&jakarta.faces.partial.ajax=true&hello=bye", false)).isEqualTo(new PartialAjaxResult(
-                        "aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye",
+        assertThat(noJSFAjaxRequests(parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456"
+                        + "&jakarta.faces.partial.ajax=true&hello=bye"), false)).isEqualTo(new PartialAjaxResult(
+                        parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye"),
                         true, false));
-        assertThat(noJSFAjaxRequests("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
+        assertThat(noJSFAjaxRequests(parseFormData("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
                         + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917"
                         + "&jakarta.faces.source=j_idt12:j_idt18"
                         + "&jakarta.faces.partial.event=click"
                         + "&jakarta.faces.partial.execute=j_idt12:j_idt18 j_idt12"
                         + "&jakarta.faces.partial.render=j_idt12"
                         + "&jakarta.faces.behavior.event=action"
-                        + "&jakarta.faces.partial.ajax=false", false))
-                .isEqualTo(new PartialAjaxResult("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
-                        + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917&j_idt12:j_idt18=",
+                        + "&jakarta.faces.partial.ajax=false"), false))
+                .isEqualTo(new PartialAjaxResult(parseFormData("j_idt12=j_idt12&j_idt12:j_idt14=asdf"
+                        + "&j_idt12:j_idt16=asdf"
+                        + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917&j_idt12:j_idt18="),
                         true, false));
     }
 
     @Test
     void encodedAjaxFieldsAreRemovedCompletely() {
-        var result = noJSFAjaxRequests("text=a%26b%2Bc%3Dd&jakarta.faces.ViewState=123%3A456"
+        var result = noJSFAjaxRequests(parseFormData("text=a%26b%2Bc%3Dd&jakarta.faces.ViewState=123%3A456"
                 + "&jakarta.faces.source=j_idt12%3Aj_idt18"
                 + "&jakarta.faces.partial.event=click"
                 + "&jakarta.faces.partial.execute=j_idt12%3Aj_idt18+j_idt12"
                 + "&jakarta.faces.partial.render=j_idt12%20%40all"
                 + "&jakarta.faces.behavior.event=action"
-                + "&jakarta.faces.partial.ajax=true", false);
+                + "&jakarta.faces.partial.ajax=true"), false);
         assertThat(result).isEqualTo(new PartialAjaxResult(
-                "text=a%26b%2Bc%3Dd&jakarta.faces.ViewState=123%3A456&j_idt12%3Aj_idt18=", true, false));
+                parseFormData("text=a%26b%2Bc%3Dd&jakarta.faces.ViewState=123%3A456&j_idt12%3Aj_idt18="),
+                true, false));
+        assertThat(result.result()).containsEntry("text", List.of("a&b+c=d"));
     }
 
     @Test
@@ -289,7 +333,7 @@ class FormSupportTest {
                 &jakarta.faces.partial.execute=secondForm:submitSecond secondForm
                 &jakarta.faces.partial.render=secondForm&jakarta.faces.behavior.event=action
                 &jakarta.faces.partial.ajax=true""".replace("\n", "");
-        assertThat(noJSFAjaxRequests(savedRequest, true).result()).isEqualTo("""
+        assertThat(noJSFAjaxRequests(parseFormData(savedRequest), true).result()).isEqualTo(parseFormData("""
                 secondForm=secondForm&secondForm:address=asfd&secondForm:city=asdf
                 &jakarta.faces.ViewState=5BDAqkysYaMvzcnTG3bVSXRoK43OvdMyb8w6RicBatqzOdHBwl/cFvOXYfYCwvJoBU6/qv
                 735kadAP67luQ/wMqF4jAQyBKDdxy5F4CxNz4FhAYC2iCd613QnwLWP8BX3so7BylQxIN2Y64n6LUogwkgZLEAHgTBDQGwG
@@ -308,11 +352,7 @@ class FormSupportTest {
                 &jakarta.faces.partial.event=click
                 &jakarta.faces.partial.execute=secondForm:submitSecond secondForm
                 &jakarta.faces.partial.render=secondForm&jakarta.faces.behavior.event=action
-                &jakarta.faces.partial.ajax=true&secondForm:submitSecond=""".replace("\n", ""));
+                &jakarta.faces.partial.ajax=true&secondForm:submitSecond=""".replace("\n", "")));
     }
 
-
-    private static String decode(String plain) {
-        return URLDecoder.decode(plain, StandardCharsets.UTF_8);
-    }
 }

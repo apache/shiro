@@ -17,18 +17,15 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletRequestWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.experimental.Delegate;
 import org.apache.shiro.web.util.WebUtils;
 import org.omnifaces.filter.MutableRequestFilter.MutableRequest;
-import org.omnifaces.util.Utils;
 
 /**
  * Replays saved form data in place of the login request's parameters, with a private request scope
@@ -52,10 +49,9 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
         Map<String, String[]> getParameterMap();
     }
 
-    FormResubmitRequest(HttpServletRequest request, String method, String formData) {
+    FormResubmitRequest(HttpServletRequest request, String method, Map<String, List<String>> formFields) {
         super(unwrap(request));
         this.method = method;
-        var formFields = toFormFields(formData);
         parameters = new MutableRequest(request) {
             @Override
             public Map<String, List<String>> getMutableParameterMap() {
@@ -69,18 +65,6 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
 
     static boolean isResubmit(ServletRequest request) {
         return request instanceof ServletRequestWrapper wrapper && wrapper.isWrapperFor(FormResubmitRequest.class);
-    }
-
-    private static Map<String, List<String>> toFormFields(String formData) {
-        var parsed = new LinkedHashMap<String, List<String>>();
-        for (String field : formData.split("&")) {
-            if (!field.isEmpty()) {
-                String[] pair = field.split("=", 2);
-                parsed.computeIfAbsent(Utils.decodeURL(pair[0]), name -> new ArrayList<>())
-                        .add(pair.length == 2 ? Utils.decodeURL(pair[1]) : "");
-            }
-        }
-        return parsed;
     }
 
     private static HttpServletRequest unwrap(HttpServletRequest request) {
