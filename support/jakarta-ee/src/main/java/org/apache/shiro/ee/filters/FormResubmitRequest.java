@@ -78,11 +78,28 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
         return request instanceof ServletRequestWrapper wrapper ? unwrap(WebUtils.toHttp(wrapper.getRequest())) : request;
     }
 
+    /**
+     * A full-page replay's response is translated for the original Ajax client by the caller,
+     * so the target must not see the Ajax header through any accessor
+     */
+    private boolean isHidden(String header) {
+        return !ajaxReplay.isPassThrough() && FACES_REQUEST_HEADER.equalsIgnoreCase(header);
+    }
+
     @Override
     public String getHeader(String name) {
-        // A full-page replay's response is translated for the original Ajax client by the caller
-        return !ajaxReplay.isPassThrough() && FACES_REQUEST_HEADER.equalsIgnoreCase(name)
-                ? null : super.getHeader(name);
+        return isHidden(name) ? null : super.getHeader(name);
+    }
+
+    @Override
+    public Enumeration<String> getHeaders(String name) {
+        return isHidden(name) ? Collections.emptyEnumeration() : super.getHeaders(name);
+    }
+
+    @Override
+    public Enumeration<String> getHeaderNames() {
+        return Collections.enumeration(Collections.list(super.getHeaderNames()).stream()
+                .filter(name -> !isHidden(name)).toList());
     }
 
     @Override
