@@ -170,8 +170,7 @@ public class FormResubmitSupport {
                              AjaxReplay ajaxReplay) { }
 
     static void savePostDataForResubmit(HttpServletRequest request, HttpServletResponse response, @NonNull String loginUrl) {
-        if (isPostRequest(request) && isSecurityManagerTypeOf(getSecurityManager(),
-                DefaultSecurityManager.class) && shouldSavePostData(request)) {
+        if (isSavableForm(request) && isSecurityManagerTypeOf(getSecurityManager(), DefaultSecurityManager.class)) {
             String postData = getPostData(request);
             var cacheKey = UUID.randomUUID();
             DefaultSecurityManager dsm = getSecurityManager(DefaultSecurityManager.class);
@@ -208,6 +207,14 @@ public class FormResubmitSupport {
     }
 
     /**
+     * Only same-origin, form-encoded POSTs can be saved and replayed: a multipart upload's body
+     * can't be reproduced from parameters, and would only bloat the cache
+     */
+    static boolean isSavableForm(HttpServletRequest request) {
+        return isPostRequest(request) && isFormUrlEncoded(request) && shouldSavePostData(request);
+    }
+
+    /**
      * Whether a POST that arrived without a session should be replayed in place, without a login flow,
      * once the security chain permits it: for a remembered subject, or for an anonymous subject whose
      * session has expired, i.e. the browser presented a session id that no longer resolves to a session.
@@ -219,13 +226,11 @@ public class FormResubmitSupport {
      * @return true if the form should be replayed
      */
     static boolean isDirectResubmitCandidate(@NonNull Subject subject, ServletRequest request) {
-        if (!isPostRequest(request)) {
+        if (!(request instanceof HttpServletRequest httpRequest) || !isSavableForm(httpRequest)) {
             return false;
         }
-        var httpRequest = WebUtils.toHttp(request);
         var servletContext = request.getServletContext();
-        if (isFormResubmitDisabled(servletContext) || isJSFClientStateSavingMethod(servletContext)
-                || !isFormUrlEncoded(httpRequest) || !shouldSavePostData(httpRequest)) {
+        if (isFormResubmitDisabled(servletContext) || isJSFClientStateSavingMethod(servletContext)) {
             return false;
         }
         if (subject.isRemembered()) {

@@ -17,6 +17,7 @@ import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
 import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isDirectResubmitCandidate;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isFormUrlEncoded;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.isSavableForm;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import jakarta.servlet.ServletContext;
@@ -130,5 +131,18 @@ class DirectResubmitCandidateTest {
         assertThat(isFormUrlEncoded(request)).isTrue();
         when(request.getContentType()).thenReturn(" application/x-www-form-urlencoded ;charset=ISO-8859-1");
         assertThat(isFormUrlEncoded(request)).isTrue();
+    }
+
+    @Test
+    void multipartUploadIsNeverSavedForLoginFlow() {
+        assertThat(isSavableForm(request)).isTrue();
+        when(request.getContentType()).thenReturn("multipart/form-data; boundary=xyz");
+        assertThat(isSavableForm(request)).isFalse();
+        when(request.getContentType()).thenReturn("application/x-www-form-urlencoded");
+        when(request.getMethod()).thenReturn("GET");
+        assertThat(isSavableForm(request)).isFalse();
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getHeader("Sec-Fetch-Site")).thenReturn("cross-site");
+        assertThat(isSavableForm(request)).isFalse();
     }
 }
