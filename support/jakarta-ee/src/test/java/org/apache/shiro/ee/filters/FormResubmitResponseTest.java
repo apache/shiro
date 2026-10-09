@@ -116,6 +116,20 @@ class FormResubmitResponseTest {
     }
 
     @Test
+    void flushAfterStreamClosedIsIgnored() throws IOException {
+        when(browser.getCharacterEncoding()).thenReturn("UTF-8");
+        when(browser.getBufferSize()).thenReturn((int) Short.MAX_VALUE);
+        var stream = response.getOutputStream();
+        assertThat(response.getOutputStream()).isSameAs(stream);
+        stream.write("body".getBytes());
+        // e.g. a download writer closes the stream, then PrimeFaces flushes the response
+        stream.close();
+        response.flushBuffer();
+        assertThat(response.getBufferAsString()).isEqualTo("body");
+        verify(browser, never()).flushBuffer();
+    }
+
+    @Test
     void resetDiscardsEverythingCaptured() throws IOException {
         when(browser.getCharacterEncoding()).thenReturn("UTF-8");
         when(browser.getBufferSize()).thenReturn((int) Short.MAX_VALUE);

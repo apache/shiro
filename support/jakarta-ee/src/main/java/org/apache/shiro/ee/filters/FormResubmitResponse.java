@@ -14,9 +14,11 @@
 package org.apache.shiro.ee.filters;
 
 import static org.apache.shiro.ee.filters.FormResubmitSupport.HttpHeaderConstants.LOCATION;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
+import java.io.Closeable;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
@@ -40,6 +43,7 @@ final class FormResubmitResponse extends BufferedHttpServletResponse {
     private final List<Consumer<HttpServletResponse>> deferred = new ArrayList<>();
     private final @Delegate(types = Captured.class) HttpServletResponse recorder;
     private @Getter @Setter int status = SC_OK;
+    private ClosableOutputStream outputStream;
 
     /**
      * Header and cookie operations are recorded, to be replayed by {@link #applyTo}.
@@ -110,6 +114,26 @@ final class FormResubmitResponse extends BufferedHttpServletResponse {
     }
 
     @Override
+    public ServletOutputStream getOutputStream() throws IOException {
+        ServletOutputStream delegate = super.getOutputStream();
+        if (outputStream == null) {
+            outputStream = new ClosableOutputStream(delegate);
+        }
+        return outputStream;
+    }
+
+    /**
+     * Container responses ignore a flush once the stream is closed, as a download writer may well do,
+     * whereas the buffering base class throws
+     */
+    @Override
+    public void flushBuffer() throws IOException {
+        if (outputStream == null || !outputStream.closed) {
+            super.flushBuffer();
+        }
+    }
+
+    @Override
     public void resetBuffer() {
         // the base class only resets its own buffer here, since the wrapped response ignores reset()
         super.reset();
@@ -120,6 +144,21 @@ final class FormResubmitResponse extends BufferedHttpServletResponse {
         super.reset();
         status = SC_OK;
         deferred.clear();
+    }
+
+    /**
+     * Tracks whether the replayed component has closed the response stream
+     */
+    @RequiredArgsConstructor
+    private static final class ClosableOutputStream extends ServletOutputStream {
+        private final @Delegate(excludes = Closeable.class) ServletOutputStream delegate;
+        private boolean closed;
+
+        @Override
+        public void close() throws IOException {
+            closed = true;
+            delegate.close();
+        }
     }
 
     /**
