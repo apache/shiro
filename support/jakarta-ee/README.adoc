@@ -59,9 +59,9 @@ the view state of all its forms with the server. Set the
 then keep their pre-expiry client state, and with Mojarra, other forms on the
 page keep their expired view state. A partial response that reports an
 unhandled Faces error is treated as a failed replay and falls back to a redirect
-to the saved request, as a failed full-page replay does. After a login flow, the browser is on the
-login page instead, so the submission is replayed as a full-page action and the
-browser is redirected to the saved request.
+to the saved request, as a failed full-page replay does. After a login flow,
+the browser is on the login page instead, so the submission is replayed as a
+full-page action and the browser is redirected to the saved request.
 
 === Replay without a login flow
 
