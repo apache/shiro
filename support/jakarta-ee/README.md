@@ -63,5 +63,21 @@ is simply redirected to the saved request without the form being resubmitted.
 
 The old `org.apache.shiro.form-resubmit-host`,
 `org.apache.shiro.form-resubmit-port`, and form-resubmit blacklist settings are
-no longer used. Saved-form cookies still use the existing secure-cookie setting;
-there is no separate replay cookie jar or cookie-header rewriting.
+no longer used. There is no separate replay cookie jar or cookie-header rewriting.
+
+## Saved-form cookie
+
+The cookie that keys a saved form is `HttpOnly`, and with the default
+`org.apache.shiro.form-resubmit.secure-cookies` setting it is also `Secure`
+and carries the `__Host-` prefix, so a browser only accepts it from this very
+host over HTTPS: another subdomain, or a plain-HTTP connection, cannot plant a
+saved form into a user's browser to have it replayed under that user's login.
+The prefix requires `Path=/`, so the cookie is named
+`__Host-org.apache.shiro.form-data-key` followed by the URL-encoded context
+path (e.g. `%2Fmy-app`), which keeps co-hosted applications apart. With secure
+cookies disabled, the cookie keeps its plain name and context path.
+
+A form saved by a previous version is not replayed after upgrading, since its
+cookie has the old name; the user is simply redirected to the saved request.
+There is deliberately no fallback to the old name, which would reopen the
+planting vector.

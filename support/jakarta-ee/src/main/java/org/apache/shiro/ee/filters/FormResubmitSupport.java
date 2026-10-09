@@ -25,6 +25,7 @@ import static jakarta.faces.context.PartialViewContext.PARTIAL_RENDER_PARAM_NAME
 import static jakarta.servlet.http.HttpServletResponse.SC_FOUND;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.addCookie;
+import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.cookieName;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.deleteCookie;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getCookieAge;
 import org.apache.shiro.crypto.CryptoException;
@@ -343,7 +344,8 @@ public class FormResubmitSupport {
     private static void doRedirectToSaved(HttpServletRequest request, HttpServletResponse response,
             @NonNull String savedRequest, boolean resubmit) {
         deleteCookie(response, request.getServletContext(), WebUtils.SAVED_REQUEST_KEY);
-        String savedFormDataKeyString = Servlets.getRequestCookie(request, SHIRO_FORM_DATA_KEY);
+        String savedFormDataKeyString = Servlets.getRequestCookie(request,
+                cookieName(request.getServletContext(), SHIRO_FORM_DATA_KEY));
         boolean doRedirectAtEnd = true;
         if (savedFormDataKeyString != null && resubmit) {
             AtomicReference<Cache<Object, ?>> cache = new AtomicReference<>();
