@@ -276,7 +276,7 @@ public class ShiroAuthFormsIT {
         discardFormData.click();
         login();
         assertThat(webDriver.getTitle()).isEqualTo("Form Page");
-        assertThat(messages.getText()).isEmpty();
+        assertThat(webDriver.findElements(By.id("messages"))).as("no form data submitted").isEmpty();
         assertThat(firstName.getAttribute("value")).isEmpty();
         webDriver.get(baseURL + "shiro/auth/loginform");
         assertThat(webDriver.findElements(By.className("shiro-form-data-notice"))).as("discarded").isEmpty();
