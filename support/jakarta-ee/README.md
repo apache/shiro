@@ -60,6 +60,34 @@ to `true` to limit this to remembered subjects, or
 `org.apache.shiro.form-resubmit.disabled` to turn off form resubmission
 entirely.
 
+## Letting the user know, and letting the user opt out
+
+A login page can tell the user that their form data was saved and will be
+submitted once they sign in, and offer to discard it instead, which covers a
+shared browser where someone else signs in next. Inside the login form:
+
+```xhtml
+xmlns:shiro="http://shiro.apache.org/tags"
+...
+<shiro:formDataNotice/>
+```
+
+This renders nothing unless form data is actually waiting. Otherwise it shows
+*"We saved the form data you entered before signing in. It will be submitted
+for you once you sign in."* and a *"Discard my form data"* checkbox. The
+`message` and `discardLabel` attributes override the wording; the
+`shiro-form-data-notice`, `shiro-form-data-message` and
+`shiro-form-data-discard` CSS classes allow styling.
+
+For a custom layout, the same building blocks are available on the `authc`
+bean: `#{authc.formDataSaved}`, `#{authc.savedFormDataPath}` (the page the
+data will be submitted to) and `#{authc.discardFormDataParameter}`, the name
+for a plain checkbox. Outside Faces, use `Forms.isFormDataSaved(request)`,
+`Forms.getSavedFormDataPath(request)` and `Forms.DISCARD_FORM_DATA_PARAMETER`.
+When that parameter arrives with the login request, from either the Faces or the
+plain-servlet login, the saved form data is deleted and the user is just taken
+to the saved page.
+
 ## Application filter configuration
 
 Shiro's Jakarta EE filter is mapped to `DispatcherType.FORWARD`, so the forwarded

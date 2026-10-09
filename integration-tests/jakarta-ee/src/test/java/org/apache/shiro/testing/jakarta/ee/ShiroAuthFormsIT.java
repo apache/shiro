@@ -47,6 +47,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -126,6 +127,12 @@ public class ShiroAuthFormsIT {
 
     @FindBy(id = "loginFailureMessage")
     private WebElement loginFailureMessage;
+
+    @FindBy(className = "shiro-form-data-notice")
+    private WebElement formDataNotice;
+
+    @FindBy(name = "org.apache.shiro.form-data.discard")
+    private WebElement discardFormData;
 
     @BeforeEach
     void deleteAllCookies() {
@@ -255,6 +262,29 @@ public class ShiroAuthFormsIT {
         nonAjaxSessionExpired("Jörg & Sons + =", "Frost 雪");
         login();
         assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jörg & Sons + =, lastName: Frost 雪");
+    }
+
+    @Test
+    @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
+    void formDataNoticeOnlyWhenFormDataIsSaved() {
+        webDriver.get(baseURL + "shiro/protected");
+        assertThat(webDriver.findElements(By.className("shiro-form-data-notice"))).isEmpty();
+        nonAjaxSessionExpired();
+        assertThat(formDataNotice.getText()).startsWith("We saved the form data you entered");
+        assertThat(discardFormData.isSelected()).isFalse();
+    }
+
+    @Test
+    @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
+    void discardSavedFormData() {
+        nonAjaxSessionExpired();
+        discardFormData.click();
+        login();
+        assertThat(webDriver.getTitle()).isEqualTo("Form Page");
+        assertThat(messages.getText()).isEmpty();
+        assertThat(firstName.getAttribute("value")).isEmpty();
+        webDriver.get(baseURL + "shiro/auth/loginform");
+        assertThat(webDriver.findElements(By.className("shiro-form-data-notice"))).as("discarded").isEmpty();
     }
 
     @Test
