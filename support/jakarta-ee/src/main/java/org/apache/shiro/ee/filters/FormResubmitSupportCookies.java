@@ -14,6 +14,9 @@
 package org.apache.shiro.ee.filters;
 
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getNativeSessionManager;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitSecureCookies;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletRequest;
@@ -23,7 +26,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.ee.listeners.EnvironmentLoaderListener;
 
 /**
  * Cookie Support methods
@@ -32,27 +34,45 @@ import org.apache.shiro.ee.listeners.EnvironmentLoaderListener;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings("HideUtilityClassConstructor")
 public class FormResubmitSupportCookies {
+    private static final String HOST_PREFIX = "__Host-";
+
+    /**
+     * With secure cookies, the {@code __Host-} prefix makes browsers refuse the cookie unless this very host
+     * set it over HTTPS, so it can't be planted from another subdomain or over plain HTTP.
+     * The prefix requires {@code Path=/}, hence the context path moves into the name, URL-encoded
+     * (cookie-name safe) to keep co-hosted applications apart.
+     */
+    static String cookieName(ServletContext servletContext, @NonNull String baseName) {
+        return isFormResubmitSecureCookies(servletContext)
+                ? HOST_PREFIX + baseName + URLEncoder.encode(servletContext.getContextPath(), StandardCharsets.UTF_8)
+                : baseName;
+    }
+
+    private static Cookie newCookie(ServletContext servletContext, String baseName, String value, int maxAge) {
+        var cookie = new Cookie(cookieName(servletContext, baseName), value);
+        boolean secure = isFormResubmitSecureCookies(servletContext);
+        cookie.setPath(secure ? "/" : servletContext.getContextPath());
+        cookie.setSecure(secure);
+        cookie.setMaxAge(maxAge);
+        return cookie;
+    }
+
+    /**
+     * @param cookieName base name, see {@link #cookieName}
+     */
     static void addCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
             @NonNull String cookieName, @NonNull String cookieValue, int maxAge, boolean httpOnly) {
-        var cookie = new Cookie(cookieName, cookieValue);
-        cookie.setPath(servletContext.getContextPath());
-        cookie.setMaxAge(maxAge);
+        var cookie = newCookie(servletContext, cookieName, cookieValue, maxAge);
         cookie.setHttpOnly(httpOnly);
-        if (EnvironmentLoaderListener.isFormResubmitSecureCookies(servletContext)) {
-            cookie.setSecure(true);
-        }
         response.addCookie(cookie);
     }
 
+    /**
+     * @param cookieName base name, see {@link #cookieName}
+     */
     static void deleteCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
             @NonNull String cookieName) {
-        var cookieToDelete = new Cookie(cookieName, "tbd");
-        cookieToDelete.setPath(servletContext.getContextPath());
-        cookieToDelete.setMaxAge(0);
-        if (EnvironmentLoaderListener.isFormResubmitSecureCookies(servletContext)) {
-            cookieToDelete.setSecure(true);
-        }
-        response.addCookie(cookieToDelete);
+        response.addCookie(newCookie(servletContext, cookieName, "tbd", 0));
     }
 
     static int getCookieAge(ServletRequest request, org.apache.shiro.mgt.SecurityManager securityManager) {
