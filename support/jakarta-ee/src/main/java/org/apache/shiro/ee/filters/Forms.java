@@ -42,6 +42,12 @@ import org.omnifaces.util.Faces;
 @SuppressWarnings("HideUtilityClassConstructor")
 public class Forms {
     /**
+     * Request parameter that, when present on the login request (e.g. from a checked checkbox),
+     * discards the user's saved form data instead of submitting it after login
+     */
+    public static final String DISCARD_FORM_DATA_PARAMETER = "org.apache.shiro.form-data.discard";
+
+    /**
      * JSF access points
      */
     @Named("authc")
@@ -110,6 +116,28 @@ public class Forms {
         public boolean isLoginFailure() {
             return Faces.getRequestAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME) != null
                     || Faces.getFlashAttribute(DEFAULT_ERROR_KEY_ATTRIBUTE_NAME) != null;
+        }
+
+        /**
+         * @return true if the user has form data saved, to be submitted after login, see {@link #getDiscardFormDataParameter()}
+         */
+        public boolean isFormDataSaved() {
+            return Forms.isFormDataSaved(Faces.getRequest());
+        }
+
+        /**
+         * @return the path of the page whose form data is saved, or null
+         */
+        public String getSavedFormDataPath() {
+            return Forms.getSavedFormDataPath(Faces.getRequest());
+        }
+
+        /**
+         * @return name for a login-form checkbox that lets the user discard the saved form data,
+         * see {@link Forms#DISCARD_FORM_DATA_PARAMETER}
+         */
+        public String getDiscardFormDataParameter() {
+            return DISCARD_FORM_DATA_PARAMETER;
         }
     }
 
@@ -217,5 +245,21 @@ public class Forms {
 
     public static boolean isSessionExpired() {
         return wasViewExpired() || Boolean.parseBoolean(Faces.getRequestParameter(SESSION_EXPIRED_PARAMETER));
+    }
+
+    /**
+     * @param request the HTTP servlet request
+     * @return true if the user has form data saved, to be submitted after login
+     */
+    public static boolean isFormDataSaved(HttpServletRequest request) {
+        return FormResubmitSupport.hasSavedFormData(request);
+    }
+
+    /**
+     * @param request the HTTP servlet request
+     * @return the path of the page whose form data is saved, or null
+     */
+    public static String getSavedFormDataPath(HttpServletRequest request) {
+        return FormResubmitSupport.getSavedRequest(request);
     }
 }

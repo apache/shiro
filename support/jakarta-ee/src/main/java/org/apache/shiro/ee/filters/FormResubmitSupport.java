@@ -316,8 +316,7 @@ public class FormResubmitSupport {
      */
     static void redirectToSaved(HttpServletRequest request, HttpServletResponse response,
             FallbackPredicate useFallbackPath, String fallbackPath, boolean resubmit) {
-        String savedRequest = normalizeSavedRequest(decrypt(Servlets.getRequestCookie(request, WebUtils.SAVED_REQUEST_KEY),
-                getRememberMeManager()), request);
+        String savedRequest = getSavedRequest(request);
         if (savedRequest != null) {
             doRedirectToSaved(request, response, savedRequest, resubmit);
         } else {
@@ -341,21 +340,62 @@ public class FormResubmitSupport {
     }
 
 
+    /**
+     * @param request the HTTP servlet request
+     * @return the saved request path from the request's cookie, normalized to this context, or null
+     */
+    static String getSavedRequest(HttpServletRequest request) {
+        return normalizeSavedRequest(decrypt(Servlets.getRequestCookie(request, WebUtils.SAVED_REQUEST_KEY),
+                getRememberMeManager()), request);
+    }
+
+    /**
+     * @param request the HTTP servlet request
+     * @return the saved form data's cache key from the request's cookie, or null if absent or malformed
+     */
+    static UUID getSavedFormDataKey(HttpServletRequest request) {
+        String key = Servlets.getRequestCookie(request, cookieName(request.getServletContext(), SHIRO_FORM_DATA_KEY));
+        try {
+            return key == null ? null : UUID.fromString(key);
+        } catch (IllegalArgumentException e) {
+            log.debug("Ignoring malformed saved form data key cookie", e);
+            return null;
+        }
+    }
+
+    /**
+     * @param request the HTTP servlet request
+     * @return true if the request's browser has form data saved, waiting to be submitted after login
+     */
+    static boolean hasSavedFormData(HttpServletRequest request) {
+        UUID savedFormDataKey = getSavedFormDataKey(request);
+        return savedFormDataKey != null && getSavedFormDataFromKey(savedFormDataKey, cache -> { }) != null;
+    }
+
+    /**
+     * @param request the HTTP servlet request
+     * @return true if the request asks for saved form data to be discarded rather than submitted,
+     * via the {@link Forms#DISCARD_FORM_DATA_PARAMETER} parameter, e.g. from a checked login-page checkbox
+     */
+    static boolean isFormDataDiscarded(HttpServletRequest request) {
+        String discard = request.getParameter(Forms.DISCARD_FORM_DATA_PARAMETER);
+        return discard != null && !Boolean.FALSE.toString().equalsIgnoreCase(discard);
+    }
+
     private static void doRedirectToSaved(HttpServletRequest request, HttpServletResponse response,
             @NonNull String savedRequest, boolean resubmit) {
         deleteCookie(response, request.getServletContext(), WebUtils.SAVED_REQUEST_KEY);
-        String savedFormDataKeyString = Servlets.getRequestCookie(request,
-                cookieName(request.getServletContext(), SHIRO_FORM_DATA_KEY));
+        UUID savedFormDataKey = getSavedFormDataKey(request);
         boolean doRedirectAtEnd = true;
-        if (savedFormDataKeyString != null && resubmit) {
+        if (savedFormDataKey != null) {
             AtomicReference<Cache<Object, ?>> cache = new AtomicReference<>();
-            UUID savedFormDataKey = UUID.fromString(savedFormDataKeyString);
             String formData = getSavedFormDataFromKey(savedFormDataKey, cache::set);
             try {
-                if (formData != null) {
+                if (formData != null && resubmit && !isFormDataDiscarded(request)) {
                     resubmitSavedForm(formData, savedRequest, request, response, ReplayFlow.AFTER_LOGIN);
                     doRedirectAtEnd = false;
                 } else {
+                    // nothing to submit, or the user chose to discard it: forget it either way
                     deleteCookie(response, request.getServletContext(), SHIRO_FORM_DATA_KEY);
                 }
             } finally {
