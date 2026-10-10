@@ -18,8 +18,10 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.FORM_IS_RESUBMITTE
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getPostData;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFClientStateSavingMethod;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isPostRequest;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.normalizeSavedRequest;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.redirectToView;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.resubmitSavedForm;
-import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.DONT_ADD_ANY_MORE_COOKIES;
+import org.apache.shiro.ee.filters.FormResubmitSupport.ReplayFlow;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.getCharacterEncoding;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isCharEncodingEnabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isShiroEEDisabled;
@@ -27,7 +29,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.Principal;
-import java.util.Optional;
 import java.util.regex.Pattern;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterChain;
@@ -36,14 +37,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isServletNoPrincipal;
@@ -52,12 +50,14 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;
+import org.apache.shiro.SecurityUtils;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isShiroEERedirectDisabled;
 import static org.apache.shiro.web.filter.authz.SslFilter.HTTPS_SCHEME;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.servlet.ShiroHttpServletRequest;
 import org.apache.shiro.web.session.mgt.WebSessionKey;
+import org.apache.shiro.web.subject.WebSubject;
 import org.apache.shiro.web.subject.WebSubjectContext;
 import org.apache.shiro.web.util.WebUtils;
 import org.omnifaces.util.Servlets;
@@ -65,13 +65,13 @@ import org.omnifaces.util.Utils;
 
 /**
  * Stops JEE server from interpreting Shiro principal as direct EJB principal,
- * this has sideffects of trying to log in to remote EJBs with the credentials from Shiro,
+ * this has side effects of trying to log in to remote EJBs with the credentials from Shiro,
  * which isn't what this meant to do, as it's meant to just transfer Shiro credentials
  * to remote EJB call site.
- *
+ * <p/>
  * Thus, force null EJB principal for the web session,
  * as the real principal comes from the EjbSecurityFilter's doAs() call
- *
+ * <p/>
  * Also handles X-Forwarded-Proto support
  */
 @Slf4j
@@ -146,13 +146,6 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
         }
 
         @Override
-        public void addCookie(Cookie cookie) {
-            if (request.getAttribute(DONT_ADD_ANY_MORE_COOKIES) != Boolean.TRUE) {
-                super.addCookie(cookie);
-            }
-        }
-
-        @Override
         public void sendRedirect(String location) throws IOException {
             if (!Utils.startsWithOneOf(location, "http://", "https://")
                     && !isShiroEERedirectDisabled(request.getServletContext())) {
@@ -162,10 +155,8 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
         }
     }
 
-    @RequiredArgsConstructor
-    static class WrappedSecurityManager implements WebSecurityManager, org.apache.shiro.mgt.WrappedSecurityManager {
-        final @Delegate WebSecurityManager wrapped;
-
+    record WrappedSecurityManager(@Delegate WebSecurityManager wrapped)
+            implements WebSecurityManager, org.apache.shiro.mgt.WrappedSecurityManager {
         @Override
         public Subject createSubject(SubjectContext context) {
             if (context instanceof WebSubjectContext webContext && wrapped instanceof DefaultWebSecurityManager wsm) {
@@ -233,7 +224,16 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
     }
 
     @Override
-    @SneakyThrows(InterruptedException.class)
+    protected WebSubject createSubject(ServletRequest request, ServletResponse response) {
+        if (FormResubmitRequest.isResubmit(request) && SecurityUtils.getSubject() instanceof WebSubject subject) {
+            // The new session cookie need not have reached the browser yet (notably with native sessions).
+            // Reuse identity, not the security chain: executeChain still resolves the forwarded target.
+            return subject;
+        }
+        return super.createSubject(request, response);
+    }
+
+    @Override
     protected void executeChain(ServletRequest request, ServletResponse response,
             FilterChain origChain) throws IOException, ServletException {
         if (isShiroEEDisabled(getServletContext())) {
@@ -242,23 +242,21 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             setCharacterEncodingIfNeeded(request);
             request.removeAttribute(FORM_IS_RESUBMITTED);
             String postData = getPostData(request);
-            log.debug("Resubmitting Post Data: {}", postData);
             var httpRequest = WebUtils.toHttp(request);
-            boolean rememberedAjaxResubmit = "partial/ajax".equals(httpRequest.getHeader("Faces-Request"));
-            Optional.ofNullable(resubmitSavedForm(postData,
-                    Servlets.getRequestURIWithQueryString(httpRequest),
-                    WebUtils.toHttp(request), WebUtils.toHttp(response),
-                    request.getServletContext(), rememberedAjaxResubmit, false))
-                    .ifPresent(url -> sendRedirect(response, url));
+            var httpResponse = WebUtils.toHttp(response);
+            // never log the body itself: replayed forms may carry credentials or other secrets
+            log.debug("Resubmitting POST to {} ({} bytes of form data)", httpRequest.getRequestURI(), postData.length());
+            // the raw request URI need not be canonical, nor start with the context path
+            String savedRequest = normalizeSavedRequest(Servlets.getRequestURIWithQueryString(httpRequest), httpRequest);
+            if (savedRequest == null) {
+                redirectToView(httpRequest, httpResponse);
+            } else {
+                resubmitSavedForm(postData, savedRequest, httpRequest, httpResponse, ReplayFlow.IN_PLACE);
+            }
         } else {
             setCharacterEncodingIfNeeded(request);
             super.executeChain(request, response, origChain);
         }
-    }
-
-    @SneakyThrows(IOException.class)
-    private static void sendRedirect(ServletResponse response, String url) {
-        WebUtils.toHttp(response).sendRedirect(url);
     }
 
     @SuppressWarnings("LineLength")

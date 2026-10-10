@@ -18,7 +18,6 @@ import com.flowlogix.util.ShrinkWrapManipulator.Action;
 
 import static com.flowlogix.util.ShrinkWrapManipulator.getContextParamValue;
 import static org.apache.shiro.testing.jakarta.ee.Deployments.standardActions;
-import static org.apache.shiro.testing.jakarta.ee.Deployments.isClientStateSavingIntegrationTest;
 import static org.apache.shiro.testing.jakarta.ee.Deployments.isShiroNativeSessionsIntegrationTest;
 
 import java.net.URL;
@@ -48,6 +47,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -122,6 +122,12 @@ public class ShiroAuthFormsIT {
 
     @FindBy(id = "loginFailureMessage")
     private WebElement loginFailureMessage;
+
+    @FindBy(className = "shiro-form-data-notice")
+    private WebElement formDataNotice;
+
+    @FindBy(name = "org.apache.shiro.form-data.discard")
+    private WebElement discardFormData;
 
     @BeforeEach
     void deleteAllCookies() {
@@ -222,13 +228,17 @@ public class ShiroAuthFormsIT {
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void nonAjaxSessionExpired() {
+        nonAjaxSessionExpired("Jack", "Frost");
+    }
+
+    private void nonAjaxSessionExpired(String first, String last) {
         webDriver.get(baseURL + "shiro/form");
         login();
         invalidateSession.click();
         waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
         webDriver.switchTo().alert().accept();
-        firstName.sendKeys("Jack");
-        lastName.sendKeys("Frost");
+        firstName.sendKeys(first);
+        lastName.sendKeys(last);
         guardHttp(submitFirst).click();
         assertThat(sessionExpiredMessage.getText()).isEqualTo("Your Session Has Expired");
     }
@@ -239,6 +249,37 @@ public class ShiroAuthFormsIT {
         nonAjaxSessionExpired();
         login();
         assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
+    }
+
+    @Test
+    @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
+    void nonAjaxResubmitPreservesEscapedInput() {
+        nonAjaxSessionExpired("Jörg & Sons + =", "Frost 雪");
+        login();
+        assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jörg & Sons + =, lastName: Frost 雪");
+    }
+
+    @Test
+    @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
+    void formDataNoticeOnlyWhenFormDataIsSaved() {
+        webDriver.get(baseURL + "shiro/protected");
+        assertThat(webDriver.findElements(By.className("shiro-form-data-notice"))).isEmpty();
+        nonAjaxSessionExpired();
+        assertThat(formDataNotice.getText()).startsWith("We saved the form data you entered");
+        assertThat(discardFormData.isSelected()).isFalse();
+    }
+
+    @Test
+    @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
+    void discardSavedFormData() {
+        nonAjaxSessionExpired();
+        discardFormData.click();
+        login();
+        assertThat(webDriver.getTitle()).isEqualTo("Form Page");
+        assertThat(webDriver.findElements(By.id("messages"))).as("no form data submitted").isEmpty();
+        assertThat(firstName.getAttribute("value")).isEmpty();
+        webDriver.get(baseURL + "shiro/auth/loginform");
+        assertThat(webDriver.findElements(By.className("shiro-form-data-notice"))).as("discarded").isEmpty();
     }
 
     @Test
@@ -304,26 +345,18 @@ public class ShiroAuthFormsIT {
         invalidateSession.click();
         waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
         webDriver.switchTo().alert().accept();
-        if (isClientStateSavingIntegrationTest()) {
-            guardAjax(submitSecond).click();
-            address.clear();
-            city.clear();
-        } else {
-            waitForHttp(submitSecond).click();
-        }
+        guardAjax(submitSecond).click();
+        address.clear();
+        city.clear();
         assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: 1 Houston Street, City: New York");
         address.sendKeys("Workshop");
         city.sendKeys("North Pole");
         invalidateSession.click();
         waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
         webDriver.switchTo().alert().accept();
-        if (isClientStateSavingIntegrationTest()) {
-            guardAjax(submitSecond).click();
-            address.clear();
-            city.clear();
-        } else {
-            waitForHttp(submitSecond).click();
-        }
+        guardAjax(submitSecond).click();
+        address.clear();
+        city.clear();
         assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: Workshop, City: North Pole");
         address.sendKeys("LAX Airport");
         city.sendKeys("Los Angeles");
