@@ -21,7 +21,7 @@ name: Pull Request Labeler
   workflow_run: # zizmor: ignore[dangerous-triggers] -- no PR code is checked out or executed
     workflows: ["Pull Request Labeler Signal"]
     types: [completed]
-permissions: {}
+permissions: { }
 jobs:
   triage:
     if: github.event.workflow_run.event == 'pull_request'
