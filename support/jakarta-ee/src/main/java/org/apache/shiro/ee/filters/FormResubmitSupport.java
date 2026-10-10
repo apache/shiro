@@ -425,7 +425,7 @@ public class FormResubmitSupport {
 
     private static void doRedirectToSaved(HttpServletRequest request, HttpServletResponse response,
             @NonNull String savedRequest, boolean resubmit) {
-        deleteCookie(response, request.getServletContext(), WebUtils.SAVED_REQUEST_KEY);
+        deleteCookie(response, request.getServletContext(), WebUtils.SAVED_REQUEST_KEY, false);
         UUID savedFormDataKey = getSavedFormDataKey(request);
         boolean doRedirectAtEnd = true;
         if (savedFormDataKey != null) {
@@ -437,7 +437,7 @@ public class FormResubmitSupport {
                     doRedirectAtEnd = false;
                 } else {
                     // nothing to submit, or the user chose to discard it: forget it either way
-                    deleteCookie(response, request.getServletContext(), SHIRO_FORM_DATA_KEY);
+                    deleteCookie(response, request.getServletContext(), SHIRO_FORM_DATA_KEY, true);
                 }
             } finally {
                 if (cache.get() != null) {
@@ -538,7 +538,7 @@ public class FormResubmitSupport {
             return false;
         }
         // These must be written before the replayed response is committed by processResubmitResponse()
-        deleteCookie(originalResponse, servletContext, SHIRO_FORM_DATA_KEY);
+        deleteCookie(originalResponse, servletContext, SHIRO_FORM_DATA_KEY, true);
         Servlets.setNoCacheHeaders(originalRequest, originalResponse);
         try {
             var savedFormFields = parseFormData(savedFormData, getFormCharset(originalRequest, servletContext));

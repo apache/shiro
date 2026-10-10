@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.apache.shiro.web.util.WebUtils;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -49,7 +50,7 @@ class FormResubmitSupportCookiesTest {
         when(servletContext.getAttribute(SECURE_COOKIES)).thenReturn(secure);
         when(servletContext.getContextPath()).thenReturn(contextPath);
         if (maxAge == 0) {
-            deleteCookie(response, servletContext, SHIRO_FORM_DATA_KEY);
+            deleteCookie(response, servletContext, SHIRO_FORM_DATA_KEY, true);
         } else {
             addCookie(response, servletContext, SHIRO_FORM_DATA_KEY, "value", maxAge, true);
         }
@@ -89,6 +90,19 @@ class FormResubmitSupportCookiesTest {
         assertThat(cookie.getName()).isEqualTo(cookieName(servletContext, SHIRO_FORM_DATA_KEY));
         assertThat(cookie.getPath()).isEqualTo("/");
         assertThat(cookie.getSecure()).isTrue();
+        assertThat(cookie.getMaxAge()).isZero();
+    }
+
+    @Test
+    void plainCookieDeletionDoesNotUseTheSecureConvention() {
+        when(servletContext.getContextPath()).thenReturn("/my-app");
+        deleteCookie(response, servletContext, WebUtils.SAVED_REQUEST_KEY, false);
+        var cookies = ArgumentCaptor.forClass(Cookie.class);
+        verify(response).addCookie(cookies.capture());
+        var cookie = cookies.getValue();
+        assertThat(cookie.getName()).isEqualTo(WebUtils.SAVED_REQUEST_KEY);
+        assertThat(cookie.getPath()).isEqualTo("/my-app");
+        assertThat(cookie.getSecure()).isFalse();
         assertThat(cookie.getMaxAge()).isZero();
     }
 
