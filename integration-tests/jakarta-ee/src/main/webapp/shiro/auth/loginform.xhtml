@@ -21,7 +21,8 @@
       xmlns:f="jakarta.faces.core"
       xmlns:h="jakarta.faces.html"
       xmlns:jsf="jakarta.faces"
-      xmlns:p="jakarta.faces.passthrough">
+      xmlns:p="jakarta.faces.passthrough"
+      xmlns:shiro="http://shiro.apache.org/tags">
     <h:head>
         <title>Please Log In</title>
         <f:view transient="true"/>
@@ -36,6 +37,7 @@
             <p/>
             Remember Me: <h:selectBooleanCheckbox id="rememberMe" title="Remember Me: "/>
             <p/>
+            <shiro:formDataNotice/>
             <h:commandButton id="login" value="Login ..." action="#{authc.login}"/>
             <h:commandButton id="login2" value="Login (non-JSF) ..."/>
         </h:form>

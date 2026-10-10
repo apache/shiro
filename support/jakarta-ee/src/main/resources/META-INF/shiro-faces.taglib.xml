@@ -134,4 +134,26 @@
         </attribute>
     </tag>
 
+    <tag>
+        <description>
+            Login-page notice that the user's form data was saved and will be submitted after sign-in,
+            with a checkbox to discard it instead. Renders nothing when no form data is saved.
+            Place inside the login form.
+        </description>
+        <tag-name>formDataNotice</tag-name>
+        <component>
+            <resource-id>shiro/formDataNotice.xhtml</resource-id>
+        </component>
+        <attribute>
+            <description>Notice text</description>
+            <name>message</name>
+            <required>false</required>
+        </attribute>
+        <attribute>
+            <description>Label of the discard checkbox</description>
+            <name>discardLabel</name>
+            <required>false</required>
+        </attribute>
+    </tag>
+
 </facelet-taglib>

@@ -13,24 +13,22 @@
  */
 package org.apache.shiro.ee.filters;
 
-import jakarta.servlet.ServletContext;
 import org.apache.shiro.ee.filters.FormResubmitSupport.PartialAjaxResult;
-import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 
-import static org.apache.shiro.ee.filters.FormResubmitSupport.FACES_SOURCE_PATTERN;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.AjaxReplay.FULL_PAGE;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.AjaxReplay.PASS_THROUGH;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.AjaxReplay.RENDER_ALL;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.extractJSFNewViewState;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.isPartialResponseError;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.getDispatchPath;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.getFormCharset;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.getReferer;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isJSFStatefulForm;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.noJSFAjaxRequests;
-import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.transformCookieHeader;
-
-import java.net.HttpCookie;
-import java.net.URLDecoder;
-import java.time.Duration;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +41,6 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.apache.shiro.mgt.DefaultSecurityManager;
 
 /**
  * Resubmit forms support
@@ -51,13 +48,8 @@ import org.apache.shiro.mgt.DefaultSecurityManager;
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("checkstyle:MethodCount")
 class FormSupportTest {
-    private static final long BLACKLISTED_AT = 1_000L;
-    private static final Duration BLACKLIST_TTL = Duration.ofSeconds(60);
-
     @Mock
     private HttpServletRequest request;
-    @Mock
-    private ServletContext servletContext;
 
     @Test
     void nullReferer() {
@@ -204,84 +196,199 @@ class FormSupportTest {
     }
 
     @Test
+    void dispatchPathStripsContextAndKeepsQuery() {
+        when(request.getContextPath()).thenReturn("/myapp");
+        assertThat(getDispatchPath("/myapp", request)).isEqualTo("/");
+        assertThat(getDispatchPath("/myapp?a=1", request)).isEqualTo("/?a=1");
+        assertThat(getDispatchPath("/myapp/calf%C3%A9/view.xhtml?a=1&b=%2F", request))
+                .isEqualTo("/calf%C3%A9/view.xhtml?a=1&b=%2F");
+        assertThat(getDispatchPath("/myapp/WEB-INFO/view.xhtml", request)).isEqualTo("/WEB-INFO/view.xhtml");
+    }
+
+    @Test
+    void dispatchPathDropsPathParameters() {
+        when(request.getContextPath()).thenReturn("/myapp");
+        assertThat(getDispatchPath("/myapp/view.xhtml;jsessionid=123?a=1", request)).isEqualTo("/view.xhtml?a=1");
+        assertThat(getDispatchPath("/myapp/a;x/view.xhtml;y", request)).isEqualTo("/a/view.xhtml");
+    }
+
+    @Test
+    void dispatchPathRejectsProtectedDirectories() {
+        when(request.getContextPath()).thenReturn("/myapp");
+        assertThat(getDispatchPath("/myapp/WEB-INF", request)).isNull();
+        assertThat(getDispatchPath("/myapp/WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/web-inf/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/META-INF/x", request)).isNull();
+        assertThat(getDispatchPath("/myapp/WEB-INF;x/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/;x/WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/%57EB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/WEB-INF%2Fweb.xml", request)).isNull();
+    }
+
+    @Test
+    void dispatchPathRejectsTraversal() {
+        when(request.getContextPath()).thenReturn("/myapp");
+        assertThat(getDispatchPath("/myapp/a/..;/WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/a/..", request)).isEqualTo("/a/..");
+        assertThat(getDispatchPath("/myapp/..", request)).isNull();
+        assertThat(getDispatchPath("/myapp/view.xhtml/", request)).isEqualTo("/view.xhtml/");
+        assertThat(getDispatchPath("/myapp/a/../WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/a/%2e%2e/WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/a/%2e%2e%2fWEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp//WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/./WEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/a%5C..%5CWEB-INF/web.xml", request)).isNull();
+        assertThat(getDispatchPath("/myapp/../../etc/passwd", request)).isNull();
+    }
+
+    @Test
     void viewStatePattern() {
         String statefulFormData
-                = "j_idt5%3Dj_idt5%26j_idt5%3Aj_idt7%3Daaa%26j_idt5%3Aj_idt9%3Dbbb%26j_idt5%3A"
-                + "j_idt11%3DSubmit+...%26jakarta.faces.ViewState"
-                + "%3D-8335355445345003673%3A-6008443334776649058";
-        assertThat(isJSFStatefulForm(decode(statefulFormData))).isTrue();
+                = "j_idt5=j_idt5&j_idt5%3Aj_idt7=aaa&j_idt5%3Aj_idt9=bbb&j_idt5%3A"
+                + "j_idt11=Submit+...&jakarta.faces.ViewState"
+                + "=-8335355445345003673%3A-6008443334776649058";
+        assertThat(isJSFStatefulForm(parseFormData(statefulFormData))).isTrue();
         String statelessFormData
-                = "j_idt5%3Dj_idt5%26j_idt5%3Aj_idt7%3Daaa%26j_idt5%3Aj_idt9%3Dbbb%26j_idt5%3A"
-                + "j_idt11%3DSubmit+...%26jakarta.faces.ViewState%3Dstateless";
-        assertThat(isJSFStatefulForm(statelessFormData)).isFalse();
+                = "j_idt5=j_idt5&j_idt5%3Aj_idt7=aaa&j_idt5%3Aj_idt9=bbb&j_idt5%3A"
+                + "j_idt11=Submit+...&jakarta.faces.ViewState=stateless";
+        assertThat(isJSFStatefulForm(parseFormData(statelessFormData))).isFalse();
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> isJSFStatefulForm(null));
         String nonJSFFormData
-                = "j_idt5%3Dj_idt5%26j_idt5%3Aj_idt7%3Daaa%26j_idt5%3Aj_idt9%3Dbbb%26j_idt5%3A"
-                + "j_idt11%3DSubmit+...";
-        assertThat(isJSFStatefulForm("xxx")).isFalse();
-        assertThat(isJSFStatefulForm(nonJSFFormData)).isFalse();
+                = "j_idt5=j_idt5&j_idt5%3Aj_idt7=aaa&j_idt5%3Aj_idt9=bbb&j_idt5%3A"
+                + "j_idt11=Submit+...";
+        assertThat(isJSFStatefulForm(parseFormData("xxx"))).isFalse();
+        assertThat(isJSFStatefulForm(parseFormData(nonJSFFormData))).isFalse();
+    }
+
+    @Test
+    void parseFormDataKeepsEmptyFieldsAndDecodesOnce() {
+        assertThat(parseFormData("")).isEmpty();
+        assertThat(parseFormData("text=a%26b%2Bc%3Dd&empty=&flag&multi=1&multi=2&multi=%3D"))
+                .containsExactly(
+                        Map.entry("text", List.of("a&b+c=d")),
+                        Map.entry("empty", List.of("")),
+                        Map.entry("flag", List.of("")),
+                        Map.entry("multi", List.of("1", "2", "=")));
+    }
+
+    @Test
+    void parseFormDataHonoursCharset() {
+        assertThat(FormResubmitSupport.parseFormData("name=J%F6rg", StandardCharsets.ISO_8859_1))
+                .containsExactly(Map.entry("name", List.of("J\u00f6rg")));
+        assertThat(FormResubmitSupport.parseFormData("name=J%C3%B6rg", StandardCharsets.UTF_8))
+                .containsExactly(Map.entry("name", List.of("J\u00f6rg")));
+    }
+
+    @Test
+    void formCharsetFallsBackFromRequestToContextToUtf8(@Mock ServletContext servletContext) {
+        when(request.getCharacterEncoding()).thenReturn("ISO-8859-1");
+        assertThat(getFormCharset(request, servletContext)).isEqualTo(StandardCharsets.ISO_8859_1);
+
+        when(request.getCharacterEncoding()).thenReturn(null);
+        when(servletContext.getRequestCharacterEncoding()).thenReturn("US-ASCII");
+        assertThat(getFormCharset(request, servletContext)).isEqualTo(StandardCharsets.US_ASCII);
+
+        when(servletContext.getRequestCharacterEncoding()).thenReturn("no-such-charset");
+        assertThat(getFormCharset(request, servletContext)).isEqualTo(StandardCharsets.UTF_8);
+
+        when(servletContext.getRequestCharacterEncoding()).thenReturn(null);
+        assertThat(getFormCharset(request, servletContext)).isEqualTo(StandardCharsets.UTF_8);
     }
 
     @Test
     void extractViewState() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> extractJSFNewViewState(null, null));
-        assertThat(extractJSFNewViewState("", "hello")).isEqualTo("hello");
-        assertThat(extractJSFNewViewState("xxx", "jakarta.faces.ViewState=stateless&hello=bye"))
-                .isEqualTo("jakarta.faces.ViewState=stateless&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>",
-                        "jakarta.faces.ViewState=stateless&hello=bye"))
-                .isEqualTo("jakarta.faces.ViewState=stateless&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>",
-                        "aaa=bbb&jakarta.faces.ViewState=xxx:yyy&hello=bye"))
-                .isEqualTo("aaa=bbb&jakarta.faces.ViewState=xxx:yyy&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>",
-                        "jakarta.faces.ViewState=987:654&hello=bye"))
-                .isEqualTo("jakarta.faces.ViewState=123:456&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
-                        "jakarta.faces.ViewState=987:654&hello=bye"))
-                .isEqualTo("jakarta.faces.ViewState=-123:-456&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
-                        "jakarta.faces.ViewState=-987:-654&hello=bye"))
-                .isEqualTo("jakarta.faces.ViewState=-123:-456&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
-                        "aaa=bbb&jakarta.faces.ViewState=-987:-654&hello=bye"))
-                .isEqualTo("aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye");
-        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>",
-                        "aaa=bbb&jakarta.faces.ViewState=-987:-654"))
-                .isEqualTo("aaa=bbb&jakarta.faces.ViewState=-123:-456");
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> extractJSFNewViewState(null));
+        assertThat(extractJSFNewViewState("")).isNull();
+        assertThat(extractJSFNewViewState("xxx")).isNull();
+        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"123:456\"/>"))
+                .isEqualTo("123:456");
+        assertThat(extractJSFNewViewState("<input name=\"jakarta.faces.ViewState\" value=\"-123:-456\"/>"
+                + "<input name=\"jakarta.faces.ViewState\" value=\"-789:-012\"/>"))
+                .isEqualTo("-123:-456");
     }
 
     @Test
     void noAjaxRequests() {
-        assertThat(noJSFAjaxRequests("aaa=bbb&jakarta.faces.ViewState=-123:-456"
-                        + "&jakarta.faces.partial.ajax=true&hello=bye", false)).isEqualTo(new PartialAjaxResult(
-                        "aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye",
-                        true, false));
-        assertThat(noJSFAjaxRequests("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
+        assertThat(noJSFAjaxRequests(parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456"
+                        + "&jakarta.faces.partial.ajax=true&hello=bye"), false)).isEqualTo(new PartialAjaxResult(
+                        parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456&hello=bye"),
+                        true, FULL_PAGE));
+        assertThat(noJSFAjaxRequests(parseFormData("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
                         + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917"
                         + "&jakarta.faces.source=j_idt12:j_idt18"
                         + "&jakarta.faces.partial.event=click"
                         + "&jakarta.faces.partial.execute=j_idt12:j_idt18 j_idt12"
                         + "&jakarta.faces.partial.render=j_idt12"
                         + "&jakarta.faces.behavior.event=action"
-                        + "&jakarta.faces.partial.ajax=false", false))
-                .isEqualTo(new PartialAjaxResult("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
-                        + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917&j_idt12:j_idt18=",
-                        true, false));
+                        + "&jakarta.faces.partial.ajax=false"), false))
+                .isEqualTo(new PartialAjaxResult(parseFormData("j_idt12=j_idt12&j_idt12:j_idt14=asdf"
+                        + "&j_idt12:j_idt16=asdf"
+                        + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917&j_idt12:j_idt18="),
+                        true, FULL_PAGE));
     }
 
     @Test
-    void parseFacesSources() {
-        var matcher = FACES_SOURCE_PATTERN.matcher("j_idt12=j_idt12&j_idt12:j_idt14=asdf&j_idt12:j_idt16=asdf"
-                + "&jakarta.faces.ViewState=7709788254588873136:-8052771455757429917"
-                + "&jakarta.faces.source=j_idt12:j_idt18"
+    void ajaxFieldsAreKeptForPassThrough() {
+        String ajaxForm = "aaa=bbb&jakarta.faces.ViewState=-123:-456&jakarta.faces.source=j_idt12:j_idt18"
+                + "&jakarta.faces.partial.render=j_idt12&jakarta.faces.partial.ajax=true";
+        assertThat(noJSFAjaxRequests(parseFormData(ajaxForm), false, PASS_THROUGH)).isEqualTo(new PartialAjaxResult(
+                parseFormData(ajaxForm + "&j_idt12:j_idt18="), true, PASS_THROUGH));
+        // a non-Ajax form submitted while the Ajax client is on the page isn't an Ajax replay
+        assertThat(noJSFAjaxRequests(parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456"), false, RENDER_ALL))
+                .isEqualTo(new PartialAjaxResult(parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456"),
+                        false, FULL_PAGE));
+    }
+
+    @Test
+    void partialResponseErrorIsDetected() {
+        assertThat(isPartialResponseError("""
+                <?xml version='1.0' encoding='UTF-8'?>
+                <partial-response id="j_id1">
+                    <error>
+                        <error-name>class jakarta.faces.application.ViewExpiredException</error-name>
+                        <error-message><![CDATA[viewId:/index.xhtml - View /index.xhtml could not be restored.]]></error-message>
+                    </error>
+                </partial-response>""")).isTrue();
+        assertThat(isPartialResponseError("""
+                <?xml version='1.0' encoding='UTF-8'?>
+                <partial-response id="j_id1">
+                    <changes>
+                        <update id="form"><![CDATA[<error>not an error</error>]]></update>
+                        <update id="j_id1:jakarta.faces.ViewState:0"><![CDATA[-123:-456]]></update>
+                    </changes>
+                </partial-response>""")).isFalse();
+        assertThat(isPartialResponseError("<html><body>full page</body></html>")).isFalse();
+    }
+
+    @Test
+    void ajaxReplayOfRebuiltViewRendersAll() {
+        String ajaxForm = "aaa=bbb&jakarta.faces.ViewState=-123:-456&jakarta.faces.source=j_idt12:j_idt18"
+                + "&jakarta.faces.partial.render=j_idt12&jakarta.faces.partial.ajax=true";
+        assertThat(noJSFAjaxRequests(parseFormData(ajaxForm), false, RENDER_ALL).result())
+                .containsEntry("jakarta.faces.partial.render", List.of("@all"))
+                .containsEntry("jakarta.faces.partial.ajax", List.of("true"));
+        // the render targets stay in place when a stateless view isn't rebuilt
+        assertThat(noJSFAjaxRequests(parseFormData(ajaxForm), true, RENDER_ALL))
+                .isEqualTo(new PartialAjaxResult(parseFormData(ajaxForm + "&j_idt12:j_idt18="), true, PASS_THROUGH));
+        // or without any render targets
+        assertThat(noJSFAjaxRequests(parseFormData("aaa=bbb&jakarta.faces.ViewState=-123:-456"
+                + "&jakarta.faces.source=j_idt12:j_idt18&jakarta.faces.partial.ajax=true"), false, RENDER_ALL)
+                .result()).containsEntry("jakarta.faces.partial.render", List.of("@all"));
+    }
+
+    @Test
+    void encodedAjaxFieldsAreRemovedCompletely() {
+        var result = noJSFAjaxRequests(parseFormData("text=a%26b%2Bc%3Dd&jakarta.faces.ViewState=123%3A456"
+                + "&jakarta.faces.source=j_idt12%3Aj_idt18"
                 + "&jakarta.faces.partial.event=click"
-                + "&jakarta.faces.partial.execute=j_idt12:j_idt18 j_idt12"
-                + "&jakarta.faces.partial.render=j_idt12"
+                + "&jakarta.faces.partial.execute=j_idt12%3Aj_idt18+j_idt12"
+                + "&jakarta.faces.partial.render=j_idt12%20%40all"
                 + "&jakarta.faces.behavior.event=action"
-                + "&jakarta.faces.partial.ajax=false");
-        assertThat(matcher.find()).isTrue();
-        assertThat(matcher.group(1)).isEqualTo("j_idt12:j_idt18");
+                + "&jakarta.faces.partial.ajax=true"), false);
+        assertThat(result).isEqualTo(new PartialAjaxResult(
+                parseFormData("text=a%26b%2Bc%3Dd&jakarta.faces.ViewState=123%3A456&j_idt12%3Aj_idt18="),
+                true, FULL_PAGE));
+        assertThat(result.result()).containsEntry("text", List.of("a&b+c=d"));
     }
 
     @Test
@@ -306,7 +413,7 @@ class FormSupportTest {
                 &jakarta.faces.partial.execute=secondForm:submitSecond secondForm
                 &jakarta.faces.partial.render=secondForm&jakarta.faces.behavior.event=action
                 &jakarta.faces.partial.ajax=true""".replace("\n", "");
-        assertThat(noJSFAjaxRequests(savedRequest, true).result).isEqualTo("""
+        assertThat(noJSFAjaxRequests(parseFormData(savedRequest), true).result()).isEqualTo(parseFormData("""
                 secondForm=secondForm&secondForm:address=asfd&secondForm:city=asdf
                 &jakarta.faces.ViewState=5BDAqkysYaMvzcnTG3bVSXRoK43OvdMyb8w6RicBatqzOdHBwl/cFvOXYfYCwvJoBU6/qv
                 735kadAP67luQ/wMqF4jAQyBKDdxy5F4CxNz4FhAYC2iCd613QnwLWP8BX3so7BylQxIN2Y64n6LUogwkgZLEAHgTBDQGwG
@@ -325,74 +432,10 @@ class FormSupportTest {
                 &jakarta.faces.partial.event=click
                 &jakarta.faces.partial.execute=secondForm:submitSecond secondForm
                 &jakarta.faces.partial.render=secondForm&jakarta.faces.behavior.event=action
-                &jakarta.faces.partial.ajax=true&secondForm:submitSecond=""".replace("\n", ""));
+                &jakarta.faces.partial.ajax=true&secondForm:submitSecond=""".replace("\n", "")));
     }
 
-    @Test
-    void parseCookies() {
-        var map = Map.of("name1", "value1", "name2", "value2", "name3", "value3")
-                .entrySet().stream()
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey,
-                        entry -> {
-                            var cookie = new HttpCookie(entry.getKey(), entry.getValue());
-                            if (entry.getKey().equals("name2")) {
-                                cookie.setPath("/my/path");
-                            }
-                            return cookie;
-                        }));
-
-        assertThat(transformCookieHeader(List.of("name1=value1", "name2=value2; path=/my/path", "name3=value3"))).isEqualTo(map);
-        assertThat(transformCookieHeader(List.of("name="))).isEqualTo(Map.of("name", new HttpCookie("name", "")));
-        assertThat(transformCookieHeader(List.of("JSESSIONID=\"abc\"; $Version=\"1\"; $Path=\"/mypath\"")))
-            .isEqualTo(Map.of("JSESSIONID", new HttpCookie("JSESSIONID", "abc")));
-    }
-
-    @Test
-    @SuppressWarnings("checkstyle:MagicNumber")
-    void blacklistUseShiroCacheManager() {
-        var securityManager = new DefaultSecurityManager();
-        securityManager.setCacheManager(new MemoryConstrainedCacheManager());
-
-        var blacklist = FormResubmitSupport.getBlacklistCache(securityManager);
-
-        blacklist.put("bad.example", BLACKLISTED_AT);
-
-        assertThat(FormResubmitSupport.isBlacklisted(blacklist, null, "bad.example",
-                BLACKLIST_TTL, 1_500L)).isTrue();
-    }
-
-    @Test
-    @SuppressWarnings("checkstyle:MagicNumber")
-    void expiredBlacklistEntryIsRemovedFromShiroCache() {
-        var securityManager = new DefaultSecurityManager();
-        securityManager.setCacheManager(new MemoryConstrainedCacheManager());
-
-        var blacklist = FormResubmitSupport.getBlacklistCache(securityManager);
-        blacklist.put("expired.example", BLACKLISTED_AT);
-
-        assertThat(FormResubmitSupport.isBlacklisted(blacklist, null, "expired.example",
-                BLACKLIST_TTL, 61_001L)).isFalse();
-        assertThat(blacklist.get("expired.example")).isNull();
-    }
-
-    @Test
-    @SuppressWarnings("checkstyle:MagicNumber")
-    void blacklistHonoursEnabledFlag() {
-        var securityManager = new DefaultSecurityManager();
-        securityManager.setCacheManager(new MemoryConstrainedCacheManager());
-        var blacklist = FormResubmitSupport.getBlacklistCache(securityManager);
-        blacklist.put("bad.example", BLACKLISTED_AT);
-
-        // attribute absent → enabled
-        assertThat(FormResubmitSupport.isBlacklisted(blacklist, servletContext, "bad.example",
-                BLACKLIST_TTL, 1_500L)).isTrue();
-
-        when(servletContext.getAttribute("org.apache.shiro.form-resubmit.blacklist.disabled")).thenReturn(Boolean.TRUE);
-        assertThat(FormResubmitSupport.isBlacklisted(blacklist, servletContext, "bad.example",
-                BLACKLIST_TTL, 1_500L)).isFalse();
-    }
-
-    private static String decode(String plain) {
-        return URLDecoder.decode(plain, StandardCharsets.UTF_8);
+    private static Map<String, List<String>> parseFormData(String formData) {
+        return FormResubmitSupport.parseFormData(formData, StandardCharsets.UTF_8);
     }
 }
