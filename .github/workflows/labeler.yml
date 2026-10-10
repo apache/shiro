@@ -16,20 +16,43 @@
 # under the License.
 
 ---
-# https://github.com/actions/labeler
 name: Pull Request Labeler
-on:
-  - pull_request_target # zizmor: ignore[dangerous-triggers]
-permissions:
-  contents: read
+"on":
+  workflow_run: # zizmor: ignore[dangerous-triggers] -- no PR code is checked out or executed
+    workflows: ["Pull Request Labeler Signal"]
+    types: [completed]
+permissions: { }
 jobs:
   triage:
+    if: github.event.workflow_run.event == 'pull_request'
     permissions:
       contents: read
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
+      - name: Find pull request
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::Unexpected pull request head SHA"
+            exit 1
+          fi
+
+          pr_numbers=$(gh api "repos/$REPO/commits/$HEAD_SHA/pulls" \
+            --jq '.[] | select(.state == "open") | .number')
+          {
+            echo "numbers<<EOF"
+            printf '%s\n' "$pr_numbers"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
       - uses: actions/labeler@bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13 # v7.0.0
+        if: steps.pr.outputs.numbers != ''
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
+          pr-number: ${{ steps.pr.outputs.numbers }}
           sync-labels: true
