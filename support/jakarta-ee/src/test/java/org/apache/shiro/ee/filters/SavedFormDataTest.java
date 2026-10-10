@@ -21,18 +21,24 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.isFormDataDiscarde
 import static org.apache.shiro.ee.filters.Forms.DISCARD_FORM_DATA_PARAMETER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import java.util.UUID;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.shiro.cache.MemoryConstrainedCacheManager;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.util.ThreadContext;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
+import org.apache.shiro.web.util.WebUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -47,6 +53,8 @@ class SavedFormDataTest {
     private HttpServletRequest request;
     @Mock
     private ServletContext servletContext;
+    @Mock
+    private HttpServletResponse response;
     private final DefaultSecurityManager securityManager = new DefaultSecurityManager();
 
     @BeforeEach
@@ -95,5 +103,29 @@ class SavedFormDataTest {
         assertThat(isFormDataDiscarded(request)).as("checked checkbox").isTrue();
         when(request.getParameter(DISCARD_FORM_DATA_PARAMETER)).thenReturn("false");
         assertThat(isFormDataDiscarded(request)).isFalse();
+    }
+
+    @Test
+    void savedRequestDeletionMatchesThePlainCookieEvenWithSecureFormCookies() throws Exception {
+        securityManager.setRememberMeManager(new CookieRememberMeManager());
+        when(servletContext.getAttribute("org.apache.shiro.form-resubmit.secure-cookies")).thenReturn(Boolean.TRUE);
+        when(servletContext.getContextPath()).thenReturn("/myapp");
+        when(servletContext.getSessionTimeout()).thenReturn(1);
+        when(request.getContextPath()).thenReturn("/myapp");
+        when(request.getRequestURI()).thenReturn("/myapp/form");
+        FormResubmitSupport.saveRequest(request, response, false);
+        var cookies = ArgumentCaptor.forClass(Cookie.class);
+        verify(response).addCookie(cookies.capture());
+        Cookie saved = cookies.getValue();
+        when(request.getCookies()).thenReturn(new Cookie[] {saved});
+        FormResubmitSupport.redirectToSaved(request, response, (path, req) -> false, "/", false);
+        verify(response, times(2)).addCookie(cookies.capture());
+        Cookie deleted = cookies.getValue();
+        assertThat(saved.getName()).isEqualTo(WebUtils.SAVED_REQUEST_KEY);
+        assertThat(saved.getMaxAge()).isPositive();
+        assertThat(deleted.getName()).isEqualTo(saved.getName());
+        assertThat(deleted.getPath()).isEqualTo(saved.getPath()).isEqualTo("/myapp");
+        assertThat(deleted.getMaxAge()).isZero();
+        verify(response).sendRedirect("/myapp/form");
     }
 }

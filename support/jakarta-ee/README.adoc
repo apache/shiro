@@ -35,8 +35,9 @@ opposed to changing the way Shiro works by integrating CDI
 
 Saved forms are replayed within the current web application using
 `RequestDispatcher.forward`, without an outbound HTTP connection. The replay
-uses the current Shiro subject, session, and browser response. Its request body
-and form parameters replace those of the login request.
+uses the current Shiro subject, session, and browser response. Saved form
+parameters replace those of the login request. Replay targets must read form
+data through the parameter accessors; the raw request body is not reconstructed.
 
 For server-side Faces state saving, a buffered GET obtains a new view state
 before the POST. A calling Faces context is restored after each dispatch.
@@ -44,9 +45,12 @@ before the POST. A calling Faces context is restored after each dispatch.
 Each replay's status, headers, cookies and body are captured rather than written
 to the browser response, which is also shielded from `reset()`, `resetBuffer()`
 and `flushBuffer()`. Only a successful replay is applied, with its headers and
-cookies. View-state GETs and failed attempts leave the login request's response,
-such as its session cookies, untouched. Saved form data is decoded with the
-request's character encoding, falling back to the servlet context's and then UTF-8.
+cookies. Response metadata setters (such as content type and encoding) and
+generic header read-back retain the wrapped response's behavior.
+Captured state from view-state GETs and failed attempts is discarded instead
+of applied to the login response, preserving its session cookies.
+Saved form data is decoded with the request's character encoding, falling back
+to the servlet context's and then UTF-8.
 
 A remembered subject's Faces Ajax submission, replayed in place when its
 session is gone, stays an Ajax request:
@@ -104,6 +108,7 @@ Replay remains in the same servlet request lifecycle. Application filters and
 request-scoped components should not assume that a replay starts a new external
 request. Saved targets must be within the current context; servlet-private
 `WEB-INF` and `META-INF` resources cannot be replay targets.
+Response `reset()` does not support switching between a writer and an output stream.
 
 Resubmission is best-effort. Replays are buffered, so if the forward fails or
 the target doesn't answer with `200` or `302`, the fault is logged and the user

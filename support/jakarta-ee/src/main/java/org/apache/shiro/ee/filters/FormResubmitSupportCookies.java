@@ -48,9 +48,10 @@ public class FormResubmitSupportCookies {
                 : baseName;
     }
 
-    private static Cookie newCookie(ServletContext servletContext, String baseName, String value, int maxAge) {
-        var cookie = new Cookie(cookieName(servletContext, baseName), value);
-        boolean secure = isFormResubmitSecureCookies(servletContext);
+    private static Cookie newCookie(ServletContext servletContext, String baseName, String value, int maxAge,
+            boolean useHostPrefix) {
+        var cookie = new Cookie(useHostPrefix ? cookieName(servletContext, baseName) : baseName, value);
+        boolean secure = useHostPrefix && isFormResubmitSecureCookies(servletContext);
         cookie.setPath(secure ? "/" : servletContext.getContextPath());
         cookie.setSecure(secure);
         cookie.setMaxAge(maxAge);
@@ -62,17 +63,18 @@ public class FormResubmitSupportCookies {
      */
     static void addCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
             @NonNull String cookieName, @NonNull String cookieValue, int maxAge, boolean httpOnly) {
-        var cookie = newCookie(servletContext, cookieName, cookieValue, maxAge);
+        var cookie = newCookie(servletContext, cookieName, cookieValue, maxAge, true);
         cookie.setHttpOnly(httpOnly);
         response.addCookie(cookie);
     }
 
     /**
      * @param cookieName base name, see {@link #cookieName}
+     * @param useHostPrefix false for a plain-name, context-scoped cookie regardless of the secure-cookie setting
      */
     static void deleteCookie(@NonNull HttpServletResponse response, ServletContext servletContext,
-            @NonNull String cookieName) {
-        response.addCookie(newCookie(servletContext, cookieName, "tbd", 0));
+            @NonNull String cookieName, boolean useHostPrefix) {
+        response.addCookie(newCookie(servletContext, cookieName, "tbd", 0, useHostPrefix));
     }
 
     static int getCookieAge(ServletRequest request, org.apache.shiro.mgt.SecurityManager securityManager) {
