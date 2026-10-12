@@ -277,8 +277,8 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
      * @see ValidatingSessionManager#validateSessions()
      */
     public void validateSessions() {
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Validating all active sessions...");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Validating all active sessions...");
         }
 
         int invalidCount = 0;
@@ -304,14 +304,14 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
             }
         }
 
-        if (LOGGER.isInfoEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             String msg = "Finished session validation.";
             if (invalidCount > 0) {
                 msg += "  [" + invalidCount + "] sessions were stopped.";
             } else {
                 msg += "  No sessions were stopped.";
             }
-            LOGGER.info(msg);
+            LOGGER.debug(msg);
         }
     }
 
