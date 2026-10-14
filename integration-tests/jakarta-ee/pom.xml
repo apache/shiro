@@ -93,7 +93,7 @@
         <dependency>
             <groupId>com.flowlogix.depchain</groupId>
             <artifactId>integration-test</artifactId>
-            <version>131</version>
+            <version>132</version>
             <scope>test</scope>
         </dependency>
 
@@ -106,7 +106,7 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>11.7</version>
+            <version>11.7.1</version>
         </dependency>
 
         <dependency>
@@ -150,7 +150,7 @@
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-bom</artifactId>
-                <version>4.50.0</version>
+                <version>4.51.0</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
