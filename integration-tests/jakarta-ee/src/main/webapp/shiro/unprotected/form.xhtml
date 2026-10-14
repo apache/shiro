@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+  <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:jsf="jakarta.faces"
+      xmlns:p="jakarta.faces.passthrough"
+      xmlns:h="jakarta.faces.html">
+    <h:head>
+        <title>Anonymous Form Page</title>
+    </h:head>
+    <h:body>
+        <h:form id="firstForm">
+            First Name:
+            <h:inputText id="firstName" title="First Name" p:autofocus="true" value="#{unprotectedFormBean.firstName}"/>
+            <p/>
+            Last Name:
+            <h:inputText id="lastName" title="Last Name" value="#{unprotectedFormBean.lastName}"/>
+            <p/>
+            <h:commandButton id="submitFirst" value="Submit ..." action="#{unprotectedFormBean.submit}"/>
+            <h:messages id="messages"/>
+        </h:form>
+        <h:form id="secondForm">
+            Address:
+            <h:inputText id="address" value="#{unprotectedFormBean.address}"/>
+            <p/>
+            City:
+            <h:inputText id="city" value="#{unprotectedFormBean.city}"/>
+            <p/>
+            <h:commandButton id="submitSecond" value="Submit ..." action="#{unprotectedFormBean.submit2}">
+                <f:ajax execute="@form" render="@form"/>
+            </h:commandButton>
+            <h:messages id="messages"/>
+        </h:form>
+        <div jsf:rendered="#{authc.sessionExpired}" style="color: red;" id="sessionExpiredMessage">
+            Your Session Has Expired
+        </div>
+        <input type="button" id="invalidate" value="Invalidate session via Servlet"
+               onclick="invalidateSession('#{request.contextPath}/invalidatesession')" />
+    </h:body>
+    <script>
+        const invalidateSession = async (path) => {
+            const response = await fetch(path);
+            const strresp = await response.text();
+            alert('Session invalidated!');
+        };
+    </script>
+</html>

@@ -28,7 +28,7 @@ import org.apache.shiro.authz.annotation.RequiresUser;
 import org.omnifaces.cdi.ViewScoped;
 
 /**
- * OmniFaces ViewScoped Shrito-protected beans
+ * OmniFaces ViewScoped Shiro-protected beans
  */
 @ViewScoped
 @Named

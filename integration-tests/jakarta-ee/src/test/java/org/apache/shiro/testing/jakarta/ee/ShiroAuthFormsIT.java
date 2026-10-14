@@ -48,6 +48,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -61,6 +62,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class ShiroAuthFormsIT {
     static final String DEPLOYMENT_DEV_MODE = "DevMode";
     static final String DEPLOYMENT_PROD_MODE = "ProdMode";
+    private static final String NATIVE_SESSION_COOKIE_NAME = "native_session_cookie";
 
     @Drone
     private WebDriver webDriver;
@@ -110,6 +112,9 @@ public class ShiroAuthFormsIT {
 
     @FindBy(id = "secondForm:messages")
     private WebElement secondFormMessages;
+
+    @FindBy(id = "firstForm:messages")
+    private WebElement firstFormMessages;
 
     @FindBy(id = "invalidate")
     private WebElement invalidateSession;
@@ -191,7 +196,7 @@ public class ShiroAuthFormsIT {
         }
         login();
         webDriver.manage().deleteCookieNamed(isShiroNativeSessionsIntegrationTest()
-                ? "native_session_cookie" : DEFAULT_SESSION_ID_NAME);
+                ? NATIVE_SESSION_COOKIE_NAME : DEFAULT_SESSION_ID_NAME);
         webDriver.navigate().refresh();
         assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
         guardHttp(logout).click();
@@ -366,6 +371,39 @@ public class ShiroAuthFormsIT {
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
+    void nonAjaxAnonymousResubmit() {
+        webDriver.get(baseURL + "shiro/unprotected/form");
+        assertThat(webDriver.getTitle()).isEqualTo("Anonymous Form Page");
+        expireAnonymousSession();
+        firstName.sendKeys("Jack");
+        lastName.sendKeys("Frost");
+        guardHttp(submitFirst).click();
+        assertThat(webDriver.getTitle()).as("no login page").isEqualTo("Anonymous Form Page");
+        assertThat(firstFormMessages.getText()).isEqualTo("Anonymous Form Submitted - firstName: Jack, lastName: Frost");
+    }
+
+    @Test
+    @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
+    void ajaxAnonymousResubmit() {
+        webDriver.get(baseURL + "shiro/unprotected/form");
+        address.sendKeys("1 Houston Street");
+        city.sendKeys("New York");
+        expireAnonymousSession();
+        guardAjax(submitSecond).click();
+        assertThat(webDriver.getTitle()).as("no login page").isEqualTo("Anonymous Form Page");
+        assertThat(secondFormMessages.getText())
+                .isEqualTo("2nd Anonymous Form Submitted - Address: 1 Houston Street, City: New York");
+        address.clear();
+        city.clear();
+        address.sendKeys("Workshop");
+        city.sendKeys("North Pole");
+        guardAjax(submitSecond).click();
+        assertThat(secondFormMessages.getText())
+                .isEqualTo("2nd Anonymous Form Submitted - Address: Workshop, City: North Pole");
+    }
+
+    @Test
+    @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void alreadyLoggedIn() {
         webDriver.get(baseURL + "shiro/form");
         login();
@@ -378,6 +416,23 @@ public class ShiroAuthFormsIT {
         username.sendKeys("webuser");
         password.sendKeys("webpwd");
         guardHttp(login).click();
+    }
+
+    /**
+     * Simulates a timed-out anonymous session. Explicit invalidation of a native session also removes
+     * its cookie from the browser, unlike a timeout, after which the browser still sends the stale id,
+     * so the stale cookie is restored here.
+     */
+    private void expireAnonymousSession() {
+        var sessionCookie = webDriver.manage().getCookieNamed(NATIVE_SESSION_COOKIE_NAME);
+        invalidateSession.click();
+        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
+        webDriver.switchTo().alert().accept();
+        if (isShiroNativeSessionsIntegrationTest() && sessionCookie != null) {
+            // Firefox rejects re-adding the cookie with its original attributes (e.g. secure) over plain HTTP
+            webDriver.manage().addCookie(new Cookie(sessionCookie.getName(), sessionCookie.getValue(),
+                    sessionCookie.getPath()));
+        }
     }
 
     @Deployment(testable = false, name = DEPLOYMENT_DEV_MODE)

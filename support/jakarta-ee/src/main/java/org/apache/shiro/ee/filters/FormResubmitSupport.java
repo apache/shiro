@@ -30,6 +30,7 @@ import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.deleteCooki
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getCookieAge;
 import org.apache.shiro.crypto.CryptoException;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isAnonymousFormResubmitDisabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitAjaxRenderAllDisabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.io.IOException;
@@ -71,6 +72,7 @@ import org.apache.shiro.mgt.AbstractRememberMeManager;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SessionsSecurityManager;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
 import org.jsoup.Jsoup;
@@ -99,6 +101,7 @@ public class FormResubmitSupport {
     private static final String FACES_BEHAVIOR_PREFIX = "jakarta.faces.behavior.";
     private static final String SEC_FETCH_SITE = "Sec-Fetch-Site";
     private static final String ORIGIN = "Origin";
+    private static final String FORM_URL_ENCODED = "application/x-www-form-urlencoded";
 
     static class HttpMethod {
         static final String GET = "GET";
@@ -167,8 +170,7 @@ public class FormResubmitSupport {
                              AjaxReplay ajaxReplay) { }
 
     static void savePostDataForResubmit(HttpServletRequest request, HttpServletResponse response, @NonNull String loginUrl) {
-        if (isPostRequest(request) && isSecurityManagerTypeOf(getSecurityManager(),
-                DefaultSecurityManager.class) && shouldSavePostData(request)) {
+        if (isSavableForm(request) && isSecurityManagerTypeOf(getSecurityManager(), DefaultSecurityManager.class)) {
             String postData = getPostData(request);
             var cacheKey = UUID.randomUUID();
             DefaultSecurityManager dsm = getSecurityManager(DefaultSecurityManager.class);
@@ -197,6 +199,45 @@ public class FormResubmitSupport {
     static boolean isPostRequest(ServletRequest request) {
         return request instanceof HttpServletRequest
                 && HttpMethod.POST.equalsIgnoreCase(WebUtils.toHttp(request).getMethod());
+    }
+
+    static boolean isFormUrlEncoded(HttpServletRequest request) {
+        String contentType = request.getContentType();
+        return contentType != null && contentType.trim().toLowerCase(Locale.ROOT).startsWith(FORM_URL_ENCODED);
+    }
+
+    /**
+     * Only same-origin, form-encoded POSTs can be saved and replayed: a multipart upload's body
+     * can't be reproduced from parameters, and would only bloat the cache
+     */
+    static boolean isSavableForm(HttpServletRequest request) {
+        return isPostRequest(request) && isFormUrlEncoded(request) && shouldSavePostData(request);
+    }
+
+    /**
+     * Whether a POST that arrived without a session should be replayed in place, without a login flow,
+     * once the security chain permits it: for a remembered subject, or for an anonymous subject whose
+     * session has expired, i.e. the browser presented a session id that no longer resolves to a session.
+     * Only same-origin, form-encoded submissions are replayed, and only when server-side Faces view state
+     * could have been lost with the session.
+     *
+     * @param subject the subject created for the request, without a session
+     * @param request the current request
+     * @return true if the form should be replayed
+     */
+    static boolean isDirectResubmitCandidate(@NonNull Subject subject, ServletRequest request) {
+        if (!(request instanceof HttpServletRequest httpRequest) || !isSavableForm(httpRequest)) {
+            return false;
+        }
+        var servletContext = request.getServletContext();
+        if (isFormResubmitDisabled(servletContext) || isJSFClientStateSavingMethod(servletContext)) {
+            return false;
+        }
+        if (subject.isRemembered()) {
+            return true;
+        }
+        return !subject.isAuthenticated() && !isAnonymousFormResubmitDisabled(servletContext)
+                && httpRequest.getRequestedSessionId() != null;
     }
 
     @SneakyThrows(IOException.class)

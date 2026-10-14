@@ -52,8 +52,7 @@ of applied to the login response, preserving its session cookies.
 Saved form data is decoded with the request's character encoding, falling back
 to the servlet context's and then UTF-8.
 
-A remembered subject's Faces Ajax submission, replayed in place when its
-session is gone, stays an Ajax request:
+A Faces Ajax submission replayed in place (see below) stays an Ajax request:
 the saved partial request is replayed with the refreshed view state, and its
 partial response is passed through to the waiting Ajax client, without a full
 page refresh. Since the server-side view is rebuilt from scratch, the replay
@@ -67,6 +66,22 @@ unhandled Faces error is treated as a failed replay and falls back to a redirect
 to the saved request, as a failed full-page replay does. After a login flow,
 the browser is on the login page instead, so the submission is replayed as a
 full-page action and the browser is redirected to the saved request.
+
+=== Replay without a login flow
+
+When a POST arrives with a session id that no longer resolves to a session,
+and the subject is either remembered or anonymous, the form is replayed in
+place as soon as Shiro's security chain permits the request, with no
+"session expired" login page in between. For a page that requires login,
+the authentication filter still runs first and saves the form for replay
+after login instead. Only same-origin, `application/x-www-form-urlencoded`
+submissions are replayed, and never with client-side Faces state saving,
+where no view state is lost with the session.
+
+Set the `org.apache.shiro.form-resubmit.anonymous.disabled` context parameter
+to `true` to limit this to remembered subjects, or
+`org.apache.shiro.form-resubmit.disabled` to turn off form resubmission
+entirely.
 
 === Letting the user know, and letting the user opt out
 
