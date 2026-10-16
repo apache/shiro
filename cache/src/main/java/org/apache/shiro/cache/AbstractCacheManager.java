@@ -56,6 +56,7 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
      * @throws IllegalArgumentException if the {@code name} argument is {@code null} or does not contain text.
      * @throws CacheException           if there is a problem lazily creating a {@code Cache} instance.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <K, V> Cache<K, V> getCache(String name) throws IllegalArgumentException, CacheException {
         if (!StringUtils.hasText(name)) {
@@ -92,6 +93,7 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
      *
      * @throws Exception if any of the managed caches can't destroy properly.
      */
+    @Override
     public void destroy() throws Exception {
         while (!caches.isEmpty()) {
             for (Cache<?, ?> cache : caches.values()) {
@@ -101,6 +103,7 @@ public abstract class AbstractCacheManager implements CacheManager, Destroyable 
         }
     }
 
+    @Override
     public String toString() {
         Collection<Cache<?, ?>> values = caches.values();
         StringBuilder sb = new StringBuilder(getClass().getSimpleName())

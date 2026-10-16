@@ -29,6 +29,7 @@ class MockPermissionResolver implements PermissionResolver {
 
     boolean invoked = false
 
+    @Override
     Permission resolvePermission(String permissionString) {
         invoked = true
         return new WildcardPermission(permissionString)

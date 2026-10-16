@@ -61,6 +61,7 @@ public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
      * @throws org.apache.shiro.authz.AuthorizationException if the calling <code>Subject</code> does not have
      *                                                       the permission(s) necessary to continue access or execution.
      */
+    @Override
     public void assertAuthorized(Annotation a) throws AuthorizationException {
         if (!(a instanceof RequiresPermissions)) {
             return;

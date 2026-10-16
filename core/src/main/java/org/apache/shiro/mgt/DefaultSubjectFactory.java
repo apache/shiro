@@ -37,6 +37,7 @@ public class DefaultSubjectFactory implements SubjectFactory {
     public DefaultSubjectFactory() {
     }
 
+    @Override
     public Subject createSubject(SubjectContext context) {
         SecurityManager securityManager = context.resolveSecurityManager();
         Session session = context.resolveSession();

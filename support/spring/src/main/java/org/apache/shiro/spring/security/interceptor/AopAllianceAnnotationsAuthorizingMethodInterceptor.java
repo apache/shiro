@@ -73,22 +73,27 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
         final MethodInvocation mi = (MethodInvocation) implSpecificMethodInvocation;
 
         return new org.apache.shiro.aop.MethodInvocation() {
+            @Override
             public Method getMethod() {
                 return mi.getMethod();
             }
 
+            @Override
             public Object[] getArguments() {
                 return mi.getArguments();
             }
 
+            @Override
             public String toString() {
                 return "Method invocation [" + mi.getMethod() + "]";
             }
 
+            @Override
             public Object proceed() throws Throwable {
                 return mi.proceed();
             }
 
+            @Override
             public Object getThis() {
                 return mi.getThis();
             }
@@ -118,6 +123,7 @@ public class AopAllianceAnnotationsAuthorizingMethodInterceptor
      * @return the return value from invoking the method invocation.
      * @throws Throwable if the underlying AOP Alliance method invocation throws a <code>Throwable</code>.
      */
+    @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         org.apache.shiro.aop.MethodInvocation mi = createMethodInvocation(methodInvocation);
         return super.invoke(mi);

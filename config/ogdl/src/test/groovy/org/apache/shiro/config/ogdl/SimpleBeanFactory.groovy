@@ -23,6 +23,7 @@ class SimpleBeanFactory implements org.apache.shiro.lang.util.Factory<SimpleBean
     int factoryInt;
     String factoryString;
 
+    @Override
     public SimpleBean getInstance() {
         return new SimpleBean(intProp: factoryInt, stringProp: factoryString)
     }

@@ -91,6 +91,7 @@ public abstract class AbstractFilter extends ServletContextSupport implements Fi
      * @param filterConfig the servlet container supplied FilterConfig instance.
      * @throws jakarta.servlet.ServletException if {@link #onFilterConfigSet() onFilterConfigSet()} throws an Exception.
      */
+    @Override
     public final void init(FilterConfig filterConfig) throws ServletException {
         setFilterConfig(filterConfig);
         try {
@@ -124,6 +125,7 @@ public abstract class AbstractFilter extends ServletContextSupport implements Fi
     /**
      * Default no-op implementation that can be overridden by subclasses for custom cleanup behavior.
      */
+    @Override
     public void destroy() {
     }
 

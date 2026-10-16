@@ -96,6 +96,7 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
      *     ((ModularRealmAuthorizer)this.authorizer).setRealms(realms);
      * }</pre>
      */
+    @Override
     protected void afterRealmsSet() {
         super.afterRealmsSet();
         if (this.authorizer instanceof ModularRealmAuthorizer realmAuthorizer) {
@@ -103,73 +104,90 @@ public abstract class AuthorizingSecurityManager extends AuthenticatingSecurityM
         }
     }
 
+    @Override
     public void destroy() {
         LifecycleUtils.destroy(getAuthorizer());
         this.authorizer = null;
         super.destroy();
     }
 
+    @Override
     public boolean isPermitted(PrincipalCollection principals, String permissionString) {
         return this.authorizer.isPermitted(principals, permissionString);
     }
 
+    @Override
     public boolean isPermitted(PrincipalCollection principals, Permission permission) {
         return this.authorizer.isPermitted(principals, permission);
     }
 
+    @Override
     public boolean[] isPermitted(PrincipalCollection principals, String... permissions) {
         return this.authorizer.isPermitted(principals, permissions);
     }
 
+    @Override
     public boolean[] isPermitted(PrincipalCollection principals, List<Permission> permissions) {
         return this.authorizer.isPermitted(principals, permissions);
     }
 
+    @Override
     public boolean isPermittedAll(PrincipalCollection principals, String... permissions) {
         return this.authorizer.isPermittedAll(principals, permissions);
     }
 
+    @Override
     public boolean isPermittedAll(PrincipalCollection principals, Collection<Permission> permissions) {
         return this.authorizer.isPermittedAll(principals, permissions);
     }
 
+    @Override
     public void checkPermission(PrincipalCollection principals, String permission) throws AuthorizationException {
         this.authorizer.checkPermission(principals, permission);
     }
 
+    @Override
     public void checkPermission(PrincipalCollection principals, Permission permission) throws AuthorizationException {
         this.authorizer.checkPermission(principals, permission);
     }
 
+    @Override
     public void checkPermissions(PrincipalCollection principals, String... permissions) throws AuthorizationException {
         this.authorizer.checkPermissions(principals, permissions);
     }
 
+    @Override
     public void checkPermissions(PrincipalCollection principals, Collection<Permission> permissions)
             throws AuthorizationException {
         this.authorizer.checkPermissions(principals, permissions);
     }
 
+    @Override
     public boolean hasRole(PrincipalCollection principals, String roleIdentifier) {
         return this.authorizer.hasRole(principals, roleIdentifier);
     }
 
+    @Override
     public boolean[] hasRoles(PrincipalCollection principals, List<String> roleIdentifiers) {
         return this.authorizer.hasRoles(principals, roleIdentifiers);
     }
 
+    @Override
     public boolean hasAllRoles(PrincipalCollection principals, Collection<String> roleIdentifiers) {
         return this.authorizer.hasAllRoles(principals, roleIdentifiers);
     }
 
+    @Override
     public void checkRole(PrincipalCollection principals, String role) throws AuthorizationException {
         this.authorizer.checkRole(principals, role);
     }
 
+    @Override
     public void checkRoles(PrincipalCollection principals, Collection<String> roles) throws AuthorizationException {
         this.authorizer.checkRoles(principals, roles);
     }
 
+    @Override
     public void checkRoles(PrincipalCollection principals, String... roles) throws AuthorizationException {
         this.authorizer.checkRoles(principals, roles);
     }

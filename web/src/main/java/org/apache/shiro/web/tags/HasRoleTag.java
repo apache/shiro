@@ -28,6 +28,7 @@ public class HasRoleTag extends RoleTag {
     public HasRoleTag() {
     }
 
+    @Override
     protected boolean showTagBody(String roleName) {
         return getSubject() != null && getSubject().hasRole(roleName);
     }

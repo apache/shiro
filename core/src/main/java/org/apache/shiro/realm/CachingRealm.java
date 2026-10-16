@@ -89,6 +89,7 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
      *
      * @param cacheManager the <tt>CacheManager</tt> to use for data caching, or <tt>null</tt> to disable caching.
      */
+    @Override
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
         afterCacheManagerSet();
@@ -119,10 +120,12 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
         this.cachingEnabled = cachingEnabled;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -146,6 +149,7 @@ public abstract class CachingRealm implements Realm, Nameable, CacheManagerAware
      * @see #getAvailablePrincipal(org.apache.shiro.subject.PrincipalCollection)
      * @since 1.2
      */
+    @Override
     public void onLogout(PrincipalCollection principals) {
         clearCache(principals);
     }

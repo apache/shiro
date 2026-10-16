@@ -46,6 +46,7 @@ public class EventBusConsumersTestConfiguration {
             return eventBus;
         }
 
+        @Override
         public void setEventBus(EventBus eventBus) {
             this.eventBus = eventBus;
         }

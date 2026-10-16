@@ -58,6 +58,7 @@ public class DefaultSampleManager implements SampleManager {
     /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
+    @Override
     public String getValue() {
         String value = null;
 
@@ -74,6 +75,7 @@ public class DefaultSampleManager implements SampleManager {
         return value;
     }
 
+    @Override
     public void setValue(String newValue) {
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
@@ -86,18 +88,21 @@ public class DefaultSampleManager implements SampleManager {
         session.setAttribute(VALUE_KEY, newValue);
     }
 
+    @Override
     public void secureMethod1() {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Secure method 1 called...");
         }
     }
 
+    @Override
     public void secureMethod2() {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Secure method 2 called...");
         }
     }
 
+    @Override
     public void secureMethod3() {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Secure method 3 called...");

@@ -123,10 +123,12 @@ public class AuthorizingRealmTest {
     @Test
     void testNullAuthzInfo() {
         AuthorizingRealm realm = new AuthorizingRealm() {
+            @Override
             protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
                 return null;
             }
 
+            @Override
             protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
                 return null;
             }
@@ -208,6 +210,7 @@ public class AuthorizingRealmTest {
 
         AuthorizingRealm realm = new AllowAllRealm();
         realm.setRolePermissionResolver(new RolePermissionResolver() {
+            @Override
             public Collection<Permission> resolvePermissionsInRole(String roleString) {
                 Collection<Permission> permissions = new HashSet<Permission>();
                 if (roleString.equals(ROLE)) {
@@ -234,6 +237,7 @@ public class AuthorizingRealmTest {
 
         AuthorizingRealm realm = new AllowAllRealm();
         realm.setRolePermissionResolver(new RolePermissionResolver() {
+            @Override
             public Collection<Permission> resolvePermissionsInRole(String roleString) {
                 Collection<Permission> permissions = new HashSet<Permission>();
                 if (roleString.equals(ROLE)) {
@@ -276,10 +280,12 @@ public class AuthorizingRealmTest {
             setCredentialsMatcher(new AllowAllCredentialsMatcher());
         }
 
+        @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             return buildAuthenticationInfo(token.getPrincipal(), token.getCredentials());
         }
 
+        @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             Set<String> roles = new HashSet<String>();
             roles.add(ROLE);

@@ -102,6 +102,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
      *
      * @inheritDoc
      */
+    @Override
     public Object getPrimaryPrincipal() {
         if (isEmpty()) {
             return null;
@@ -109,6 +110,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         return iterator().next();
     }
 
+    @Override
     public void add(Object principal, String realmName) {
         if (realmName == null) {
             throw new NullPointerException("realmName argument cannot be null.");
@@ -120,6 +122,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         getPrincipalsLazy(realmName).add(principal);
     }
 
+    @Override
     public void addAll(Collection<?> principals, String realmName) {
         if (realmName == null) {
             throw new NullPointerException("realmName argument cannot be null.");
@@ -134,6 +137,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         getPrincipalsLazy(realmName).addAll(principals);
     }
 
+    @Override
     public void addAll(PrincipalCollection principals) {
         if (principals.getRealmNames() != null) {
             for (String realmName : principals.getRealmNames()) {
@@ -144,6 +148,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         }
     }
 
+    @Override
     public <T> T oneByType(Class<T> type) {
         if (realmPrincipals == null || realmPrincipals.isEmpty()) {
             return null;
@@ -159,6 +164,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         return null;
     }
 
+    @Override
     public <T> Collection<T> byType(Class<T> type) {
         if (realmPrincipals == null || realmPrincipals.isEmpty()) {
             return Collections.emptySet();
@@ -178,6 +184,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         return Collections.unmodifiableSet(typed);
     }
 
+    @Override
     public List<Object> asList() {
         Set<?> all = asSet();
         if (all.isEmpty()) {
@@ -186,6 +193,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         return Collections.unmodifiableList(new ArrayList<>(all));
     }
 
+    @Override
     public Set<Object> asSet() {
         if (realmPrincipals == null || realmPrincipals.isEmpty()) {
             return Collections.emptySet();
@@ -201,6 +209,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         return Collections.unmodifiableSet(aggregated);
     }
 
+    @Override
     public Collection<Object> fromRealm(String realmName) {
         if (realmPrincipals == null || realmPrincipals.isEmpty()) {
             return Collections.emptySet();
@@ -212,6 +221,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         return Collections.unmodifiableSet(principals);
     }
 
+    @Override
     public Set<String> getRealmNames() {
         if (realmPrincipals == null) {
             return null;
@@ -220,10 +230,12 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         }
     }
 
+    @Override
     public boolean isEmpty() {
         return realmPrincipals == null || realmPrincipals.isEmpty();
     }
 
+    @Override
     public void clear() {
         this.cachedToString = null;
         if (realmPrincipals != null) {
@@ -232,10 +244,12 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         }
     }
 
+    @Override
     public Iterator<Object> iterator() {
         return asSet().iterator();
     }
 
+    @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;
@@ -246,6 +260,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
         return false;
     }
 
+    @Override
     public int hashCode() {
         if (this.realmPrincipals != null && !realmPrincipals.isEmpty()) {
             return realmPrincipals.hashCode();
@@ -259,6 +274,7 @@ public class SimplePrincipalCollection implements MutablePrincipalCollection {
      * @return a simple string representation suitable for printing.
      * @since 1.0
      */
+    @Override
     public String toString() {
         if (this.cachedToString == null) {
             Set<Object> principals = asSet();

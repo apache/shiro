@@ -195,6 +195,7 @@ public class IniShiroFilter extends AbstractShiroFilter {
         this.configPath = StringUtils.clean(configPath);
     }
 
+    @Override
     public void init() throws Exception {
         applyInitParams();
         configure();

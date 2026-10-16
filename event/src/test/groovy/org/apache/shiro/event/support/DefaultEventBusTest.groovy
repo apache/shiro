@@ -39,6 +39,7 @@ class DefaultEventBusTest {
     @Test
     void testSetEventListenerResolver() {
         def resolver = new EventListenerResolver() {
+            @Override
             List<EventListener> getEventListeners(Object instance) {
                 return null //dummy implementation
             }
@@ -87,6 +88,7 @@ class DefaultEventBusTest {
     @Test
     void testSubscribeWithNullResolvedListeners() {
         def resolver = new EventListenerResolver() {
+            @Override
             List<EventListener> getEventListeners(Object instance) {
                 return null //dummy implementation
             }

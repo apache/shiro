@@ -160,10 +160,12 @@ public class DefaultLdapRealmTest {
         replay(factory);
 
         realm.getAuthenticationInfo(new AuthenticationToken() {
+            @Override
             public Object getPrincipal() {
                 return userId;
             }
 
+            @Override
             public Object getCredentials() {
                 return "secret";
             }

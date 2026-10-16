@@ -130,6 +130,7 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      * @return {@code true} if the provided token credentials are equal to the stored account credentials,
      * {@code false} otherwise
      */
+    @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         Object tokenCredentials = getCredentials(token);
         Object accountCredentials = getCredentials(info);

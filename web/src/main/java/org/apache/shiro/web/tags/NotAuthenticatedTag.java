@@ -37,6 +37,7 @@ public class NotAuthenticatedTag extends SecureTag {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotAuthenticatedTag.class);
 
+    @Override
     public int onDoStartTag() throws JspException {
         if (getSubject() == null || !getSubject().isAuthenticated()) {
             if (LOGGER.isTraceEnabled()) {

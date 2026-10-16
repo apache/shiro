@@ -28,10 +28,12 @@ import org.apache.shiro.crypto.hash.SimpleHash;
 @Deprecated
 public class Sha512CredentialsMatcherTest extends AbstractHashedCredentialsMatcherTest {
 
+    @Override
     public Class<? extends HashedCredentialsMatcher> getMatcherClass() {
         return Sha512CredentialsMatcher.class;
     }
 
+    @Override
     public SimpleHash hash(Object credentials) {
         return new Sha512Hash(credentials);
     }

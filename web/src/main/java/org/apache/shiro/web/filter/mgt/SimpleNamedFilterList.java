@@ -75,18 +75,22 @@ public class SimpleNamedFilterList implements NamedFilterList {
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public FilterChain proxy(FilterChain orig) {
         return new ProxiedFilterChain(orig, this);
     }
 
+    @Override
     public boolean add(Filter filter) {
         return this.backingList.add(filter);
     }
 
+    @Override
     public void add(int index, Filter filter) {
         this.backingList.add(index, filter);
     }
@@ -99,78 +103,97 @@ public class SimpleNamedFilterList implements NamedFilterList {
         return this.backingList.addAll(index, c);
     }
 
+    @Override
     public void clear() {
         this.backingList.clear();
     }
 
+    @Override
     public boolean contains(Object o) {
         return this.backingList.contains(o);
     }
 
+    @Override
     public boolean containsAll(Collection<?> c) {
         return this.backingList.containsAll(c);
     }
 
+    @Override
     public Filter get(int index) {
         return this.backingList.get(index);
     }
 
+    @Override
     public int indexOf(Object o) {
         return this.backingList.indexOf(o);
     }
 
+    @Override
     public boolean isEmpty() {
         return this.backingList.isEmpty();
     }
 
+    @Override
     public Iterator<Filter> iterator() {
         return this.backingList.iterator();
     }
 
+    @Override
     public int lastIndexOf(Object o) {
         return this.backingList.lastIndexOf(o);
     }
 
+    @Override
     public ListIterator<Filter> listIterator() {
         return this.backingList.listIterator();
     }
 
+    @Override
     public ListIterator<Filter> listIterator(int index) {
         return this.backingList.listIterator(index);
     }
 
+    @Override
     public Filter remove(int index) {
         return this.backingList.remove(index);
     }
 
+    @Override
     public boolean remove(Object o) {
         return this.backingList.remove(o);
     }
 
+    @Override
     public boolean removeAll(Collection<?> c) {
         return this.backingList.removeAll(c);
     }
 
+    @Override
     public boolean retainAll(Collection<?> c) {
         return this.backingList.retainAll(c);
     }
 
+    @Override
     public Filter set(int index, Filter filter) {
         return this.backingList.set(index, filter);
     }
 
+    @Override
     public int size() {
         return this.backingList.size();
     }
 
+    @Override
     public List<Filter> subList(int fromIndex, int toIndex) {
         return this.backingList.subList(fromIndex, toIndex);
     }
 
+    @Override
     public Object[] toArray() {
         return this.backingList.toArray();
     }
 
+    @Override
     public <T> T[] toArray(T[] a) {
         //noinspection SuspiciousToArrayCall
         return this.backingList.toArray(a);

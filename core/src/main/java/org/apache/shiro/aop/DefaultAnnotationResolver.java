@@ -49,6 +49,7 @@ public class DefaultAnnotationResolver implements AnnotationResolver {
      * @return the discovered annotation or {@code null} if an annotation instance could not be
      * found.
      */
+    @Override
     public Annotation getAnnotation(MethodInvocation mi, Class<? extends Annotation> clazz) {
         if (mi == null) {
             throw new IllegalArgumentException("method argument cannot be null");

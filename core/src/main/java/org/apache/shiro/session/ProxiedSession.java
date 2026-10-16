@@ -54,6 +54,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public Serializable getId() {
         return delegate.getId();
     }
@@ -61,6 +62,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public Date getStartTimestamp() {
         return delegate.getStartTimestamp();
     }
@@ -68,6 +70,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public Date getLastAccessTime() {
         return delegate.getLastAccessTime();
     }
@@ -75,6 +78,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public long getTimeout() throws InvalidSessionException {
         return delegate.getTimeout();
     }
@@ -82,6 +86,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
         delegate.setTimeout(maxIdleTimeInMillis);
     }
@@ -89,6 +94,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public String getHost() {
         return delegate.getHost();
     }
@@ -96,6 +102,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public void touch() throws InvalidSessionException {
         delegate.touch();
     }
@@ -103,6 +110,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public void stop() throws InvalidSessionException {
         delegate.stop();
     }
@@ -110,6 +118,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
         return delegate.getAttributeKeys();
     }
@@ -117,6 +126,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public Object getAttribute(Object key) throws InvalidSessionException {
         return delegate.getAttribute(key);
     }
@@ -124,6 +134,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public void setAttribute(Object key, Object value) throws InvalidSessionException {
         delegate.setAttribute(key, value);
     }
@@ -131,6 +142,7 @@ public class ProxiedSession implements Session {
     /**
      * Immediately delegates to the underlying proxied session.
      */
+    @Override
     public Object removeAttribute(Object key) throws InvalidSessionException {
         return delegate.removeAttribute(key);
     }

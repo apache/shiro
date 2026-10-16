@@ -104,6 +104,7 @@ public class ExecutorServiceSessionValidationSchedulerTest {
     }
 
     private static final class FakeDefaultSessionManager extends DefaultSessionManager {
+        @Override
         public void validateSessions() throws RuntimeException {
             throw new RuntimeException("Session test exception");
         }

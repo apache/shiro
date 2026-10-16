@@ -39,6 +39,7 @@ public abstract class PermissionTag extends SecureTag {
         this.name = name;
     }
 
+    @Override
     protected void verifyAttributes() throws JspException {
         String permission = getName();
 
@@ -48,6 +49,7 @@ public abstract class PermissionTag extends SecureTag {
         }
     }
 
+    @Override
     public int onDoStartTag() throws JspException {
 
         String p = getName();

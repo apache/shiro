@@ -59,6 +59,7 @@ public class DefaultSessionStorageEvaluator implements SessionStorageEvaluator {
      * @param subject the {@code Subject} for which session state persistence may be enabled
      * @return the value of {@link #isSessionStorageEnabled()} and ignores the {@code Subject} argument.
      */
+    @Override
     public boolean isSessionStorageEnabled(Subject subject) {
         return (subject != null && subject.getSession(false) != null) || isSessionStorageEnabled();
     }

@@ -92,22 +92,27 @@ public class SubjectAwareExecutorService extends SubjectAwareExecutor implements
         super.setTargetExecutor(targetExecutor);
     }
 
+    @Override
     public void shutdown() {
         this.targetExecutorService.shutdown();
     }
 
+    @Override
     public List<Runnable> shutdownNow() {
         return this.targetExecutorService.shutdownNow();
     }
 
+    @Override
     public boolean isShutdown() {
         return this.targetExecutorService.isShutdown();
     }
 
+    @Override
     public boolean isTerminated() {
         return this.targetExecutorService.isTerminated();
     }
 
+    @Override
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
         return this.targetExecutorService.awaitTermination(timeout, unit);
     }
@@ -117,16 +122,19 @@ public class SubjectAwareExecutorService extends SubjectAwareExecutor implements
         return subject.associateWith(task);
     }
 
+    @Override
     public <T> Future<T> submit(Callable<T> task) {
         Callable<T> work = associateWithSubject(task);
         return this.targetExecutorService.submit(work);
     }
 
+    @Override
     public <T> Future<T> submit(Runnable task, T result) {
         Runnable work = associateWithSubject(task);
         return this.targetExecutorService.submit(work, result);
     }
 
+    @Override
     public Future<?> submit(Runnable task) {
         Runnable work = associateWithSubject(task);
         return this.targetExecutorService.submit(work);
@@ -141,22 +149,26 @@ public class SubjectAwareExecutorService extends SubjectAwareExecutor implements
         return workItems;
     }
 
+    @Override
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
         Collection<Callable<T>> workItems = associateWithSubject(tasks);
         return this.targetExecutorService.invokeAll(workItems);
     }
 
+    @Override
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
             throws InterruptedException {
         Collection<Callable<T>> workItems = associateWithSubject(tasks);
         return this.targetExecutorService.invokeAll(workItems, timeout, unit);
     }
 
+    @Override
     public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
         Collection<Callable<T>> workItems = associateWithSubject(tasks);
         return this.targetExecutorService.invokeAny(workItems);
     }
 
+    @Override
     public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException {
         Collection<Callable<T>> workItems = associateWithSubject(tasks);

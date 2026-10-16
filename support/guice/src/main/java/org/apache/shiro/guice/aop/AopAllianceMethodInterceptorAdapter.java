@@ -32,6 +32,7 @@ class AopAllianceMethodInterceptorAdapter implements MethodInterceptor {
         this.shiroInterceptor = shiroInterceptor;
     }
 
+    @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         return shiroInterceptor.invoke(new AopAllianceMethodInvocationAdapter(invocation));
     }

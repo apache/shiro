@@ -361,6 +361,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @param token   the token that resulted in a successful authentication attempt.
      * @param info    the authentication info resulting from the successful authentication attempt.
      */
+    @Override
     public void onSuccessfulLogin(Subject subject, AuthenticationToken token, AuthenticationInfo info) {
         //always clear any previous identity:
         forgetIdentity(subject);
@@ -460,6 +461,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      *                       is being used to construct a {@link Subject} instance.
      * @return the remembered principals or {@code null} if none could be acquired.
      */
+    @Override
     public PrincipalCollection getRememberedPrincipals(SubjectContext subjectContext) {
         PrincipalCollection principals = null;
         byte[] bytes = null;
@@ -624,6 +626,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      * @param token   the authentication token resulting in a failed login attempt - ignored by this implementation
      * @param ae      the exception thrown as a result of the failed login attempt - ignored by this implementation
      */
+    @Override
     public void onFailedLogin(Subject subject, AuthenticationToken token, AuthenticationException ae) {
         forgetIdentity(subject);
     }
@@ -634,6 +637,7 @@ public abstract class AbstractRememberMeManager implements RememberMeManager {
      *
      * @param subject the subject logging out.
      */
+    @Override
     public void onLogout(Subject subject) {
         forgetIdentity(subject);
     }

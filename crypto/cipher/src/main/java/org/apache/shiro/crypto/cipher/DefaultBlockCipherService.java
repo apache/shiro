@@ -455,6 +455,7 @@ public class DefaultBlockCipherService extends AbstractSymmetricCipherService {
      * @param streaming if the transformation string is going to be used for a Cipher performing stream-based encryption or not.
      * @return the transformation string
      */
+    @Override
     protected String getTransformationString(boolean streaming) {
         if (streaming) {
             if (this.streamingTransformationString == null) {

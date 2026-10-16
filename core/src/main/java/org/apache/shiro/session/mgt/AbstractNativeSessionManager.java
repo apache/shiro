@@ -80,6 +80,7 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
      * @param eventBus the EventBus to use to publish SessionEvents.
      * @since 1.3
      */
+    @Override
     public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
     }
@@ -96,6 +97,7 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
         }
     }
 
+    @Override
     public Session start(SessionContext context) {
         Session session = createSession(context);
         applyGlobalSessionTimeout(session);
@@ -137,6 +139,7 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
     protected void onStart(Session session, SessionContext context) {
     }
 
+    @Override
     public Session getSession(SessionKey key) throws SessionException {
         Session session = lookupSession(key);
         return session != null ? createExposedSession(session, key) : null;
@@ -210,34 +213,41 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
         }
     }
 
+    @Override
     public Date getStartTimestamp(SessionKey key) {
         return lookupRequiredSession(key).getStartTimestamp();
     }
 
+    @Override
     public Date getLastAccessTime(SessionKey key) {
         return lookupRequiredSession(key).getLastAccessTime();
     }
 
+    @Override
     public long getTimeout(SessionKey key) throws InvalidSessionException {
         return lookupRequiredSession(key).getTimeout();
     }
 
+    @Override
     public void setTimeout(SessionKey key, long maxIdleTimeInMillis) throws InvalidSessionException {
         Session s = lookupRequiredSession(key);
         s.setTimeout(maxIdleTimeInMillis);
         onChange(s);
     }
 
+    @Override
     public void touch(SessionKey key) throws InvalidSessionException {
         Session s = lookupRequiredSession(key);
         s.touch();
         onChange(s);
     }
 
+    @Override
     public String getHost(SessionKey key) {
         return lookupRequiredSession(key).getHost();
     }
 
+    @Override
     public Collection<Object> getAttributeKeys(SessionKey key) {
         Collection<Object> c = lookupRequiredSession(key).getAttributeKeys();
         if (!CollectionUtils.isEmpty(c)) {
@@ -246,10 +256,12 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
         return Collections.emptySet();
     }
 
+    @Override
     public Object getAttribute(SessionKey sessionKey, Object attributeKey) throws InvalidSessionException {
         return lookupRequiredSession(sessionKey).getAttribute(attributeKey);
     }
 
+    @Override
     public void setAttribute(SessionKey sessionKey, Object attributeKey, Object value) throws InvalidSessionException {
         if (value == null) {
             removeAttribute(sessionKey, attributeKey);
@@ -260,6 +272,7 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
         }
     }
 
+    @Override
     public Object removeAttribute(SessionKey sessionKey, Object attributeKey) throws InvalidSessionException {
         Session s = lookupRequiredSession(sessionKey);
         Object removed = s.removeAttribute(attributeKey);
@@ -269,6 +282,7 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
         return removed;
     }
 
+    @Override
     public boolean isValid(SessionKey key) {
         try {
             checkValid(key);
@@ -278,6 +292,7 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
         }
     }
 
+    @Override
     public void stop(SessionKey key) throws InvalidSessionException {
         Session session = lookupRequiredSession(key);
         try {
@@ -303,6 +318,7 @@ public abstract class AbstractNativeSessionManager extends AbstractSessionManage
     protected void afterStopped(Session session) {
     }
 
+    @Override
     public void checkValid(SessionKey key) throws InvalidSessionException {
         //just try to acquire it.  If there is a problem, an exception will be thrown:
         lookupRequiredSession(key);

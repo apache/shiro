@@ -61,6 +61,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
         this.roles = roles;
     }
 
+    @Override
     public Set<String> getRoles() {
         return roles;
     }
@@ -100,6 +101,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
         this.roles.addAll(roles);
     }
 
+    @Override
     public Set<String> getStringPermissions() {
         return stringPermissions;
     }
@@ -141,6 +143,7 @@ public class SimpleAuthorizationInfo implements AuthorizationInfo {
         this.stringPermissions.addAll(permissions);
     }
 
+    @Override
     public Set<Permission> getObjectPermissions() {
         return objectPermissions;
     }

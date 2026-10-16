@@ -112,6 +112,7 @@ public abstract class AbstractSessionDAO implements SessionDAO {
      *
      * @param session Session object to create in the EIS and associate with an ID.
      */
+    @Override
     public Serializable create(Session session) {
         Serializable sessionId = doCreate(session);
         verifySessionId(sessionId);
@@ -164,6 +165,7 @@ public abstract class AbstractSessionDAO implements SessionDAO {
      * @return the session identified by <tt>sessionId</tt> in the EIS.
      * @throws UnknownSessionException if the id specified does not correspond to any session in the EIS.
      */
+    @Override
     public Session readSession(Serializable sessionId) throws UnknownSessionException {
         Session s = doReadSession(sessionId);
         if (s == null) {

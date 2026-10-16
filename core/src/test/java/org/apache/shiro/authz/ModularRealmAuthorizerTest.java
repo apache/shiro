@@ -56,6 +56,7 @@ public class ModularRealmAuthorizerTest {
 
         // now set the RolePermissionResolver
         RolePermissionResolver rolePermissionResolver = new RolePermissionResolver() {
+            @Override
             public Collection<Permission> resolvePermissionsInRole(String roleString) {
                 return null;
             }

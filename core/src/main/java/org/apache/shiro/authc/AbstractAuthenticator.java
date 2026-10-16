@@ -163,6 +163,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      *
      * @param principals the identifying principals of the {@code Subject}/account logging out.
      */
+    @Override
     public void onLogout(PrincipalCollection principals) {
         notifyLogout(principals);
     }
@@ -187,6 +188,7 @@ public abstract class AbstractAuthenticator implements Authenticator, LogoutAwar
      * @throws AuthenticationException if there is any problem during the authentication process - see the
      *                                 interface's JavaDoc for a more detailed explanation.
      */
+    @Override
     public final AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
 
         if (token == null) {

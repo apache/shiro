@@ -56,6 +56,7 @@ public class ProxiedFilterChain implements FilterChain {
         this.index = 0;
     }
 
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
         if (this.filters == null || this.filters.size() == this.index) {
             //we've reached the end of the wrapped chain, so invoke the original one:

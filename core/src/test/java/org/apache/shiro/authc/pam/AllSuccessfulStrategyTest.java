@@ -59,6 +59,7 @@ public class AllSuccessfulStrategyTest {
         assertThatExceptionOfType(UnsupportedTokenException.class).isThrownBy(() -> {
             Realm notSupportingRealm = new AuthorizingRealm() {
 
+                @Override
                 public boolean supports(AuthenticationToken token) {
                     return false;
                 }

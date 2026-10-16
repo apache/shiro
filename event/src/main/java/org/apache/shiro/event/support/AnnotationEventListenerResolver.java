@@ -53,6 +53,7 @@ public class AnnotationEventListenerResolver implements EventListenerResolver {
      * @return a new collection of {@link EventListener} instances, each instance corresponding to an annotated
      * method discovered on the specified {@code instance} argument.
      */
+    @Override
     public List<EventListener> getEventListeners(Object instance) {
         if (instance == null) {
             return Collections.emptyList();

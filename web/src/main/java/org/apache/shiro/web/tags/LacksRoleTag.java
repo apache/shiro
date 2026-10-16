@@ -28,6 +28,7 @@ public class LacksRoleTag extends RoleTag {
     public LacksRoleTag() {
     }
 
+    @Override
     protected boolean showTagBody(String roleName) {
         boolean hasRole = getSubject() != null && getSubject().hasRole(roleName);
         return !hasRole;

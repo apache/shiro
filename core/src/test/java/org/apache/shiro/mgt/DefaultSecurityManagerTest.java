@@ -64,6 +64,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
     }
 
     @AfterEach
+    @Override
     public void tearDown() {
         SecurityUtils.setSecurityManager(null);
         sm.destroy();

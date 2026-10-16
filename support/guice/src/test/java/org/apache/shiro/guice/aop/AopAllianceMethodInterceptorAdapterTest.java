@@ -38,6 +38,7 @@ public class AopAllianceMethodInterceptorAdapterTest {
         MethodInvocation allianceInvocation = createMock(MethodInvocation.class);
         MethodInterceptor mockShiroInterceptor = createMock(MethodInterceptor.class);
         expect(mockShiroInterceptor.invoke(anyObject(AopAllianceMethodInvocationAdapter.class))).andAnswer(new IAnswer<Object>() {
+            @Override
             public Object answer() throws Throwable {
                 return getCurrentArguments()[0];
             }

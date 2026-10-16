@@ -176,6 +176,7 @@ public class ShiroAopModuleTest {
             super(new MyAnnotationHandler(MyTestAnnotation.class));
         }
 
+        @Override
         public Object invoke(MethodInvocation methodInvocation) throws Throwable {
             return null;
         }

@@ -57,6 +57,7 @@ public class TextConfigurationRealmTest {
              * Demonstrates that a lock can't be obtained on the realm by a read thread until after
              * the lock is released.
              */
+            @Override
             public void test(Thread runnable) throws InterruptedException {
                 // Obtain the realm's locks
                 usersLock.writeLock().lock();
@@ -100,6 +101,7 @@ public class TextConfigurationRealmTest {
     void testRoleAndUserAccount() throws InterruptedException {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
+            @Override
             public void run() {
                 assertTrue(realm.roleExists("role1"), "role not found when it was expected");
                 assertTrue(realm.accountExists("user1"), "user not found when it was expected");
@@ -114,6 +116,7 @@ public class TextConfigurationRealmTest {
     void testHasRole() throws InterruptedException {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
+            @Override
             public void run() {
                 PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 assertTrue(realm.hasRole(principalCollection, "role2"),
@@ -131,6 +134,7 @@ public class TextConfigurationRealmTest {
     void testCheckRole() throws InterruptedException {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
+            @Override
             public void run() {
                 PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 try {
@@ -149,6 +153,7 @@ public class TextConfigurationRealmTest {
     void testCheckPermission() throws InterruptedException {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
+            @Override
             public void run() {
                 PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 try {
@@ -169,6 +174,7 @@ public class TextConfigurationRealmTest {
         setUpForReadConfigurationTest();
         executeTest(new Runnable() {
 
+            @Override
             public void run() {
                 PrincipalCollection principalCollection = ImmutablePrincipalCollection.ofSinglePrincipal("user1", "realm1");
                 assertTrue(realm.isPermitted(principalCollection,
@@ -187,6 +193,7 @@ public class TextConfigurationRealmTest {
     @Test
     void testProcessRoleDefinitions() throws InterruptedException {
         realm = new TestRealm() {
+            @Override
             public void test(Thread runnable) throws InterruptedException {
                 // While the realm's lock is held by this thread role definitions cannot be processed
                 // Obtain the realm's locks
@@ -203,6 +210,7 @@ public class TextConfigurationRealmTest {
         };
         // A thread to process new role definitions
         TestThread testThread = new TestThread(new Runnable() {
+            @Override
             public void run() {
                 try {
                     realm.processRoleDefinitions();
@@ -225,6 +233,7 @@ public class TextConfigurationRealmTest {
     @Test
     void testProcessUserDefinitions() throws InterruptedException {
         realm = new TestRealm() {
+            @Override
             public void test(Thread runnable) throws InterruptedException {
                 // While the realm's lock is held by this thread user definitions cannot be processed
                 // Obtain the realm's locks
@@ -240,6 +249,7 @@ public class TextConfigurationRealmTest {
             }
         };
         TestThread testThread = new TestThread(new Runnable() {
+            @Override
             public void run() {
                 try {
                     realm.processUserDefinitions();
@@ -267,6 +277,7 @@ public class TextConfigurationRealmTest {
             this.test = test;
         }
 
+        @Override
         public void run() {
             try {
                 test.run();

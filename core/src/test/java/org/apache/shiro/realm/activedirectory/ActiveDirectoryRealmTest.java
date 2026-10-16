@@ -269,6 +269,7 @@ public class ActiveDirectoryRealmTest {
 
 
             credentialsMatcher = new CredentialsMatcher() {
+                @Override
                 public boolean doCredentialsMatch(AuthenticationToken object, AuthenticationInfo object1) {
                     return true;
                 }
@@ -303,6 +304,7 @@ public class ActiveDirectoryRealmTest {
         }
 
         // override ldap query because i don't care about testing that piece in this case
+        @Override
         protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token,
                                                                 LdapContextFactory ldapContextFactory) {
             return new SimpleAccount(token.getPrincipal(), token.getCredentials(), getName());

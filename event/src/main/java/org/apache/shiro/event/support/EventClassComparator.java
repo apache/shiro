@@ -48,6 +48,7 @@ import java.util.Comparator;
  * @since 1.3
  */
 public class EventClassComparator implements Comparator<Class<?>> {
+    @Override
     public int compare(Class<?> a, Class<?> b) {
         if (a == null) {
             if (b == null) {

@@ -51,6 +51,7 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
      * Returns {@code null} immediately, relying on this class's {@link #merge merge} implementation to return
      * only the first {@code info} object it encounters, ignoring all subsequent ones.
      */
+    @Override
     public AuthenticationInfo beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token)
             throws AuthenticationException {
         return null;
@@ -62,6 +63,7 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
      * Returns the <code>aggregate</code> method argument, without modification
      * otherwise.
      */
+    @Override
     public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo aggregate)
             throws AuthenticationException {
         if (getStopAfterFirstSuccess() && aggregate != null && !isEmpty(aggregate.getPrincipals())) {
@@ -81,6 +83,7 @@ public class FirstSuccessfulStrategy extends AbstractAuthenticationStrategy {
      * This logic ensures that the first valid info encountered is the one retained and all subsequent ones are ignored,
      * since this strategy mandates that only the info from the first successfully authenticated realm be used.
      */
+    @Override
     protected AuthenticationInfo merge(AuthenticationInfo info, AuthenticationInfo aggregate) {
         if (aggregate != null && !isEmpty(aggregate.getPrincipals())) {
             return aggregate;

@@ -345,6 +345,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
         }
     }
 
+    @Override
     public void setName(String name) {
         super.setName(name);
         String authcCacheName = this.authenticationCacheName;
@@ -370,6 +371,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * @param token the token being submitted for authentication.
      * @return true if this authentication realm can process the submitted token instance of the class, false otherwise.
      */
+    @Override
     public boolean supports(AuthenticationToken token) {
         return token != null && getAuthenticationTokenClass().isAssignableFrom(token.getClass());
     }
@@ -397,6 +399,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      *
      * @since 1.2
      */
+    @Override
     public final void init() {
         //trigger obtaining the authentication cache if possible
         getAvailableAuthenticationCache();
@@ -417,6 +420,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      *
      * @since 1.2
      */
+    @Override
     protected void afterCacheManagerSet() {
         //trigger obtaining the authentication cache if possible
         getAvailableAuthenticationCache();
@@ -568,6 +572,7 @@ public abstract class AuthenticatingRealm extends CachingRealm implements Initia
      * AuthenticationInfo could be found.
      * @throws AuthenticationException if authentication failed.
      */
+    @Override
     public final AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
         AuthenticationInfo info = getCachedAuthenticationInfo(token);

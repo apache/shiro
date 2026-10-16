@@ -34,6 +34,7 @@ public abstract class ResourceBasedWebEnvironment extends DefaultWebEnvironment 
         return configLocations;
     }
 
+    @Override
     public void setConfigLocations(String locations) {
         if (!StringUtils.hasText(locations)) {
             throw new IllegalArgumentException("Null/empty locations argument not allowed.");
@@ -42,6 +43,7 @@ public abstract class ResourceBasedWebEnvironment extends DefaultWebEnvironment 
         setConfigLocations(arr);
     }
 
+    @Override
     public void setConfigLocations(String[] configLocations) {
         this.configLocations = configLocations;
     }

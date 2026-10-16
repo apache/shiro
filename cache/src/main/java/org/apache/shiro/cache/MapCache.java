@@ -54,26 +54,32 @@ public class MapCache<K, V> implements Cache<K, V> {
         this.map = backingMap;
     }
 
+    @Override
     public V get(K key) throws CacheException {
         return map.get(key);
     }
 
+    @Override
     public V put(K key, V value) throws CacheException {
         return map.put(key, value);
     }
 
+    @Override
     public V remove(K key) throws CacheException {
         return map.remove(key);
     }
 
+    @Override
     public void clear() throws CacheException {
         map.clear();
     }
 
+    @Override
     public int size() {
         return map.size();
     }
 
+    @Override
     public Set<K> keys() {
         Set<K> keys = map.keySet();
         if (!keys.isEmpty()) {
@@ -82,6 +88,7 @@ public class MapCache<K, V> implements Cache<K, V> {
         return Collections.emptySet();
     }
 
+    @Override
     public Collection<V> values() {
         Collection<V> values = map.values();
         if (!values.isEmpty()) {
@@ -90,6 +97,7 @@ public class MapCache<K, V> implements Cache<K, V> {
         return Collections.emptyList();
     }
 
+    @Override
     public String toString() {
         return new StringBuilder("MapCache '")
                 .append(name).append("' (")

@@ -124,6 +124,7 @@ public class SubjectAwareExecutor implements Executor {
      * @param command the runnable to associate with the currently executing subject and then to execute via the target
      *                {@code Executor} instance.
      */
+    @Override
     public void execute(Runnable command) {
         Runnable associated = associateWithSubject(command);
         getTargetExecutor().execute(associated);

@@ -43,6 +43,7 @@ public class AllowAllCredentialsMatcher implements CredentialsMatcher {
      * @param info  the account being verified for access
      * @return <code>true</code> <em>always</em>. (except for simulated credentials)
      */
+    @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         return info != SIMULATED_CREDENTIALS;
     }

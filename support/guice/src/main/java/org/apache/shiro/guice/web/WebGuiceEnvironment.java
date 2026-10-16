@@ -50,22 +50,27 @@ class WebGuiceEnvironment implements WebEnvironment {
         servletContext.setAttribute(EnvironmentLoaderListener.ENVIRONMENT_ATTRIBUTE_KEY, this);
     }
 
+    @Override
     public FilterChainResolver getFilterChainResolver() {
         return filterChainResolver;
     }
 
+    @Override
     public ServletContext getServletContext() {
         return servletContext;
     }
 
+    @Override
     public WebSecurityManager getWebSecurityManager() {
         return securityManager;
     }
 
+    @Override
     public SecurityManager getSecurityManager() {
         return securityManager;
     }
 
+    @Override
     public ShiroFilterConfiguration getShiroFilterConfiguration() {
         return filterConfiguration;
     }

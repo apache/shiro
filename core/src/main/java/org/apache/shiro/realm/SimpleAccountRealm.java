@@ -162,6 +162,7 @@ public class SimpleAccountRealm extends AuthorizingRealm {
         return values;
     }
 
+    @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
         SimpleAccount account = getUser(upToken.getUsername());
@@ -181,6 +182,7 @@ public class SimpleAccountRealm extends AuthorizingRealm {
         return account;
     }
 
+    @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         String username = getUsername(principals);
         usersLock.readLock().lock();

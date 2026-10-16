@@ -27,24 +27,29 @@ import java.util.List;
 @Repository("userDAO")
 public class HibernateUserDAO extends HibernateDao implements UserDAO {
 
+    @Override
     public User getUser(Long userId) {
         return (User) getSession().find(User.class, userId);
     }
 
+    @Override
     public User findUser(String username) {
         Assert.hasText(username);
         String query = "from User u where u.username = :username";
         return getSession().createQuery(query, User.class).setParameter("username", username).getSingleResultOrNull();
     }
 
+    @Override
     public void createUser(User user) {
         getSession().persist(user);
     }
 
+    @Override
     public List<User> getAllUsers() {
         return getSession().createQuery("from User order by username", User.class).getResultList();
     }
 
+    @Override
     public void deleteUser(Long userId) {
         User user = getUser(userId);
         if (user != null) {
@@ -52,6 +57,7 @@ public class HibernateUserDAO extends HibernateDao implements UserDAO {
         }
     }
 
+    @Override
     public void updateUser(User user) {
         getSession().merge(user);
     }

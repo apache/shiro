@@ -84,10 +84,12 @@ public class IpFilterTest {
     @Test
     void willBlockAndAllowBasedOnIpSource() throws Exception {
         IpSource source = new IpSource() {
+            @Override
             public Collection<String> getAuthorizedIps() {
                 return Collections.singleton("192.168.0.0/16");
             }
 
+            @Override
             public Collection<String> getDeniedIps() {
                 return Collections.singleton("192.168.33.0/24");
             }

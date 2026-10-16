@@ -43,6 +43,7 @@ public class DefaultUserService implements UserService {
         this.userDAO = userDAO;
     }
 
+    @Override
     public User getCurrentUser() {
         final Long currentUserId = (Long) SecurityUtils.getSubject().getPrincipal();
         if (currentUserId != null) {
@@ -52,6 +53,7 @@ public class DefaultUserService implements UserService {
         }
     }
 
+    @Override
     public void createUser(String username, String email, String password) {
         User user = new User();
         user.setUsername(username);
@@ -60,18 +62,22 @@ public class DefaultUserService implements UserService {
         userDAO.createUser(user);
     }
 
+    @Override
     public List<User> getAllUsers() {
         return userDAO.getAllUsers();
     }
 
+    @Override
     public User getUser(Long userId) {
         return userDAO.getUser(userId);
     }
 
+    @Override
     public void deleteUser(Long userId) {
         userDAO.deleteUser(userId);
     }
 
+    @Override
     public void updateUser(User user) {
         userDAO.updateUser(user);
     }

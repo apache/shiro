@@ -141,6 +141,7 @@ public class DefaultSubjectDAO implements SubjectDAO {
      * @param subject the Subject instance for which its state will be created or updated.
      * @return the same {@code Subject} passed in (a new Subject instance is not created).
      */
+    @Override
     public Subject save(Subject subject) {
         if (isSessionStorageEnabled(subject)) {
             saveToSession(subject);
@@ -280,6 +281,7 @@ public class DefaultSubjectDAO implements SubjectDAO {
      *
      * @param subject the Subject instance for which any persistent state should be deleted.
      */
+    @Override
     public void delete(Subject subject) {
         removeFromSession(subject);
     }

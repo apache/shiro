@@ -165,6 +165,7 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         }
     }
 
+    @Override
     public Session start(SessionContext context) throws AuthorizationException {
         if (sessionManager == null) {
             throw new IllegalStateException("Session manager is not available or has been destroyed");
@@ -172,10 +173,12 @@ public abstract class SessionsSecurityManager extends AuthorizingSecurityManager
         return this.sessionManager.start(context);
     }
 
+    @Override
     public Session getSession(SessionKey key) throws SessionException {
         return this.sessionManager.getSession(key);
     }
 
+    @Override
     public void destroy() {
         LifecycleUtils.destroy(getSessionManager());
         this.sessionManager = null;

@@ -170,6 +170,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     /**
      * Destroy reload scheduler if one exists.
      */
+    @Override
     public void destroy() {
         try {
             if (scheduler != null) {
@@ -192,6 +193,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
         }
     }
 
+    @Override
     public void run() {
         try {
             reloadPropertiesIfNecessary();

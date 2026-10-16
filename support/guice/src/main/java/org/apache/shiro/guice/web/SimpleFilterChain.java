@@ -39,6 +39,7 @@ class SimpleFilterChain implements FilterChain {
         this.chain = chain;
     }
 
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
         if (chain.hasNext()) {
             Filter filter = chain.next();

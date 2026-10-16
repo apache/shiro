@@ -95,6 +95,7 @@ public class DelegatingSubjectTest {
         assertThat(ThreadContext.getSecurityManager()).isNull();
 
         Callable<String> callable = new Callable<String>() {
+            @Override
             public String call() throws Exception {
                 Subject callingSubject = SecurityUtils.getSubject();
                 assertThat(callingSubject).isNotNull();
@@ -125,6 +126,7 @@ public class DelegatingSubjectTest {
         assertThat(ThreadContext.getSecurityManager()).isNull();
 
         Runnable runnable = new Runnable() {
+            @Override
             public void run() {
                 Subject callingSubject = SecurityUtils.getSubject();
                 assertThat(callingSubject).isNotNull();

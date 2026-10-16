@@ -113,6 +113,7 @@ public class PrincipalTag extends SecureTag {
     ============================================*/
 
 
+    @Override
     @SuppressWarnings({"unchecked"})
     public int onDoStartTag() throws JspException {
         String strValue = null;

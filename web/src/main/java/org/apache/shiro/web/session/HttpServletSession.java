@@ -61,18 +61,22 @@ public class HttpServletSession implements Session {
         }
     }
 
+    @Override
     public Serializable getId() {
         return httpSession.getId();
     }
 
+    @Override
     public Date getStartTimestamp() {
         return new Date(httpSession.getCreationTime());
     }
 
+    @Override
     public Date getLastAccessTime() {
         return new Date(httpSession.getLastAccessedTime());
     }
 
+    @Override
     @SuppressWarnings("checkstyle:MagicNumber")
     public long getTimeout() throws InvalidSessionException {
         try {
@@ -82,6 +86,7 @@ public class HttpServletSession implements Session {
         }
     }
 
+    @Override
     @SuppressWarnings("checkstyle:MagicNumber")
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
         try {
@@ -96,10 +101,12 @@ public class HttpServletSession implements Session {
         setAttribute(HOST_SESSION_KEY, host);
     }
 
+    @Override
     public String getHost() {
         return (String) getAttribute(HOST_SESSION_KEY);
     }
 
+    @Override
     public void touch() throws InvalidSessionException {
         //just manipulate the session to update the access time:
         try {
@@ -110,6 +117,7 @@ public class HttpServletSession implements Session {
         }
     }
 
+    @Override
     public void stop() throws InvalidSessionException {
         try {
             httpSession.invalidate();
@@ -118,6 +126,7 @@ public class HttpServletSession implements Session {
         }
     }
 
+    @Override
     public Collection<Object> getAttributeKeys() throws InvalidSessionException {
         try {
             Enumeration<?> namesEnum = httpSession.getAttributeNames();
@@ -143,6 +152,7 @@ public class HttpServletSession implements Session {
         return (String) key;
     }
 
+    @Override
     public Object getAttribute(Object key) throws InvalidSessionException {
         try {
             return httpSession.getAttribute(assertString(key));
@@ -151,6 +161,7 @@ public class HttpServletSession implements Session {
         }
     }
 
+    @Override
     public void setAttribute(Object key, Object value) throws InvalidSessionException {
         try {
             httpSession.setAttribute(assertString(key), value);
@@ -159,6 +170,7 @@ public class HttpServletSession implements Session {
         }
     }
 
+    @Override
     public Object removeAttribute(Object key) throws InvalidSessionException {
         try {
             String sKey = assertString(key);

@@ -104,6 +104,7 @@ public class AntPathMatcher implements PatternMatcher {
         return (path.indexOf('*') != -1 || path.indexOf('?') != -1);
     }
 
+    @Override
     public boolean matches(String pattern, String source) {
         return match(pattern, source);
     }

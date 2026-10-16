@@ -149,6 +149,7 @@ class IniSecurityManagerFactoryTest {
         Subject subject = new Subject.Builder(sm).buildSubject();
         //ensure thread clean-up after the login method returns.  Test cases only:
         subject.execute(new Runnable() {
+            @Override
             public void run() {
                 //the plain-text 'secret' should be converted to an Sha256 hash first
                 //by the CredentialsMatcher.  This should return quietly if

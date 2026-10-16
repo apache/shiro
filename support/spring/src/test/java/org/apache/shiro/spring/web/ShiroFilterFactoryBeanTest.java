@@ -103,6 +103,7 @@ class ShiroFilterFactoryBeanTest {
         verify(mockFilterConfig);
 
         FilterChain filterChain = new FilterChain() {
+            @Override
             public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse)
                     throws IOException, ServletException {
                 HttpServletRequest request = (HttpServletRequest) servletRequest;

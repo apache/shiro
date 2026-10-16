@@ -32,10 +32,12 @@ public class EditUserValidator implements Validator {
 
     private static final String SIMPLE_EMAIL_REGEX = "[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}";
 
+    @Override
     public boolean supports(Class<?> aClass) {
         return EditUserCommand.class.isAssignableFrom(aClass);
     }
 
+    @Override
     public void validate(Object o, Errors errors) {
         EditUserCommand command = (EditUserCommand) o;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "error.username.empty", "Please specify a username.");

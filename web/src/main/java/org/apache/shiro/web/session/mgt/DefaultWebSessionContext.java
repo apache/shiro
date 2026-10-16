@@ -45,22 +45,26 @@ public class DefaultWebSessionContext extends DefaultSessionContext implements W
         super(map);
     }
 
+    @Override
     public void setServletRequest(ServletRequest request) {
         if (request != null) {
             put(SERVLET_REQUEST, request);
         }
     }
 
+    @Override
     public ServletRequest getServletRequest() {
         return getTypedValue(SERVLET_REQUEST, ServletRequest.class);
     }
 
+    @Override
     public void setServletResponse(ServletResponse response) {
         if (response != null) {
             put(SERVLET_RESPONSE, response);
         }
     }
 
+    @Override
     public ServletResponse getServletResponse() {
         return getTypedValue(SERVLET_RESPONSE, ServletResponse.class);
     }

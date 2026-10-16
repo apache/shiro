@@ -92,6 +92,7 @@ class BeanTypeListener implements TypeListener {
                 SuppressPropertiesBeanIntrospector.SUPPRESS_CLASS);
     }
 
+    @Override
     public <I> void hear(TypeLiteral<I> type, final TypeEncounter<I> encounter) {
         PropertyDescriptor[] propertyDescriptors = beanUtilsBean.getPropertyUtils().getPropertyDescriptors(type.getRawType());
         final Map<PropertyDescriptor, Key<?>> propertyDependencies
@@ -105,6 +106,7 @@ class BeanTypeListener implements TypeListener {
             }
         }
         encounter.register(new MembersInjector<I>() {
+            @Override
             public void injectMembers(I instance) {
                 for (Map.Entry<PropertyDescriptor, Key<?>> dependency : propertyDependencies.entrySet()) {
                     try {

@@ -43,6 +43,7 @@ public class SimpleByteSourceBroker implements ByteSourceBroker, Destroyable {
         this.key = key.clone();
     }
 
+    @Override
     public synchronized void useBytes(ByteSourceUser user) {
         if (destroyed || user == null) {
             return;
@@ -57,12 +58,14 @@ public class SimpleByteSourceBroker implements ByteSourceBroker, Destroyable {
 
     }
 
+    @Override
     public byte[] getClonedBytes() {
         ByteSource byteSource = cipherService.decryptInternal(ciphertext, key);
         // this's a newly created byte array
         return byteSource.getBytes();
     }
 
+    @Override
     public void destroy() throws Exception {
         if (!destroyed) {
             synchronized (this) {

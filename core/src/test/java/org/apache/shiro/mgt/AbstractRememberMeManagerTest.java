@@ -58,6 +58,7 @@ public class AbstractRememberMeManagerTest {
 
     @SuppressWarnings("checkstyle:FinalClass")
     private static class DummyRememberMeManager extends AbstractRememberMeManager {
+        @Override
         public void forgetIdentity(SubjectContext subjectContext) {
             //do nothing
         }

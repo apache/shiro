@@ -39,6 +39,7 @@ public class BootstrapDataPopulator implements InitializingBean {
         this.dataSource = dataSource;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         //because we're using an in-memory hsqldb for the sample app, a new one will be created each time the
         //app starts, so insert the sample admin user at startup:

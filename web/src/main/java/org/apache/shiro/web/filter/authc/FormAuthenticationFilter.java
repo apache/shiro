@@ -193,16 +193,19 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
         return (request instanceof HttpServletRequest) && WebUtils.toHttp(request).getMethod().equalsIgnoreCase(POST_METHOD);
     }
 
+    @Override
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) {
         String username = getUsername(request);
         String password = getPassword(request);
         return createToken(username, password, request, response);
     }
 
+    @Override
     protected boolean isRememberMe(ServletRequest request) {
         return WebUtils.isTrue(request, getRememberMeParam());
     }
 
+    @Override
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject,
                                      ServletRequest request, ServletResponse response) throws Exception {
         issueSuccessRedirect(request, response);
@@ -210,6 +213,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
         return false;
     }
 
+    @Override
     protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e,
                                      ServletRequest request, ServletResponse response) {
         if (LOGGER.isDebugEnabled()) {

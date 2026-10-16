@@ -38,6 +38,7 @@ public class ShiroAnnotationProcessorConfiguration extends AbstractShiroAnnotati
     }
 
     @Bean
+    @Override
     protected AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
         return super.authorizationAttributeSourceAdvisor(securityManager);
     }

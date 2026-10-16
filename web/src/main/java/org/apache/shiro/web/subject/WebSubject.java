@@ -41,6 +41,7 @@ public interface WebSubject extends Subject, RequestPairSource {
      *
      * @return the {@code ServletRequest} accessible when the Subject instance was created.
      */
+    @Override
     ServletRequest getServletRequest();
 
     /**
@@ -48,6 +49,7 @@ public interface WebSubject extends Subject, RequestPairSource {
      *
      * @return the {@code ServletResponse} accessible when the Subject instance was created.
      */
+    @Override
     ServletResponse getServletResponse();
 
     /**

@@ -101,14 +101,17 @@ public class AbstractValidatingSessionManagerTest {
     @Test
     void testNoMemoryLeakOnInvalidSessions() throws Exception {
         SessionListener sessionListener = new SessionListener() {
+            @Override
             public void onStart(Session session) {
                 session.setAttribute("I love", "Romania");
             }
 
+            @Override
             public void onStop(Session session) {
                 tryToCleanSession(session);
             }
 
+            @Override
             public void onExpiration(Session session) {
                 tryToCleanSession(session);
             }

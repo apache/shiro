@@ -37,6 +37,7 @@ class LifecycleTypeListener implements TypeListener {
         this.registry = registry;
     }
 
+    @Override
     public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
         if (InitializableInjectionListener.MATCHER.matches(type)) {
             encounter.register(this.<I>castListener(new InitializableInjectionListener<Initializable>()));

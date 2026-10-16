@@ -112,6 +112,7 @@ public final class Ini implements Map<String, Ini.Section> {
      * @return {@code true} if no sections have been configured, or if there are sections, but the sections themselves
      * are all empty, {@code false} otherwise.
      */
+    @Override
     public boolean isEmpty() {
         Collection<Section> sections = this.sections.values();
         if (!sections.isEmpty()) {
@@ -445,6 +446,7 @@ public final class Ini implements Map<String, Ini.Section> {
         return null;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Ini ini) {
             return this.sections.equals(ini.sections);
@@ -457,6 +459,7 @@ public final class Ini implements Map<String, Ini.Section> {
         return this.sections.hashCode();
     }
 
+    @Override
     public String toString() {
         if (this.sections == null || this.sections.isEmpty()) {
             return "<empty INI>";
@@ -474,26 +477,32 @@ public final class Ini implements Map<String, Ini.Section> {
         }
     }
 
+    @Override
     public int size() {
         return this.sections.size();
     }
 
+    @Override
     public boolean containsKey(Object key) {
         return this.sections.containsKey(key);
     }
 
+    @Override
     public boolean containsValue(Object value) {
         return this.sections.containsValue(value);
     }
 
+    @Override
     public Section get(Object key) {
         return this.sections.get(key);
     }
 
+    @Override
     public Section put(String key, Section value) {
         return this.sections.put(key, value);
     }
 
+    @Override
     public Section remove(Object key) {
         return this.sections.remove(key);
     }
@@ -502,18 +511,22 @@ public final class Ini implements Map<String, Ini.Section> {
         this.sections.putAll(m);
     }
 
+    @Override
     public void clear() {
         this.sections.clear();
     }
 
+    @Override
     public Set<String> keySet() {
         return Collections.unmodifiableSet(this.sections.keySet());
     }
 
+    @Override
     public Collection<Section> values() {
         return Collections.unmodifiableCollection(this.sections.values());
     }
 
+    @Override
     public Set<Entry<String, Section>> entrySet() {
         return Collections.unmodifiableSet(this.sections.entrySet());
     }
@@ -651,34 +664,42 @@ public final class Ini implements Map<String, Ini.Section> {
             return this.name;
         }
 
+        @Override
         public void clear() {
             this.props.clear();
         }
 
+        @Override
         public boolean containsKey(Object key) {
             return this.props.containsKey(key);
         }
 
+        @Override
         public boolean containsValue(Object value) {
             return this.props.containsValue(value);
         }
 
+        @Override
         public Set<Entry<String, String>> entrySet() {
             return this.props.entrySet();
         }
 
+        @Override
         public String get(Object key) {
             return this.props.get(key);
         }
 
+        @Override
         public boolean isEmpty() {
             return this.props.isEmpty();
         }
 
+        @Override
         public Set<String> keySet() {
             return this.props.keySet();
         }
 
+        @Override
         public String put(String key, String value) {
             return this.props.put(key, value);
         }
@@ -687,18 +708,22 @@ public final class Ini implements Map<String, Ini.Section> {
             this.props.putAll(m);
         }
 
+        @Override
         public String remove(Object key) {
             return this.props.remove(key);
         }
 
+        @Override
         public int size() {
             return this.props.size();
         }
 
+        @Override
         public Collection<String> values() {
             return this.props.values();
         }
 
+        @Override
         public String toString() {
             String name = getName();
             if (DEFAULT_SECTION_NAME.equals(name)) {

@@ -37,6 +37,7 @@ public class JavaUuidSessionIdGenerator implements SessionIdGenerator {
      * @param session the {@link Session} instance to which the ID will be applied.
      * @return the String value of the JDK's next {@link UUID#randomUUID() randomUUID()}.
      */
+    @Override
     public Serializable generateId(Session session) {
         return UUID.randomUUID().toString();
     }
