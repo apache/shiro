@@ -41,6 +41,7 @@ public class AllPermission implements Permission, Serializable {
      * @param p the Permission to check for implies logic.
      * @return <tt>true</tt> always, indicating any Subject grated this permission can do anything.
      */
+    @Override
     public boolean implies(Permission p) {
         return true;
     }

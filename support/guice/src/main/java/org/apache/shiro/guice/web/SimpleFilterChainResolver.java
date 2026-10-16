@@ -46,6 +46,7 @@ class SimpleFilterChainResolver implements FilterChainResolver {
         this.patternMatcher = patternMatcher;
     }
 
+    @Override
     public FilterChain getChain(ServletRequest request, ServletResponse response, final FilterChain originalChain) {
         String requestURI = WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
         final String requestURINoTrailingSlash = removeTrailingSlash(requestURI);
@@ -66,12 +67,17 @@ class SimpleFilterChainResolver implements FilterChainResolver {
     private FilterChain proxy(FilterChain originalChain, String pathPattern) {
         final Iterator<Key<? extends Filter>> chain = Arrays.asList(chains.get(pathPattern)).iterator();
         return new SimpleFilterChain(originalChain, new Iterator<>() {
+            @Override
             public boolean hasNext() {
                 return chain.hasNext();
             }
+
+            @Override
             public Filter next() {
                 return injector.getInstance(chain.next());
             }
+
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }

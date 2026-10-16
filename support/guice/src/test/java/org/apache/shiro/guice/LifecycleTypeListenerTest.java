@@ -67,12 +67,14 @@ public class LifecycleTypeListenerTest {
 
     static class MyInitializable implements Initializable {
 
+        @Override
         public void init() throws ShiroException {
             // do nothing
         }
     }
 
     static class MyDestroyable implements Destroyable {
+        @Override
         public void destroy() throws Exception {
             // do nothing
         }

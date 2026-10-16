@@ -87,6 +87,7 @@ public class DefaultSessionManagerTest {
     void testSessionListenerStartNotification() {
         final boolean[] started = new boolean[1];
         SessionListener listener = new SessionListenerAdapter() {
+            @Override
             public void onStart(Session session) {
                 started[0] = true;
             }
@@ -100,6 +101,7 @@ public class DefaultSessionManagerTest {
     void testSessionListenerStopNotification() {
         final boolean[] stopped = new boolean[1];
         SessionListener listener = new SessionListenerAdapter() {
+            @Override
             public void onStop(Session session) {
                 stopped[0] = true;
             }
@@ -118,6 +120,7 @@ public class DefaultSessionManagerTest {
         final boolean[] stopped = new boolean[1];
         final String[] value = new String[1];
         SessionListener listener = new SessionListenerAdapter() {
+            @Override
             public void onStop(Session session) {
                 stopped[0] = true;
                 value[0] = (String) session.getAttribute("foo");
@@ -138,6 +141,7 @@ public class DefaultSessionManagerTest {
     void testSessionListenerExpiredNotification() {
         final boolean[] expired = new boolean[1];
         SessionListener listener = new SessionListenerAdapter() {
+            @Override
             public void onExpiration(Session session) {
                 expired[0] = true;
             }
@@ -169,6 +173,7 @@ public class DefaultSessionManagerTest {
 
         final Session[] activeSession = new SimpleSession[] {session1};
         sm.setSessionFactory(new SessionFactory() {
+            @Override
             public Session createSession(SessionContext initData) {
                 return activeSession[0];
             }
@@ -247,10 +252,12 @@ public class DefaultSessionManagerTest {
             this.timeout = timeout;
         }
 
+        @Override
         public void appendTo(StringBuffer buffer) {
             buffer.append("eqSession(timeout=").append(this.timeout).append(")");
         }
 
+        @Override
         public boolean matches(Object o) {
             return o instanceof Session session && session.getTimeout() == this.timeout;
         }

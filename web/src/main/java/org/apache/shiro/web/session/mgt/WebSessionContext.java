@@ -40,6 +40,7 @@ public interface WebSessionContext extends SessionContext, RequestPairSource {
      * @return the {@code ServletRequest} received by the servlet container triggering the creation of the
      * {@code Session} instance.
      */
+    @Override
     ServletRequest getServletRequest();
 
     /**
@@ -57,6 +58,7 @@ public interface WebSessionContext extends SessionContext, RequestPairSource {
      * @return the paired {@code ServletResponse} corresponding to the associated
      * {@link #getServletRequest servletRequest}.
      */
+    @Override
     ServletResponse getServletResponse();
 
     /**

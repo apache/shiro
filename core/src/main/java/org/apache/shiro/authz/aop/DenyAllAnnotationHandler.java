@@ -49,6 +49,7 @@ public class DenyAllAnnotationHandler extends AuthorizingAnnotationHandler {
      * @param a the annotation to check for one or more roles
      * @throws UnauthorizedException when the DenyAll annotation is present
      */
+    @Override
     public void assertAuthorized(Annotation a) throws UnauthorizedException {
         throw new UnauthenticatedException("Attempting to perform a denied operation.");
     }

@@ -39,15 +39,18 @@ public class DummyFilter implements Filter {
     public DummyFilter() {
     }
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         //no-op
     }
 
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
         chain.doFilter(request, response);
     }
 
+    @Override
     public void destroy() {
         //no-op
     }

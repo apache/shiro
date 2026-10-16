@@ -42,6 +42,7 @@ public class AuthenticatedTag extends SecureTag {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticatedTag.class);
 
+    @Override
     public int onDoStartTag() throws JspException {
         if (getSubject() != null && getSubject().isAuthenticated()) {
             if (LOGGER.isTraceEnabled()) {

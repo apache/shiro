@@ -30,6 +30,7 @@ class InitializableBean implements Initializable {
 
     public InitializableBean() {}
 
+    @Override
     public void init() throws ShiroException {
         initialized = true;
     }

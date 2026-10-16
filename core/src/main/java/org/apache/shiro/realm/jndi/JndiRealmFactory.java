@@ -98,6 +98,7 @@ public class JndiRealmFactory extends JndiLocator implements RealmFactory {
      * @return an ordered collection of the {@link #setJndiNames(java.util.Collection) specified Realms} found in JNDI.
      * @throws IllegalStateException if any of the JNDI names fails to successfully look up a Realm instance.
      */
+    @Override
     public Collection<Realm> getRealms() throws IllegalStateException {
         Collection<String> jndiNames = getJndiNames();
         if (jndiNames == null || jndiNames.isEmpty()) {

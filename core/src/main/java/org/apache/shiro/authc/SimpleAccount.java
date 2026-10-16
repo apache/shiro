@@ -220,6 +220,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      *
      * @return all the principals, aka the identifying attributes, of this Account.
      */
+    @Override
     public PrincipalCollection getPrincipals() {
         return authcInfo.getPrincipals();
     }
@@ -242,6 +243,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      *
      * @return this Account's credentials.
      */
+    @Override
     public Object getCredentials() {
         return authcInfo.getCredentials();
     }
@@ -265,6 +267,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * was used or credentials were not hashed at all.
      * @since 1.1
      */
+    @Override
     public ByteSource getCredentialsSalt() {
         return this.authcInfo.getCredentialsSalt();
     }
@@ -286,6 +289,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      *
      * @return the Account's assigned roles.
      */
+    @Override
     public Collection<String> getRoles() {
         return authzInfo.getRoles();
     }
@@ -326,6 +330,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      *
      * @return all String-based permissions assigned to this Account.
      */
+    @Override
     public Collection<String> getStringPermissions() {
         return authzInfo.getStringPermissions();
     }
@@ -364,6 +369,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      *
      * @return all object-based permissions assigned directly to this Account (not any of its realms).
      */
+    @Override
     public Collection<Permission> getObjectPermissions() {
         return authzInfo.getObjectPermissions();
     }
@@ -445,6 +451,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * @param info the <code>AuthenticationInfo</code> to merge into this account.
      * @return this instance with the merged information from the specified argument.
      */
+    @Override
     public AuthenticationInfo merge(AuthenticationInfo info) {
         authcInfo.merge(info);
 
@@ -467,6 +474,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      *
      * @return <code>principals.hashCode()</code> if they are not null, 0 (zero) otherwise.
      */
+    @Override
     public int hashCode() {
         return (getPrincipals() != null ? getPrincipals().hashCode() : 0);
     }
@@ -479,6 +487,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      * @return <code>true</code> if the specified object is also a {@link SimpleAccount SimpleAccount} and its
      * {@link #getPrincipals() principals} are equal to this object's <code>principals</code>, <code>false</code> otherwise.
      */
+    @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;
@@ -496,6 +505,7 @@ public class SimpleAccount implements Account, MergableAuthenticationInfo, Salte
      *
      * @return the String representation of this Account object.
      */
+    @Override
     public String toString() {
         return getPrincipals() != null ? getPrincipals().toString() : "empty";
     }

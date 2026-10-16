@@ -38,6 +38,7 @@ public class GuestTag extends SecureTag {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GuestTag.class);
 
+    @Override
     public int onDoStartTag() throws JspException {
         if (getSubject() == null || getSubject().getPrincipal() == null) {
             if (LOGGER.isTraceEnabled()) {

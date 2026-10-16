@@ -74,6 +74,7 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
         this.sessionValidationInterval = sessionValidationInterval;
     }
 
+    @Override
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -92,11 +93,13 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
      */
     //TODO Implement an integration test to test for jvm exit as part of the standalone example
     // (so we don't have to change the unit test execution model for the core module)
+    @Override
     public void enableSessionValidation() {
         if (this.sessionValidationInterval > 0L) {
             this.service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
                 private final AtomicInteger count = new AtomicInteger(1);
 
+                @Override
                 public Thread newThread(Runnable r) {
                     Thread thread = new Thread(r);
                     thread.setDaemon(true);
@@ -110,6 +113,7 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
         this.enabled = true;
     }
 
+    @Override
     public void run() {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Executing session validation...");
@@ -131,6 +135,7 @@ public class ExecutorServiceSessionValidationScheduler implements SessionValidat
         }
     }
 
+    @Override
     public void disableSessionValidation() {
         if (this.service != null) {
             this.service.shutdownNow();

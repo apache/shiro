@@ -184,6 +184,7 @@ class AbstractRememberMeManagerObjectInputFilterTest {
             forgetCount++;
         }
 
+        @Override
         public void forgetIdentity(SubjectContext subjectContext) {
             stored = null;
             forgetCount++;

@@ -198,6 +198,7 @@ public class WildcardPermission implements Permission, Serializable {
     |               M E T H O D S               |
     ============================================*/
 
+    @Override
     public boolean implies(Permission p) {
         // By default only supports comparisons with other WildcardPermissions
         if (!(p instanceof WildcardPermission)) {
@@ -234,6 +235,7 @@ public class WildcardPermission implements Permission, Serializable {
         return true;
     }
 
+    @Override
     public String toString() {
         StringBuilder buffer = new StringBuilder();
         for (Set<String> part : parts) {
@@ -251,6 +253,7 @@ public class WildcardPermission implements Permission, Serializable {
         return buffer.toString();
     }
 
+    @Override
     public boolean equals(Object o) {
         if (o instanceof WildcardPermission wp) {
             return parts.equals(wp.parts);
@@ -258,6 +261,7 @@ public class WildcardPermission implements Permission, Serializable {
         return false;
     }
 
+    @Override
     public int hashCode() {
         return parts.hashCode();
     }

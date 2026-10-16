@@ -50,10 +50,12 @@ public class WebSessionKey extends DefaultSessionKey implements RequestPairSourc
         setSessionId(sessionId);
     }
 
+    @Override
     public ServletRequest getServletRequest() {
         return servletRequest;
     }
 
+    @Override
     public ServletResponse getServletResponse() {
         return servletResponse;
     }

@@ -101,6 +101,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
         this.filterConfig = filterConfig;
     }
 
+    @Override
     public Map<String, Filter> getFilters() {
         return filters;
     }
@@ -128,14 +129,17 @@ public class DefaultFilterChainManager implements FilterChainManager {
         this.caseInsensitive = caseInsensitive;
     }
 
+    @Override
     public void addFilter(String name, Filter filter) {
         addFilter(name, filter, false);
     }
 
+    @Override
     public void addFilter(String name, Filter filter, boolean init) {
         addFilter(name, filter, init, true);
     }
 
+    @Override
     public void createDefaultChain(String chainName, String chainDefinition) {
         // only create the defaultChain if we don't have a chain with this name already
         // (the global filters will already be in that chain)
@@ -144,6 +148,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
         }
     }
 
+    @Override
     public void createChain(String chainName, String chainDefinition) {
         if (!StringUtils.hasText(chainName)) {
             throw new NullPointerException("chainName cannot be null or empty.");
@@ -290,10 +295,12 @@ public class DefaultFilterChainManager implements FilterChainManager {
         }
     }
 
+    @Override
     public void addToChain(String chainName, String filterName) {
         addToChain(chainName, filterName, null);
     }
 
+    @Override
     public void addToChain(String chainName, String filterName, String chainSpecificFilterConfig) {
         if (!StringUtils.hasText(chainName)) {
             throw new IllegalArgumentException("chainName cannot be null or empty.");
@@ -315,6 +322,7 @@ public class DefaultFilterChainManager implements FilterChainManager {
         return List.copyOf(globalFilterNames);
     }
 
+    @Override
     public void setGlobalFilters(List<String> globalFilterNames) throws ConfigurationException {
         // validate each filter name
         if (!CollectionUtils.isEmpty(globalFilterNames)) {
@@ -360,18 +368,22 @@ public class DefaultFilterChainManager implements FilterChainManager {
         return chain;
     }
 
+    @Override
     public NamedFilterList getChain(String chainName) {
         return this.filterChains.get(chainName);
     }
 
+    @Override
     public boolean hasChains() {
         return !CollectionUtils.isEmpty(this.filterChains);
     }
 
+    @Override
     public Set<String> getChainNames() {
         return this.filterChains != null ? this.filterChains.keySet() : Set.of();
     }
 
+    @Override
     public FilterChain proxy(FilterChain original, String chainName) {
         NamedFilterList configured = getChain(chainName);
         if (configured == null) {

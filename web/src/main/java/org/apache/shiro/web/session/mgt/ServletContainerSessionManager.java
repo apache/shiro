@@ -60,10 +60,12 @@ public class ServletContainerSessionManager implements WebSessionManager {
     public ServletContainerSessionManager() {
     }
 
+    @Override
     public Session start(SessionContext context) throws AuthorizationException {
         return createSession(context);
     }
 
+    @Override
     public Session getSession(SessionKey key) throws SessionException {
         if (!WebUtils.isHttp(key)) {
             String msg = "SessionKey must be an HTTP compatible implementation.";
@@ -126,6 +128,7 @@ public class ServletContainerSessionManager implements WebSessionManager {
      * @return {@code true} always
      * @since 1.2
      */
+    @Override
     public boolean isServletContainerSessions() {
         return true;
     }

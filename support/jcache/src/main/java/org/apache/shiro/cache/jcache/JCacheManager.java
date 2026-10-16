@@ -103,6 +103,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
      *
      * @throws org.apache.shiro.cache.CacheException if there are any CacheExceptions thrown by JCache.
      */
+    @Override
     public final void init() throws CacheException {
         ensureCacheManager();
     }
@@ -141,6 +142,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
      * a non-null CacheManager into this instance before calling {@link #init() init}, this instance expects that same
      * component to also destroy the CacheManager instance, and it will not attempt to do so.
      */
+    @Override
     public void destroy() {
         if (cacheManagerImplicitlyCreated) {
             try {
@@ -211,6 +213,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
          * @param key   the key.
          * @param value the value.
          */
+        @Override
         public V put(K key, V value) throws CacheException {
             LOGGER.trace("Putting object in cache [{}] for key [{}]", cache.getName(), key);
             try {
@@ -229,6 +232,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
          *
          * @param key the key of the element to remove
          */
+        @Override
         public V remove(K key) throws CacheException {
             LOGGER.trace("Removing object from cache [{}] for key [{}]", cache.getName(), key);
             try {
@@ -241,6 +245,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
         /**
          * Removes all elements in the cache, but leaves the cache in a usable state.
          */
+        @Override
         public void clear() throws CacheException {
             LOGGER.trace("Clearing all objects from cache [{}]", cache.getName());
             try {
@@ -250,6 +255,7 @@ public class JCacheManager implements CacheManager, Initializable, Destroyable {
             }
         }
 
+        @Override
         public int size() {
             return (int) toStream(cache.iterator()).count();
         }

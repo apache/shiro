@@ -47,6 +47,7 @@ public class DefaultWebSubjectFactory extends DefaultSubjectFactory {
         super();
     }
 
+    @Override
     public Subject createSubject(SubjectContext context) {
         //SHIRO-646
         //Check if the existing subject is NOT a WebSubject. If it isn't, then call super.createSubject instead.

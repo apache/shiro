@@ -34,6 +34,7 @@ public abstract class AuthorizingMethodInterceptor extends MethodInterceptorSupp
      * if authorization is allowed by first
      * calling {@link #assertAuthorized(org.apache.shiro.aop.MethodInvocation) assertAuthorized}.
      */
+    @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         assertAuthorized(methodInvocation);
         return methodInvocation.proceed();

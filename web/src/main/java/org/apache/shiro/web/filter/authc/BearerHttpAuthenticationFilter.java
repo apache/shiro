@@ -70,6 +70,7 @@ public class BearerHttpAuthenticationFilter extends HttpAuthenticationFilter {
      * @param response outgoing ServletResponse
      * @return the AuthenticationToken used to execute the login attempt
      */
+    @Override
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) {
         String authorizationHeader = getAuthzHeader(request);
         if (authorizationHeader == null || authorizationHeader.length() == 0) {

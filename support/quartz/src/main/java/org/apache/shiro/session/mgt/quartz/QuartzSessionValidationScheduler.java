@@ -125,6 +125,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         this.sessionManager = sessionManager;
     }
 
+    @Override
     public boolean isEnabled() {
         return this.enabled;
     }
@@ -149,6 +150,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
      * Starts session validation by creating a Quartz simple trigger, linking it to
      * the {@link QuartzSessionValidationJob}, and scheduling it with the Quartz scheduler.
      */
+    @Override
     public void enableSessionValidation() {
 
         if (LOGGER.isDebugEnabled()) {
@@ -191,6 +193,7 @@ public class QuartzSessionValidationScheduler implements SessionValidationSchedu
         }
     }
 
+    @Override
     @SuppressWarnings("checkstyle:NPathComplexity")
     public void disableSessionValidation() {
         if (LOGGER.isDebugEnabled()) {

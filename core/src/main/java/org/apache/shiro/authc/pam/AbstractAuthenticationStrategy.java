@@ -47,6 +47,7 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
      * which supports
      * aggregating account data across realms.
      */
+    @Override
     public AuthenticationInfo beforeAllAttempts(Collection<? extends Realm> realms, AuthenticationToken token)
             throws AuthenticationException {
         return new SimpleAuthenticationInfo();
@@ -55,6 +56,7 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
     /**
      * Simply returns the <code>aggregate</code> method argument, without modification.
      */
+    @Override
     public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token, AuthenticationInfo aggregate)
             throws AuthenticationException {
         return aggregate;
@@ -64,6 +66,7 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
      * Base implementation that will aggregate the specified <code>singleRealmInfo</code> into the
      * <code>aggregateInfo</code> and then returns the aggregate.  Can be overridden by subclasses for custom behavior.
      */
+    @Override
     public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token,
                                            AuthenticationInfo singleRealmInfo, AuthenticationInfo aggregateInfo,
                                            Throwable t) throws AuthenticationException {
@@ -113,6 +116,7 @@ public abstract class AbstractAuthenticationStrategy implements AuthenticationSt
     /**
      * Simply returns the <code>aggregate</code> argument without modification.  Can be overridden for custom behavior.
      */
+    @Override
     public AuthenticationInfo afterAllAttempts(AuthenticationToken token, AuthenticationInfo aggregate)
             throws AuthenticationException {
         return aggregate;

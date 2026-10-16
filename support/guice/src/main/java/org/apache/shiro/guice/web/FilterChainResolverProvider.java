@@ -63,10 +63,12 @@ class FilterChainResolverProvider implements ProviderWithDependencies<FilterChai
         this.patternMatcher = patternMatcher;
     }
 
+    @Override
     public Set<Dependency<?>> getDependencies() {
         return dependencies;
     }
 
+    @Override
     public FilterChainResolver get() {
         return new SimpleFilterChainResolver(chains, injector, patternMatcher);
     }

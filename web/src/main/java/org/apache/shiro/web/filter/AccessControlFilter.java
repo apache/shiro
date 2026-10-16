@@ -159,6 +159,7 @@ public abstract class AccessControlFilter extends PathMatchingFilter {
      * {@link #onAccessDenied(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse) onAccessDenied}.
      * @throws Exception if an error occurs.
      */
+    @Override
     public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         return isAccessAllowed(request, response, mappedValue) || onAccessDenied(request, response, mappedValue);
     }

@@ -303,6 +303,7 @@ public abstract class JcaCipherService implements CipherService {
         return ivBytes;
     }
 
+    @Override
     public ByteSource encrypt(byte[] plaintext, byte[] key) {
         byte[] ivBytes = null;
         boolean generate = isGenerateInitializationVectors(false);
@@ -347,6 +348,7 @@ public abstract class JcaCipherService implements CipherService {
         return ByteSource.Util.bytes(output);
     }
 
+    @Override
     public ByteSourceBroker decrypt(byte[] ciphertext, byte[] key) throws CryptoException {
         return new SimpleByteSourceBroker(this, ciphertext, key);
     }
@@ -504,6 +506,7 @@ public abstract class JcaCipherService implements CipherService {
     }
 
 
+    @Override
     public void encrypt(InputStream in, OutputStream out, byte[] key) throws CryptoException {
         byte[] iv = null;
         boolean generate = isGenerateInitializationVectors(true);
@@ -530,6 +533,7 @@ public abstract class JcaCipherService implements CipherService {
         crypt(in, out, key, iv, javax.crypto.Cipher.ENCRYPT_MODE);
     }
 
+    @Override
     public void decrypt(InputStream in, OutputStream out, byte[] key) throws CryptoException {
         decrypt(in, out, key, isGenerateInitializationVectors(true));
     }

@@ -75,6 +75,7 @@ public class DefaultEnvironment implements NamedObjectEnvironment, Destroyable {
      * @return the application's {@code SecurityManager} instance accessible in the backing map using the
      * {@link #getSecurityManagerName() securityManagerName} property as the lookup key.
      */
+    @Override
     public SecurityManager getSecurityManager() throws IllegalStateException {
         SecurityManager securityManager = lookupSecurityManager();
         if (securityManager == null) {
@@ -166,6 +167,7 @@ public class DefaultEnvironment implements NamedObjectEnvironment, Destroyable {
     }
 
 
+    @Override
     public void destroy() throws Exception {
         LifecycleUtils.destroy(this.objects.values());
     }

@@ -160,6 +160,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
         this.staticSecurityManagerEnabled = staticSecurityManagerEnabled;
     }
 
+    @Override
     protected final void onFilterConfigSet() throws Exception {
         //added in 1.2 for SHIRO-287:
         applyStaticSecurityManagerEnabledConfig();
@@ -361,6 +362,7 @@ public abstract class AbstractShiroFilter extends OncePerRequestFilter {
      * @throws IOException                    if an IO error occurs
      * @throws jakarta.servlet.ServletException if a Throwable other than an IOException
      */
+    @Override
     protected void doFilterInternal(ServletRequest servletRequest, ServletResponse servletResponse, final FilterChain chain)
             throws ServletException, IOException {
 

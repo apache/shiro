@@ -39,6 +39,7 @@ public class EventListenerComparator implements Comparator<EventListener> {
     //event class comparator is stateless, so we can retain an instance:
     private static final EventClassComparator EVENT_CLASS_COMPARATOR = new EventClassComparator();
 
+    @Override
     public int compare(EventListener a, EventListener b) {
         if (a == null) {
             if (b == null) {

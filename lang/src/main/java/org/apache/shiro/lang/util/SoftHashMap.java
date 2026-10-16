@@ -150,6 +150,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
         putAll(source);
     }
 
+    @Override
     public V get(Object key) {
         processQueue();
 
@@ -204,22 +205,26 @@ public class SoftHashMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public boolean isEmpty() {
         processQueue();
         return map.isEmpty();
     }
 
+    @Override
     public boolean containsKey(Object key) {
         processQueue();
         return map.containsKey(key);
     }
 
+    @Override
     public boolean containsValue(Object value) {
         processQueue();
         Collection<?> values = values();
         return values.contains(value);
     }
 
+    @Override
     public void putAll(Map<? extends K, ? extends V> m) {
         if (m == null || m.isEmpty()) {
             processQueue();
@@ -230,11 +235,13 @@ public class SoftHashMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public Set<K> keySet() {
         processQueue();
         return map.keySet();
     }
 
+    @Override
     public Collection<V> values() {
         processQueue();
         Collection<K> keys = map.keySet();
@@ -254,6 +261,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
     /**
      * Creates a new entry, but wraps the value in a SoftValue instance to enable auto garbage collection.
      */
+    @Override
     public V put(K key, V value) {
         // throw out garbage collected values first
         processQueue();
@@ -263,6 +271,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
         return previous != null ? previous.get() : null;
     }
 
+    @Override
     public V remove(Object key) {
         // throw out garbage collected values first
         processQueue();
@@ -270,6 +279,7 @@ public class SoftHashMap<K, V> implements Map<K, V> {
         return raw != null ? raw.get() : null;
     }
 
+    @Override
     public void clear() {
         strongReferencesLock.lock();
         try {
@@ -282,12 +292,14 @@ public class SoftHashMap<K, V> implements Map<K, V> {
         map.clear();
     }
 
+    @Override
     public int size() {
         // throw out garbage collected values first
         processQueue();
         return map.size();
     }
 
+    @Override
     public Set<Map.Entry<K, V>> entrySet() {
         // throw out garbage collected values first
         processQueue();

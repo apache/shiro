@@ -44,6 +44,7 @@ public abstract class SecureTag extends TagSupport {
     protected void verifyAttributes() throws JspException {
     }
 
+    @Override
     public int doStartTag() throws JspException {
 
         verifyAttributes();

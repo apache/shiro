@@ -42,6 +42,7 @@ public class UserTag extends SecureTag {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserTag.class);
 
+    @Override
     public int onDoStartTag() throws JspException {
         if (getSubject() != null && getSubject().getPrincipal() != null) {
             if (LOGGER.isTraceEnabled()) {

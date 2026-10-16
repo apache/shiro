@@ -419,6 +419,7 @@ public class ShiroFilterFactoryBean implements FactoryBean<Filter> {
      *
      * @return <code>{@link org.apache.shiro.web.servlet.AbstractShiroFilter}.class</code>
      */
+    @Override
     public Class<?> getObjectType() {
         return SpringShiroFilter.class;
     }

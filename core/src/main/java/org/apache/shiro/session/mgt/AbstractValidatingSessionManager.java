@@ -129,6 +129,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
      */
     protected abstract Session retrieveSession(SessionKey key) throws UnknownSessionException;
 
+    @Override
     protected Session createSession(SessionContext context) throws AuthorizationException {
         enableSessionValidationIfNecessary();
         return doCreateSession(context);
@@ -269,6 +270,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
     protected void beforeSessionValidationDisabled() {
     }
 
+    @Override
     public void destroy() {
         disableSessionValidation();
     }
@@ -276,6 +278,7 @@ public abstract class AbstractValidatingSessionManager extends AbstractNativeSes
     /**
      * @see ValidatingSessionManager#validateSessions()
      */
+    @Override
     public void validateSessions() {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Validating all active sessions...");

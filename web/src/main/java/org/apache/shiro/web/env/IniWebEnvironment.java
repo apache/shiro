@@ -82,6 +82,7 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      * Initializes this instance by resolving any potential (explicit or resource-configured) {@link Ini}
      * configuration and calling {@link #configure() configure} for actual instance configuration.
      */
+    @Override
     public void init() {
 
         setIni(parseConfig());

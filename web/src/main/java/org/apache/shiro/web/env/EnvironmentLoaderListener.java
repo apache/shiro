@@ -53,6 +53,7 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
      *
      * @param sce the ServletContextEvent triggered upon application startup
      */
+    @Override
     public void contextInitialized(ServletContextEvent sce) {
         initEnvironment(sce.getServletContext());
     }
@@ -63,6 +64,7 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
      *
      * @param sce the ServletContextEvent triggered upon application shutdown
      */
+    @Override
     public void contextDestroyed(ServletContextEvent sce) {
         destroyEnvironment(sce.getServletContext());
     }

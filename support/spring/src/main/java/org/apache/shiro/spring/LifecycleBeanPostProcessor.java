@@ -79,6 +79,7 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
      * @return the initialized bean.
      * @throws BeansException if any exception is thrown during initialization.
      */
+    @Override
     public Object postProcessBeforeInitialization(Object object, String name) throws BeansException {
         if (object instanceof Initializable initializable) {
             try {
@@ -98,6 +99,7 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
     /**
      * Does nothing - merely returns the object argument immediately.
      */
+    @Override
     public Object postProcessAfterInitialization(Object object, String name) throws BeansException {
         // Does nothing after initialization
         return object;
@@ -111,6 +113,7 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
      * @param name   the name of the bean being initialized.
      * @throws BeansException if any exception is thrown during initialization.
      */
+    @Override
     public void postProcessBeforeDestruction(Object object, String name) throws BeansException {
         if (object instanceof Destroyable destroyable) {
             try {
@@ -130,6 +133,7 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
      *
      * @return order value.
      */
+    @Override
     public int getOrder() {
         // LifecycleBeanPostProcessor needs Order. See https://issues.apache.org/jira/browse/SHIRO-222
         return order;
@@ -142,6 +146,7 @@ public class LifecycleBeanPostProcessor implements DestructionAwareBeanPostProce
      * @return true only if <code>bean</code> implements Destroyable.
      * @since 1.4
      */
+    @Override
     @SuppressWarnings("unused")
     public boolean requiresDestruction(Object bean) {
         return (bean instanceof Destroyable);

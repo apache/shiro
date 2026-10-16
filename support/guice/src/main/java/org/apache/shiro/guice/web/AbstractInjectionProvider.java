@@ -52,6 +52,7 @@ class AbstractInjectionProvider<T> implements ProviderWithDependencies<T> {
         this.dependencies = Collections.unmodifiableSet(dependencyBuilder);
     }
 
+    @Override
     public T get() {
         Constructor<T> constructor = getConstructor();
         Object[] params = new Object[constructor.getParameterTypes().length];
@@ -78,6 +79,7 @@ class AbstractInjectionProvider<T> implements ProviderWithDependencies<T> {
         return t;
     }
 
+    @Override
     public Set<Dependency<?>> getDependencies() {
         return dependencies;
     }

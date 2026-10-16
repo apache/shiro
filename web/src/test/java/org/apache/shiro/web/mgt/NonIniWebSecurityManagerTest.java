@@ -40,6 +40,7 @@ public class NonIniWebSecurityManagerTest extends AbstractWebSecurityManagerTest
     }
 
     @AfterEach
+    @Override
     public void tearDown() {
         sm.destroy();
         super.tearDown();

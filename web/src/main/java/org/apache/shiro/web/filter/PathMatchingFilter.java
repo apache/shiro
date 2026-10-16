@@ -81,6 +81,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * @param config the specified for <em>this particular filter only</em> for the given <code>path</code>
      * @return this configured filter.
      */
+    @Override
     public Filter processPathConfig(String path, String config) {
         String[] values = null;
         if (config != null) {

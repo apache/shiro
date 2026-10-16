@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
  */
 public class SpringAnnotationResolver implements AnnotationResolver {
 
+    @Override
     public Annotation getAnnotation(MethodInvocation mi, Class<? extends Annotation> clazz) {
         Method m = mi.getMethod();
 

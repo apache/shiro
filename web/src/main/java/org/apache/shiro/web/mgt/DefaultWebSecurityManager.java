@@ -206,6 +206,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
     /**
      * @since 1.0
      */
+    @Override
     public boolean isHttpSessionMode() {
         SessionManager sessionManager = getSessionManager();
         return sessionManager instanceof WebSessionManager wsm && wsm.isServletContainerSessions();

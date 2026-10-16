@@ -32,10 +32,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Deprecated
 public class JndiLdapRealmTest extends DefaultLdapRealmTest {
 
+    @Override
     protected DefaultLdapRealm getNewRealmUnderTest() {
         return new JndiLdapRealm();
     }
 
+    @Override
     @Test
     public void testGetUserDnWithOutPrefixAndSuffix() {
         JndiLdapRealm realm = new JndiLdapRealm() {

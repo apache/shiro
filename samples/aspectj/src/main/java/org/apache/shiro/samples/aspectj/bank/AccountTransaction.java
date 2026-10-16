@@ -135,6 +135,7 @@ public final class AccountTransaction {
      * @see java.lang.Object#toString()
      */
 
+    @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
                 append("id", id).

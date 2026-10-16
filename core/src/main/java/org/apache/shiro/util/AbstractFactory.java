@@ -43,6 +43,7 @@ public abstract class AbstractFactory<T> implements Factory<T> {
         this.singleton = singleton;
     }
 
+    @Override
     public T getInstance() {
         T instance;
         if (isSingleton()) {

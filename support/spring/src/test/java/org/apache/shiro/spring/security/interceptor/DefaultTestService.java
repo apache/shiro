@@ -29,38 +29,48 @@ import org.apache.shiro.authz.annotation.RequiresUser;
  */
 public class DefaultTestService implements TestService {
 
+    @Override
     @RequiresGuest
     public void guestImplementation() {
     }
 
+    @Override
     public void guestInterface() {
     }
 
+    @Override
     @RequiresUser
     public void userImplementation() {
     }
 
+    @Override
     public void userInterface() {
     }
 
+    @Override
     @RequiresAuthentication
     public void authenticatedImplementation() {
     }
 
+    @Override
     public void authenticatedInterface() {
     }
 
+    @Override
     @RequiresRoles("test")
     public void roleImplementation() {
     }
 
+    @Override
     public void roleInterface() {
     }
 
+    @Override
     @RequiresPermissions("test:execute")
     public void permissionImplementation() {
     }
 
+    @Override
     public void permissionInterface() {
     }
 }

@@ -82,6 +82,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
      * @return <tt>true</tt> if the method has a Shiro annotation, false otherwise.
      * @see org.springframework.aop.MethodMatcher#matches(java.lang.reflect.Method, Class)
      */
+    @Override
     public boolean matches(Method method, Class<?> targetClass) {
         Method m = method;
 

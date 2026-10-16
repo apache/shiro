@@ -67,6 +67,7 @@ public class ImmutableProxiedSession extends ProxiedSession {
      * Immediately {@link #throwImmutableException() throws} an <code>InvalidSessionException</code> in all
      * cases because this proxy is immutable.
      */
+    @Override
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
         throwImmutableException();
     }
@@ -75,6 +76,7 @@ public class ImmutableProxiedSession extends ProxiedSession {
      * Immediately {@link #throwImmutableException() throws} an <code>InvalidSessionException</code> in all
      * cases because this proxy is immutable.
      */
+    @Override
     public void touch() throws InvalidSessionException {
         throwImmutableException();
     }
@@ -83,6 +85,7 @@ public class ImmutableProxiedSession extends ProxiedSession {
      * Immediately {@link #throwImmutableException() throws} an <code>InvalidSessionException</code> in all
      * cases because this proxy is immutable.
      */
+    @Override
     public void stop() throws InvalidSessionException {
         throwImmutableException();
     }
@@ -91,6 +94,7 @@ public class ImmutableProxiedSession extends ProxiedSession {
      * Immediately {@link #throwImmutableException() throws} an <code>InvalidSessionException</code> in all
      * cases because this proxy is immutable.
      */
+    @Override
     public void setAttribute(Object key, Object value) throws InvalidSessionException {
         throwImmutableException();
     }
@@ -99,6 +103,7 @@ public class ImmutableProxiedSession extends ProxiedSession {
      * Immediately {@link #throwImmutableException() throws} an <code>InvalidSessionException</code> in all
      * cases because this proxy is immutable.
      */
+    @Override
     public Object removeAttribute(Object key) throws InvalidSessionException {
         throwImmutableException();
         //we should never ever reach this point due to the exception being thrown.

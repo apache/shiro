@@ -93,6 +93,7 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
      * {@link AuthorizingAnnotationMethodInterceptor#assertAuthorized(org.apache.shiro.aop.MethodInvocation) asserts}
      * that the invocation is authorized to proceed.
      */
+    @Override
     protected void assertAuthorized(MethodInvocation methodInvocation) throws AuthorizationException {
         //default implementation just ensures no deny votes are cast:
         Collection<AuthorizingAnnotationMethodInterceptor> aamis = getMethodInterceptors();

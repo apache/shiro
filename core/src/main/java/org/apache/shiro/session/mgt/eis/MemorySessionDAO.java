@@ -63,6 +63,7 @@ public class MemorySessionDAO extends AbstractSessionDAO {
         this.sessions = new ConcurrentHashMap<Serializable, Session>();
     }
 
+    @Override
     protected Serializable doCreate(Session session) {
         Serializable sessionId = generateSessionId(session);
         assignSessionId(session, sessionId);
@@ -77,14 +78,17 @@ public class MemorySessionDAO extends AbstractSessionDAO {
         return sessions.putIfAbsent(id, session);
     }
 
+    @Override
     protected Session doReadSession(Serializable sessionId) {
         return sessions.get(sessionId);
     }
 
+    @Override
     public void update(Session session) throws UnknownSessionException {
         storeSession(session.getId(), session);
     }
 
+    @Override
     public void delete(Session session) {
         if (session == null) {
             throw new NullPointerException("session argument cannot be null.");
@@ -95,6 +99,7 @@ public class MemorySessionDAO extends AbstractSessionDAO {
         }
     }
 
+    @Override
     public Collection<Session> getActiveSessions() {
         Collection<Session> values = sessions.values();
         if (CollectionUtils.isEmpty(values)) {

@@ -58,16 +58,19 @@ public class DefaultWebSubjectContext extends DefaultSubjectContext implements W
         return host;
     }
 
+    @Override
     public ServletRequest getServletRequest() {
         return getTypedValue(SERVLET_REQUEST, ServletRequest.class);
     }
 
+    @Override
     public void setServletRequest(ServletRequest request) {
         if (request != null) {
             put(SERVLET_REQUEST, request);
         }
     }
 
+    @Override
     public ServletRequest resolveServletRequest() {
 
         ServletRequest request = getServletRequest();
@@ -83,16 +86,19 @@ public class DefaultWebSubjectContext extends DefaultSubjectContext implements W
         return request;
     }
 
+    @Override
     public ServletResponse getServletResponse() {
         return getTypedValue(SERVLET_RESPONSE, ServletResponse.class);
     }
 
+    @Override
     public void setServletResponse(ServletResponse response) {
         if (response != null) {
             put(SERVLET_RESPONSE, response);
         }
     }
 
+    @Override
     public ServletResponse resolveServletResponse() {
 
         ServletResponse response = getServletResponse();

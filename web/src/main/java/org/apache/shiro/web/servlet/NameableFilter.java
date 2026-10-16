@@ -71,6 +71,7 @@ public abstract class NameableFilter extends AbstractFilter implements Nameable 
      *
      * @param name the name of the filter.
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -82,6 +83,7 @@ public abstract class NameableFilter extends AbstractFilter implements Nameable 
      * @return a StringBuilder instance to use for appending String data that will eventually be returned from a
      * {@code toString()} invocation.
      */
+    @Override
     protected StringBuilder toStringBuilder() {
         String name = getName();
         if (name == null) {

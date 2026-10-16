@@ -31,6 +31,7 @@ public class SessionListenerAdapter implements SessionListener {
      *
      * @param session the session that has started.
      */
+    @Override
     public void onStart(Session session) {
         //no-op
     }
@@ -40,6 +41,7 @@ public class SessionListenerAdapter implements SessionListener {
      *
      * @param session the session that has stopped.
      */
+    @Override
     public void onStop(Session session) {
         //no-op
     }
@@ -49,6 +51,7 @@ public class SessionListenerAdapter implements SessionListener {
      *
      * @param session the session that has expired.
      */
+    @Override
     public void onExpiration(Session session) {
         //no-op
     }

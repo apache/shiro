@@ -28,6 +28,7 @@ public class LacksPermissionTag extends PermissionTag {
     public LacksPermissionTag() {
     }
 
+    @Override
     protected boolean showTagBody(String p) {
         return !isPermitted(p);
     }

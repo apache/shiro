@@ -73,6 +73,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         return httpSessions;
     }
 
+    @Override
     public String getRemoteUser() {
         String remoteUser;
         Object scPrincipal = getSubjectPrincipal();
@@ -103,6 +104,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         return userPrincipal;
     }
 
+    @Override
     public boolean isUserInRole(String s) {
         Subject subject = getSubject();
         boolean inRole = (subject != null && subject.hasRole(s));
@@ -112,6 +114,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         return inRole;
     }
 
+    @Override
     public Principal getUserPrincipal() {
         Principal userPrincipal;
         Object scPrincipal = getSubjectPrincipal();
@@ -127,6 +130,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         return userPrincipal;
     }
 
+    @Override
     public String getRequestedSessionId() {
         String requestedSessionId = null;
         if (isHttpSessions()) {
@@ -141,6 +145,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         return requestedSessionId;
     }
 
+    @Override
     public HttpSession getSession(boolean create) {
 
         HttpSession httpSession;
@@ -191,10 +196,12 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         return new DisabledSessionException(msg);
     }
 
+    @Override
     public HttpSession getSession() {
         return getSession(true);
     }
 
+    @Override
     public boolean isRequestedSessionIdValid() {
         if (isHttpSessions()) {
             return super.isRequestedSessionIdValid();
@@ -204,6 +211,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         }
     }
 
+    @Override
     public boolean isRequestedSessionIdFromCookie() {
         if (isHttpSessions()) {
             return super.isRequestedSessionIdFromCookie();
@@ -213,6 +221,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         }
     }
 
+    @Override
     public boolean isRequestedSessionIdFromURL() {
         if (isHttpSessions()) {
             return super.isRequestedSessionIdFromURL();
@@ -238,14 +247,17 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
             return object;
         }
 
+        @Override
         public String getName() {
             return getObject().toString();
         }
 
+        @Override
         public int hashCode() {
             return object.hashCode();
         }
 
+        @Override
         public boolean equals(Object o) {
             if (o instanceof ObjectPrincipal op) {
                 return getObject().equals(op.getObject());
@@ -253,6 +265,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
             return false;
         }
 
+        @Override
         public String toString() {
             return object.toString();
         }

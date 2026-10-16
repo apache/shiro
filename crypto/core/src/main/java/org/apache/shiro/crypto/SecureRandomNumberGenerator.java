@@ -106,10 +106,12 @@ public class SecureRandomNumberGenerator implements RandomNumberGenerator {
         this.defaultNextBytesSize = defaultNextBytesSize;
     }
 
+    @Override
     public ByteSource nextBytes() {
         return nextBytes(getDefaultNextBytesSize());
     }
 
+    @Override
     public ByteSource nextBytes(int numBytes) {
         if (numBytes <= 0) {
             throw new IllegalArgumentException("numBytes argument must be a positive integer (1 or larger)");

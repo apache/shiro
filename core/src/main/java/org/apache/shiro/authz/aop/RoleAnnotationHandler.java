@@ -49,6 +49,7 @@ public class RoleAnnotationHandler extends AuthorizingAnnotationHandler {
      * @throws org.apache.shiro.authz.AuthorizationException if the calling <code>Subject</code> does not have the role(s)
      *                                                       necessary to proceed.
      */
+    @Override
     public void assertAuthorized(Annotation a) throws AuthorizationException {
         if (!(a instanceof RequiresRoles)) {
             return;

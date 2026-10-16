@@ -62,10 +62,12 @@ public class WebDelegatingSubject extends DelegatingSubject implements WebSubjec
         this.servletResponse = response;
     }
 
+    @Override
     public ServletRequest getServletRequest() {
         return servletRequest;
     }
 
+    @Override
     public ServletResponse getServletResponse() {
         return servletResponse;
     }

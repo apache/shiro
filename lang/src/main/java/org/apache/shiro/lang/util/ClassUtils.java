@@ -367,6 +367,7 @@ public final class ClassUtils {
      * @since 1.0
      */
     public abstract static class ExceptionIgnoringAccessor implements ClassLoaderAccessor {
+        @Override
         public Class<?> loadClass(String fqcn) {
             Class<?> clazz = null;
             ClassLoader cl = getClassLoader();
@@ -383,6 +384,7 @@ public final class ClassUtils {
             return clazz;
         }
 
+        @Override
         public InputStream getResourceStream(String name) {
             InputStream is = null;
             ClassLoader cl = getClassLoader();
@@ -392,6 +394,7 @@ public final class ClassUtils {
             return is;
         }
 
+        @Override
         public URL getResource(String name) {
             URL url = null;
             ClassLoader cl = getClassLoader();

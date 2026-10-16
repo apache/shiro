@@ -87,6 +87,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      *
      * @param url URL to be encoded
      */
+    @Override
     public String encodeRedirectURL(String url) {
         if (isEncodeable(toAbsolute(url))) {
             return toEncoded(url, request.getSession().getId());
@@ -107,6 +108,7 @@ public class ShiroHttpServletResponse extends HttpServletResponseWrapper {
      *
      * @param url URL to be encoded
      */
+    @Override
     public String encodeURL(String url) {
         String absolute = toAbsolute(url);
         if (isEncodeable(absolute)) {

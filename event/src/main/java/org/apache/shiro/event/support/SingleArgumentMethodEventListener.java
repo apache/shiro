@@ -55,14 +55,17 @@ public class SingleArgumentMethodEventListener implements TypedEventListener {
         }
     }
 
+    @Override
     public boolean accepts(Object event) {
         return event != null && getEventType().isInstance(event);
     }
 
+    @Override
     public Class<?> getEventType() {
         return getMethodArgumentType(getMethod());
     }
 
+    @Override
     public void onEvent(Object event) {
         Method method = getMethod();
         try {

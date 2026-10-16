@@ -152,6 +152,7 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
      * newly set {@link org.apache.shiro.cache.CacheManager CacheManager} to be propagated to the
      * internal collection of <code>Realm</code> that would need to use it.
      */
+    @Override
     protected void afterCacheManagerSet() {
         super.afterCacheManagerSet();
         applyCacheManagerToRealms();
@@ -163,6 +164,7 @@ public abstract class RealmSecurityManager extends CachingSecurityManager {
         applyEventBusToRealms();
     }
 
+    @Override
     public void destroy() {
         LifecycleUtils.destroy(getRealms());
         this.realms = null;

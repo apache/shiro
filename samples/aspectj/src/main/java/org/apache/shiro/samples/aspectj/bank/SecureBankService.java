@@ -85,6 +85,7 @@ public class SecureBankService implements BankService {
      * @see com.connectif.trilogy.root.security.BankService#createNewAccount(java.lang.String)
      */
 
+    @Override
     @RequiresPermissions("bankAccount:create")
     public long createNewAccount(String anOwnerName) {
         assertServiceState();
@@ -105,6 +106,7 @@ public class SecureBankService implements BankService {
      * @see com.connectif.trilogy.root.security.BankService#searchAccountIdsByOwner(java.lang.String)
      */
 
+    @Override
     public long[] searchAccountIdsByOwner(String anOwnerName) {
         assertServiceState();
         LOGGER.info("Searching existing accounts for " + anOwnerName);
@@ -132,6 +134,7 @@ public class SecureBankService implements BankService {
      * @see com.connectif.trilogy.root.security.BankService#getOwnerOf(long)
      */
 
+    @Override
     @RequiresPermissions("bankAccount:read")
     public String getOwnerOf(long anAccountId) throws AccountNotFoundException {
         assertServiceState();
@@ -145,6 +148,7 @@ public class SecureBankService implements BankService {
      * @see com.connectif.trilogy.root.security.BankService#getBalanceOf(long)
      */
 
+    @Override
     @RequiresPermissions("bankAccount:read")
     public double getBalanceOf(long anAccountId) throws AccountNotFoundException {
         assertServiceState();
@@ -158,6 +162,7 @@ public class SecureBankService implements BankService {
      * @see com.connectif.trilogy.root.security.BankService#depositInto(long, double)
      */
 
+    @Override
     @RequiresPermissions("bankAccount:operate")
     public double depositInto(long anAccountId, double anAmount) throws AccountNotFoundException, InactiveAccountException {
         assertServiceState();
@@ -182,6 +187,7 @@ public class SecureBankService implements BankService {
     /* (non-Javadoc)
      * @see com.connectif.trilogy.root.security.BankService#withdrawFrom(long, double)
      */
+    @Override
     @RequiresPermissions("bankAccount:operate")
     public double withdrawFrom(long anAccountId, double anAmount)
             throws AccountNotFoundException, NotEnoughFundsException, InactiveAccountException {
@@ -203,6 +209,7 @@ public class SecureBankService implements BankService {
      * @see com.connectif.trilogy.root.security.BankService#getTxHistoryFor(long)
      */
 
+    @Override
     @RequiresPermissions("bankAccount:read")
     public TxLog[] getTxHistoryFor(long anAccountId) throws AccountNotFoundException {
         assertServiceState();
@@ -229,6 +236,7 @@ public class SecureBankService implements BankService {
      * @see com.connectif.trilogy.root.security.BankService#closeAccount(long)
      */
 
+    @Override
     @RequiresPermissions("bankAccount:close")
     public double closeAccount(long anAccountId) throws AccountNotFoundException, InactiveAccountException {
         assertServiceState();
@@ -258,6 +266,7 @@ public class SecureBankService implements BankService {
      * @see com.connectif.trilogy.root.security.BankService#isAccountActive(long)
      */
 
+    @Override
     @RequiresPermissions("bankAccount:read")
     public boolean isAccountActive(long anAccountId) throws AccountNotFoundException {
         assertServiceState();

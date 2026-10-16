@@ -33,6 +33,7 @@ public class UsernamePrincipal implements Principal, Serializable {
         return username;
     }
 
+    @Override
     public String getName() {
         return String.valueOf(username);
     }

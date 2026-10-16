@@ -136,6 +136,7 @@ public class JndiTemplate {
     public Object lookup(final String name) throws NamingException {
         LOGGER.debug("Looking up JNDI object with name '{}'", name);
         return execute(new JndiCallback() {
+            @Override
             public Object doInContext(Context ctx) throws NamingException {
                 Object located = ctx.lookup(name);
                 if (located == null) {
@@ -181,6 +182,7 @@ public class JndiTemplate {
     public void bind(final String name, final Object object) throws NamingException {
         LOGGER.debug("Binding JNDI object with name '{}'", name);
         execute(new JndiCallback() {
+            @Override
             public Object doInContext(Context ctx) throws NamingException {
                 ctx.bind(name, object);
                 return null;
@@ -199,6 +201,7 @@ public class JndiTemplate {
     public void rebind(final String name, final Object object) throws NamingException {
         LOGGER.debug("Rebinding JNDI object with name '{}'", name);
         execute(new JndiCallback() {
+            @Override
             public Object doInContext(Context ctx) throws NamingException {
                 ctx.rebind(name, object);
                 return null;
@@ -215,6 +218,7 @@ public class JndiTemplate {
     public void unbind(final String name) throws NamingException {
         LOGGER.debug("Unbinding JNDI object with name '{}'", name);
         execute(new JndiCallback() {
+            @Override
             public Object doInContext(Context ctx) throws NamingException {
                 ctx.unbind(name);
                 return null;

@@ -48,6 +48,7 @@ public class RegExPatternMatcher implements PatternMatcher {
      * @param source  the source to match
      * @return {@code true} if the source matches the required pattern, {@code false} otherwise.
      */
+    @Override
     public boolean matches(String pattern, String source) {
         if (pattern == null) {
             throw new IllegalArgumentException("pattern argument cannot be null.");

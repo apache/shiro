@@ -78,6 +78,7 @@ public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
      * @see org.apache.shiro.aop.MethodInvocation#getArguments()
      */
 
+    @Override
     public Object[] getArguments() {
         return someArguments;
     }
@@ -86,6 +87,7 @@ public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
      * @see org.apache.shiro.aop.MethodInvocation#getMethod()
      */
 
+    @Override
     public Method getMethod() {
         return method;
     }
@@ -94,6 +96,7 @@ public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
      * @see org.apache.shiro.aop.MethodInvocation#proceed()
      */
 
+    @Override
     public Object proceed() throws Throwable {
         // Do nothing since this adapts a before advice
         return null;
@@ -102,6 +105,7 @@ public class BeforeAdviceMethodInvocationAdapter implements MethodInvocation {
     /**
      * @since 1.0
      */
+    @Override
     public Object getThis() {
         return anObject;
     }

@@ -50,10 +50,12 @@ import java.util.Collection;
 public class IpFilter extends AuthorizationFilter {
 
     private static final IpSource DEFAULT_IP_SOURCE = new IpSource() {
+        @Override
         public Collection<String> getAuthorizedIps() {
             return Collections.emptySet();
         }
 
+        @Override
         public Collection<String> getDeniedIps() {
             return Collections.emptySet();
         }

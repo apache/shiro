@@ -36,6 +36,7 @@ public class HasAnyRolesTag extends RoleTag {
     public HasAnyRolesTag() {
     }
 
+    @Override
     protected boolean showTagBody(String roleNames) {
         boolean hasAnyRole = false;
 

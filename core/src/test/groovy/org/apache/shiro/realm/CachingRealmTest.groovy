@@ -145,10 +145,12 @@ class CachingRealmTest {
         boolean templateMethodCalled = false
         boolean doClearCacheCalled = false
 
+        @Override
         boolean supports(AuthenticationToken token) {
             return true
         }
 
+        @Override
         AuthenticationInfo getAuthenticationInfo(AuthenticationToken token) {
             return info;
         }

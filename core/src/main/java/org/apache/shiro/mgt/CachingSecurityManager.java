@@ -79,6 +79,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      * @param cacheManager the CacheManager used by this {@code SecurityManager} and potentially any of its
      *                     children components.
      */
+    @Override
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
         afterCacheManagerSet();
@@ -115,6 +116,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
      *                 children components.
      * @since 1.3
      */
+    @Override
     public void setEventBus(EventBus eventBus) {
         this.eventBus = eventBus;
         afterEventBusSet();
@@ -142,6 +144,7 @@ public abstract class CachingSecurityManager implements SecurityManager, Destroy
     /**
      * Destroys the {@link #getCacheManager() cacheManager} via {@link LifecycleUtils#destroy LifecycleUtils.destroy}.
      */
+    @Override
     public void destroy() {
         LifecycleUtils.destroy(getCacheManager());
         this.cacheManager = null;

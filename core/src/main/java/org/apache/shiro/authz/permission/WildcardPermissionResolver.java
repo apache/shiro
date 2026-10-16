@@ -75,6 +75,7 @@ public class WildcardPermissionResolver implements PermissionResolver {
      * @return a new {@link WildcardPermission WildcardPermission} instance constructed based on the specified
      * <tt>permissionString</tt>
      */
+    @Override
     public Permission resolvePermission(String permissionString) {
         return new WildcardPermission(permissionString, caseSensitive);
     }

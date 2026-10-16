@@ -91,14 +91,17 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
         super(ctx);
     }
 
+    @Override
     public SecurityManager getSecurityManager() {
         return getTypedValue(SECURITY_MANAGER, SecurityManager.class);
     }
 
+    @Override
     public void setSecurityManager(SecurityManager securityManager) {
         nullSafePut(SECURITY_MANAGER, securityManager);
     }
 
+    @Override
     public SecurityManager resolveSecurityManager() {
         SecurityManager securityManager = getSecurityManager();
         if (securityManager == null) {
@@ -117,22 +120,27 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
         return securityManager;
     }
 
+    @Override
     public Serializable getSessionId() {
         return getTypedValue(SESSION_ID, Serializable.class);
     }
 
+    @Override
     public void setSessionId(Serializable sessionId) {
         nullSafePut(SESSION_ID, sessionId);
     }
 
+    @Override
     public Subject getSubject() {
         return getTypedValue(SUBJECT, Subject.class);
     }
 
+    @Override
     public void setSubject(Subject subject) {
         nullSafePut(SUBJECT, subject);
     }
 
+    @Override
     public PrincipalCollection getPrincipals() {
         return getTypedValue(PRINCIPALS, PrincipalCollection.class);
     }
@@ -141,12 +149,14 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
         return pc == null || pc.isEmpty();
     }
 
+    @Override
     public void setPrincipals(PrincipalCollection principals) {
         if (!isEmpty(principals)) {
             put(PRINCIPALS, principals);
         }
     }
 
+    @Override
     public PrincipalCollection resolvePrincipals() {
         PrincipalCollection principals = getPrincipals();
 
@@ -177,14 +187,17 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
     }
 
 
+    @Override
     public Session getSession() {
         return getTypedValue(SESSION, Session.class);
     }
 
+    @Override
     public void setSession(Session session) {
         nullSafePut(SESSION, session);
     }
 
+    @Override
     public Session resolveSession() {
         Session session = getSession();
         if (session == null) {
@@ -197,24 +210,29 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
         return session;
     }
 
+    @Override
     public boolean isSessionCreationEnabled() {
         Boolean val = getTypedValue(SESSION_CREATION_ENABLED, Boolean.class);
         return val == null || val;
     }
 
+    @Override
     public void setSessionCreationEnabled(boolean enabled) {
         nullSafePut(SESSION_CREATION_ENABLED, enabled);
     }
 
+    @Override
     public boolean isAuthenticated() {
         Boolean authc = getTypedValue(AUTHENTICATED, Boolean.class);
         return authc != null && authc;
     }
 
+    @Override
     public void setAuthenticated(boolean authc) {
         put(AUTHENTICATED, authc);
     }
 
+    @Override
     public boolean resolveAuthenticated() {
         Boolean authc = getTypedValue(AUTHENTICATED, Boolean.class);
         if (authc == null) {
@@ -235,32 +253,39 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
         return authc;
     }
 
+    @Override
     public AuthenticationInfo getAuthenticationInfo() {
         return getTypedValue(AUTHENTICATION_INFO, AuthenticationInfo.class);
     }
 
+    @Override
     public void setAuthenticationInfo(AuthenticationInfo info) {
         nullSafePut(AUTHENTICATION_INFO, info);
     }
 
+    @Override
     public AuthenticationToken getAuthenticationToken() {
         return getTypedValue(AUTHENTICATION_TOKEN, AuthenticationToken.class);
     }
 
+    @Override
     public void setAuthenticationToken(AuthenticationToken token) {
         nullSafePut(AUTHENTICATION_TOKEN, token);
     }
 
+    @Override
     public String getHost() {
         return getTypedValue(HOST, String.class);
     }
 
+    @Override
     public void setHost(String host) {
         if (StringUtils.hasText(host)) {
             put(HOST, host);
         }
     }
 
+    @Override
     public String resolveHost() {
         String host = getHost();
 
@@ -282,10 +307,12 @@ public class DefaultSubjectContext extends MapContext implements SubjectContext 
         return host;
     }
 
+    @Override
     public void setRememberedPrincipals(boolean remembered) {
         put(REMEMBERED_PRINCIPALS, remembered);
     }
 
+    @Override
     public boolean isRememberedPrincipals() {
         Boolean remembered = getTypedValue(REMEMBERED_PRINCIPALS, Boolean.class);
         return remembered != null && remembered;

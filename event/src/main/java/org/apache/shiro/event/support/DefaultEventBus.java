@@ -126,6 +126,7 @@ public class DefaultEventBus implements EventBus {
         }
     }
 
+    @Override
     public void publish(Object event) {
         if (event == null) {
             LOGGER.info("Received null event for publishing.  Ignoring and returning.");
@@ -155,6 +156,7 @@ public class DefaultEventBus implements EventBus {
         }
     }
 
+    @Override
     public void register(Object instance) {
         if (instance == null) {
             LOGGER.info("Received null instance for event listener registration.  Ignoring registration request.");
@@ -181,6 +183,7 @@ public class DefaultEventBus implements EventBus {
         }
     }
 
+    @Override
     public void unregister(Object instance) {
         if (instance == null) {
             return;

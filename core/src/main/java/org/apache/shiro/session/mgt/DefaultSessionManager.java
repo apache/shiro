@@ -129,6 +129,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         this.deleteInvalidSessions = deleteInvalidSessions;
     }
 
+    @Override
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
         applyCacheManagerToSessionDAO();
@@ -151,6 +152,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         }
     }
 
+    @Override
     protected Session doCreateSession(SessionContext context) {
         Session s = newSessionInstance(context);
         if (LOGGER.isTraceEnabled()) {
@@ -194,6 +196,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         }
     }
 
+    @Override
     protected void onExpiration(Session session) {
         if (session instanceof SimpleSession simpleSession) {
             simpleSession.setExpired(true);
@@ -208,10 +211,12 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         }
     }
 
+    @Override
     protected void onChange(Session session) {
         sessionDAO.update(session);
     }
 
+    @Override
     protected Session retrieveSession(SessionKey sessionKey) throws UnknownSessionException {
         Serializable sessionId = getSessionId(sessionKey);
         if (sessionId == null) {
@@ -240,6 +245,7 @@ public class DefaultSessionManager extends AbstractValidatingSessionManager impl
         sessionDAO.delete(session);
     }
 
+    @Override
     protected Collection<Session> getActiveSessions() {
         Collection<Session> active = sessionDAO.getActiveSessions();
         return active != null ? active : Collections.<Session>emptySet();

@@ -100,10 +100,12 @@ public class IniSecurityManagerFactory extends IniFactorySupport<SecurityManager
         return getReflectionBuilder().getBean(SECURITY_MANAGER_NAME, SecurityManager.class);
     }
 
+    @Override
     protected SecurityManager createDefaultInstance() {
         return new DefaultSecurityManager();
     }
 
+    @Override
     protected SecurityManager createInstance(Ini ini) {
         if (CollectionUtils.isEmpty(ini)) {
             throw new NullPointerException("Ini argument cannot be null or empty.");

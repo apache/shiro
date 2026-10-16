@@ -27,6 +27,7 @@ import org.apache.shiro.crypto.hash.Hash
  */
 class ToStringHashFormat implements HashFormat {
 
+    @Override
     String format(Hash hash) {
         return hash.toString()
     }

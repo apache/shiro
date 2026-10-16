@@ -93,6 +93,7 @@ public class ShiroSecurityContext implements SecurityContext {
             return object;
         }
 
+        @Override
         public String getName() {
             return getObject().toString();
         }
@@ -112,10 +113,12 @@ public class ShiroSecurityContext implements SecurityContext {
 
         }
 
+        @Override
         public int hashCode() {
             return object.hashCode();
         }
 
+        @Override
         public String toString() {
             return object.toString();
         }

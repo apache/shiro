@@ -44,6 +44,7 @@ public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfigura
     }
 
     @Bean(name = "globalFilters")
+    @Override
     protected List<String> globalFilters() {
         return super.globalFilters();
     }

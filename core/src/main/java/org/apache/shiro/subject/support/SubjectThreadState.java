@@ -78,6 +78,7 @@ public class SubjectThreadState implements ThreadState {
      * Prior to binding, the {@code ThreadContext}'s existing {@link ThreadContext#getResources() resources} are
      * retained so they can be restored later via the {@link #restore restore} call.
      */
+    @Override
     public void bind() {
         SecurityManager securityManager = this.securityManager;
         if (securityManager == null) {
@@ -98,6 +99,7 @@ public class SubjectThreadState implements ThreadState {
      * thread-bound resources existed prior to the {@link #bind bind} call, they are restored back to the
      * {@code ThreadContext} to ensure the thread state is exactly as it was before binding.
      */
+    @Override
     public void restore() {
         ThreadContext.remove();
         if (!CollectionUtils.isEmpty(this.originalResources)) {
@@ -110,6 +112,7 @@ public class SubjectThreadState implements ThreadState {
      * only be called in special cases - it is more 'correct' to {@link #restore restore} a thread to its previous
      * state than to clear it entirely.
      */
+    @Override
     public void clear() {
         ThreadContext.remove();
     }

@@ -59,6 +59,7 @@ public class AbstractAuthenticatorTest {
 
     private AbstractAuthenticator createAuthcReturnNull() {
         return new AbstractAuthenticator() {
+            @Override
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 return null;
             }
@@ -67,6 +68,7 @@ public class AbstractAuthenticatorTest {
 
     private AbstractAuthenticator createAuthcReturnValidAuthcInfo() {
         return new AbstractAuthenticator() {
+            @Override
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 return info;
             }
@@ -85,6 +87,7 @@ public class AbstractAuthenticatorTest {
     @Test
     void newAbstractAuthenticatorSecurityManagerConstructor() {
         abstractAuthenticator = new AbstractAuthenticator() {
+            @Override
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 return info;
             }
@@ -146,6 +149,7 @@ public class AbstractAuthenticatorTest {
         final AuthenticationException ae = new AuthenticationException("dummy exception to test notification");
 
         abstractAuthenticator = new AbstractAuthenticator() {
+            @Override
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 throw ae;
             }
@@ -173,6 +177,7 @@ public class AbstractAuthenticatorTest {
     void notifyFailureAfterDoAuthenticateThrowsNonAuthenticationException() {
         assertThatExceptionOfType(AuthenticationException.class).isThrownBy(() -> {
             abstractAuthenticator = new AbstractAuthenticator() {
+                @Override
                 protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                     throw new IllegalArgumentException("not an AuthenticationException subclass");
                 }
@@ -189,6 +194,7 @@ public class AbstractAuthenticatorTest {
                 + " for test logExceptionAfterDoAuthenticateThrowsNonAuthenticationException";
 
         abstractAuthenticator = new AbstractAuthenticator() {
+            @Override
             protected AuthenticationInfo doAuthenticate(AuthenticationToken token) throws AuthenticationException {
                 throw new IllegalArgumentException(expectedExceptionMessage);
             }

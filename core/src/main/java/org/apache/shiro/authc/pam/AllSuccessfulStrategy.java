@@ -53,6 +53,7 @@ public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {
      * {@link UnsupportedTokenException UnsupportedTokenException} to end the authentication
      * process immediately. If the realm does support the token, the <code>info</code> argument is returned immediately.
      */
+    @Override
     public AuthenticationInfo beforeAttempt(Realm realm, AuthenticationToken token,
                                             AuthenticationInfo info) throws AuthenticationException {
         if (!realm.supports(token)) {
@@ -76,6 +77,7 @@ public class AllSuccessfulStrategy extends AbstractAuthenticationStrategy {
      * realm did in fact authenticate successfully</li>
      * </ol>
      */
+    @Override
     public AuthenticationInfo afterAttempt(Realm realm, AuthenticationToken token,
                                            AuthenticationInfo info, AuthenticationInfo aggregate, Throwable t)
             throws AuthenticationException {

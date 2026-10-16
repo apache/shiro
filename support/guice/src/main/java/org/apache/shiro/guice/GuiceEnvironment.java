@@ -30,6 +30,7 @@ class GuiceEnvironment implements Environment {
         this.securityManager = securityManager;
     }
 
+    @Override
     public SecurityManager getSecurityManager() {
         return securityManager;
     }

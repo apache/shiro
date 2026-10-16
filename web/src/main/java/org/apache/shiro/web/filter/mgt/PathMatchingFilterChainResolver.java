@@ -112,6 +112,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
         this.filterChainManager = filterChainManager;
     }
 
+    @Override
     public FilterChain getChain(ServletRequest request, ServletResponse response, FilterChain originalChain) {
         FilterChainManager filterChainManager = getFilterChainManager();
         if (!filterChainManager.hasChains()) {

@@ -92,6 +92,7 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
      * Passes on the {@link #getRealms() realms} to the internal delegate <code>Authenticator</code> instance so
      * that it may use them during authentication attempts.
      */
+    @Override
     protected void afterRealmsSet() {
         super.afterRealmsSet();
         if (this.authenticator instanceof ModularRealmAuthenticator realmAuthenticator) {
@@ -102,10 +103,12 @@ public abstract class AuthenticatingSecurityManager extends RealmSecurityManager
     /**
      * Delegates to the wrapped {@link org.apache.shiro.authc.Authenticator Authenticator} for authentication.
      */
+    @Override
     public AuthenticationInfo authenticate(AuthenticationToken token) throws AuthenticationException {
         return this.authenticator.authenticate(token);
     }
 
+    @Override
     public void destroy() {
         LifecycleUtils.destroy(getAuthenticator());
         this.authenticator = null;

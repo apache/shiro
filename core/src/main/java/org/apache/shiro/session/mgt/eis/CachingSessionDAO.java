@@ -79,6 +79,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      *
      * @param cacheManager the manager to use for constructing the session cache.
      */
+    @Override
     public void setCacheManager(CacheManager cacheManager) {
         this.cacheManager = cacheManager;
     }
@@ -178,6 +179,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      *
      * @param session Session object to create in the EIS and then cache.
      */
+    @Override
     public Serializable create(Session session) {
         Serializable sessionId = super.create(session);
         cache(session, sessionId);
@@ -253,6 +255,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * @return the session identified by {@code sessionId} in the EIS.
      * @throws UnknownSessionException if the id specified does not correspond to any session in the cache or EIS.
      */
+    @Override
     public Session readSession(Serializable sessionId) throws UnknownSessionException {
         Session s = getCachedSession(sessionId);
         if (s == null) {
@@ -271,6 +274,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      * @throws UnknownSessionException if no existing EIS session record exists with the
      *                                 identifier of {@link Session#getId() session.getId()}
      */
+    @Override
     public void update(Session session) throws UnknownSessionException {
         doUpdate(session);
         if (session instanceof ValidatingSession validatingSession) {
@@ -297,6 +301,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      *
      * @param session the session to remove from caches and permanently delete from the EIS.
      */
+    @Override
     public void delete(Session session) {
         uncache(session);
         doDelete(session);
@@ -337,6 +342,7 @@ public abstract class CachingSessionDAO extends AbstractSessionDAO implements Ca
      *
      * @return the sessions found in the activeSessions cache.
      */
+    @Override
     public Collection<Session> getActiveSessions() {
         Cache<Serializable, Session> cache = getActiveSessionsCacheLazy();
         if (cache != null) {

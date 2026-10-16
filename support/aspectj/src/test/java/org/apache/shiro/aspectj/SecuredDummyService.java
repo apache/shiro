@@ -30,6 +30,7 @@ import java.sql.Timestamp;
  */
 public class SecuredDummyService implements DummyService {
 
+    @Override
     @RequiresAuthentication
     @RequiresPermissions("dummy:admin")
     public void change() {
@@ -38,25 +39,30 @@ public class SecuredDummyService implements DummyService {
         peek();
     }
 
+    @Override
     public void anonymous() {
         log("anonymous");
     }
 
+    @Override
     @RequiresGuest
     public void guest() {
         log("guest");
     }
 
+    @Override
     @RequiresUser
     public void peek() {
         log("peek");
     }
 
+    @Override
     @RequiresPermissions("dummy:user")
     public void retrieve() {
         log("retrieve");
     }
 
+    @Override
     public void log(String aMessage) {
         if (aMessage != null) {
             System.out.println(new Timestamp(System.currentTimeMillis())

@@ -45,10 +45,12 @@ public class DefaultWebEnvironment extends DefaultEnvironment implements Mutable
         super();
     }
 
+    @Override
     public FilterChainResolver getFilterChainResolver() {
         return getObject(DEFAULT_FILTER_CHAIN_RESOLVER_NAME, FilterChainResolver.class);
     }
 
+    @Override
     public void setFilterChainResolver(FilterChainResolver filterChainResolver) {
         setObject(DEFAULT_FILTER_CHAIN_RESOLVER_NAME, filterChainResolver);
     }
@@ -64,12 +66,14 @@ public class DefaultWebEnvironment extends DefaultEnvironment implements Mutable
         super.setSecurityManager(securityManager);
     }
 
+    @Override
     public WebSecurityManager getWebSecurityManager() {
         SecurityManager sm = super.getSecurityManager();
         assertWebSecurityManager(sm);
         return (WebSecurityManager) sm;
     }
 
+    @Override
     public void setWebSecurityManager(WebSecurityManager wsm) {
         super.setSecurityManager(wsm);
     }
@@ -81,10 +85,12 @@ public class DefaultWebEnvironment extends DefaultEnvironment implements Mutable
         }
     }
 
+    @Override
     public ServletContext getServletContext() {
         return this.servletContext;
     }
 
+    @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }

@@ -31,8 +31,10 @@ import org.apache.shiro.util.ThreadContext;
  * Guice scope for Shiro sessions.  Not bound by default.
  */
 public class ShiroSessionScope implements Scope {
+    @Override
     public <T> Provider<T> scope(final Key<T> key, final Provider<T> unscoped) {
         return new Provider<T>() {
+            @Override
             public T get() {
                 Subject subject;
                 if (ScopedValues.INSTANCE.isSupported() && ScopedValues.INSTANCE.isBound()) {

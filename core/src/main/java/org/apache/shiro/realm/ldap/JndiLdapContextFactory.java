@@ -397,6 +397,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      * @return the system LdapContext
      * @throws NamingException if there is a problem connecting to the LDAP directory
      */
+    @Override
     public LdapContext getSystemLdapContext() throws NamingException {
         return getLdapContext(getSystemUsername(), getSystemPassword());
     }
@@ -434,6 +435,7 @@ public class JndiLdapContextFactory implements LdapContextFactory {
      * @throws NamingException
      * @throws IllegalStateException
      */
+    @Override
     public LdapContext getLdapContext(Object principal, Object credentials) throws NamingException,
             IllegalStateException {
 

@@ -94,10 +94,12 @@ public class SimpleRole implements Serializable {
         return false;
     }
 
+    @Override
     public int hashCode() {
         return (getName() != null ? getName().hashCode() : 0);
     }
 
+    @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;
@@ -109,6 +111,7 @@ public class SimpleRole implements Serializable {
         return false;
     }
 
+    @Override
     public String toString() {
         return getName();
     }

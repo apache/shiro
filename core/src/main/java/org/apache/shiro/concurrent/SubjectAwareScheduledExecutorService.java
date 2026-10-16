@@ -69,21 +69,25 @@ public class SubjectAwareScheduledExecutorService extends SubjectAwareExecutorSe
         super.setTargetExecutorService(targetExecutorService);
     }
 
+    @Override
     public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
         Runnable work = associateWithSubject(command);
         return this.targetScheduledExecutorService.schedule(work, delay, unit);
     }
 
+    @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
         Callable<V> work = associateWithSubject(callable);
         return this.targetScheduledExecutorService.schedule(work, delay, unit);
     }
 
+    @Override
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
         Runnable work = associateWithSubject(command);
         return this.targetScheduledExecutorService.scheduleAtFixedRate(work, initialDelay, period, unit);
     }
 
+    @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
         Runnable work = associateWithSubject(command);
         return this.targetScheduledExecutorService.scheduleWithFixedDelay(work, initialDelay, delay, unit);

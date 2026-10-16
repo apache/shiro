@@ -39,6 +39,7 @@ public abstract class RoleTag extends SecureTag {
         this.name = name;
     }
 
+    @Override
     public int onDoStartTag() throws JspException {
         boolean show = showTagBody(getName());
         if (show) {

@@ -76,6 +76,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         bindListener(Matchers.any(), new SubscribedEventTypeListener());
         bindListener(Matchers.any(), new EventBusAwareTypeListener());
         final DestroyableInjectionListener.DestroyableRegistry registry = new DestroyableInjectionListener.DestroyableRegistry() {
+            @Override
             public void add(Destroyable destroyable) {
                 ShiroModule.this.add(destroyable);
             }
@@ -191,6 +192,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
      *
      * @throws Exception
      */
+    @Override
     public final void destroy() {
         for (Destroyable destroyable : destroyables) {
             try {

@@ -49,6 +49,7 @@ public class AuthenticatedAnnotationHandler extends AuthorizingAnnotationHandler
      * @throws org.apache.shiro.authz.UnauthenticatedException if the calling <code>Subject</code> has not yet
      *                                                         authenticated.
      */
+    @Override
     public void assertAuthorized(Annotation a) throws UnauthenticatedException {
         if (a instanceof RequiresAuthentication && !getSubject().isAuthenticated()) {
             throw new UnauthenticatedException("The current Subject is not authenticated.  Access denied.");

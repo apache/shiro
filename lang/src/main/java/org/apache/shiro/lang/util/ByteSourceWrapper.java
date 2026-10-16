@@ -49,6 +49,7 @@ public final class ByteSourceWrapper implements Closeable {
         return bytes;
     }
 
+    @Override
     public void close() throws IOException {
         ByteUtils.wipe(bytes);
     }

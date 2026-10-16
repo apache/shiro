@@ -26,6 +26,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 @RequiresPermissions("dummy:admin")
 public class RestrictedDummyService extends SecuredDummyService {
 
+    @Override
     public void retrieve() {
         log("retrieve *RESTRICTED*");
         super.retrieve();
