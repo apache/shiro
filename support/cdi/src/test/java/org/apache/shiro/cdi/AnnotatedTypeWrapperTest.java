@@ -97,9 +97,9 @@ class AnnotatedTypeWrapperTest {
     @Test
     void removeAnnotations() {
         initializeStubs();
-        Set<Annotation> sessionScopeAnnoationsSet = Set.of(getAnnotation(SessionScopedAnnotated.class, SessionScoped.class));
-        Set<Annotation> requiresGuestAnnoationsSet = Set.of(getAnnotation(Annotated.class, RequiresGuest.class));
-        var wrapper = new AnnotatedTypeWrapper<>(annotatedType, true, sessionScopeAnnoationsSet, requiresGuestAnnoationsSet);
+        Set<Annotation> sessionScopeAnnotationsSet = Set.of(getAnnotation(SessionScopedAnnotated.class, SessionScoped.class));
+        Set<Annotation> requiresGuestAnnotationsSet = Set.of(getAnnotation(Annotated.class, RequiresGuest.class));
+        var wrapper = new AnnotatedTypeWrapper<>(annotatedType, true, sessionScopeAnnotationsSet, requiresGuestAnnotationsSet);
         assertThat(wrapper.getAnnotations()).hasSize(3);
         assertThat(wrapper.isAnnotationPresent(RequiresGuest.class)).isFalse();
         assertThat(wrapper.isAnnotationPresent(SessionScoped.class)).isTrue();
