@@ -39,6 +39,7 @@ class DestroyableInjectionListener<I extends Destroyable> implements InjectionLi
         this.registry = registry;
     }
 
+    @Override
     public void afterInjection(Destroyable injectee) {
         registry.add(injectee);
     }

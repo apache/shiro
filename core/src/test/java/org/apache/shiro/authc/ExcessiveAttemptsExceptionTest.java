@@ -30,6 +30,7 @@ import org.apache.shiro.ExceptionTest;
  */
 public class ExcessiveAttemptsExceptionTest extends ExceptionTest {
 
+    @Override
     protected Class<?> getExceptionClass() {
         return ExcessiveAttemptsException.class;
     }

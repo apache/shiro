@@ -26,6 +26,7 @@ import org.apache.shiro.ExceptionTest;
  */
 public class UnauthorizedExceptionTest extends ExceptionTest {
 
+    @Override
     protected Class<?> getExceptionClass() {
         return UnauthorizedException.class;
     }

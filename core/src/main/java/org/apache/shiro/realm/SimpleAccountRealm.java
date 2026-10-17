@@ -146,7 +146,7 @@ public class SimpleAccountRealm extends AuthorizingRealm {
     }
 
     protected static Set<String> toSet(String delimited, String delimiter) {
-        if (delimited == null || delimited.trim().equals("")) {
+        if (delimited == null || delimited.trim().isEmpty()) {
             return null;
         }
 

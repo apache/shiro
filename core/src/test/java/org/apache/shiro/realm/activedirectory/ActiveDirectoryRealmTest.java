@@ -283,6 +283,7 @@ public class ActiveDirectoryRealmTest {
             setCredentialsMatcher(credentialsMatcher);
         }
 
+        @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             SimpleAccount account = (SimpleAccount) super.doGetAuthenticationInfo(token);
 
@@ -297,6 +298,7 @@ public class ActiveDirectoryRealmTest {
 
         }
 
+        @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             Set<String> roles = new HashSet<>();
             roles.add(ROLE);

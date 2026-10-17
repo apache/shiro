@@ -30,6 +30,7 @@ import org.apache.shiro.ExceptionTest;
  */
 public class ConcurrentAccessExceptionTest extends ExceptionTest {
 
+    @Override
     protected Class<?> getExceptionClass() {
         return ConcurrentAccessException.class;
     }

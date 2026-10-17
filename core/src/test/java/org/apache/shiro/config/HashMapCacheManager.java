@@ -41,7 +41,7 @@ public class HashMapCacheManager<K, V> extends AbstractCacheManager {
 
     //This class is not strictly necessary - it exists to verify a test case only.
 
-    public class HashMapCache<K, V> extends MapCache<K, V> {
+    public static class HashMapCache<K, V> extends MapCache<K, V> {
         public HashMapCache(String name) {
             super(name, new HashMap<K, V>());
         }

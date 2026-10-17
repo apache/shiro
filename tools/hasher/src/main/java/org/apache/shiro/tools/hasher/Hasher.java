@@ -196,7 +196,7 @@ public final class Hasher {
                 generateSalt = true;
                 generatedSaltSize = getRequiredPositiveInt(line, SALT_GEN_SIZE);
                 if (generatedSaltSize % 8 != 0) {
-                    throw new IllegalArgumentException("Generated salt size must be"
+                    throw new IllegalArgumentException("Generated salt size must be "
                             + "a multiple of 8 (e.g. 128, 192, 256, 512, etc.).");
                 }
             }
@@ -222,8 +222,6 @@ public final class Hasher {
                 if (remainingArgs == null || remainingArgs.length != 1) {
                     printHelpAndExit(options, null, debug, -1);
                 }
-
-                assert remainingArgs != null;
                 sourceValue = toString(remainingArgs);
 
                 if (resource) {

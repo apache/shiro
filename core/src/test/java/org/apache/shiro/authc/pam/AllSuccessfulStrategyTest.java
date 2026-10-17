@@ -64,10 +64,12 @@ public class AllSuccessfulStrategyTest {
                     return false;
                 }
 
+                @Override
                 protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
                     return null;
                 }
 
+                @Override
                 protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
                     return null;
                 }

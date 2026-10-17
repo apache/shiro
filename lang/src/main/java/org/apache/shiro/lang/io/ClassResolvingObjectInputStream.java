@@ -52,7 +52,6 @@ public class ClassResolvingObjectInputStream extends ObjectInputStream {
      *
      * @param osc the ObjectStreamClass to resolve the class name.
      * @return the discovered class
-     * @throws IOException            never - declaration retained for subclass consistency
      * @throws ClassNotFoundException if the class could not be found in any known ClassLoader
      */
     @Override

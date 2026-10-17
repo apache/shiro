@@ -42,7 +42,7 @@ import org.omnifaces.servlet.BufferedHttpServletResponse;
 final class FormResubmitResponse extends BufferedHttpServletResponse {
     private final List<Consumer<HttpServletResponse>> deferred = new ArrayList<>();
     private final @Delegate(types = Captured.class) HttpServletResponse recorder;
-    private @Getter @Setter int status = SC_OK;
+    private @Getter(onMethod_ = @Override) @Setter(onMethod_ = @Override) int status = SC_OK;
     private ClosableOutputStream outputStream;
 
     /**

@@ -30,6 +30,7 @@ import org.apache.shiro.ExceptionTest;
  */
 public class IncorrectCredentialsExceptionTest extends ExceptionTest {
 
+    @Override
     protected Class<?> getExceptionClass() {
         return IncorrectCredentialsException.class;
     }

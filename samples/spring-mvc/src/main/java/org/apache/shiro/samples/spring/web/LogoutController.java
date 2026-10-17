@@ -39,6 +39,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class LogoutController extends AbstractController {
 
     @GetMapping
+    @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
         SecurityUtils.getSubject().logout();
         return new ModelAndView("redirect:login");

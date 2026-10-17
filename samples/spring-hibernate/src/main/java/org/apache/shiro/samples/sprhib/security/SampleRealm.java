@@ -61,6 +61,7 @@ public class SampleRealm extends AuthorizingRealm {
         this.userDAO = userDAO;
     }
 
+    @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
         UsernamePasswordToken token = (UsernamePasswordToken) authcToken;
         User user = userDAO.findUser(token.getUsername());
@@ -72,6 +73,7 @@ public class SampleRealm extends AuthorizingRealm {
     }
 
 
+    @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         Long userId = (Long) principals.fromRealm(getName()).iterator().next();
         User user = userDAO.getUser(userId);
