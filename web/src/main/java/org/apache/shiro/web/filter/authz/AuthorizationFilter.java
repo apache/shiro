@@ -103,6 +103,7 @@ public abstract class AuthorizationFilter extends AccessControlFilter {
      * @return {@code false} always for this implementation.
      * @throws IOException if there is any servlet error.
      */
+    @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {
 
         Subject subject = getSubject(request, response);

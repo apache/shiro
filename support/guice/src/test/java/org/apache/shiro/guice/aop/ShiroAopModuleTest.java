@@ -107,6 +107,8 @@ public class ShiroAopModuleTest {
                 }
             }
         }
+        assertThat(calledDefault).isTrue();
+        assertThat(calledCustom).isTrue();
     }
 
     @Test

@@ -156,6 +156,7 @@ public class FormAuthenticationFilter extends AuthenticatingFilter {
         this.failureKeyAttribute = failureKeyAttribute;
     }
 
+    @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         if (isLoginRequest(request, response)) {
             if (isLoginSubmission(request, response)) {

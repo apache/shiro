@@ -108,17 +108,17 @@ class SecurityUtilsUnwrapTest {
         var dsm = unwrapSecurityManager(defaultSecurityManager, DefaultSecurityManager.class);
         assertThat(dsm).isEqualTo(defaultSecurityManager);
         when(defaultSecurityManager.createSubject(subjectContext)).thenReturn(subject);
-        Subject subject = dsm.createSubject(subjectContext);
-        assertThat(subject).isEqualTo(this.subject);
+        Subject created = dsm.createSubject(subjectContext);
+        assertThat(created).isEqualTo(subject);
         verify(defaultSecurityManager).createSubject(subjectContext);
-        verifyNoMoreInteractions(defaultSecurityManager, this.subject, subjectContext);
+        verifyNoMoreInteractions(defaultSecurityManager, subject, subjectContext);
     }
 
     @Test
     void invalidCast() {
         SecurityManager wrapped = new Wrapped(defaultSecurityManager);
         assertThatExceptionOfType(ClassCastException.class).isThrownBy(() -> {
-            DefaultSecurityManager sm = (DefaultSecurityManager) wrapped;
+            DefaultSecurityManager.class.cast(wrapped);
         });
     }
 

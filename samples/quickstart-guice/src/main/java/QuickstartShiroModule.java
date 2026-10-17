@@ -23,6 +23,7 @@ import org.apache.shiro.guice.ShiroModule;
 import org.apache.shiro.realm.text.IniRealm;
 
 public class QuickstartShiroModule extends ShiroModule {
+    @Override
     protected void configureShiro() {
         try {
             bindRealm().toConstructor(IniRealm.class.getConstructor(Ini.class));

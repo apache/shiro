@@ -124,6 +124,7 @@ public class MapContext implements Map<String, Object>, Serializable {
         return backingMap.remove(o);
     }
 
+    @Override
     public void putAll(Map<? extends String, ?> map) {
         backingMap.putAll(map);
     }

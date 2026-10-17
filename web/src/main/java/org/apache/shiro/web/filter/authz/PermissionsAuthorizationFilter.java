@@ -34,6 +34,7 @@ public class PermissionsAuthorizationFilter extends AuthorizationFilter {
 
     //TODO - complete JavaDoc
 
+    @Override
     public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws IOException {
 
         Subject subject = getSubject(request, response);

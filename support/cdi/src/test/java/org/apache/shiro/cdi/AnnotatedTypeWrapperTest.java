@@ -50,15 +50,15 @@ class AnnotatedTypeWrapperTest {
     @RequiresAuthentication
     @RequiresGuest
     @RequiresPermissions("hello")
-    private final class Annotated {
+    private static final class Annotated {
     }
 
     @ShiroSecureAnnotation
-    private final class ShiroSecureAnnotated {
+    private static final class ShiroSecureAnnotated {
     }
 
     @Stateless
-    private final class StatelessAnnotated {
+    private static final class StatelessAnnotated {
     }
 
     @SessionScoped

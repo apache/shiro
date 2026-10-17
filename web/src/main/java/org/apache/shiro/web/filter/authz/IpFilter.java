@@ -112,6 +112,7 @@ public class IpFilter extends AuthorizationFilter {
         return request.getRemoteAddr();
     }
 
+    @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         String remoteIp = getHostFromRequest(request);
         for (IpAddressMatcher matcher : deniedIpMatchers) {

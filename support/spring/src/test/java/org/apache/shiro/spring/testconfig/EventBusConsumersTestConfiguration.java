@@ -38,7 +38,7 @@ public class EventBusConsumersTestConfiguration {
         return new EventSubscriber();
     }
 
-    public class EventBusAwareObject implements EventBusAware {
+    public static class EventBusAwareObject implements EventBusAware {
 
         private EventBus eventBus;
 
@@ -52,7 +52,7 @@ public class EventBusConsumersTestConfiguration {
         }
     }
 
-    public class EventSubscriber {
+    public static class EventSubscriber {
 
         @Subscribe
         public void listen(Object object) {

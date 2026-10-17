@@ -33,6 +33,7 @@ class InitializableInjectionListener<I extends Initializable> implements Injecti
     @SuppressWarnings("rawtypes")
     public static final Matcher<TypeLiteral> MATCHER = ShiroMatchers.typeLiteral(Matchers.subclassesOf(Initializable.class));
 
+    @Override
     public void afterInjection(Initializable injectee) {
         injectee.init();
     }

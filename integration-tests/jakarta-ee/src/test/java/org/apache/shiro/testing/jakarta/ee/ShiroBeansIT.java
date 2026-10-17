@@ -86,9 +86,6 @@ public class ShiroBeansIT {
     @FindBy(id = "login")
     private WebElement login;
 
-    @FindBy(id = "usingWebSessions")
-    private WebElement usingWebSessions;
-
     @BeforeEach
     void deleteAllCookies() {
         webDriver.manage().deleteAllCookies();
@@ -149,7 +146,6 @@ public class ShiroBeansIT {
         login();
 
         webDriver.get(baseURL + "shiro/unprotected/manybeans");
-        boolean webSessions = Boolean.parseBoolean(usingWebSessions.getText());
         guardAjax(elem).click();
         webDriver.navigate().refresh();
         guardAjax(elem).click();

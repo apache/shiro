@@ -38,7 +38,7 @@ public class GuiceEnvironmentTest {
     @Test
     void ensureInjectable() {
         try {
-            InjectionPoint ip = InjectionPoint.forConstructorOf(GuiceEnvironment.class);
+            InjectionPoint.forConstructorOf(GuiceEnvironment.class);
         } catch (Exception e) {
             fail("Could not create constructor injection point.");
         }

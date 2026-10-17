@@ -189,6 +189,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * handled the request explicitly.
      * @throws Exception if an error occurs
      */
+    @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
 
         if (this.appliedPaths == null || this.appliedPaths.isEmpty()) {

@@ -47,7 +47,7 @@ class AopHelperTest {
     }
 
     @ShiroSecureAnnotation
-    public class NotAnnotated {
+    public static class NotAnnotated {
         @NotNull
         public void method() {
         }

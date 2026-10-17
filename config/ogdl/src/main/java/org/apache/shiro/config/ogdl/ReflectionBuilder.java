@@ -871,7 +871,7 @@ public class ReflectionBuilder {
         }
     }
 
-    private final class BeanConfiguration {
+    private static final class BeanConfiguration {
 
         private final InstantiationStatement instantiationStatement;
         private final List<AssignmentStatement> assignments = new ArrayList<AssignmentStatement>();
@@ -941,7 +941,7 @@ public class ReflectionBuilder {
         }
     }
 
-    private abstract class Statement {
+    private abstract static class Statement {
 
         protected final String lhs;
         protected final String rhs;

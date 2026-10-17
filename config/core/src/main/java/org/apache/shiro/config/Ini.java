@@ -507,6 +507,7 @@ public final class Ini implements Map<String, Ini.Section> {
         return this.sections.remove(key);
     }
 
+    @Override
     public void putAll(Map<? extends String, ? extends Section> m) {
         this.sections.putAll(m);
     }
@@ -704,6 +705,7 @@ public final class Ini implements Map<String, Ini.Section> {
             return this.props.put(key, value);
         }
 
+        @Override
         public void putAll(Map<? extends String, ? extends String> m) {
             this.props.putAll(m);
         }

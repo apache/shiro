@@ -30,6 +30,7 @@ import org.apache.shiro.ExceptionTest;
  */
 public class UnknownAccountExceptionTest extends ExceptionTest {
 
+    @Override
     protected Class<?> getExceptionClass() {
         return UnknownAccountException.class;
     }

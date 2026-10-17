@@ -66,6 +66,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
 
     private final Set<Destroyable> destroyables = Collections.newSetFromMap(new WeakHashMap<Destroyable, Boolean>());
 
+    @Override
     public void configure() {
         // setup security manager
         bindSecurityManager(bind(SecurityManager.class));
@@ -207,7 +208,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         this.destroyables.add(destroyable);
     }
 
-    private final class SubscribedEventTypeListener implements TypeListener {
+    private static final class SubscribedEventTypeListener implements TypeListener {
         @Override
         public <I> void hear(TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
 
@@ -225,7 +226,7 @@ public abstract class ShiroModule extends PrivateModule implements Destroyable {
         }
     }
 
-    private final class EventBusAwareTypeListener implements TypeListener {
+    private static final class EventBusAwareTypeListener implements TypeListener {
         @Override
         public <I> void hear(TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
 
