@@ -142,9 +142,10 @@ public class JDBCRealmTest {
         JdbcRealm realm = realmMap.get(testMethodName);
         createDefaultSchema(testMethodName, false);
         realm.setSaltStyle(JdbcRealm.SaltStyle.NO_SALT);
-        Connection conn = dsMap.get(testMethodName).getConnection();
-        Statement sql = conn.createStatement();
-        sql.executeUpdate("insert into users values ('" + username + "', 'dupe')");
+        try (Connection conn = dsMap.get(testMethodName).getConnection();
+             Statement sql = conn.createStatement()) {
+            sql.executeUpdate("insert into users values ('" + username + "', 'dupe')");
+        }
 
         Subject.Builder builder = new Subject.Builder(securityManager);
         Subject currentUser = builder.buildSubject();
@@ -326,9 +327,9 @@ public class JDBCRealmTest {
         Statement sql = null;
         DataSource ds = dsMap.get(testName);
         try {
-            Connection c = ds.getConnection();
-            Statement s = c.createStatement();
-            s.executeUpdate("SHUTDOWN");
+            conn = ds.getConnection();
+            sql = conn.createStatement();
+            sql.executeUpdate("SHUTDOWN");
         } catch (SQLException ex) {
             // ignore
         } finally {

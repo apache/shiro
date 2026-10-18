@@ -435,7 +435,7 @@ public class SimpleCookie implements Cookie {
         boolean httpOnly = false;
         SameSiteOptions sameSite = getSameSite();
 
-        addCookieHeader(response, name, DELETED_COOKIE_VALUE, null, domain, path, maxAge, version, secure, httpOnly, sameSite);
+        addCookieHeader(response, name, DELETED_COOKIE_VALUE, comment, domain, path, maxAge, version, secure, httpOnly, sameSite);
 
         LOGGER.trace("Removed '{}' cookie by setting maxAge=0", name);
     }

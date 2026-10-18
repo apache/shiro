@@ -287,6 +287,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
      * @throws AuthenticationException if the authentication attempt fails or if a
      *                                 {@link NamingException} occurs.
      */
+    @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         AuthenticationInfo info;
         try {
@@ -305,6 +306,7 @@ public class DefaultLdapRealm extends AuthorizingRealm {
     }
 
 
+    @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         AuthorizationInfo info;
         try {

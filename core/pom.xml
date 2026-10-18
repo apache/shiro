@@ -32,6 +32,8 @@
     <packaging>bundle</packaging>
     <properties>
         <module.name>core</module.name>
+        <delombok.phase>prepare-package</delombok.phase>
+        <javadoc.sourcepath>${javadoc.delombok.sourcepath}</javadoc.sourcepath>
     </properties>
 
     <build>

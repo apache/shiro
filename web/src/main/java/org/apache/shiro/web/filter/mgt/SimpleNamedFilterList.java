@@ -95,10 +95,12 @@ public class SimpleNamedFilterList implements NamedFilterList {
         this.backingList.add(index, filter);
     }
 
+    @Override
     public boolean addAll(Collection<? extends Filter> c) {
         return this.backingList.addAll(c);
     }
 
+    @Override
     public boolean addAll(int index, Collection<? extends Filter> c) {
         return this.backingList.addAll(index, c);
     }

@@ -243,6 +243,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      * @param response outgoing ServletResponse
      * @return true if the request should be processed; false if the request should not continue to be processed
      */
+    @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         //false by default or we wouldn't be in this method
         boolean loggedIn = false;

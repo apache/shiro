@@ -229,7 +229,7 @@ public class DefaultSessionManagerTest {
 
         // starting a session will trigger the starting of the validator
         try {
-            Session session = sessionManager.start(null);
+            sessionManager.start(null);
 
             // now sessionValidationScheduler should be enabled
             assertThat(sessionValidationScheduler.isEnabled()).as("sessionValidationScheduler was not enabled").isTrue();

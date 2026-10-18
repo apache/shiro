@@ -71,6 +71,7 @@ public class PortFilter extends AuthorizationFilter {
         return Integer.parseInt(ports[0]);
     }
 
+    @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         int requiredPort = toPort(mappedValue);
         int requestPort = request.getServerPort();

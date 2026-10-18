@@ -103,6 +103,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      * @return an {@link AuthenticationInfo} instance containing information retrieved from LDAP.
      * @throws NamingException if any LDAP errors occur during the search.
      */
+    @Override
     protected AuthenticationInfo queryForAuthenticationInfo(AuthenticationToken token, LdapContextFactory ldapContextFactory)
             throws NamingException {
 
@@ -140,6 +141,7 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
      * @return the AuthorizationInfo for the given Subject principal.
      * @throws NamingException if an error occurs when searching the LDAP server.
      */
+    @Override
     protected AuthorizationInfo queryForAuthorizationInfo(PrincipalCollection principals,
                                                           LdapContextFactory ldapContextFactory) throws NamingException {
 

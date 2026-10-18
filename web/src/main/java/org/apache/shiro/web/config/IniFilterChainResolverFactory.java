@@ -109,6 +109,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         this.caseInsensitive = caseInsensitive;
     }
 
+    @Override
     protected FilterChainResolver createInstance(Ini ini) {
         FilterChainResolver filterChainResolver = createDefaultInstance();
         if (filterChainResolver instanceof PathMatchingFilterChainResolver resolver) {
@@ -118,6 +119,7 @@ public class IniFilterChainResolverFactory extends IniFactorySupport<FilterChain
         return filterChainResolver;
     }
 
+    @Override
     protected FilterChainResolver createDefaultInstance() {
         FilterConfig filterConfig = getFilterConfig();
         if (filterConfig != null) {

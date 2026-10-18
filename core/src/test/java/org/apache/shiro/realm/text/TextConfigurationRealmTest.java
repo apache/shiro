@@ -269,7 +269,7 @@ public class TextConfigurationRealmTest {
     /*
      * A Class that captures a thread's assertion error.
      */
-    private class TestThread implements Runnable {
+    private static class TestThread implements Runnable {
         private Runnable test;
         private volatile AssertionError ae;
 

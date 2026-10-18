@@ -176,6 +176,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     |               M E T H O D S                |
     ============================================*/
 
+    @Override
     protected void onInit() {
         super.onInit();
         ensureContextFactory();
@@ -199,6 +200,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     }
 
 
+    @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         AuthenticationInfo info;
         try {
@@ -214,6 +216,7 @@ public abstract class AbstractLdapRealm extends AuthorizingRealm {
     }
 
 
+    @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         AuthorizationInfo info;
         try {

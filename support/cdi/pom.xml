@@ -32,6 +32,8 @@
     </parent>
     <properties>
         <module.name>cdi</module.name>
+        <delombok.phase>prepare-package</delombok.phase>
+        <javadoc.sourcepath>${javadoc.delombok.sourcepath}</javadoc.sourcepath>
     </properties>
 
     <dependencies>

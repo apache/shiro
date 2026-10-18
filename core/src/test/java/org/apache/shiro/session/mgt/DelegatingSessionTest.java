@@ -25,7 +25,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import java.io.Serializable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -63,7 +62,6 @@ public class DelegatingSessionTest {
     @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testTimeout() {
-        Serializable origId = session.getId();
         assertThat(session.getTimeout()).isEqualTo(AbstractSessionManager.DEFAULT_GLOBAL_SESSION_TIMEOUT);
         session.touch();
         session.setTimeout(100);

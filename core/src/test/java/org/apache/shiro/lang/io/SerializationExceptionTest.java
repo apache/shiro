@@ -26,6 +26,7 @@ import org.apache.shiro.ExceptionTest;
  */
 public class SerializationExceptionTest extends ExceptionTest {
 
+    @Override
     protected Class<?> getExceptionClass() {
         return SerializationException.class;
     }

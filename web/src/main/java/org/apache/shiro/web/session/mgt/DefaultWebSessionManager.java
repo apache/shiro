@@ -224,6 +224,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         return name;
     }
 
+    @Override
     protected Session createExposedSession(Session session, SessionContext context) {
         if (!WebUtils.isWeb(context)) {
             return super.createExposedSession(session, context);
@@ -234,6 +235,7 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
         return new DelegatingSession(this, key);
     }
 
+    @Override
     protected Session createExposedSession(Session session, SessionKey key) {
         if (!WebUtils.isWeb(key)) {
             return super.createExposedSession(session, key);

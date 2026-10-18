@@ -150,7 +150,7 @@ public class WildcardPermission implements Permission, Serializable {
         wildcardString = StringUtils.clean(wildcardString);
 
         if (wildcardString == null || wildcardString.isEmpty()) {
-            throw new IllegalArgumentException("Wildcard string cannot be null or empty."
+            throw new IllegalArgumentException("Wildcard string cannot be null or empty. "
                     + "Make sure permission strings are properly formatted.");
         }
 
@@ -165,14 +165,14 @@ public class WildcardPermission implements Permission, Serializable {
             Set<String> subparts = CollectionUtils.asSet(part.split(SUBPART_DIVIDER_TOKEN));
 
             if (subparts.isEmpty()) {
-                throw new IllegalArgumentException("Wildcard string cannot contain parts with only dividers."
+                throw new IllegalArgumentException("Wildcard string cannot contain parts with only dividers. "
                         + "Make sure permission strings are properly formatted.");
             }
             this.parts.add(subparts);
         }
 
         if (this.parts.isEmpty()) {
-            throw new IllegalArgumentException("Wildcard string cannot contain only dividers."
+            throw new IllegalArgumentException("Wildcard string cannot contain only dividers. "
                         + "Make sure permission strings are properly formatted.");
         }
     }

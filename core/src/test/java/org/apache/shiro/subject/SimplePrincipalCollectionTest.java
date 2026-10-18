@@ -35,9 +35,6 @@ public class SimplePrincipalCollectionTest {
         principalCollection.addPrincipal("johnny", "realm1");
         principalCollection.addPrincipal("Alberto", "realm2");
 
-        PrincipalCollection underTest = principalCollection.build();
-
-//        underTest.
-        LOG.trace("{}", principalCollection);
+        LOG.trace("{}", principalCollection.build());
     }
 }

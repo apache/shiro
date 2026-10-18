@@ -33,6 +33,8 @@
 
     <properties>
         <module.name>jakarta.ee</module.name>
+        <delombok.phase>prepare-package</delombok.phase>
+        <javadoc.sourcepath>${javadoc.delombok.sourcepath}</javadoc.sourcepath>
     </properties>
 
     <dependencies>

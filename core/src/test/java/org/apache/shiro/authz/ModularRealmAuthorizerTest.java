@@ -87,7 +87,7 @@ public class ModularRealmAuthorizerTest {
 
     }
 
-    class MockAuthorizingRealm extends AuthorizingRealm {
+    static class MockAuthorizingRealm extends AuthorizingRealm {
 
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {

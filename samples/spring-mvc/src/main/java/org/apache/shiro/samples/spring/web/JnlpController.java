@@ -69,6 +69,7 @@ public class JnlpController extends AbstractController {
 
     @SuppressWarnings("checkstyle:MagicNumber")
     @GetMapping
+    @Override
     protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         Subject subject = SecurityUtils.getSubject();

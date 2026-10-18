@@ -133,6 +133,10 @@
         <hibernate.version>7.4.13.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <lombok.version>1.18.48</lombok.version>
+        <!-- modules using Lombok set delombok.phase=prepare-package and javadoc.sourcepath=${javadoc.delombok.sourcepath} -->
+        <delombok.phase>none</delombok.phase>
+        <javadoc.sourcepath>${project.build.sourceDirectory}</javadoc.sourcepath>
+        <javadoc.delombok.sourcepath>${project.build.directory}/generated-sources/delombok</javadoc.delombok.sourcepath>
 
         <!-- checkstyle -->
         <checkstyle.configLocation>${root.dir}/src/checkstyle.xml</checkstyle.configLocation>
@@ -313,8 +317,33 @@
                             <link>https://docs.spring.io/spring-boot/${spring-boot.version}/api/java/</link>
                             <link>https://junit.org/junit5/docs/${junit.version}/api/</link>
                             <link>https://www.quartz-scheduler.org/api/${quartz.docs.version}/</link>
+                            <link>https://projectlombok.org/api/</link>
                         </links>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok-maven-plugin</artifactId>
+                    <version>1.18.20.0</version>
+                    <configuration>
+                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+                        <addOutputDirectory>false</addOutputDirectory>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>${delombok.phase}</phase>
+                            <goals>
+                                <goal>delombok</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
@@ -718,6 +747,10 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
             </plugin>
 
             <plugin>
@@ -1511,7 +1544,7 @@
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-javadoc-plugin</artifactId>
                             <configuration>
-                                <sourcepath>${project.build.sourceDirectory}</sourcepath>
+                                <sourcepath>${javadoc.sourcepath}</sourcepath>
                                 <doclint>none</doclint>
                                 <additionalJOptions>
                                     <additionalJOption>--allow-script-in-comments</additionalJOption>

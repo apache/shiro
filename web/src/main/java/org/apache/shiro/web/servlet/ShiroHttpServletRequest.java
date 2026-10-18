@@ -236,7 +236,7 @@ public class ShiroHttpServletRequest extends HttpServletRequestWrapper {
         return isRequestedSessionIdFromURL();
     }
 
-    private class ObjectPrincipal implements java.security.Principal {
+    private static class ObjectPrincipal implements java.security.Principal {
         private Object object;
 
         ObjectPrincipal(Object object) {

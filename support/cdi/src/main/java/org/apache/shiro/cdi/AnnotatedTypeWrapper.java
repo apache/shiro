@@ -33,7 +33,7 @@ public class AnnotatedTypeWrapper<T> implements AnnotatedType<T> {
     }
 
     private final @Delegate(types = AT.class) AnnotatedType<T> wrapped;
-    private final @Getter Set<Annotation> annotations;
+    private final @Getter(onMethod_ = @Override) Set<Annotation> annotations;
 
 
     public AnnotatedTypeWrapper(AnnotatedType<T> wrapped, Annotation... additionalAnnotations) {

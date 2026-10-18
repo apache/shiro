@@ -488,7 +488,6 @@ public class DelegatingSubject implements Subject {
                 previousPrincipals = this.principals;
             } else {
                 //always get the one behind the current:
-                assert stack != null;
                 previousPrincipals = stack.get(1);
             }
         }
