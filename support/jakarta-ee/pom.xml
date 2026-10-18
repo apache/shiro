@@ -33,6 +33,8 @@
 
     <properties>
         <module.name>jakarta.ee</module.name>
+        <delombok.phase>generate-sources</delombok.phase>
+        <javadoc.sourcepath>${delombok.sourcepath}</javadoc.sourcepath>
     </properties>
 
     <dependencies>
