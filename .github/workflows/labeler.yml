@@ -36,6 +36,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          HEAD_OWNER: ${{ github.event.workflow_run.head_repository.owner.login }}
+          HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
           set -euo pipefail
           if ! [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]; then
@@ -43,8 +45,14 @@ jobs:
             exit 1
           fi
 
-          pr_numbers=$(gh api "repos/$REPO/commits/$HEAD_SHA/pulls" \
-            --jq '.[] | select(.state == "open") | .number')
+          # commits/{sha}/pulls does not find pull requests from forks,
+          # so look up by head owner:branch and match the head SHA
+          pr_numbers=$(gh api -X GET "repos/$REPO/pulls" \
+            -f state=open -f head="$HEAD_OWNER:$HEAD_BRANCH" \
+            --jq ".[] | select(.head.sha == \"$HEAD_SHA\") | .number")
+          if [[ -z "$pr_numbers" ]]; then
+            echo "::warning::No open pull request found for $HEAD_OWNER:$HEAD_BRANCH@$HEAD_SHA"
+          fi
           {
             echo "numbers<<EOF"
             printf '%s\n' "$pr_numbers"
