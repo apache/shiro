@@ -36,7 +36,7 @@
         <arquillian.graphene.version>3.0.1.Final</arquillian.graphene.version>
         <drone.browser>firefox</drone.browser>
 
-        <payara.version>7.2026.9</payara.version>
+        <payara.version>7.2026.10</payara.version>
         <payara.start.skip>${skipITs}</payara.start.skip>
         <asadmin.cmd>asadmin</asadmin.cmd>
         <unix-sed-skip>${payara.start.skip}</unix-sed-skip>
@@ -93,7 +93,7 @@
         <dependency>
             <groupId>com.flowlogix.depchain</groupId>
             <artifactId>integration-test</artifactId>
-            <version>132</version>
+            <version>133</version>
             <scope>test</scope>
         </dependency>
 
@@ -106,7 +106,7 @@
         <dependency>
             <groupId>com.flowlogix</groupId>
             <artifactId>flowlogix-jee</artifactId>
-            <version>11.7.1</version>
+            <version>11.7.3</version>
         </dependency>
 
         <dependency>
