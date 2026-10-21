@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.web.tags;
 
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,8 @@ import java.io.IOException;
  * the specified property of the principal.  If no principal is found or the user
  * is not authenticated, the tag displays nothing unless a <tt>defaultValue</tt>
  * is specified.</p>
+ *
+ * <p>The output is HTML-encoded.</p>
  *
  * @since 0.2
  */
@@ -143,7 +146,7 @@ public class PrincipalTag extends SecureTag {
         // Print out the principal value if not null
         if (strValue != null) {
             try {
-                pageContext.getOut().write(strValue);
+                pageContext.getOut().write(Encode.forHtml(strValue));
             } catch (IOException e) {
                 throw new JspTagException("Error writing [" + strValue + "] to JSP.", e);
             }
