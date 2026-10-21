@@ -90,4 +90,31 @@ public class PortFilterTest {
         assertThat(result).isFalse();
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
+    @Test
+    void testServerPortUsedByDefault() throws Exception {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getServerPort()).andReturn(8443).anyTimes();
+        expect(request.getLocalPort()).andReturn(8080).anyTimes();
+        replay(request);
+
+        PortFilter filter = new PortFilter();
+        assertThat(filter.isAccessAllowed(request, null, new String[] {"8443"})).isTrue();
+        assertThat(filter.isAccessAllowed(request, null, new String[] {"8080"})).isFalse();
+    }
+
+    @SuppressWarnings("checkstyle:MagicNumber")
+    @Test
+    void testLocalPortUsedWhenConfigured() throws Exception {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getServerPort()).andReturn(8443).anyTimes();
+        expect(request.getLocalPort()).andReturn(8080).anyTimes();
+        replay(request);
+
+        PortFilter filter = new PortFilter();
+        filter.setUseLocalPort(true);
+        assertThat(filter.isAccessAllowed(request, null, new String[] {"8080"})).isTrue();
+        assertThat(filter.isAccessAllowed(request, null, new String[] {"8443"})).isFalse();
+    }
+
 }
