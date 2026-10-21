@@ -90,7 +90,11 @@ public class HttpServletSession implements Session {
     @SuppressWarnings("checkstyle:MagicNumber")
     public void setTimeout(long maxIdleTimeInMillis) throws InvalidSessionException {
         try {
-            int timeout = (int) (maxIdleTimeInMillis / 1000);
+            // HttpSession timeouts are in whole seconds
+            // round positive millisecond values up to the next second to avoid converting them to never expire.
+            long timeoutInSeconds = maxIdleTimeInMillis < 0
+                    ? -1 : maxIdleTimeInMillis / 1000 + (maxIdleTimeInMillis % 1000 == 0 ? 0 : 1);
+            int timeout = (int) Math.min(timeoutInSeconds, Integer.MAX_VALUE);
             httpSession.setMaxInactiveInterval(timeout);
         } catch (Exception e) {
             throw new InvalidSessionException(e);
