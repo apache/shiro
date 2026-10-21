@@ -19,6 +19,7 @@ import static org.apache.shiro.ee.filters.FormResubmitSupport.isViewRebuildCandi
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.getCharacterEncoding;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isCharEncodingEnabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isShiroEEDisabled;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isXForwardedProtoDisabled;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -66,7 +67,9 @@ import org.omnifaces.util.Utils;
  * Thus, force null EJB principal for the web session,
  * as the real principal comes from the EjbSecurityFilter's doAs() call
  * <p/>
- * Also handles X-Forwarded-Proto support
+ * Also handles X-Forwarded-Proto support, which can be turned off
+ * with the {@code org.apache.shiro.ee.x-forwarded-proto.disabled} context parameter.
+ * The header is trusted by default, so the proxy must overwrite or strip any client-supplied value
  */
 @Slf4j
 @WebFilter(filterName = "ShiroFilter", urlPatterns = "/*",
@@ -120,7 +123,8 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
         }
 
         private boolean createHttpButNeedHttps() {
-            return !HTTPS_SCHEME.equalsIgnoreCase(super.getScheme())
+            return !isXForwardedProtoDisabled(servletContext)
+                    && !HTTPS_SCHEME.equalsIgnoreCase(super.getScheme())
                     && HTTPS_SCHEME.equalsIgnoreCase(WebUtils.toHttp(getRequest())
                             .getHeader(X_FORWARDED_PROTO));
         }

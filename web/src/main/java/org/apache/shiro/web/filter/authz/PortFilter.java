@@ -40,6 +40,15 @@ import java.io.IOException;
  * # override for just this path:
  * /another/path/** = port[8080]
  * </pre>
+ * <p/>
+ * This filter is a redirect helper, not an access control. By default the port is taken from
+ * {@link ServletRequest#getServerPort()}, which most containers derive from the {@code Host} header
+ * (or from forwarded headers when so configured), so a client can influence it. Restrictions that must hold,
+ * such as limiting a path to an internal listener, belong in listener or network configuration and in
+ * authentication and authorization filters.
+ * <p/>
+ * Behind a reverse proxy or load balancer, leave {@link #setUseLocalPort(boolean) useLocalPort} off, since the
+ * container's local port is then not the port the client used.
  *
  * @since 1.0
  */
@@ -50,6 +59,7 @@ public class PortFilter extends AuthorizationFilter {
     public static final String HTTP_SCHEME = "http";
 
     private int port = DEFAULT_HTTP_PORT;
+    private boolean useLocalPort;
 
     public int getPort() {
         return port;
@@ -57,6 +67,24 @@ public class PortFilter extends AuthorizationFilter {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public boolean isUseLocalPort() {
+        return useLocalPort;
+    }
+
+    /**
+     * Sets whether the access check compares the required port with {@link ServletRequest#getLocalPort()},
+     * the port the container actually accepted the connection on, instead of
+     * {@link ServletRequest#getServerPort()}, which a client can influence through the {@code Host} header.
+     * Only enable this when clients connect directly to the container, not through a proxy that changes the port.
+     * The redirect issued on denial is not affected. Defaults to {@code false}.
+     *
+     * @param useLocalPort whether to compare against the local port
+     * @since 3.0.2
+     */
+    public void setUseLocalPort(boolean useLocalPort) {
+        this.useLocalPort = useLocalPort;
     }
 
     protected int toPort(Object mappedValue) {
@@ -74,7 +102,7 @@ public class PortFilter extends AuthorizationFilter {
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         int requiredPort = toPort(mappedValue);
-        int requestPort = request.getServerPort();
+        int requestPort = useLocalPort ? request.getLocalPort() : request.getServerPort();
         return requiredPort == requestPort;
     }
 
