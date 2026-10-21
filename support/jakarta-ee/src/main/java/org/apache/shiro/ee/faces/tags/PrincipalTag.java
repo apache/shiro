@@ -99,7 +99,7 @@ public class PrincipalTag extends SecureComponent {
         // Print out the principal value if not null
         if (strValue != null) {
             try {
-                ctx.getResponseWriter().write(strValue);
+                ctx.getResponseWriter().writeText(strValue, null);
             } catch (IOException e) {
                 throw new IOException("Error writing [" + strValue + "] to output.");
             }
