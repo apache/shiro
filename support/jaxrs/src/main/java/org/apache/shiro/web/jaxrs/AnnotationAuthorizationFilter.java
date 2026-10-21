@@ -26,6 +26,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.authz.aop.AuthenticatedAnnotationHandler;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
+import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler.EmptyAuthorizationConfigPolicy;
 import org.apache.shiro.authz.aop.DenyAllAnnotationHandler;
 import org.apache.shiro.authz.aop.GuestAnnotationHandler;
 import org.apache.shiro.authz.aop.PermissionAnnotationHandler;
@@ -60,6 +61,7 @@ public class AnnotationAuthorizationFilter implements ContainerRequestFilter {
         Map<AuthorizingAnnotationHandler, Annotation> authChecks =
                 new HashMap<AuthorizingAnnotationHandler, Annotation>(authzSpecs.size());
         for (Annotation authSpec : authzSpecs) {
+            EmptyAuthorizationConfigPolicy.validate(authSpec);
             authChecks.put(createHandler(authSpec), authSpec);
         }
         this.authzChecks = Collections.unmodifiableMap(authChecks);

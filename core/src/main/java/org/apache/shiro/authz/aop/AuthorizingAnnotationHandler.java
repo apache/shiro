@@ -19,9 +19,16 @@
 package org.apache.shiro.authz.aop;
 
 import java.lang.annotation.Annotation;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.shiro.aop.AnnotationHandler;
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.config.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An AnnotationHandler that executes authorization (access control) behavior based on directive(s) found in a
@@ -52,4 +59,79 @@ public abstract class AuthorizingAnnotationHandler extends AnnotationHandler {
      * @throws org.apache.shiro.authz.AuthorizationException if the class/instance/method is not allowed to proceed/execute.
      */
     public abstract void assertAuthorized(Annotation a) throws AuthorizationException;
+
+    /**
+     * What to do with authorization configuration that names no permissions or roles, such as the {@code perms} and
+     * {@code roles} filters without arguments, or {@code @RequiresPermissions({})}.
+     * <p/>
+     * Such configuration performs no check, which is almost always a mistake. By default a warning is logged and the
+     * previous behavior is kept. If the {@value #STRICT_PROPERTY} system property is {@code true}, the
+     * configuration is rejected with a {@link ConfigurationException} when the integration reads it at startup.
+     *
+     * @since 3.0.2
+     */
+    public static final class EmptyAuthorizationConfigPolicy {
+        /**
+         * System property that, when {@code true}, makes empty authorization configuration fail at startup
+         * instead of only logging a warning.
+         */
+        public static final String STRICT_PROPERTY = "shiro.authz.strictEmptyConfig";
+
+        private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizingAnnotationHandler.class);
+        private static final Set<String> WARNED = ConcurrentHashMap.newKeySet();
+
+        private EmptyAuthorizationConfigPolicy() {
+        }
+
+        /**
+         * Returns whether empty configuration is rejected, according to the {@value #STRICT_PROPERTY} system property.
+         *
+         * @return {@code true} if empty configuration is rejected
+         */
+        public static boolean isFailOnEmptyAuthorizationConfig() {
+            return Boolean.getBoolean(STRICT_PROPERTY);
+        }
+
+        /**
+         * Validates the permissions or roles of an authorization annotation. Annotations other than
+         * {@link RequiresPermissions} and {@link RequiresRoles} are ignored.
+         *
+         * @param annotation the annotation found on a class or method
+         * @throws ConfigurationException if the annotation is empty and {@link #isFailOnEmptyAuthorizationConfig()}
+         *                                is set
+         */
+        public static <T extends Annotation> T validate(T annotation) {
+            if (annotation instanceof RequiresPermissions permissions) {
+                validate(permissions.value(), "@RequiresPermissions");
+            } else if (annotation instanceof RequiresRoles roles) {
+                validate(roles.value(), "@RequiresRoles");
+            }
+            return annotation;
+        }
+
+        /**
+         * Logs a warning, once per {@code what}, if the configuration is empty, and rejects it by throwing if
+         * {@link #isFailOnEmptyAuthorizationConfig()} is set. Integrations call this when they read the configuration
+         * at startup, and the annotation handlers call it again when they check, for configuration that no
+         * startup hook saw.
+         *
+         * @param values the configured permissions or roles
+         * @param what   describes the configuration, for the message
+         * @throws ConfigurationException if the configuration is empty and {@link #isFailOnEmptyAuthorizationConfig()}
+         *                                is set
+         */
+        public static void validate(String[] values, String what) {
+            if (values != null && values.length > 0) {
+                return;
+            }
+            boolean strict = isFailOnEmptyAuthorizationConfig();
+            if (WARNED.add(what)) {
+                LOGGER.warn("{} specifies no permissions or roles, so it {}. Specify at least one.", what,
+                        strict ? "is rejected" : "performs no check");
+            }
+            if (strict) {
+                throw new ConfigurationException(what + " must specify at least one permission or role");
+            }
+        }
+    }
 }

@@ -20,12 +20,16 @@ package org.apache.shiro.web.filter.authz;
 
 import java.io.IOException;
 import java.util.Set;
+import jakarta.servlet.Filter;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 
+import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler.EmptyAuthorizationConfigPolicy;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.CollectionUtils;
 
+
+import static org.apache.shiro.lang.util.StringUtils.split;
 
 /**
  * Filter that allows access if the current user has the roles specified by the mapped value, or denies access
@@ -37,7 +41,12 @@ public class RolesAuthorizationFilter extends AuthorizationFilter {
 
     //TODO - complete JavaDoc
 
-    @SuppressWarnings({"unchecked"})
+    @Override
+    public Filter processPathConfig(String path, String config) {
+        EmptyAuthorizationConfigPolicy.validate(split(config), "Path '" + path + "' of " + getClass().getSimpleName());
+        return super.processPathConfig(path, config);
+    }
+
     @Override
     public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws IOException {
 
