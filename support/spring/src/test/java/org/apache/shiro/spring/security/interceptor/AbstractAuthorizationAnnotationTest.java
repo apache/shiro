@@ -24,7 +24,7 @@ import org.apache.shiro.subject.ImmutablePrincipalCollection;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectThreadState;
-import org.apache.shiro.util.ThreadState;
+import org.apache.shiro.util.ThreadContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,19 +49,15 @@ abstract class AbstractAuthorizationAnnotationTest {
     @Autowired
     private Realm realm;
 
-    private ThreadState threadState;
-
     protected void bind(Subject subject) {
         clearSubject();
-        this.threadState = new SubjectThreadState(subject);
-        this.threadState.bind();
+        ThreadContext.bind(subject);
+        ThreadContext.bind(SubjectThreadState.getSecurityManager(subject));
     }
 
     @AfterEach
     public void clearSubject() {
-        if (threadState != null) {
-            threadState.clear();
-        }
+        ThreadContext.remove();
     }
 
     protected void bindGuest() {

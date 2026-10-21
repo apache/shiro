@@ -23,8 +23,8 @@ import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectThreadState;
+import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.lang.util.LifecycleUtils;
-import org.apache.shiro.util.ThreadState;
 import org.junit.jupiter.api.AfterAll;
 
 /**
@@ -38,8 +38,6 @@ public abstract class AbstractShiroTest {
      */
     public static final String GLOBAL_SECURITY_MANAGER_RESOURCE = "globalSecurityManager";
 
-    private static ThreadState subjectThreadState;
-
     public AbstractShiroTest() {
     }
 
@@ -50,16 +48,12 @@ public abstract class AbstractShiroTest {
      */
     protected void setSubject(Subject subject) {
         clearSubject();
-        subjectThreadState = createThreadState(subject);
-        subjectThreadState.bind();
+        ThreadContext.bind(subject);
+        ThreadContext.bind(SubjectThreadState.getSecurityManager(subject));
     }
 
     protected Subject getSubject() {
         return SecurityUtils.getSubject();
-    }
-
-    protected ThreadState createThreadState(Subject subject) {
-        return new SubjectThreadState(subject);
     }
 
     /**
@@ -70,10 +64,7 @@ public abstract class AbstractShiroTest {
     }
 
     private static void doClearSubject() {
-        if (subjectThreadState != null) {
-            subjectThreadState.clear();
-            subjectThreadState = null;
-        }
+        ThreadContext.remove();
     }
 
     protected static void setSecurityManager(SecurityManager securityManager) {

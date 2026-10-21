@@ -72,6 +72,10 @@ public class SubjectCallable<V> implements Callable<V> {
     }
 
     protected SubjectCallable(Subject subject, ThreadState threadState, Callable<V> delegate) {
+        if (threadState != null && ScopedValues.INSTANCE.isSupported()) {
+            throw new IllegalStateException("ThreadState is not supported when ScopedValues are in use "
+                    + "(JDK 25 or later), as it would be silently ignored.");
+        }
         if (threadState == null && !ScopedValues.INSTANCE.isSupported()) {
             throw new IllegalArgumentException("ThreadState argument cannot be null.");
         }
