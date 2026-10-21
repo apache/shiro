@@ -21,15 +21,12 @@ package org.apache.shiro.mgt;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.SubjectThreadState;
 import org.apache.shiro.util.ThreadContext;
-import org.apache.shiro.util.ThreadState;
 import org.junit.jupiter.api.AfterEach;
 
 /**
  * @since 1.0
  */
 public abstract class AbstractSecurityManagerTest {
-
-    protected ThreadState threadState;
 
     @AfterEach
     public void tearDown() {
@@ -38,8 +35,8 @@ public abstract class AbstractSecurityManagerTest {
 
     protected Subject newSubject(SecurityManager securityManager) {
         Subject subject = new Subject.Builder(securityManager).buildSubject();
-        threadState = new SubjectThreadState(subject);
-        threadState.bind();
+        ThreadContext.bind(subject);
+        ThreadContext.bind(SubjectThreadState.getSecurityManager(subject));
         return subject;
     }
 }

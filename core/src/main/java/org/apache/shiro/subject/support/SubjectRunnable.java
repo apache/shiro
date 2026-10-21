@@ -84,6 +84,10 @@ public class SubjectRunnable implements Runnable {
      * @throws IllegalArgumentException if either the {@code ThreadState} or {@link Runnable} arguments are {@code null}.
      */
     protected SubjectRunnable(Subject subject, ThreadState threadState, Runnable delegate) throws IllegalArgumentException {
+        if (threadState != null && ScopedValues.INSTANCE.isSupported()) {
+            throw new IllegalStateException("ThreadState is not supported when ScopedValues are in use "
+                    + "(JDK 25 or later), as it would be silently ignored.");
+        }
         if (threadState == null && !ScopedValues.INSTANCE.isSupported()) {
             throw new IllegalArgumentException("ThreadState argument cannot be null.");
         }
