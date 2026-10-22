@@ -166,6 +166,22 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
         this.authcScheme = authcScheme;
     }
 
+    /**
+     * Sets whether CORS preflight requests are allowed through this filter without authentication. Defaults to
+     * {@code true}.
+     * <p>
+     * A request is treated as a preflight if it is an {@code OPTIONS} request with non-empty {@code Origin} and
+     * {@code Access-Control-Request-Method} headers. Both are supplied by the client, so any client, not only a
+     * browser, can send a request that is treated as a preflight. Such requests are <em>not</em> answered by this
+     * filter; they continue down the filter chain to the application, <b>unauthenticated</b>, including to
+     * any {@code OPTIONS} handler, or to any handler that also accepts {@code OPTIONS}
+     * (for example, a framework mapping without a restricted HTTP method).
+     * <p>
+     * If such handlers must be protected, annotate them with the appropriate Shiro authorization annotations,
+     * or set this property to {@code false} and place a dedicated CORS filter in front of this one.
+     *
+     * @param allowPreFlightRequests {@code true} to let preflight requests bypass authentication
+     */
     public void setAllowPreFlightRequests(boolean allowPreFlightRequests) {
         this.allowPreFlightRequests = allowPreFlightRequests;
     }
