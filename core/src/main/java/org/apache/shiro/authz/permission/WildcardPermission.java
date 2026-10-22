@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -155,7 +156,8 @@ public class WildcardPermission implements Permission, Serializable {
         }
 
         if (!caseSensitive) {
-            wildcardString = wildcardString.toLowerCase();
+            // Locale.ENGLISH (as in SHIRO-415/SHIRO-483): under a Turkish default locale "ADMIN" would become "admın"
+            wildcardString = wildcardString.toLowerCase(Locale.ENGLISH);
         }
 
         List<String> parts = CollectionUtils.asList(wildcardString.split(PART_DIVIDER_TOKEN));
