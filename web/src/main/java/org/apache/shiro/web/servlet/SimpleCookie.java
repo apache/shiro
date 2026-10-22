@@ -385,7 +385,7 @@ public class SimpleCookie implements Cookie {
             sb.append(ATTRIBUTE_DELIMITER);
             sb.append(SAME_SITE_ATTRIBUTE_NAME)
                     .append(NAME_VALUE_DELIMITER)
-                    .append(sameSite.toString().toLowerCase(Locale.ENGLISH));
+                    .append(sameSite.toString().toLowerCase(Locale.ROOT));
         }
     }
 

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -130,8 +131,8 @@ public final class StringUtils {
         if (str.length() < prefix.length()) {
             return false;
         }
-        String lcStr = str.substring(0, prefix.length()).toLowerCase();
-        String lcPrefix = prefix.toLowerCase();
+        String lcStr = str.substring(0, prefix.length()).toLowerCase(Locale.ROOT);
+        String lcPrefix = prefix.toLowerCase(Locale.ROOT);
         return lcStr.equals(lcPrefix);
     }
 

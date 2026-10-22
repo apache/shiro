@@ -48,6 +48,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 
@@ -163,7 +164,7 @@ public class DefaultWebSecurityManager extends DefaultSecurityManager implements
         if (mode == null) {
             throw new IllegalArgumentException("sessionMode argument cannot be null.");
         }
-        mode = sessionMode.toLowerCase();
+        mode = sessionMode.toLowerCase(Locale.ROOT);
         if (!HTTP_SESSION_MODE.equals(mode) && !NATIVE_SESSION_MODE.equals(mode)) {
             String msg = "Invalid sessionMode [" + sessionMode + "].  Allowed values are "
                     + "public static final String constants in the " + getClass().getName() + " class: '"

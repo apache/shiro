@@ -19,6 +19,7 @@
 package org.apache.shiro.web.session.mgt;
 
 import org.apache.shiro.session.ExpiredSessionException;
+import java.util.Locale;
 import org.apache.shiro.session.InvalidSessionException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
@@ -141,9 +142,9 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
                 if (queryString != null && queryString.contains(name)) {
                     id = request.getParameter(name);
                 }
-                if (id == null && queryString != null && queryString.contains(name.toLowerCase())) {
+                if (id == null && queryString != null && queryString.contains(name.toLowerCase(Locale.ROOT))) {
                     //try lowercase:
-                    id = request.getParameter(name.toLowerCase());
+                    id = request.getParameter(name.toLowerCase(Locale.ROOT));
                 }
             }
             if (id != null) {

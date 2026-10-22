@@ -21,6 +21,7 @@ package org.apache.shiro.authz.permission;
 import org.apache.shiro.lang.util.StringUtils;
 
 import java.io.Serial;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -95,7 +96,8 @@ public class DomainPermission extends WildcardPermission {
     }
 
     protected String getDomain(Class<? extends DomainPermission> clazz) {
-        String domain = clazz.getSimpleName().toLowerCase();
+        // Locale.ROOT: under certain non-English default locales "InvoicePermission" would become "ınvoicepermission"
+        String domain = clazz.getSimpleName().toLowerCase(Locale.ROOT);
         //strip any trailing 'permission' text from the name (as all subclasses should have been named):
         int index = domain.lastIndexOf("permission");
         if (index != -1) {

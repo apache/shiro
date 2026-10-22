@@ -66,7 +66,7 @@ public enum ProvidedHashFormat {
         try {
             // Use English Locale, some Locales handle uppercase/lower differently. i.e. Turkish and upper case 'i'
             // is not 'I'. And 'SHIRO1' would be 'SHİRO1'
-            return valueOf(id.toUpperCase(Locale.ENGLISH));
+            return valueOf(id.toUpperCase(Locale.ROOT));
         } catch (final IllegalArgumentException ignored) {
             return null;
         }
