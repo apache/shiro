@@ -156,8 +156,8 @@ public class WildcardPermission implements Permission, Serializable {
         }
 
         if (!caseSensitive) {
-            // Locale.ENGLISH (as in SHIRO-415/SHIRO-483): under a Turkish default locale "ADMIN" would become "admın"
-            wildcardString = wildcardString.toLowerCase(Locale.ENGLISH);
+            // Locale.ROOT (as in SHIRO-415/SHIRO-483): under certain non-English default locales "ADMIN" would become "admın"
+            wildcardString = wildcardString.toLowerCase(Locale.ROOT);
         }
 
         List<String> parts = CollectionUtils.asList(wildcardString.split(PART_DIVIDER_TOKEN));

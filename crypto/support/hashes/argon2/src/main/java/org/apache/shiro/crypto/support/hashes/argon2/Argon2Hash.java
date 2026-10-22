@@ -332,7 +332,7 @@ class Argon2Hash extends AbstractCryptHash {
 
     private CharSequence formatParameters() {
         return String.format(
-                Locale.ENGLISH,
+                Locale.ROOT,
                 "t=%d,m=%d,p=%d",
                 getIterations(),
                 getMemoryKiB(),

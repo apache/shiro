@@ -142,9 +142,9 @@ public class DefaultWebSessionManager extends DefaultSessionManager implements W
                 if (queryString != null && queryString.contains(name)) {
                     id = request.getParameter(name);
                 }
-                if (id == null && queryString != null && queryString.contains(name.toLowerCase(Locale.ENGLISH))) {
+                if (id == null && queryString != null && queryString.contains(name.toLowerCase(Locale.ROOT))) {
                     //try lowercase:
-                    id = request.getParameter(name.toLowerCase(Locale.ENGLISH));
+                    id = request.getParameter(name.toLowerCase(Locale.ROOT));
                 }
             }
             if (id != null) {

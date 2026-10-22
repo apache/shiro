@@ -27,6 +27,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -150,7 +151,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
      */
     public HttpMethodPermissionFilter() {
         for (HttpMethodAction methodAction : HttpMethodAction.values()) {
-            httpMethodActions.put(methodAction.name().toLowerCase(), methodAction.getAction());
+            httpMethodActions.put(methodAction.name().toLowerCase(Locale.ROOT), methodAction.getAction());
         }
     }
 
@@ -187,7 +188,7 @@ public class HttpMethodPermissionFilter extends PermissionsAuthorizationFilter {
      * @return The string equivalent verb of the method.
      */
     protected String getHttpMethodAction(String method) {
-        String lc = method.toLowerCase();
+        String lc = method.toLowerCase(Locale.ROOT);
         String resolved = getHttpMethodActions().get(lc);
         return resolved != null ? resolved : method;
     }

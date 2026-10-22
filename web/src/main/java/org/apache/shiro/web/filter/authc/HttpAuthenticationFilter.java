@@ -208,7 +208,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
         boolean authcRequired = methods.isEmpty();
         for (String m : methods) {
             // list of methods is in upper case
-            if (httpMethod.toUpperCase(Locale.ENGLISH).equals(m)) {
+            if (httpMethod.toUpperCase(Locale.ROOT).equals(m)) {
                 authcRequired = true;
                 break;
             }
@@ -229,7 +229,7 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
                 // to be backwards compatible with 1.3, we can ONLY check for known args
                 // ideally we would just validate HTTP methods, but someone could already be using this for webdav
                 if (!option.equalsIgnoreCase(PERMISSIVE)) {
-                    methods.add(option.toUpperCase(Locale.ENGLISH));
+                    methods.add(option.toUpperCase(Locale.ROOT));
                 }
             }
         }
@@ -314,8 +314,8 @@ abstract class HttpAuthenticationFilter extends AuthenticatingFilter {
      */
     protected boolean isLoginAttempt(String authzHeader) {
         //SHIRO-415: use English Locale:
-        String authzScheme = getAuthzScheme().toLowerCase(Locale.ENGLISH);
-        return authzHeader.toLowerCase(Locale.ENGLISH).startsWith(authzScheme);
+        String authzScheme = getAuthzScheme().toLowerCase(Locale.ROOT);
+        return authzHeader.toLowerCase(Locale.ROOT).startsWith(authzScheme);
     }
 
     /**

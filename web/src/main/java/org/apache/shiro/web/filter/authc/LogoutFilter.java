@@ -81,7 +81,7 @@ public class LogoutFilter extends AdviceFilter {
         if (isPostOnlyLogout()) {
 
             // check if the current request's method is a POST, if not redirect
-            if (!WebUtils.toHttp(request).getMethod().toUpperCase(Locale.ENGLISH).equals("POST")) {
+            if (!WebUtils.toHttp(request).getMethod().toUpperCase(Locale.ROOT).equals("POST")) {
                 return onLogoutRequestNotAPost(request, response);
             }
         }

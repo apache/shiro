@@ -96,8 +96,8 @@ public class DomainPermission extends WildcardPermission {
     }
 
     protected String getDomain(Class<? extends DomainPermission> clazz) {
-        // Locale.ENGLISH: under a Turkish default locale "InvoicePermission" would become "ınvoicepermission"
-        String domain = clazz.getSimpleName().toLowerCase(Locale.ENGLISH);
+        // Locale.ROOT: under certain non-English default locales "InvoicePermission" would become "ınvoicepermission"
+        String domain = clazz.getSimpleName().toLowerCase(Locale.ROOT);
         //strip any trailing 'permission' text from the name (as all subclasses should have been named):
         int index = domain.lastIndexOf("permission");
         if (index != -1) {
