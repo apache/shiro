@@ -41,6 +41,11 @@ public class NoAccessFilter extends AuthenticatingFilter {
     }
 
     @Override
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        return false;
+    }
+
+    @Override
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
         return null;
     }

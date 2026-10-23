@@ -128,7 +128,7 @@ public class ShiroFilterFactoryBean implements FactoryBean<Filter> {
     private String successUrl;
     private String unauthorizedUrl;
     private boolean allowAccessByDefault;
-    private boolean caseInsensitive;
+    private boolean caseInsensitive = true;
 
     private AbstractShiroFilter instance;
 
