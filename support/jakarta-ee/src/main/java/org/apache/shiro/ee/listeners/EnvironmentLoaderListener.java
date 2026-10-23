@@ -37,6 +37,7 @@ import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
 public class EnvironmentLoaderListener extends EnvironmentLoader implements ServletContextListener {
     private static final String SHIRO_EE_DISABLED_PARAM = "org.apache.shiro.ee.disabled";
     private static final String SHIRO_EE_REDIRECT_DISABLED_PARAM = "org.apache.shiro.ee.redirect.disabled";
+    private static final String SHIRO_EE_X_FORWARDED_PROTO_DISABLED_PARAM = "org.apache.shiro.ee.x-forwarded-proto.disabled";
     private static final String SHIRO_EE_ENABLE_URL_SESSION_TRACKING_PARAM = "org.apache.shiro.ee.enable-url-session-tracking";
     private static final String SHIRO_EE_SESSION_TRACKING_CONFIGURATION_DISABLED_PARAM =
             "org.apache.shiro.ee.session-tracking-configuration.disabled";
@@ -57,6 +58,14 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
 
     public static boolean isShiroEERedirectDisabled(ServletContext ctx) {
         return Boolean.TRUE.equals(ctx.getAttribute(SHIRO_EE_REDIRECT_DISABLED_PARAM));
+    }
+
+    /**
+     * @param ctx servlet context
+     * @return whether honoring the {@code X-Forwarded-Proto} request header is disabled
+     */
+    public static boolean isXForwardedProtoDisabled(ServletContext ctx) {
+        return Boolean.TRUE.equals(ctx.getAttribute(SHIRO_EE_X_FORWARDED_PROTO_DISABLED_PARAM));
     }
 
     public static boolean isFormResubmitDisabled(ServletContext ctx) {
@@ -103,6 +112,7 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
     public void contextInitialized(ServletContextEvent sce) {
         copyBooleanInitParameter(sce.getServletContext(), SHIRO_EE_DISABLED_PARAM);
         copyBooleanInitParameter(sce.getServletContext(), SHIRO_EE_REDIRECT_DISABLED_PARAM);
+        copyBooleanInitParameter(sce.getServletContext(), SHIRO_EE_X_FORWARDED_PROTO_DISABLED_PARAM);
         copyBooleanInitParameter(sce.getServletContext(), FORM_RESUBMIT_DISABLED_PARAM);
         copyBooleanInitParameter(sce.getServletContext(), FORM_RESUBMIT_ANONYMOUS_DISABLED_PARAM);
         String secureCookiesStr = sce.getServletContext().getInitParameter(FORM_RESUBMIT_SECURE_COOKIES);

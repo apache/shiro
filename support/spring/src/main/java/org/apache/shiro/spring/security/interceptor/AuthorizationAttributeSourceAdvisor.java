@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.spring.security.interceptor;
 
+import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler.EmptyAuthorizationConfigPolicy;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -109,6 +110,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
         for (Class<? extends Annotation> annClass : AUTHZ_ANNOTATION_CLASSES) {
             Annotation a = AnnotationUtils.findAnnotation(targetClazz, annClass);
             if (a != null) {
+                EmptyAuthorizationConfigPolicy.validate(a);
                 return true;
             }
         }
@@ -119,6 +121,7 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
         for (Class<? extends Annotation> annClass : AUTHZ_ANNOTATION_CLASSES) {
             Annotation a = AnnotationUtils.findAnnotation(method, annClass);
             if (a != null) {
+                EmptyAuthorizationConfigPolicy.validate(a);
                 return true;
             }
         }

@@ -21,6 +21,7 @@ package org.apache.shiro.subject.support;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.ScopedValues;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.util.ThreadState;
 
@@ -44,15 +45,22 @@ public class SubjectThreadState implements ThreadState {
     private Map<Object, Object> originalResources;
 
     private final Subject subject;
-    private transient SecurityManager securityManager;
+    private final SecurityManager securityManager;
 
     /**
      * Creates a new {@code SubjectThreadState} that will bind and unbind the specified {@code Subject} to the
      * thread
      *
      * @param subject the {@code Subject} instance to bind and unbind from the {@link ThreadContext}.
+     * @throws IllegalStateException if running on JDK 25 or later, where {@link ScopedValues} hold the thread state
+     *                               and a {@code ThreadState} would not be seen by {@code SecurityUtils}. Use
+     *                               {@link Subject#execute(Runnable)} or {@link Subject#associateWith(Runnable)} instead.
      */
     public SubjectThreadState(Subject subject) {
+        if (ScopedValues.INSTANCE.isSupported()) {
+            throw new IllegalStateException("ThreadState is not supported when ScopedValues are in use (JDK 25 or later). "
+                    + "Use Subject.execute(), Subject.associateWith() or SubjectRunnable/SubjectCallable instead.");
+        }
         if (subject == null) {
             throw new IllegalArgumentException("Subject argument cannot be null.");
         }

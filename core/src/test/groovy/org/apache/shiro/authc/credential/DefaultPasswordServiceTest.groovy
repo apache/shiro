@@ -72,10 +72,10 @@ class DefaultPasswordServiceTest {
     @Test
     void testPasswordsMatchWithNullOrEmpty() {
         def service = createSha256Service()
-        assertTrue service.passwordsMatch(null, (String) null)
-        assertTrue service.passwordsMatch(null, (Hash) null)
-        assertTrue service.passwordsMatch("", (String) null)
-        assertTrue service.passwordsMatch(null, "")
+        assertFalse service.passwordsMatch(null, (String) null)
+        assertFalse service.passwordsMatch(null, (Hash) null)
+        assertFalse service.passwordsMatch("", (String) null)
+        assertFalse service.passwordsMatch(null, "")
         assertFalse service.passwordsMatch(null, "12345")
         assertFalse service.passwordsMatch(null, new Sha384Hash("test"))
     }

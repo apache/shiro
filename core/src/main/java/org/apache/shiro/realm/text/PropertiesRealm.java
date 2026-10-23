@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.realm.text;
 
+import org.apache.shiro.cache.Cache;
 import org.apache.shiro.lang.ShiroException;
 import org.apache.shiro.lang.io.ResourceUtils;
 import org.apache.shiro.lang.util.Destroyable;
@@ -28,11 +29,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * A {@link TextConfigurationRealm} that defers all logic to the parent class, but just enables
@@ -205,7 +208,7 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
     }
 
     private void loadProperties() {
-        if (resourcePath == null || resourcePath.length() == 0) {
+        if (resourcePath == null || resourcePath.isEmpty()) {
             throw new IllegalStateException("The resourcePath property is not set.  "
                     + "It must be set prior to this realm being initialized.");
         }
@@ -280,9 +283,15 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void restart() {
-        if (resourcePath == null || resourcePath.length() == 0) {
+    /**
+     * Reloads the realm from the properties source.
+     * <p/>
+     * The accounts and roles loaded so far are dropped first, so entries that are no longer present in the source
+     * (or whose roles and permissions were narrowed) are removed. If the source can't be loaded, the realm is left
+     * without the entries that were dropped.
+     */
+    void restart() {
+        if (resourcePath == null || resourcePath.isEmpty()) {
             throw new IllegalStateException("The resourcePath property is not set.  "
                     + "It must be set prior to this realm being initialized.");
         }
@@ -296,7 +305,24 @@ public class PropertiesRealm extends TextConfigurationRealm implements Destroyab
         } catch (Exception e) {
             //ignored
         }
+        clearLoadedState();
         init();
+    }
+
+    private void clearLoadedState() {
+        usersLock.writeLock().lock();
+        rolesLock.writeLock().lock();
+        try {
+            users.clear();
+            roles.clear();
+        } finally {
+            rolesLock.writeLock().unlock();
+            usersLock.writeLock().unlock();
+        }
+        // init() would process the previous definitions again, which would bring the dropped entries back
+        setUserDefinitions(null);
+        setRoleDefinitions(null);
+        Stream.of(getAuthenticationCache(), getAuthorizationCache()).filter(Objects::nonNull).forEach(Cache::clear);
     }
 
     @SuppressWarnings("unchecked")
