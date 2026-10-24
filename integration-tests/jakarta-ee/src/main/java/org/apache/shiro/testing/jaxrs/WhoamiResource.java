@@ -39,6 +39,9 @@ public class WhoamiResource {
     WhoamiBean whoamiBean;
     @Inject
     RolesAllowedBean rolesAllowedBean;
+
+    @Inject
+    RolesSecuredBean rolesSecuredBean;
     @Inject
     TestApplication testApplication;
     @Context
@@ -58,6 +61,13 @@ public class WhoamiResource {
     @Produces(APPLICATION_JSON)
     public Response rolesAllowed(@QueryParam("user") String user, @QueryParam("password") String password) {
         return check(rolesAllowedBean::userRole, () -> Response.status(Status.UNAUTHORIZED).build(), user, password);
+    }
+
+    @GET
+    @Path("rolesViaInterface")
+    @Produces(APPLICATION_JSON)
+    public Response rolesViaInterface(@QueryParam("user") String user, @QueryParam("password") String password) {
+        return check(rolesSecuredBean::userRole, () -> Response.status(Status.UNAUTHORIZED).build(), user, password);
     }
 
     @GET

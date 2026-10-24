@@ -46,6 +46,15 @@
             <h:commandButton id="protected" value="Protected Method" action="#{unprotectedFacade.callProtectedMethod()}">
                 <f:ajax execute="@form" render="@form"/>
             </h:commandButton>
+            <h:commandButton id="viaInterface" value="Via Interface" action="#{unprotectedFacade.callViaInterface()}">
+                <f:ajax execute="@form" render="@form"/>
+            </h:commandButton>
+            <h:commandButton id="viaInterfaceMethod" value="Via Interface Method" action="#{unprotectedFacade.callViaInterfaceMethod()}">
+                <f:ajax execute="@form" render="@form"/>
+            </h:commandButton>
+            <h:commandButton id="viaSuperclass" value="Via Superclass" action="#{unprotectedFacade.callViaSuperclass()}">
+                <f:ajax execute="@form" render="@form"/>
+            </h:commandButton>
             <p/>
             <h:commandButton id="logout" value="Logout..." action="#{logoutBean.logout}"/>
             <h:messages id="messages"/>

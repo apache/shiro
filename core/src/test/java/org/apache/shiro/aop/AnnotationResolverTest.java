@@ -19,12 +19,17 @@
 package org.apache.shiro.aop;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 
 import java.lang.reflect.Method;
 
+import org.apache.shiro.aop.fixtures.MethodSecuredInterfaceImpl;
+import org.apache.shiro.aop.fixtures.SecuredInterface;
+import org.apache.shiro.aop.fixtures.SecuredInterfaceImpl;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.junit.jupiter.api.Test;
@@ -70,6 +75,7 @@ public class AnnotationResolverTest {
         MethodInvocation methodInvocation = createMock(MethodInvocation.class);
         Method method = MyFixture.class.getDeclaredMethod("operateThat");
         expect(methodInvocation.getMethod()).andReturn(method);
+        expect(methodInvocation.getThis()).andReturn(new MyFixture());
         replay(methodInvocation);
         assertThat(annotationResolver.getAnnotation(methodInvocation, RequiresUser.class)).isNotNull();
     }
@@ -93,5 +99,37 @@ public class AnnotationResolverTest {
         expect(methodInvocation.getThis()).andReturn(null);
         replay(methodInvocation);
         assertThat(annotationResolver.getAnnotation(methodInvocation, RequiresUser.class)).isNull();
+    }
+
+    @Test
+    void testAnnotationFoundFromInterface() throws SecurityException, NoSuchMethodException {
+        SecuredInterfaceImpl target = new SecuredInterfaceImpl();
+        MethodInvocation methodInvocation = createMock(MethodInvocation.class);
+        Method method = SecuredInterface.class.getDeclaredMethod("adminOnly");
+        expect(methodInvocation.getMethod()).andReturn(method);
+        expect(methodInvocation.getThis()).andReturn(target);
+        replay(methodInvocation);
+        assertThat(annotationResolver.getAnnotation(methodInvocation, RequiresRoles.class)).isNotNull();
+    }
+
+    @Test
+    void testAnnotationFoundFromInterfaceMethod() throws SecurityException, NoSuchMethodException {
+        MethodSecuredInterfaceImpl target = new MethodSecuredInterfaceImpl();
+        MethodInvocation methodInvocation = createMock(MethodInvocation.class);
+        Method method = MethodSecuredInterfaceImpl.class.getDeclaredMethod("read");
+        expect(methodInvocation.getMethod()).andReturn(method);
+        expect(methodInvocation.getThis()).andReturn(target);
+        replay(methodInvocation);
+        assertThat(annotationResolver.getAnnotation(methodInvocation, RequiresPermissions.class)).isNotNull();
+    }
+
+    @Test
+    void testNullArguments() {
+        assertThatIllegalArgumentException().isThrownBy(() -> annotationResolver.getAnnotation(null, RequiresUser.class));
+        MethodInvocation methodInvocation = createMock(MethodInvocation.class);
+        expect(methodInvocation.getMethod()).andReturn(null);
+        replay(methodInvocation);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> annotationResolver.getAnnotation(methodInvocation, RequiresUser.class));
     }
 }

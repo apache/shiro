@@ -112,7 +112,7 @@ public class ShiroAopModuleTest {
     }
 
     @Test
-    void testBindShiroInterceptor() {
+    void testBindShiroInterceptor() throws NoSuchMethodException {
 
 
         ShiroAopModule underTest = new ShiroAopModule() {
@@ -126,29 +126,24 @@ public class ShiroAopModuleTest {
 
         for (Element element : elements) {
             if (element instanceof InterceptorBinding binding) {
-                assertThat(binding.getClassMatcher().matches(getClass())).isTrue();
-                Method method = null;
-                Class<? extends Annotation> theAnnotation = null;
-
-                for (Class<? extends Annotation> annotation : protectedMethods.keySet()) {
-                    if (binding.getMethodMatcher().matches(protectedMethods.get(annotation))) {
-                        method = protectedMethods.get(annotation);
-                        theAnnotation = annotation;
-                        protectedMethods.remove(annotation);
-                        break;
-                    }
-                }
-
+                List<MethodInterceptor> interceptors = binding.getInterceptors();
+                assertThat(interceptors).hasSize(1);
+                assertThat(interceptors.get(0)).isInstanceOf(AopAllianceMethodInterceptorAdapter.class);
+                AnnotationMethodInterceptor shiroInterceptor = (AnnotationMethodInterceptor)
+                        ((AopAllianceMethodInterceptorAdapter) interceptors.get(0)).shiroInterceptor;
+                Class<? extends Annotation> theAnnotation = shiroInterceptor.getHandler().getAnnotationClass();
+                Method method = protectedMethods.remove(theAnnotation);
                 if (method == null) {
                     fail("Did not expect interceptor binding " + binding.getInterceptors());
                 }
+                assertThat(interceptorTypes.get(theAnnotation).isInstance(shiroInterceptor)).isTrue();
 
-                List<MethodInterceptor> interceptors = binding.getInterceptors();
-                assertThat(interceptors).hasSize(1);
-                assertThat(interceptors.get(0) instanceof AopAllianceMethodInterceptorAdapter).isTrue();
-                assertThat(interceptorTypes.get(theAnnotation)
-                        .isInstance(((AopAllianceMethodInterceptorAdapter) interceptors.get(0)).shiroInterceptor)).isTrue();
-
+                // the class matcher gates on the annotation being present anywhere in the class hierarchy
+                assertThat(binding.getClassMatcher().matches(getClass())).isTrue();
+                assertThat(binding.getClassMatcher().matches(Object.class)).isFalse();
+                // every enhanceable method of a matched class is bound; the interceptor decides per invocation
+                assertThat(binding.getMethodMatcher().matches(method)).isTrue();
+                assertThat(binding.getMethodMatcher().matches(getClass().getMethod("setup"))).isTrue();
             }
         }
 

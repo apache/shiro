@@ -19,11 +19,8 @@
 package org.apache.shiro.web.jaxrs;
 
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresGuest;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.apache.shiro.authz.annotation.RequiresUser;
+import org.apache.shiro.aop.AnnotationHierarchy;
+import org.apache.shiro.authz.aop.AuthorizationAnnotations;
 import org.apache.shiro.web.filter.authz.AuthorizationFilter;
 
 import jakarta.ws.rs.Priorities;
@@ -32,50 +29,33 @@ import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.FeatureContext;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import jakarta.annotation.security.DenyAll;
-import jakarta.annotation.security.PermitAll;
-import jakarta.annotation.security.RolesAllowed;
 
 import static org.apache.shiro.web.jaxrs.SubjectPrincipalRequestFilter.SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM;
 
 /**
  * Wraps {@link AuthorizationFilter filters} around JAX-RS resources that are annotated with Shiro annotations.
+ * Annotations are resolved on the resource method, the resource class, their supertypes and interfaces, and as
+ * meta-annotations, see {@link AnnotationHierarchy#findAnnotation(java.lang.reflect.Method, Class, Class)}.
  *
  * @since 1.4
  */
 public class ShiroAnnotationFilterFeature implements DynamicFeature {
 
-    private static final List<Class<? extends Annotation>> SHIRO_ANNOTATIONS = List.of(
-            RequiresPermissions.class,
-            RequiresRoles.class,
-            RequiresAuthentication.class,
-            RequiresUser.class,
-            RequiresGuest.class);
-
-    private static final List<Class<? extends Annotation>> JSR_250_ANNOTATIONS = List.of(
-            RolesAllowed.class, PermitAll.class, DenyAll.class);
-
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext context) {
         List<Annotation> authzSpecs = new ArrayList<>();
-        var annotations = SHIRO_ANNOTATIONS;
+        Collection<Class<? extends Annotation>> annotations = AuthorizationAnnotations.shiroTypes();
         if (Boolean.TRUE.equals(context.getConfiguration().getProperty(SHIRO_WEB_JAXRS_DISABLE_PRINCIPAL_PARAM))) {
-            annotations = Stream.concat(SHIRO_ANNOTATIONS.stream(), JSR_250_ANNOTATIONS.stream())
-                    .collect(Collectors.toList());
+            annotations = AuthorizationAnnotations.allTypes();
         }
 
         for (Class<? extends Annotation> annotationClass : annotations) {
-            // XXX What is the performance of getAnnotation vs getAnnotations?
-            Annotation methodAuthzSpec = resourceInfo.getResourceMethod().getAnnotation(annotationClass);
-            Annotation classAuthzSpec = resourceInfo.getResourceClass().getAnnotation(annotationClass);
-
-            if (methodAuthzSpec != null) {
-                authzSpecs.add(methodAuthzSpec);
-            } else if (classAuthzSpec != null) {
-                authzSpecs.add(classAuthzSpec);
+            Annotation authzSpec = AnnotationHierarchy.findAnnotation(resourceInfo.getResourceMethod(),
+                    resourceInfo.getResourceClass(), annotationClass);
+            if (authzSpec != null) {
+                authzSpecs.add(authzSpec);
             }
         }
 
