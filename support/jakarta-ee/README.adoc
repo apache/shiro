@@ -31,6 +31,39 @@ throws it)
 - Basically, it’s Shiro on steroids when used with Jakarta EE stack as
 opposed to changing the way Shiro works by integrating CDI
 
+== Authorization annotations on interfaces and base classes
+
+Shiro's authorization annotations (`@RequiresRoles`, `@RequiresPermissions`, `@RequiresAuthentication`,
+`@RequiresUser`, `@RequiresGuest`) and the JSR-250 annotations (`@RolesAllowed`, `@PermitAll`, `@DenyAll`)
+are honored wherever they appear in a bean's type hierarchy: on the bean class, on a superclass, on an
+implemented interface, on an overridden or interface method, or as a meta-annotation of a composed annotation.
+The Guice, CDI and JAX-RS integrations share the same resolution rules: the closest declaration wins.
+The invoked method is inspected first, then the bean class, its superclasses and its interfaces, most
+specific first. At each level the method declaration is inspected before the type.
+A method-level annotation therefore overrides a type-level annotation of the same type.
+A subclass can also restrict inherited methods with a type-level annotation.
+
+The Spring integration keeps using Spring's own annotation lookup, which Spring users already expect.
+It also finds annotations on interfaces and superclasses.
+It prefers a method-level annotation anywhere in the hierarchy over a type-level one.
+A type-level annotation on a subclass therefore does not override a method annotation on its superclass in Spring.
+
+CDI inspects only the types the container reports to the two observers in `shiro-cdi`.
+The first observer receives classes that carry one of these annotations.
+Those classes get the security interceptor without any further inspection.
+The second observer receives classes that carry a bean-defining annotation (a scope or a stereotype).
+Such a class gets the interceptor when one of its superclasses or interfaces is secured.
+No class path scanning or index is needed, and classes that are neither annotated nor beans are never loaded for this purpose.
+
+Limitations:
+
+* a class without a bean-defining annotation that is secured only through an interface or a superclass is not
+  intercepted. In `annotated` bean discovery mode such a class is not a bean at all. In `all` mode, add a scope
+  annotation to it, or annotate the class itself;
+* EJBs (`@Stateless`, `@Stateful`, `@Singleton`) secured through an interface or a superclass are
+  intercepted when the optional `shiro-ejb` module is added to the application. Without it, annotate the EJB class directly;
+* `final` classes cannot be intercepted.
+
 == Form resubmission
 
 Saved forms are replayed within the current web application using

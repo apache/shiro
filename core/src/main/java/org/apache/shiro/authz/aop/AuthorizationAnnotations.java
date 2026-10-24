@@ -33,6 +33,15 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * The single registry of authorization annotations Shiro understands, with their handlers and method interceptors,
+ * shared by every integration (Spring, Guice, CDI, JAX-RS, AspectJ).
+ * <p>
+ * The five Shiro annotations are always available. The JSR-250 annotations ({@code @RolesAllowed},
+ * {@code @PermitAll}, {@code @DenyAll}) are registered only when {@code jakarta.annotation} is on the class path.
+ *
+ * @since 3.0.2
+ */
 public final class AuthorizationAnnotations {
     private static final String JSR250_PROBE = "jakarta.annotation.security.RolesAllowed";
 
@@ -64,14 +73,28 @@ public final class AuthorizationAnnotations {
 
     private record Registration(Class<? extends Annotation> type, Factory factory) { }
 
+    /**
+     * @return the five Shiro authorization annotations, in enforcement order
+     */
     public static List<Class<? extends Annotation>> shiroTypes() {
         return SHIRO_TYPES;
     }
 
+    /**
+     * @return {@link #shiroTypes()} followed by the JSR-250 annotations ({@code @RolesAllowed}, {@code @PermitAll},
+     * {@code @DenyAll}), which are present only when {@code jakarta.annotation} is on the class path
+     */
     public static List<Class<? extends Annotation>> allTypes() {
         return ALL_TYPES;
     }
 
+    /**
+     * Creates one method interceptor per annotation type, all sharing the given resolver.
+     *
+     * @param resolver        the resolver to use, or {@code null} for the default
+     * @param annotationTypes the annotation types to enforce
+     * @return new interceptors, in the order of the given types
+     */
     public static List<AuthorizingAnnotationMethodInterceptor> createMethodInterceptors(
             AnnotationResolver resolver, Collection<Class<? extends Annotation>> annotationTypes) {
         return annotationTypes.stream().map(type -> ALL.stream().filter(registration -> registration.type() == type)

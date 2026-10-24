@@ -54,11 +54,15 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
     }
 
     /**
+     * @return the handler given to the constructor, typed as an {@link AuthorizingAnnotationHandler}
+     * @since 3.0.2
+     */
     @Override
     public AuthorizingAnnotationHandler getHandler() {
         return (AuthorizingAnnotationHandler) super.getHandler();
     }
 
+    /**
      * Ensures the <code>methodInvocation</code> is allowed to execute first before proceeding by calling the
      * {@link #assertAuthorized(org.apache.shiro.aop.MethodInvocation) assertAuthorized} method first.
      *

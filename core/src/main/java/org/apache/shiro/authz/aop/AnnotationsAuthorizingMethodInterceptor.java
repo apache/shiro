@@ -56,6 +56,14 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
         this(null, AuthorizationAnnotations.shiroTypes());
     }
 
+    /**
+     * Constructs an interceptor enforcing the given annotation types, all resolved through the same
+     * {@code AnnotationResolver}.
+     *
+     * @param resolver        the resolver shared by all method interceptors, or {@code null} for the default
+     * @param annotationTypes the annotation types to enforce, see {@link AuthorizationAnnotations#allTypes()}
+     * @since 3.0.2
+     */
     public AnnotationsAuthorizingMethodInterceptor(AnnotationResolver resolver,
                                                    Collection<Class<? extends Annotation>> annotationTypes) {
         methodInterceptors = AuthorizationAnnotations.createMethodInterceptors(resolver, annotationTypes);

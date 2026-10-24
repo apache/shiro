@@ -23,6 +23,14 @@ import jakarta.enterprise.inject.spi.WithAnnotations;
 
 import org.apache.shiro.cdi.ShiroSecurityExtension;
 
+/**
+ * Secures EJBs whose superclass or interface carries an authorization annotation.
+ * <p>
+ * EJBs that are annotated themselves are already handled by {@link ShiroSecurityExtension}.
+ * Session beans are not scoped or stereotyped, so the inherited-security observer
+ * of that extension never sees them. This extension applies the same rule to them.
+ * Message-driven beans are excluded on purpose: no Subject is bound on the container's listener thread.
+ */
 public class ShiroEjbSecurityExtension implements Extension {
     public <T> void addInheritedSecurity(@Observes @WithAnnotations({
             Stateless.class, Stateful.class, Singleton.class}) ProcessAnnotatedType<T> pat) {
