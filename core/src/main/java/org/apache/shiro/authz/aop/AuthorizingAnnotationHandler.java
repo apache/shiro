@@ -108,7 +108,13 @@ public abstract class AuthorizingAnnotationHandler extends AnnotationHandler {
             return annotation;
         }
 
-
+        /**
+         * Validates authorization annotations declared on a type and throughout its hierarchy,
+         * including composed annotations.
+         *
+         * @param type the type whose annotations are validated
+         * @return the validated type
+         */
         public static Class<?> validateHierarchy(Class<?> type) {
             AnnotationHierarchy.hierarchy(type).stream()
                     .flatMap(declaring -> Stream.concat(Stream.of(declaring),

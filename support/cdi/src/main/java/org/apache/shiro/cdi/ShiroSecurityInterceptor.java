@@ -30,7 +30,10 @@ import org.apache.shiro.authz.aop.AnnotationsAuthorizingMethodInterceptor;
 import org.apache.shiro.authz.aop.AuthorizationAnnotations;
 
 /**
- * Enforce Shiro security on EJBs and CDI Beans
+ * Enforce Shiro security on EJBs and CDI Beans.
+ * <p>
+ * Delegates to the same {@link AnnotationsAuthorizingMethodInterceptor} chain used by the other integrations,
+ * so annotations on interfaces, superclasses and composed annotations are honored identically.
  */
 @Interceptor
 @ShiroSecureAnnotation
@@ -50,7 +53,10 @@ public class ShiroSecurityInterceptor implements Serializable {
         return INTERCEPTOR.invoke(new InvocationAdapter(ctx));
     }
 
-
+    /**
+     * Adapts a CDI {@link InvocationContext} to a Shiro {@link MethodInvocation}.
+     * {@code proceed} and {@code getMethod} are delegated, the other two have different names in CDI.
+     */
     private record InvocationAdapter(@Delegate InvocationContext context) implements MethodInvocation {
         @Override
         public Object[] getArguments() {

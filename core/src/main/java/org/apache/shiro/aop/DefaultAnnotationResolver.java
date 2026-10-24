@@ -23,27 +23,17 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
- * Default {@code AnnotationResolver} implementation that merely inspects the
- * {@link MethodInvocation MethodInvocation}'s {@link MethodInvocation#getMethod() target method},
- * and returns {@code targetMethod}.{@link Method#getAnnotation(Class) getAnnotation(class)}.
- * <p/>
- * Unfortunately Java's default reflection API for Annotations is not very robust, and this logic
- * may not be enough - if the incoming method invocation represents a method from an interface,
- * this default logic would not discover the annotation if it existed on the method implementation
- * directly (as opposed to being defined directly in the interface definition).
- * <p/>
- * More complex class hierarchy traversal logic is required to exhaust a method's target object's
- * classes, parent classes, interfaces and parent interfaces.  That logic will likely be added
- * to this implementation in due time, but for now, this implementation relies on the JDK's default
- * {@link Method#getAnnotation(Class) Method.getAnnotation(class)} logic.
+ * Default {@code AnnotationResolver} implementation that locates the annotation through
+ * {@link AnnotationHierarchy}: on the invoked method, on the same method declared by any superclass or
+ * interface of the target object's class, and finally on the target class, its superclasses and interfaces,
+ * taking meta-annotations (composed annotations) into account at every step.
  *
  * @since 1.1
  */
 public class DefaultAnnotationResolver implements AnnotationResolver {
 
     /**
-     * Returns {@code methodInvocation.}{@link org.apache.shiro.aop.MethodInvocation#getMethod() getMethod()}.
-     * {@link Method#getAnnotation(Class) getAnnotation(clazz)}.
+     * Returns the annotation governing the invocation, see {@link AnnotationHierarchy#findAnnotation(Method, Class, Class)}.
      *
      * @param mi    the intercepted method to be invoked.
      * @param clazz the annotation class to use to find an annotation instance on the method.
@@ -64,7 +54,12 @@ public class DefaultAnnotationResolver implements AnnotationResolver {
         return AnnotationHierarchy.findAnnotation(m, target != null ? target.getClass() : null, clazz);
     }
 
-
+    /**
+     * @param targetClass the class to inspect
+     * @param clazz       the annotation type
+     * @return the type-level annotation found on the class, its superclasses or interfaces
+     * @deprecated use {@link #getAnnotation(MethodInvocation, Class)}
+     */
     @Deprecated(since = "3.0.2")
     public static Annotation getAnnotationFromClassHierarchy(Class<?> targetClass, Class<? extends Annotation> clazz) {
         return AnnotationHierarchy.hierarchy(targetClass).stream()

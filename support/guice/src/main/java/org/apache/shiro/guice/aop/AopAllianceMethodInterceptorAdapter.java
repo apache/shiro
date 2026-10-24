@@ -24,7 +24,8 @@ import org.apache.shiro.aop.AnnotationMethodInterceptor;
 
 /**
  * Adapts a Shiro {@link org.apache.shiro.aop.MethodInterceptor MethodInterceptor} to an AOPAlliance
- * {@link org.aopalliance.intercept.MethodInterceptor}.
+ * {@link org.aopalliance.intercept.MethodInterceptor}. Invocations an
+ * {@link AnnotationMethodInterceptor} does not {@link AnnotationMethodInterceptor#supports support} proceed untouched.
  */
 class AopAllianceMethodInterceptorAdapter implements MethodInterceptor {
     org.apache.shiro.aop.MethodInterceptor shiroInterceptor;

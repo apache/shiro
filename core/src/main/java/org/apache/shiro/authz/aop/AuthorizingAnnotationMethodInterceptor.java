@@ -54,11 +54,15 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
     }
 
     /**
+     * @return the handler given to the constructor, typed as an {@link AuthorizingAnnotationHandler}
+     * @since 3.0.2
+     */
     @Override
     public AuthorizingAnnotationHandler getHandler() {
         return (AuthorizingAnnotationHandler) super.getHandler();
     }
 
+    /**
      * Ensures the <code>methodInvocation</code> is allowed to execute first before proceeding by calling the
      * {@link #assertAuthorized(org.apache.shiro.aop.MethodInvocation) assertAuthorized} method first.
      *
@@ -68,12 +72,6 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
      * @throws org.apache.shiro.authz.AuthorizationException if the <code>MethodInvocation</code> is not allowed to proceed.
      * @throws Throwable                                     if any other error occurs.
      */
-    @Override
-    public AuthorizingAnnotationHandler getHandler() {
-        return (AuthorizingAnnotationHandler) super.getHandler();
-    }
-
-
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         assertAuthorized(methodInvocation);

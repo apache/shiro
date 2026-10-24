@@ -35,6 +35,11 @@ import java.util.Optional;
 /**
  * Install this module to enable Shiro AOP functionality in Guice.  You may extend it to add your own Shiro
  * interceptors, override the default ones, or provide a specific {@link org.apache.shiro.aop.AnnotationResolver}.
+ * <p>
+ * Annotations are honored on the class, its superclasses, its interfaces, overridden and interface methods and
+ * as meta-annotations, exactly as in the other Shiro integrations: a class is enhanced when an annotation is
+ * present anywhere in its hierarchy, and each invocation is then checked by the interceptor's
+ * {@link AnnotationMethodInterceptor#supports(org.apache.shiro.aop.MethodInvocation) resolver}.
  */
 public class ShiroAopModule extends AbstractModule {
     // The interceptor decides whether an enhanceable method is secured for a given invocation.

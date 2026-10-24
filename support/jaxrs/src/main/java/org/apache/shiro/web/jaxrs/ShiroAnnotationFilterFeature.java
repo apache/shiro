@@ -36,6 +36,8 @@ import static org.apache.shiro.web.jaxrs.SubjectPrincipalRequestFilter.SHIRO_WEB
 
 /**
  * Wraps {@link AuthorizationFilter filters} around JAX-RS resources that are annotated with Shiro annotations.
+ * Annotations are resolved on the resource method, the resource class, their supertypes and interfaces, and as
+ * meta-annotations, see {@link AnnotationHierarchy#findAnnotation(java.lang.reflect.Method, Class, Class)}.
  *
  * @since 1.4
  */
