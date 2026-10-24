@@ -18,7 +18,11 @@
  */
 package org.apache.shiro.authz.permission;
 
+import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler.AuthorizationConfigPolicy;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
@@ -26,7 +30,80 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 /**
  * @since 0.9
  */
+@ResourceLock("AuthorizationConfigPolicy.strictParsing")
 public class WildcardPermissionTest {
+
+    private boolean strictParsing;
+
+    @BeforeEach
+    void saveStrictProperty() {
+        strictParsing = AuthorizationConfigPolicy.isStrictParsing();
+    }
+
+    @AfterEach
+    void restoreStrictProperty() {
+        AuthorizationConfigPolicy.setStrictParsing(strictParsing);
+    }
+
+    @Test
+    void strictParsingRejectsEmptyPartsAndSubparts() {
+        AuthorizationConfigPolicy.setStrictParsing(true);
+        for (String permission : new String[] {"doc:read:", "doc:read::", ":doc:read", "doc::read", "doc:read,",
+                "doc:,read", "doc:read,,write", "doc:read: ", "doc: :id", "doc:read, ,write", ":", ","}) {
+            assertThatExceptionOfType(IllegalArgumentException.class)
+                    .as("constructor rejects '%s'", permission)
+                    .isThrownBy(() -> new WildcardPermission(permission));
+            assertThatExceptionOfType(IllegalArgumentException.class)
+                    .as("resolver rejects '%s'", permission)
+                    .isThrownBy(() -> new WildcardPermissionResolver().resolvePermission(permission));
+        }
+    }
+
+    @Test
+    void legacyParsingRetainsTrailingSeparatorBehavior() {
+        AuthorizationConfigPolicy.setStrictParsing(false);
+        assertThat(new WildcardPermission("doc:read:")).isEqualTo(new WildcardPermission("doc:read"));
+        assertThat(new WildcardPermission("doc:read,")).isEqualTo(new WildcardPermission("doc:read"));
+        assertThat(new WildcardPermission("doc:read:").implies(new WildcardPermission("doc:read:any"))).isTrue();
+    }
+
+    @Test
+    void literalPartsRejectUnsafeValuesRegardlessOfStrictMode() {
+        for (boolean strict : new boolean[] {false, true}) {
+            AuthorizationConfigPolicy.setStrictParsing(strict);
+            for (String value : new String[] {null, "", " ", "\t", "alice:admin", "alice,bob", "*", "alice*",
+                    " alice", "alice "}) {
+                assertThatExceptionOfType(IllegalArgumentException.class)
+                        .as("literal instance rejects '%s' with strict=%s", value, strict)
+                        .isThrownBy(() -> WildcardPermission.fromLiteralParts("doc", "read", value));
+                assertThatExceptionOfType(IllegalArgumentException.class)
+                        .as("literal domain rejects '%s' with strict=%s", value, strict)
+                        .isThrownBy(() -> WildcardPermission.fromLiteralParts(true, value, "read", "id"));
+            }
+        }
+    }
+
+    @Test
+    void literalPartsRequireAtLeastOnePart() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> WildcardPermission.fromLiteralParts());
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> WildcardPermission.fromLiteralParts((String[]) null));
+    }
+
+    @Test
+    void literalPermissionsInteroperateWithWildcardGrantsWithoutBroadeningAccess() {
+        AuthorizationConfigPolicy.setStrictParsing(true);
+        WildcardPermission permission = WildcardPermission.fromLiteralParts("doc", "read", "Alice");
+        assertThat(permission).isEqualTo(new WildcardPermission("doc:read:alice"));
+        assertThat(new WildcardPermission(permission.toString())).isEqualTo(permission);
+        assertThat(permission.implies(WildcardPermission.fromLiteralParts("doc", "read", "Bob"))).isFalse();
+        assertThat(permission.implies(new WildcardPermission("doc:read:*"))).isFalse();
+        assertThat(new WildcardPermission("doc:read:*").implies(permission)).isTrue();
+        assertThat(new WildcardPermission("doc:read").implies(permission)).isTrue();
+        assertThat(WildcardPermission.fromLiteralParts(true, "doc", "read", "Alice")
+                .implies(new WildcardPermission("doc:read:alice", true))).isFalse();
+    }
 
     @Test
     void testNull() {

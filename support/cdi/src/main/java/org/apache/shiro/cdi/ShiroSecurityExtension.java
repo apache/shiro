@@ -20,12 +20,12 @@ import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 import jakarta.enterprise.inject.spi.WithAnnotations;
-
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler.AuthorizationConfigPolicy;
 
 /**
  * Automatically apply Shiro security to all appropriate beans
@@ -39,6 +39,9 @@ public class ShiroSecurityExtension implements Extension {
             RequiresAuthentication.class, RequiresGuest.class, RequiresPermissions.class,
             RequiresRoles.class, RequiresUser.class, RolesAllowed.class,
             PermitAll.class, DenyAll.class}) ProcessAnnotatedType<T> pat) {
+        pat.getAnnotatedType().getAnnotations().forEach(AuthorizationConfigPolicy::validate);
+        pat.getAnnotatedType().getMethods().forEach(method ->
+                method.getAnnotations().forEach(AuthorizationConfigPolicy::validate));
         pat.setAnnotatedType(new AnnotatedTypeWrapper<>(pat.getAnnotatedType(),
                 ShiroSecureAnnotated.class.getDeclaredAnnotations()[0]));
     }

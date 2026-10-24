@@ -51,11 +51,12 @@ public class RoleAnnotationHandler extends AuthorizingAnnotationHandler {
      */
     @Override
     public void assertAuthorized(Annotation a) throws AuthorizationException {
-        if (!(a instanceof RequiresRoles)) {
+        if (!(a instanceof RequiresRoles rrAnnotation)) {
             return;
         }
 
-        RequiresRoles rrAnnotation = (RequiresRoles) a;
+        AuthorizationConfigPolicy.validate(a);
+
         String[] roles = rrAnnotation.value();
 
         if (roles.length == 1) {

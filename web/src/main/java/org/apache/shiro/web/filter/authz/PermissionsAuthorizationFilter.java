@@ -19,10 +19,13 @@
 package org.apache.shiro.web.filter.authz;
 
 import java.io.IOException;
+import jakarta.servlet.Filter;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-
+import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler.AuthorizationConfigPolicy;
 import org.apache.shiro.subject.Subject;
+
+import static org.apache.shiro.lang.util.StringUtils.split;
 
 /**
  * Filter that allows access if the current user has the permissions specified by the mapped value, or denies access
@@ -33,6 +36,13 @@ import org.apache.shiro.subject.Subject;
 public class PermissionsAuthorizationFilter extends AuthorizationFilter {
 
     //TODO - complete JavaDoc
+
+    @Override
+    public Filter processPathConfig(String path, String config) {
+        AuthorizationConfigPolicy.validate(split(config),
+                "Path '" + path + "' of " + getClass().getSimpleName());
+        return super.processPathConfig(path, config);
+    }
 
     @Override
     public boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws IOException {

@@ -63,11 +63,12 @@ public class PermissionAnnotationHandler extends AuthorizingAnnotationHandler {
      */
     @Override
     public void assertAuthorized(Annotation a) throws AuthorizationException {
-        if (!(a instanceof RequiresPermissions)) {
+        if (!(a instanceof RequiresPermissions rpAnnotation)) {
             return;
         }
 
-        RequiresPermissions rpAnnotation = (RequiresPermissions) a;
+        AuthorizationConfigPolicy.validate(a);
+
         String[] perms = getAnnotationValue(a);
         Subject subject = getSubject();
 
