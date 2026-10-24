@@ -24,12 +24,14 @@ import org.apache.shiro.aop.AnnotationMethodInterceptor;
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.DefaultAnnotationResolver;
 import org.apache.shiro.authz.aop.AuthenticatedAnnotationMethodInterceptor;
+import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler.AuthorizationConfigPolicy;
 import org.apache.shiro.authz.aop.GuestAnnotationMethodInterceptor;
 import org.apache.shiro.authz.aop.PermissionAnnotationMethodInterceptor;
 import org.apache.shiro.authz.aop.RoleAnnotationMethodInterceptor;
 import org.apache.shiro.authz.aop.UserAnnotationMethodInterceptor;
 
 import java.lang.annotation.Annotation;
+import java.util.Optional;
 import static org.apache.shiro.aop.DefaultAnnotationResolver.getAnnotationFromClassHierarchy;
 
 /**
@@ -47,8 +49,9 @@ public class ShiroAopModule extends AbstractModule {
     protected final void bindShiroInterceptor(final AnnotationMethodInterceptor methodInterceptor) {
         bindInterceptor(Matchers.any(), method -> {
             Class<? extends Annotation> annotation = methodInterceptor.getHandler().getAnnotationClass();
-            return method.getAnnotation(annotation) != null
-                    || getAnnotationFromClassHierarchy(method.getDeclaringClass(), annotation) != null;
+            return Optional.<Annotation>ofNullable(method.getAnnotation(annotation))
+                    .or(() -> Optional.ofNullable(getAnnotationFromClassHierarchy(method.getDeclaringClass(), annotation)))
+                    .map(AuthorizationConfigPolicy::validate).isPresent();
         }, new AopAllianceMethodInterceptorAdapter(methodInterceptor));
     }
 
