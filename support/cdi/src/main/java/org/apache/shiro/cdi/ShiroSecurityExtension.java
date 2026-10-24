@@ -13,18 +13,26 @@
  */
 package org.apache.shiro.cdi;
 
+import java.lang.annotation.Annotation;
+import java.util.stream.Stream;
 import jakarta.annotation.security.DenyAll;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.enterprise.context.NormalScope;
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Stereotype;
 import jakarta.enterprise.inject.spi.Extension;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 import jakarta.enterprise.inject.spi.WithAnnotations;
+import jakarta.inject.Scope;
+
+import org.apache.shiro.aop.AnnotationHierarchy;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.apache.shiro.authz.aop.AuthorizationAnnotations;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler.AuthorizationConfigPolicy;
 
 /**
@@ -35,6 +43,8 @@ public class ShiroSecurityExtension implements Extension {
     public static class ShiroSecureAnnotated {
     }
 
+    private static final Annotation SHIRO_SECURE = ShiroSecureAnnotated.class.getDeclaredAnnotations()[0];
+
     public <T> void addSecurity(@Observes @WithAnnotations({
             RequiresAuthentication.class, RequiresGuest.class, RequiresPermissions.class,
             RequiresRoles.class, RequiresUser.class, RolesAllowed.class,
@@ -42,7 +52,23 @@ public class ShiroSecurityExtension implements Extension {
         pat.getAnnotatedType().getAnnotations().forEach(AuthorizationConfigPolicy::validate);
         pat.getAnnotatedType().getMethods().forEach(method ->
                 method.getAnnotations().forEach(AuthorizationConfigPolicy::validate));
-        pat.setAnnotatedType(new AnnotatedTypeWrapper<>(pat.getAnnotatedType(),
-                ShiroSecureAnnotated.class.getDeclaredAnnotations()[0]));
+        pat.setAnnotatedType(new AnnotatedTypeWrapper<>(pat.getAnnotatedType(), SHIRO_SECURE));
+    }
+
+
+    public <T> void addInheritedSecurity(@Observes @WithAnnotations({
+            Scope.class, NormalScope.class, Stereotype.class}) ProcessAnnotatedType<T> pat) {
+        applyInheritedSecurity(pat);
+    }
+
+    public static <T> void applyInheritedSecurity(ProcessAnnotatedType<T> pat) {
+        Class<?> type = pat.getAnnotatedType().getJavaClass();
+        if (Stream.concat(Stream.of(type.getSuperclass()), Stream.of(type.getInterfaces()))
+                .filter(parent -> parent != null && parent != Object.class)
+                .anyMatch(parent -> AuthorizationAnnotations.allTypes().stream()
+                        .anyMatch(annotation -> AnnotationHierarchy.isPresent(parent, annotation)))) {
+            AuthorizationConfigPolicy.validateHierarchy(type);
+            pat.setAnnotatedType(new AnnotatedTypeWrapper<>(pat.getAnnotatedType(), SHIRO_SECURE));
+        }
     }
 }

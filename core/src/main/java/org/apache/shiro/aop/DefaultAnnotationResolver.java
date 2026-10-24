@@ -20,6 +20,7 @@ package org.apache.shiro.aop;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * Default {@code AnnotationResolver} implementation that merely inspects the
@@ -58,26 +59,15 @@ public class DefaultAnnotationResolver implements AnnotationResolver {
         if (m == null) {
             String msg = MethodInvocation.class.getName() + " parameter incorrectly constructed.  getMethod() returned null";
             throw new IllegalArgumentException(msg);
-
         }
-        Annotation annotation = m.getAnnotation(clazz);
-        if (annotation == null) {
-            Object miThis = mi.getThis();
-            Class<?> targetClass = miThis != null ? miThis.getClass() : m.getDeclaringClass();
-            annotation = getAnnotationFromClassHierarchy(targetClass, clazz);
-        }
-        return annotation;
+        Object target = mi.getThis();
+        return AnnotationHierarchy.findAnnotation(m, target != null ? target.getClass() : null, clazz);
     }
 
+
+    @Deprecated(since = "3.0.2")
     public static Annotation getAnnotationFromClassHierarchy(Class<?> targetClass, Class<? extends Annotation> clazz) {
-        Class<?> current = targetClass;
-        while (current != null) {
-            Annotation annotation = current.getDeclaredAnnotation(clazz);
-            if (annotation != null) {
-                return annotation;
-            }
-            current = current.getSuperclass();
-        }
-        return null;
+        return AnnotationHierarchy.hierarchy(targetClass).stream()
+                .map(type -> AnnotationHierarchy.findDeclared(type, clazz)).filter(Objects::nonNull).findFirst().orElse(null);
     }
 }

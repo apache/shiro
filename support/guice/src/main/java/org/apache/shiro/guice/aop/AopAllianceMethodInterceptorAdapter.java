@@ -20,6 +20,7 @@ package org.apache.shiro.guice.aop;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.shiro.aop.AnnotationMethodInterceptor;
 
 /**
  * Adapts a Shiro {@link org.apache.shiro.aop.MethodInterceptor MethodInterceptor} to an AOPAlliance
@@ -34,7 +35,12 @@ class AopAllianceMethodInterceptorAdapter implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        return shiroInterceptor.invoke(new AopAllianceMethodInvocationAdapter(invocation));
+        AopAllianceMethodInvocationAdapter adapted = new AopAllianceMethodInvocationAdapter(invocation);
+        if (shiroInterceptor instanceof AnnotationMethodInterceptor annotationInterceptor
+                && !annotationInterceptor.supports(adapted)) {
+            return invocation.proceed();
+        }
+        return shiroInterceptor.invoke(adapted);
     }
 
     @Override

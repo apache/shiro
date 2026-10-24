@@ -39,6 +39,7 @@
         <module>servlet-plugin</module>
         <module>jaxrs</module>
         <module>cdi</module>
+        <module>ejb</module>
         <module>jakarta-ee</module>
         <module>spring</module>
         <module>spring-boot</module>

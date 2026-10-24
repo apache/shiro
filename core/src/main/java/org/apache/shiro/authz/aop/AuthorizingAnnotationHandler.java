@@ -19,10 +19,13 @@
 package org.apache.shiro.authz.aop;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.shiro.aop.AnnotationHierarchy;
 import org.apache.shiro.aop.AnnotationHandler;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -103,6 +106,19 @@ public abstract class AuthorizingAnnotationHandler extends AnnotationHandler {
                 validate(roles.value(), "@RequiresRoles");
             }
             return annotation;
+        }
+
+
+        public static Class<?> validateHierarchy(Class<?> type) {
+            AnnotationHierarchy.hierarchy(type).stream()
+                    .flatMap(declaring -> Stream.concat(Stream.of(declaring),
+                            Arrays.stream(declaring.getDeclaredMethods())
+                                    .filter(AnnotationHierarchy.USER_DECLARED_METHODS)))
+                    .forEach(element -> {
+                        validate(AnnotationHierarchy.findDeclared(element, RequiresPermissions.class));
+                        validate(AnnotationHierarchy.findDeclared(element, RequiresRoles.class));
+                    });
+            return type;
         }
 
         /**

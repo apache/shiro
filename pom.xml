@@ -491,6 +491,7 @@
                             </ignoreMissingClassesByRegularExpressions>
                             <excludes>
                                 <exclude>org.apache.shiro.subject.SimplePrincipalMap</exclude>
+                                <exclude>org.apache.shiro.cdi.ShiroSecurityInterceptor</exclude>
                             </excludes>
                         </parameter>
                     </configuration>

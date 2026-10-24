@@ -54,6 +54,11 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
     }
 
     /**
+    @Override
+    public AuthorizingAnnotationHandler getHandler() {
+        return (AuthorizingAnnotationHandler) super.getHandler();
+    }
+
      * Ensures the <code>methodInvocation</code> is allowed to execute first before proceeding by calling the
      * {@link #assertAuthorized(org.apache.shiro.aop.MethodInvocation) assertAuthorized} method first.
      *
@@ -63,6 +68,12 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
      * @throws org.apache.shiro.authz.AuthorizationException if the <code>MethodInvocation</code> is not allowed to proceed.
      * @throws Throwable                                     if any other error occurs.
      */
+    @Override
+    public AuthorizingAnnotationHandler getHandler() {
+        return (AuthorizingAnnotationHandler) super.getHandler();
+    }
+
+
     @Override
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         assertAuthorized(methodInvocation);
@@ -83,7 +94,7 @@ public abstract class AuthorizingAnnotationMethodInterceptor extends AnnotationM
      */
     public void assertAuthorized(MethodInvocation mi) throws AuthorizationException {
         try {
-            ((AuthorizingAnnotationHandler) getHandler()).assertAuthorized(getAnnotation(mi));
+            getHandler().assertAuthorized(getAnnotation(mi));
         } catch (AuthorizationException ae) {
             // Annotation handler doesn't know why it was called, so add the information here if possible.
             // Don't wrap the exception here since we don't want to mask the specific exception, such as
