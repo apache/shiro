@@ -71,6 +71,15 @@ public class ShiroBeansIT {
     @FindBy(id = "form:protected")
     private WebElement protectedMethod;
 
+    @FindBy(id = "form:viaInterface")
+    private WebElement viaInterface;
+
+    @FindBy(id = "form:viaInterfaceMethod")
+    private WebElement viaInterfaceMethod;
+
+    @FindBy(id = "form:viaSuperclass")
+    private WebElement viaSuperclass;
+
     @FindBy(id = "invalidate")
     private WebElement invalidateSession;
 
@@ -108,6 +117,12 @@ public class ShiroBeansIT {
         assertThat(messages.getText()).isEqualTo("unprotected method: hello from unprotected");
         guardAjax(protectedMethod).click();
         assertThat(messages.getText()).startsWith("protected unauth: Attempting to perform a user-only operation");
+        guardAjax(viaInterface).click();
+        assertThat(messages.getText()).startsWith("via interface unauth: Attempting to perform a user-only operation");
+        guardAjax(viaInterfaceMethod).click();
+        assertThat(messages.getText()).startsWith("via interface method unauth: Attempting to perform a user-only operation");
+        guardAjax(viaSuperclass).click();
+        assertThat(messages.getText()).startsWith("via superclass unauth: Attempting to perform a user-only operation");
         webDriver.get(baseURL + "lastException");
         String exceptionText = webDriver.findElement(By.tagName("body")).getText();
         assertThat(exceptionText).startsWith(
@@ -131,6 +146,13 @@ public class ShiroBeansIT {
         assertThat(messages.getText()).startsWith("Hello from ProtectedStatelessBean");
         guardAjax(protectedMethod).click();
         assertThat(messages.getText()).isEqualTo("protected method: hello from protected");
+        guardAjax(viaInterface).click();
+        assertThat(messages.getText()).isEqualTo("Hello from ProtectedViaInterfaceBean");
+        guardAjax(viaInterfaceMethod).click();
+        assertThat(messages.getText()).isEqualTo("Unprotected hello from ProtectedViaInterfaceMethodBean"
+                + " / Hello from ProtectedViaInterfaceMethodBean");
+        guardAjax(viaSuperclass).click();
+        assertThat(messages.getText()).isEqualTo("Hello from ProtectedViaSuperclassBean");
     }
 
     @Test
