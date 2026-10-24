@@ -19,24 +19,25 @@
 package org.apache.shiro.guice.aop;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.matcher.Matchers;
+import com.google.inject.matcher.Matcher;
+import org.apache.shiro.aop.AnnotationHierarchy;
 import org.apache.shiro.aop.AnnotationMethodInterceptor;
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.DefaultAnnotationResolver;
-import org.apache.shiro.authz.aop.AuthenticatedAnnotationMethodInterceptor;
-import org.apache.shiro.authz.aop.GuestAnnotationMethodInterceptor;
-import org.apache.shiro.authz.aop.PermissionAnnotationMethodInterceptor;
-import org.apache.shiro.authz.aop.RoleAnnotationMethodInterceptor;
-import org.apache.shiro.authz.aop.UserAnnotationMethodInterceptor;
+import org.apache.shiro.authz.aop.AuthorizationAnnotations;
 
 import java.lang.annotation.Annotation;
-import static org.apache.shiro.aop.DefaultAnnotationResolver.getAnnotationFromClassHierarchy;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  * Install this module to enable Shiro AOP functionality in Guice.  You may extend it to add your own Shiro
  * interceptors, override the default ones, or provide a specific {@link org.apache.shiro.aop.AnnotationResolver}.
  */
 public class ShiroAopModule extends AbstractModule {
+    private static final Matcher<Method> ENHANCEABLE_METHODS = method -> !Modifier.isStatic(method.getModifiers())
+            && !method.isSynthetic() && !method.isBridge() && method.getDeclaringClass() != Object.class;
+
     @Override
     protected final void configure() {
         AnnotationResolver resolver = createAnnotationResolver();
@@ -45,11 +46,9 @@ public class ShiroAopModule extends AbstractModule {
     }
 
     protected final void bindShiroInterceptor(final AnnotationMethodInterceptor methodInterceptor) {
-        bindInterceptor(Matchers.any(), method -> {
-            Class<? extends Annotation> annotation = methodInterceptor.getHandler().getAnnotationClass();
-            return method.getAnnotation(annotation) != null
-                    || getAnnotationFromClassHierarchy(method.getDeclaringClass(), annotation) != null;
-        }, new AopAllianceMethodInterceptorAdapter(methodInterceptor));
+        Class<? extends Annotation> annotation = methodInterceptor.getHandler().getAnnotationClass();
+        Matcher<Class<?>> securedClasses = type -> AnnotationHierarchy.isPresent(type, annotation);
+        bindInterceptor(securedClasses, ENHANCEABLE_METHODS, new AopAllianceMethodInterceptorAdapter(methodInterceptor));
     }
 
     protected AnnotationResolver createAnnotationResolver() {
@@ -57,11 +56,8 @@ public class ShiroAopModule extends AbstractModule {
     }
 
     protected void configureDefaultInterceptors(AnnotationResolver resolver) {
-        bindShiroInterceptor(new RoleAnnotationMethodInterceptor(resolver));
-        bindShiroInterceptor(new PermissionAnnotationMethodInterceptor(resolver));
-        bindShiroInterceptor(new AuthenticatedAnnotationMethodInterceptor(resolver));
-        bindShiroInterceptor(new UserAnnotationMethodInterceptor(resolver));
-        bindShiroInterceptor(new GuestAnnotationMethodInterceptor(resolver));
+        AuthorizationAnnotations.createMethodInterceptors(resolver, AuthorizationAnnotations.shiroTypes())
+                .forEach(this::bindShiroInterceptor);
     }
 
     protected void configureInterceptors(AnnotationResolver resolver) {

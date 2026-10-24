@@ -18,9 +18,10 @@
  */
 package org.apache.shiro.authz.aop;
 
-import java.util.ArrayList;
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 
+import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.aop.MethodInvocation;
 import org.apache.shiro.authz.AuthorizationException;
 
@@ -52,12 +53,12 @@ public abstract class AnnotationsAuthorizingMethodInterceptor extends Authorizin
      * support role and permission annotations.
      */
     public AnnotationsAuthorizingMethodInterceptor() {
-        methodInterceptors = new ArrayList<AuthorizingAnnotationMethodInterceptor>(5);
-        methodInterceptors.add(new RoleAnnotationMethodInterceptor());
-        methodInterceptors.add(new PermissionAnnotationMethodInterceptor());
-        methodInterceptors.add(new AuthenticatedAnnotationMethodInterceptor());
-        methodInterceptors.add(new UserAnnotationMethodInterceptor());
-        methodInterceptors.add(new GuestAnnotationMethodInterceptor());
+        this(null, AuthorizationAnnotations.shiroTypes());
+    }
+
+    public AnnotationsAuthorizingMethodInterceptor(AnnotationResolver resolver,
+                                                   Collection<Class<? extends Annotation>> annotationTypes) {
+        methodInterceptors = AuthorizationAnnotations.createMethodInterceptors(resolver, annotationTypes);
     }
 
     /**
