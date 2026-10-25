@@ -15,6 +15,7 @@ Browse to `http://localhost:8080/`
 
 Path Matching
 -------------
+
 The starter's environment post-processor requests Ant path matching from Spring MVC when Boot still supports it.
 If MVC instead uses Spring's native `PathPatternParser` (for example, when the Ant setting is no longer supported), the starter
 uses Spring's parsed patterns for both Shiro filter-chain selection and path-aware filters.
