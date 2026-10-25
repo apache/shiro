@@ -108,7 +108,7 @@
         <tomcat.version>11.0.27</tomcat.version>
         <jakarta.ee.version>11.0.0</jakarta.ee.version>
         <jetty.version>12.1.14</jetty.version>
-        <owasp.java.encoder.version>1.5.0</owasp.java.encoder.version>
+        <owasp.java.encoder.version>1.5.1</owasp.java.encoder.version>
         <!-- Don't change this version without also changing the shiro-quartz and shiro-features
              modules' OSGi metadata: -->
         <quartz.version>2.5.2</quartz.version>
@@ -125,7 +125,7 @@
         <!-- Test 3rd-party dependencies: -->
         <easymock.version>5.7.0</easymock.version>
         <mockito.version>5.24.0</mockito.version>
-        <bytebuddy.version>1.18.14</bytebuddy.version>
+        <bytebuddy.version>1.18.15</bytebuddy.version>
         <gmaven.version>5.1.0</gmaven.version>
         <groovy.version>6.0.0</groovy.version>
         <junit.version>6.1.3</junit.version>
@@ -468,7 +468,7 @@
                 <plugin>
                     <groupId>com.github.siom79.japicmp</groupId>
                     <artifactId>japicmp-maven-plugin</artifactId>
-                    <version>0.26.3</version>
+                    <version>0.26.5</version>
                     <configuration>
                         <!-- If specific old version is needed, uncomment the following and set the version to compare against
                         <oldVersion>
