@@ -22,6 +22,7 @@ import org.apache.shiro.SecurityUtils
 import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication
 import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication.EventBusAwareObject
 import org.apache.shiro.spring.boot.autoconfigure.web.application.ShiroWebAutoConfigurationTestApplication.SubscribedListener
+import org.apache.shiro.spring.web.SpringPathPatternMatcher
 
 import org.apache.shiro.event.EventBus
 import org.apache.shiro.mgt.DefaultSecurityManager
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.aop.framework.Advised
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 
 import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.equalTo
@@ -62,6 +64,9 @@ class ShiroWebSpringAutoConfigurationTest {
     @Autowired
     private AbstractShiroFilter shiroFilter
 
+    @Autowired
+    private RequestMappingHandlerMapping requestMappingHandlerMapping
+
     @Test
     void testMinimalConfiguration() {
 
@@ -72,6 +77,12 @@ class ShiroWebSpringAutoConfigurationTest {
         assertNotNull eventBusAwareObject
         assertNotNull eventBus
         assertNotNull shiroFilter
+        if (shiroFilter.filterChainResolver.pathMatcher instanceof SpringPathPatternMatcher) {
+            assertNotNull requestMappingHandlerMapping.patternParser
+        } else {
+            assertNull requestMappingHandlerMapping.patternParser
+            assertThat requestMappingHandlerMapping.pathMatcher, instanceOf(org.springframework.util.AntPathMatcher)
+        }
         assertTrue(eventBus.registry.containsKey(subscribedListener))
         assertSame(((Advised)eventBusAwareObject.getEventBus()).getTargetSource().getTarget(), eventBus)
         assertSame(((Advised) SecurityUtils.unwrapSecurityManager(securityManager, DefaultSecurityManager)

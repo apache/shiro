@@ -21,12 +21,14 @@ package org.apache.shiro.spring.web;
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.util.CollectionUtils;
+import org.apache.shiro.util.PatternMatcher;
 import org.apache.shiro.lang.util.Nameable;
 import org.apache.shiro.lang.util.StringUtils;
 import org.apache.shiro.web.config.IniFilterChainResolverFactory;
 import org.apache.shiro.web.config.ShiroFilterConfiguration;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.filter.InvalidRequestFilter;
+import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.filter.authc.AuthenticationFilter;
 import org.apache.shiro.web.filter.authz.AuthorizationFilter;
 import org.apache.shiro.web.filter.mgt.DefaultFilter;
@@ -129,6 +131,7 @@ public class ShiroFilterFactoryBean implements FactoryBean<Filter> {
     private String unauthorizedUrl;
     private boolean allowAccessByDefault;
     private boolean caseInsensitive;
+    private PatternMatcher pathMatcher;
 
     private AbstractShiroFilter instance;
 
@@ -293,6 +296,14 @@ public class ShiroFilterFactoryBean implements FactoryBean<Filter> {
     }
 
     /**
+     * Sets the matcher for filter-chain resolution and path-aware filters.
+     * @param pathMatcher the path matcher, or {@code null} for the default Ant matcher
+     */
+    public void setPathMatcher(PatternMatcher pathMatcher) {
+        this.pathMatcher = pathMatcher;
+    }
+
+    /**
      * Returns the filterName-to-Filter map of filters available for reference when defining filter chain definitions.
      * All filter chain definitions will reference filters by the names in this map (i.e. the keys).
      *
@@ -437,6 +448,9 @@ public class ShiroFilterFactoryBean implements FactoryBean<Filter> {
     protected FilterChainManager createFilterChainManager() {
 
         DefaultFilterChainManager manager = new DefaultFilterChainManager();
+        if (pathMatcher != null) {
+            pathMatcher.setCaseInsensitive(caseInsensitive);
+        }
         manager.setCaseInsensitive(caseInsensitive);
         Map<String, Filter> defaultFilters = manager.getFilters();
         //apply global settings if necessary:
@@ -523,6 +537,9 @@ public class ShiroFilterFactoryBean implements FactoryBean<Filter> {
         // FilterChainResolver implementation. The AbstractShiroFilter implementations
         // do not know about FilterChainManagers - only resolvers:
         PathMatchingFilterChainResolver chainResolver = new PathMatchingFilterChainResolver().caseInsensitive(caseInsensitive);
+        if (pathMatcher != null) {
+            chainResolver.setPathMatcher(pathMatcher);
+        }
         chainResolver.setFilterChainManager(manager);
 
         //Now create a concrete ShiroFilter instance and apply the acquired SecurityManager and built
@@ -566,6 +583,11 @@ public class ShiroFilterFactoryBean implements FactoryBean<Filter> {
     }
 
     void applyGlobalPropertiesIfNecessary(Filter filter) {
+        if (filter instanceof PathMatchingFilter pathMatchingFilter) {
+            if (pathMatcher != null) {
+                pathMatchingFilter.setPathMatcher(pathMatcher);
+            }
+        }
         applyLoginUrlIfNecessary(filter);
         applySuccessUrlIfNecessary(filter);
         applyUnauthorizedUrlIfNecessary(filter);

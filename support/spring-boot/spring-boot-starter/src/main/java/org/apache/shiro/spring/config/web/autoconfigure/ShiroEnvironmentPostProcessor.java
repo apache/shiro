@@ -18,21 +18,31 @@
  */
 package org.apache.shiro.spring.config.web.autoconfigure;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.boot.EnvironmentPostProcessor;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties.MatchingStrategy;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 
 import java.util.Collections;
+import java.util.Arrays;
 
 class ShiroEnvironmentPostProcessor implements EnvironmentPostProcessor, PriorityOrdered {
+    static final String ANT_PATH_MATCHER = "ant_path_matcher";
+
     @Override
-    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+    public void postProcessEnvironment(@NonNull ConfigurableEnvironment environment,
+                                       @NonNull SpringApplication application) {
+        if (Arrays.stream(MatchingStrategy.values())
+                .noneMatch(strategy -> strategy.name().equalsIgnoreCase(ANT_PATH_MATCHER))) {
+            return;
+        }
         // force the use of the ant path matcher
         environment.getPropertySources()
                 .addFirst(new MapPropertySource("shiro",
-                        Collections.singletonMap("spring.mvc.pathmatch.matching-strategy", "ant_path_matcher")));
+                        Collections.singletonMap("spring.mvc.pathmatch.matching-strategy", ANT_PATH_MATCHER)));
     }
 
     @Override
