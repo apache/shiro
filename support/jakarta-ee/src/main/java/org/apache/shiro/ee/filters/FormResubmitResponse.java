@@ -36,7 +36,7 @@ import org.omnifaces.servlet.BufferedHttpServletResponse;
 /**
  * Captures a replay's status, headers, cookies and body instead of committing them to the browser.
  * Nothing reaches the browser response until {@link #applyTo} is called for a successful replay,
- * so view-state GETs, failed attempts and Faces error handling (which resets the response)
+ * so failed attempts and Faces error handling (which resets the response)
  * cannot disturb what the login request has already written, such as session cookies.
  */
 final class FormResubmitResponse extends BufferedHttpServletResponse {

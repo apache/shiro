@@ -49,7 +49,7 @@ class FormResubmitRequestTest {
     }
 
     private FormResubmitRequest request(AjaxReplay ajaxReplay) {
-        return new FormResubmitRequest(login, "POST", Map.of(), ajaxReplay);
+        return new FormResubmitRequest(login, Map.of(), ajaxReplay);
     }
 
     @Test

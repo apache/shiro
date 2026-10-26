@@ -39,23 +39,27 @@ uses the current Shiro subject, session, and browser response. Saved form
 parameters replace those of the login request. Replay targets must read form
 data through the parameter accessors; the raw request body is not reconstructed.
 
-For server-side Faces state saving, a buffered GET obtains a new view state
-before the POST. A calling Faces context is restored after each dispatch.
+For server-side Faces state saving, Shiro's `FormResubmitViewHandler` rebuilds
+an expired view during the replayed POST using OmniFaces' view builder, like
+`o:enableRestorableView`, without requiring the tag on each page. There is no
+preliminary GET or view-state scraping. Existing views are restored normally,
+and requests outside Shiro's replay and client-side state saving are unaffected.
+A calling Faces context is restored after the dispatch.
 
 Each replay's status, headers, cookies and body are captured rather than written
 to the browser response, which is also shielded from `reset()`, `resetBuffer()`
 and `flushBuffer()`. Only a successful replay is applied, with its headers and
 cookies. Response metadata setters (such as content type and encoding) and
 generic header read-back retain the wrapped response's behavior.
-Captured state from view-state GETs and failed attempts is discarded instead
+Captured state from failed attempts is discarded instead
 of applied to the login response, preserving its session cookies.
 Saved form data is decoded with the request's character encoding, falling back
 to the servlet context's and then UTF-8.
 
 A Faces Ajax submission replayed in place (see below) stays an Ajax request:
-the saved partial request is replayed with the refreshed view state, and its
+the saved partial request is replayed against the restored or rebuilt view, and its
 partial response is passed through to the waiting Ajax client, without a full
-page refresh. Since the server-side view is rebuilt from scratch, the replay
+page refresh. An expired server-side view is rebuilt from scratch, so the replay
 renders the whole view (`@all`) by default, which resynchronizes the page and
 the view state of all its forms with the server. Set the
 `org.apache.shiro.form-resubmit.ajax-render-all.disabled` context parameter to

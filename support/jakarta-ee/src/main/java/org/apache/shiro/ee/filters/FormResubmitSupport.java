@@ -77,7 +77,6 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.ResourcePaths;
 import org.omnifaces.util.Servlets;
@@ -542,10 +541,10 @@ public class FormResubmitSupport {
         Servlets.setNoCacheHeaders(originalRequest, originalResponse);
         try {
             var savedFormFields = parseFormData(savedFormData, getFormCharset(originalRequest, servletContext));
-            PartialAjaxResult formData = prepareFormData(savedFormFields, dispatchPath, originalRequest,
-                    originalResponse, servletContext, AjaxReplay.of(flow, originalRequest));
+            boolean isStateless = isJSFClientStateSavingMethod(servletContext) || !isJSFStatefulForm(savedFormFields);
+            PartialAjaxResult formData = noJSFAjaxRequests(savedFormFields, isStateless, AjaxReplay.of(flow, originalRequest));
             var response = new FormResubmitResponse(originalResponse);
-            forward(dispatchPath, originalRequest, response, HttpMethod.POST, formData.result, formData.ajaxReplay);
+            forward(dispatchPath, originalRequest, response, formData.result, formData.ajaxReplay);
             if (isFailed(response.getStatus())) {
                 log.debug("Form resubmit to {} failed with status {}", dispatchPath, response.getStatus());
                 return false;
@@ -605,9 +604,9 @@ public class FormResubmitSupport {
      * @param path dispatch path already verified by {@link #replaySavedForm} to resolve to a dispatcher
      */
     private static void forward(String path, HttpServletRequest originalRequest, HttpServletResponse response,
-            String method, Map<String, List<String>> formFields, AjaxReplay ajaxReplay)
+            Map<String, List<String>> formFields, AjaxReplay ajaxReplay)
             throws ServletException, IOException {
-        var request = new FormResubmitRequest(originalRequest, method, formFields, ajaxReplay);
+        var request = new FormResubmitRequest(originalRequest, formFields, ajaxReplay);
         var dispatcher = originalRequest.getServletContext().getRequestDispatcher(path);
         if (!hasFacesContext()) {
             dispatcher.forward(request, response);
@@ -656,17 +655,6 @@ public class FormResubmitSupport {
                 }).orElse(StandardCharsets.UTF_8);
     }
 
-    private static PartialAjaxResult prepareFormData(Map<String, List<String>> savedFormFields, String path,
-            HttpServletRequest request, HttpServletResponse response, ServletContext servletContext,
-            AjaxReplay ajaxReplay) throws IOException, ServletException {
-        boolean isStateless = isJSFClientStateSavingMethod(servletContext) || !isJSFStatefulForm(savedFormFields);
-        var formFields = new LinkedHashMap<>(savedFormFields);
-        if (!isStateless) {
-            refreshJSFViewState(path, request, response, formFields);
-        }
-        return noJSFAjaxRequests(formFields, isStateless, ajaxReplay);
-    }
-
     /**
      * Only a successful replay reaches the browser, with its headers and cookies.
      * An Ajax replay's partial response is passed through to the Ajax client that submitted the form.
@@ -703,27 +691,6 @@ public class FormResubmitSupport {
             return (AbstractRememberMeManager) dsm.getRememberMeManager();
         }
         return null;
-    }
-
-    private static void refreshJSFViewState(String path, HttpServletRequest request,
-            HttpServletResponse response, Map<String, List<String>> formFields) throws IOException, ServletException {
-        // view-state GET headers and cookies stay captured and are never applied to the browser response
-        var htmlResponse = new FormResubmitResponse(response);
-        forward(path, request, htmlResponse, HttpMethod.GET, Map.of(), AjaxReplay.FULL_PAGE);
-        if (htmlResponse.getStatus() == SC_OK) {
-            Optional.ofNullable(extractJSFNewViewState(htmlResponse.getBufferAsString())).ifPresent(viewState -> {
-                log.debug("Replaced ViewState: {}", viewState);
-                formFields.put(FACES_VIEW_STATE, List.of(viewState));
-            });
-        }
-    }
-
-    /**
-     * @return view state of the first form in the rendered view, or null if there is none
-     */
-    static String extractJSFNewViewState(@NonNull String responseBody) {
-        Elements elts = Jsoup.parse(responseBody).select("input[name=%s]".formatted(FACES_VIEW_STATE));
-        return elts.isEmpty() ? null : Objects.requireNonNull(elts.first()).attr("value");
     }
 
     /**

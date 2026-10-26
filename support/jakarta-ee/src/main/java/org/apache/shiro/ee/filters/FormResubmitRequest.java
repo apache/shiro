@@ -39,7 +39,7 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
             "org.apache.myfaces.", "org.omnifaces.", "jakarta.servlet.forward.", "jakarta.servlet.include.",
             FormResubmitSupport.FORM_IS_RESUBMITTED);
     private static final String FACES_REQUEST_HEADER = "Faces-Request";
-    private final @Getter(onMethod_ = @Override) String method;
+    private final @Getter(onMethod_ = @Override) String method = FormResubmitSupport.HttpMethod.POST;
     private final AjaxReplay ajaxReplay;
     private final @Delegate(types = Parameters.class) MutableRequest parameters;
     private final Map<String, Object> attributes = new HashMap<>();
@@ -52,10 +52,9 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
         Map<String, String[]> getParameterMap();
     }
 
-    FormResubmitRequest(HttpServletRequest request, String method, Map<String, List<String>> formFields,
+    FormResubmitRequest(HttpServletRequest request, Map<String, List<String>> formFields,
             AjaxReplay ajaxReplay) {
         super(unwrap(request));
-        this.method = method;
         this.ajaxReplay = ajaxReplay;
         parameters = new MutableRequest(request) {
             @Override
