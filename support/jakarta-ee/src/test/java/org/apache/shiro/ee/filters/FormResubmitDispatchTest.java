@@ -20,7 +20,6 @@ import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.shiro.ee.filters.FormResubmitSupport.ReplayFlow;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -47,23 +46,25 @@ class FormResubmitDispatchTest {
     private ServletOutputStream output;
 
     @Test
-    void inPlaceReplayUsesOnePostAndNoGet() throws Exception {
-        replayWithOnePostAndNoGet(ReplayFlow.IN_PLACE);
+    void afterLoginReplayUsesOnePostAndNoGet() throws Exception {
+        replayAfterLogin(false);
     }
 
     @Test
-    void afterLoginReplayUsesOnePostAndNoGet() throws Exception {
-        replayWithOnePostAndNoGet(ReplayFlow.AFTER_LOGIN);
+    void afterLoginAjaxReplayProcessesCommandThenRedirects() throws Exception {
+        replayAfterLogin(true);
     }
 
-    private void replayWithOnePostAndNoGet(ReplayFlow flow) throws Exception {
+    private void replayAfterLogin(boolean ajaxForm) throws Exception {
         when(request.getContextPath()).thenReturn("/app");
         when(request.getRequestURL()).thenReturn(new StringBuffer("https://localhost/app/form.xhtml"));
         when(request.getServletContext()).thenReturn(servletContext);
         when(request.getAttributeNames()).thenReturn(Collections.emptyEnumeration());
         when(servletContext.getContextPath()).thenReturn("/app");
         when(servletContext.getRequestDispatcher("/form.xhtml")).thenReturn(dispatcher);
-        when(response.getOutputStream()).thenReturn(output);
+        if (!ajaxForm) {
+            when(response.getOutputStream()).thenReturn(output);
+        }
         byte[] result = "replayed".getBytes(StandardCharsets.UTF_8);
         doAnswer(invocation -> {
             HttpServletRequest replay = invocation.getArgument(0);
@@ -72,15 +73,28 @@ class FormResubmitDispatchTest {
             assertThat(replay.getParameter("jakarta.faces.ViewState")).isEqualTo("123:456");
             assertThat(replay.getParameter("name")).isEqualTo("Jack & Jill");
             assertThat(FormResubmitRequest.isResubmit(replay)).isTrue();
+            if (ajaxForm) {
+                assertThat(replay.getParameter("jakarta.faces.partial.ajax")).isNull();
+                assertThat(replay.getParameter("jakarta.faces.source")).isNull();
+                assertThat(replay.getParameter("form:submit")).isEmpty();
+                assertThat(replay.getHeader("Faces-Request")).isNull();
+            }
             captured.getOutputStream().write(result);
             return null;
         }).when(dispatcher).forward(any(), any());
 
-        FormResubmitSupport.resubmitSavedForm("name=Jack+%26+Jill&jakarta.faces.ViewState=123%3A456",
-                "/app/form.xhtml", request, response, flow);
+        String formData = "name=Jack+%26+Jill&jakarta.faces.ViewState=123%3A456"
+                + (ajaxForm ? "&jakarta.faces.partial.ajax=true&jakarta.faces.source=form%3Asubmit" : "");
+        FormResubmitSupport.resubmitSavedForm(formData,
+                "/app/form.xhtml", request, response);
 
         verify(dispatcher).forward(any(), any());
-        verify(output).write(result);
-        verify(response, never()).sendRedirect(any());
+        if (ajaxForm) {
+            verify(response).sendRedirect("/app/form.xhtml");
+            verify(response, never()).getOutputStream();
+        } else {
+            verify(output).write(result);
+            verify(response, never()).sendRedirect(any());
+        }
     }
 }

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.experimental.Delegate;
-import org.apache.shiro.ee.filters.FormResubmitSupport.AjaxReplay;
 import org.apache.shiro.web.util.WebUtils;
 import org.omnifaces.filter.MutableRequestFilter.MutableRequest;
 
@@ -37,10 +36,9 @@ import org.omnifaces.filter.MutableRequestFilter.MutableRequest;
 final class FormResubmitRequest extends HttpServletRequestWrapper {
     private static final List<String> DISPATCH_SCOPED_PREFIXES = List.of("jakarta.faces.", "com.sun.faces.",
             "org.apache.myfaces.", "org.omnifaces.", "jakarta.servlet.forward.", "jakarta.servlet.include.",
-            FormResubmitSupport.FORM_IS_RESUBMITTED);
+            FormResubmitSupport.REBUILD_EXPIRED_VIEW);
     private static final String FACES_REQUEST_HEADER = "Faces-Request";
     private final @Getter(onMethod_ = @Override) String method = FormResubmitSupport.HttpMethod.POST;
-    private final AjaxReplay ajaxReplay;
     private final @Delegate(types = Parameters.class) MutableRequest parameters;
     private final Map<String, Object> attributes = new HashMap<>();
 
@@ -52,10 +50,8 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
         Map<String, String[]> getParameterMap();
     }
 
-    FormResubmitRequest(HttpServletRequest request, Map<String, List<String>> formFields,
-            AjaxReplay ajaxReplay) {
+    FormResubmitRequest(HttpServletRequest request, Map<String, List<String>> formFields) {
         super(unwrap(request));
-        this.ajaxReplay = ajaxReplay;
         parameters = new MutableRequest(request) {
             @Override
             public Map<String, List<String>> getMutableParameterMap() {
@@ -81,8 +77,8 @@ final class FormResubmitRequest extends HttpServletRequestWrapper {
      * A full-page replay's response is translated for the original Ajax client by the caller,
      * so the target must not see the Ajax header through any accessor
      */
-    private boolean isHidden(String header) {
-        return !ajaxReplay.isPassThrough() && FACES_REQUEST_HEADER.equalsIgnoreCase(header);
+    private static boolean isHidden(String header) {
+        return FACES_REQUEST_HEADER.equalsIgnoreCase(header);
     }
 
     @Override

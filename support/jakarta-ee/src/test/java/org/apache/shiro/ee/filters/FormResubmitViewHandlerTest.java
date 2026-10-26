@@ -16,14 +16,15 @@ package org.apache.shiro.ee.filters;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import jakarta.faces.application.ViewHandler;
 import jakarta.faces.component.UIViewRoot;
 import jakarta.faces.context.ExternalContext;
 import jakarta.faces.context.FacesContext;
+import jakarta.faces.context.PartialViewContext;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
-import org.apache.shiro.ee.filters.FormResubmitSupport.AjaxReplay;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +36,11 @@ import org.omnifaces.util.ComponentsLocal;
 import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,6 +59,8 @@ class FormResubmitViewHandlerTest {
     @Mock
     private UIViewRoot view;
     @Mock
+    private PartialViewContext partialViewContext;
+    @Mock
     private MockedStatic<ComponentsLocal> components;
 
     private FormResubmitViewHandler handler;
@@ -69,7 +76,7 @@ class FormResubmitViewHandlerTest {
     private void replay() {
         when(context.isPostback()).thenReturn(true);
         when(request.getAttributeNames()).thenReturn(Collections.emptyEnumeration());
-        var replay = new FormResubmitRequest(request, Map.of(), AjaxReplay.FULL_PAGE);
+        var replay = new FormResubmitRequest(request, Map.of());
         when(externalContext.getRequest()).thenReturn(new HttpServletRequestWrapper(replay));
     }
 
@@ -86,6 +93,54 @@ class FormResubmitViewHandlerTest {
         components.when(() -> ComponentsLocal.buildView(context, VIEW_ID)).thenReturn(view);
         assertThat(handler.restoreView(context, VIEW_ID)).isSameAs(view);
         components.verify(() -> ComponentsLocal.buildView(context, VIEW_ID));
+    }
+
+    @Test
+    void expiredMarkedRequestUsesOmniFacesViewBuilder() {
+        when(context.isPostback()).thenReturn(true);
+        when(request.getAttribute(FormResubmitSupport.REBUILD_EXPIRED_VIEW)).thenReturn(Boolean.TRUE);
+        when(context.getPartialViewContext()).thenReturn(partialViewContext);
+        when(partialViewContext.isAjaxRequest()).thenReturn(true);
+        components.when(() -> ComponentsLocal.buildView(context, VIEW_ID)).thenReturn(view);
+        assertThat(handler.restoreView(context, VIEW_ID)).isSameAs(view);
+        components.verify(() -> ComponentsLocal.buildView(context, VIEW_ID));
+        verify(partialViewContext).setRenderAll(true);
+    }
+
+    @Test
+    void markedRequestKeepsRenderTargetsWhenRenderAllIsDisabled() {
+        when(context.isPostback()).thenReturn(true);
+        when(request.getAttribute(FormResubmitSupport.REBUILD_EXPIRED_VIEW)).thenReturn(Boolean.TRUE);
+        when(context.getPartialViewContext()).thenReturn(partialViewContext);
+        when(partialViewContext.isAjaxRequest()).thenReturn(true);
+        when(servletContext.getAttribute("org.apache.shiro.form-resubmit.ajax-render-all.disabled"))
+                .thenReturn(Boolean.TRUE);
+        components.when(() -> ComponentsLocal.buildView(context, VIEW_ID)).thenReturn(view);
+
+        assertThat(handler.restoreView(context, VIEW_ID)).isSameAs(view);
+
+        verify(partialViewContext, never()).setRenderAll(anyBoolean());
+    }
+
+    @Test
+    void viewBuildEnablesAndRestoresProcessingEvents() {
+        replay();
+        var processingEvents = new AtomicBoolean();
+        when(context.isProcessingEvents()).thenAnswer(invocation -> processingEvents.get());
+        doAnswer(invocation -> {
+            processingEvents.set(invocation.getArgument(0));
+            return null;
+        }).when(context).setProcessingEvents(anyBoolean());
+        components.when(() -> ComponentsLocal.buildView(context, VIEW_ID)).thenAnswer(invocation -> {
+            assertThat(processingEvents.get()).isTrue();
+            return view;
+        });
+
+        assertThat(handler.restoreView(context, VIEW_ID)).isSameAs(view);
+
+        assertThat(processingEvents.get()).isFalse();
+        verify(context).setProcessingEvents(true);
+        verify(context).setProcessingEvents(false);
     }
 
     @Test
@@ -116,5 +171,7 @@ class FormResubmitViewHandlerTest {
         components.when(() -> ComponentsLocal.buildView(context, VIEW_ID)).thenThrow(failure);
         assertThatExceptionOfType(IOException.class)
                 .isThrownBy(() -> handler.restoreView(context, VIEW_ID)).isSameAs(failure);
+        verify(context).setProcessingEvents(true);
+        verify(context).setProcessingEvents(false);
     }
 }

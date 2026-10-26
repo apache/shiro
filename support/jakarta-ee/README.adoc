@@ -33,18 +33,20 @@ opposed to changing the way Shiro works by integrating CDI
 
 == Form resubmission
 
-Saved forms are replayed within the current web application using
-`RequestDispatcher.forward`, without an outbound HTTP connection. The replay
-uses the current Shiro subject, session, and browser response. Saved form
+After a login flow, saved forms are replayed within the current web application
+using `RequestDispatcher.forward`, without an outbound HTTP connection. The
+replay uses the current Shiro subject, session, and browser response. Saved form
 parameters replace those of the login request. Replay targets must read form
 data through the parameter accessors; the raw request body is not reconstructed.
 
 For server-side Faces state saving, Shiro's `FormResubmitViewHandler` rebuilds
-an expired view during the replayed POST using OmniFaces' view builder, like
-`o:enableRestorableView`, without requiring the tag on each page. There is no
-preliminary GET or view-state scraping. Existing views are restored normally,
-and requests outside Shiro's replay and client-side state saving are unaffected.
-A calling Faces context is restored after the dispatch.
+an expired view during a marked POST using OmniFaces' view builder, like
+`o:enableRestorableView`, without requiring the tag on each page. Expired
+same-origin POSTs that do not require a login continue through the normal filter
+chain; Shiro does not consume their body or dispatch them a second time. After
+login, the same view handler rebuilds the view during the forwarded replay.
+Existing views are restored normally, and unmarked requests and client-side
+state saving are unaffected.
 
 Each replay's status, headers, cookies and body are captured rather than written
 to the browser response, which is also shielded from `reset()`, `resetBuffer()`
@@ -56,31 +58,31 @@ of applied to the login response, preserving its session cookies.
 Saved form data is decoded with the request's character encoding, falling back
 to the servlet context's and then UTF-8.
 
-A Faces Ajax submission replayed in place (see below) stays an Ajax request:
-the saved partial request is replayed against the restored or rebuilt view, and its
-partial response is passed through to the waiting Ajax client, without a full
-page refresh. An expired server-side view is rebuilt from scratch, so the replay
-renders the whole view (`@all`) by default, which resynchronizes the page and
-the view state of all its forms with the server. Set the
+A Faces Ajax request with an expired server-side view stays an Ajax request and
+continues through the normal lifecycle without a full page refresh. The rebuilt
+view renders the whole view (`@all`) by default, which resynchronizes the page
+and the view state of all its forms with the server. Set the
 `org.apache.shiro.form-resubmit.ajax-render-all.disabled` context parameter to
 `true` to keep the form's own render targets instead; components outside them
-then keep their pre-expiry client state, and with Mojarra, other forms on the
-page keep their expired view state. A partial response that reports an
-unhandled Faces error is treated as a failed replay and falls back to a redirect
-to the saved request, as a failed full-page replay does. After a login flow,
-the browser is on the login page instead, so the submission is replayed as a
-full-page action and the browser is redirected to the saved request.
+then keep their pre-expiry client state. After a login flow, the browser is on
+the login page instead, so the submission is replayed as a full-page action and
+the browser is redirected to the saved request. Stateful saved forms lose their
+Ajax fields so the complete form is processed; stateless views and client-side
+state saving retain the fields to preserve partial execution. The forwarded
+request always hides the `Faces-Request` header.
 
 === Replay without a login flow
 
 When a POST arrives with a session id that no longer resolves to a session,
-and the subject is either remembered or anonymous, the form is replayed in
-place as soon as Shiro's security chain permits the request, with no
-"session expired" login page in between. For a page that requires login,
-the authentication filter still runs first and saves the form for replay
-after login instead. Only same-origin, `application/x-www-form-urlencoded`
-submissions are replayed, and never with client-side Faces state saving,
-where no view state is lost with the session.
+and the subject is either remembered or anonymous, the request continues in
+place as soon as Shiro's security chain permits it, with no "session expired"
+login page in between. Shiro marks the request so an expired server-side Faces
+view can be rebuilt, without consuming the request body or dispatching it
+again. For a page that requires login, the authentication filter still runs
+first and saves the form for replay after login instead. Only same-origin,
+`application/x-www-form-urlencoded` submissions are eligible, and client-side
+Faces state saving is unaffected because its view state is not lost with the
+session.
 
 Set the `org.apache.shiro.form-resubmit.anonymous.disabled` context parameter
 to `true` to limit this to remembered subjects, or
@@ -118,15 +120,16 @@ to the saved page.
 
 === Application filter configuration
 
-Shiro's Jakarta EE filter is mapped to `DispatcherType.FORWARD`, so the forwarded
-target's security chain runs again. Application filters needed during replay
-must also be mapped to `FORWARD`, not only `REQUEST`. Leave Shiro's
+Shiro's Jakarta EE filter is mapped to `DispatcherType.FORWARD`, so an
+after-login forwarded target's security chain runs again. Application filters
+needed during this replay must also be mapped to `FORWARD`, not only `REQUEST`.
+Leave Shiro's
 `filterOncePerRequest` disabled when using form resubmission.
 
-Replay remains in the same servlet request lifecycle. Application filters and
-request-scoped components should not assume that a replay starts a new external
-request. Saved targets must be within the current context; servlet-private
-`WEB-INF` and `META-INF` resources cannot be replay targets.
+After-login replay remains in the same servlet request lifecycle. Application
+filters and request-scoped components should not assume that a replay starts a
+new external request. Saved targets must be within the current context;
+servlet-private `WEB-INF` and `META-INF` resources cannot be replay targets.
 Response `reset()` does not support switching between a writer and an output stream.
 
 Resubmission is best-effort. Replays are buffered, so if the forward fails or

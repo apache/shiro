@@ -14,16 +14,18 @@
 package org.apache.shiro.ee.filters;
 
 import java.io.IOException;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.REBUILD_EXPIRED_VIEW;
 import jakarta.faces.application.ViewHandler;
 import jakarta.faces.application.ViewHandlerWrapper;
 import jakarta.faces.component.UIViewRoot;
 import jakarta.faces.context.FacesContext;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitAjaxRenderAllDisabled;
 import lombok.SneakyThrows;
 import org.omnifaces.util.ComponentsLocal;
 import org.omnifaces.util.FacesLocal;
 
 /**
- * Rebuilds expired server-side views only while Shiro is replaying a saved form.
+ * Rebuilds expired server-side views only for marked or replayed Shiro form submissions.
  */
 public class FormResubmitViewHandler extends ViewHandlerWrapper {
     public FormResubmitViewHandler(ViewHandler wrapped) {
@@ -34,9 +36,21 @@ public class FormResubmitViewHandler extends ViewHandlerWrapper {
     @SneakyThrows(IOException.class)
     public UIViewRoot restoreView(FacesContext context, String viewId) {
         var view = super.restoreView(context, viewId);
-        if (view == null && context.isPostback() && FormResubmitRequest.isResubmit(FacesLocal.getRequest(context))
+        var request = FacesLocal.getRequest(context);
+        boolean rebuildExpiredView = Boolean.TRUE.equals(request.getAttribute(REBUILD_EXPIRED_VIEW));
+        if (view == null && context.isPostback() && (FormResubmitRequest.isResubmit(request) || rebuildExpiredView)
                 && !FormResubmitSupport.isJSFClientStateSavingMethod(FacesLocal.getServletContext(context))) {
-            return ComponentsLocal.buildView(context, viewId);
+            if (rebuildExpiredView && context.getPartialViewContext().isAjaxRequest()
+                    && !isFormResubmitAjaxRenderAllDisabled(FacesLocal.getServletContext(context))) {
+                context.getPartialViewContext().setRenderAll(true);
+            }
+            boolean processingEvents = context.isProcessingEvents();
+            context.setProcessingEvents(true);
+            try {
+                return ComponentsLocal.buildView(context, viewId);
+            } finally {
+                context.setProcessingEvents(processingEvents);
+            }
         }
         return view;
     }
