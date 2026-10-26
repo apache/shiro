@@ -81,7 +81,7 @@ class FormResubmitViewHandlerTest {
     }
 
     @Test
-    void expiredReplayUsesOmniFacesViewBuilder() throws IOException {
+    void expiredReplayUsesOmniFacesViewBuilder() {
         replay();
         components.when(() -> ComponentsLocal.buildView(context, VIEW_ID)).thenReturn(view);
         assertThat(handler.restoreView(context, VIEW_ID)).isSameAs(view);
@@ -110,7 +110,7 @@ class FormResubmitViewHandlerTest {
     }
 
     @Test
-    void buildFailurePropagatesToReplayFallback() throws IOException {
+    void buildFailurePropagatesToReplayFallback() {
         replay();
         var failure = new IOException("Cannot build view");
         components.when(() -> ComponentsLocal.buildView(context, VIEW_ID)).thenThrow(failure);

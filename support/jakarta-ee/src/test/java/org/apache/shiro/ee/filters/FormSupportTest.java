@@ -273,9 +273,9 @@ class FormSupportTest {
     @Test
     void parseFormDataHonoursCharset() {
         assertThat(FormResubmitSupport.parseFormData("name=J%F6rg", StandardCharsets.ISO_8859_1))
-                .containsExactly(Map.entry("name", List.of("J\u00f6rg")));
+                .containsExactly(Map.entry("name", List.of("Jörg")));
         assertThat(FormResubmitSupport.parseFormData("name=J%C3%B6rg", StandardCharsets.UTF_8))
-                .containsExactly(Map.entry("name", List.of("J\u00f6rg")));
+                .containsExactly(Map.entry("name", List.of("Jörg")));
     }
 
     @Test
