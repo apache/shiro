@@ -138,9 +138,9 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
                 // but the pathPattern match "/resource/menus" can not match "resource/menus/"
                 // user can use requestURI + "/" to simply bypassed chain filter, to bypassed shiro protect
 
-                pathPattern = removeTrailingSlash(pathPattern);
+                String pathPatternNoTrailingSlash = removeTrailingSlash(pathPattern);
 
-                if (pathMatches(pathPattern, requestURINoTrailingSlash)) {
+                if (pathMatches(pathPatternNoTrailingSlash, requestURINoTrailingSlash)) {
                     if (LOGGER.isTraceEnabled()) {
                         LOGGER.trace("Matched path pattern [{}] for requestURI [{}].  "
                                 + "Utilizing corresponding filter chain...",

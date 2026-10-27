@@ -20,18 +20,23 @@ package org.apache.shiro.spring.config.web.autoconfigure;
 
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBeanPostProcessor;
+import org.apache.shiro.spring.web.SpringPathPatternMatcher;
 import org.apache.shiro.spring.web.config.AbstractShiroWebFilterConfiguration;
 import org.apache.shiro.web.servlet.AbstractShiroFilter;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Lazy;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @since 1.4.0
@@ -50,11 +55,22 @@ public class ShiroWebFilterConfiguration extends AbstractShiroWebFilterConfigura
      */
     public static final String FILTER_NAME = "shiroFilter";
 
+    @Autowired
+    protected ObjectProvider<RequestMappingHandlerMapping> handlerMappings;
+
     @Bean
     @ConditionalOnMissingBean
     @Override
     protected ShiroFilterFactoryBean shiroFilterFactoryBean() {
-        return super.shiroFilterFactoryBean();
+        ShiroFilterFactoryBean factoryBean = super.shiroFilterFactoryBean();
+        handlerMappings.orderedStream().map(RequestMappingHandlerMapping::getPatternParser).filter(Objects::nonNull)
+                .findFirst().ifPresent(parser -> {
+                    SpringPathPatternMatcher matcher = new SpringPathPatternMatcher(parser);
+                    matcher.setCaseInsensitive(caseInsensitive);
+                    factoryBean.getFilterChainDefinitionMap().keySet().forEach(matcher::validatePattern);
+                    factoryBean.setPathMatcher(matcher);
+                });
+        return factoryBean;
     }
 
     @Bean

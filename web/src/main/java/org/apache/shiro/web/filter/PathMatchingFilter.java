@@ -64,6 +64,14 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     protected Map<String, Object> appliedPaths = new LinkedHashMap<String, Object>();
 
     /**
+     * Sets the matcher used for this filter's configured paths.
+     * @param pathMatcher the path matcher
+     */
+    public void setPathMatcher(PatternMatcher pathMatcher) {
+        this.pathMatcher = pathMatcher;
+    }
+
+    /**
      * Splits any comma-delimited values that might be found in the <code>config</code> argument and sets the resulting
      * <code>String[]</code> array on the <code>appliedPaths</code> internal Map.
      * <p/>
