@@ -14,15 +14,8 @@
 package org.apache.shiro.ee.filters;
 
 import static org.apache.shiro.ee.cdi.ShiroScopeContext.addScopeSessionListeners;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.FORM_IS_RESUBMITTED;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.getPostData;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.isDirectResubmitCandidate;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.isLoginUrl;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.isPostRequest;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.normalizeSavedRequest;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.redirectToView;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.resubmitSavedForm;
-import org.apache.shiro.ee.filters.FormResubmitSupport.ReplayFlow;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.REBUILD_EXPIRED_VIEW;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.isViewRebuildCandidate;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.getCharacterEncoding;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isCharEncodingEnabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isShiroEEDisabled;
@@ -169,9 +162,9 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
                     log.debug("Create Session Failed", e);
                 }
                 var newSubject = wrapped.createSubject(context);
-                if (session == null && isDirectResubmitCandidate(newSubject, webContext.getServletRequest())) {
-                    log.debug("Subject {} without a session, form will be replayed", newSubject.getPrincipal());
-                    webContext.getServletRequest().setAttribute(FORM_IS_RESUBMITTED, Boolean.TRUE);
+                if (session == null && isViewRebuildCandidate(newSubject, webContext.getServletRequest())) {
+                    log.debug("Subject {} without a session, expired Faces view may be rebuilt", newSubject.getPrincipal());
+                    webContext.getServletRequest().setAttribute(REBUILD_EXPIRED_VIEW, Boolean.TRUE);
                 }
                 return newSubject;
             } else {
@@ -240,34 +233,7 @@ public class ShiroFilter extends org.apache.shiro.web.servlet.ShiroFilter {
             origChain.doFilter(request, response);
         } else {
             setCharacterEncodingIfNeeded(request);
-            // Replay only once the security chain has permitted the request, so that a denied request
-            // still saves its form for the login flow, with its body intact
-            super.executeChain(request, response, (chainRequest, chainResponse) -> {
-                if (Boolean.TRUE.equals(chainRequest.getAttribute(FORM_IS_RESUBMITTED))) {
-                    chainRequest.removeAttribute(FORM_IS_RESUBMITTED);
-                    if (isPostRequest(chainRequest) && !isLoginUrl(WebUtils.toHttp(chainRequest))) {
-                        resubmitForm(WebUtils.toHttp(chainRequest), WebUtils.toHttp(chainResponse));
-                        return;
-                    }
-                }
-                origChain.doFilter(chainRequest, chainResponse);
-            });
-        }
-    }
-
-    /**
-     * Replays the current POST, whose session has been lost, in place of the request's own processing
-     */
-    private static void resubmitForm(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
-        String postData = getPostData(httpRequest);
-        // never log the body itself: anonymous replays may carry credentials or other secrets
-        log.debug("Resubmitting POST to {} ({} bytes of form data)", httpRequest.getRequestURI(), postData.length());
-        // the raw request URI need not be canonical, nor start with the context path
-        String savedRequest = normalizeSavedRequest(Servlets.getRequestURIWithQueryString(httpRequest), httpRequest);
-        if (savedRequest == null) {
-            redirectToView(httpRequest, httpResponse);
-        } else {
-            resubmitSavedForm(postData, savedRequest, httpRequest, httpResponse, ReplayFlow.IN_PLACE);
+            super.executeChain(request, response, origChain);
         }
     }
 

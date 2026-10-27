@@ -20,8 +20,6 @@ import static org.apache.shiro.SecurityUtils.isSecurityManagerTypeOf;
 import static org.apache.shiro.SecurityUtils.unwrapSecurityManager;
 import static org.apache.shiro.ee.filters.FormAuthenticationFilter.LOGIN_URL_ATTR_NAME;
 import static jakarta.faces.component.behavior.ClientBehaviorContext.BEHAVIOR_SOURCE_PARAM_NAME;
-import static jakarta.faces.context.PartialViewContext.ALL_PARTIAL_PHASE_CLIENT_IDS;
-import static jakarta.faces.context.PartialViewContext.PARTIAL_RENDER_PARAM_NAME;
 import static jakarta.servlet.http.HttpServletResponse.SC_FOUND;
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.addCookie;
@@ -31,7 +29,6 @@ import static org.apache.shiro.ee.filters.FormResubmitSupportCookies.getCookieAg
 import org.apache.shiro.crypto.CryptoException;
 import org.apache.shiro.ee.filters.Forms.FallbackPredicate;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isAnonymousFormResubmitDisabled;
-import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitAjaxRenderAllDisabled;
 import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.isFormResubmitDisabled;
 import java.io.IOException;
 import java.net.URI;
@@ -53,7 +50,6 @@ import static org.apache.shiro.web.filter.authz.SslFilter.DEFAULT_HTTPS_PORT;
 import static org.apache.shiro.web.filter.authz.SslFilter.HTTPS_SCHEME;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import jakarta.faces.context.FacesContext;
 import jakarta.servlet.ServletContext;
@@ -75,9 +71,6 @@ import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.util.WebUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.ResourcePaths;
 import org.omnifaces.util.Servlets;
@@ -92,11 +85,10 @@ import org.omnifaces.util.Utils;
 public class FormResubmitSupport {
     static final String SHIRO_FORM_DATA_KEY = "org.apache.shiro.form-data-key";
     static final String SESSION_EXPIRED_PARAMETER = "org.apache.shiro.sessionExpired";
-    static final String FORM_IS_RESUBMITTED = "org.apache.shiro.form-is-resubmitted";
+    static final String REBUILD_EXPIRED_VIEW = "org.apache.shiro.rebuild-expired-view";
     static final String FORM_DATA_CACHE = "org.apache.shiro.form-data-cache";
     // encoded view state
     private static final String FACES_VIEW_STATE = "jakarta.faces.ViewState";
-    private static final Pattern STATEFUL_VIEW_STATE_PATTERN = Pattern.compile("-?\\d+:-?\\d+");
     private static final String FACES_PARTIAL_PREFIX = "jakarta.faces.partial.";
     private static final String FACES_BEHAVIOR_PREFIX = "jakarta.faces.behavior.";
     private static final String SEC_FETCH_SITE = "Sec-Fetch-Site";
@@ -113,61 +105,12 @@ public class FormResubmitSupport {
     }
 
     /**
-     * Where a saved form's replay is triggered from
-     */
-    enum ReplayFlow {
-        /** the browser is still on the saved form's page, whose submission found the session expired */
-        IN_PLACE,
-        /** the browser is on the login page, having just authenticated */
-        AFTER_LOGIN
-    }
-
-    /**
-     * How a saved Faces Ajax submission is replayed
-     */
-    enum AjaxReplay {
-        /** as a full-page submission of the same command, for a browser that isn't awaiting the partial response */
-        FULL_PAGE,
-        /** as-is, with its partial response passed through to the waiting Ajax client */
-        PASS_THROUGH,
-        /** passed through, re-rendering the whole rebuilt view so the page resynchronizes with the server */
-        RENDER_ALL;
-
-        /**
-         * @return the replay the original request calls for, before the saved form itself is considered
-         */
-        static AjaxReplay of(ReplayFlow flow, HttpServletRequest request) {
-            if (flow != ReplayFlow.IN_PLACE || !Servlets.isFacesAjaxRequest(request)) {
-                return FULL_PAGE;
-            }
-            return isFormResubmitAjaxRenderAllDisabled(request.getServletContext()) ? PASS_THROUGH : RENDER_ALL;
-        }
-
-        /**
-         * @return this replay narrowed to the saved form: only a Faces Ajax submission can be passed through,
-         * and a stateless view isn't rebuilt, so there is nothing to resynchronize
-         */
-        AjaxReplay forForm(boolean isPartialAjaxRequest, boolean isStateless) {
-            if (!isPartialAjaxRequest) {
-                return FULL_PAGE;
-            }
-            return isStateless && this == RENDER_ALL ? PASS_THROUGH : this;
-        }
-
-        boolean isPassThrough() {
-            return this != FULL_PAGE;
-        }
-    }
-
-    /**
      * Form fields prepared for replay
      *
      * @param result decoded form fields, by name
      * @param isPartialAjaxRequest whether the saved form was submitted via Faces Ajax
-     * @param ajaxReplay how the form is replayed
      */
-    record PartialAjaxResult(Map<String, List<String>> result, boolean isPartialAjaxRequest,
-                             AjaxReplay ajaxReplay) { }
+    record PartialAjaxResult(Map<String, List<String>> result, boolean isPartialAjaxRequest) { }
 
     static void savePostDataForResubmit(HttpServletRequest request, HttpServletResponse response, @NonNull String loginUrl) {
         if (isSavableForm(request) && isSecurityManagerTypeOf(getSecurityManager(), DefaultSecurityManager.class)) {
@@ -215,17 +158,17 @@ public class FormResubmitSupport {
     }
 
     /**
-     * Whether a POST that arrived without a session should be replayed in place, without a login flow,
-     * once the security chain permits it: for a remembered subject, or for an anonymous subject whose
-     * session has expired, i.e. the browser presented a session id that no longer resolves to a session.
-     * Only same-origin, form-encoded submissions are replayed, and only when server-side Faces view state
+     * Whether a POST that arrived without a session should rebuild its server-side Faces view during
+     * the request: for a remembered subject, or for an anonymous subject whose session has expired,
+     * i.e. the browser presented a session id that no longer resolves to a session.
+     * Only same-origin, form-encoded submissions are eligible, and only when server-side Faces view state
      * could have been lost with the session.
      *
      * @param subject the subject created for the request, without a session
      * @param request the current request
-     * @return true if the form should be replayed
+     * @return true if an expired server-side Faces view may be rebuilt
      */
-    static boolean isDirectResubmitCandidate(@NonNull Subject subject, ServletRequest request) {
+    static boolean isViewRebuildCandidate(@NonNull Subject subject, ServletRequest request) {
         if (!(request instanceof HttpServletRequest httpRequest) || !isSavableForm(httpRequest)) {
             return false;
         }
@@ -433,7 +376,7 @@ public class FormResubmitSupport {
             String formData = getSavedFormDataFromKey(savedFormDataKey, cache::set);
             try {
                 if (formData != null && resubmit && !isFormDataDiscarded(request)) {
-                    resubmitSavedForm(formData, savedRequest, request, response, ReplayFlow.AFTER_LOGIN);
+                    resubmitSavedForm(formData, savedRequest, request, response);
                     doRedirectAtEnd = false;
                 } else {
                     // nothing to submit, or the user chose to discard it: forget it either way
@@ -516,8 +459,8 @@ public class FormResubmitSupport {
      * @param savedRequest already validated by {@link #normalizeSavedRequest}
      */
     static void resubmitSavedForm(@NonNull String savedFormData, @NonNull String savedRequest,
-            HttpServletRequest originalRequest, HttpServletResponse originalResponse, ReplayFlow flow) {
-        if (!replaySavedForm(savedFormData, savedRequest, originalRequest, originalResponse, flow)) {
+            HttpServletRequest originalRequest, HttpServletResponse originalResponse) {
+        if (!replaySavedForm(savedFormData, savedRequest, originalRequest, originalResponse)) {
             doFacesRedirect(originalRequest, originalResponse, savedRequest);
         }
     }
@@ -526,7 +469,7 @@ public class FormResubmitSupport {
      * @return whether the response has been fully written
      */
     private static boolean replaySavedForm(String savedFormData, String savedRequest,
-            HttpServletRequest originalRequest, HttpServletResponse originalResponse, ReplayFlow flow) {
+            HttpServletRequest originalRequest, HttpServletResponse originalResponse) {
         if (FormResubmitRequest.isResubmit(originalRequest)) {
             log.debug("Recursive form resubmission, skipping replay");
             return false;
@@ -542,20 +485,16 @@ public class FormResubmitSupport {
         Servlets.setNoCacheHeaders(originalRequest, originalResponse);
         try {
             var savedFormFields = parseFormData(savedFormData, getFormCharset(originalRequest, servletContext));
-            PartialAjaxResult formData = prepareFormData(savedFormFields, dispatchPath, originalRequest,
-                    originalResponse, servletContext, AjaxReplay.of(flow, originalRequest));
+            boolean isStateless = isJSFClientStateSavingMethod(servletContext) || !isJSFStatefulForm(savedFormFields);
+            PartialAjaxResult formData = noJSFAjaxRequests(savedFormFields, isStateless);
             var response = new FormResubmitResponse(originalResponse);
-            forward(dispatchPath, originalRequest, response, HttpMethod.POST, formData.result, formData.ajaxReplay);
+            forward(dispatchPath, originalRequest, response, formData.result);
             if (isFailed(response.getStatus())) {
                 log.debug("Form resubmit to {} failed with status {}", dispatchPath, response.getStatus());
                 return false;
             }
-            if (formData.ajaxReplay.isPassThrough() && isPartialResponseError(response.getBufferAsString())) {
-                log.debug("Form resubmit to {} failed with a Faces Ajax error", dispatchPath);
-                return false;
-            }
             processResubmitResponse(response, originalRequest, originalResponse, savedRequest,
-                    formData.isPartialAjaxRequest, flow);
+                    formData.isPartialAjaxRequest);
         } catch (ServletException | IOException | RuntimeException e) {
             log.warn("Unable to resubmit form to {}", dispatchPath, e);
             return false;
@@ -568,15 +507,6 @@ public class FormResubmitSupport {
 
     private static boolean isFailed(int status) {
         return status != SC_OK && status != SC_FOUND;
-    }
-
-    /**
-     * Faces reports an unhandled exception in an Ajax request as a successful partial response that carries
-     * an error element, which would reach only the Ajax client's error callback.
-     * Such a replay is considered failed, so that it falls back to a redirect like a full-page one.
-     */
-    static boolean isPartialResponseError(@NonNull String responseBody) {
-        return Jsoup.parse(responseBody, Parser.xmlParser()).selectFirst("partial-response > error") != null;
     }
 
     /**
@@ -605,9 +535,9 @@ public class FormResubmitSupport {
      * @param path dispatch path already verified by {@link #replaySavedForm} to resolve to a dispatcher
      */
     private static void forward(String path, HttpServletRequest originalRequest, HttpServletResponse response,
-            String method, Map<String, List<String>> formFields, AjaxReplay ajaxReplay)
+            Map<String, List<String>> formFields)
             throws ServletException, IOException {
-        var request = new FormResubmitRequest(originalRequest, method, formFields, ajaxReplay);
+        var request = new FormResubmitRequest(originalRequest, formFields);
         var dispatcher = originalRequest.getServletContext().getRequestDispatcher(path);
         if (!hasFacesContext()) {
             dispatcher.forward(request, response);
@@ -656,29 +586,17 @@ public class FormResubmitSupport {
                 }).orElse(StandardCharsets.UTF_8);
     }
 
-    private static PartialAjaxResult prepareFormData(Map<String, List<String>> savedFormFields, String path,
-            HttpServletRequest request, HttpServletResponse response, ServletContext servletContext,
-            AjaxReplay ajaxReplay) throws IOException, ServletException {
-        boolean isStateless = isJSFClientStateSavingMethod(servletContext) || !isJSFStatefulForm(savedFormFields);
-        var formFields = new LinkedHashMap<>(savedFormFields);
-        if (!isStateless) {
-            refreshJSFViewState(path, request, response, formFields);
-        }
-        return noJSFAjaxRequests(formFields, isStateless, ajaxReplay);
-    }
-
     /**
      * Only a successful replay reaches the browser, with its headers and cookies.
-     * An Ajax replay's partial response is passed through to the Ajax client that submitted the form.
-     * Otherwise, the Ajax client is redirected to see the full-page replay's outcome.
+     * A saved Ajax submission redirects to the saved page after its action is replayed.
+     * Otherwise, the full-page replay's response body is returned.
      */
     private static void processResubmitResponse(FormResubmitResponse response, HttpServletRequest originalRequest,
-            HttpServletResponse originalResponse, String savedRequest, boolean isPartialAjaxRequest,
-            ReplayFlow flow) throws IOException {
+            HttpServletResponse originalResponse, String savedRequest, boolean isPartialAjaxRequest) throws IOException {
         int status = response.getStatus();
         response.applyTo(originalResponse);
         originalResponse.setStatus(status);
-        if (isPartialAjaxRequest && (status == SC_FOUND || flow == ReplayFlow.AFTER_LOGIN)) {
+        if (isPartialAjaxRequest) {
             doFacesRedirect(originalRequest, originalResponse, savedRequest);
         } else {
             originalResponse.getOutputStream().write(response.getBuffer());
@@ -705,59 +623,24 @@ public class FormResubmitSupport {
         return null;
     }
 
-    private static void refreshJSFViewState(String path, HttpServletRequest request,
-            HttpServletResponse response, Map<String, List<String>> formFields) throws IOException, ServletException {
-        // view-state GET headers and cookies stay captured and are never applied to the browser response
-        var htmlResponse = new FormResubmitResponse(response);
-        forward(path, request, htmlResponse, HttpMethod.GET, Map.of(), AjaxReplay.FULL_PAGE);
-        if (htmlResponse.getStatus() == SC_OK) {
-            Optional.ofNullable(extractJSFNewViewState(htmlResponse.getBufferAsString())).ifPresent(viewState -> {
-                log.debug("Replaced ViewState: {}", viewState);
-                formFields.put(FACES_VIEW_STATE, List.of(viewState));
-            });
-        }
-    }
-
-    /**
-     * @return view state of the first form in the rendered view, or null if there is none
-     */
-    static String extractJSFNewViewState(@NonNull String responseBody) {
-        Elements elts = Jsoup.parse(responseBody).select("input[name=%s]".formatted(FACES_VIEW_STATE));
-        return elts.isEmpty() ? null : Objects.requireNonNull(elts.first()).attr("value");
-    }
-
     /**
      * Turns a Faces Ajax submission into a full-page submission of the same command.
-     * The Ajax fields are only kept for stateless views, where they can't fail view state restoration.
+     * For a stateful view, its Ajax fields are removed so the complete form is processed and any expired view rebuilt.
+     * A stateless view can retain the Ajax fields and its partial execute.
      */
     static PartialAjaxResult noJSFAjaxRequests(Map<String, List<String>> formFields, boolean isStateless) {
-        return noJSFAjaxRequests(formFields, isStateless, AjaxReplay.FULL_PAGE);
-    }
-
-    /**
-     * Keeps a Faces Ajax submission intact when it's passed through to the waiting Ajax client,
-     * or when the view is stateless so the Ajax fields can't fail view state restoration.
-     * Otherwise, turns it into a full-page submission of the same command.
-     */
-    static PartialAjaxResult noJSFAjaxRequests(Map<String, List<String>> formFields, boolean isStateless,
-            AjaxReplay ajaxReplay) {
-        var fullForm = new LinkedHashMap<String, List<String>>();
+        var result = new LinkedHashMap<String, List<String>>();
+        boolean isPartialAjaxRequest = formFields.keySet().stream().anyMatch(FormResubmitSupport::isFacesAjaxField);
         formFields.forEach((name, values) -> {
-            if (!isFacesAjaxField(name)) {
-                fullForm.put(name, values);
+            if (isStateless || !isFacesAjaxField(name)) {
+                result.put(name, values);
             }
         });
-        boolean isPartialAjaxRequest = fullForm.size() != formFields.size();
-        var replay = ajaxReplay.forForm(isPartialAjaxRequest, isStateless);
-        var result = isStateless || replay.isPassThrough() ? new LinkedHashMap<>(formFields) : fullForm;
-        if (replay == AjaxReplay.RENDER_ALL) {
-            result.put(PARTIAL_RENDER_PARAM_NAME, List.of(ALL_PARTIAL_PHASE_CLIENT_IDS));
-        }
         // The source value becomes the submitted command's parameter name
         formFields.getOrDefault(BEHAVIOR_SOURCE_PARAM_NAME, List.of()).stream()
                 .filter(source -> !Utils.isEmpty(source)).findFirst()
                 .ifPresent(source -> result.putIfAbsent(source, List.of("")));
-        return new PartialAjaxResult(result, isPartialAjaxRequest, replay);
+        return new PartialAjaxResult(result, isPartialAjaxRequest);
     }
 
     private static boolean isFacesAjaxField(String name) {
@@ -767,7 +650,7 @@ public class FormResubmitSupport {
 
     static boolean isJSFStatefulForm(@NonNull Map<String, List<String>> formFields) {
         return formFields.getOrDefault(FACES_VIEW_STATE, List.of()).stream()
-                .anyMatch(viewState -> STATEFUL_VIEW_STATE_PATTERN.matcher(viewState).matches());
+                .anyMatch(viewState -> !viewState.isBlank() && !"stateless".equals(viewState));
     }
 
     static boolean isJSFClientStateSavingMethod(ServletContext servletContext) {

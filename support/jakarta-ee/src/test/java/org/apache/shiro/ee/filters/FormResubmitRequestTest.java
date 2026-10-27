@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.shiro.ee.filters.FormResubmitSupport.AjaxReplay;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,24 +47,13 @@ class FormResubmitRequestTest {
                 .thenReturn(Collections.enumeration(List.of("partial/ajax")));
     }
 
-    private FormResubmitRequest request(AjaxReplay ajaxReplay) {
-        return new FormResubmitRequest(login, "POST", Map.of(), ajaxReplay);
-    }
-
     @Test
     void facesRequestHeaderIsHiddenFromAllAccessorsOnFullPageReplay() {
-        var request = request(AjaxReplay.FULL_PAGE);
+        var request = new FormResubmitRequest(login, Map.of());
         assertThat(request.getHeader("Faces-Request")).isNull();
         assertThat(request.getHeader("faces-request")).isNull();
         assertThat(Collections.list(request.getHeaders("Faces-Request"))).isEmpty();
         assertThat(Collections.list(request.getHeaderNames())).containsExactly("Host");
     }
 
-    @Test
-    void facesRequestHeaderIsVisibleOnPassThroughReplay() {
-        var request = request(AjaxReplay.PASS_THROUGH);
-        assertThat(request.getHeader("Faces-Request")).isEqualTo("partial/ajax");
-        assertThat(Collections.list(request.getHeaders("Faces-Request"))).containsExactly("partial/ajax");
-        assertThat(Collections.list(request.getHeaderNames())).containsExactly("Faces-Request", "Host");
-    }
 }

@@ -15,7 +15,7 @@ package org.apache.shiro.ee.filters;
 
 import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_CLIENT;
 import static jakarta.faces.application.StateManager.STATE_SAVING_METHOD_PARAM_NAME;
-import static org.apache.shiro.ee.filters.FormResubmitSupport.isDirectResubmitCandidate;
+import static org.apache.shiro.ee.filters.FormResubmitSupport.isViewRebuildCandidate;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isFormUrlEncoded;
 import static org.apache.shiro.ee.filters.FormResubmitSupport.isSavableForm;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,11 +32,11 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 /**
- * Replaying a form in place, without a login flow, for remembered and anonymous subjects
+ * Rebuilding expired views without a login flow for remembered and anonymous subjects
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class DirectResubmitCandidateTest {
+class ViewRebuildCandidateTest {
     private static final String FORM_RESUBMIT_DISABLED_PARAM = "org.apache.shiro.form-resubmit.disabled";
     private static final String FORM_RESUBMIT_ANONYMOUS_DISABLED_PARAM = "org.apache.shiro.form-resubmit.anonymous.disabled";
 
@@ -59,68 +59,68 @@ class DirectResubmitCandidateTest {
     }
 
     @Test
-    void anonymousExpiredSessionIsReplayed() {
-        assertThat(isDirectResubmitCandidate(subject, request)).isTrue();
+    void anonymousExpiredSessionAllowsViewRebuild() {
+        assertThat(isViewRebuildCandidate(subject, request)).isTrue();
     }
 
     @Test
-    void anonymousWithoutPriorSessionIsNotReplayed() {
+    void anonymousWithoutPriorSessionDoesNotAllowViewRebuild() {
         when(request.getRequestedSessionId()).thenReturn(null);
-        assertThat(isDirectResubmitCandidate(subject, request)).isFalse();
+        assertThat(isViewRebuildCandidate(subject, request)).isFalse();
     }
 
     @Test
-    void rememberedIsReplayedEvenWithoutPriorSession() {
+    void rememberedAllowsViewRebuildEvenWithoutPriorSession() {
         when(request.getRequestedSessionId()).thenReturn(null);
         when(subject.isRemembered()).thenReturn(true);
-        assertThat(isDirectResubmitCandidate(subject, request)).isTrue();
+        assertThat(isViewRebuildCandidate(subject, request)).isTrue();
     }
 
     @Test
-    void anonymousReplayCanBeDisabled() {
+    void anonymousViewRebuildCanBeDisabled() {
         when(servletContext.getAttribute(FORM_RESUBMIT_ANONYMOUS_DISABLED_PARAM)).thenReturn(Boolean.TRUE);
-        assertThat(isDirectResubmitCandidate(subject, request)).isFalse();
+        assertThat(isViewRebuildCandidate(subject, request)).isFalse();
     }
 
     @Test
-    void anonymousDisablingKeepsRememberedReplay() {
+    void anonymousDisablingKeepsRememberedViewRebuild() {
         when(servletContext.getAttribute(FORM_RESUBMIT_ANONYMOUS_DISABLED_PARAM)).thenReturn(Boolean.TRUE);
         when(subject.isRemembered()).thenReturn(true);
-        assertThat(isDirectResubmitCandidate(subject, request)).isTrue();
+        assertThat(isViewRebuildCandidate(subject, request)).isTrue();
     }
 
     @Test
-    void globalDisablingStopsAllReplays() {
+    void globalDisablingStopsAllViewRebuilds() {
         when(servletContext.getAttribute(FORM_RESUBMIT_DISABLED_PARAM)).thenReturn(Boolean.TRUE);
-        assertThat(isDirectResubmitCandidate(subject, request)).isFalse();
+        assertThat(isViewRebuildCandidate(subject, request)).isFalse();
         when(subject.isRemembered()).thenReturn(true);
-        assertThat(isDirectResubmitCandidate(subject, request)).isFalse();
+        assertThat(isViewRebuildCandidate(subject, request)).isFalse();
     }
 
     @Test
-    void clientStateSavingNeedsNoReplay() {
+    void clientStateSavingNeedsNoViewRebuild() {
         when(servletContext.getInitParameter(STATE_SAVING_METHOD_PARAM_NAME)).thenReturn(STATE_SAVING_METHOD_CLIENT);
-        assertThat(isDirectResubmitCandidate(subject, request)).isFalse();
+        assertThat(isViewRebuildCandidate(subject, request)).isFalse();
     }
 
     @Test
-    void getIsNotReplayed() {
+    void getDoesNotAllowViewRebuild() {
         when(request.getMethod()).thenReturn("GET");
-        assertThat(isDirectResubmitCandidate(subject, request)).isFalse();
+        assertThat(isViewRebuildCandidate(subject, request)).isFalse();
     }
 
     @Test
-    void crossSitePostIsNotReplayed() {
+    void crossSitePostDoesNotAllowViewRebuild() {
         when(request.getHeader("Sec-Fetch-Site")).thenReturn("cross-site");
-        assertThat(isDirectResubmitCandidate(subject, request)).isFalse();
+        assertThat(isViewRebuildCandidate(subject, request)).isFalse();
     }
 
     @Test
-    void nonFormContentIsNotReplayed() {
+    void nonFormContentDoesNotAllowViewRebuild() {
         when(request.getContentType()).thenReturn("application/json");
-        assertThat(isDirectResubmitCandidate(subject, request)).isFalse();
+        assertThat(isViewRebuildCandidate(subject, request)).isFalse();
         when(request.getContentType()).thenReturn("multipart/form-data; boundary=xyz");
-        assertThat(isDirectResubmitCandidate(subject, request)).isFalse();
+        assertThat(isViewRebuildCandidate(subject, request)).isFalse();
     }
 
     @Test
