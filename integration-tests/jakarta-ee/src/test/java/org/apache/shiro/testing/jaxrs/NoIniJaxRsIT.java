@@ -94,6 +94,22 @@ public class NoIniJaxRsIT {
 
     @Test
     @OperateOnDeployment(TESTABLE_MODE)
+    void rolesViaInterface() {
+        assertEquals(Status.OK.getStatusCode(), createWebTarget("whoami/rolesViaInterface",
+                Credentials.builder().username("regular").password("meh").send(true).build())
+                .request().get().getStatus());
+    }
+
+    @Test
+    @OperateOnDeployment(TESTABLE_MODE)
+    void rolesViaInterfaceNotAllowed() {
+        assertEquals(Status.UNAUTHORIZED.getStatusCode(), createWebTarget("whoami/rolesViaInterface",
+                Credentials.builder().username("powerful").password("awesome").send(true).build())
+                .request().get().getStatus());
+    }
+
+    @Test
+    @OperateOnDeployment(TESTABLE_MODE)
     void otherRolesAllowed() {
         assertEquals(Status.OK.getStatusCode(), createWebTarget("whoami/otherRolesAllowed",
                 Credentials.builder().username("regular").password("meh").send(true).build())

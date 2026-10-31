@@ -32,6 +32,8 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * TODO - complete JavaDoc
@@ -107,25 +109,21 @@ public class AuthorizationAttributeSourceAdvisor extends StaticMethodMatcherPoin
     }
 
     private boolean isAuthzAnnotationPresent(Class<?> targetClazz) {
-        for (Class<? extends Annotation> annClass : AUTHZ_ANNOTATION_CLASSES) {
-            Annotation a = AnnotationUtils.findAnnotation(targetClazz, annClass);
-            if (a != null) {
-                AuthorizationConfigPolicy.validate(a);
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(AUTHZ_ANNOTATION_CLASSES)
+                .map(annotation -> AnnotationUtils.findAnnotation(targetClazz, annotation))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .map(AuthorizationConfigPolicy::validate)
+                .isPresent();
     }
 
     private boolean isAuthzAnnotationPresent(Method method) {
-        for (Class<? extends Annotation> annClass : AUTHZ_ANNOTATION_CLASSES) {
-            Annotation a = AnnotationUtils.findAnnotation(method, annClass);
-            if (a != null) {
-                AuthorizationConfigPolicy.validate(a);
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(AUTHZ_ANNOTATION_CLASSES)
+                .map(annotation -> AnnotationUtils.findAnnotation(method, annotation))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .map(AuthorizationConfigPolicy::validate)
+                .isPresent();
     }
 
 }

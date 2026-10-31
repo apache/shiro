@@ -19,25 +19,10 @@
 package org.apache.shiro.web.jaxrs;
 
 
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
-import org.apache.shiro.authz.annotation.RequiresGuest;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
-import org.apache.shiro.authz.annotation.RequiresUser;
-import org.apache.shiro.authz.aop.AuthenticatedAnnotationHandler;
+import org.apache.shiro.authz.aop.AuthorizationAnnotations;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler;
 import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler.AuthorizationConfigPolicy;
-import org.apache.shiro.authz.aop.DenyAllAnnotationHandler;
-import org.apache.shiro.authz.aop.GuestAnnotationHandler;
-import org.apache.shiro.authz.aop.PermissionAnnotationHandler;
-import org.apache.shiro.authz.aop.PermitAllAnnotationHandler;
-import org.apache.shiro.authz.aop.RoleAnnotationHandler;
-import org.apache.shiro.authz.aop.RolesAllowedAnnotationHandler;
-import org.apache.shiro.authz.aop.UserAnnotationHandler;
 
-import jakarta.annotation.security.DenyAll;
-import jakarta.annotation.security.PermitAll;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import java.io.IOException;
@@ -45,6 +30,7 @@ import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -62,32 +48,10 @@ public class AnnotationAuthorizationFilter implements ContainerRequestFilter {
                 new HashMap<AuthorizingAnnotationHandler, Annotation>(authzSpecs.size());
         for (Annotation authSpec : authzSpecs) {
             AuthorizationConfigPolicy.validate(authSpec);
-            authChecks.put(createHandler(authSpec), authSpec);
+            authChecks.put(AuthorizationAnnotations
+                    .createMethodInterceptors(null, List.of(authSpec.annotationType())).get(0).getHandler(), authSpec);
         }
         this.authzChecks = Collections.unmodifiableMap(authChecks);
-    }
-
-    private static AuthorizingAnnotationHandler createHandler(Annotation annotation) {
-        Class<?> t = annotation.annotationType();
-        if (RequiresPermissions.class.equals(t)) {
-            return new PermissionAnnotationHandler();
-        } else if (RequiresRoles.class.equals(t)) {
-            return new RoleAnnotationHandler();
-        } else if (RequiresUser.class.equals(t)) {
-            return new UserAnnotationHandler();
-        } else if (RequiresGuest.class.equals(t)) {
-            return new GuestAnnotationHandler();
-        } else if (RequiresAuthentication.class.equals(t)) {
-            return new AuthenticatedAnnotationHandler();
-        } else if (RolesAllowed.class.equals(t)) {
-            return new RolesAllowedAnnotationHandler();
-        } else if (PermitAll.class.equals(t)) {
-            return new PermitAllAnnotationHandler();
-        } else if (DenyAll.class.equals(t)) {
-            return new DenyAllAnnotationHandler();
-        } else {
-            throw new IllegalArgumentException("Cannot create a handler for the unknown for annotation " + t);
-        }
     }
 
     @Override

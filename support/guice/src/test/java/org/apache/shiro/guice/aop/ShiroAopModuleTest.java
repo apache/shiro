@@ -41,8 +41,11 @@ import org.apache.shiro.authz.aop.GuestAnnotationMethodInterceptor;
 import org.apache.shiro.authz.aop.PermissionAnnotationMethodInterceptor;
 import org.apache.shiro.authz.aop.RoleAnnotationMethodInterceptor;
 import org.apache.shiro.authz.aop.UserAnnotationMethodInterceptor;
+import org.apache.shiro.authz.aop.AuthorizingAnnotationHandler.AuthorizationConfigPolicy;
+import org.apache.shiro.config.ConfigurationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
@@ -55,14 +58,69 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.fail;
 
 
 
 public class ShiroAopModuleTest {
 
+    @RequiresRoles({})
+    public interface EmptyRoles {
+    }
+
+    public static class EmptyRolesService implements EmptyRoles {
+        public void operation() {
+        }
+    }
+
+    public static class EmptyPermissionsBase {
+        @RequiresPermissions({})
+        public void operation() {
+        }
+    }
+
+    public static class EmptyPermissionsService extends EmptyPermissionsBase {
+        @Override
+        public void operation() {
+        }
+    }
+
+    @Target({ElementType.TYPE, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @RequiresRoles({})
+    public @interface EmptyComposedRoles {
+    }
+
+    @EmptyComposedRoles
+    public static class EmptyComposedRolesService {
+        public void operation() {
+        }
+    }
+
     private Map<Class<? extends Annotation>, Method> protectedMethods;
     private Map<Class<? extends Annotation>, Class<? extends AnnotationMethodInterceptor>> interceptorTypes;
+
+    @Test
+    @ResourceLock("AuthorizationConfigPolicy.strictParsing")
+    void validatesHierarchyWhenMatchingSecuredClasses() {
+        boolean strictParsing = AuthorizationConfigPolicy.isStrictParsing();
+        try {
+            var bindings = Elements.getElements(new ShiroAopModule()).stream()
+                    .filter(InterceptorBinding.class::isInstance).map(InterceptorBinding.class::cast).toList();
+            for (Class<?> type : List.of(EmptyRolesService.class, EmptyPermissionsService.class,
+                    EmptyComposedRolesService.class)) {
+                AuthorizationConfigPolicy.setStrictParsing(false);
+                var matchingBindings = bindings.stream().filter(binding -> binding.getClassMatcher().matches(type)).toList();
+                assertThat(matchingBindings).isNotEmpty();
+                AuthorizationConfigPolicy.setStrictParsing(true);
+                matchingBindings.forEach(binding -> assertThatExceptionOfType(ConfigurationException.class)
+                        .isThrownBy(() -> binding.getClassMatcher().matches(type)));
+            }
+        } finally {
+            AuthorizationConfigPolicy.setStrictParsing(strictParsing);
+        }
+    }
 
     @Test
     void testGetAnnotationResolver() {
@@ -112,7 +170,7 @@ public class ShiroAopModuleTest {
     }
 
     @Test
-    void testBindShiroInterceptor() {
+    void testBindShiroInterceptor() throws NoSuchMethodException {
 
 
         ShiroAopModule underTest = new ShiroAopModule() {
@@ -126,29 +184,24 @@ public class ShiroAopModuleTest {
 
         for (Element element : elements) {
             if (element instanceof InterceptorBinding binding) {
-                assertThat(binding.getClassMatcher().matches(getClass())).isTrue();
-                Method method = null;
-                Class<? extends Annotation> theAnnotation = null;
-
-                for (Class<? extends Annotation> annotation : protectedMethods.keySet()) {
-                    if (binding.getMethodMatcher().matches(protectedMethods.get(annotation))) {
-                        method = protectedMethods.get(annotation);
-                        theAnnotation = annotation;
-                        protectedMethods.remove(annotation);
-                        break;
-                    }
-                }
-
+                List<MethodInterceptor> interceptors = binding.getInterceptors();
+                assertThat(interceptors).hasSize(1);
+                assertThat(interceptors.get(0)).isInstanceOf(AopAllianceMethodInterceptorAdapter.class);
+                AnnotationMethodInterceptor shiroInterceptor = (AnnotationMethodInterceptor)
+                        ((AopAllianceMethodInterceptorAdapter) interceptors.get(0)).shiroInterceptor;
+                Class<? extends Annotation> theAnnotation = shiroInterceptor.getHandler().getAnnotationClass();
+                Method method = protectedMethods.remove(theAnnotation);
                 if (method == null) {
                     fail("Did not expect interceptor binding " + binding.getInterceptors());
                 }
+                assertThat(interceptorTypes.get(theAnnotation).isInstance(shiroInterceptor)).isTrue();
 
-                List<MethodInterceptor> interceptors = binding.getInterceptors();
-                assertThat(interceptors).hasSize(1);
-                assertThat(interceptors.get(0) instanceof AopAllianceMethodInterceptorAdapter).isTrue();
-                assertThat(interceptorTypes.get(theAnnotation)
-                        .isInstance(((AopAllianceMethodInterceptorAdapter) interceptors.get(0)).shiroInterceptor)).isTrue();
-
+                // the class matcher gates on the annotation being present anywhere in the class hierarchy
+                assertThat(binding.getClassMatcher().matches(getClass())).isTrue();
+                assertThat(binding.getClassMatcher().matches(Object.class)).isFalse();
+                // every enhanceable method of a matched class is bound; the interceptor decides per invocation
+                assertThat(binding.getMethodMatcher().matches(method)).isTrue();
+                assertThat(binding.getMethodMatcher().matches(getClass().getMethod("setup"))).isTrue();
             }
         }
 

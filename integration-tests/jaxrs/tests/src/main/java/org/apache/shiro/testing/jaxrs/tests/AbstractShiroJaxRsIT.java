@@ -75,4 +75,21 @@ public abstract class AbstractShiroJaxRsIT {
         Arrays.stream(stormtroopers).forEach(stormtrooper
                 -> assertThat(stormtrooper.getStormtrooperId().getValue().startsWith("u")).isTrue());
     }
+
+    @Test
+    public void testInterfaceAnnotatedResourceUnauthenticated() {
+        final Response response = client.target(getBaseUri()).path("secured").request(MediaType.TEXT_PLAIN_TYPE)
+                .buildGet().invoke();
+        assertThat(response.getStatus()).isEqualTo(Status.UNAUTHORIZED.getStatusCode());
+    }
+
+    @Test
+    public void testInterfaceAnnotatedResourceAuthenticated() {
+        final String basicToken = Base64.getEncoder().encodeToString("root:secret".getBytes(StandardCharsets.UTF_8));
+        final Response response = client.target(getBaseUri()).path("secured").request(MediaType.TEXT_PLAIN_TYPE)
+                .header("Authorization", "Basic " + basicToken)
+                .buildGet().invoke();
+        assertThat(response.getStatus()).isEqualTo(Status.OK.getStatusCode());
+        assertThat(response.readEntity(String.class)).isEqualTo("root");
+    }
 }

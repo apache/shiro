@@ -51,6 +51,15 @@ public class UnprotectedFacade {
     @Inject
     ProtectedOneMethod protectedOneMethod;
 
+    @Inject
+    ProtectedViaInterfaceBean viaInterface;
+
+    @Inject
+    ProtectedViaInterfaceMethodBean viaInterfaceMethod;
+
+    @Inject
+    ProtectedViaSuperclassBean viaSuperclass;
+
     public void callFacesViewScoped() {
         try {
             Messages.addGlobalInfo(viewScoped.hello());
@@ -104,6 +113,30 @@ public class UnprotectedFacade {
             Messages.addGlobalInfo("protected method: {0}", protectedOneMethod.protectedMethod());
         } catch (UnauthenticatedException e) {
             Messages.addGlobalInfo("protected unauth: {0}", e.getMessage());
+        }
+    }
+
+    public void callViaInterface() {
+        try {
+            Messages.addGlobalInfo(viaInterface.hello());
+        } catch (UnauthenticatedException e) {
+            Messages.addGlobalInfo("via interface unauth: {0}", e.getMessage());
+        }
+    }
+
+    public void callViaInterfaceMethod() {
+        try {
+            Messages.addGlobalInfo("{0} / {1}", viaInterfaceMethod.unprotectedHello(), viaInterfaceMethod.hello());
+        } catch (UnauthenticatedException e) {
+            Messages.addGlobalInfo("via interface method unauth: {0}", e.getMessage());
+        }
+    }
+
+    public void callViaSuperclass() {
+        try {
+            Messages.addGlobalInfo(viaSuperclass.hello());
+        } catch (UnauthenticatedException e) {
+            Messages.addGlobalInfo("via superclass unauth: {0}", e.getMessage());
         }
     }
 
