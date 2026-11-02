@@ -68,6 +68,11 @@ jobs:
         jdk: [ 17, 21, 25 ]
         dist: [ 'temurin', 'semeru', 'zulu' ]
         exclude:
+          # Older supported JDKs are covered on Linux.
+          - { os: 'macOS-latest', jdk: 17 }
+          - { os: 'macOS-latest', jdk: 21 }
+          - { os: 'windows-latest', jdk: 17 }
+          - { os: 'windows-latest', jdk: 21 }
           # Zulu covers HotSpot on macOS and Windows; Semeru covers OpenJ9.
           - { os: 'macOS-latest', dist: 'temurin' }
           - { os: 'windows-latest', dist: 'temurin' }
