@@ -41,6 +41,9 @@ updates:
         patterns:
           - '*'
     ignore:
+      # RAT 0.18+ requires Java 17; 2.x supports Java 11.
+      - dependency-name: "org.apache.rat:apache-rat-plugin"
+        versions: [ ">=0.18" ]
       - dependency-name: "jakarta.platform:*"
         update-types: [ "version-update:semver-major" ]
       - dependency-name: "jakarta.activation:jakarta.activation-api"
