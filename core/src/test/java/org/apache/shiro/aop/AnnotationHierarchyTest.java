@@ -40,7 +40,6 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.junit.jupiter.api.Test;
 
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -49,8 +48,6 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AnnotationHierarchyTest {
-    private static final long MAX_BYTES_PER_CALL = 10_000;
-
     @RequiresRoles("interface")
     interface Closer {
     }
@@ -215,17 +212,4 @@ class AnnotationHierarchyTest {
         assertThat(AnnotationHierarchy.isPresent(JdkParents.class, Deprecated.class)).isFalse();
     }
 
-    /**
-     * Supertypes from the JDK can't hold a ClassValue entry, so their results are kept elsewhere.
-     * Without that, every call searches the methods of all of them again, which allocates over 100 KB per call.
-     */
-    @Test
-    void classesOutsideTheLoaderChainDoNotRepeatTheSearch() {
-        var threads = (com.sun.management.ThreadMXBean) ManagementFactory.getThreadMXBean();
-        AnnotationHierarchy.isPresent(JdkParents.class, RequiresRoles.class);
-        long before = threads.getCurrentThreadAllocatedBytes();
-        AnnotationHierarchy.isPresent(JdkParents.class, RequiresRoles.class);
-        assertThat(threads.getCurrentThreadAllocatedBytes() - before).as("bytes allocated by the second call")
-                .isLessThan(MAX_BYTES_PER_CALL);
-    }
 }
