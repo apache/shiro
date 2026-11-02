@@ -73,6 +73,7 @@
         <jacoco.skip>true</jacoco.skip>
         <!-- workaround for gmavenplus plugin until maven 4 is being used -->
         <maven.project.sourceRoots.warningsDisabled>true</maven.project.sourceRoots.warningsDisabled>
+        <maven.test.compile.skip>${maven.test.skip}</maven.test.compile.skip>
         <!--suppress CheckTagEmptyBody -->
         <surefire.argLine/>
         <!--suppress CheckTagEmptyBody -->
@@ -657,6 +658,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
+                    <skip>${maven.test.compile.skip}</skip>
                     <showWarnings>true</showWarnings>
                     <compilerArgs>
                         <arg>-Xlint:deprecation</arg>
@@ -739,6 +741,9 @@
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
+                <configuration>
+                    <skipTests>${maven.test.compile.skip}</skipTests>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
