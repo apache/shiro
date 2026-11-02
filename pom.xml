@@ -70,6 +70,7 @@
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2026-01-15T21:40:21Z</project.build.outputTimestamp>
         <rat.skip>false</rat.skip>
+        <version.apache-rat-plugin>0.17</version.apache-rat-plugin>
         <jacoco.skip>true</jacoco.skip>
         <!-- workaround for gmavenplus plugin until maven 4 is being used -->
         <maven.project.sourceRoots.warningsDisabled>true</maven.project.sourceRoots.warningsDisabled>
@@ -361,31 +362,31 @@
                         -->
                         <skip>true</skip>
                         <excludeSubProjects>false</excludeSubProjects>
-                        <excludes>
-                            <exclude>**/.externalToolBuilders/*</exclude>
-                            <exclude>**/infinitest.filters</exclude>
+                        <inputExcludes>
+                            <inputExclude>**/.externalToolBuilders/*</inputExclude>
+                            <inputExclude>**/infinitest.filters</inputExclude>
                             <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
-                            <exclude>velocity.log</exclude>
-                            <exclude>CONTRIBUTING.md</exclude>
-                            <exclude>AGENTS.md</exclude>
-                            <exclude>SECURITY.md</exclude>
-                            <exclude>**/README.md</exclude>
-                            <exclude>**/*.json</exclude>
-                            <exclude>**/spring.factories</exclude>
-                            <exclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</exclude>
-                            <exclude>**/spring.provides</exclude>
-                            <exclude>**/*.iml</exclude>
-                            <exclude>**/target/**</exclude>
-                            <exclude>**/nb-configuration.xml</exclude>
-                            <exclude>**/faces-config.NavData</exclude>
-                            <exclude>**/org.mockito.plugins.MockMaker</exclude>
-                            <exclude>**/.project</exclude>
-                            <exclude>**/.classpath</exclude>
-                            <exclude>**/.settings/*</exclude>
-                            <exclude>.github/linters/codespell.txt</exclude>
-                            <exclude>.mvn/*</exclude>
-                            <exclude>.jenkins_maven_args</exclude>
-                        </excludes>
+                            <inputExclude>velocity.log</inputExclude>
+                            <inputExclude>CONTRIBUTING.md</inputExclude>
+                            <inputExclude>AGENTS.md</inputExclude>
+                            <inputExclude>SECURITY.md</inputExclude>
+                            <inputExclude>**/README.md</inputExclude>
+                            <inputExclude>**/*.json</inputExclude>
+                            <inputExclude>**/spring.factories</inputExclude>
+                            <inputExclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</inputExclude>
+                            <inputExclude>**/spring.provides</inputExclude>
+                            <inputExclude>**/*.iml</inputExclude>
+                            <inputExclude>**/target/**</inputExclude>
+                            <inputExclude>**/nb-configuration.xml</inputExclude>
+                            <inputExclude>**/faces-config.NavData</inputExclude>
+                            <inputExclude>**/org.mockito.plugins.MockMaker</inputExclude>
+                            <inputExclude>**/.project</inputExclude>
+                            <inputExclude>**/.classpath</inputExclude>
+                            <inputExclude>**/.settings/*</inputExclude>
+                            <inputExclude>.github/linters/codespell.txt</inputExclude>
+                            <inputExclude>.mvn/*</inputExclude>
+                            <inputExclude>.jenkins_maven_args</inputExclude>
+                        </inputExcludes>
                     </configuration>
 <!--                This can be removed when RAT plugin is updated to use commons-lang3 3.20.0 or above -->
                     <dependencies>
@@ -1607,7 +1608,6 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
-                <version>0.18</version>
                 <inherited>false</inherited>
                 <!-- configuration is inherited from build/pluginManagement -->
                 <configuration>
