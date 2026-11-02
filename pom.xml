@@ -66,10 +66,10 @@
     </distributionManagement>
 
     <properties>
-        <shiro.previousVersion>2.0.0</shiro.previousVersion>
         <!-- Replaced by the build number plugin at build time: -->
         <buildNumber>${user.name}-${maven.build.timestamp}</buildNumber>
         <project.build.outputTimestamp>2026-01-15T21:40:21Z</project.build.outputTimestamp>
+        <rat.skip>false</rat.skip>
         <jacoco.skip>true</jacoco.skip>
         <!-- workaround for gmavenplus plugin until maven 4 is being used -->
         <maven.project.sourceRoots.warningsDisabled>true</maven.project.sourceRoots.warningsDisabled>
@@ -353,7 +353,14 @@
                     <groupId>org.apache.rat</groupId>
                     <artifactId>apache-rat-plugin</artifactId>
                     <configuration>
-                        <!-- note that this configuration needs to be maintained both in pluginManagement and reporting sections -->
+                        <!-- also applied to the RAT report in <reporting> -->
+                        <!--
+                            RAT is not thread-safe in parallel (-T / mvnd) builds (shared .gitignore parser and
+                            license matchers), so it is skipped in modules and runs once at the root,
+                            scanning the whole tree. This also covers command-line "apache-rat:check" runs.
+                        -->
+                        <skip>true</skip>
+                        <excludeSubProjects>false</excludeSubProjects>
                         <excludes>
                             <exclude>**/.externalToolBuilders/*</exclude>
                             <exclude>**/infinitest.filters</exclude>
@@ -463,15 +470,18 @@
                     <artifactId>japicmp-maven-plugin</artifactId>
                     <version>0.26.1</version>
                     <configuration>
+                        <!-- If specific old version is needed, uncomment the following and set the version to compare against
                         <oldVersion>
                             <dependency>
                                 <groupId>${project.groupId}</groupId>
                                 <artifactId>${project.artifactId}</artifactId>
-                                <version>${shiro.previousVersion}</version>
+                                <version>2.0.0</version>
                                 <type>jar</type>
                             </dependency>
                         </oldVersion>
+                        -->
                         <parameter>
+                            <oldVersionPattern>2\.0\.0</oldVersionPattern>
                             <onlyModified>true</onlyModified>
                             <breakBuildOnSourceIncompatibleModifications>true</breakBuildOnSourceIncompatibleModifications>
                             <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
@@ -621,6 +631,11 @@
             <plugin>
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
+                <!-- only run at the root, see pluginManagement -->
+                <inherited>false</inherited>
+                <configuration>
+                    <skip>${rat.skip}</skip>
+                </configuration>
                 <executions>
                     <execution>
                         <id>rat-check</id>
@@ -1593,35 +1608,10 @@
                 <groupId>org.apache.rat</groupId>
                 <artifactId>apache-rat-plugin</artifactId>
                 <version>0.18</version>
-                <!-- only run at the root -->
                 <inherited>false</inherited>
+                <!-- configuration is inherited from build/pluginManagement -->
                 <configuration>
-                    <!-- note that this configuration needs to be maintained both in pluginManagement and reporting sections -->
-                    <excludes>
-                        <exclude>**/.externalToolBuilders/*</exclude>
-                        <exclude>**/infinitest.filters</exclude>
-                        <!-- Apparently some test in samples/spring-client generates velocity log - would better to reconfigure to output to target/ -->
-                        <exclude>velocity.log</exclude>
-                        <exclude>CONTRIBUTING.md</exclude>
-                        <exclude>AGENTS.md</exclude>
-                        <exclude>SECURITY.md</exclude>
-                        <exclude>**/README.md</exclude>
-                        <exclude>**/*.json</exclude>
-                        <exclude>**/spring.factories</exclude>
-                        <exclude>**/org.springframework.boot.autoconfigure.AutoConfiguration.imports</exclude>
-                        <exclude>**/spring.provides</exclude>
-                        <exclude>**/*.iml</exclude>
-                        <exclude>**/target/**</exclude>
-                        <exclude>**/nb-configuration.xml</exclude>
-                        <exclude>**/faces-config.NavData</exclude>
-                        <exclude>**/.project</exclude>
-                        <exclude>**/.classpath</exclude>
-                        <exclude>**/.settings/*</exclude>
-                        <exclude>.github/linters/codespell.txt</exclude>
-                        <exclude>**/org.mockito.plugins.MockMaker</exclude>
-                        <exclude>.mvn/*</exclude>
-                        <exclude>.jenkins_maven_args</exclude>
-                    </excludes>
+                    <skip>${rat.skip}</skip>
                 </configuration>
             </plugin>
             <plugin>
