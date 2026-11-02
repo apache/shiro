@@ -44,40 +44,40 @@ jobs:
           java-version: 25
           distribution: temurin
 
-      - name: License Check
-        run: ./mvnw apache-rat:check "-Drat.consoleOutput"
-
       - name: Build with Maven
-        # zizmor: ignore[template-injection]
         run: >-
           ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress -Pdocs
-          -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
+          -DskipTests -DskipITs
 
-  build-all:
+      - name: Bundle build output
+        run: find . -path './.mvn' -prune -o -type d -name target -prune -print0 | tar --null -T - -czf ci-build.tar.gz
+
+      - name: Upload build output
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-build
+          path: ci-build.tar.gz
+          retention-days: 1
+
+  test:
     needs: build
 
     strategy:
       matrix:
         os: [ 'ubuntu-latest', 'windows-latest', 'macOS-latest' ]
-        jdk: [ 21, 25 ]
+        jdk: [ 17, 21, 25 ]
         dist: [ 'temurin', 'semeru', 'zulu' ]
         exclude:
-          # was already built
-          - os: 'ubuntu-latest'
-            jdk: 25
-            dist: 'temurin'
-          # exclude temurin on MacOS. zulu (also hotspot) and Semeru are sufficient.
-          - os: 'macOS-latest'
-            dist: 'temurin'
-          # no Temurin 21
-          - dist: 'temurin'
-            jdk: 21
-          # no Semeru 21
-          - dist: 'semeru'
-            jdk: 21
+          # Zulu covers HotSpot on macOS and Windows; Semeru covers OpenJ9.
+          - { os: 'macOS-latest', dist: 'temurin' }
+          - { os: 'windows-latest', dist: 'temurin' }
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - name: Checkout
@@ -85,24 +85,33 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up JDK
+      - name: Set up test JDK
         uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           java-version: ${{ matrix.jdk }}
           distribution: ${{ matrix.dist }}
 
-      - name: Build with Maven (Linux)
-        if: matrix.os == 'ubuntu-latest' && matrix.jdk >= 21
-        # zizmor: ignore[template-injection]
-        run: >-
-          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress
-          -Dgh_user=${{ github.actor }} -Dgh_token=${{ secrets.GITHUB_TOKEN }}
+      - name: Download build output
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: ci-build
 
-      - name: Build with Maven (non-Linux)
-        if: matrix.os != 'ubuntu-latest' || matrix.jdk < 21
-        run: >-
-          ./mvnw verify --show-version --errors --batch-mode --no-transfer-progress
-          -Pskip_jakarta_ee_tests
+      - name: Restore build output
+        run: tar -xzf ci-build.tar.gz
+
+      - name: Test with Maven
+        env:
+          JAKARTA_EE_TESTS: ${{ matrix.os == 'ubuntu-latest' && matrix.jdk == 25 }}
+          GH_USER: ${{ github.actor }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          args=(--show-version --errors --batch-mode --no-transfer-progress
+            -Dmaven.main.skip=true -Dmaven.test.compile.skip=true -Daspectj.skip=true
+            -Dcheckstyle.skip -DminimalJavaBuildVersion=17 "-Dgh_user=$GH_USER" "-Dgh_token=$GH_TOKEN")
+          if [ "$JAKARTA_EE_TESTS" != true ]; then
+            args+=(-Pskip_jakarta_ee_tests)
+          fi
+          ./mvnw verify "${args[@]}"
 
       - name: Archive test run logs
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

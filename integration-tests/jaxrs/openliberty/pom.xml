@@ -34,6 +34,7 @@
 
     <properties>
         <module.name>its.jaxrs.openliberty</module.name>
+        <liberty.start.skip>${skipITs}</liberty.start.skip>
         <liberty.var.default.http.port>9080</liberty.var.default.http.port>
         <liberty.var.default.https.port>9443</liberty.var.default.https.port>
         <liberty.var.app.filename>shiro-its-jaxrs-app-${project.version}</liberty.var.app.filename>
@@ -62,6 +63,7 @@
                 <artifactId>liberty-maven-plugin</artifactId>
                 <version>3.12.4</version>
                 <configuration>
+                    <skip>${liberty.start.skip}</skip>
                     <serverName>shiro-its-jaxrs-openliberty</serverName>
                     <features>
                         <acceptLicense>true</acceptLicense>
