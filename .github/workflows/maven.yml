@@ -43,6 +43,7 @@ jobs:
         with:
           java-version: 25
           distribution: temurin
+          cache: maven
 
       - name: Build with Maven
         run: >-
@@ -95,6 +96,7 @@ jobs:
         with:
           java-version: ${{ matrix.jdk }}
           distribution: ${{ matrix.dist }}
+          cache: maven
 
       - name: Download build output
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
