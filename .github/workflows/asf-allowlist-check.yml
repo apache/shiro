@@ -31,4 +31,4 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: apache/infrastructure-actions/allowlist-check@d3a005f07dd94a34d11361b0287b0c1fdc6d55f5 # main
+      - uses: apache/infrastructure-actions/allowlist-check@b41ca1cbe4d8a214dea50788a0e037184a69ad3f # main
