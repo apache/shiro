@@ -130,7 +130,7 @@
         <groovy.version>6.0.0</groovy.version>
         <junit.version>6.1.3</junit.version>
         <junit.server.jetty.version>3.5.0</junit.server.jetty.version>
-        <hibernate.version>7.4.13.Final</hibernate.version>
+        <hibernate.version>7.4.14.Final</hibernate.version>
         <taglibs.standard.version>1.2.5</taglibs.standard.version>
         <lombok.version>1.18.48</lombok.version>
         <!-- modules using Lombok set delombok.phase=prepare-package and javadoc.sourcepath=${javadoc.delombok.sourcepath} -->
@@ -429,7 +429,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.15</version>
+                    <version>0.8.16</version>
                 </plugin>
                 <plugin>
                     <groupId>com.mycila</groupId>
@@ -552,7 +552,7 @@
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>
                             <artifactId>checkstyle</artifactId>
-                            <version>14.3.0</version>
+                            <version>14.4.0</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -1151,12 +1151,12 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.6.5</version>
+                <version>1.6.6</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.6.5</version>
+                <version>1.6.6</version>
             </dependency>
 
             <dependency>
