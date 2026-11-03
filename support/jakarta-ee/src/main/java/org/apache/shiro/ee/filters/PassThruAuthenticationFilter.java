@@ -56,7 +56,7 @@ public class PassThruAuthenticationFilter extends org.apache.shiro.web.filter.au
         public boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
             return PassThruAuthenticationFilter.super.preHandle(request, response);
         }
-    };
+    }
 
     public PassThruAuthenticationFilter() {
         delegate = new AuthenticationFilterDelegate(new Methods());
