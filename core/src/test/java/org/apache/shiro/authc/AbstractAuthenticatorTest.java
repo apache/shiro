@@ -30,7 +30,6 @@ import org.junit.jupiter.api.parallel.Isolated;
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.replay;
@@ -159,18 +158,10 @@ public class AbstractAuthenticatorTest {
         mockListener.onFailure(token, ae);
         replay(mockListener);
 
-        boolean exceptionThrown = false;
-        try {
-            abstractAuthenticator.authenticate(token);
-        } catch (AuthenticationException e) {
-            exceptionThrown = true;
-            assertThat(ae).isEqualTo(e);
-        }
+        assertThatExceptionOfType(AuthenticationException.class)
+                .isThrownBy(() -> abstractAuthenticator.authenticate(token))
+                .isEqualTo(ae);
         verify(mockListener);
-
-        if (!exceptionThrown) {
-            fail("An AuthenticationException should have been thrown during the notifyFailure test case.");
-        }
     }
 
     @Test
@@ -201,11 +192,8 @@ public class AbstractAuthenticatorTest {
         };
         AuthenticationToken token = newToken();
 
-        try {
-            abstractAuthenticator.authenticate(token);
-            fail("the expected AuthenticationException was not thrown");
-        } catch (AuthenticationException ignored) {
-        }
+        assertThatExceptionOfType(AuthenticationException.class)
+                .isThrownBy(() -> abstractAuthenticator.authenticate(token));
 
         String logMsg = String.join("\n", listAppender.getMessages());
         assertThat(logMsg).contains("WARN");
