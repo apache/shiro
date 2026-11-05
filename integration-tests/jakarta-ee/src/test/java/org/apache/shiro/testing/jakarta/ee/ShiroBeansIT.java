@@ -194,6 +194,6 @@ public class ShiroBeansIT {
 
     @Deployment(testable = false, name = DEPLOYMENT_DEV_MODE)
     public static WebArchive createDeployment() {
-        return ShiroAuthFormsIT.createDeploymentDev("shiro-beans-test.war");
+        return ShiroAuthFormsIT.createDeploymentDev("shiro-beans-test");
     }
 }

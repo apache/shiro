@@ -233,6 +233,6 @@ public class FacesTagsIT {
 
     @Deployment(testable = false, name = DEPLOYMENT_DEV_MODE)
     public static WebArchive createDeployment() {
-        return createDeploymentDev("shiro-facelet-tags.war");
+        return createDeploymentDev("shiro-facelet-tags");
     }
 }

@@ -161,6 +161,6 @@ public class NoIniJaxRsIT {
 
     @Deployment(name = TESTABLE_MODE)
     public static WebArchive createDeployment() {
-        return ComponentInjectionIT.createDeployment("no-ini-jaxrs.war");
+        return ComponentInjectionIT.createDeployment("no-ini-jaxrs");
     }
 }

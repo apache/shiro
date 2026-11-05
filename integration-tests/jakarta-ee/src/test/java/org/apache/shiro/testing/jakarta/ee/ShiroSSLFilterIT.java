@@ -63,6 +63,6 @@ public class ShiroSSLFilterIT {
 
     @Deployment(testable = false, name = DEPLOYMENT_PROD_MODE)
     public static WebArchive createDeploymentProd() {
-        return ShiroAuthFormsIT.createDeploymentProd("ShiroSSLFilterTest-prod.war");
+        return ShiroAuthFormsIT.createDeploymentProd("ShiroSSLFilterTest-prod");
     }
 }

@@ -39,9 +39,7 @@ import static org.jboss.arquillian.graphene.Graphene.waitGui;
 
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.archive.importer.MavenImporter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -437,13 +435,11 @@ public class ShiroAuthFormsIT {
 
     @Deployment(testable = false, name = DEPLOYMENT_DEV_MODE)
     public static WebArchive createDeployment() {
-        return createDeploymentDev("shiro-auth-forms.war");
+        return createDeploymentDev("shiro-auth-forms");
     }
 
     static WebArchive createDeploymentDev(String archiveName) {
-        WebArchive archive = ShrinkWrap.create(MavenImporter.class, archiveName)
-                .loadPomFromFile("pom.xml").importBuildOutput()
-                .as(WebArchive.class)
+        var archive = ShrinkWrapManipulator.<WebArchive>createDeployment(name -> "%s-%s".formatted(name, archiveName))
                 .deletePackage("org.apache.shiro.testing.jaxrs");
         new ShrinkWrapManipulator().webXmlXPath(archive, standardActions);
         return archive;
@@ -451,13 +447,11 @@ public class ShiroAuthFormsIT {
 
     @Deployment(testable = false, name = DEPLOYMENT_PROD_MODE)
     public static WebArchive createDeploymentProd() {
-        return createDeploymentProd("shiro-auth-forms-prod.war");
+        return createDeploymentProd("shiro-auth-forms-prod");
     }
 
     static WebArchive createDeploymentProd(String archiveName) {
-        WebArchive archive = ShrinkWrap.create(MavenImporter.class, archiveName)
-                .loadPomFromFile("pom.xml").importBuildOutput()
-                .as(WebArchive.class)
+        var archive = ShrinkWrapManipulator.<WebArchive>createDeployment(name -> "%s-%s".formatted(name, archiveName))
                 .deletePackage("org.apache.shiro.testing.jaxrs");
         var productionList = List.of(new Action(
                 getContextParamValue("jakarta.faces.PROJECT_STAGE"),
