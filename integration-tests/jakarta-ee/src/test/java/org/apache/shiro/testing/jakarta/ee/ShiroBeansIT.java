@@ -18,14 +18,14 @@ import java.net.URL;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_DEV_MODE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.apache.shiro.testing.jakarta.ee.pages.LoginPage;
+import org.apache.shiro.testing.jakarta.ee.pages.ManyBeansPage;
+import org.apache.shiro.testing.jakarta.ee.pages.SessionControls;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 
-import static org.jboss.arquillian.graphene.Graphene.guardAjax;
-import static org.jboss.arquillian.graphene.Graphene.guardHttp;
-import static org.jboss.arquillian.graphene.Graphene.waitGui;
-
+import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -36,9 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 /**
  * Protected EJB/CDI beans tests
@@ -53,47 +51,14 @@ public class ShiroBeansIT {
     @ArquillianResource
     protected URL baseURL;
 
-    @FindBy(id = "form:facesViewScoped")
-    private WebElement facesViewScoped;
+    @Page
+    private LoginPage loginPage;
 
-    @FindBy(id = "form:omniViewScoped")
-    private WebElement omniViewScoped;
+    @Page
+    private ManyBeansPage manyBeansPage;
 
-    @FindBy(id = "form:sessionScoped")
-    private WebElement sessionScoped;
-
-    @FindBy(id = "form:stateless")
-    private WebElement stateless;
-
-    @FindBy(id = "form:unprotected")
-    private WebElement unprotectedMethod;
-
-    @FindBy(id = "form:protected")
-    private WebElement protectedMethod;
-
-    @FindBy(id = "form:viaInterface")
-    private WebElement viaInterface;
-
-    @FindBy(id = "form:viaInterfaceMethod")
-    private WebElement viaInterfaceMethod;
-
-    @FindBy(id = "form:viaSuperclass")
-    private WebElement viaSuperclass;
-
-    @FindBy(id = "invalidate")
-    private WebElement invalidateSession;
-
-    @FindBy(id = "form:messages")
-    private WebElement messages;
-
-    @FindBy(id = "username")
-    private WebElement username;
-
-    @FindBy(id = "password")
-    private WebElement password;
-
-    @FindBy(id = "login")
-    private WebElement login;
+    @FindBy(tagName = "body")
+    private SessionControls session;
 
     @BeforeEach
     void deleteAllCookies() {
@@ -104,25 +69,26 @@ public class ShiroBeansIT {
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void checkDontCallWhenNotAuth() {
-        webDriver.get(baseURL + "shiro/unprotected/manybeans");
-        guardAjax(facesViewScoped).click();
-        assertThat(messages.getText()).startsWith("view scope unauth: Attempting to perform a user-only operation");
-        guardAjax(omniViewScoped).click();
-        assertThat(messages.getText()).startsWith("omni view scope unauth: Attempting to perform a user-only operation");
-        guardAjax(sessionScoped).click();
-        assertThat(messages.getText()).startsWith("session scoped unauth: Attempting to perform a user-only operation");
-        guardAjax(stateless).click();
-        assertThat(messages.getText()).startsWith("stateless bean unauth: Attempting to perform a user-only operation");
-        guardAjax(unprotectedMethod).click();
-        assertThat(messages.getText()).isEqualTo("unprotected method: hello from unprotected");
-        guardAjax(protectedMethod).click();
-        assertThat(messages.getText()).startsWith("protected unauth: Attempting to perform a user-only operation");
-        guardAjax(viaInterface).click();
-        assertThat(messages.getText()).startsWith("via interface unauth: Attempting to perform a user-only operation");
-        guardAjax(viaInterfaceMethod).click();
-        assertThat(messages.getText()).startsWith("via interface method unauth: Attempting to perform a user-only operation");
-        guardAjax(viaSuperclass).click();
-        assertThat(messages.getText()).startsWith("via superclass unauth: Attempting to perform a user-only operation");
+        manyBeansPage.goTo();
+        manyBeansPage.callFacesViewScoped();
+        assertThat(manyBeansPage.message()).startsWith("view scope unauth: Attempting to perform a user-only operation");
+        manyBeansPage.callOmniViewScoped();
+        assertThat(manyBeansPage.message()).startsWith("omni view scope unauth: Attempting to perform a user-only operation");
+        manyBeansPage.callSessionScoped();
+        assertThat(manyBeansPage.message()).startsWith("session scoped unauth: Attempting to perform a user-only operation");
+        manyBeansPage.callStateless();
+        assertThat(manyBeansPage.message()).startsWith("stateless bean unauth: Attempting to perform a user-only operation");
+        manyBeansPage.callUnprotectedMethod();
+        assertThat(manyBeansPage.message()).isEqualTo("unprotected method: hello from unprotected");
+        manyBeansPage.callProtectedMethod();
+        assertThat(manyBeansPage.message()).startsWith("protected unauth: Attempting to perform a user-only operation");
+        manyBeansPage.callViaInterface();
+        assertThat(manyBeansPage.message()).startsWith("via interface unauth: Attempting to perform a user-only operation");
+        manyBeansPage.callViaInterfaceMethod();
+        assertThat(manyBeansPage.message())
+                .startsWith("via interface method unauth: Attempting to perform a user-only operation");
+        manyBeansPage.callViaSuperclass();
+        assertThat(manyBeansPage.message()).startsWith("via superclass unauth: Attempting to perform a user-only operation");
         webDriver.get(baseURL + "lastException");
         String exceptionText = webDriver.findElement(By.tagName("body")).getText();
         assertThat(exceptionText).startsWith(
@@ -132,50 +98,48 @@ public class ShiroBeansIT {
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void checkCallWhenAuth() {
-        webDriver.get(baseURL + "shiro/auth/loginform");
-        login();
+        loginPage.goTo();
+        loginPage.login();
 
-        webDriver.get(baseURL + "shiro/unprotected/manybeans");
-        guardAjax(facesViewScoped).click();
-        assertThat(messages.getText()).startsWith("Hello from FacesViewScoped");
-        guardAjax(omniViewScoped).click();
-        assertThat(messages.getText()).startsWith("Hello from OmniViewScoped");
-        guardAjax(sessionScoped).click();
-        assertThat(messages.getText()).startsWith("Hello from SessionScoped");
-        guardAjax(stateless).click();
-        assertThat(messages.getText()).startsWith("Hello from ProtectedStatelessBean");
-        guardAjax(protectedMethod).click();
-        assertThat(messages.getText()).isEqualTo("protected method: hello from protected");
-        guardAjax(viaInterface).click();
-        assertThat(messages.getText()).isEqualTo("Hello from ProtectedViaInterfaceBean");
-        guardAjax(viaInterfaceMethod).click();
-        assertThat(messages.getText()).isEqualTo("Unprotected hello from ProtectedViaInterfaceMethodBean"
+        manyBeansPage.goTo();
+        manyBeansPage.callFacesViewScoped();
+        assertThat(manyBeansPage.message()).startsWith("Hello from FacesViewScoped");
+        manyBeansPage.callOmniViewScoped();
+        assertThat(manyBeansPage.message()).startsWith("Hello from OmniViewScoped");
+        manyBeansPage.callSessionScoped();
+        assertThat(manyBeansPage.message()).startsWith("Hello from SessionScoped");
+        manyBeansPage.callStateless();
+        assertThat(manyBeansPage.message()).startsWith("Hello from ProtectedStatelessBean");
+        manyBeansPage.callProtectedMethod();
+        assertThat(manyBeansPage.message()).isEqualTo("protected method: hello from protected");
+        manyBeansPage.callViaInterface();
+        assertThat(manyBeansPage.message()).isEqualTo("Hello from ProtectedViaInterfaceBean");
+        manyBeansPage.callViaInterfaceMethod();
+        assertThat(manyBeansPage.message()).isEqualTo("Unprotected hello from ProtectedViaInterfaceMethodBean"
                 + " / Hello from ProtectedViaInterfaceMethodBean");
-        guardAjax(viaSuperclass).click();
-        assertThat(messages.getText()).isEqualTo("Hello from ProtectedViaSuperclassBean");
+        manyBeansPage.callViaSuperclass();
+        assertThat(manyBeansPage.message()).isEqualTo("Hello from ProtectedViaSuperclassBean");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void beanDestroyCalled() {
-        exerciseViewAndSessionScoped(facesViewScoped, "api/statistics/pc_fv", "api/statistics/pd_fv");
+        exerciseViewAndSessionScoped(manyBeansPage::callFacesViewScoped, "api/statistics/pc_fv", "api/statistics/pd_fv");
         webDriver.get(baseURL + "api/statistics/clear");
-        exerciseViewAndSessionScoped(omniViewScoped, "api/statistics/pc_ofv", "api/statistics/pd_ofv");
+        exerciseViewAndSessionScoped(manyBeansPage::callOmniViewScoped, "api/statistics/pc_ofv", "api/statistics/pd_ofv");
     }
 
-    private void exerciseViewAndSessionScoped(WebElement elem, String createStatistic, String destroyStatistic) {
-        webDriver.get(baseURL + "shiro/auth/loginform");
-        login();
+    private void exerciseViewAndSessionScoped(Runnable callBean, String createStatistic, String destroyStatistic) {
+        loginPage.goTo();
+        loginPage.login();
 
-        webDriver.get(baseURL + "shiro/unprotected/manybeans");
-        guardAjax(elem).click();
+        manyBeansPage.goTo();
+        callBean.run();
         webDriver.navigate().refresh();
-        guardAjax(elem).click();
-        guardAjax(sessionScoped).click();
+        callBean.run();
+        manyBeansPage.callSessionScoped();
 
-        invalidateSession.click();
-        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
-        webDriver.switchTo().alert().accept();
+        session.invalidateSession();
         webDriver.get(baseURL + createStatistic);
         assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("2");
         webDriver.get(baseURL + destroyStatistic);
@@ -186,14 +150,8 @@ public class ShiroBeansIT {
         assertThat(webDriver.findElement(By.tagName("body")).getText()).isEqualTo("1");
     }
 
-    private void login() {
-        username.sendKeys("webuser");
-        password.sendKeys("webpwd");
-        guardHttp(login).click();
-    }
-
     @Deployment(testable = false, name = DEPLOYMENT_DEV_MODE)
     public static WebArchive createDeployment() {
-        return ShiroAuthFormsIT.createDeploymentDev("shiro-beans-test.war");
+        return ShiroAuthFormsIT.createDeploymentDev("shiro-beans-test");
     }
 }
