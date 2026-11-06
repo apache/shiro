@@ -18,11 +18,13 @@ import static org.jboss.arquillian.graphene.Graphene.guardAjax;
 import java.net.URL;
 
 import org.jboss.arquillian.drone.api.annotation.Drone;
+import org.jboss.arquillian.graphene.page.Location;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+@Location("shiro/unprotected/manybeans")
 public class ManyBeansPage {
     @Drone
     private WebDriver webDriver;

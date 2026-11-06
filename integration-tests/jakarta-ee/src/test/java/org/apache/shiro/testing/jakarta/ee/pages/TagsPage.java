@@ -16,11 +16,13 @@ package org.apache.shiro.testing.jakarta.ee.pages;
 import java.net.URL;
 
 import org.jboss.arquillian.drone.api.annotation.Drone;
+import org.jboss.arquillian.graphene.page.Location;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+@Location("shiro/unprotected/tags")
 public class TagsPage {
     @Drone
     private WebDriver webDriver;
