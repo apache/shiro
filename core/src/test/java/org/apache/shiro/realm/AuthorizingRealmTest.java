@@ -48,6 +48,8 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 
 
@@ -56,6 +58,7 @@ import org.junit.jupiter.api.Test;
  * <p/>
  * TODO - this could/should be expanded to be more robust end to end test for the AuthorizingRealm
  */
+@ResourceLock(value = "AuthorizationConfigPolicy.strictParsing", mode = ResourceAccessMode.READ)
 public class AuthorizingRealmTest {
 
     private static final String USERNAME = "testuser";
