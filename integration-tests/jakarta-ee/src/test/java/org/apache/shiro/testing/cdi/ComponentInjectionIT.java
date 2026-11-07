@@ -39,6 +39,7 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Tests @Injecting Subject, Session, Principal and SecurityManager with CDI
@@ -111,11 +112,11 @@ public class ComponentInjectionIT {
 
     @Deployment(name = TESTABLE_MODE)
     public static WebArchive createDeployment() {
-        return createDeployment("security-manager-injection.war");
+        return createDeployment("security-manager-injection");
     }
 
     public static WebArchive createDeployment(String archive) {
-        var webArchive = ShrinkWrap.create(WebArchive.class, archive)
+        var webArchive = ShrinkWrap.create(WebArchive.class, "s%s-%s.war".formatted(UUID.randomUUID(), archive))
                 .addAsResource("META-INF/beans.xml")
                 .addAsResource(new StringAsset("org.apache.shiro.cdi.ShiroSecurityExtension"),
                         "META-INF/services/jakarta.enterprise.inject.spi.Extension")

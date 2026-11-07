@@ -28,31 +28,25 @@ import java.util.stream.Stream;
 import static org.apache.shiro.web.servlet.ShiroHttpSession.DEFAULT_SESSION_ID_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.apache.shiro.testing.jakarta.ee.pages.FormPage;
+import org.apache.shiro.testing.jakarta.ee.pages.LoginPage;
+import org.apache.shiro.testing.jakarta.ee.pages.SessionControls;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 
-import static org.jboss.arquillian.graphene.Graphene.guardAjax;
-import static org.jboss.arquillian.graphene.Graphene.guardHttp;
-import static org.jboss.arquillian.graphene.Graphene.waitForHttp;
-import static org.jboss.arquillian.graphene.Graphene.waitGui;
-
+import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.junit5.ArquillianExtension;
 import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.maven.archive.importer.MavenImporter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 /**
  * Form resubmit tests
@@ -71,68 +65,14 @@ public class ShiroAuthFormsIT {
     @ArquillianResource
     protected URL baseURL;
 
-    @FindBy(id = "username")
-    private WebElement username;
+    @Page
+    private LoginPage loginPage;
 
-    @FindBy(id = "password")
-    private WebElement password;
+    @Page
+    private FormPage formPage;
 
-    @FindBy(id = "login")
-    private WebElement login;
-
-    @FindBy(id = "login2")
-    private WebElement nonJSFLogin;
-
-    @FindBy(id = "rememberMe")
-    private WebElement rememberMe;
-
-    @FindBy(id = "form:logout")
-    private WebElement logout;
-
-    @FindBy(id = "logoutFiaFilter")
-    private WebElement logoutViaFilter;
-
-    @FindBy(id = "firstForm:firstName")
-    private WebElement firstName;
-
-    @FindBy(id = "firstForm:lastName")
-    private WebElement lastName;
-
-    @FindBy(id = "firstForm:submitFirst")
-    private WebElement submitFirst;
-
-    @FindBy(id = "secondForm:address")
-    private WebElement address;
-
-    @FindBy(id = "secondForm:city")
-    private WebElement city;
-
-    @FindBy(id = "secondForm:submitSecond")
-    private WebElement submitSecond;
-
-    @FindBy(id = "secondForm:messages")
-    private WebElement secondFormMessages;
-
-    @FindBy(id = "firstForm:messages")
-    private WebElement firstFormMessages;
-
-    @FindBy(id = "invalidate")
-    private WebElement invalidateSession;
-
-    @FindBy(id = "messages")
-    private WebElement messages;
-
-    @FindBy(id = "sessionExpiredMessage")
-    private WebElement sessionExpiredMessage;
-
-    @FindBy(id = "loginFailureMessage")
-    private WebElement loginFailureMessage;
-
-    @FindBy(className = "shiro-form-data-notice")
-    private WebElement formDataNotice;
-
-    @FindBy(name = "org.apache.shiro.form-data.discard")
-    private WebElement discardFormData;
+    @FindBy(tagName = "body")
+    private SessionControls session;
 
     @BeforeEach
     void deleteAllCookies() {
@@ -144,7 +84,7 @@ public class ShiroAuthFormsIT {
     void protectedPageWithLogin() {
         webDriver.get(baseURL + "shiro/protected");
         assertThat(webDriver.getCurrentUrl().contains("shiro/auth")).as("redirect to login").isTrue();
-        login();
+        loginPage.login();
         assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
     }
 
@@ -152,10 +92,10 @@ public class ShiroAuthFormsIT {
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void checkLogout() {
         webDriver.get(baseURL + "shiro/protected");
-        login();
-        guardHttp(logout).click();
+        loginPage.login();
+        session.logout();
         assertThat(webDriver.getCurrentUrl().contains("shiro/auth")).as("redirect to login").isTrue();
-        login();
+        loginPage.login();
         assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
     }
 
@@ -163,43 +103,33 @@ public class ShiroAuthFormsIT {
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void nonJSFLogin() {
         webDriver.get(baseURL + "shiro/protected");
-        username.sendKeys("webuser");
-        password.sendKeys("webpwd");
-        guardHttp(nonJSFLogin).click();
+        loginPage.loginNonJSF();
         assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void logoutViaFilterThenLoginAndForm() {
-        webDriver.get(baseURL + "shiro/form");
-        username.sendKeys("webuser");
-        password.sendKeys("webpwd");
-        guardHttp(nonJSFLogin).click();
-        guardHttp(logoutViaFilter).click();
+        formPage.goTo();
+        loginPage.loginNonJSF();
+        session.logoutViaFilter();
         assertThat(webDriver.getCurrentUrl().contains("shiro/auth")).as("redirect to login").isTrue();
-        username.sendKeys("webuser");
-        password.sendKeys("webpwd");
-        guardHttp(nonJSFLogin).click();
-        firstName.sendKeys("Jack");
-        lastName.sendKeys("Frost");
-        guardHttp(submitFirst).click();
-        assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
+        loginPage.loginNonJSF();
+        formPage.submitFirstForm("Jack", "Frost");
+        assertThat(formPage.submissionMessage()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void rememberMe() {
         webDriver.get(baseURL + "shiro/protected");
-        if (!rememberMe.isSelected()) {
-            rememberMe.click();
-        }
-        login();
+        loginPage.rememberMe();
+        loginPage.login();
         webDriver.manage().deleteCookieNamed(isShiroNativeSessionsIntegrationTest()
                 ? NATIVE_SESSION_COOKIE_NAME : DEFAULT_SESSION_ID_NAME);
         webDriver.navigate().refresh();
         assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
-        guardHttp(logout).click();
+        session.logout();
         assertThat(webDriver.getCurrentUrl().contains("shiro/auth")).as("redirect to login").isTrue();
     }
 
@@ -207,14 +137,12 @@ public class ShiroAuthFormsIT {
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void unauthorized() {
         webDriver.get(baseURL + "shiro/adminpage");
-        login();
+        loginPage.login();
         assertThat(webDriver.getTitle()).isEqualTo("Unauthorized");
-        guardHttp(logout).click();
+        session.logout();
         assertThat(webDriver.getCurrentUrl()).isEqualTo(baseURL + "index");
         webDriver.get(baseURL + "shiro/adminpage");
-        username.sendKeys("admin");
-        password.sendKeys("adminpwd");
-        guardHttp(login).click();
+        loginPage.login("admin", "adminpwd");
         assertThat(webDriver.getTitle()).isEqualTo("Admin Page");
     }
 
@@ -222,11 +150,9 @@ public class ShiroAuthFormsIT {
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void incorrectLoginOnce() {
         webDriver.get(baseURL + "shiro/protected");
-        username.sendKeys("webuser");
-        password.sendKeys("wrongpwd");
-        guardHttp(login).click();
-        assertThat(loginFailureMessage.getText()).isEqualTo("Login Failed");
-        login();
+        loginPage.login("webuser", "wrongpwd");
+        assertThat(loginPage.loginFailureMessage()).isEqualTo("Login Failed");
+        loginPage.login();
         assertThat(webDriver.getTitle()).isEqualTo("Protected Page");
     }
 
@@ -237,185 +163,151 @@ public class ShiroAuthFormsIT {
     }
 
     private void nonAjaxSessionExpired(String first, String last) {
-        webDriver.get(baseURL + "shiro/form");
-        login();
-        invalidateSession.click();
-        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
-        webDriver.switchTo().alert().accept();
-        firstName.sendKeys(first);
-        lastName.sendKeys(last);
-        guardHttp(submitFirst).click();
-        assertThat(sessionExpiredMessage.getText()).isEqualTo("Your Session Has Expired");
+        formPage.goTo();
+        loginPage.login();
+        session.invalidateSession();
+        formPage.submitFirstForm(first, last);
+        assertThat(loginPage.sessionExpiredMessage()).isEqualTo("Your Session Has Expired");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void nonAjaxResubmit() {
         nonAjaxSessionExpired();
-        login();
-        assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
+        loginPage.login();
+        assertThat(formPage.submissionMessage()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void nonAjaxResubmitPreservesEscapedInput() {
         nonAjaxSessionExpired("Jörg & Sons + =", "Frost 雪");
-        login();
-        assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jörg & Sons + =, lastName: Frost 雪");
+        loginPage.login();
+        assertThat(formPage.submissionMessage()).isEqualTo("Form Submitted - firstName: Jörg & Sons + =, lastName: Frost 雪");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void formDataNoticeOnlyWhenFormDataIsSaved() {
         webDriver.get(baseURL + "shiro/protected");
-        assertThat(webDriver.findElements(By.className("shiro-form-data-notice"))).isEmpty();
+        assertThat(loginPage.hasFormDataNotice()).isFalse();
         nonAjaxSessionExpired();
-        assertThat(formDataNotice.getText()).startsWith("We saved the form data you entered");
-        assertThat(discardFormData.isSelected()).isFalse();
+        assertThat(loginPage.formDataNotice()).startsWith("We saved the form data you entered");
+        assertThat(loginPage.isDiscardFormDataSelected()).isFalse();
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void discardSavedFormData() {
         nonAjaxSessionExpired();
-        discardFormData.click();
-        login();
+        loginPage.discardSavedFormData();
+        loginPage.login();
         assertThat(webDriver.getTitle()).isEqualTo("Form Page");
-        assertThat(webDriver.findElements(By.id("messages"))).as("no form data submitted").isEmpty();
-        assertThat(firstName.getAttribute("value")).isEmpty();
-        webDriver.get(baseURL + "shiro/auth/loginform");
-        assertThat(webDriver.findElements(By.className("shiro-form-data-notice"))).as("discarded").isEmpty();
+        assertThat(formPage.hasSubmissionMessage()).as("no form data submitted").isFalse();
+        assertThat(formPage.firstName()).isEmpty();
+        loginPage.goTo();
+        assertThat(loginPage.hasFormDataNotice()).as("discarded").isFalse();
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void nonAjaxResubmitAfterFailedLogin() {
         nonAjaxSessionExpired();
-        username.sendKeys("xxx");
-        password.sendKeys("yyy");
-        guardHttp(login).click();
-        login();
-        assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
+        loginPage.login("xxx", "yyy");
+        loginPage.login();
+        assertThat(formPage.submissionMessage()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void nonAjaxRememberedResubmit() {
-        webDriver.get(baseURL + "shiro/form");
-        rememberMe.click();
-        login();
-        invalidateSession.click();
-        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
-        webDriver.switchTo().alert().accept();
-        firstName.sendKeys("Jack");
-        lastName.sendKeys("Frost");
-        guardHttp(submitFirst).click();
-        assertThat(messages.getText()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
+        formPage.goTo();
+        loginPage.rememberMe();
+        loginPage.login();
+        session.invalidateSession();
+        formPage.submitFirstForm("Jack", "Frost");
+        assertThat(formPage.submissionMessage()).isEqualTo("Form Submitted - firstName: Jack, lastName: Frost");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void ajaxSessionExpired() {
-        webDriver.get(baseURL + "shiro/form");
-        login();
-        invalidateSession.click();
-        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
-        webDriver.switchTo().alert().accept();
-        address.sendKeys("1 Houston Street");
-        city.sendKeys("New York");
-        waitForHttp(submitSecond).click();
-        assertThat(sessionExpiredMessage.getText()).isEqualTo("Your Session Has Expired");
+        formPage.goTo();
+        loginPage.login();
+        session.invalidateSession();
+        formPage.fillSecondForm("1 Houston Street", "New York");
+        formPage.submitSecondFormWithRedirect();
+        assertThat(loginPage.sessionExpiredMessage()).isEqualTo("Your Session Has Expired");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void ajaxResubmit() {
         ajaxSessionExpired();
-        login();
-        assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: 1 Houston Street, City: New York");
-        address.sendKeys("Workshop");
-        city.sendKeys("North Pole");
-        guardAjax(submitSecond).click();
-        assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: Workshop, City: North Pole");
+        loginPage.login();
+        assertThat(formPage.secondFormMessage()).isEqualTo("2nd Form Submitted - Address: 1 Houston Street, City: New York");
+        formPage.fillSecondForm("Workshop", "North Pole");
+        formPage.submitSecondForm();
+        assertThat(formPage.secondFormMessage()).isEqualTo("2nd Form Submitted - Address: Workshop, City: North Pole");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void ajaxRememberedResubmit() {
-        webDriver.get(baseURL + "shiro/form");
-        rememberMe.click();
-        login();
-        address.sendKeys("1 Houston Street");
-        city.sendKeys("New York");
-        invalidateSession.click();
-        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
-        webDriver.switchTo().alert().accept();
-        guardAjax(submitSecond).click();
-        address.clear();
-        city.clear();
-        assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: 1 Houston Street, City: New York");
-        address.sendKeys("Workshop");
-        city.sendKeys("North Pole");
-        invalidateSession.click();
-        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
-        webDriver.switchTo().alert().accept();
-        guardAjax(submitSecond).click();
-        address.clear();
-        city.clear();
-        assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: Workshop, City: North Pole");
-        address.sendKeys("LAX Airport");
-        city.sendKeys("Los Angeles");
-        guardAjax(submitSecond).click();
-        assertThat(secondFormMessages.getText()).isEqualTo("2nd Form Submitted - Address: LAX Airport, City: Los Angeles");
+        formPage.goTo();
+        loginPage.rememberMe();
+        loginPage.login();
+        formPage.fillSecondForm("1 Houston Street", "New York");
+        session.invalidateSession();
+        formPage.submitSecondForm();
+        formPage.clearSecondForm();
+        assertThat(formPage.secondFormMessage()).isEqualTo("2nd Form Submitted - Address: 1 Houston Street, City: New York");
+        formPage.fillSecondForm("Workshop", "North Pole");
+        session.invalidateSession();
+        formPage.submitSecondForm();
+        formPage.clearSecondForm();
+        assertThat(formPage.secondFormMessage()).isEqualTo("2nd Form Submitted - Address: Workshop, City: North Pole");
+        formPage.fillSecondForm("LAX Airport", "Los Angeles");
+        formPage.submitSecondForm();
+        assertThat(formPage.secondFormMessage()).isEqualTo("2nd Form Submitted - Address: LAX Airport, City: Los Angeles");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void nonAjaxAnonymousResubmit() {
-        webDriver.get(baseURL + "shiro/unprotected/form");
+        formPage.goToAnonymous();
         assertThat(webDriver.getTitle()).isEqualTo("Anonymous Form Page");
         expireAnonymousSession();
-        firstName.sendKeys("Jack");
-        lastName.sendKeys("Frost");
-        guardHttp(submitFirst).click();
+        formPage.submitFirstForm("Jack", "Frost");
         assertThat(webDriver.getTitle()).as("no login page").isEqualTo("Anonymous Form Page");
-        assertThat(firstFormMessages.getText()).isEqualTo("Anonymous Form Submitted - firstName: Jack, lastName: Frost");
+        assertThat(formPage.firstFormMessage()).isEqualTo("Anonymous Form Submitted - firstName: Jack, lastName: Frost");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void ajaxAnonymousResubmit() {
-        webDriver.get(baseURL + "shiro/unprotected/form");
-        address.sendKeys("1 Houston Street");
-        city.sendKeys("New York");
+        formPage.goToAnonymous();
+        formPage.fillSecondForm("1 Houston Street", "New York");
         expireAnonymousSession();
-        guardAjax(submitSecond).click();
+        formPage.submitSecondForm();
         assertThat(webDriver.getTitle()).as("no login page").isEqualTo("Anonymous Form Page");
-        assertThat(secondFormMessages.getText())
+        assertThat(formPage.secondFormMessage())
                 .isEqualTo("2nd Anonymous Form Submitted - Address: 1 Houston Street, City: New York");
-        address.clear();
-        city.clear();
-        address.sendKeys("Workshop");
-        city.sendKeys("North Pole");
-        guardAjax(submitSecond).click();
-        assertThat(secondFormMessages.getText())
+        formPage.clearSecondForm();
+        formPage.fillSecondForm("Workshop", "North Pole");
+        formPage.submitSecondForm();
+        assertThat(formPage.secondFormMessage())
                 .isEqualTo("2nd Anonymous Form Submitted - Address: Workshop, City: North Pole");
     }
 
     @Test
     @OperateOnDeployment(DEPLOYMENT_DEV_MODE)
     void alreadyLoggedIn() {
-        webDriver.get(baseURL + "shiro/form");
-        login();
-        webDriver.get(baseURL + "shiro/auth/loginform");
-        login();
+        formPage.goTo();
+        loginPage.login();
+        loginPage.goTo();
+        loginPage.login();
         assertThat(webDriver.getTitle()).isEqualTo("Index");
-    }
-
-    private void login() {
-        username.sendKeys("webuser");
-        password.sendKeys("webpwd");
-        guardHttp(login).click();
     }
 
     /**
@@ -425,9 +317,7 @@ public class ShiroAuthFormsIT {
      */
     private void expireAnonymousSession() {
         var sessionCookie = webDriver.manage().getCookieNamed(NATIVE_SESSION_COOKIE_NAME);
-        invalidateSession.click();
-        waitGui(webDriver).until(ExpectedConditions.alertIsPresent());
-        webDriver.switchTo().alert().accept();
+        session.invalidateSession();
         if (isShiroNativeSessionsIntegrationTest() && sessionCookie != null) {
             // Firefox rejects re-adding the cookie with its original attributes (e.g. secure) over plain HTTP
             webDriver.manage().addCookie(new Cookie(sessionCookie.getName(), sessionCookie.getValue(),
@@ -437,13 +327,11 @@ public class ShiroAuthFormsIT {
 
     @Deployment(testable = false, name = DEPLOYMENT_DEV_MODE)
     public static WebArchive createDeployment() {
-        return createDeploymentDev("shiro-auth-forms.war");
+        return createDeploymentDev("shiro-auth-forms");
     }
 
     static WebArchive createDeploymentDev(String archiveName) {
-        WebArchive archive = ShrinkWrap.create(MavenImporter.class, archiveName)
-                .loadPomFromFile("pom.xml").importBuildOutput()
-                .as(WebArchive.class)
+        var archive = ShrinkWrapManipulator.<WebArchive>createDeployment(name -> "%s-%s".formatted(name, archiveName))
                 .deletePackage("org.apache.shiro.testing.jaxrs");
         new ShrinkWrapManipulator().webXmlXPath(archive, standardActions);
         return archive;
@@ -451,13 +339,11 @@ public class ShiroAuthFormsIT {
 
     @Deployment(testable = false, name = DEPLOYMENT_PROD_MODE)
     public static WebArchive createDeploymentProd() {
-        return createDeploymentProd("shiro-auth-forms-prod.war");
+        return createDeploymentProd("shiro-auth-forms-prod");
     }
 
     static WebArchive createDeploymentProd(String archiveName) {
-        WebArchive archive = ShrinkWrap.create(MavenImporter.class, archiveName)
-                .loadPomFromFile("pom.xml").importBuildOutput()
-                .as(WebArchive.class)
+        var archive = ShrinkWrapManipulator.<WebArchive>createDeployment(name -> "%s-%s".formatted(name, archiveName))
                 .deletePackage("org.apache.shiro.testing.jaxrs");
         var productionList = List.of(new Action(
                 getContextParamValue("jakarta.faces.PROJECT_STAGE"),

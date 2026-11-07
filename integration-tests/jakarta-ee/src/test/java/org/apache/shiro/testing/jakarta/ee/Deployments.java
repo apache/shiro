@@ -51,7 +51,7 @@ public class Deployments {
 
     @Deployment(testable = false, name = DEPLOYMENT_DEV_MODE)
     public static WebArchive createDeployment() {
-        return ShiroAuthFormsIT.createDeploymentDev("ShiroSuiteTest-ui.war");
+        return ShiroAuthFormsIT.createDeploymentDev("ShiroSuiteTest-ui");
     }
 
     @Deployment(testable = false, name = DEPLOYMENT_PROD_MODE)
@@ -61,7 +61,7 @@ public class Deployments {
 
     @Deployment(name = TESTABLE_MODE)
     public static WebArchive createNonUIDeployment() {
-        return ComponentInjectionIT.createDeployment("ShiroSuiteTest.war");
+        return ComponentInjectionIT.createDeployment("ShiroSuiteTest");
     }
 
     private static List<Action> initializeStandardActions() {
