@@ -60,20 +60,18 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
         section.put("guest", "guest, guest");
         section.put("lonestarr", "vespa, goodguy");
         sm.setRealm(new IniRealm(ini));
-        SecurityUtils.setSecurityManager(sm);
     }
 
     @AfterEach
     @Override
     public void tearDown() {
-        SecurityUtils.setSecurityManager(null);
         sm.destroy();
         super.tearDown();
     }
 
     @Test
     void testDefaultConfig() {
-        Subject subject = SecurityUtils.getSubject();
+        Subject subject = new Subject.Builder(sm).buildSubject();
 
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
         subject.login(token);
@@ -99,7 +97,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
     @SuppressWarnings("checkstyle:MagicNumber")
     @Test
     void testAutoCreateSessionAfterInvalidation() {
-        Subject subject = SecurityUtils.getSubject();
+        Subject subject = new Subject.Builder(sm).buildSubject();
         Session session = subject.getSession();
 
         String key = "foo";
@@ -128,7 +126,7 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
     @Test
     void testSubjectReuseAfterLogout() {
 
-        Subject subject = SecurityUtils.getSubject();
+        Subject subject = new Subject.Builder(sm).buildSubject();
 
         AuthenticationToken token = new UsernamePasswordToken("guest", "guest");
         subject.login(token);
@@ -195,19 +193,18 @@ public class DefaultSecurityManagerTest extends AbstractSecurityManagerTest {
     void testNewSubjectWithoutSessionCreationEnabled() {
         PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("guest", "asd");
         // this tests that calling `buildSubject` doesn't throw an exception due to session-creation being disabled
-        Subject subject = new Subject.Builder().principals(principals).sessionCreationEnabled(false).buildSubject();
+        Subject subject = new Subject.Builder(sm).principals(principals).sessionCreationEnabled(false).buildSubject();
 
         assertThat(subject.getPrincipal()).isEqualTo("guest");
     }
 
     @Test
     void testNewSubjectWithSubjectFactoryThatDisablesSessionCreation() {
-        ((DefaultSecurityManager) SecurityUtils.getSecurityManager())
-            .setSubjectFactory(new SessionCreationDisabledSubjectFactory());
+        sm.setSubjectFactory(new SessionCreationDisabledSubjectFactory());
 
         PrincipalCollection principals = ImmutablePrincipalCollection.ofSinglePrincipal("guest", "asd");
         // this tests that calling `buildSubject` doesn't throw an exception due to session-creation being disabled
-        Subject subject = new Subject.Builder().principals(principals).buildSubject();
+        Subject subject = new Subject.Builder(sm).principals(principals).buildSubject();
 
         assertThat(subject.getPrincipal()).isEqualTo("guest");
     }
