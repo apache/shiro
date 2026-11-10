@@ -10,6 +10,16 @@ Your proposed code changes will be published to your own fork of the Apache Shir
 
 _Let's get started!!!_
 
+Discussions and defect reports
+------------------------------
+
+- Questions, ideas and discussions of proposed changes: [GitHub Discussions](https://github.com/apache/shiro/discussions)
+  and the [mailing lists](https://shiro.apache.org/mailing-lists.html), including `dev@shiro.apache.org`.
+- Defects and feature requests: [GitHub Issues](https://github.com/apache/shiro/issues).
+  See [Issues and Bug Tracking](https://shiro.apache.org/issues.html) for what to include in a report
+  (ideally a small reproducing JUnit test, otherwise a stack trace and `TRACE`/`DEBUG` logs).
+- **Security vulnerabilities must not be reported in public.** Follow [SECURITY.md](SECURITY.md).
+
 Fork the code
 -------------
 
@@ -50,6 +60,36 @@ $ git commit -a -m "descriptive commit message for your changes"
 
 > The `-b` specifies that you want to create a new branch called `feature_x`.  You only specify `-b` the first time you checkout because you are creating a new branch.  
 > Once the `feature_x` branch exists, you can later switch to it with only `git checkout feature_x`.
+
+Building from source
+--------------------
+
+You need a JDK (CI builds with latest LTS) and Git. Maven is provided by the included Maven Wrapper, so no separate installation is required.
+Dependencies are resolved from Maven Central.
+
+```bash
+$ ./mvnw verify
+```
+
+This compiles all modules, runs the unit and integration tests, and runs the style (checkstyle, Apache RAT license header) checks.
+The same command is run by the project's CI on every pull request.
+For quick local builds while iterating, `./mvnw package` is much faster; run `./mvnw verify` before submitting a pull request.
+Optionally install [pre-commit](https://pre-commit.com/) (`pre-commit install`) to run the repository's formatting and sanity hooks before each commit.
+
+Requirements for acceptable contributions
+-----------------------------------------
+
+A pull request is accepted when it meets all of the following:
+
+- It is linked to a GitHub issue (trivial changes such as typos or Javadoc excepted) and addresses only that issue.
+- `./mvnw verify` passes, and CI is green.
+- New behavior and bug fixes come with automated tests.
+- New files carry the Apache License 2.0 header. Contributors either have an [ICLA](https://www.apache.org/licenses/icla.pdf) on file with the ASF
+  or tick the license acknowledgment checkbox in the pull request template; either is sufficient.
+- No secrets, credentials or generated or unreviewable binary files are committed.
+- The change is reviewed and approved by a project committer.
+- Behavior with security impact is described in the pull request, and conforms to the
+  [security model](https://shiro.apache.org/security-model.html).
 
 Rebase `feature_x` to include updates from `upstream/main`
 ----------------------------------------------------------
@@ -114,3 +154,15 @@ $ git checkout main
 $ git branch -D feature_x
 $ git push origin :feature_x
 ```
+
+Dependency policy
+-----------------
+
+- **Selecting:** direct dependencies must be available under an [ASF-compatible license](https://www.apache.org/legal/resolved.html)
+  (Category A or B), be actively maintained, and be justified in the pull request that adds them.
+  Adding or upgrading a dependency is a normal pull request and goes through the same review.
+- **Obtaining:** all dependencies are declared in the Maven `pom.xml` files and resolved from Maven Central.
+  Build tooling versions (including Maven itself) are pinned in the repository, and GitHub Actions are pinned to commit SHAs.
+- **Tracking:** Dependabot opens update pull requests for Maven dependencies, GitHub Actions and pre-commit hooks,
+  GitHub Dependency Review checks every pull request for vulnerable or incompatible-license dependencies,
+  and security alerts are monitored by the PMC. Known-vulnerable dependencies are updated or replaced in the next release.
