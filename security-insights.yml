@@ -1,0 +1,151 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+header:
+  schema-version: 2.2.0
+  last-reviewed: 2026-11-09
+  last-updated: 2026-11-09
+  url: https://raw.githubusercontent.com/apache/shiro/main/security-insights.yml
+
+project:
+  name: Apache Shiro
+  homepage: https://shiro.apache.org/
+  steward:
+    comment: Apache Shiro is a top-level project of the Apache Software Foundation.
+    uri: https://www.apache.org/
+  administrators:
+    - name: Apache Shiro PMC
+      primary: true
+      affiliation: Apache Software Foundation
+      email: dev@shiro.apache.org
+  repositories:
+    - name: shiro
+      comment: Main source repository for the Apache Shiro Java security framework.
+      url: https://github.com/apache/shiro
+  documentation:
+    detailed-guide: https://shiro.apache.org/documentation.html
+    design: https://shiro.apache.org/architecture.html
+    quickstart-guide: https://shiro.apache.org/10-minute-tutorial.html
+    code-of-conduct: https://www.apache.org/foundation/policies/conduct.html
+    release-process: https://shiro.apache.org/download.html#release_process
+    support-policy: https://shiro.apache.org/support.html#supported-versions
+  vulnerability-reporting:
+    reports-accepted: true
+    bug-bounty-available: false
+    policy: https://shiro.apache.org/security-reports.html
+    contact:
+      name: Apache Shiro Security Team
+      primary: true
+      affiliation: Apache Software Foundation
+      email: security@shiro.apache.org
+    comment: >-
+      Report vulnerabilities privately to security@shiro.apache.org. Do not
+      open public issues or pull requests for undisclosed vulnerabilities.
+      The security model describing what is and is not considered a
+      vulnerability is at https://shiro.apache.org/security-model.html
+
+repository:
+  url: https://github.com/apache/shiro
+  status: active
+  accepts-change-request: true
+  accepts-automated-change-request: true
+  core-team:
+    - name: Apache Shiro PMC
+      primary: true
+      affiliation: Apache Software Foundation
+      email: dev@shiro.apache.org
+  license:
+    expression: Apache-2.0
+    url: https://github.com/apache/shiro/blob/main/LICENSE
+  documentation:
+    contributing-guide: https://github.com/apache/shiro/blob/main/CONTRIBUTING.md
+    security-policy: https://github.com/apache/shiro/blob/main/SECURITY.md
+    governance: https://shiro.apache.org/team.html
+    dependency-management-policy: https://github.com/apache/shiro/blob/main/CONTRIBUTING.md#dependency-policy
+    review-policy: https://github.com/apache/shiro/blob/main/CONTRIBUTING.md#requirements-for-acceptable-contributions
+  release:
+    automated-pipeline: true
+    changelog: https://github.com/apache/shiro/releases
+    distribution-points:
+      - uri: https://shiro.apache.org/download.html
+        comment: Official source releases, signed and published by the ASF.
+      - uri: https://repo.maven.apache.org/maven2/org/apache/shiro/
+        comment: Binary artifacts on Maven Central.
+  security:
+    assessments:
+      self:
+        name: Apache Shiro Security Self-Assessment
+        comment: >-
+          OSPS self-assessment, built on the published threat and security model for Apache Shiro
+          (https://shiro.apache.org/security-model.html).
+        date: 2026-11-09
+        evidence: https://github.com/apache/shiro/blob/main/SECURITY-SELF-ASSESSMENT.md
+    tools:
+      - name: CodeQL
+        type: SAST
+        version: latest
+        rulesets:
+          - default
+        integration:
+          adhoc: true
+          ci: true
+          release: true
+        results:
+          ci:
+            name: CodeQL code scanning alerts
+            location: https://github.com/apache/shiro/security/code-scanning
+            predicate-uri: https://github.com/github/codeql-action
+      - name: Dependency Review
+        type: SCA
+        version: latest
+        rulesets:
+          - default
+        integration:
+          adhoc: false
+          ci: true
+          release: true
+        results:
+          ci:
+            name: Dependency Review workflow runs
+            location: https://github.com/apache/shiro/actions/workflows/dependency-review.yml
+            predicate-uri: https://github.com/actions/dependency-review-action
+      - name: Dependabot
+        type: SCA
+        version: latest
+        rulesets:
+          - default
+        integration:
+          adhoc: true
+          ci: false
+          release: true
+        results:
+          adhoc:
+            name: Dependabot alerts and update pull requests
+            location: https://github.com/apache/shiro/security/dependabot
+            predicate-uri: https://docs.github.com/en/code-security/dependabot
+      - name: OpenSSF Scorecard
+        type: other
+        version: latest
+        rulesets:
+          - default
+        integration:
+          adhoc: true
+          ci: true
+          release: true
+        results:
+          adhoc:
+            name: OpenSSF Scorecard results
+            location: https://scorecard.dev/viewer/?uri=github.com/apache/shiro
+            predicate-uri: https://github.com/ossf/scorecard
