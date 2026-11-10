@@ -87,7 +87,9 @@ repository:
     assessments:
       self:
         name: Apache Shiro Security Self-Assessment
-        comment: OSPS self-assessment, built on the published threat and security model for Apache Shiro (https://shiro.apache.org/security-model.html).
+        comment: >-
+          OSPS self-assessment, built on the published threat and security model for Apache Shiro
+          (https://shiro.apache.org/security-model.html).
         date: 2026-11-09
         evidence: https://github.com/apache/shiro/blob/main/SECURITY-SELF-ASSESSMENT.md
     tools:

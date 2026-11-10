@@ -26,7 +26,7 @@ the adversaries, guarantees and known non-findings in detail.
 ## Metadata
 
 | | |
-|---|---|
+| --- | --- |
 | Assessment created | 2026-11-09 |
 | Software | Apache Shiro, <https://github.com/apache/shiro> |
 | Security provider | Yes. Shiro is an application security framework. |
@@ -52,7 +52,7 @@ Spring, Guice, CDI and others.
 ### Actors
 
 | Actor | Description | Trust |
-|---|---|---|
+| --- | --- | --- |
 | Application code | Code that calls Shiro APIs inside the JVM. | Trusted |
 | Operator / administrator | Controls configuration (INI, properties, Spring or Guice wiring), keys, and deployment. | Trusted |
 | Realm backing stores | LDAP, databases and other credential or permission sources. | Trusted |
@@ -96,7 +96,7 @@ and it does not replace the security model or an assessment of your deployment.
 ## Security functions and features
 
 | Function | Critical to security | Notes |
-|---|---|---|
+| --- | --- | --- |
 | Credential matching and realm coordination | Yes | `CredentialsMatcher`, `AuthenticationStrategy`. |
 | Permission and role resolution | Yes | Wildcard permissions and annotations. |
 | Session management and fixation prevention | Yes | Pluggable `SessionDAO`; timeouts and validation. |
@@ -144,8 +144,8 @@ against the [OSPS Baseline](https://baseline.openssf.org/) using
 ## Threats and mitigations
 
 | Threat | Mitigation | Residual risk |
-|---|---|---|
-| Authentication bypass via crafted requests or path ambiguity | Filter chains, `InvalidRequestFilter` STRICT mode, application-level checks with Shiro APIs | Downstream frameworks may interpret paths differently; applications must not rely on URL patterns alone. |
+| --- | --- | --- |
+| Authentication bypass via crafted requests | Filter chains, strict `InvalidRequestFilter`, Shiro API checks | Downstream frameworks may read paths differently. |
 | Session fixation and hijacking | Session ID regeneration on login, timeouts, TLS | Session IDs are sensitive; operators must use secure transport and storage. |
 | Weak credential storage | Secure default `PasswordService` (Argon2, BCrypt) | Operators can configure weak algorithms. |
 | Injection into identity lookups (for example LDAP DN) | Input escaping in realms, fixed through advisories | New realm implementations must escape input. |
