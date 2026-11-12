@@ -1,10 +1,10 @@
 [<img src="https://shiro.apache.org/images/apache-shiro-logo.png" align="right" alt="Apache Shiro" />](https://shiro.apache.org)
 
-[![Maven Central](https://img.shields.io/maven-central/v/org.apache.shiro/shiro-core?filter=!*alpha*)](https://central.sonatype.com/artifact/org.apache.shiro/shiro-core/)
-[![Build Status](https://ci-builds.apache.org/buildStatus/icon?job=Shiro%2FShiro-all%2Fmain)](https://ci-builds.apache.org/job/Shiro/job/Shiro-all/job/main/)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.shiro/shiro-core?filter=!*alpha*&style=plastic)](https://central.sonatype.com/artifact/org.apache.shiro/shiro-core/)
+[![Build Status](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci-builds.apache.org%2Fjob%2FShiro%2Fjob%2FShiro-all%2Fjob%2Fmain%2F&style=plastic)](https://ci-builds.apache.org/job/Shiro/job/Shiro-all/job/main/)
 [![OpenSSF Best Practices](https://img.shields.io/cii/level/14685?style=plastic&label=openssf%20best%20practices)](https://www.bestpractices.dev/projects/14685)
 [![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/apache/shiro?style=plastic&label=openssf%20scorecard)](https://deps.dev/project/github/apache%2Fshiro)
-[![Reproducible Builds](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/jvm-repo-rebuild/reproducible-central/master/content/org/apache/shiro/badge.json)](https://github.com/jvm-repo-rebuild/reproducible-central/blob/master/content/org/apache/shiro/README.md)
+[![Reproducible Builds](https://img.shields.io/endpoint?style=plastic&url=https://raw.githubusercontent.com/jvm-repo-rebuild/reproducible-central/master/content/org/apache/shiro/badge.json)](https://github.com/jvm-repo-rebuild/reproducible-central/blob/master/content/org/apache/shiro/README.md)
 
 Apache Shiro
 ============
