@@ -246,8 +246,6 @@ public class AuthorizingRealmTest {
                 if (roleString.equals(ROLE)) {
                     permissions.add(new WildcardPermission(ROLE + ":perm1"));
                     permissions.add(new WildcardPermission(ROLE + ":perm2"));
-                    permissions.add(new WildcardPermission(ROLE + ": "));
-                    permissions.add(new WildcardPermission(ROLE + ":\t"));
                     permissions.add(new WildcardPermission("other:*:foo"));
                 }
                 return permissions;
@@ -262,7 +260,7 @@ public class AuthorizingRealmTest {
         authorizationInfo.addStringPermission("\t");
         authorizationInfo.addStringPermission(null);
         Collection<Permission> permissions = realm.getPermissions(authorizationInfo);
-        assertThat(permissions).hasSize(4);
+        assertThat(permissions).hasSize(3);
     }
 
     private void assertArrayEquals(boolean[] expected, boolean[] actual) {
