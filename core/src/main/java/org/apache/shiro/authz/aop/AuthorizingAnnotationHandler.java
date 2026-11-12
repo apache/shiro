@@ -68,22 +68,24 @@ public abstract class AuthorizingAnnotationHandler extends AnnotationHandler {
      * What to do with authorization configuration that names no permissions or roles, such as the {@code perms} and
      * {@code roles} filters without arguments, or {@code @RequiresPermissions({})}.
      * <p/>
-     * Such configuration performs no check, which is almost always a mistake. By default a warning is logged and the
-     * previous behavior is kept. If the {@value #STRICT_PROPERTY} system property is {@code true}, the
-     * configuration is rejected with a {@link ConfigurationException} when the integration reads it at startup.
+     * Such configuration performs no check, which is almost always a mistake. By default the configuration is
+     * rejected with a {@link ConfigurationException} when the integration reads it at startup. If the
+     * {@value #STRICT_PROPERTY} system property is {@code false}, a warning is logged and the legacy behavior is kept.
      *
-     * @since 3.0.2
+     * @since 3.0.2 (opt-in), strict by default since 3.1
      */
     public static final class AuthorizationConfigPolicy {
         /**
-         * System property that, when {@code true}, makes empty authorization configuration fail at startup
-         * instead of only logging a warning. Also enables strict {@link org.apache.shiro.authz.permission.WildcardPermission}
-         * parsing, rejecting empty or blank permission parts and subparts, including trailing separators.
+         * System property controlling strict authorization configuration. Defaults to {@code true} when absent,
+         * making empty authorization configuration fail at startup and making strict
+         * {@link org.apache.shiro.authz.permission.WildcardPermission} parsing reject empty or blank permission parts
+         * and subparts, including trailing separators. Set it to {@code false} to only log a warning and keep the
+         * legacy behavior.
          */
         private static final String STRICT_PROPERTY = "shiro.authz.strictConfig";
         @Getter @Setter
         // Setter is for testing only, to avoid having to set a system property in the test JVM.
-        private static boolean strictParsing = Boolean.getBoolean(STRICT_PROPERTY);
+        private static boolean strictParsing = !"false".equalsIgnoreCase(System.getProperty(STRICT_PROPERTY));
 
         private static final Logger LOGGER = LoggerFactory.getLogger(AuthorizingAnnotationHandler.class);
         private static final Set<String> WARNED = ConcurrentHashMap.newKeySet();
