@@ -112,8 +112,8 @@ import java.util.Set;
  * syntax, not literal data. Use {@link #fromLiteralParts(String...)} for both grants and checks built from data.
  * This factory rejects reserved characters instead of escaping them.
  * <p/>
- * Setting {@code -Dshiro.authz.strictConfig=true} rejects empty or blank parts and subparts, including trailing
- * separators such as {@code newsletter:edit:}. Without it, legacy parsing is preserved, including discarding trailing
+ * Empty or blank parts and subparts, including trailing separators such as {@code newsletter:edit:}, are rejected
+ * by default. Setting {@code -Dshiro.authz.strictConfig=false} preserves legacy parsing, including discarding trailing
  * separators, which can broaden a grant. Intentionally omitted parts and explicit wildcards remain supported.
  *
  * @since 0.9
