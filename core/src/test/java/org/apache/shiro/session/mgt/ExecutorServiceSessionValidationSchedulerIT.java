@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SuppressWarnings("checkstyle:MagicNumber")
-public class ExecutorServiceSessionValidationSchedulerTest {
+public class ExecutorServiceSessionValidationSchedulerIT {
 
     ExecutorServiceSessionValidationScheduler executorServiceSessionValidationScheduler;
     DefaultSessionManager defaultSessionManager;

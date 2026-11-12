@@ -40,7 +40,6 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.authz.UnauthorizedException;
-import org.apache.shiro.authz.permission.RolePermissionResolver;
 import org.apache.shiro.authz.permission.WildcardPermission;
 import org.apache.shiro.authz.permission.WildcardPermissionResolver;
 import org.apache.shiro.subject.ImmutablePrincipalCollection;
@@ -50,8 +49,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceAccessMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
-
-
 
 /**
  * Simple test case for AuthorizingRealm.
@@ -139,10 +136,10 @@ public class AuthorizingRealmTest {
 
         Principal principal = new UsernamePrincipal("blah");
         PrincipalCollection pCollection = ImmutablePrincipalCollection.ofSinglePrincipal(principal, "nullAuthzRealm");
-        List<Permission> permList = new ArrayList<Permission>();
+        List<Permission> permList = new ArrayList<>();
         permList.add(new WildcardPermission("stringPerm1"));
         permList.add(new WildcardPermission("stringPerm2"));
-        List<String> roleList = new ArrayList<String>();
+        List<String> roleList = new ArrayList<>();
         roleList.add("role1");
         roleList.add("role2");
 
@@ -212,17 +209,14 @@ public class AuthorizingRealmTest {
                 "testRealmWithRolePermissionResolver");
 
         AuthorizingRealm realm = new AllowAllRealm();
-        realm.setRolePermissionResolver(new RolePermissionResolver() {
-            @Override
-            public Collection<Permission> resolvePermissionsInRole(String roleString) {
-                Collection<Permission> permissions = new HashSet<Permission>();
-                if (roleString.equals(ROLE)) {
-                    permissions.add(new WildcardPermission(ROLE + ":perm1"));
-                    permissions.add(new WildcardPermission(ROLE + ":perm2"));
-                    permissions.add(new WildcardPermission("other:*:foo"));
-                }
-                return permissions;
+        realm.setRolePermissionResolver(roleString -> {
+            Collection<Permission> permissions = new HashSet<>();
+            if (roleString.equals(ROLE)) {
+                permissions.add(new WildcardPermission(ROLE + ":perm1"));
+                permissions.add(new WildcardPermission(ROLE + ":perm2"));
+                permissions.add(new WildcardPermission("other:*:foo"));
             }
+            return permissions;
         });
 
         assertThat(realm.hasRole(pCollection, ROLE)).isTrue();
@@ -239,17 +233,14 @@ public class AuthorizingRealmTest {
                 "testRealmWithRolePermissionResolver");
 
         AuthorizingRealm realm = new AllowAllRealm();
-        realm.setRolePermissionResolver(new RolePermissionResolver() {
-            @Override
-            public Collection<Permission> resolvePermissionsInRole(String roleString) {
-                Collection<Permission> permissions = new HashSet<Permission>();
-                if (roleString.equals(ROLE)) {
-                    permissions.add(new WildcardPermission(ROLE + ":perm1"));
-                    permissions.add(new WildcardPermission(ROLE + ":perm2"));
-                    permissions.add(new WildcardPermission("other:*:foo"));
-                }
-                return permissions;
+        realm.setRolePermissionResolver(roleString -> {
+            Collection<Permission> permissions = new HashSet<>();
+            if (roleString.equals(ROLE)) {
+                permissions.add(new WildcardPermission(ROLE + ":perm1"));
+                permissions.add(new WildcardPermission(ROLE + ":perm2"));
+                permissions.add(new WildcardPermission("other:*:foo"));
             }
+            return permissions;
         });
 
         realm.setPermissionResolver(new WildcardPermissionResolver());
@@ -288,13 +279,13 @@ public class AuthorizingRealmTest {
 
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-            Set<String> roles = new HashSet<String>();
+            Set<String> roles = new HashSet<>();
             roles.add(ROLE);
             return new SimpleAuthorizationInfo(roles);
         }
 
         protected AuthenticationInfo buildAuthenticationInfo(Object principal, Object credentials) {
-            Collection<Object> principals = new ArrayList<Object>(3);
+            Collection<Object> principals = new ArrayList<>(3);
             principals.add(new UserIdPrincipal(USER_ID));
             principals.add(new UsernamePrincipal(USERNAME));
             principals.add(USER_ID + USERNAME);
