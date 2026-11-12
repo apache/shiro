@@ -5,6 +5,9 @@
     },
     {
       "pattern": "^https://ci-builds.apache.org/job/Shiro/job/Shiro-all/job/main/"
+    },
+    {
+      "pattern": "^https://central.sonatype.com/"
     }
   ]
 }
