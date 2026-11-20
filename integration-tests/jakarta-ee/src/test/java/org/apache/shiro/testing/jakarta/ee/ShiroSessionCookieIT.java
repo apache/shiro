@@ -34,6 +34,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+/**
+ * Session Cookies Tests
+ */
 @ExtendWith(ArquillianExtension.class)
 public class ShiroSessionCookieIT {
     static final String SESSION_COOKIE_DEFAULT = "session-cookie-default";
@@ -43,18 +46,35 @@ public class ShiroSessionCookieIT {
     @ArquillianResource
     private URL baseUrl;
 
+    /**
+     * Verifies that the container's session cookie carries {@code Secure} by default.
+     *
+     * @throws Exception if the session endpoint cannot be requested
+     */
     @Test
     @OperateOnDeployment(SESSION_COOKIE_DEFAULT)
     void productionSessionCookieIsSecure() throws Exception {
         assertThat(sessionCookieIsSecure(baseUrl)).as("JSESSIONID has the Secure attribute by default").isTrue();
     }
 
+    /**
+     * Verifies that the container's session cookie omits {@code Secure} when the Shiro opt-out is enabled.
+     *
+     * @throws Exception if the session endpoint cannot be requested
+     */
     @Test
     @OperateOnDeployment(SESSION_COOKIE_OPT_OUT)
     void productionSessionCookieHonorsOptOut() throws Exception {
         assertThat(sessionCookieIsSecure(baseUrl)).as("JSESSIONID has the Secure attribute after opt-out").isFalse();
     }
 
+    /**
+     * Builds a Production deployment with Shiro EE enabled and container-managed sessions.
+     *
+     * @param name the deployment name
+     * @param optOut whether to disable Shiro's enforcement of the session cookie's {@code Secure} attribute
+     * @return the configured web archive
+     */
     static WebArchive createDeployment(String name, boolean optOut) {
         var archive = ShiroAuthFormsIT.createDeploymentProd(name).addClass(CreateSessionServlet.class);
         // Keep these deployments on container sessions even in the suite's native session mode.
@@ -80,6 +100,13 @@ public class ShiroSessionCookieIT {
         return archive;
     }
 
+    /**
+     * Requests a new session and checks the raw {@code Set-Cookie} header for the {@code Secure} attribute.
+     *
+     * @param baseUrl the deployment's base URL
+     * @return whether the single {@code JSESSIONID} cookie carries {@code Secure}
+     * @throws Exception if the session endpoint URI is invalid or the request fails
+     */
     private static boolean sessionCookieIsSecure(URL baseUrl) throws Exception {
         var request = HttpRequest.newBuilder(baseUrl.toURI().resolve(CreateSessionServlet.PATH.substring(1)))
                 .timeout(REQUEST_TIMEOUT)

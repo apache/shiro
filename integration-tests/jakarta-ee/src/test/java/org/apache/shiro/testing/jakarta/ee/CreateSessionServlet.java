@@ -18,11 +18,20 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Test fixture that creates a container-managed session so the client can inspect its session cookie.
+ */
 @WebServlet(CreateSessionServlet.PATH)
 public class CreateSessionServlet extends HttpServlet {
     static final String PATH = "/create-container-session";
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Creates a session if needed and returns HTTP 204.
+     *
+     * @param request the request whose session is created or reused
+     * @param response the response that carries the session cookie when a new session is created
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         request.getSession(true);
