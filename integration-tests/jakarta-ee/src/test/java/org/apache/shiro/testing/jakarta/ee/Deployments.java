@@ -23,8 +23,6 @@ import org.apache.shiro.testing.cdi.ComponentInjectionIT;
 import static org.apache.shiro.testing.cdi.ComponentInjectionIT.TESTABLE_MODE;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_DEV_MODE;
 import static org.apache.shiro.testing.jakarta.ee.ShiroAuthFormsIT.DEPLOYMENT_PROD_MODE;
-import static org.apache.shiro.testing.jakarta.ee.ShiroSessionCookieIT.SESSION_COOKIE_DEFAULT;
-import static org.apache.shiro.testing.jakarta.ee.ShiroSessionCookieIT.SESSION_COOKIE_OPT_OUT;
 
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -59,16 +57,6 @@ public class Deployments {
     @Deployment(testable = false, name = DEPLOYMENT_PROD_MODE)
     public static WebArchive createDeploymentProd() {
         return ShiroAuthFormsIT.createDeploymentProd();
-    }
-
-    @Deployment(testable = false, name = SESSION_COOKIE_DEFAULT)
-    public static WebArchive createSessionCookieDefaultDeployment() {
-        return ShiroSessionCookieIT.createDeployment(SESSION_COOKIE_DEFAULT, false);
-    }
-
-    @Deployment(testable = false, name = SESSION_COOKIE_OPT_OUT)
-    public static WebArchive createSessionCookieOptOutDeployment() {
-        return ShiroSessionCookieIT.createDeployment(SESSION_COOKIE_OPT_OUT, true);
     }
 
     @Deployment(name = TESTABLE_MODE)
