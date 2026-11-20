@@ -177,7 +177,7 @@ public class EnvironmentLoaderListener extends EnvironmentLoader implements Serv
 
     private void modifySecureSessionConfiguration(ServletContextEvent sce) {
         if (!Boolean.parseBoolean(sce.getServletContext().getInitParameter(SHIRO_EE_DISABLE_SECURE_SESSION_COOKIE_PARAM))
-                && !hasFacesContext() || !Faces.isDevelopment()) {
+                && (!hasFacesContext() || !Faces.isDevelopment())) {
             sce.getServletContext().getSessionCookieConfig().setSecure(true);
         }
     }
