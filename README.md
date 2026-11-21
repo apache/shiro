@@ -27,7 +27,8 @@ Tutorials
 Credentials
 -----------
 
-<a href="https://www.credly.com/badges/56f64713-d104-4720-8afe-b7b5d083f47b"><img src="https://images.credly.com/images/cda2302b-7758-428e-a02b-62d1428481be/twitter_thumb_201604_blob" alt="Security Slam 2026 CRA Readiness Badge" width="150"></a>
+<a href="https://www.credly.com/badges/56f64713-d104-4720-8afe-b7b5d083f47b"><img src="https://images.credly.com/images/cda2302b-7758-428e-a02b-62d1428481be/twitter_thumb_201604_blob"
+alt="Security Slam 2026 CRA Readiness Badge" width="150"></a>
 
 [Security Slam 2026 CRA Readiness Badge](https://www.credly.com/badges/56f64713-d104-4720-8afe-b7b5d083f47b) issued by The Linux Foundation to Apache Shiro.
 
