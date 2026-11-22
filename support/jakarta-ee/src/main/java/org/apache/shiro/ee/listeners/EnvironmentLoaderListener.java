@@ -35,14 +35,14 @@ import static org.apache.shiro.ee.listeners.IniEnvironment.hasFacesContext;
  */
 @WebListener
 public class EnvironmentLoaderListener extends EnvironmentLoader implements ServletContextListener {
+    static final String SHIRO_EE_SESSION_TRACKING_CONFIGURATION_DISABLED_PARAM =
+            "org.apache.shiro.ee.session-tracking-configuration.disabled";
+    static final String SHIRO_EE_DISABLE_SECURE_SESSION_COOKIE_PARAM =
+            "org.apache.shiro.ee.secure-session-cookie.disabled";
     private static final String SHIRO_EE_DISABLED_PARAM = "org.apache.shiro.ee.disabled";
     private static final String SHIRO_EE_REDIRECT_DISABLED_PARAM = "org.apache.shiro.ee.redirect.disabled";
     private static final String SHIRO_EE_X_FORWARDED_PROTO_DISABLED_PARAM = "org.apache.shiro.ee.x-forwarded-proto.disabled";
     private static final String SHIRO_EE_ENABLE_URL_SESSION_TRACKING_PARAM = "org.apache.shiro.ee.enable-url-session-tracking";
-    private static final String SHIRO_EE_SESSION_TRACKING_CONFIGURATION_DISABLED_PARAM =
-            "org.apache.shiro.ee.session-tracking-configuration.disabled";
-    private static final String SHIRO_EE_DISABLE_SECURE_SESSION_COOKIE_PARAM =
-            "org.apache.shiro.ee.secure-session-cookie.disabled";
     private static final String SHIRO_EE_DISABLE_CHAR_ENCODING_PARAM = "org.apache.shiro.ee.disable-character-encoding";
     private static final String SHIRO_EE_CHAR_ENCODING_PARAM = "org.apache.shiro.ee.character-encoding";
     private static final String FORM_RESUBMIT_DISABLED_PARAM = "org.apache.shiro.form-resubmit.disabled";
