@@ -25,6 +25,8 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.omnifaces.util.Faces;
 
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.SHIRO_EE_DISABLE_SECURE_SESSION_COOKIE_PARAM;
+import static org.apache.shiro.ee.listeners.EnvironmentLoaderListener.SHIRO_EE_SESSION_TRACKING_CONFIGURATION_DISABLED_PARAM;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -32,9 +34,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EnvironmentLoaderListenerTest {
-    private static final String OPT_OUT = "org.apache.shiro.ee.secure-session-cookie.disabled";
-    private static final String TRACKING_DISABLED = "org.apache.shiro.ee.session-tracking-configuration.disabled";
-
     @Mock
     private ServletContext context;
     @Mock
@@ -51,7 +50,7 @@ class EnvironmentLoaderListenerTest {
 
     @BeforeEach
     void setUp() {
-        lenient().when(context.getInitParameter(TRACKING_DISABLED)).thenReturn("true");
+        lenient().when(context.getInitParameter(SHIRO_EE_SESSION_TRACKING_CONFIGURATION_DISABLED_PARAM)).thenReturn("true");
     }
 
     @Test
@@ -78,7 +77,7 @@ class EnvironmentLoaderListenerTest {
 
     @Test
     void productionHonorsOptOut() {
-        lenient().when(context.getInitParameter(OPT_OUT)).thenReturn("true");
+        lenient().when(context.getInitParameter(SHIRO_EE_DISABLE_SECURE_SESSION_COOKIE_PARAM)).thenReturn("true");
         faces.when(Faces::isDevelopment).thenReturn(false);
 
         assertSecureCookieNotEnforced();
