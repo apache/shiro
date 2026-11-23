@@ -36,7 +36,7 @@
         <arquillian.graphene.version>3.0.1.Final</arquillian.graphene.version>
         <drone.browser>firefox</drone.browser>
 
-        <payara.version>7.2026.10</payara.version>
+        <payara.version>7.2026.11</payara.version>
         <payara.start.skip>${skipITs}</payara.start.skip>
         <asadmin.cmd>asadmin</asadmin.cmd>
         <unix-sed-skip>${payara.start.skip}</unix-sed-skip>
@@ -150,7 +150,7 @@
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-bom</artifactId>
-                <version>4.52.0</version>
+                <version>4.53.0</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -280,7 +280,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.4</version>
+                <version>3.7.0</version>
                 <configuration>
                     <executable>${project.build.directory}/dependency/payara7/bin/${asadmin.cmd}</executable>
                     <skip>${payara.start.skip}</skip>
