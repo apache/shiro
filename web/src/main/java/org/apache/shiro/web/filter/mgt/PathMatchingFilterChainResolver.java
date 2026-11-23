@@ -20,11 +20,13 @@ package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
+import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletRequest;
@@ -83,11 +85,18 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      * matches a configured filter chain.  Unless overridden, the
      * default implementation is an {@link AntPathMatcher AntPathMatcher}.
      *
+     * <p/>
+     * The matcher is also applied to every {@link PathMatchingFilter} already registered with the current
+     * {@link #getFilterChainManager() FilterChainManager}, so that a filter re-checks the request path with the same
+     * matching semantics that selected its chain.  Filters registered with the manager afterwards are not updated;
+     * call this method again once they have been added.
+     *
      * @param pathMatcher the {@code PatternMatcher} used when determining if an incoming request's path
      *                    matches a configured filter chain.
      */
     public void setPathMatcher(PatternMatcher pathMatcher) {
         this.pathMatcher = pathMatcher;
+        applyPathMatcherToFilters();
     }
 
     public boolean isCaseInsensitive() {
@@ -110,6 +119,20 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
     @SuppressWarnings({"UnusedDeclaration"})
     public void setFilterChainManager(FilterChainManager filterChainManager) {
         this.filterChainManager = filterChainManager;
+        applyPathMatcherToFilters();
+    }
+
+    private void applyPathMatcherToFilters() {
+        // A filter keeps its own matcher and re-matches the path in preHandle; if it differs from the one that
+        // selected the chain, the filter can silently skip the request.
+        if (pathMatcher == null || filterChainManager == null || filterChainManager.getFilters() == null) {
+            return;
+        }
+        for (Filter filter : filterChainManager.getFilters().values()) {
+            if (filter instanceof PathMatchingFilter pathMatchingFilter) {
+                pathMatchingFilter.setPathMatcher(pathMatcher);
+            }
+        }
     }
 
     @Override

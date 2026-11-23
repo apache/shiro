@@ -19,6 +19,8 @@
 package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.AntPathMatcher;
+import org.apache.shiro.util.RegExPatternMatcher;
+import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.WebTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,6 +79,65 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         resolver.setFilterChainManager(new DefaultFilterChainManager());
         assertThat(resolver.getFilterChainManager()).isNotNull();
         assertThat(resolver.getFilterChainManager() instanceof DefaultFilterChainManager).isTrue();
+    }
+
+    @Test
+    void testPathMatcherReachesFiltersAlreadyInManager() throws Exception {
+        RejectingFilter filter = new RejectingFilter();
+        resolver.getFilterChainManager().addFilter("reject", filter);
+
+        resolver.setPathMatcher(new RegExPatternMatcher());
+        resolver.getFilterChainManager().addToChain("/secure/[^/]+", "reject");
+
+        assertThat(isRejected(filter, "/secure/index.html")).isTrue();
+    }
+
+    @Test
+    void testPathMatcherReachesFiltersOfReplacedManager() throws Exception {
+        RejectingFilter filter = new RejectingFilter();
+        DefaultFilterChainManager manager = new DefaultFilterChainManager();
+        manager.addFilter("reject", filter);
+        manager.addToChain("/secure/[^/]+", "reject");
+
+        resolver.setPathMatcher(new RegExPatternMatcher());
+        resolver.setFilterChainManager(manager);
+
+        assertThat(isRejected(filter, "/secure/index.html")).isTrue();
+    }
+
+    @Test
+    void testPathMatcherReachesFiltersAddedBeforeReapplying() throws Exception {
+        resolver.setPathMatcher(new RegExPatternMatcher());
+        RejectingFilter filter = new RejectingFilter();
+        resolver.getFilterChainManager().addFilter("reject", filter);
+        resolver.getFilterChainManager().addToChain("/secure/[^/]+", "reject");
+
+        resolver.setPathMatcher(resolver.getPathMatcher());
+
+        assertThat(isRejected(filter, "/secure/index.html")).isTrue();
+    }
+
+    private boolean isRejected(RejectingFilter filter, String path) throws Exception {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(request.getServletPath()).thenReturn("");
+        when(request.getPathInfo()).thenReturn(path);
+
+        FilterChain resolved = resolver.getChain(request, response, mock(FilterChain.class));
+        assertThat(resolved).isNotNull();
+        return !filter.runPreHandle(request, response);
+    }
+
+    /** Stops the chain for every path it is configured for, like an authentication filter without credentials. */
+    private static final class RejectingFilter extends PathMatchingFilter {
+        boolean runPreHandle(ServletRequest request, ServletResponse response) throws Exception {
+            return preHandle(request, response);
+        }
+
+        @Override
+        protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) {
+            return false;
+        }
     }
 
     @Test
