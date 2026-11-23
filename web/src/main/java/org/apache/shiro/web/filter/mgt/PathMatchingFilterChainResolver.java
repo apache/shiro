@@ -86,10 +86,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
      * default implementation is an {@link AntPathMatcher AntPathMatcher}.
      *
      * <p/>
-     * The matcher is also applied to every {@link PathMatchingFilter} already registered with the current
-     * {@link #getFilterChainManager() FilterChainManager}, so that a filter re-checks the request path with the same
-     * matching semantics that selected its chain.  Filters registered with the manager afterwards are not updated;
-     * call this method again once they have been added.
+     * The matcher is also set on every {@link PathMatchingFilter} currently in the {@link FilterChainManager}.
      *
      * @param pathMatcher the {@code PatternMatcher} used when determining if an incoming request's path
      *                    matches a configured filter chain.
@@ -123,9 +120,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
     }
 
     private void applyPathMatcherToFilters() {
-        // A filter keeps its own matcher and re-matches the path in preHandle; if it differs from the one that
-        // selected the chain, the filter can silently skip the request.
-        if (pathMatcher == null || filterChainManager == null || filterChainManager.getFilters() == null) {
+        if (pathMatcher == null || filterChainManager == null) {
             return;
         }
         for (Filter filter : filterChainManager.getFilters().values()) {

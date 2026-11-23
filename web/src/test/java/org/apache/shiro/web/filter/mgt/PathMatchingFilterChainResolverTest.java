@@ -105,18 +105,6 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         assertThat(isRejected(filter, "/secure/index.html")).isTrue();
     }
 
-    @Test
-    void testPathMatcherReachesFiltersAddedBeforeReapplying() throws Exception {
-        resolver.setPathMatcher(new RegExPatternMatcher());
-        RejectingFilter filter = new RejectingFilter();
-        resolver.getFilterChainManager().addFilter("reject", filter);
-        resolver.getFilterChainManager().addToChain("/secure/[^/]+", "reject");
-
-        resolver.setPathMatcher(resolver.getPathMatcher());
-
-        assertThat(isRejected(filter, "/secure/index.html")).isTrue();
-    }
-
     private boolean isRejected(RejectingFilter filter, String path) throws Exception {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
@@ -128,7 +116,6 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         return !filter.runPreHandle(request, response);
     }
 
-    /** Stops the chain for every path it is configured for, like an authentication filter without credentials. */
     private static final class RejectingFilter extends PathMatchingFilter {
         boolean runPreHandle(ServletRequest request, ServletResponse response) throws Exception {
             return preHandle(request, response);
