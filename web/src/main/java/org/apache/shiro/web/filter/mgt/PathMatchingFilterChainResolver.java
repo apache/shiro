@@ -20,6 +20,7 @@ package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
+import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
@@ -114,6 +115,7 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
 
     @Override
     public FilterChain getChain(ServletRequest request, ServletResponse response, FilterChain originalChain) {
+        request.removeAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE);
         FilterChainManager filterChainManager = getFilterChainManager();
         if (!filterChainManager.hasChains()) {
             return null;
@@ -125,29 +127,17 @@ public class PathMatchingFilterChainResolver implements FilterChainResolver {
         //the 'chain names' in this implementation are actually path patterns defined by the user.  We just use them
         //as the chain name for the FilterChainManager's requirements
         for (String pathPattern : filterChainManager.getChainNames()) {
-            // If the path does match, then pass on to the subclass implementation for specific checks:
-            if (pathMatches(pathPattern, requestURI)) {
+            // in spring web, the requestURI "/resource/menus" ---- "resource/menus/" both can access the resource
+            // but the pathPattern match "/resource/menus" can not match "resource/menus/"
+            // user can use requestURI + "/" to simply bypassed chain filter, to bypassed shiro protect
+            if (pathMatches(pathPattern, requestURI)
+                    || pathMatches(removeTrailingSlash(pathPattern), requestURINoTrailingSlash)) {
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace("Matched path pattern [{}] for requestURI [{}].  "
                             + "Utilizing corresponding filter chain...", pathPattern, Encode.forHtml(requestURI));
                 }
+                request.setAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE, pathPattern);
                 return filterChainManager.proxy(originalChain, pathPattern);
-            } else {
-
-                // in spring web, the requestURI "/resource/menus" ---- "resource/menus/" both can access the resource
-                // but the pathPattern match "/resource/menus" can not match "resource/menus/"
-                // user can use requestURI + "/" to simply bypassed chain filter, to bypassed shiro protect
-
-                String pathPatternNoTrailingSlash = removeTrailingSlash(pathPattern);
-
-                if (pathMatches(pathPatternNoTrailingSlash, requestURINoTrailingSlash)) {
-                    if (LOGGER.isTraceEnabled()) {
-                        LOGGER.trace("Matched path pattern [{}] for requestURI [{}].  "
-                                + "Utilizing corresponding filter chain...",
-                                    pathPattern, Encode.forHtml(requestURINoTrailingSlash));
-                    }
-                    return filterChainManager.proxy(originalChain, pathPattern);
-                }
             }
         }
 

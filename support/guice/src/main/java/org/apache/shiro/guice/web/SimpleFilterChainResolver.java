@@ -31,6 +31,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 
 import org.apache.shiro.util.PatternMatcher;
+import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.util.WebUtils;
 import static org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver.removeTrailingSlash;
@@ -48,17 +49,15 @@ class SimpleFilterChainResolver implements FilterChainResolver {
 
     @Override
     public FilterChain getChain(ServletRequest request, ServletResponse response, final FilterChain originalChain) {
+        request.removeAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE);
         String requestURI = WebUtils.getPathWithinApplication(WebUtils.toHttp(request));
         final String requestURINoTrailingSlash = removeTrailingSlash(requestURI);
 
         for (String pathPattern : chains.keySet()) {
-            if (patternMatcher.matches(pathPattern, requestURI)) {
+            if (patternMatcher.matches(pathPattern, requestURI)
+                    || patternMatcher.matches(removeTrailingSlash(pathPattern), requestURINoTrailingSlash)) {
+                request.setAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE, pathPattern);
                 return proxy(originalChain, pathPattern);
-            } else {
-                pathPattern = removeTrailingSlash(pathPattern);
-                if (patternMatcher.matches(pathPattern, requestURINoTrailingSlash)) {
-                    return proxy(originalChain, pathPattern);
-                }
             }
         }
         return null;
