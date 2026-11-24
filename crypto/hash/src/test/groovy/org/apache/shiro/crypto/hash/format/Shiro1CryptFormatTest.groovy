@@ -22,6 +22,7 @@ import org.apache.shiro.crypto.SecureRandomNumberGenerator
 import org.apache.shiro.crypto.hash.SimpleHash
 import org.junit.jupiter.api.Test
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy
 import static org.junit.jupiter.api.Assertions.*
 
 /**
@@ -164,6 +165,24 @@ class Shiro1CryptFormatTest {
             format.parse(formatted)
             fail("parse should have thrown an IllegalArgumentException")
         } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    void testParseWithMissingTokens() {
+        def format = new Shiro1CryptFormat()
+        def malformed = [
+                '$shiro1$SHA-256',
+                '$shiro1$SHA-256$',
+                '$shiro1$SHA-256$abc',
+                '$shiro1$SHA-256$1$abc',
+                '$shiro1$SHA-256$1$$'
+        ]
+
+        malformed.each { formatted ->
+            assertThatThrownBy { format.parse(formatted) }
+                    .describedAs("parsing '%s'", formatted)
+                    .isInstanceOf(IllegalArgumentException.class)
         }
     }
 
