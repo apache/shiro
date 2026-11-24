@@ -144,6 +144,11 @@ public class Shiro1CryptFormat implements ModularCryptFormat, ParsableHashFormat
         String suffix = formatted.substring(MCF_PREFIX.length());
         String[] parts = suffix.split("\\$");
 
+        //a valid shiro1 hash always has 4 tokens: algorithm, iterations, salt (may be empty) and digest:
+        if (parts.length < 4) {
+            throw new IllegalArgumentException("The argument is not a valid '" + ID + "' formatted hash.");
+        }
+
         final String algorithmName = parts[0];
         if (!new SimpleHashProvider().getImplementedAlgorithms().contains(algorithmName)) {
             throw new UnsupportedOperationException("Algorithm " + algorithmName + " is not supported in shiro1 format.");
