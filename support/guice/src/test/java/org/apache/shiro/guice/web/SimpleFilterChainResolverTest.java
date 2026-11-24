@@ -22,6 +22,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import org.apache.shiro.util.PatternMatcher;
+import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.easymock.IMocksControl;
 import org.junit.jupiter.api.Test;
@@ -82,6 +83,7 @@ public class SimpleFilterChainResolverTest {
         ServletResponse response = ctrl.createMock(HttpServletResponse.class);
         FilterChain originalChain = ctrl.createMock(FilterChain.class);
 
+        request.removeAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE);
         expect(request.getAttribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE)).andReturn("/mychain");
         expect(request.getAttribute(WebUtils.INCLUDE_PATH_INFO_ATTRIBUTE)).andReturn("");
 
@@ -89,6 +91,7 @@ public class SimpleFilterChainResolverTest {
 
         expect(patternMatcher.matches(chainOne, "/mychain")).andReturn(false).times(2);
         expect(patternMatcher.matches(chainTwo, "/mychain")).andReturn(true);
+        request.setAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE, chainTwo);
 
         Filter filter2a = ctrl.createMock(Filter.class);
         Filter filter2b = ctrl.createMock(Filter.class);
@@ -113,6 +116,7 @@ public class SimpleFilterChainResolverTest {
 
         ctrl.reset();
 
+        request.removeAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE);
         expect(request.getAttribute(WebUtils.INCLUDE_SERVLET_PATH_ATTRIBUTE)).andReturn("/nochain");
         expect(request.getAttribute(WebUtils.INCLUDE_PATH_INFO_ATTRIBUTE)).andReturn("");
 

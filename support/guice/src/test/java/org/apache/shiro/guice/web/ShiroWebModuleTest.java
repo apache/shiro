@@ -38,6 +38,7 @@ import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
 import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
+import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
@@ -66,9 +67,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
@@ -198,6 +201,10 @@ public class ShiroWebModuleTest {
         expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test_authc_basic");
         expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test_perms");
         expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/multiple_configs");
+        request.removeAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE);
+        expectLastCall().anyTimes();
+        request.setAttribute(eq(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE), anyString());
+        expectLastCall().anyTimes();
         replay(servletContext, request);
 
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
@@ -286,6 +293,10 @@ public class ShiroWebModuleTest {
         expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("/test_custom_filter");
         expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("/test_perms");
         expect(request.getAttribute(RequestDispatcher.INCLUDE_CONTEXT_PATH)).andReturn("/multiple_configs");
+        request.removeAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE);
+        expectLastCall().anyTimes();
+        request.setAttribute(eq(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE), anyString());
+        expectLastCall().anyTimes();
         replay(servletContext, request);
 
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
@@ -356,6 +367,10 @@ public class ShiroWebModuleTest {
         expect(request.getAttribute(RequestDispatcher.INCLUDE_PATH_INFO)).andReturn(null).anyTimes();
         expect(request.getPathInfo()).andReturn(null).anyTimes();
         expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test/foobar");
+        request.removeAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE);
+        expectLastCall().anyTimes();
+        request.setAttribute(eq(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE), anyString());
+        expectLastCall().anyTimes();
         replay(servletContext, request);
 
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
@@ -399,6 +414,10 @@ public class ShiroWebModuleTest {
         expect(request.getAttribute(RequestDispatcher.INCLUDE_PATH_INFO)).andReturn(null).anyTimes();
         expect(request.getPathInfo()).andReturn(null).anyTimes();
         expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test/foobar");
+        request.removeAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE);
+        expectLastCall().anyTimes();
+        request.setAttribute(eq(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE), anyString());
+        expectLastCall().anyTimes();
         replay(servletContext, request);
 
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {
@@ -447,6 +466,10 @@ public class ShiroWebModuleTest {
         expect(request.getAttribute(RequestDispatcher.INCLUDE_PATH_INFO)).andReturn(null).anyTimes();
         expect(request.getPathInfo()).andReturn(null).anyTimes();
         expect(request.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH)).andReturn("/test/foobar");
+        request.removeAttribute(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE);
+        expectLastCall().anyTimes();
+        request.setAttribute(eq(PathMatchingFilter.RESOLVED_CHAIN_ATTRIBUTE), anyString());
+        expectLastCall().anyTimes();
         replay(servletContext, request);
 
         Injector injector = Guice.createInjector(new ShiroWebModule(servletContext) {

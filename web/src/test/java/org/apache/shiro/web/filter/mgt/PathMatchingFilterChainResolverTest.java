@@ -19,6 +19,8 @@
 package org.apache.shiro.web.filter.mgt;
 
 import org.apache.shiro.util.AntPathMatcher;
+import org.apache.shiro.util.RegExPatternMatcher;
+import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.WebTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,9 +31,17 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -77,6 +87,37 @@ public class PathMatchingFilterChainResolverTest extends WebTest {
         resolver.setFilterChainManager(new DefaultFilterChainManager());
         assertThat(resolver.getFilterChainManager()).isNotNull();
         assertThat(resolver.getFilterChainManager() instanceof DefaultFilterChainManager).isTrue();
+    }
+
+    @Test
+    void testFilterEnforcesChainSelectedByNonAntMatcher() throws Exception {
+        resolver.setPathMatcher(new RegExPatternMatcher());
+        List<Object> appliedConfigs = new ArrayList<>();
+        resolver.getFilterChainManager().addFilter("deny", new PathMatchingFilter() {
+            @Override
+            protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) {
+                appliedConfigs.add(mappedValue);
+                return false;
+            }
+        });
+        // as a regex this does not match /secure/report, as an Ant pattern it does
+        resolver.getFilterChainManager().createChain("/secure/*", "deny[other]");
+        resolver.getFilterChainManager().createChain("/secure/[^/]+", "deny[resolved]");
+
+        Map<String, Object> attributes = new HashMap<>();
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain originalChain = mock(FilterChain.class);
+        when(request.getServletPath()).thenReturn("");
+        when(request.getPathInfo()).thenReturn("/secure/report");
+        when(request.getAttribute(anyString())).thenAnswer(call -> attributes.get(call.<String>getArgument(0)));
+        doAnswer(call -> attributes.put(call.getArgument(0), call.getArgument(1)))
+                .when(request).setAttribute(anyString(), any());
+
+        resolver.getChain(request, response, originalChain).doFilter(request, response);
+
+        verify(originalChain, never()).doFilter(request, response);
+        assertThat((String[]) appliedConfigs.get(0)).containsExactly("resolved");
     }
 
     @Test

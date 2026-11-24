@@ -20,6 +20,7 @@ package org.apache.shiro.web.filter;
 
 import org.apache.shiro.util.AntPathMatcher;
 import org.apache.shiro.util.PatternMatcher;
+import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.servlet.AdviceFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.owasp.encoder.Encode;
@@ -40,6 +41,13 @@ import static org.apache.shiro.lang.util.StringUtils.split;
  * @since 0.9
  */
 public abstract class PathMatchingFilter extends AdviceFilter implements PathConfigProcessor {
+    /**
+     * Request attribute set by the {@link FilterChainResolver} to the path pattern it matched.
+     * The filter uses that pattern's config instead of matching the path itself.
+     *
+     * @since 3.1.0
+     */
+    public static final String RESOLVED_CHAIN_ATTRIBUTE = PathMatchingFilter.class.getName() + ".RESOLVED_CHAIN";
 
     /**
      * Log available to this class only
@@ -181,15 +189,15 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     /**
      * Implementation that handles path-matching behavior before a request is evaluated.  If the path matches and
      * the filter
-     * {@link #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, String, Object) isEnabled} for
+     * {@link #isEnabled(ServletRequest, ServletResponse, String, Object) isEnabled} for
      * that path/config, the request will be allowed through via the result from
-     * {@link #onPreHandle(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, Object) onPreHandle}.  If the
+     * {@link #onPreHandle(ServletRequest, ServletResponse, Object) onPreHandle}.  If the
      * path does not match or the filter is not enabled for that path, this filter will allow passthrough immediately
      * to allow the {@code FilterChain} to continue executing.
      * <p/>
      * In order to retain path-matching functionality, subclasses should not override this method if at all
      * possible, and instead override
-     * {@link #onPreHandle(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, Object) onPreHandle} instead.
+     * {@link #onPreHandle(ServletRequest, ServletResponse, Object) onPreHandle} instead.
      *
      * @param request  the incoming ServletRequest
      * @param response the outgoing ServletResponse
@@ -199,20 +207,18 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      */
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
-
-        if (this.appliedPaths == null || this.appliedPaths.isEmpty()) {
-            if (LOGGER.isTraceEnabled()) {
-                LOGGER.trace("appliedPaths property is null or empty.  This Filter will passthrough immediately.");
-            }
-            return true;
+        // the resolver already matched the path, use its pattern if it is one of ours
+        String resolvedChain = (String) request.getAttribute(RESOLVED_CHAIN_ATTRIBUTE);
+        if (appliedPaths.containsKey(resolvedChain)) {
+            return isFilterChainContinued(request, response, resolvedChain, appliedPaths.get(resolvedChain));
         }
 
-        for (String path : this.appliedPaths.keySet()) {
+        for (String path : appliedPaths.keySet()) {
             // If the path does match, then pass on to the subclass implementation for specific checks
             //(first match 'wins'):
             if (pathsMatch(path, request)) {
                 LOGGER.trace("Current requestURI matches pattern '{}'.  Determining filter chain execution...", path);
-                Object config = this.appliedPaths.get(path);
+                Object config = appliedPaths.get(path);
                 return isFilterChainContinued(request, response, path, config);
             }
         }
@@ -263,7 +269,7 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
      * @return {@code true} if the request should be able to continue, {@code false} if the filter will
      * handle the response directly.
      * @throws Exception if an error occurs
-     * @see #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, String, Object)
+     * @see #isEnabled(ServletRequest, ServletResponse, String, Object)
      */
     protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
         return true;
@@ -272,12 +278,12 @@ public abstract class PathMatchingFilter extends AdviceFilter implements PathCon
     @SuppressWarnings("UnusedParameters")
     /**
      * Path-matching version of the parent class's
-     * {@link #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)} method, but additionally allows
+     * {@link #isEnabled(ServletRequest, ServletResponse)} method, but additionally allows
      * for inspection of any path-specific configuration values corresponding to the specified request.  Subclasses
      * may wish to inspect this additional mapped configuration to determine if the filter is enabled or not.
      * <p/>
      * This method's default implementation ignores the {@code path} and {@code mappedValue} arguments and merely
-     * returns the value from a call to {@link #isEnabled(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)}.
+     * returns the value from a call to {@link #isEnabled(ServletRequest, ServletResponse)}.
      * It is expected that subclasses override this method if they need to perform enable/disable logic for a specific
      * request based on any path-specific config for the filter instance.
      *
