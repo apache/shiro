@@ -100,6 +100,38 @@ class IniWebEnvironmentTest {
     }
 
     @Test
+    void testUserUrlsTakePrecedenceOverFrameworkUrls() {
+
+        def ini = new Ini()
+        ini.load("""
+        [urls]
+        /admin/** = authc
+        /** = authcBasic
+        """)
+
+        def env = new IniWebEnvironment() {
+            @Override
+            protected Ini getFrameworkIni() {
+                def frameworkIni = new Ini()
+                frameworkIni.load("""
+                [urls]
+                /** = anon
+                /framework/** = anon
+                """)
+                return frameworkIni
+            }
+        }
+        env.ini = ini
+        env.init()
+
+        def urls = env.ini.getSection("urls")
+        assertEquals(["/admin/**", "/**", "/framework/**"], urls.keySet() as List)
+        assertEquals("authcBasic", urls.get("/**"))
+        assertEquals(["/admin/**", "/**", "/framework/**"],
+                env.filterChainResolver.filterChainManager.chainNames as List)
+    }
+
+    @Test
     void testDisableGlobalFilters() {
         Ini ini = new Ini()
         ini.load("""
