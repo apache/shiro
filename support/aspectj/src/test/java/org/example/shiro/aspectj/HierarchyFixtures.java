@@ -85,5 +85,10 @@ final class HierarchyFixtures {
 
         public static void runStatic() {
         }
+
+        @Override
+        public String toString() {
+            return "secured toString";
+        }
     }
 }

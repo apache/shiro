@@ -20,6 +20,10 @@ package org.example.shiro.aspectj;
 
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.shiro.aspectj.AspectjAnnotationsAuthorizingMethodInterceptor;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.env.BasicIniEnvironment;
@@ -31,6 +35,7 @@ import org.example.shiro.aspectj.HierarchyFixtures.ComposedOnType;
 import org.example.shiro.aspectj.HierarchyFixtures.ImplementsSecuredMethod;
 import org.example.shiro.aspectj.HierarchyFixtures.OverridesSecuredMethod;
 import org.junit.jupiter.api.Named;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -69,5 +74,18 @@ class HierarchyAspectTest {
     void adminIsAllowed(Runnable call) {
         subject.login(new UsernamePasswordToken("root", "secret"));
         assertThatCode(() -> subject.execute(call)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void traceLoggingDoesNotCallSecuredToString() {
+        String logger = AspectjAnnotationsAuthorizingMethodInterceptor.class.getName();
+        Level level = LogManager.getLogger(logger).getLevel();
+        Configurator.setLevel(logger, Level.TRACE);
+        try {
+            subject.login(new UsernamePasswordToken("root", "secret"));
+            assertThatCode(() -> subject.execute(() -> new ComposedOnType().run())).doesNotThrowAnyException();
+        } finally {
+            Configurator.setLevel(logger, level);
+        }
     }
 }

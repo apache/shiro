@@ -53,7 +53,7 @@ public class AspectjAnnotationsAuthorizingMethodInterceptor extends AnnotationsA
                     + "\n\tjoinPoint  : " + aJoinPoint
                     + "\n\tannotations: "
                         + Arrays.toString(((MethodSignature) aJoinPoint.getSignature()).getMethod().getAnnotations())
-                    + "\n\ttarget     : " + aJoinPoint.getTarget()
+                    + "\n\ttarget     : " + describe(aJoinPoint.getTarget())
             );
         }
 
@@ -62,5 +62,11 @@ public class AspectjAnnotationsAuthorizingMethodInterceptor extends AnnotationsA
 
         // 2. Delegate the authorization of the method call to the super class
         super.invoke(mi);
+    }
+
+    // Calling the target's toString() here could run a secured method and re-enter the aspect.
+    private static String describe(Object target) {
+        return target == null ? "none (static method)"
+                : target.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(target));
     }
 }
