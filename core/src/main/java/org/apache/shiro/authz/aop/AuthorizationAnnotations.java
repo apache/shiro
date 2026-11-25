@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 
 /**
  * The single registry of authorization annotations Shiro understands, with their handlers and method interceptors,
- * shared by every integration (Spring, Guice, CDI, JAX-RS, AspectJ).
+ * shared by Shiro's integrations, except Spring, which uses Spring's own annotation lookup.
  * <p>
  * The five Shiro annotations are always available. The JSR-250 annotations ({@code @RolesAllowed},
  * {@code @PermitAll}, {@code @DenyAll}) are registered only when {@code jakarta.annotation} is on the class path.

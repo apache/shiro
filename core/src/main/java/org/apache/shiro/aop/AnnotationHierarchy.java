@@ -41,7 +41,7 @@ import java.util.stream.Stream;
 /**
  * Framework-independent, cached discovery of annotations across a type hierarchy.
  * <p>
- * The lookup rules are the same for every Shiro integration (Spring, Guice, CDI, JAX-RS, AspectJ).
+ * Used by Shiro's integrations, except Spring, which uses Spring's own annotation lookup.
  * The closest declaration wins.
  * The invoked method itself is inspected first.
  * Then every type of the target's hierarchy is inspected, most specific first: the target class,

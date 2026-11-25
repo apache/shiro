@@ -33,8 +33,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 /**
  * Enforces Shiro's authorization annotations, such as {@code @RequiresPermissions}, on woven classes.
  * <p>
- * Annotations are honored on the method, its class, the interfaces and superclasses it inherits from,
- * and in composed annotations, the same as in the other Shiro integrations.
+ * Shiro also recognizes them on interfaces and superclasses, and in composed annotations.
  * <p>
  * Every woven method is checked, which adds about 10 ns to each call of a method without Shiro annotations.
  * Weave only the code that needs it. With compile-time weaving, weave only the modules that use Shiro annotations.
