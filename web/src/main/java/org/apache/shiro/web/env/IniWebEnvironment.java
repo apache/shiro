@@ -41,6 +41,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * {@link WebEnvironment} implementation configured by an {@link Ini} instance or {@code Ini} resource locations.
@@ -152,6 +154,10 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
      * Extension point to allow subclasses to provide an {@link Ini} configuration that will be merged into the
      * users configuration.  The users configuration will override anything set here.
      * <p>
+     * In {@code [main]}, the framework's definitions come first, so the user's configuration can refer to them.
+     * In {@code [urls]}, the user's rules come first, because the first matching rule wins.
+     * A user catch-all rule such as {@code /** = authc} therefore hides the framework's rules.
+     * <p>
      * <strong>NOTE:</strong> Framework developers should use with caution. It is possible a user could provide
      * configuration that would conflict with the frameworks configuration.  For example: if this method returns an
      * Ini object with the following configuration:
@@ -225,6 +231,13 @@ public class IniWebEnvironment extends ResourceBasedWebEnvironment implements In
         // at this point we have two valid ini objects, create a new one and merge the contents of 2 into 1
         Ini iniResult = new Ini(ini1);
         iniResult.merge(ini2);
+
+        // The first matching [urls] rule wins, so the rules of ini2 go first, followed by the rules only ini1 has.
+        Optional.ofNullable(ini2.getSection(IniFilterChainResolverFactory.URLS)).ifPresent(userUrls -> {
+            Ini.Section merged = iniResult.removeSection(IniFilterChainResolverFactory.URLS);
+            Stream.concat(userUrls.keySet().stream(), merged.keySet().stream()).distinct().forEach(path ->
+                    iniResult.setSectionProperty(IniFilterChainResolverFactory.URLS, path, merged.get(path)));
+        });
 
         return iniResult;
     }
