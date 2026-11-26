@@ -18,55 +18,27 @@
  */
 package org.apache.shiro.aspectj;
 
-import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.env.BasicIniEnvironment;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
- *
+ * Each test runs as its own Subject, bound to the current thread only, so the tests can run in parallel.
  */
 @SuppressWarnings("checkstyle:MethodName")
 public class DummyServiceTest {
+    private static final SecurityManager SECURITY_MANAGER =
+            new BasicIniEnvironment("classpath:shiroDummyServiceTest.ini").getSecurityManager();
+    private static final DummyService SECURED_SERVICE = new SecuredDummyService();
+    private static final DummyService RESTRICTED_SERVICE = new RestrictedDummyService();
 
-    private static DummyService securedService;
-    private static DummyService restrictedService;
-
-    private Subject subject;
-
-    @BeforeAll
-    public static void setUpClass() throws Exception {
-        var basicIniEnvironment = new BasicIniEnvironment("classpath:shiroDummyServiceTest.ini");
-        SecurityUtils.setSecurityManager(basicIniEnvironment.getSecurityManager());
-
-        securedService = new SecuredDummyService();
-        restrictedService = new RestrictedDummyService();
-    }
-
-    @AfterAll
-    public static void tearDownClass() throws Exception {
-        //don't corrupt other test cases since this is static memory:
-        SecurityUtils.setSecurityManager(null);
-    }
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        subject = SecurityUtils.getSubject();
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        subject.logout();
-    }
+    private final Subject subject = new Subject.Builder(SECURITY_MANAGER).buildSubject();
 
     private void loginAsUser() {
         subject.login(new UsernamePasswordToken("joe", "bob"));
@@ -79,32 +51,32 @@ public class DummyServiceTest {
     // TEST ANONYMOUS
     @Test
     void testAnonymous_asAnonymous() throws Exception {
-        securedService.anonymous();
+        subject.execute(SECURED_SERVICE::anonymous);
     }
 
     @Test
     void testAnonymous_asUser() throws Exception {
         loginAsUser();
-        securedService.anonymous();
+        subject.execute(SECURED_SERVICE::anonymous);
     }
 
     @Test
     void testAnonymous_asAdmin() throws Exception {
         loginAsAdmin();
-        securedService.anonymous();
+        subject.execute(SECURED_SERVICE::anonymous);
     }
 
     // TEST GUEST
     @Test
     void testGuest_asAnonymous() throws Exception {
-        securedService.guest();
+        subject.execute(SECURED_SERVICE::guest);
     }
 
     @Test
     void testGuest_asUser() throws Exception {
         assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             loginAsUser();
-            securedService.guest();
+            subject.execute(SECURED_SERVICE::guest);
         });
     }
 
@@ -112,7 +84,7 @@ public class DummyServiceTest {
     void testGuest_asAdmin() throws Exception {
         assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
             loginAsAdmin();
-            securedService.guest();
+            subject.execute(SECURED_SERVICE::guest);
         });
     }
 
@@ -120,20 +92,20 @@ public class DummyServiceTest {
     @Test
     void testPeek_asAnonymous() throws Exception {
         assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
-            securedService.peek();
+            subject.execute(SECURED_SERVICE::peek);
         });
     }
 
     @Test
     void testPeek_asUser() throws Exception {
         loginAsUser();
-        securedService.peek();
+        subject.execute(SECURED_SERVICE::peek);
     }
 
     @Test
     void testPeek_asAdmin() throws Exception {
         loginAsAdmin();
-        securedService.peek();
+        subject.execute(SECURED_SERVICE::peek);
     }
 
     // TEST RETRIEVE
@@ -141,20 +113,20 @@ public class DummyServiceTest {
     @Test
     void testRetrieve_asAnonymous() throws Exception {
         assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
-            securedService.retrieve();
+            subject.execute(SECURED_SERVICE::retrieve);
         });
     }
 
     @Test
     void testRetrieve_asUser() throws Exception {
         loginAsUser();
-        securedService.retrieve();
+        subject.execute(SECURED_SERVICE::retrieve);
     }
 
     @Test
     void testRetrieve_asAdmin() throws Exception {
         loginAsAdmin();
-        securedService.retrieve();
+        subject.execute(SECURED_SERVICE::retrieve);
     }
 
     // TEST CHANGE
@@ -162,7 +134,7 @@ public class DummyServiceTest {
     @Test
     void testChange_asAnonymous() throws Exception {
         assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
-            securedService.change();
+            subject.execute(SECURED_SERVICE::change);
         });
     }
 
@@ -170,14 +142,14 @@ public class DummyServiceTest {
     void testChange_asUser() throws Exception {
         assertThatExceptionOfType(UnauthorizedException.class).isThrownBy(() -> {
             loginAsUser();
-            securedService.change();
+            subject.execute(SECURED_SERVICE::change);
         });
     }
 
     @Test
     void testChange_asAdmin() throws Exception {
         loginAsAdmin();
-        securedService.change();
+        subject.execute(SECURED_SERVICE::change);
     }
 
     // TEST RETRIEVE RESTRICTED
@@ -185,7 +157,7 @@ public class DummyServiceTest {
     @Test
     void testRetrieveRestricted_asAnonymous() throws Exception {
         assertThatExceptionOfType(UnauthenticatedException.class).isThrownBy(() -> {
-            restrictedService.retrieve();
+            subject.execute(RESTRICTED_SERVICE::retrieve);
         });
     }
 
@@ -193,21 +165,21 @@ public class DummyServiceTest {
     void testRetrieveRestricted_asUser() throws Exception {
         assertThatExceptionOfType(UnauthorizedException.class).isThrownBy(() -> {
             loginAsUser();
-            restrictedService.retrieve();
+            subject.execute(RESTRICTED_SERVICE::retrieve);
         });
     }
 
     @Test
     void testRetrieveRestricted_asAdmin() throws Exception {
         loginAsAdmin();
-        restrictedService.retrieve();
+        subject.execute(RESTRICTED_SERVICE::retrieve);
     }
 
     @Test
     void testStaticMethodOnClassLevelRequiresRoles_asUser() throws Exception {
         assertThatExceptionOfType(UnauthorizedException.class).isThrownBy(() -> {
             loginAsUser();
-            StaticDummyService.staticAdminOnly();
+            subject.execute(StaticDummyService::staticAdminOnly);
         });
     }
 }
