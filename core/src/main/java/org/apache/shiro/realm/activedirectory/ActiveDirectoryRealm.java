@@ -18,6 +18,7 @@
  */
 package org.apache.shiro.realm.activedirectory;
 
+import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
@@ -108,6 +109,11 @@ public class ActiveDirectoryRealm extends AbstractLdapRealm {
             throws NamingException {
 
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
+        if (!StringUtils.hasText(upToken.getUsername())) {
+            // an empty username would result in an anonymous bind (RFC 4513 section 5.1.1),
+            // which does not authenticate anyone
+            throw new AccountException("Null or empty usernames are not allowed by this realm.");
+        }
 
         // Binds using the username and password provided by the user.
         LdapContext ctx = null;
