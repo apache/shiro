@@ -21,6 +21,7 @@ package org.apache.shiro.realm.activedirectory;
 import java.util.Optional;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.UnavailableSecurityManagerException;
+import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -60,6 +61,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
 import static org.apache.shiro.test.AbstractShiroTest.GLOBAL_SECURITY_MANAGER_RESOURCE;
 import static org.easymock.EasyMock.anyObject;
@@ -197,6 +199,21 @@ public class ActiveDirectoryRealmTest {
 
         activeDirectoryRealm.queryForAuthenticationInfo(token, factory);
 
+        verify(factory);
+    }
+
+    @Test
+    void emptyUsernameIsRejectedBeforeBind() {
+        var activeDirectoryRealm = new ActiveDirectoryRealm();
+        LdapContextFactory factory = createMock(LdapContextFactory.class);
+        replay(factory);
+
+        for (String username : new String[] {null, "", " ", "\t"}) {
+            var token = new UsernamePasswordToken(username, "");
+            assertThatThrownBy(() -> activeDirectoryRealm.queryForAuthenticationInfo(token, factory))
+                    .isInstanceOf(AccountException.class);
+        }
+        // no LDAP bind must have been attempted
         verify(factory);
     }
 
